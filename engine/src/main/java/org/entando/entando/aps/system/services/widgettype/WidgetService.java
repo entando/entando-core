@@ -25,6 +25,7 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -108,14 +109,41 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetType.getMainGroup()}, "widgettype.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
+        WidgetDto widgetDto = null;
         try {
             this.getWidgetManager().addWidgetType(widgetType);
-        } catch (ApsSystemException e) {
+            this.createAndAddFragment(widgetType, widgetRequest);
+            widgetDto = this.dtoBuilder.convert(widgetType);
+            this.addFragments(widgetDto);
+        } catch (Exception e) {
             logger.error("Failed to add widget type for request {} ", widgetRequest);
             throw new RestServerError("error in add widget", e);
         }
-        WidgetDto widgetDto = this.dtoBuilder.convert(widgetType);
         return widgetDto;
+    }
+
+    private void createAndAddFragment(WidgetType widgetType, WidgetRequest widgetRequest) throws Exception {
+        GuiFragment guiFragment = new GuiFragment();
+        String code = this.extractUniqueGuiFragmentCode(widgetType.getCode());
+        guiFragment.setCode(code);
+        guiFragment.setPluginCode(widgetType.getPluginCode());
+        guiFragment.setGui(widgetRequest.getCustomUi());
+        guiFragment.setWidgetTypeCode(widgetType.getCode());
+        this.getGuiFragmentManager().addGuiFragment(guiFragment);
+    }
+
+    protected String extractUniqueGuiFragmentCode(String widgetTypeCode) throws ApsSystemException {
+        String uniqueCode = widgetTypeCode;
+        if (null != this.getGuiFragmentManager().getGuiFragment(uniqueCode)) {
+            int index = 0;
+            String currentCode = null;
+            do {
+                index++;
+                currentCode = uniqueCode + "_" + index;
+            } while (null != this.getGuiFragmentManager().getGuiFragment(currentCode));
+            uniqueCode = currentCode;
+        }
+        return uniqueCode;
     }
 
     @Override
@@ -132,6 +160,15 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetDto widgetDto = dtoBuilder.convert(type);
         try {
             this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            if (!StringUtils.isEmpty(widgetCode)) {
+                GuiFragment guiFragment = this.getGuiFragmentManager().getUniqueGuiFragmentByWidgetType(widgetCode);
+                if (null == guiFragment) {
+                    this.createAndAddFragment(type, widgetRequest);
+                } else {
+                    guiFragment.setGui(widgetRequest.getCustomUi());
+                    this.getGuiFragmentManager().updateGuiFragment(guiFragment);
+                }
+            }
             this.addFragments(widgetDto);
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);
@@ -148,6 +185,10 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             if (validationResult.hasErrors()) {
                 throw new ValidationGenericException(validationResult);
             }
+            List<String> fragmentCodes = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetCode);
+            for (String fragmentCode : fragmentCodes) {
+                this.getGuiFragmentManager().deleteGuiFragment(fragmentCode);
+            }
             this.getWidgetManager().deleteWidgetType(widgetCode);
         } catch (ApsSystemException e) {
             logger.error("Failed to remove widget type for request {} ", widgetCode);
@@ -160,7 +201,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         ApsProperties titles = new ApsProperties();
         widgetRequest.getTitles().forEach((k, v) -> titles.put(k, v));
         type.setTitles(titles);
-        type.setPluginCode(widgetRequest.getPluginCode());
         type.setMainGroup(widgetRequest.getGroup());
     }
 

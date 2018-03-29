@@ -25,12 +25,10 @@ public class WidgetRequest {
     @NotEmpty(message = "widgettype.titles.notBlank")
     private Map<String, String> titles;
 
-    private String pluginCode;
-
     @NotBlank(message = "widgettype.group.notBlank")
     private String group;
 
-    @NotBlank(message = "widgettype.customUi.notBlank")
+    //@NotBlank(message = "widgettype.customUi.notBlank")
     private String customUi;
 
     public String getCode() {
@@ -63,14 +61,6 @@ public class WidgetRequest {
 
     public void setCustomUi(String customUi) {
         this.customUi = customUi;
-    }
-
-    public String getPluginCode() {
-        return pluginCode;
-    }
-
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
     }
 
 }

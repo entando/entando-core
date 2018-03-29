@@ -103,10 +103,12 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
 
+            String defaultLangCode = langManager.getDefaultLang().getCode();
+
             LabelRequest request = new LabelRequest();
             request.setKey(code);
             Map<String, String> languages = new HashMap<>();
-            languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
+            languages.put(defaultLangCode, "this label has no name");
             request.setTitles(languages);
             String payLoad = mapper.writeValueAsString(request);
 
@@ -120,6 +122,8 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
 
             assertThat(this.ii18nManager.getLabelGroup(code), is(not(nullValue())));
+            ApsProperties enlabel = this.ii18nManager.getLabelGroup(code);
+            assertThat(enlabel.get(defaultLangCode), is("this label has no name"));
 
             //-------------------------------------------------
             request = new LabelRequest();
@@ -136,7 +140,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isBadRequest());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
+            //System.out.println(result.andReturn().getResponse().getContentAsString());
 
             //-------------------------------------------------
             request = new LabelRequest();
@@ -158,11 +162,11 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             //-------------------------------------------------
 
-            String lang = langManager.getDefaultLang().getCode();
+
             request = new LabelRequest();
             request.setKey(code);
             languages = new HashMap<>();
-            languages.put(lang, "this label has no name");
+            languages.put(defaultLangCode, "this label has no name!");
             request.setTitles(languages);
             payLoad = mapper.writeValueAsString(request);
 
@@ -173,8 +177,8 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            String enlabel = this.ii18nManager.getLabel(code, lang);
-            assertThat(enlabel, is(languages.get(lang)));
+            enlabel = this.ii18nManager.getLabelGroup(code);
+            assertThat(enlabel.get(defaultLangCode), is("this label has no name!"));
 
             //-------------------------------------------------
 

@@ -4,7 +4,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
@@ -27,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 
 public class LabelService implements ILabelService {
-
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -61,7 +59,6 @@ public class LabelService implements ILabelService {
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public PagedMetadata<LabelDto> getLabelGroups(RestListRequest restRequest) {
-
         Map<String, ApsProperties> result = this.i18nManager.getLabelGroups();
         List<LabelDto> dtoList = this.getDtoBuilder().convert(result);
         if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
@@ -70,8 +67,8 @@ public class LabelService implements ILabelService {
             dtoList = dtoList.stream().sorted(Comparator.comparing(LabelDto::getKey)).collect(Collectors.toList());
         }
 
-        if (null != restRequest.getFilter()) {
-            for (Filter f : restRequest.getFilter()) {
+        if (null != restRequest.getFilters()) {
+            for (Filter f : restRequest.getFilters()) {
                 if (f.getAttributeName().equals(LABEL_KEY_FILTER_KEY)) {
                     dtoList = dtoList
                                      .stream()
@@ -122,14 +119,10 @@ public class LabelService implements ILabelService {
             if (validationResult.hasErrors()) {
                 throw new ValidationGenericException(validationResult);
             }
-
-            Properties languages = new Properties();
+            ApsProperties languages = new ApsProperties();
             languages.putAll(labelRequest.getTitles());
-
-            this.getI18nManager().updateLabelGroup(code, new ApsProperties(languages));
-
+            this.getI18nManager().updateLabelGroup(code, languages);
             return labelRequest;
-
         } catch (ApsSystemException t) {
             logger.error("error in update label group with code {}", labelRequest.getKey(), t);
             throw new RestServerError("error in update label group", t);
@@ -139,18 +132,15 @@ public class LabelService implements ILabelService {
     @Override
     public LabelDto addLabelGroup(LabelDto labelRequest) {
         try {
-
             BeanPropertyBindingResult validationResult = this.validateAddLabelGroup(labelRequest);
             if (validationResult.hasErrors()) {
                 throw new ValidationGenericException(validationResult);
             }
             String code = labelRequest.getKey();
-            Properties languages = new Properties();
+            ApsProperties languages = new ApsProperties();
             languages.putAll(labelRequest.getTitles());
-            this.getI18nManager().addLabelGroup(code, new ApsProperties(languages));
-
+            this.getI18nManager().addLabelGroup(code, languages);
             return labelRequest;
-
         } catch (ApsSystemException t) {
             logger.error("error in add label group with code {}", labelRequest.getKey(), t);
             throw new RestServerError("error in add label group", t);
@@ -160,7 +150,6 @@ public class LabelService implements ILabelService {
     @Override
     public void removeLabelGroup(String code) {
         try {
-
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
@@ -174,19 +163,15 @@ public class LabelService implements ILabelService {
     }
 
     protected BeanPropertyBindingResult validateUpdateLabelGroup(LabelDto labelDto) {
-
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(labelDto, "labelGroup");
-
         String defaultLang = this.getLangManager().getDefaultLang().getCode();
         boolean isDefaultLangValid = validateDefaultLang(labelDto, bindingResult, defaultLang);
         if (!isDefaultLangValid) {
             return bindingResult;
         }
-
         List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
         labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
         return bindingResult;
-
     }
 
     protected BeanPropertyBindingResult validateAddLabelGroup(LabelDto labelDto) {
@@ -199,16 +184,13 @@ public class LabelService implements ILabelService {
                 return bindingResult;
             }
             String defaultLang = this.getLangManager().getDefaultLang().getCode();
-
             boolean isDefaultLangValid = validateDefaultLang(labelDto, bindingResult, defaultLang);
             if (!isDefaultLangValid) {
                 return bindingResult;
             }
-
             List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
             labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, configuredLangs, defaultLang, bindingResult));
             return bindingResult;
-
         } catch (ApsSystemException t) {
             logger.error("error in validate add label group with code {}", labelDto.getKey(), t);
             throw new RestServerError("error in validate add label group", t);
@@ -228,7 +210,6 @@ public class LabelService implements ILabelService {
         if (!configuredLangs.contains(currentLangCode)) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_INVALID_LANG, new String[]{currentLangCode}, "labelGroup.langs.lang.invalid");
         }
-
         if (currentLangCode.equals(defaultLangCode) && StringUtils.isBlank(entry.getValue())) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_TEXT_REQURED, new String[]{currentLangCode}, "labelGroup.langs.defaultLang.textRequired");
         }

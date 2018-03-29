@@ -46,7 +46,9 @@ public class PagedMetadata<T> {
         this.totalItems = result.getCount();
         this.setSort(req.getSort());
         this.setDirection(req.getDirection());
-        this.setFilters(req.getFilters());
+        if (null != req.getFilters()) {
+            this.setFilters(req.getFilters());
+        }
     }
 
     public PagedMetadata(int page, int size, int last, int totalItems) {

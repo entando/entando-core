@@ -200,9 +200,9 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
 
             ResultActions result = mockMvc
                                           .perform(post(BASE_URI)
-                                                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                .content(payload)
-                                                                .header("Authorization", "Bearer " + accessToken));
+                                                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                 .content(payload)
+                                                                 .header("Authorization", "Bearer " + accessToken));
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
@@ -240,9 +240,9 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
 
             result = mockMvc
                             .perform(delete(BASE_URI + "/{id}", modelId)
-                                                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                     .content(payload)
-                                                     .header("Authorization", "Bearer " + accessToken));
+                                                                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                        .content(payload)
+                                                                        .header("Authorization", "Bearer " + accessToken));
 
             //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
@@ -259,7 +259,24 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                 this.contentModelManager.removeContentModel(model);
             }
         }
+    }
+
+    @Test
+    public void testDeleteReferencedModel() throws Throwable {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        ResultActions result = mockMvc
+                                      .perform(delete(BASE_URI + "/{id}", 2)
+                                                                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                            .header("Authorization", "Bearer " + accessToken));
+
+        // System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isConflict());
+        result.andExpect(jsonPath("$.errors[0].code", is(String.valueOf("5"))));
 
     }
+
 
 }

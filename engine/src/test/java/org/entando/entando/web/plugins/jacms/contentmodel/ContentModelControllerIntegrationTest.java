@@ -96,5 +96,34 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         result.andExpect(jsonPath("$.payload.length()", is(2)));
     }
 
+    @Test
+    public void testGetContentModelOk() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get(BASE_URI + "/{modelId}", "1")
+
+                                                                                .header("Authorization", "Bearer " + accessToken));
+        //System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.id", is(1)));
+
+    }
+
+    @Test
+    public void testGetContentModelKo() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get(BASE_URI + "/{modelId}", "0")
+
+                                                                                .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isNotFound());
+        result.andExpect(jsonPath("$.errors[0].code", is("1")));
+
+    }
 
 }

@@ -11,10 +11,12 @@ import javax.annotation.PostConstruct;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.utils.ContentModelUtils;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.plugins.jacms.contentmodel.validator.ContentModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,16 +65,20 @@ public class ContentModelService implements IContentModelService {
 
         List<ContentModel> contentModels = this.getContentModelManager().getContentModels();
 
+        Stream<ContentModel> stream = contentModels.stream();
+
         //filter
         List<Predicate<ContentModel>> filters = ContentModelUtils.getPredicates(requestList);
-        Stream<ContentModel> stream = contentModels.stream();
         for (Predicate<ContentModel> predicate : filters) {
             stream = stream.filter(predicate);
         }
 
         //sort
         Comparator<ContentModel> comparator = ContentModelUtils.getComparator(requestList.getSort(), requestList.getDirection());
-        stream = stream.sorted(comparator);
+        if (null != comparator) {
+            stream = stream.sorted(comparator);
+        }
+
         contentModels = stream.collect(Collectors.toList());
 
         //page
@@ -85,6 +91,16 @@ public class ContentModelService implements IContentModelService {
     }
 
 
+    @Override
+    public ContentModelDto getContentModel(Long modelId) {
+        ContentModel contentModel = this.getContentModelManager().getContentModel(modelId);
+        if (null == contentModel) {
+            logger.warn("no contentModel found with id {}", modelId);
+            throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_NOT_FOUND, "contentModel", String.valueOf(modelId));
+        }
+        ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
+        return dto;
+    }
 
 
 }

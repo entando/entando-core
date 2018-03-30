@@ -10,4 +10,6 @@ public interface IContentModelService {
 
     public PagedMetadata<ContentModelDto> getContentModels(RestListRequest requestList);
 
+    public ContentModelDto getContentModel(Long modelId);
+
 }

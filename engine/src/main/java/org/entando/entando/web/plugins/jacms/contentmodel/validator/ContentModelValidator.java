@@ -6,11 +6,12 @@ import org.springframework.validation.Errors;
 
 public class ContentModelValidator extends AbstractPaginationValidator {
 
-    //    public static final String ERRCODE_ROLE_NOT_FOUND = "1";
+    public static final String ERRCODE_CONTENTMODEL_NOT_FOUND = "1";
     //    public static final String ERRCODE_ROLE_ALREADY_EXISTS = "2";
     //    public static final String ERRCODE_URINAME_MISMATCH = "3";
     //    public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
     //    public static final String ERRCODE_ROLE_REFERENCES = "5";
+
 
 
     @Override

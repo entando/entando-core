@@ -92,7 +92,7 @@ public class ContentModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{modelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateRole(@PathVariable Long modelId, @Valid @RequestBody ContentModelRequest contentModelRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updateContentModel(@PathVariable Long modelId, @Valid @RequestBody ContentModelRequest contentModelRequest, BindingResult bindingResult) {
         logger.debug("updating contentModel {}", modelId);
         //field validations
         if (bindingResult.hasErrors()) {

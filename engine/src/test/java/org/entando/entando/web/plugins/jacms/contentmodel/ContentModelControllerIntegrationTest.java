@@ -117,6 +117,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.id", is(1)));
 
+
     }
 
     @Test
@@ -142,6 +143,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                                                             .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
+
     }
 
     @Test
@@ -154,6 +156,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                                                                             .param("typeCode", "EVN")
                                                                             .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+        System.err.println(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test
@@ -236,6 +239,41 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
             assertThat(contentModelAdded, is(nullValue()));
 
             //----------------------------------------------
+
+        } finally {
+            ContentModel model = this.contentModelManager.getContentModel(modelId);
+            if (null != model) {
+
+                this.contentModelManager.removeContentModel(model);
+            }
+        }
+    }
+
+    @Test
+    public void testAddWithInvalidContentType() throws Exception {
+        long modelId = 2001;
+        try {
+            String payload = null;
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ContentModelRequest request = new ContentModelRequest();
+            request.setId(modelId);
+            request.setContentType("XXX");
+            request.setDescr("testChangeContentType");
+            request.setContentShape("testChangeContentType");
+
+            payload = mapper.writeValueAsString(request);
+
+            ResultActions result = mockMvc
+                                          .perform(post(BASE_URI)
+                                                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                 .content(payload)
+                                                                 .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isConflict());
+            result.andExpect(jsonPath("$.errors[0].code", is("6")));
 
         } finally {
             ContentModel model = this.contentModelManager.getContentModel(modelId);

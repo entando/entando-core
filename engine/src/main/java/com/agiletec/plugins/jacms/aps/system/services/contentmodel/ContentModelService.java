@@ -234,7 +234,7 @@ public class ContentModelService implements IContentModelService {
         IApsEntity prototype = this.getContentManager().getEntityPrototype(typeCode);
         if (null == prototype) {
             logger.warn("no contentModel found with id {}", typeCode);
-            throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND, "contentType", typeCode);
+            throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, "contentType", typeCode);
         }
         return this.getDictionaryProvider().buildDictionary((Content) prototype);
     }
@@ -256,6 +256,7 @@ public class ContentModelService implements IContentModelService {
     protected BeanPropertyBindingResult validateForAdd(ContentModel contentModel) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
         validateIdIsUnique(contentModel, errors);
+        validateContentType(contentModel, errors);
         return errors;
     }
 
@@ -268,13 +269,14 @@ public class ContentModelService implements IContentModelService {
         return errors;
     }
 
-    private BeanPropertyBindingResult validateForUpdate(ContentModelRequest request, ContentModel contentModel) {
+    protected BeanPropertyBindingResult validateForUpdate(ContentModelRequest request, ContentModel contentModel) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
         this.validateContentTypeIsEquals(request.getContentType(), contentModel.getContentType(), errors);
+        this.validateContentType(contentModel, errors);
         return errors;
     }
 
-    private void validateContentTypeIsEquals(String newContentType, String existingConentType, BeanPropertyBindingResult errors) {
+    protected void validateContentTypeIsEquals(String newContentType, String existingConentType, BeanPropertyBindingResult errors) {
         if (!newContentType.equals(existingConentType)) {
             Object[] args = {existingConentType, newContentType};
             errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_CANNOT_UPDATE_CONTENT_TYPE, args, "contetntmodel.contentType.locked");
@@ -294,6 +296,16 @@ public class ContentModelService implements IContentModelService {
             Object[] args = {String.valueOf(modelId), utilizer.getDescription()};
             errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_WRONG_UTILIZER, args, "contentModel.id.wrongUtilizer");
         }
+    }
+
+    protected void validateContentType(ContentModel contentModel, BeanPropertyBindingResult errors) {
+        String contentType = contentModel.getContentType();
+
+        if (!this.getContentManager().getSmallContentTypesMap().containsKey(contentType)) {
+            Object[] args = {contentType};
+            errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, args, "contentModel.contentType.notFound");
+        }
+
     }
 
 }

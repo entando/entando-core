@@ -21,7 +21,9 @@ import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -30,12 +32,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import org.hamcrest.Matchers;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class CategoryControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -131,16 +135,32 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            this.executePost("2_POST_valid.json", accessToken, status().isOk());
-            this.executePut("2_PUT_invalid_1.json", categoryCode, accessToken, status().isBadRequest());
-            this.executePut("2_PUT_invalid_2.json", categoryCode, accessToken, status().isBadRequest());
-            this.executePut("2_PUT_valid.json", "home", accessToken, status().isBadRequest());
-            this.executePut("2_PUT_valid.json", categoryCode, accessToken, status().isOk());
+            ResultActions result = this.executePost("2_POST_valid.json", accessToken, status().isOk());
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
+
+            result = this.executePut("2_PUT_invalid_1.json", categoryCode, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_PARENT_CATEGORY_CANNOT_BE_CHANGED)));
+
+            result = this.executePut("2_PUT_invalid_2.json", categoryCode, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors[0].code", is("53")));
+
+            result = this.executePut("2_PUT_valid.json", "home", accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_URINAME_MISMATCH)));
+
+            result = this.executePut("2_PUT_valid.json", categoryCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Category modified = this.categoryManager.getCategory(categoryCode);
             Assert.assertNotNull(modified);
             Assert.assertTrue(modified.getTitle("en").startsWith("New "));
             Assert.assertTrue(modified.getTitle("it").startsWith("Nuovo "));
-            this.executeDelete(categoryCode, accessToken, status().isOk());
+            result = this.executeDelete(categoryCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
             this.categoryManager.deleteCategory(categoryCode);
@@ -155,12 +175,16 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            this.executePost("1_POST_valid.json", accessToken, status().isOk());
+            ResultActions result = this.executePost("1_POST_valid.json", accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Assert.assertNotNull(this.categoryManager.getCategory(categoryCode));
-            this.executeDelete(categoryCode, accessToken, status().isOk());
+            result = this.executeDelete(categoryCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
-            this.executeDelete("invalid_category", accessToken, status().isOk());
-            this.executeDelete("cat1", accessToken, status().isBadRequest());
+            result = this.executeDelete("invalid_category", accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is("invalid_category")));
+            result = this.executeDelete("cat1", accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_REFERENCES)));
         } finally {
             this.categoryManager.deleteCategory(categoryCode);
         }
@@ -172,20 +196,26 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         Assert.assertNull(this.categoryManager.getCategory("test_test"));
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = this.mockOAuthInterceptor(user);
-        this.executeReference("cat1", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isOk());
-        this.executeReference("test_test", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isNotFound());
-        this.executeReference("cat1", accessToken, SystemConstants.GROUP_MANAGER, status().isNotFound());
+        ResultActions result = this.executeReference("cat1", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
+        result = this.executeReference("test_test", accessToken, SystemConstants.DATA_OBJECT_MANAGER, status().isNotFound());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND)));
+        result = this.executeReference("cat1", accessToken, SystemConstants.GROUP_MANAGER, status().isNotFound());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES)));
     }
 
-    private void executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+    private ResultActions executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}", new Object[]{categoryCode})
                         .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(rm);
+        return result;
     }
 
-    private void executePost(String filename, String accessToken, ResultMatcher rm) throws Exception {
+    private ResultActions executePost(String filename, String accessToken, ResultMatcher rm) throws Exception {
         InputStream isJsonPost = this.getClass().getResourceAsStream(filename);
         String jsonPost = FileTextReader.getText(isJsonPost);
         ResultActions result = mockMvc
@@ -193,9 +223,10 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
+        return result;
     }
 
-    private void executePut(String filename, String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+    private ResultActions executePut(String filename, String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         InputStream isJsonPut = this.getClass().getResourceAsStream(filename);
         String jsonPut = FileTextReader.getText(isJsonPut);
         ResultActions result = mockMvc
@@ -204,22 +235,25 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
+        return result;
     }
 
-    private void executeDelete(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+    private ResultActions executeDelete(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/categories/{categoryCode}", new Object[]{categoryCode})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
+        return result;
     }
 
-    private void executeReference(String categoryCode, String accessToken, String managerName, ResultMatcher rm) throws Exception {
+    private ResultActions executeReference(String categoryCode, String accessToken, String managerName, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}/references/{holder}", new Object[]{categoryCode, managerName})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
+        return result;
     }
 
 }

@@ -9,7 +9,7 @@ public class ContentModelValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_CONTENTMODEL_NOT_FOUND = "1";
     public static final String ERRCODE_CONTENTMODEL_ALREADY_EXISTS = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
-    //    public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
+    public static final String ERRCODE_CONTENTMODEL_CANNOT_UPDATE_CONTENT_TYPE = "4";
     public static final String ERRCODE_CONTENTMODEL_REFERENCES = "5";
 
     public static final String ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND = "6";

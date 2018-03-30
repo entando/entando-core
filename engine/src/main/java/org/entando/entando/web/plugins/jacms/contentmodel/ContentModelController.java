@@ -1,6 +1,7 @@
 package org.entando.entando.web.plugins.jacms.contentmodel;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -8,6 +9,7 @@ import javax.validation.Valid;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelService;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -114,12 +116,20 @@ public class ContentModelController {
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{modelId}/pagereferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getReferences(@PathVariable Long modelId) {
+        logger.debug("loading contentModel references {}");
+        Map<String, List<String>> references = this.getContentModelService().getPageReferences(modelId);
+        return new ResponseEntity<>(new RestResponse(references), HttpStatus.OK);
+    }
+
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
         logger.debug("loading contentModel dictionaty {}");
-        Object dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
+        ContentModelDictionary dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
         return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);
     }
 

@@ -23,7 +23,7 @@ public interface IContentModelService {
 
     public void removeContentModel(Long modelId);
 
-    public Map<String, List<String>> getPageReferences(Long modelId, RestListRequest restRequest);
+    public Map<String, List<String>> getPageReferences(Long modelId);
 
     public ContentModelDto updateContentModel(ContentModelRequest contentModelRequest);
 

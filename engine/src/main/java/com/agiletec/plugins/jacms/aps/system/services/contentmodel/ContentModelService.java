@@ -171,12 +171,11 @@ public class ContentModelService implements IContentModelService {
                 throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_NOT_FOUND, "contentModel", String.valueOf(modelId));
             }
 
-            this.copyProperties(contentModelRequest, contentModel);
-
-            BeanPropertyBindingResult validationResult = this.validateForUpdate(contentModel);
+            BeanPropertyBindingResult validationResult = this.validateForUpdate(contentModelRequest, contentModel);
             if (validationResult.hasErrors()) {
                 throw new ValidationConflictException(validationResult);
             }
+            this.copyProperties(contentModelRequest, contentModel);
 
             this.getContentModelManager().updateContentModel(contentModel);
             ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
@@ -208,7 +207,7 @@ public class ContentModelService implements IContentModelService {
     }
 
     @Override
-    public Map<String, List<String>> getPageReferences(Long modelId, RestListRequest restRequest) {
+    public Map<String, List<String>> getPageReferences(Long modelId) {
         ContentModel contentModel = this.getContentModelManager().getContentModel(modelId);
         if (null == contentModel) {
             logger.info("contentModel {} does not exists", modelId);
@@ -269,9 +268,17 @@ public class ContentModelService implements IContentModelService {
         return errors;
     }
 
-    private BeanPropertyBindingResult validateForUpdate(ContentModel contentModel) {
+    private BeanPropertyBindingResult validateForUpdate(ContentModelRequest request, ContentModel contentModel) {
         BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
+        this.validateContentTypeIsEquals(request.getContentType(), contentModel.getContentType(), errors);
         return errors;
+    }
+
+    private void validateContentTypeIsEquals(String newContentType, String existingConentType, BeanPropertyBindingResult errors) {
+        if (!newContentType.equals(existingConentType)) {
+            Object[] args = {existingConentType, newContentType};
+            errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_CANNOT_UPDATE_CONTENT_TYPE, args, "contetntmodel.contentType.locked");
+        }
     }
 
     protected void validateIdIsUnique(ContentModel contentModel, BeanPropertyBindingResult errors) {
@@ -279,12 +286,12 @@ public class ContentModelService implements IContentModelService {
 
         ContentModel dummyModel = this.getContentModelManager().getContentModel(modelId);
         if (dummyModel != null) {
-            Object[] args = {modelId};
+            Object[] args = {String.valueOf(modelId)};
             errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_ALREADY_EXISTS, args, "contetntmodel.id.already.present");
         }
         SmallEntityType utilizer = this.getContentModelManager().getDefaultUtilizer(modelId);
         if (null != utilizer && !utilizer.getCode().equals(contentModel.getContentType())) {
-            Object[] args = {modelId, utilizer.getDescription()};
+            Object[] args = {String.valueOf(modelId), utilizer.getDescription()};
             errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_WRONG_UTILIZER, args, "contentModel.id.wrongUtilizer");
         }
     }

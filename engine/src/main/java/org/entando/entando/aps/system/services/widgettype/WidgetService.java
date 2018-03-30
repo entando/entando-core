@@ -62,7 +62,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
         try {
-            //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
             filters.stream().filter(i -> i.getKey() != null)
                     .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
@@ -221,10 +220,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         }
         if (widgetType.isLocked()) {
             bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_LOCKED, new String[]{widgetType.getCode()}, "widgettype.delete.locked");
-        }
-        List<String> fragments = this.getGuiFragmentManager().getGuiFragmentCodesByWidgetType(widgetType.getCode());
-        if (null != fragments && fragments.size() > 0) {
-            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_FRAGMENTS, new String[]{widgetType.getCode()}, "widgettype.delete.references.fragment");
         }
         List<IPage> onLinePages = this.getPageManager().getOnlineWidgetUtilizers(widgetType.getCode());
         List<IPage> draftPages = this.getPageManager().getDraftWidgetUtilizers(widgetType.getCode());

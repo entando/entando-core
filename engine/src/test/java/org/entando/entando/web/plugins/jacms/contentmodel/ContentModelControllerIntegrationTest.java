@@ -126,4 +126,48 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
 
     }
 
+    @Test
+    public void testGetContentModelDictionary() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get(BASE_URI + "/dictionary")
+
+                                                                            .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        //result.andExpect(jsonPath("$.errors[0].code", is("1")));
+    }
+
+    @Test
+    public void testGetContentModelDictionaryWithTypeCode() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get(BASE_URI + "/dictionary")
+                                                                            .param("typeCode", "EVN")
+
+                                                                            .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        //result.andExpect(jsonPath("$.errors[0].code", is("1")));
+    }
+
+    @Test
+    public void testGetContentModelDictionaryValidTypeCodeInvalid() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get(BASE_URI + "/dictionary")
+                                                                            .param("typeCode", "LOL")
+
+                                                                            .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isNotFound());
+        //result.andExpect(jsonPath("$.errors[0].code", is("1")));
+    }
+
 }

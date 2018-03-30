@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -59,10 +60,18 @@ public class ContentModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{modelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getRole(@PathVariable Long modelId) {
+    public ResponseEntity<RestResponse> getContentModel(@PathVariable Long modelId) {
         logger.debug("loading contentModel {}", modelId);
         ContentModelDto model = this.getContentModelService().getContentModel(modelId);
         return new ResponseEntity<>(new RestResponse(model), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
+        logger.debug("loading contentModel dictionaty {}");
+        Object dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
+        return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);
     }
 
 }

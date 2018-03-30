@@ -19,6 +19,10 @@
 
     <bean id="ContentModelService" class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelService" >
         <property name="contentModelManager" ref="jacmsContentModelManager" />
+        <property name="contentManager" ref="jacmsContentManager" />
+        <property name="dictionaryProvider" ref="ContentModelDictionaryProvider" />
     </bean>
+
+ 
     
 </beans>

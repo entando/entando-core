@@ -12,4 +12,6 @@ public interface IContentModelService {
 
     public ContentModelDto getContentModel(Long modelId);
 
+    public Object getContentModelDictionary(String typeCode);
+
 }

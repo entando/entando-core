@@ -8,9 +8,15 @@ import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionaryProvider;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.utils.ContentModelUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -26,6 +32,8 @@ public class ContentModelService implements IContentModelService {
 
     private IContentModelManager contentModelManager;
     private IDtoBuilder<ContentModel, ContentModelDto> dtoBuilder;
+    private ContentModelDictionaryProvider dictionaryProvider;
+    private IContentManager contentManager;
 
     protected IContentModelManager getContentModelManager() {
         return contentModelManager;
@@ -41,6 +49,22 @@ public class ContentModelService implements IContentModelService {
 
     public void setDtoBuilder(IDtoBuilder<ContentModel, ContentModelDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
+    }
+
+    protected ContentModelDictionaryProvider getDictionaryProvider() {
+        return dictionaryProvider;
+    }
+
+    public void setDictionaryProvider(ContentModelDictionaryProvider dictionaryProvider) {
+        this.dictionaryProvider = dictionaryProvider;
+    }
+
+    protected IContentManager getContentManager() {
+        return contentManager;
+    }
+
+    public void setContentManager(IContentManager contentManager) {
+        this.contentManager = contentManager;
     }
 
     @PostConstruct
@@ -100,6 +124,20 @@ public class ContentModelService implements IContentModelService {
         }
         ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
         return dto;
+    }
+
+    @Override
+    public ContentModelDictionary getContentModelDictionary(String typeCode) {
+        if (StringUtils.isBlank(typeCode)) {
+            return this.getDictionaryProvider().buildDictionary();
+        }
+        IApsEntity prototype = this.getContentManager().getEntityPrototype(typeCode);
+        if (null == prototype) {
+            logger.warn("no contentModel found with id {}", typeCode);
+            throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND, "contentType", typeCode);
+        }
+        return this.getDictionaryProvider().buildDictionary((Content) prototype);
+
     }
 
 

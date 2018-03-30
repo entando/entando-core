@@ -12,6 +12,7 @@ public class ContentModelValidator extends AbstractPaginationValidator {
     //    public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
     //    public static final String ERRCODE_ROLE_REFERENCES = "5";
 
+    public static final String ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND = "6";
 
 
     @Override

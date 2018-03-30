@@ -33,9 +33,8 @@ public class CategoryValidator implements Validator {
 
     public static final String ERRCODE_PARENT_CATEGORY_NOT_FOUND = "1";
     public static final String ERRCODE_CATEGORY_NOT_FOUND = "1";
-    public static final String ERRCODE_CATEGORY_VALIDATION = "2";
     public static final String ERRCODE_CATEGORY_ALREADY_EXISTS = "3";
-    public static final String ERRCODE_URINAME_MISMATCH = "4";
+    public static final String ERRCODE_URINAME_MISMATCH = "2";
     public static final String ERRCODE_PARENT_CATEGORY_CANNOT_BE_CHANGED = "3";
     public static final String ERRCODE_CATEGORY_REFERENCES = "1";
     public static final String ERRCODE_CATEGORY_NO_REFERENCES = "5";

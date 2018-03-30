@@ -1,64 +1,35 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.widget.model;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class WidgetRequest {
 
+    @NotBlank(message = "widgettype.code.notBlank")
     private String code;
-    private String name;
-    private Boolean used;
+
+    @NotEmpty(message = "widgettype.titles.notBlank")
     private Map<String, String> titles;
-    private List<GuiFragmentRef> guiFragments = new ArrayList<>();
-    private String pluginCode;
+
+    @NotBlank(message = "widgettype.group.notBlank")
     private String group;
+
+    //@NotBlank(message = "widgettype.customUi.notBlank")
     private String customUi;
-    private String defaultUi;
-    private Date createdAt;
-    private Date updatedAt;
-
-    public void addGuiFragmentRef(String code, String customUi, String defaultUi) {
-
-        GuiFragmentRef ref = new GuiFragmentRef();
-        ref.code = code;
-        ref.customUi = customUi;
-        ref.defaultUi = defaultUi;
-
-        guiFragments.add(ref);
-    }
-
-    protected class GuiFragmentRef {
-
-        private String code;
-        private String customUi;
-        private String defaultUi;
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-
-        public String getCustomUi() {
-            return customUi;
-        }
-
-        public void setCustomUi(String customUi) {
-            this.customUi = customUi;
-        }
-
-        public String getDefaultUi() {
-            return defaultUi;
-        }
-
-        public void setDefaultUi(String defaultUi) {
-            this.defaultUi = defaultUi;
-        }
-    }
 
     public String getCode() {
         return code;
@@ -68,27 +39,11 @@ public class WidgetRequest {
         this.code = code;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean getUsed() {
-        return used;
-    }
-
-    public void setUsed(boolean used) {
-        this.used = used;
-    }
-
-    public  Map<String, String>getTitles() {
+    public Map<String, String> getTitles() {
         return titles;
     }
 
-    public void setTitles( Map<String, String> titles) {
+    public void setTitles(Map<String, String> titles) {
         this.titles = titles;
     }
 
@@ -106,38 +61,6 @@ public class WidgetRequest {
 
     public void setCustomUi(String customUi) {
         this.customUi = customUi;
-    }
-
-    public String getDefaultUi() {
-        return defaultUi;
-    }
-
-    public void setDefaultUi(String defaultUi) {
-        this.defaultUi = defaultUi;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public String getPluginCode() {
-        return pluginCode;
-    }
-
-    public void setPluginCode(String pluginCode) {
-        this.pluginCode = pluginCode;
     }
 
 }

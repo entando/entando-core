@@ -13,7 +13,6 @@
  */
 package org.entando.entando.web.widget;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,12 +155,8 @@ public class WidgetControllerTest extends AbstractControllerTest {
         titles.put("en", "the test title");
         WidgetRequest req = new WidgetRequest();
         req.setCode("test");
-        req.setCreatedAt(new Date());
         req.setGroup("test");
-        req.setName("widgetName");
         req.setTitles(titles);
-        req.setUpdatedAt(new Date());
-        req.setUsed(true);
         return req;
     }
 

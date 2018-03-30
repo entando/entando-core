@@ -21,9 +21,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractControllerIntegrationTest {
@@ -33,7 +35,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
 
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
-
 
     @Test
     public void testConfigureListViewer() throws Exception {
@@ -46,52 +47,49 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
             IPage draftPage = this.pageManager.getDraftPage(pageCode);
             assertThat(draftPage, is(not(nullValue())));
 
-
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
-
-            String payloadWithInvalidContentType = "{\n" +
-                                                   "  \"code\": \"content_viewer_list\",\n" +
-                                                   "  \"config\": {\n" +
-                                                   "      \"contentType\": \"LOL\",\n" +
-                                                   "      \"maxElements\": \"15\"\n" +
-                                                   "  }\n" +
-                                                   "}";
+            String payloadWithInvalidContentType = "{\n"
+                    + "  \"code\": \"content_viewer_list\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentType\": \"LOL\",\n"
+                    + "      \"maxElements\": \"15\"\n"
+                    + "  }\n"
+                    + "}";
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
-                                                                                                          .param("status", IPageService.STATUS_ONLINE)
-                                                                                                          .content(payloadWithInvalidContentType)
-                                                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .content(payloadWithInvalidContentType)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
             //-------------------
-
-            String payloadWithInvalidModelId = "{\n" +
-                                               "  \"code\": \"content_viewer_list\",\n" +
-                                               "  \"config\": {\n" +
-                                               " \"contentType\": \"ART\",\n" +
-                                               " \"modelId\": \"9999999999\",\n" +
-                                               " \"maxElements\": \"15\"\n" +
-                                               "  }\n" +
-                                               "}";
+            String payloadWithInvalidModelId = "{\n"
+                    + "  \"code\": \"content_viewer_list\",\n"
+                    + "  \"config\": {\n"
+                    + " \"contentType\": \"ART\",\n"
+                    + " \"modelId\": \"9999999999\",\n"
+                    + " \"maxElements\": \"15\"\n"
+                    + "  }\n"
+                    + "}";
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
-                                                                                                          .param("status", IPageService.STATUS_ONLINE)
-                                                                                                          .content(payloadWithInvalidModelId)
-                                                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .content(payloadWithInvalidModelId)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
@@ -116,54 +114,142 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
-            String payloadWithInvalidContentId = "{\n" +
-                                                   "  \"code\": \"content_viewer\",\n" +
-                                                   "  \"config\": {\n" +
-                                                   "      \"contentId\": \"ART1120000000\",\n" +
-                                                   "      \"modelId\": \"default\"\n" +
-                                                   "  }\n" +
-                                                   "}";
+            String payloadWithInvalidContentId = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentId\": \"ART1120000000\",\n"
+                    + "      \"modelId\": \"default\"\n"
+                    + "  }\n"
+                    + "}";
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
-                                                                                                          .param("status", IPageService.STATUS_ONLINE)
-                                                                                                          .content(payloadWithInvalidContentId)
-                                                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .content(payloadWithInvalidContentId)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
-            String validContentIdWithIncompatibleGroup = "{\n" +
-                                               "  \"code\": \"content_viewer\",\n" +
-                                               "  \"config\": {\n" +
-                                               "      \"contentId\": \"ART112\",\n" +
-                                               "      \"modelId\": \"default\"\n" +
-                                               "  }\n" +
-                                               "}";
+            String validContentIdWithIncompatibleGroup = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentId\": \"ART112\",\n"
+                    + "      \"modelId\": \"default\"\n"
+                    + "  }\n"
+                    + "}";
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
-                                                                                                          .param("status", IPageService.STATUS_ONLINE)
-                                                                                                          .content(validContentIdWithIncompatibleGroup)
-                                                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .content(validContentIdWithIncompatibleGroup)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
-
 
         } finally {
             this.pageManager.deletePage(pageCode);
         }
     }
 
+    @Test
+    public void testConigurationRestore() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
 
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            //checking page draft config
+            ResultActions result = mockMvc
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
+            result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
+
+            //publishing page
+            String putPageOnlinePayload = "{\"status\": \"published\"}";
+            result = mockMvc.perform(
+                    put("/pages/{pageCode}/status", pageCode)
+                            .sessionAttr("user", user)
+                            .content(putPageOnlinePayload)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            //checking page online config
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
+            result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
+
+            //changing configuration
+            String payloadWithValidContentId = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentId\": \"ART187\",\n"
+                    + "      \"modelId\": \"default\"\n"
+                    + "  }\n"
+                    + "}";
+
+            result = mockMvc
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .content(payloadWithValidContentId)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(status().isOk());
+
+            //checking page draft config
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
+            result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART187")));
+
+            //restoring page configuration
+            result = mockMvc
+                    .perform(put("/pages/{pageCode}/configuration/restore", new Object[]{pageCode})
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            //checking page draft config
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
+            result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
+
+        } finally {
+            this.pageManager.setPageOffline(pageCode);
+            this.pageManager.deletePage(pageCode);
+        }
+    }
 
     protected Page createPage(String pageCode) {
         IPage parentPage = pageManager.getDraftPage("service");

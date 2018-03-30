@@ -32,7 +32,7 @@ public class CategoryDto {
     @NotBlank(message = "category.code.notBlank")
     private String code;
 
-    @NotBlank(message = "category.description.notBlank")
+    @NotBlank(message = "category.parent.notBlank")
     private String parentCode;
 
     @NotEmpty(message = "category.titles.notBlank")
@@ -88,14 +88,14 @@ public class CategoryDto {
         this.titles.put(lang, title);
     }
 
-	public Map<String, String> getFullTitles() {
-		return fullTitles;
-	}
+    public Map<String, String> getFullTitles() {
+        return fullTitles;
+    }
 
-	public void setFullTitles(Map<String, String> fullTitles) {
-		this.fullTitles = fullTitles;
-	}
-	
+    public void setFullTitles(Map<String, String> fullTitles) {
+        this.fullTitles = fullTitles;
+    }
+
     public List<String> getChildren() {
         return children;
     }

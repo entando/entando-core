@@ -61,6 +61,7 @@ public class Filter {
         this.operator = operator;
     }
 
+    @JsonIgnore
     public String getAttributeName() {
         return this.getAttribute();
     }

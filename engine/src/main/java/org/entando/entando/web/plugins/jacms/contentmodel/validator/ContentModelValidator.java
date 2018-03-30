@@ -7,12 +7,13 @@ import org.springframework.validation.Errors;
 public class ContentModelValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_CONTENTMODEL_NOT_FOUND = "1";
-    //    public static final String ERRCODE_ROLE_ALREADY_EXISTS = "2";
-    //    public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_CONTENTMODEL_ALREADY_EXISTS = "2";
+    public static final String ERRCODE_URINAME_MISMATCH = "3";
     //    public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
-    //    public static final String ERRCODE_ROLE_REFERENCES = "5";
+    public static final String ERRCODE_CONTENTMODEL_REFERENCES = "5";
 
     public static final String ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND = "6";
+    public static final String ERRCODE_CONTENTMODEL_WRONG_UTILIZER = "7";
 
 
     @Override
@@ -25,9 +26,9 @@ public class ContentModelValidator extends AbstractPaginationValidator {
 
     }
 
-    //    public void validateBodyName(String roleCode, RoleRequest roleRequest, Errors errors) {
-    //        if (!StringUtils.equals(roleCode, roleRequest.getCode())) {
-    //            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new String[]{roleCode, roleRequest.getName()}, "role.code.mismatch");
-    //        }
-    //    }
+    public void validateBodyName(long modelId, ContentModelRequest contentModelReq, Errors errors) {
+        if (modelId != contentModelReq.getId().longValue()) {
+            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new Object[]{modelId, contentModelReq.getId()}, "contentmodel.code.mismatch");
+        }
+    }
 }

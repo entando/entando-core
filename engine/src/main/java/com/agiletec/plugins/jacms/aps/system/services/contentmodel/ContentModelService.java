@@ -1,7 +1,9 @@
 package com.agiletec.plugins.jacms.aps.system.services.contentmodel;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -9,7 +11,10 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.SmallEntityType;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
@@ -18,13 +23,18 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.Content
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.utils.ContentModelUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.plugins.jacms.contentmodel.model.ContentModelRequest;
 import org.entando.entando.web.plugins.jacms.contentmodel.validator.ContentModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 public class ContentModelService implements IContentModelService {
 
@@ -34,6 +44,7 @@ public class ContentModelService implements IContentModelService {
     private IDtoBuilder<ContentModel, ContentModelDto> dtoBuilder;
     private ContentModelDictionaryProvider dictionaryProvider;
     private IContentManager contentManager;
+    private PageDtoBuilder pageDtoBuilder;
 
     protected IContentModelManager getContentModelManager() {
         return contentModelManager;
@@ -65,6 +76,14 @@ public class ContentModelService implements IContentModelService {
 
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
+    }
+
+    protected PageDtoBuilder getPageDtoBuilder() {
+        return pageDtoBuilder;
+    }
+
+    public void setPageDtoBuilder(PageDtoBuilder pageDtoBuilder) {
+        this.pageDtoBuilder = pageDtoBuilder;
     }
 
     @PostConstruct
@@ -114,7 +133,6 @@ public class ContentModelService implements IContentModelService {
         return pagedMetadata;
     }
 
-
     @Override
     public ContentModelDto getContentModel(Long modelId) {
         ContentModel contentModel = this.getContentModelManager().getContentModel(modelId);
@@ -124,6 +142,89 @@ public class ContentModelService implements IContentModelService {
         }
         ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
         return dto;
+    }
+
+    @Override
+    public ContentModelDto addContentModel(ContentModelRequest contentModelReq) {
+        try {
+            ContentModel contentModel = this.createContentModel(contentModelReq);
+            BeanPropertyBindingResult validationResult = this.validateForAdd(contentModel);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+            this.getContentModelManager().addContentModel(contentModel);
+            ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
+            return dto;
+        } catch (ApsSystemException e) {
+            logger.error("Error adding a content model", e);
+            throw new RestServerError("error in add content model", e);
+        }
+    }
+
+    @Override
+    public ContentModelDto updateContentModel(ContentModelRequest contentModelRequest) {
+        try {
+            long modelId = contentModelRequest.getId();
+            ContentModel contentModel = this.getContentModelManager().getContentModel(contentModelRequest.getId());
+            if (null == contentModel) {
+                logger.warn("no contentModel found with id {}", modelId);
+                throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_NOT_FOUND, "contentModel", String.valueOf(modelId));
+            }
+
+            this.copyProperties(contentModelRequest, contentModel);
+
+            BeanPropertyBindingResult validationResult = this.validateForUpdate(contentModel);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+
+            this.getContentModelManager().updateContentModel(contentModel);
+            ContentModelDto dto = this.getDtoBuilder().convert(contentModel);
+            return dto;
+        } catch (ApsSystemException e) {
+            logger.error("Error updating a content model", e);
+            throw new RestServerError("error in update content model", e);
+        }
+    }
+
+
+    @Override
+    public void removeContentModel(Long modelId) {
+        try {
+            ContentModel contentModel = this.getContentModelManager().getContentModel(modelId);
+            if (null == contentModel) {
+                logger.info("contentModel {} does not exists", modelId);
+                return;
+            }
+            BeanPropertyBindingResult validationResult = this.validateForDelete(contentModel);
+            if (validationResult.hasErrors()) {
+                throw new ValidationConflictException(validationResult);
+            }
+            this.getContentModelManager().removeContentModel(contentModel);
+        } catch (ApsSystemException e) {
+            logger.error("Error in delete contentModel {}", modelId, e);
+            throw new RestServerError("error in delete contentModel", e);
+        }
+    }
+
+    @Override
+    public Map<String, List<String>> getPageReferences(Long modelId, RestListRequest restRequest) {
+        ContentModel contentModel = this.getContentModelManager().getContentModel(modelId);
+        if (null == contentModel) {
+            logger.info("contentModel {} does not exists", modelId);
+            throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_NOT_FOUND, "contentModel", String.valueOf(modelId));
+        }
+        Map<String, List<String>> referencingPages = this.getReferencingPages(modelId);
+        return referencingPages;
+    }
+
+    private Map<String, List<String>> getReferencingPages(Long modelId) {
+        Map<String, List<IPage>> refs = this.getContentModelManager().getReferencingPages(modelId);
+        Map<String, List<String>> dtoReferences = new HashMap<>();
+        if (null != refs && !refs.isEmpty()) {
+            refs.entrySet().stream().forEach(e -> e.getValue().stream().forEach(v -> dtoReferences.put(e.getKey(), e.getValue().stream().map(ee -> ee.getCode()).collect(Collectors.toList()))));
+        }
+        return dtoReferences;
     }
 
     @Override
@@ -137,8 +238,55 @@ public class ContentModelService implements IContentModelService {
             throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_DICT_TYPECODE_NOT_FOUND, "contentType", typeCode);
         }
         return this.getDictionaryProvider().buildDictionary((Content) prototype);
-
     }
 
+    protected ContentModel createContentModel(ContentModelRequest src) {
+        ContentModel contentModel = new ContentModel();
+        this.copyProperties(src, contentModel);
+        return contentModel;
+    }
+
+    protected void copyProperties(ContentModelRequest src, ContentModel dest) {
+        dest.setContentShape(src.getContentShape());
+        dest.setContentType(src.getContentType());
+        dest.setDescription(src.getDescr());
+        dest.setId(src.getId());
+        dest.setStylesheet(src.getStylesheet());
+    }
+
+    protected BeanPropertyBindingResult validateForAdd(ContentModel contentModel) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
+        validateIdIsUnique(contentModel, errors);
+        return errors;
+    }
+
+    protected BeanPropertyBindingResult validateForDelete(ContentModel contentModel) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
+        Map<String, List<IPage>> referencingPages = this.getContentModelManager().getReferencingPages(contentModel.getId());
+        if (!referencingPages.isEmpty()) {
+            errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_REFERENCES, null, "contetntmodel.page.references");
+        }
+        return errors;
+    }
+
+    private BeanPropertyBindingResult validateForUpdate(ContentModel contentModel) {
+        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(contentModel, "contentModel");
+        return errors;
+    }
+
+    protected void validateIdIsUnique(ContentModel contentModel, BeanPropertyBindingResult errors) {
+        long modelId = contentModel.getId();
+
+        ContentModel dummyModel = this.getContentModelManager().getContentModel(modelId);
+        if (dummyModel != null) {
+            Object[] args = {modelId};
+            errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_ALREADY_EXISTS, args, "contetntmodel.id.already.present");
+        }
+        SmallEntityType utilizer = this.getContentModelManager().getDefaultUtilizer(modelId);
+        if (null != utilizer && !utilizer.getCode().equals(contentModel.getContentType())) {
+            Object[] args = {modelId, utilizer.getDescription()};
+            errors.reject(ContentModelValidator.ERRCODE_CONTENTMODEL_WRONG_UTILIZER, args, "contentModel.id.wrongUtilizer");
+        }
+    }
 
 }

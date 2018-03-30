@@ -21,6 +21,7 @@
         <property name="contentModelManager" ref="jacmsContentModelManager" />
         <property name="contentManager" ref="jacmsContentManager" />
         <property name="dictionaryProvider" ref="ContentModelDictionaryProvider" />
+        <property name="pageDtoBuilder" ref="PageDtoBuilder" />
     </bean>
 
  

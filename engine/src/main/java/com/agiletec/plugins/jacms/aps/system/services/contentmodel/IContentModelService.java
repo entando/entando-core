@@ -1,8 +1,13 @@
 package com.agiletec.plugins.jacms.aps.system.services.contentmodel;
 
+import java.util.List;
+import java.util.Map;
+
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.plugins.jacms.contentmodel.model.ContentModelRequest;
 
 public interface IContentModelService {
 
@@ -12,6 +17,14 @@ public interface IContentModelService {
 
     public ContentModelDto getContentModel(Long modelId);
 
-    public Object getContentModelDictionary(String typeCode);
+    public ContentModelDictionary getContentModelDictionary(String typeCode);
+
+    public ContentModelDto addContentModel(ContentModelRequest contentModel);
+
+    public void removeContentModel(Long modelId);
+
+    public Map<String, List<String>> getPageReferences(Long modelId, RestListRequest restRequest);
+
+    public ContentModelDto updateContentModel(ContentModelRequest contentModelRequest);
 
 }

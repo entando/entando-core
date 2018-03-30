@@ -286,8 +286,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
                 bindingResult.reject(ERRCODE_STATUS_INVALID, new String[]{pageCode}, "page.status.invalid");
                 throw new ValidationGenericException(bindingResult);
             }
-            ((Page) pageD).setMetadata(pageO.getMetadata());
-            ((Page) pageD).setWidgets(pageO.getWidgets());
+            pageD.setMetadata(pageO.getMetadata());
+            pageD.setWidgets(pageO.getWidgets());
             this.getPageManager().updatePage(pageD);
             PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(pageO, STATUS_ONLINE);
             return pageConfigurationDto;

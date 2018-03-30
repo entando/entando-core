@@ -20,6 +20,7 @@ import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 
 /**
@@ -43,6 +44,8 @@ public interface IPageService {
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
 
     public List<PageDto> getPages(String parentCode);
+
+    public List<PageDto> searchPages(PageSearchRequest request);
 
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest);
 

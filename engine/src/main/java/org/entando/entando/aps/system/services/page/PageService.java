@@ -47,6 +47,7 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -484,5 +485,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
             logger.error("Error loading page references for group {}", groupName, ex);
             throw new RestServerError("Error loading page references for group", ex);
         }
+    }
+
+    @Override
+    public List<PageDto> searchPages(PageSearchRequest request) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

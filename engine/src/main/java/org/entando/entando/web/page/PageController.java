@@ -30,6 +30,7 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
@@ -109,6 +110,15 @@ public class PageController {
         List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().getPages(parentCode));
         Map<String, String> metadata = new HashMap<>();
         metadata.put("parentCode", parentCode);
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RequestMapping(value = "/pages/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getPages(@ModelAttribute("user") UserDetails user, PageSearchRequest searchRequest) {
+        logger.debug("getting page list with request {}", searchRequest);
+        List<PageDto> result = this.getAuthorizationService().filterList(user, this.getPageService().searchPages(searchRequest));
+        Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 

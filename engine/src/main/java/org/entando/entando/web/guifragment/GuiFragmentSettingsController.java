@@ -67,6 +67,7 @@ public class GuiFragmentSettingsController {
         }
         Map<String, Boolean> result = new HashMap<>();
         result.put(RESULT_PARAM_NAME, value);
+        logger.debug("Extracted fragment setting -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
@@ -81,6 +82,7 @@ public class GuiFragmentSettingsController {
         this.getConfigManager().updateParam(SystemConstants.CONFIG_PARAM_EDIT_EMPTY_FRAGMENT_ENABLED, String.valueOf(value));
         Map<String, Boolean> result = new HashMap<>();
         result.put(RESULT_PARAM_NAME, value);
+        logger.debug("Updated fragment setting -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 

@@ -31,26 +31,28 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
  * DOM support class used to handle the configuration parameters.
+ *
  * @author E.Santoboni
  */
 public class SystemParamsUtils {
 
-	private static final Logger _logger = LoggerFactory.getLogger(SystemParamsUtils.class);
-	
+    private static final Logger _logger = LoggerFactory.getLogger(SystemParamsUtils.class);
+
     /**
      * Return the configuration params contained in the given XML.
+     *
      * @param xmlParams XML string containing the parameters to fetch.
      * @return The resulting parameters map.
-     * @throws Throwable if errors are detected.
+     * @throws Exception if errors are detected.
      */
-    public static Map<String, String> getParams(String xmlParams) throws Throwable {
-        Map<String, String> params = new HashMap<String, String>();
+    public static Map<String, String> getParams(String xmlParams) throws Exception {
+        Map<String, String> params = new HashMap<>();
         Document doc = decodeDOM(xmlParams);
         Element element = doc.getRootElement();
         insertParams(element, params);
         return params;
     }
-    
+
     private static void insertParams(Element currentElement, Map<String, String> params) {
         if ("Param".equals(currentElement.getName())) {
             String key = currentElement.getAttributeValue("name");
@@ -63,23 +65,39 @@ public class SystemParamsUtils {
             insertParams(element, params);
         }
     }
-    
+
     /**
-     * Return the XML of the configuration with updated parameters.
-     * NOTE: All the values contained in the map but NOT in the given XML are ignored. 
+     * Return the XML of the configuration with updated parameters. NOTE: All
+     * the values contained in the map but NOT in the given XML are NOT ignored
+     * and will be added into the new xml.
+     *
      * @param oldXmlParams The old configuration XML.
      * @param newSystemParams The map with updated values
-     * @return String The new system configuration string.
-     * @throws Throwable if errors are detected.
+     * @return The new system configuration string.
+     * @throws Exception if errors are detected.
      */
-    public static String getNewXmlParams(String oldXmlParams, Map<String, String> newSystemParams) throws Throwable {
+    public static String getNewXmlParams(String oldXmlParams, Map<String, String> newSystemParams) throws Exception {
+        return getNewXmlParams(oldXmlParams, newSystemParams, true);
+    }
+
+    /**
+     * Return the XML of the configuration with updated parameters.
+     *
+     * @param oldXmlParams The old configuration XML.
+     * @param newSystemParams The map with updated values
+     * @param addNewParams True if the new parameters have to be added into the
+     * xml, otherwise false.
+     * @return The new system configuration string.
+     * @throws Exception if errors are detected.
+     */
+    public static String getNewXmlParams(String oldXmlParams, Map<String, String> newSystemParams, boolean addNewParams) throws Exception {
         Document doc = decodeDOM(oldXmlParams);
         Element element = doc.getRootElement();
-        updateParameters(element, newSystemParams);
+        updateParameters(element, newSystemParams, addNewParams);
         return getXMLDocument(doc);
     }
-    
-    private static void updateParameters(Element rootElement, Map<String, String> parameters) {
+
+    private static void updateParameters(Element rootElement, Map<String, String> parameters, boolean addNewParams) {
         Iterator<String> newParamsName = parameters.keySet().iterator();
         while (newParamsName.hasNext()) {
             String paramName = newParamsName.next();
@@ -87,7 +105,7 @@ public class SystemParamsUtils {
             if (null != paramElement) {
                 String value = parameters.get(paramName);
                 paramElement.setText(value);
-            } else {
+            } else if (addNewParams) {
                 Element extraParamsElement = rootElement.getChild(EXTRA_PARAMS_ELEMENT);
                 if (null == extraParamsElement) {
                     extraParamsElement = new Element(EXTRA_PARAMS_ELEMENT);
@@ -100,7 +118,7 @@ public class SystemParamsUtils {
             }
         }
     }
-    
+
     public static String getXMLDocument(Document doc) {
         XMLOutputter out = new XMLOutputter();
         Format format = Format.getPrettyFormat();
@@ -108,7 +126,7 @@ public class SystemParamsUtils {
         out.setFormat(format);
         return out.outputString(doc);
     }
-    
+
     private static Element searchParamElement(Element currentElement, String paramName) {
         String elementName = currentElement.getName();
         String key = currentElement.getAttributeValue("name");
@@ -126,7 +144,7 @@ public class SystemParamsUtils {
         }
         return null;
     }
-    
+
     private static Document decodeDOM(String xmlText) throws ApsSystemException {
         Document doc = null;
         try {
@@ -140,9 +158,9 @@ public class SystemParamsUtils {
         }
         return doc;
     }
-    
+
     public static final String PARAMS_ELEMENT = "Params";
     public static final String PARAM_ELEMENT = "Param";
     public static final String EXTRA_PARAMS_ELEMENT = "ExtraParams";
-    
+
 }

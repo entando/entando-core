@@ -31,7 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,7 +42,7 @@ public class GuiFragmentSettingsController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static final String RESULT_PARAM_NAME = "enableEditingWhenEmptyDefaultGui";
+    public static final String RESULT_PARAM_NAME = "enableEditingWhenEmptyDefaultGui";
 
     @Autowired
     private ConfigInterface configManager;
@@ -58,7 +57,7 @@ public class GuiFragmentSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getGuiFragment(@PathVariable String fragmentCode) {
+    public ResponseEntity<RestResponse> getSettings() {
         String paramValue = this.getConfigManager().getParam(SystemConstants.CONFIG_PARAM_EDIT_EMPTY_FRAGMENT_ENABLED);
         Boolean value = null;
         try {
@@ -72,8 +71,8 @@ public class GuiFragmentSettingsController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addGuiFragment(@Valid @RequestBody GuiFragmentSettingsBody bodyRequest, BindingResult bindingResult) throws ApsSystemException {
+    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> updateSettings(@Valid @RequestBody GuiFragmentSettingsBody bodyRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

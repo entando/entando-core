@@ -28,6 +28,7 @@ import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
 import org.entando.entando.web.group.GroupControllerUnitTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
+import org.entando.entando.web.guifragment.GuiFragmentSettingsControllerTest;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidatorTest;
 import org.entando.entando.web.label.LabelControllerIntegrationTest;
 import org.entando.entando.web.label.LabelControllerUnitTest;
@@ -60,8 +61,11 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(PageSettingsControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageControllerTest.class));
+
         suite.addTest(new JUnit4TestAdapter(GuiFragmentControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(GuiFragmentSettingsControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentValidatorTest.class));
+
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
@@ -84,7 +88,7 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ProfileTypeControllerTest.class));
-      
+
         suite.addTest(new JUnit4TestAdapter(UserControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(UserControllerUnitTest.class));
 
@@ -93,7 +97,7 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(DatabaseControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DatabaseControllerTest.class));
-        
+
         suite.addTest(new JUnit4TestAdapter(CategoryControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(CategoryControllerTest.class));
 

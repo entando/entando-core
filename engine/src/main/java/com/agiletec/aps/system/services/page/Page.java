@@ -303,6 +303,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return _metadata;
     }
 
+    @Override
     public void setMetadata(PageMetadata metadata) {
         this._metadata = metadata;
     }
@@ -312,6 +313,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return widgets;
     }
 
+    @Override
     public void setWidgets(Widget[] widgets) {
         this.widgets = widgets;
     }
@@ -325,6 +327,5 @@ public class Page extends TreeNode implements IPage, Serializable {
     private boolean online;
     private boolean onlineInstance;
     private boolean changed;
-
 
 }

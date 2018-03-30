@@ -48,6 +48,8 @@ public interface IPageService {
 
     public PageConfigurationDto getPageConfiguration(String pageCode, String status);
 
+    public PageConfigurationDto restorePageConfiguration(String pageCode);
+
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status);
 
     public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, WidgetConfigurationRequest widget);

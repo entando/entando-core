@@ -52,6 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
 
 /**
  *
@@ -66,6 +68,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
     private static final String ERRCODE_FRAME_INVALID = "3";
     private static final String ERRCODE_WIDGET_INVALID = "4";
+    private static final String ERRCODE_STATUS_INVALID = "3";
 
     @Autowired
     private IPageManager pageManager;
@@ -267,6 +270,31 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         }
         PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(page, status);
         return pageConfigurationDto;
+    }
+
+    @Override
+    public PageConfigurationDto restorePageConfiguration(String pageCode) {
+        try {
+            IPage pageD = this.loadPage(pageCode, STATUS_DRAFT);
+            if (null == pageD) {
+                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            }
+            IPage pageO = this.loadPage(pageCode, STATUS_ONLINE);
+            if (null == pageO) {
+                DataBinder binder = new DataBinder(pageCode);
+                BindingResult bindingResult = binder.getBindingResult();
+                bindingResult.reject(ERRCODE_STATUS_INVALID, new String[]{pageCode}, "page.status.invalid");
+                throw new ValidationGenericException(bindingResult);
+            }
+            pageD.setMetadata(pageO.getMetadata());
+            pageD.setWidgets(pageO.getWidgets());
+            this.getPageManager().updatePage(pageD);
+            PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(pageO, STATUS_ONLINE);
+            return pageConfigurationDto;
+        } catch (ApsSystemException e) {
+            logger.error("Error restoring page {} configuration", pageCode, e);
+            throw new RestServerError("error in restoring page configuration", e);
+        }
     }
 
     @Override

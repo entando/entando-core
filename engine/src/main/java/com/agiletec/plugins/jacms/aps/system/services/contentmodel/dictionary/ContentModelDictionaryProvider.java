@@ -47,16 +47,6 @@ public class ContentModelDictionaryProvider {
         this.commonMap = commonMap;
     }
 
-    public ContentModelDictionary buildDictionary(Content prototype) {
-        ContentModelDictionary dictionary = new ContentModelDictionary(contentMap, i18nMap, infoMap, commonMap, allowedPublicAttributeMethods, prototype);
-        return dictionary;
-    }
-
-    public ContentModelDictionary buildDictionary() {
-        ContentModelDictionary dictionary = new ContentModelDictionary(contentMap, i18nMap, infoMap, commonMap, allowedPublicAttributeMethods, null);
-        return dictionary;
-    }
-
     public Properties getAllowedPublicAttributeMethods() {
         return allowedPublicAttributeMethods;
     }
@@ -65,4 +55,12 @@ public class ContentModelDictionaryProvider {
         this.allowedPublicAttributeMethods = allowedPublicAttributeMethods;
     }
 
+    public ContentModelDictionary buildDictionary() {
+        return buildDictionary(null);
+    }
+
+    public ContentModelDictionary buildDictionary(Content prototype) {
+        ContentModelDictionary dictionary = new ContentModelDictionary(contentMap, i18nMap, infoMap, commonMap, allowedPublicAttributeMethods, prototype);
+        return dictionary;
+    }
 }

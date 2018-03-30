@@ -15,50 +15,48 @@ import com.agiletec.aps.system.common.entity.model.attribute.AbstractAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ContentModelDictionary {
 
-
-    private LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String KEY_CONTENT = "$content";
     private static final String KEY_I18N = "$i18n";
     private static final String KEY_INFO = "$info";
 
+    private LinkedHashMap<String, Object> data = new LinkedHashMap<>();
+
+    @JsonValue
+    public LinkedHashMap<String, Object> getData() {
+        return data;
+    }
+
+    public void setData(LinkedHashMap<String, Object> data) {
+        this.data = data;
+    }
 
     public ContentModelDictionary(List<String> contentConfig, List<String> i18nConfig, List<String> infoConfig, List<String> commonConfig, Properties publicAttributeMethods, Content prototype) {
-        super();
         this.putAsMap(KEY_CONTENT, contentConfig);
         if (null != prototype) {
             this.addAttributes(prototype, publicAttributeMethods);
         }
-        //
         this.putAsMap(KEY_I18N, i18nConfig);
         this.putAsMap(KEY_INFO, infoConfig);
         this.putAsList(commonConfig);
     }
 
 
-
-    public void putAsMap(String key, List<String> list) {
-        Map<String, String> result = list.stream().collect(HashMap::new, (m, v) -> m.put(v, null), HashMap::putAll);
-        this.getData().put(key, result);
-    }
-
-    public void putAsList(List<String> list) {
-        Map<String, String> result = list.stream().collect(HashMap::new, (m, v) -> m.put(v, null), HashMap::putAll);
-        this.getData().putAll(result);
-    }
-
-    private void addAttributes(Content prototype, Properties publicAttributeMethods) {
+    protected void addAttributes(Content prototype, Properties publicAttributeMethods) {
         for (AttributeInterface attribute : prototype.getAttributeList()) {
             List<String> attibuteMethodList = this.getAllowedAttributeMethods(attribute, publicAttributeMethods);
             this.putAsMap(attribute.getName(), attibuteMethodList);
         }
     }
 
-    public List<String> getAllowedAttributeMethods(AttributeInterface attribute, Properties publicAttributeMethods) {
+    protected List<String> getAllowedAttributeMethods(AttributeInterface attribute, Properties publicAttributeMethods) {
         List<String> methods = new ArrayList<String>();
         try {
             String methodsString = publicAttributeMethods.getProperty(attribute.getType());
@@ -75,22 +73,21 @@ public class ContentModelDictionary {
                     }
                 }
             }
-            //}
         } catch (Throwable t) {
-            //_logger.error("error in getAllowedAttributeMethods", t);
-            //ApsSystemUtils.logThrowable(t, this, "getAllowedAttributeMethods");
+            logger.error("error loading allowed attribute methods for typeCode {} and attribute {}", attribute.getParentEntity().getTypeCode(), attribute.getName(), t);
+            throw new RuntimeException("error loading allowed attribute methods for dictionary", t);
         }
         return methods;
     }
 
-
-    @JsonValue
-    public LinkedHashMap<String, Object> getData() {
-        return data;
+    protected void putAsMap(String key, List<String> list) {
+        Map<String, String> result = list.stream().collect(HashMap::new, (m, v) -> m.put(v, null), HashMap::putAll);
+        this.getData().put(key, result);
     }
 
-
-    public void setData(LinkedHashMap<String, Object> data) {
-        this.data = data;
+    protected void putAsList(List<String> list) {
+        Map<String, String> result = list.stream().collect(HashMap::new, (m, v) -> m.put(v, null), HashMap::putAll);
+        this.getData().putAll(result);
     }
+
 }

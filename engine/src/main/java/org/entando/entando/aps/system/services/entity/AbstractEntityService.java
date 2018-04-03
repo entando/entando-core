@@ -129,7 +129,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         Filter[] filters = requestList.getFilters();
         Map<String, String> fieldMapping = new HashMap<>();
         fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "type");
-        mainList.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> attributeCodes.add(i.getName()));
+        mainList.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> attributeCodes.add(i.getType()));
         Collections.sort(attributeCodes);
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(attributeCodes);

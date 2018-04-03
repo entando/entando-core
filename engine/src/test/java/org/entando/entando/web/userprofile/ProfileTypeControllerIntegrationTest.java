@@ -204,4 +204,31 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         }
     }
 
+    // attributes
+    @Test
+    public void testGetUserProfileAttributeTypes_1() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypeAttributes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
+        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+    }
+
+    @Test
+    public void testGetUserProfileAttributeTypes_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypeAttributes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+
+    }
+
 }

@@ -49,7 +49,7 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
         List<String> codes = new ArrayList<>();
-        Filter[] filters = requestList.getFilter();
+        Filter[] filters = requestList.getFilters();
         List<IEntityManager> managers = this.getEntityManagers();
         Map<String, String> fieldMapping = new HashMap<>();
         fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
@@ -94,6 +94,11 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     @Override
     public void deleteEntityType(String entityManagerCode, String entityTypeCode) {
         super.deleteEntityType(entityManagerCode, entityTypeCode);
+    }
+
+    @Override
+    public PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
+        return super.getAttributeTypes(entityManagerCode, requestList);
     }
 
 }

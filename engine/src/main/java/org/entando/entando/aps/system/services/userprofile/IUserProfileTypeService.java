@@ -35,4 +35,6 @@ public interface IUserProfileTypeService {
 
     public void deleteUserProfileType(String profileTypeCode);
 
+    public PagedMetadata<String> getAttributeTypes(RestListRequest requestList);
+
 }

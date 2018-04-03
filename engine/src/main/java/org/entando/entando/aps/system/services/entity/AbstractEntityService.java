@@ -93,7 +93,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
         Map<String, String> fieldMapping = this.getEntityTypeFieldNameMapping();
-        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter(), fieldMapping));
+        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilters(), fieldMapping));
         Collections.sort(entityTypes, new BeanComparator(this.getFieldName(requestList.getSort(), fieldMapping)));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
@@ -120,6 +120,25 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     protected String getFieldName(String dtoFieldName, Map<String, String> mapping) {
         String name = mapping.get(dtoFieldName);
         return ((null != name) ? name : mapping.get(RestListRequest.SORT_VALUE_DEFAULT));
+    }
+
+    protected PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        List<AttributeInterface> mainList = new ArrayList<>(entityManager.getEntityAttributePrototypes().values());
+        List<String> attributeCodes = new ArrayList<>();
+        Filter[] filters = requestList.getFilters();
+        Map<String, String> fieldMapping = new HashMap<>();
+        fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "type");
+        mainList.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> attributeCodes.add(i.getName()));
+        Collections.sort(attributeCodes);
+        if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
+            Collections.reverse(attributeCodes);
+        }
+        List<String> sublist = requestList.getSublist(attributeCodes);
+        SearcherDaoPaginatedResult<AttributeInterface> result = new SearcherDaoPaginatedResult(attributeCodes.size(), sublist);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
+        pagedMetadata.setBody(sublist);
+        return pagedMetadata;
     }
 
     protected O getFullEntityType(String entityManagerCode, String entityTypeCode) {

@@ -67,4 +67,9 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
         super.deleteEntityType(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
     }
 
+    @Override
+    public PagedMetadata<String> getAttributeTypes(RestListRequest requestList) {
+        return super.getAttributeTypes(SystemConstants.USER_PROFILE_MANAGER, requestList);
+    }
+
 }

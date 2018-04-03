@@ -49,7 +49,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author E.Santoboni
  */
 @RestController
-@RequestMapping(value = "/profileTypes")
 public class ProfileTypeController {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -77,7 +76,7 @@ public class ProfileTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/profileTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
@@ -87,7 +86,7 @@ public class ProfileTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> {}", profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
@@ -99,7 +98,7 @@ public class ProfileTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/profileTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
@@ -123,7 +122,7 @@ public class ProfileTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updateUserProfileType(@PathVariable String profileTypeCode,
             @Valid @RequestBody ProfileTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
@@ -143,13 +142,24 @@ public class ProfileTypeController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{profileTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteDataType(@PathVariable String profileTypeCode) throws ApsSystemException {
         logger.debug("Deleting profile type -> {}", profileTypeCode);
         this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
         Map<String, String> result = new HashMap<>();
         result.put("code", profileTypeCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    // ********************* ATTRIBUTES *********************
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypeAttributes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getUserProfileAttributeTypes(RestListRequest requestList) throws JsonProcessingException {
+        this.getProfileTypeValidator().validateRestListRequest(requestList);
+        PagedMetadata<String> result = this.getUserProfileTypeService().getAttributeTypes(requestList);
+        logger.debug("Main Response -> {}", result);
+        this.getProfileTypeValidator().validateRestListResult(requestList, result);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
 }

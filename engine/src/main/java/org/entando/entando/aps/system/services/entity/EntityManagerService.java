@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.entity;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,8 +58,7 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
             Collections.reverse(codes);
         }
         List<String> sublist = requestList.getSublist(codes);
-        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(codes.size(), sublist);
-        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, codes.size());
         pagedMetadata.setBody(sublist);
         return pagedMetadata;
     }

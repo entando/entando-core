@@ -31,9 +31,11 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.Comparator;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -99,8 +101,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             Collections.reverse(entityTypes);
         }
         List<IApsEntity> sublist = requestList.getSublist(entityTypes);
-        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(entityTypes.size(), sublist);
-        PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, entityTypes.size());
         List<EntityTypeShortDto> body = this.getEntityTypeShortDtoBuilder().convert(sublist);
         for (EntityTypeShortDto entityTypeShortDto : body) {
             String code = entityTypeShortDto.getCode();
@@ -125,18 +126,21 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     protected PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<AttributeInterface> mainList = new ArrayList<>(entityManager.getEntityAttributePrototypes().values());
-        List<String> attributeCodes = new ArrayList<>();
-        Filter[] filters = requestList.getFilters();
-        Map<String, String> fieldMapping = new HashMap<>();
-        fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "type");
-        mainList.stream().filter(i -> this.filterObjects(i, filters, fieldMapping)).forEach(i -> attributeCodes.add(i.getType()));
-        Collections.sort(attributeCodes);
-        if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
-            Collections.reverse(attributeCodes);
+        Stream<AttributeInterface> stream = mainList.stream();
+        //filter
+        List<Predicate<AttributeInterface>> filters = AttributeTypeServiceUtils.getPredicates(requestList);
+        for (Predicate<AttributeInterface> predicate : filters) {
+            stream = stream.filter(predicate);
         }
+        //sort
+        Comparator<AttributeInterface> comparator = AttributeTypeServiceUtils.getComparator(requestList.getSort(), requestList.getDirection());
+        if (null != comparator) {
+            stream = stream.sorted(comparator);
+        }
+        List<String> attributeCodes = new ArrayList<>();
+        stream.forEach(i -> attributeCodes.add(i.getType()));
         List<String> sublist = requestList.getSublist(attributeCodes);
-        SearcherDaoPaginatedResult<AttributeInterface> result = new SearcherDaoPaginatedResult(attributeCodes.size(), sublist);
-        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, attributeCodes.size());
         pagedMetadata.setBody(sublist);
         return pagedMetadata;
     }
@@ -337,7 +341,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
 
     protected boolean filterObjects(Object bean, Filter[] filters, Map<String, String> mapping) {
         try {
-            if (null == filters) {
+            if (null == filters || filters.length == 0) {
                 return true;
             }
             Map<String, Object> properties = BeanUtils.describe(bean);

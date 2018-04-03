@@ -22,6 +22,8 @@ import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeServi
 import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -35,6 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ProfileTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -225,10 +228,32 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/profileTypeAttributes")
+                .perform(get("/profileTypeAttributes").param("pageSize", "5")
+                        .param("sort", "code").param("direction", "DESC")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
+        result.andExpect(jsonPath("$.metaData.lastPage", is(3)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(15)));
+        result.andExpect(jsonPath("$.payload[0]", is("Timestamp")));
+    }
 
+    @Test
+    public void testGetUserProfileAttributeTypes_3() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypeAttributes").param("pageSize", "7")
+                        .param("sort", "code").param("direction", "ASC")
+                        .param("filters[0].attribute", "code").param("filters[0].value", "tex")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(7)));
+        result.andExpect(jsonPath("$.metaData.lastPage", is(1)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(4)));
+        result.andExpect(jsonPath("$.payload[0]", is("Hypertext")));
     }
 
 }

@@ -26,7 +26,6 @@ import org.entando.entando.web.utils.OAuth2TestUtils;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -50,7 +49,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     private ICategoryManager categoryManager;
 
     @Autowired
-    @InjectMocks
     private CategoryController controller;
 
     @Test

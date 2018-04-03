@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
+			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.0.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+
+
+    <bean id="ContentModelDictionaryProvider" class="com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionaryProvider" >
+        <property name="contentMap" ref="contentModelDictionaryContentMap" />
+        <property name="i18nMap" ref="contentModelDictionaryI18NMap" />
+        <property name="infoMap" ref="contentModelDictionaryInfoMap" />
+        <property name="commonMap" ref="contentModelDictionaryCommonMap" />
+        <property name="allowedPublicAttributeMethods" ref="contentModelDictionaryAllowedPublicAttributeMethods" />
+    </bean>
+    
+    
+	<util:list id="contentModelDictionaryContentMap">
+		<value><![CDATA[getId()]]></value>
+		<value><![CDATA[getCategories()]]></value>
+		<value><![CDATA[getContentLink()]]></value>
+		<value><![CDATA[getContentOnPageLink("<PAGE_CODE>")]]></value>
+		<value><![CDATA[getCreated("<DATE_PATTERN>")]]></value>
+		<value><![CDATA[getLastModified("<DATE_PATTERN>")]]></value>
+		<value><![CDATA[getVersion()]]></value>
+		<value><![CDATA[getLastEditor()]]></value>
+		<value><![CDATA[isUserAllowed("<PERMISSION_NAME>")]]></value>
+		<value><![CDATA[getLangCode()]]></value>
+	</util:list>
+
+	<util:list id="contentModelDictionaryI18NMap">
+		<value><![CDATA[getLabel("<LABEL_CODE>")]]></value>
+		<value><![CDATA[getLabelWithParams("<LABEL_CODE>").addParam("<PARAM_KEY>", "<PARAM_VALUE>")]]></value>
+	</util:list>
+
+	<util:list id="contentModelDictionaryInfoMap">
+		<value><![CDATA[getConfigParameter("<PARAM_NAME>")]]></value>
+		<value><![CDATA[getCurrentPage()]]></value>
+		<value><![CDATA[getCurrentLang()]]></value>
+		<value><![CDATA[getCurrentWidget()]]></value>
+	</util:list>
+
+	<util:list id="contentModelDictionaryCommonMap">
+		<value><![CDATA[#foreach ($item in $<LIST>) $item #end]]></value>
+		<value><![CDATA[#if (<TRUE>) <DO> #else <DOANOTHER> #end]]></value>
+		<value><![CDATA[#if (<TRUE>) <DO> #end]]></value>
+		<value><![CDATA[#set ($<VAR> = <VALUE>)]]></value>
+	</util:list>
+	
+	<util:map id="contentModelDictionaryAllowedPublicAttributeMethods" map-class="java.util.Properties">
+		<entry>
+			<key><value>Date</value></key>
+			<value><![CDATA[fullDate;longDate;mediumDate;shortDate;getFormattedDate("<DATE_PATTERN>")]]></value>
+		</entry>
+		<entry>
+			<key><value>Timestamp</value></key>
+			<value><![CDATA[fullDate;longDate;mediumDate;shortDate;getFormattedDate("<DATE_PATTERN>")]]></value>
+		</entry>
+		<entry>
+			<key><value>Number</value></key>
+			<value><![CDATA[number;value]]></value>
+		</entry>
+		<entry>
+			<key><value>Monotext</value></key>
+			<value><![CDATA[text]]></value>
+		</entry>
+		<entry>
+			<key><value>Enumerator</value></key>
+			<value><![CDATA[text]]></value>
+		</entry>
+		<entry>
+			<key><value>EnumeratorMap</value></key>
+			<value><![CDATA[mapKey;mapValue]]></value>
+		</entry>
+		<entry>
+			<key><value>Text</value></key>
+			<value><![CDATA[text;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"]]]></value>
+		</entry>
+		<entry>
+			<key><value>Longtext</value></key>
+			<value><![CDATA[text;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"]]]></value>
+		</entry>
+		<entry>
+			<key><value>Boolean</value></key>
+			<value><![CDATA[value;booleanValue]]></value>
+		</entry>
+		<entry>
+			<key><value>ThreeState</value></key>
+			<value><![CDATA[value;booleanValue]]></value>
+		</entry>
+		<entry>
+			<key><value>CheckBox</value></key>
+			<value><![CDATA[value;booleanValue]]></value>
+		</entry>
+		<entry>
+			<key><value>Composite</value></key>
+			<value><![CDATA[get("<ATTRIBUTE_NAME>");size()]]></value>
+		</entry>
+		<entry>
+			<key><value>List</value></key>
+			<value><![CDATA[get(<INDEX>);size()]]></value>
+		</entry>
+		<entry>
+			<key><value>Monolist</value></key>
+			<value><![CDATA[get(<INDEX>);size()]]></value>
+		</entry>
+		<entry>
+			<key><value>Link</value></key>
+			<value><![CDATA[text;destination;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"];symbolicLink]]></value>
+		</entry>
+		<entry>
+			<key><value>Image</value></key>
+			<value><![CDATA[text;getImagePath(<SIZE_ID>);getResource("<LANG_CODE>");resource;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"]]]></value>
+		</entry>
+		<entry>
+			<key><value>Attach</value></key>
+			<value><![CDATA[text;attachPath;getResource("<LANG_CODE>");resource;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"]]]></value>
+		</entry>
+		<entry>
+			<key><value>Hypertext</value></key>
+			<value><![CDATA[text;getTextForLang("<LANG_CODE>");textMap["<LANG_CODE>"];getTextBeforeImage(<PERCENT_VALUE>);getTextByRange(<START_PERCENT_VALUE>,<END_PERCENT_VALUE>);getTextAfterImage(<PERCENT_VALUE>);getHead(<VALUE>);getHeadEscaped(VALUE)]]></value>
+		</entry>
+	</util:map>
+
+    
+</beans>

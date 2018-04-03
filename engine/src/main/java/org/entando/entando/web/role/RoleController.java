@@ -25,7 +25,6 @@ import org.entando.entando.aps.system.services.role.IRoleService;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -121,11 +120,6 @@ public class RoleController {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
-        }
-        //business validations
-        getRoleValidator().validate(roleRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
         }
         RoleDto dto = this.getRoleService().addRole(roleRequest);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);

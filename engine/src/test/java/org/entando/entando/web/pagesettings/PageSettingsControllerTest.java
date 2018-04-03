@@ -13,10 +13,11 @@
  */
 package org.entando.entando.web.pagesettings;
 
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsService;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
 import org.entando.entando.aps.system.services.pagesettings.model.ParamDto;
@@ -28,14 +29,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
@@ -60,28 +62,20 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_load_the_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
                 .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isOk());
     }
 
     @Test
     public void should_not_update_with_empty_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequestEmptyParams())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
@@ -90,18 +84,12 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
                 .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
                 .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void should_update_with_a_valid_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequest())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
@@ -110,9 +98,6 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
                 .content(convertObjectToJsonBytes(createMockRequest()))
                 .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isOk());
     }
 
@@ -127,9 +112,6 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
                 get("/pageSettings")
                 .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isUnauthorized());
     }
 

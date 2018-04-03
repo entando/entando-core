@@ -60,6 +60,46 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
+    protected IWidgetTypeManager getWidgetManager() {
+        return widgetManager;
+    }
+
+    public void setWidgetManager(IWidgetTypeManager widgetManager) {
+        this.widgetManager = widgetManager;
+    }
+
+    protected IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
+    }
+
+    protected IGroupManager getGroupManager() {
+        return groupManager;
+    }
+
+    public void setGroupManager(IGroupManager groupManager) {
+        this.groupManager = groupManager;
+    }
+
+    protected IGuiFragmentManager getGuiFragmentManager() {
+        return guiFragmentManager;
+    }
+
+    public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
+        this.guiFragmentManager = guiFragmentManager;
+    }
+
+    protected IDtoBuilder<WidgetType, WidgetDto> getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(IDtoBuilder<WidgetType, WidgetDto> dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
@@ -131,38 +171,20 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         return widgetDto;
     }
 
-    private void createAndAddFragment(WidgetType widgetType, WidgetRequest widgetRequest) throws Exception {
-        GuiFragment guiFragment = new GuiFragment();
-        String code = this.extractUniqueGuiFragmentCode(widgetType.getCode());
-        guiFragment.setCode(code);
-        guiFragment.setPluginCode(widgetType.getPluginCode());
-        guiFragment.setGui(widgetRequest.getCustomUi());
-        guiFragment.setWidgetTypeCode(widgetType.getCode());
-        this.getGuiFragmentManager().addGuiFragment(guiFragment);
-    }
-
-    protected String extractUniqueGuiFragmentCode(String widgetTypeCode) throws ApsSystemException {
-        String uniqueCode = widgetTypeCode;
-        if (null != this.getGuiFragmentManager().getGuiFragment(uniqueCode)) {
-            int index = 0;
-            String currentCode = null;
-            do {
-                index++;
-                currentCode = uniqueCode + "_" + index;
-            } while (null != this.getGuiFragmentManager().getGuiFragment(currentCode));
-            uniqueCode = currentCode;
-        }
-        return uniqueCode;
-    }
-
     @Override
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
+
         if (type == null) {
             throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
         } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
             bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
+            throw new ValidationGenericException(bindingResult);
+        }
+        if (type.isLocked()) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
+            bindingResult.reject(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED, new String[]{type.getCode()}, "widgettype.update.locked");
             throw new ValidationGenericException(bindingResult);
         }
         this.processWidgetType(type, widgetRequest);
@@ -205,6 +227,46 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         }
     }
 
+    @Override
+    public String getManagerName() {
+        return ((IManager) this.getWidgetManager()).getName();
+    }
+
+    @Override
+    public List<WidgetDto> getGroupUtilizer(String groupCode) {
+        try {
+            List<WidgetType> list = ((GroupUtilizer<WidgetType>) this.getWidgetManager()).getGroupUtilizers(groupCode);
+            return this.getDtoBuilder().convert(list);
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading WidgetType references for group {}", groupCode, ex);
+            throw new RestServerError("Error loading WidgetType references for group", ex);
+        }
+    }
+
+    protected String extractUniqueGuiFragmentCode(String widgetTypeCode) throws ApsSystemException {
+        String uniqueCode = widgetTypeCode;
+        if (null != this.getGuiFragmentManager().getGuiFragment(uniqueCode)) {
+            int index = 0;
+            String currentCode = null;
+            do {
+                index++;
+                currentCode = uniqueCode + "_" + index;
+            } while (null != this.getGuiFragmentManager().getGuiFragment(currentCode));
+            uniqueCode = currentCode;
+        }
+        return uniqueCode;
+    }
+
+    private void createAndAddFragment(WidgetType widgetType, WidgetRequest widgetRequest) throws Exception {
+        GuiFragment guiFragment = new GuiFragment();
+        String code = this.extractUniqueGuiFragmentCode(widgetType.getCode());
+        guiFragment.setCode(code);
+        guiFragment.setPluginCode(widgetType.getPluginCode());
+        guiFragment.setGui(widgetRequest.getCustomUi());
+        guiFragment.setWidgetTypeCode(widgetType.getCode());
+        this.getGuiFragmentManager().addGuiFragment(guiFragment);
+    }
+
     private void processWidgetType(WidgetType type, WidgetRequest widgetRequest) {
         type.setCode(widgetRequest.getCode());
         ApsProperties titles = new ApsProperties();
@@ -229,7 +291,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             return bindingResult;
         }
         if (widgetType.isLocked()) {
-            bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_LOCKED, new String[]{widgetType.getCode()}, "widgettype.delete.locked");
+            bindingResult.reject(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED, new String[]{widgetType.getCode()}, "widgettype.delete.locked");
         }
         List<IPage> onLinePages = this.getPageManager().getOnlineWidgetUtilizers(widgetType.getCode());
         List<IPage> draftPages = this.getPageManager().getDraftWidgetUtilizers(widgetType.getCode());
@@ -239,60 +301,5 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         return bindingResult;
     }
 
-    @Override
-    public String getManagerName() {
-        return ((IManager) this.getWidgetManager()).getName();
-    }
-
-    @Override
-    public List<WidgetDto> getGroupUtilizer(String groupCode) {
-        try {
-            List<WidgetType> list = ((GroupUtilizer<WidgetType>) this.getWidgetManager()).getGroupUtilizers(groupCode);
-            return this.getDtoBuilder().convert(list);
-        } catch (ApsSystemException ex) {
-            logger.error("Error loading WidgetType references for group {}", groupCode, ex);
-            throw new RestServerError("Error loading WidgetType references for group", ex);
-        }
-    }
-
-    public IWidgetTypeManager getWidgetManager() {
-        return widgetManager;
-    }
-
-    public void setWidgetManager(IWidgetTypeManager widgetManager) {
-        this.widgetManager = widgetManager;
-    }
-
-    public IPageManager getPageManager() {
-        return pageManager;
-    }
-
-    public void setPageManager(IPageManager pageManager) {
-        this.pageManager = pageManager;
-    }
-
-    public IGroupManager getGroupManager() {
-        return groupManager;
-    }
-
-    public void setGroupManager(IGroupManager groupManager) {
-        this.groupManager = groupManager;
-    }
-
-    public IGuiFragmentManager getGuiFragmentManager() {
-        return guiFragmentManager;
-    }
-
-    public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
-        this.guiFragmentManager = guiFragmentManager;
-    }
-
-    public IDtoBuilder<WidgetType, WidgetDto> getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(IDtoBuilder<WidgetType, WidgetDto> dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
-    }
 
 }

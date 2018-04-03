@@ -519,6 +519,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'params', '
 	<Param name="baseUrl">static</Param>
 	<Param name="baseUrlContext">true</Param>
 	<Param name="useJsessionId">true</Param>
+	<Param name="editEmptyFragmentEnabled">false</Param>
 	<SpecialPages>
 		<Param name="notFoundPageCode">notfound</Param>
 		<Param name="homePageCode">homepage</Param>

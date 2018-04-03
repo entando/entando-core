@@ -13,10 +13,8 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.util.ApsProperties;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,25 +24,22 @@ import java.util.Map;
  */
 public interface IWidgetTypeDAO {
 
-	/**
-	 * Return the map of the widget types
-	 *
-	 * @return The map of the widget types
-	 */
-	public Map<String, WidgetType> loadWidgetTypes();
+    /**
+     * Return the map of the widget types
+     *
+     * @return The map of the widget types
+     */
+    public Map<String, WidgetType> loadWidgetTypes();
 
-	public void addWidgetType(WidgetType widgetType);
+    public void addWidgetType(WidgetType widgetType);
 
-	/**
-	 * Delete a widget type.
-	 *
-	 * @param widgetTypeCode The code of widget type to delete
-	 */
-	public void deleteWidgetType(String widgetTypeCode);
+    /**
+     * Delete a widget type.
+     *
+     * @param widgetTypeCode The code of widget type to delete
+     */
+    public void deleteWidgetType(String widgetTypeCode);
 
-	public void updateWidgetType(String showletTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup);
+    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup);
 
-	public int countWidgetTypes(FieldSearchFilter[] filters);
-
-    public List<String> searchWidgetTypes(FieldSearchFilter[] filters);
 }

@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.page;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,9 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Collections;
+import java.util.logging.Level;
+import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -38,6 +42,7 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
@@ -45,6 +50,7 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -488,7 +494,26 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     }
 
     @Override
-    public List<PageDto> searchPages(PageSearchRequest request) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
+        try {
+            List<IPage> rawPages = this.getPageManager().searchPages(request.getPageCodeToken(), allowedGroups);
+            List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
+            return this.getPagedResult(request, pages);
+        } catch (ApsSystemException ex) {
+            logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
+            throw new RestServerError("Error searching pages", ex);
+        }
+    }
+
+    private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
+        BeanComparator comparator = new BeanComparator(request.getSort());
+        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+            Collections.sort(pages, comparator.reversed());
+        } else {
+            Collections.sort(pages, comparator);
+        }
+        PageSearchDto result = new PageSearchDto(request, pages);
+        result.imposeLimits();
+        return result;
     }
 }

@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.services.authorization.AuthorizationManager;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -31,44 +32,44 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author paddeo
  */
 public class PageAuthorizationService extends AbstractAuthorizationService<PageDto> {
-
+    
     @Autowired
     private IPageManager pageManager;
-
+    
     @Autowired
     private AuthorizationManager authorizationManager;
-
+    
     public IPageManager getPageManager() {
         return pageManager;
     }
-
+    
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
     }
-
+    
     public AuthorizationManager getAuthorizationManager() {
         return authorizationManager;
     }
-
+    
     public void setAuthorizationManager(AuthorizationManager authorizationManager) {
         this.authorizationManager = authorizationManager;
     }
-
+    
     @Override
     public boolean isAuth(UserDetails user, PageDto pageDto) {
         return this.isAuth(user, pageDto.getCode());
     }
-
+    
     @Override
     public boolean isAuth(UserDetails user, String pageCode) {
         IPage page = this.getPageManager().getDraftPage(pageCode);
         return this.isAuth(user, page);
     }
-
+    
     public boolean isAuth(UserDetails user, IPage page) {
         return this.getAuthorizationManager().isAuth(user, page);
     }
-
+    
     @Override
     public List<PageDto> filterList(UserDetails user, List<PageDto> toBeFiltered) {
         List<PageDto> res = new ArrayList<>();
@@ -76,5 +77,12 @@ public class PageAuthorizationService extends AbstractAuthorizationService<PageD
                 .filter(elem -> this.isAuth(user, elem)).collect(Collectors.toList())));
         return res;
     }
-
+    
+    public List<String> getAllowedGroupCodes(UserDetails user) {
+        List<String> allowedGroups = new ArrayList<>();
+        List<Group> userGroups = this.getAuthorizationManager().getUserGroups(user);
+        userGroups.forEach(group -> allowedGroups.add(group.getName()));
+        return allowedGroups;
+    }
+    
 }

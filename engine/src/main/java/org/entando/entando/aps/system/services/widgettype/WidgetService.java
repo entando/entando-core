@@ -78,9 +78,10 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
                 stream = stream.sorted(comparator);
             }
             List<WidgetDto> resultList = stream.collect(Collectors.toList());
-            SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult(types.size(), resultList);
+            List<WidgetDto> sublist = restListReq.getSublist(resultList);
+            SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult(resultList.size(), sublist);
             PagedMetadata<WidgetDto> pagedMetadata = new PagedMetadata<>(restListReq, paginatedResult);
-            pagedMetadata.setBody(resultList);
+            pagedMetadata.setBody(sublist);
             return pagedMetadata;
         } catch (Throwable t) {
             logger.error("error in get widgets", t);

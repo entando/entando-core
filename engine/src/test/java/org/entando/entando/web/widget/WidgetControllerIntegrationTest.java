@@ -93,10 +93,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println("-----------------------------");
-        System.out.println(response);
-        System.out.println("-----------------------------");
-        result.andExpect(jsonPath("$.payload[0].code", is("53")));
+        result.andExpect(jsonPath("$.payload[0].code", is("search_result")));
         assertNotNull(response);
     }
 

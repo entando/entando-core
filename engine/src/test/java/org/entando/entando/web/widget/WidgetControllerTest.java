@@ -48,6 +48,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
     @Mock
     private WidgetService widgetService;
 
+    @Mock
+    private WidgetValidator widgetValidator;
+
     @InjectMocks
     private WidgetController controller;
 
@@ -84,7 +87,8 @@ public class WidgetControllerTest extends AbstractControllerTest {
                 get("/widgets")
                 .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        result.andExpect(status().isOk());
+        String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
     }
 
@@ -97,7 +101,8 @@ public class WidgetControllerTest extends AbstractControllerTest {
                 delete("/widgets/1")
                 .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        result.andExpect(status().isOk());
+        String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
     }
 
@@ -113,7 +118,8 @@ public class WidgetControllerTest extends AbstractControllerTest {
                 .content(convertObjectToJsonBytes(createMockRequest()))
                 .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        String response = result.andReturn().getResponse().getContentAsString();
+        result.andExpect(status().isOk());
         assertNotNull(response);
     }
 
@@ -122,7 +128,6 @@ public class WidgetControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(widgetService.updateWidget(any(), any())).thenReturn(new WidgetDto());
-        this.controller.setWidgetValidator(new WidgetValidator());
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 put("/widgets/test")
@@ -156,6 +161,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         WidgetRequest req = new WidgetRequest();
         req.setCode("test");
         req.setGroup("test");
+        req.setCustomUi("<h1>UI Code</h1>");
         req.setTitles(titles);
         return req;
     }

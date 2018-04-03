@@ -13,10 +13,8 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -25,6 +23,10 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Comparator;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -62,16 +64,24 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
         try {
-            List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
-            filters.stream().filter(i -> i.getKey() != null)
-                    .forEach(i -> i.setKey(WidgetDto.getEntityFieldName(i.getKey())));
-            SearcherDaoPaginatedResult<WidgetType> widgets = this.getWidgetManager().getWidgetTypes(filters);
-            List<WidgetDto> dtoList = dtoBuilder.convert(widgets.getList());
-            for (WidgetDto widgetDto : dtoList) {
-                this.addFragments(widgetDto);
+            List<WidgetType> types = this.getWidgetManager().getWidgetTypes();
+            List<WidgetDto> dtoList = dtoBuilder.convert(types);
+            Stream<WidgetDto> stream = dtoList.stream();
+            //filter
+            List<Predicate<WidgetDto>> filters = WidgetTypeServiceUtils.getPredicates(restListReq);
+            for (Predicate<WidgetDto> predicate : filters) {
+                stream = stream.filter(predicate);
             }
-            PagedMetadata<WidgetDto> pagedMetadata = new PagedMetadata<>(restListReq, widgets);
-            pagedMetadata.setBody(dtoList);
+            //sort
+            Comparator<WidgetDto> comparator = WidgetTypeServiceUtils.getComparator(restListReq.getSort(), restListReq.getDirection());
+            if (null != comparator) {
+                stream = stream.sorted(comparator);
+            }
+            List<WidgetDto> resultList = stream.collect(Collectors.toList());
+            List<WidgetDto> sublist = restListReq.getSublist(resultList);
+            SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult(resultList.size(), sublist);
+            PagedMetadata<WidgetDto> pagedMetadata = new PagedMetadata<>(restListReq, paginatedResult);
+            pagedMetadata.setBody(sublist);
             return pagedMetadata;
         } catch (Throwable t) {
             logger.error("error in get widgets", t);

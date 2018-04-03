@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -67,20 +66,8 @@ public class WidgetTypeManager extends AbstractService
     }
 
     @Override
-    @Deprecated
-    public WidgetType getShowletType(String widgetTypeCode) {
-        return this.getWidgetType(widgetTypeCode);
-    }
-
-    @Override
     public WidgetType getWidgetType(String code) {
         return this.getCacheWrapper().getWidgetType(code);
-    }
-
-    @Override
-    @Deprecated
-    public List<WidgetType> getShowletTypes() {
-        return this.getWidgetTypes();
     }
 
     @Override
@@ -90,12 +77,6 @@ public class WidgetTypeManager extends AbstractService
         BeanComparator comparator = new BeanComparator("code");
         Collections.sort(types, comparator);
         return types;
-    }
-
-    @Override
-    @Deprecated
-    public void addShowletType(WidgetType widgetType) throws ApsSystemException {
-        this.addWidgetType(widgetType);
     }
 
     @Override
@@ -127,12 +108,6 @@ public class WidgetTypeManager extends AbstractService
             logger.error("Error adding a Widget Type", t);
             throw new ApsSystemException("Error adding a Widget Type", t);
         }
-    }
-
-    @Override
-    @Deprecated
-    public void deleteShowletType(String widgetTypeCode) throws ApsSystemException {
-        this.deleteWidgetType(widgetTypeCode);
     }
 
     @Override
@@ -170,28 +145,6 @@ public class WidgetTypeManager extends AbstractService
             logger.error("Error deleting widget type", t);
             throw new ApsSystemException("Error deleting widget type", t);
         }
-    }
-
-    @Override
-    @Deprecated
-    public void updateShowletType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig) throws ApsSystemException {
-        try {
-            WidgetType type = this.getWidgetType(widgetTypeCode);
-            if (null == type) {
-                logger.error("Type not exists : type code {}", widgetTypeCode);
-                return;
-            }
-            this.updateWidgetType(widgetTypeCode, titles, defaultConfig, Group.FREE_GROUP_NAME);
-        } catch (Throwable t) {
-            logger.error("Error updating Widget type titles : type code {}", widgetTypeCode, t);
-            throw new ApsSystemException("Error updating Widget type titles : type code" + widgetTypeCode, t);
-        }
-    }
-
-    @Override
-    @Deprecated
-    public void updateShowletType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) throws ApsSystemException {
-        this.updateWidgetType(widgetTypeCode, titles, defaultConfig, mainGroup);
     }
 
     @Override
@@ -294,28 +247,6 @@ public class WidgetTypeManager extends AbstractService
 
     public void setCacheWrapper(IWidgetTypeManagerCacheWrapper cacheWrapper) {
         this._cacheWrapper = cacheWrapper;
-    }
-
-    @Override
-    public SearcherDaoPaginatedResult<WidgetType> getWidgetTypes(List<FieldSearchFilter> fieldSearchFilters) throws ApsSystemException {
-        SearcherDaoPaginatedResult<WidgetType> pagedResult = null;
-        try {
-            List<WidgetType> widgets = new ArrayList<>();
-            FieldSearchFilter[] array = null;
-            if (null != fieldSearchFilters) {
-                array = fieldSearchFilters.toArray(new FieldSearchFilter[fieldSearchFilters.size()]);
-            }
-            int count = this.getWidgetTypeDAO().countWidgetTypes(array);
-            List<String> widgetCodes = this.getWidgetTypeDAO().searchWidgetTypes(array);
-            for (String widgetCode : widgetCodes) {
-                widgets.add(this.getWidgetType(widgetCode));
-            }
-            pagedResult = new SearcherDaoPaginatedResult<>(count, widgets);
-        } catch (Throwable t) {
-            logger.error("Error searching groups", t);
-            throw new ApsSystemException("Error searching groups", t);
-        }
-        return pagedResult;
     }
 
 }

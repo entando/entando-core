@@ -58,6 +58,7 @@
 
     <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder" >
         <property name="pageManager" ref="PageManager" />
+        <property name="stockWidgetCodes"><value>${widgets.stock}</value></property>
     </bean>
 
     <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />

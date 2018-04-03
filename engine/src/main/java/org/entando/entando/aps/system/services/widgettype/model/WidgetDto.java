@@ -20,9 +20,14 @@ import java.util.Map;
 
 public class WidgetDto {
 
+    public static final String USER_TYPOLOGY_CODE = "user";
+    public static final String CUSTOM_TYPOLOGY_CODE = "custom";
+    public static final String STOCK_TYPOLOGY_CODE = "stock";
+
     private String code;
     private Integer used = 0;
     private Map<String, String> titles = new HashMap<>();
+    private String typology;
     private String group;
     private String pluginCode;
     private List<GuiFragmentRef> guiFragments = new ArrayList<>();
@@ -93,6 +98,14 @@ public class WidgetDto {
 
     public void setTitles(Map<String, String> titles) {
         this.titles = titles;
+    }
+
+    public String getTypology() {
+        return typology;
+    }
+
+    public void setTypology(String typology) {
+        this.typology = typology;
     }
 
     public String getGroup() {

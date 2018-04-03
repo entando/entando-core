@@ -16,6 +16,8 @@ package org.entando.entando.web.widget;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -23,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class WidgetControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -59,15 +62,61 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     }
 
     @Test
-    public void testGetWidgetList() throws Exception {
+    public void testGetWidgetList_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = mockMvc.perform(
-                get("/widgets")
+                get("/widgets").param("pageSize", "100")
                 .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(10)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
+        String response = result.andReturn().getResponse().getContentAsString();
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testGetWidgetList_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        // @formatter:off
+        ResultActions result = mockMvc.perform(
+                get("/widgets").param("pageSize", "5")
+                .param("sort", "code").param("direction", "DESC")
+                .header("Authorization", "Bearer " + accessToken)
+        );
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println("-----------------------------");
+        System.out.println(response);
+        System.out.println("-----------------------------");
+        result.andExpect(jsonPath("$.payload[0].code", is("53")));
+        assertNotNull(response);
+    }
+
+    @Test
+    public void testGetWidgetList_3() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        // @formatter:off
+        ResultActions result = mockMvc.perform(
+                get("/widgets").param("pageSize", "5")
+                .param("sort", "code").param("direction", "DESC")
+                .param("filters[0].attribute", "typology").param("filters[0].value", "oc")
+                .header("Authorization", "Bearer " + accessToken)
+        );
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(4)));
+        result.andExpect(jsonPath("$.payload[0].code", is("messages_system")));
+        String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
     }
 

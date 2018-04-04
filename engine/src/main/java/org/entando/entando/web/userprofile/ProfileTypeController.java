@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
@@ -198,50 +199,35 @@ POST /profileTypes/refresh/
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addUserProfileAttribute(@PathVariable String profileTypeCode, @Valid @RequestBody EntityAttributeFullDto bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
-        /*
-        //field validations
-        this.getProfileTypeValidator().validate(bodyRequest, bindingResult);
+        logger.debug("Profile type {} - Adding attribute {}", profileTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        //business validations
-        if (this.getProfileTypeValidator().existType(bodyRequest.getCode())) {
-            bindingResult.reject(DataTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{bodyRequest.getCode()}, "entityType.exists");
-        }
-        if (bindingResult.hasErrors()) {
-            throw new ValidationConflictException(bindingResult);
-        }
-        UserProfileTypeDto result = this.getUserProfileTypeService().addUserProfileType(bodyRequest, bindingResult);
+        EntityAttributeFullDto result = this.getUserProfileTypeService().addUserProfileAttribute(profileTypeCode, bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
-         */
-        throw new RuntimeException("TODO");
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updateUserProfileAttribute(@PathVariable String profileTypeCode,
-            @PathVariable String attributeCode, @Valid @RequestBody EntityAttributeFullDto request, BindingResult bindingResult) throws JsonProcessingException {
-        /*
-        int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
+            @PathVariable String attributeCode, @Valid @RequestBody EntityAttributeFullDto bodyRequest, BindingResult bindingResult) throws JsonProcessingException {
+        logger.debug("Profile type {} - Updating attribute {}", profileTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
-            if (result == 404) {
-                throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "profile type", profileTypeCode);
-            } else {
-                throw new ValidationGenericException(bindingResult);
-            }
+            throw new ValidationGenericException(bindingResult);
+        } else if (!StringUtils.equals(attributeCode, bodyRequest.getCode())) {
+            bindingResult.rejectValue("code", ProfileTypeValidator.ERRCODE_URINAME_MISMATCH, new String[]{attributeCode, bodyRequest.getCode()}, "entityType.attribute.code.mismatch");
+            throw new ValidationGenericException(bindingResult);
         }
-        UserProfileTypeDto dto = this.getUserProfileTypeService().updateUserProfileType(request, bindingResult);
+        EntityAttributeFullDto result = this.getUserProfileTypeService().updateUserProfileAttribute(profileTypeCode, bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        logger.debug("Main Response -> {}", dto);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
-         */
-        throw new RuntimeException("TODO");
+        logger.debug("Main Response -> {}", result);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

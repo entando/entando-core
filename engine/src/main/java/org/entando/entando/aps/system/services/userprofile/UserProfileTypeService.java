@@ -85,13 +85,13 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
-        return super.addEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, bodyRequest, bindingResult);
+    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.addEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 
     @Override
-    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
-        return super.updateEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, bodyRequest, bindingResult);
+    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.updateEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 
     @Override

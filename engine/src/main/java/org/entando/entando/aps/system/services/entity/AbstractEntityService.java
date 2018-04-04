@@ -159,9 +159,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     protected O getFullEntityType(String entityManagerCode, String entityTypeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         I entityType = (I) entityManager.getEntityPrototype(entityTypeCode);
-        if (null == entityManager) {
-            logger.warn("no entity type found with code {}", entityTypeCode);
-            throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
         }
         O type = this.convertEntityType(entityManager, entityType);
         type.setStatus(String.valueOf(entityManager.getStatus(entityTypeCode)));
@@ -374,7 +374,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return true;
     }
 
-    public EntityAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+    protected EntityAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -389,12 +389,73 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return new EntityAttributeFullDto(attribute, entityManager.getAttributeRoles());
     }
 
-    public EntityAttributeFullDto addEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
-        throw new RuntimeException("TODO!!!");
+    protected EntityAttributeFullDto addEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+        }
+        AttributeInterface oldAttribute = (AttributeInterface) entityType.getAttribute(bodyRequest.getCode());
+        if (null != oldAttribute) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_ALREADY_EXISTS,
+                    bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.exists");
+        }
+        Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
+        AttributeInterface attribute = this.buildAttribute(entityTypeCode, bodyRequest, attributeMap, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return null;
+        }
+        EntityAttributeFullDto result = null;
+        try {
+            entityType.addAttribute(attribute);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+            IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
+            AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
+            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+        return result;
     }
 
-    public EntityAttributeFullDto updateEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode, EntityAttributeFullDto request, BindingResult bindingResult) {
-        throw new RuntimeException("TODO!!!");
+    public EntityAttributeFullDto updateEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+        }
+        AttributeInterface oldAttribute = (AttributeInterface) entityType.getAttribute(bodyRequest.getCode());
+        if (null == oldAttribute) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
+                    bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.notExists");
+        } else if (oldAttribute.getType().equals(bodyRequest.getType())) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH,
+                    bindingResult, new String[]{entityTypeCode,
+                        bodyRequest.getCode(), oldAttribute.getType(), bodyRequest.getType()}, "entityType.attribute.typeMismatch");
+        }
+        Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
+        AttributeInterface attribute = this.buildAttribute(entityTypeCode, bodyRequest, attributeMap, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return null;
+        }
+        EntityAttributeFullDto result = null;
+        try {
+            entityType.getAttributeMap().remove(bodyRequest.getCode());
+            entityType.addAttribute(attribute);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+            IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
+            AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
+            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+        return result;
     }
 
     public void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {

@@ -44,9 +44,9 @@ public interface IUserProfileTypeService {
     // ----------------------------------
     public EntityAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode);
 
-    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
+    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
 
-    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto request, BindingResult bindingResult);
+    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
 
     public void deleteUserProfileAttribute(String profileTypeCode, String attributeCode);
 

@@ -323,7 +323,7 @@ public class PageControllerTest extends AbstractControllerTest {
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
     @Test

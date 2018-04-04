@@ -16,8 +16,6 @@ import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionaryProvider;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.utils.ContentModelUtils;
@@ -26,6 +24,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -227,7 +226,7 @@ public class ContentModelService implements IContentModelService {
     }
 
     @Override
-    public ContentModelDictionary getContentModelDictionary(String typeCode) {
+    public IEntityModelDictionary getContentModelDictionary(String typeCode) {
         if (StringUtils.isBlank(typeCode)) {
             return this.getDictionaryProvider().buildDictionary();
         }
@@ -236,7 +235,7 @@ public class ContentModelService implements IContentModelService {
             logger.warn("no contentModel found with id {}", typeCode);
             throw new RestRourceNotFoundException(ContentModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, "contentType", typeCode);
         }
-        return this.getDictionaryProvider().buildDictionary((Content) prototype);
+        return this.getDictionaryProvider().buildDictionary(prototype);
     }
 
     protected ContentModel createContentModel(ContentModelRequest src) {

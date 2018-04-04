@@ -13,21 +13,28 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.page.IPage;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.entando.entando.aps.system.services.dataobjectmodel.dictionary.DataModelDictionaryProvider;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
+import org.entando.entando.web.dataobjectmodel.validator.DataObjectModelValidator;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +47,12 @@ public class DataObjectModelService implements IDataObjectModelService {
 
     @Autowired
     private IDataObjectModelManager dataObjectModelManager;
+
+    //TODO fix this
+    @Autowired
+    private DataModelDictionaryProvider dictionaryProvider;
+
+    private IDataObjectManager dataObjectManager;
 
     @Autowired
     private IDtoBuilder<DataObjectModel, DataModelDto> dtoBuilder;
@@ -58,6 +71,22 @@ public class DataObjectModelService implements IDataObjectModelService {
 
     public void setDtoBuilder(IDtoBuilder<DataObjectModel, DataModelDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
+    }
+
+    protected IDataObjectManager getDataObjectManager() {
+        return dataObjectManager;
+    }
+
+    public void setDataObjectManager(IDataObjectManager dataObjectManager) {
+        this.dataObjectManager = dataObjectManager;
+    }
+
+    protected DataModelDictionaryProvider getDictionaryProvider() {
+        return dictionaryProvider;
+    }
+
+    public void setDictionaryProvider(DataModelDictionaryProvider dictionaryProvider) {
+        this.dictionaryProvider = dictionaryProvider;
     }
 
     @Override
@@ -171,5 +200,19 @@ public class DataObjectModelService implements IDataObjectModelService {
         }
         return bindingResult;
     }
+
+    @Override
+    public IEntityModelDictionary getDataModelDictionary(String typeCode) {
+        if (StringUtils.isBlank(typeCode)) {
+            return this.getDictionaryProvider().buildDictionary();
+        }
+        IApsEntity prototype = this.getDataObjectManager().getEntityPrototype(typeCode);
+        if (null == prototype) {
+            logger.warn("no model found with id {}", typeCode);
+            throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, "dataObject", typeCode);
+        }
+        return this.getDictionaryProvider().buildDictionary(prototype);
+    }
+
 
 }

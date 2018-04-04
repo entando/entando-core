@@ -1,4 +1,4 @@
-package com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary;
+package org.entando.entando.aps.system.services.dataobjectmodel.dictionary;
 
 import java.util.List;
 import java.util.Properties;
@@ -8,20 +8,20 @@ import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityMode
 import org.springframework.stereotype.Component;
 
 @Component
-public class ContentModelDictionaryProvider {
+public class DataModelDictionaryProvider {
 
-    private List<String> contentMap;
+    private List<String> dataMap;
     private List<String> i18nMap;
     private List<String> infoMap;
     private List<String> commonMap;
     private Properties allowedPublicAttributeMethods;
 
-    public List<String> getContentMap() {
-        return contentMap;
+    public List<String> getDataMap() {
+        return dataMap;
     }
 
-    public void setContentMap(List<String> contentMap) {
-        this.contentMap = contentMap;
+    public void setDataMap(List<String> dataMap) {
+        this.dataMap = dataMap;
     }
 
     public List<String> getI18nMap() {
@@ -61,7 +61,8 @@ public class ContentModelDictionaryProvider {
     }
 
     public IEntityModelDictionary buildDictionary(IApsEntity prototype) {
-        IEntityModelDictionary dictionary = new ContentModelDictionary(contentMap, i18nMap, infoMap, commonMap, allowedPublicAttributeMethods, prototype);
+        IEntityModelDictionary dictionary = new DataModelDictionary(dataMap, i18nMap, infoMap, commonMap, allowedPublicAttributeMethods, prototype);
         return dictionary;
     }
+
 }

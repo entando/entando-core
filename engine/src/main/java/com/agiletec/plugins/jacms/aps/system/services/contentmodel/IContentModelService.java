@@ -3,8 +3,8 @@ package com.agiletec.plugins.jacms.aps.system.services.contentmodel;
 import java.util.List;
 import java.util.Map;
 
-import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.plugins.jacms.contentmodel.model.ContentModelRequest;
@@ -17,7 +17,7 @@ public interface IContentModelService {
 
     public ContentModelDto getContentModel(Long modelId);
 
-    public ContentModelDictionary getContentModelDictionary(String typeCode);
+    public IEntityModelDictionary getContentModelDictionary(String typeCode);
 
     public ContentModelDto addContentModel(ContentModelRequest contentModel);
 

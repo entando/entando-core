@@ -44,6 +44,8 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_URINAME_INVALID = "3";
     public static final String ERRCODE_DATAOBJECTMODEL_REFERENCES = "4";
 
+    public static final String ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND = "6";
+
     @Autowired
     private IDataObjectModelManager dataObjectModelManager;
 

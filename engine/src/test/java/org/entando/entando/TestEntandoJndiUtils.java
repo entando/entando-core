@@ -102,6 +102,6 @@ public class TestEntandoJndiUtils {
 		} catch (Throwable t) {
 			throw new RuntimeException("Error on creation datasource '" + beanName + "'", t);
 		}
-        logger.info("created datasource {}", beanName);
+        logger.debug("created datasource {}", beanName);
 	}
 }

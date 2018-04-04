@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
@@ -30,4 +31,5 @@ public interface IDataObjectModelService {
 
     public void removeDataObjectModel(Long dataModelId);
 
+    public IEntityModelDictionary getDataModelDictionary(String typeCode);
 }

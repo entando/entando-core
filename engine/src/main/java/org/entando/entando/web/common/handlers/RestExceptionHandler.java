@@ -77,7 +77,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(value = EntandoAuthorizationException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public RestResponse processEntandoAuthorizationException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
@@ -90,7 +90,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(value = EntandoTokenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public RestResponse processEntandoTokenException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
@@ -102,7 +102,7 @@ public class RestExceptionHandler {
         return response;
     }
 
-    @ExceptionHandler(value = ResourceAccessException.class)
+    @ExceptionHandler(value = ResourcePermissionsException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public RestResponse processEntandoTokenException(ResourcePermissionsException ex) {

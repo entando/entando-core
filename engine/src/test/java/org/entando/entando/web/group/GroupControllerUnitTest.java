@@ -65,8 +65,8 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
         ResultActions result = mockMvc.perform(
                 get("/groups").param("page", "1")
-                .param("pageSize", "4")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("pageSize", "4")
+                        .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isOk());
@@ -86,10 +86,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/groups").param("page", "1")
-                .param("pageSize", "4")
-                .param("filter[0].attribute", "code")
-                .param("filter[0].value", "free")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("pageSize", "4")
+                        .param("filter[0].attribute", "code")
+                        .param("filter[0].value", "free")
+                        .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isOk());
@@ -110,10 +110,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/groups")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
 
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
     @Test
@@ -131,9 +131,9 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(
                 put("/groups/{groupCode}",
                         "helpdesk")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -153,8 +153,8 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(
                 delete("/groups/{groupName}",
                         groupName)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
@@ -174,9 +174,9 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
                 post("/groups")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
         // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
@@ -193,7 +193,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 delete("/groups/{code}", code)
-                .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken));
 
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result

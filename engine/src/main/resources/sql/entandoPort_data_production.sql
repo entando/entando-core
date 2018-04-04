@@ -251,10 +251,10 @@ INSERT INTO pagemodels (code, descr, frames, plugincode, templategui) VALUES ('h
 
 
 
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 5, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 6, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 4, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 3, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 1, 'free');
+INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 2, 'free');
 INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
 
 INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>

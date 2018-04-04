@@ -18,13 +18,17 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author E.Santoboni
  */
 public class EntityAttributeDto {
 
+    @NotEmpty(message = "entityType.attribute.code.notEmpty")
     private String code;
+
+    @NotEmpty(message = "entityType.attribute.type.notEmpty")
     private String type;
     private String name;
     private List<AttributePropertyDto> roles = new ArrayList<>();

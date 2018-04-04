@@ -182,6 +182,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             if (null != entityManager.getEntityPrototype(bodyRequest.getCode())) {
                 this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
                         bindingResult, new String[]{bodyRequest.getCode()}, "entityType.exists");
+                throw new ValidationConflictException(bindingResult);
             }
             I entityPrototype = this.createEntityType(entityManager, bodyRequest, bindingResult);
             if (bindingResult.hasErrors()) {
@@ -190,6 +191,8 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
                 response = builder.convert(entityPrototype);
             }
+        } catch (ValidationConflictException vce) {
+            throw vce;
         } catch (Throwable e) {
             logger.error("Error adding entity type", e);
             throw new RestServerError("error add entity type", e);
@@ -401,6 +404,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         if (null != oldAttribute) {
             this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_ALREADY_EXISTS,
                     bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.exists");
+            throw new ValidationConflictException(bindingResult);
         }
         Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
         AttributeInterface attribute = this.buildAttribute(entityTypeCode, bodyRequest, attributeMap, bindingResult);

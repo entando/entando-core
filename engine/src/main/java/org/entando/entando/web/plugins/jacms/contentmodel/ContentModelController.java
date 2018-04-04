@@ -9,9 +9,9 @@ import javax.validation.Valid;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelService;
-import com.agiletec.plugins.jacms.aps.system.services.contentmodel.dictionary.ContentModelDictionary;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -128,8 +128,8 @@ public class ContentModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
-        logger.debug("loading contentModel dictionaty {}");
-        ContentModelDictionary dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
+        logger.debug("loading contentModel dictionary {}");
+        IEntityModelDictionary dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
         return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);
     }
 

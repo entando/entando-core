@@ -18,6 +18,7 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -76,6 +77,26 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     @Override
     public AttributeTypeDto getAttributeType(String attributeCode) {
         return super.getAttributeType(SystemConstants.USER_PROFILE_MANAGER, attributeCode);
+    }
+
+    @Override
+    public EntityAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode) {
+        return super.getEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode);
+    }
+
+    @Override
+    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.addEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, bodyRequest, bindingResult);
+    }
+
+    @Override
+    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.updateEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, bodyRequest, bindingResult);
+    }
+
+    @Override
+    public void deleteUserProfileAttribute(String profileTypeCode, String attributeCode) {
+        super.deleteEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode);
     }
 
 }

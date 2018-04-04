@@ -88,6 +88,32 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
     }
 
     @Test
+    public void testAddInvalidProfileType() throws Exception {
+        Assert.assertNull(this.userProfileManager.getEntityPrototype("XXX"));
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String body1 = "{\"code\": \"XXX\", \"name\": \"\", \"attributes\": []}";
+        ResultActions result1 = mockMvc
+                .perform(post("/profileTypes")
+                        .content(body1)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result1.andExpect(status().isBadRequest());
+        result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result1.andExpect(jsonPath("$.errors[0].code", is("52")));
+
+        String body2 = "{\"code\": \"\", \"name\": \"Description\", \"attributes\": []}";
+        ResultActions result2 = mockMvc
+                .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
+                        .content(body2)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result2.andExpect(status().isBadRequest());
+        result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result2.andExpect(jsonPath("$.errors[0].code", is("52")));
+    }
+
+    @Test
     public void testAddUpdateUserProfileType_1() throws Exception {
         try {
             Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));

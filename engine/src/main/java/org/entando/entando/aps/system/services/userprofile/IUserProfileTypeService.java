@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.userprofile;
 
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -39,5 +40,14 @@ public interface IUserProfileTypeService {
     public PagedMetadata<String> getAttributeTypes(RestListRequest requestList);
 
     public AttributeTypeDto getAttributeType(String attributeCode);
+
+    // ----------------------------------
+    public EntityAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode);
+
+    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
+
+    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, String attributeCode, EntityAttributeFullDto request, BindingResult bindingResult);
+
+    public void deleteUserProfileAttribute(String profileTypeCode, String attributeCode);
 
 }

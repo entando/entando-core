@@ -374,6 +374,33 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return true;
     }
 
+    public EntityAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+        }
+        AttributeInterface attribute = (AttributeInterface) entityType.getAttribute(attributeCode);
+        if (null == attribute) {
+            logger.warn("no attribute found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Attribute", attributeCode);
+        }
+        return new EntityAttributeFullDto(attribute, entityManager.getAttributeRoles());
+    }
+
+    public EntityAttributeFullDto addEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        throw new RuntimeException("TODO!!!");
+    }
+
+    public EntityAttributeFullDto updateEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode, EntityAttributeFullDto request, BindingResult bindingResult) {
+        throw new RuntimeException("TODO!!!");
+    }
+
+    public void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+        throw new RuntimeException("TODO!!!");
+    }
+
     protected List<IEntityManager> getEntityManagers() {
         return entityManagers;
     }

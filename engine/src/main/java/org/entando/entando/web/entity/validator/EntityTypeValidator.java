@@ -29,9 +29,8 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
 
     public static final String ERRCODE_ENTITY_TYPE_ALREADY_EXISTS = "1";
 
-    public static final String ERRCODE_ENTITY_TYPE_CODE_REQUIRED = "2";
-    public static final String ERRCODE_ENTITY_TYPE_DESCR_REQUIRED = "3";
-
+    //public static final String ERRCODE_ENTITY_TYPE_CODE_REQUIRED = "2";
+    //public static final String ERRCODE_ENTITY_TYPE_DESCR_REQUIRED = "3";
     public static final String ERRCODE_URINAME_MISMATCH = "6";
     public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "7";
 
@@ -60,8 +59,8 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
 
     @Override
     public void validate(Object target, Errors errors) {
-        EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
-        this.validateBody(request, errors);
+        //EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
+        //this.validateBody(request, errors);
     }
 
     public int validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
@@ -73,9 +72,10 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
             errors.reject(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, new String[]{typeCode}, "entityType.notExists");
             return 404;
         }
-        return this.validateBody(request, errors);
+        return 0;//this.validateBody(request, errors);
     }
 
+    /*
     private int validateBody(EntityTypeDtoRequest request, Errors errors) {
         if (StringUtils.isBlank(request.getCode())) {
             errors.reject(ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
@@ -87,7 +87,7 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
         }
         return 0;
     }
-
+     */
     public boolean existType(String typeCode) {
         return (null != this.getEntityManager().getEntityPrototype(typeCode));
     }

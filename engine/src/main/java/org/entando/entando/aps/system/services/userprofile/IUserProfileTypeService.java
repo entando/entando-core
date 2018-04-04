@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.userprofile;
 
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -36,5 +37,7 @@ public interface IUserProfileTypeService {
     public void deleteUserProfileType(String profileTypeCode);
 
     public PagedMetadata<String> getAttributeTypes(RestListRequest requestList);
+
+    public AttributeTypeDto getAttributeType(String attributeCode);
 
 }

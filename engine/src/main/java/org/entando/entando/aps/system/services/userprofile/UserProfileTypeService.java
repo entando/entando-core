@@ -17,6 +17,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -70,6 +71,11 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     @Override
     public PagedMetadata<String> getAttributeTypes(RestListRequest requestList) {
         return super.getAttributeTypes(SystemConstants.USER_PROFILE_MANAGER, requestList);
+    }
+
+    @Override
+    public AttributeTypeDto getAttributeType(String attributeCode) {
+        return super.getAttributeType(SystemConstants.USER_PROFILE_MANAGER, attributeCode);
     }
 
 }

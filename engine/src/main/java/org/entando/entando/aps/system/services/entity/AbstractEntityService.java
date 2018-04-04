@@ -43,7 +43,8 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.entity.model.AttributeRoleDto;
+import org.entando.entando.aps.system.services.entity.model.AttributePropertyDto;
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
@@ -143,6 +144,16 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, attributeCodes.size());
         pagedMetadata.setBody(sublist);
         return pagedMetadata;
+    }
+
+    protected AttributeTypeDto getAttributeType(String entityManagerCode, String attributeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        AttributeInterface attribute = entityManager.getEntityAttributePrototypes().get(attributeCode);
+        if (null == attribute) {
+            logger.warn("no attribute type found with code {}", attributeCode);
+            throw new RestRourceNotFoundException("attribute", attributeCode);
+        }
+        return new AttributeTypeDto(attribute, entityManager);
     }
 
     protected O getFullEntityType(String entityManagerCode, String entityTypeCode) {
@@ -257,9 +268,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         attribute.setName(attributeDto.getCode());
         attribute.setDescription(attributeDto.getName());
         attribute.setIndexingType(attributeDto.isIndexable() ? IndexableAttributeInterface.INDEXING_TYPE_TEXT : null);
-        List<AttributeRoleDto> dtoRoles = attributeDto.getRoles();
+        List<AttributePropertyDto> dtoRoles = attributeDto.getRoles();
         if (null != dtoRoles && !dtoRoles.isEmpty()) {
-            List<String> codes = dtoRoles.stream().map(AttributeRoleDto::getCode).collect(Collectors.toList());
+            List<String> codes = dtoRoles.stream().map(AttributePropertyDto::getCode).collect(Collectors.toList());
             attribute.setRoles(codes.toArray(new String[codes.size()]));
         }
         attribute.setRequired(attributeDto.isMandatory());

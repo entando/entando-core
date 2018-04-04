@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.usersettings;
 
 import java.util.Map;
@@ -51,13 +64,12 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
         assertEquals("6", params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS));
         assertEquals("3", params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE));
 
-
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                                               get("/usersettings")
-                                                                   .header("Authorization", "Bearer " + accessToken));
+                get("/usersettings")
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
 
@@ -86,27 +98,26 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc.perform(
-                                                   get("/usersettings")
-                                                                       .header("Authorization", "Bearer " + accessToken));
+                    get("/usersettings")
+                    .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
             System.out.println(result.andReturn().getResponse().getContentAsString());
 
             result.andExpect(jsonPath("$.payload.restrictionsActive",
-                                      is(Boolean.parseBoolean(params.get(UserSettingsDto.EXTENDED_PRIVACY_MODULE_ENABLED)))));
+                    is(Boolean.parseBoolean(params.get(UserSettingsDto.EXTENDED_PRIVACY_MODULE_ENABLED)))));
 
             result.andExpect(jsonPath("$.payload.enableGravatarIntegration",
-                                      is(Boolean.parseBoolean(params.get(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED)))));
+                    is(Boolean.parseBoolean(params.get(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED)))));
 
             result.andExpect(jsonPath("$.payload.maxMonthsSinceLastAccess",
-                                      is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
+                    is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
 
             result.andExpect(jsonPath("$.payload.maxMonthsSinceLastPasswordChange",
-                                      is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE)))));
+                    is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE)))));
 
             //-------------
-
             UserSettingsRequest userSettingsRequest = new UserSettingsRequest();
             userSettingsRequest.setExtendedPrivacyModuleEnabled(true);
             userSettingsRequest.setGravatarIntegrationEnabled(true);
@@ -114,10 +125,10 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             userSettingsRequest.setMaxMonthsSinceLastPasswordChange(30);
 
             result = mockMvc.perform(
-                                     put("/usersettings")
-                                                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                         .content(mapper.writeValueAsString(userSettingsRequest))
-                                                         .header("Authorization", "Bearer " + accessToken));
+                    put("/usersettings")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(mapper.writeValueAsString(userSettingsRequest))
+                    .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
             System.out.println(result.andReturn().getResponse().getContentAsString());
@@ -128,8 +139,6 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             result.andExpect(jsonPath("$.payload.maxMonthsSinceLastPasswordChange", is(30)));
 
             //-------------
-
-
             userSettingsRequest = new UserSettingsRequest();
             userSettingsRequest.setExtendedPrivacyModuleEnabled(false);
             userSettingsRequest.setGravatarIntegrationEnabled(false);
@@ -137,10 +146,10 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             userSettingsRequest.setMaxMonthsSinceLastPasswordChange(3);
 
             result = mockMvc.perform(
-                                     put("/usersettings")
-                                                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                         .content(mapper.writeValueAsString(userSettingsRequest))
-                                                         .header("Authorization", "Bearer " + accessToken));
+                    put("/usersettings")
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(mapper.writeValueAsString(userSettingsRequest))
+                    .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 

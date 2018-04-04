@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -160,6 +161,15 @@ public class ProfileTypeController {
         logger.debug("Main Response -> {}", result);
         this.getProfileTypeValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypeAttributes/{attributeTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getUserProfileAttributeType(@PathVariable String attributeTypeCode) throws JsonProcessingException {
+        logger.debug("Extracting attribute type -> {}", attributeTypeCode);
+        AttributeTypeDto attribute = this.getUserProfileTypeService().getAttributeType(attributeTypeCode);
+        logger.debug("Main Response -> {}", attribute);
+        return new ResponseEntity<>(new RestResponse(attribute), HttpStatus.OK);
     }
 
 }

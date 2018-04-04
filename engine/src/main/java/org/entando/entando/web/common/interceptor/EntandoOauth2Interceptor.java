@@ -25,7 +25,6 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
-import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -70,11 +69,12 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
     protected void extractOAuthParameters(HttpServletRequest request, String permission) {
         try {
-            logger.info("Permission required: {}", permission);
+            logger.debug("Permission required: {}", permission);
             OAuthAccessResourceRequest requestMessage = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
 
             String accessToken = requestMessage.getAccessToken();
             if (StringUtils.isBlank(accessToken)) {
+                logger.warn("no access token found");
                 throw new EntandoTokenException("no access token found", request, null);
             }
 
@@ -94,9 +94,10 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
         UserDetails user = authenticationProviderManager.getUser(username);
         if (user != null) {
             request.getSession().setAttribute("user", user);
-            logger.info("User {} requesting resource that requires {} permission ", username, permission);
+            logger.debug("User {} requesting resource that requires {} permission ", username, permission);
             if (StringUtils.isNotBlank(permission)) {
                 if (!authorizationManager.isAuthOnPermission(user, permission)) {
+                    logger.warn("User {} is missing the required permission {}", username, permission);
                     throw new EntandoAuthorizationException(null, request, username);
                 }
             }

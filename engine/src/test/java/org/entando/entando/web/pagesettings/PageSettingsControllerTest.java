@@ -60,59 +60,42 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_load_the_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isOk());
     }
 
     @Test
     public void should_not_update_with_empty_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequestEmptyParams())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
+                .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isBadRequest());
     }
 
     @Test
     public void should_update_with_a_valid_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup("pageSettingsGroup")
-                .withAuthorization("pageSettingsGroup", "pageSessings", "pageSettings_read", "pageSettings_write")
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequest())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(convertObjectToJsonBytes(createMockRequest()))
-                        .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(convertObjectToJsonBytes(createMockRequest()))
+                .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isOk());
     }
 
@@ -125,12 +108,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
-
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
-        result.andExpect(status().isForbidden());
+        result.andExpect(status().isUnauthorized());
     }
 
     private PageSettingsDto createMockDto() {

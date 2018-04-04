@@ -23,6 +23,7 @@ import org.entando.entando.web.database.DatabaseControllerIntegrationTest;
 import org.entando.entando.web.database.DatabaseControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
+import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerIntegrationTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
@@ -53,6 +54,8 @@ import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
 import org.entando.entando.web.usersettings.UserSettigsControllerUnitTest;
 import org.entando.entando.web.usersettings.UserSettingsControllerIntegrationTest;
+import org.entando.entando.web.widget.WidgetControllerIntegrationTest;
+import org.entando.entando.web.widget.WidgetControllerTest;
 
 public class ControllersAllTests extends TestCase {
 
@@ -71,12 +74,16 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(GuiFragmentValidatorTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PageConfigurationControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(PageConfigurationControllerWidgetsIntegrationTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(WidgetControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(WidgetControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(EntityManagerControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(ReloadConfigurationControllerTest.class));

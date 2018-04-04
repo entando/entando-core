@@ -13,12 +13,13 @@
  */
 package org.entando.entando.web.widget;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.HashMap;
-import java.util.Map;
 import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -44,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WidgetController {
 
-    //TODO check permissions
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -61,7 +61,7 @@ public class WidgetController {
         return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = "widget_delete")
+    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
     public ResponseEntity<RestResponse> deleteWidget(@PathVariable String widgetCode) throws ApsSystemException {
         logger.info("deleting widget {}", widgetCode);

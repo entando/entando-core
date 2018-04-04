@@ -31,6 +31,8 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
 
     private IPageManager pageManager;
 
+    private String stockWidgetCodes;
+
     @Override
     protected WidgetDto toDto(WidgetType src) {
         WidgetDto dest = new WidgetDto();
@@ -48,9 +50,19 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
             throw new RestServerError("Error extracting utilizers for widget " + src.getCode(), e);
         }
         dest.setUsed(count);
-        dest.setPluginCode(src.getPluginCode());
+        String pluginCode = src.getPluginCode();
+        dest.setPluginCode(pluginCode);
         List<WidgetTypeParameter> params = src.getTypeParameters();
         dest.setHasConfig(null != params && params.size() > 0);
+        if (null != pluginCode && pluginCode.trim().length() > 0) {
+            dest.setTypology(pluginCode);
+        } else if (src.isUserType()) {
+            dest.setTypology(WidgetDto.USER_TYPOLOGY_CODE);
+        } else if (this.getStockWidgetCodes().contains(src.getCode())) {
+            dest.setTypology(WidgetDto.STOCK_TYPOLOGY_CODE);
+        } else {
+            dest.setTypology(WidgetDto.CUSTOM_TYPOLOGY_CODE);
+        }
         return dest;
     }
 
@@ -60,6 +72,14 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
 
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
+    }
+
+    protected String getStockWidgetCodes() {
+        return stockWidgetCodes;
+    }
+
+    public void setStockWidgetCodes(String stockWidgetCodes) {
+        this.stockWidgetCodes = stockWidgetCodes;
     }
 
 }

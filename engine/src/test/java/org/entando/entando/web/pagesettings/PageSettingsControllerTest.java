@@ -66,7 +66,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
     }
@@ -78,9 +78,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.updatePageSettings(createMockRequestEmptyParams())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
-                .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isBadRequest());
     }
@@ -92,9 +92,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.updatePageSettings(createMockRequest())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 put("/pageSettings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(createMockRequest()))
-                .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjectToJsonBytes(createMockRequest()))
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
     }
@@ -108,9 +108,9 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
     private PageSettingsDto createMockDto() {

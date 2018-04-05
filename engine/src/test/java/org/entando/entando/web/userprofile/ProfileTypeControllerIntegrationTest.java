@@ -317,7 +317,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result3.andExpect(jsonPath("$.payload.code", is("TextAttribute")));
             result3.andExpect(jsonPath("$.payload.type", is("Text")));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
-            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+            result3.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result3.andExpect(jsonPath("$.metaData.profileTypeCode", is("TST")));
 
         } finally {
             if (null != this.userProfileManager.getEntityPrototype("TST")) {
@@ -363,7 +364,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result5.andExpect(jsonPath("$.payload.code", is("added_mt")));
             result5.andExpect(jsonPath("$.payload.roles", Matchers.hasSize(1)));
             result5.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
-            result5.andExpect(jsonPath("$.metaData.size()", is(0)));
+            result5.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result5.andExpect(jsonPath("$.metaData.profileTypeCode", is(typeCode)));
 
             IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
             Assert.assertEquals(4, profileType.getAttributeList().size());
@@ -384,7 +386,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
 
-            ResultActions result1 = this.executeProfileAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isBadRequest());
+            ResultActions result1 = this.executeProfileAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result1.andExpect(jsonPath("$.errors[0].code", is("15")));
@@ -396,7 +398,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result2.andExpect(jsonPath("$.errors[0].code", is("16")));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result3 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isBadRequest());
+            ResultActions result3 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isConflict());
             result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result3.andExpect(jsonPath("$.errors[0].code", is("6")));
@@ -405,7 +407,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             ResultActions result4 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "list", accessToken, status().isOk());
             result4.andExpect(jsonPath("$.payload.code", is("list")));
             result4.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
-            result4.andExpect(jsonPath("$.metaData.size()", is(0)));
+            result4.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result4.andExpect(jsonPath("$.metaData.profileTypeCode", is(typeCode)));
 
             IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
             Assert.assertEquals(4, profileType.getAttributeList().size());

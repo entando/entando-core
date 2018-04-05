@@ -437,6 +437,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         if (null == oldAttribute) {
             this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
                     bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.notExists");
+            throw new RestRourceNotFoundException(bindingResult);
         } else if (!oldAttribute.getType().equals(bodyRequest.getType())) {
             this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH,
                     bindingResult, new String[]{entityTypeCode,
@@ -463,7 +464,22 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     }
 
     public void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
-        throw new RuntimeException("TODO!!!");
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+        }
+        if (!entityType.getAttributeMap().containsKey(attributeCode)) {
+            return;
+        }
+        try {
+            entityType.getAttributeMap().remove(attributeCode);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
     }
 
     protected List<IEntityManager> getEntityManagers() {

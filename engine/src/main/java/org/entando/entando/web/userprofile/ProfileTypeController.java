@@ -192,7 +192,9 @@ POST /profileTypes/refresh/
         logger.debug("Requested profile type {} - attribute {}", profileTypeCode, attributeCode);
         EntityAttributeFullDto dto = this.getUserProfileTypeService().getUserProfileAttribute(profileTypeCode, attributeCode);
         logger.debug("Main Response -> {}", dto);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("profileTypeCode", profileTypeCode);
+        return new ResponseEntity<>(new RestResponse(dto, null, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -208,7 +210,9 @@ POST /profileTypes/refresh/
             throw new ValidationGenericException(bindingResult);
         }
         logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("profileTypeCode", profileTypeCode);
+        return new ResponseEntity<>(new RestResponse(result, null, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -220,27 +224,27 @@ POST /profileTypes/refresh/
             throw new ValidationGenericException(bindingResult);
         } else if (!StringUtils.equals(attributeCode, bodyRequest.getCode())) {
             bindingResult.rejectValue("code", ProfileTypeValidator.ERRCODE_URINAME_MISMATCH, new String[]{attributeCode, bodyRequest.getCode()}, "entityType.attribute.code.mismatch");
-            throw new ValidationGenericException(bindingResult);
+            throw new ValidationConflictException(bindingResult);
         }
         EntityAttributeFullDto result = this.getUserProfileTypeService().updateUserProfileAttribute(profileTypeCode, bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        Map<String, String> metadata = new HashMap<>();
+        metadata.put("profileTypeCode", profileTypeCode);
+        return new ResponseEntity<>(new RestResponse(result, null, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteUserProfileAttribute(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
-        /*
-        logger.debug("Deleting profile type -> {}", profileTypeCode);
-        this.getUserProfileTypeService().deleteUserProfileType(profileTypeCode);
+        logger.debug("Deleting attribute {} from profile type {}", attributeCode, profileTypeCode);
+        this.getUserProfileTypeService().deleteUserProfileAttribute(profileTypeCode, attributeCode);
         Map<String, String> result = new HashMap<>();
-        result.put("code", profileTypeCode);
+        result.put("profileTypeCode", profileTypeCode);
+        result.put("attributeCode", attributeCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
-         */
-        throw new RuntimeException("TODO");
     }
 
 }

@@ -431,7 +431,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
             logger.warn("no type found with code {}", entityTypeCode);
-            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
         }
         AttributeInterface oldAttribute = (AttributeInterface) entityType.getAttribute(bodyRequest.getCode());
         if (null == oldAttribute) {
@@ -468,12 +468,20 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
             logger.warn("no type found with code {}", entityTypeCode);
-            throw new RestRourceNotFoundException("Type Code", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
         }
         if (!entityType.getAttributeMap().containsKey(attributeCode)) {
             return;
         }
         try {
+            List<AttributeInterface> attributes = entityType.getAttributeList();
+            for (int i = 0; i < attributes.size(); i++) {
+                AttributeInterface old = attributes.get(i);
+                if (old.getName().equals(attributeCode)) {
+                    attributes.remove(i);
+                    break;
+                }
+            }
             entityType.getAttributeMap().remove(attributeCode);
             ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
         } catch (Throwable e) {

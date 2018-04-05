@@ -419,6 +419,50 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         }
     }
 
+    @Test
+    public void testDeleteUserProfileAttribute() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, profileType.getAttributeList().size());
+            Assert.assertNotNull(profileType.getAttribute("list"));
+
+            ResultActions result1 = this.executeProfileAttributeDelete("wrongCode", "list_wrong", accessToken, status().isNotFound());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.errors[0].code", is("1")));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = this.executeProfileAttributeDelete(typeCode, "list_wrong", accessToken, status().isOk());
+            result2.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            result2.andExpect(jsonPath("$.payload.attributeCode", is("list_wrong")));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, profileType.getAttributeList().size());
+
+            ResultActions result3 = this.executeProfileAttributeDelete(typeCode, "list", accessToken, status().isOk());
+            result3.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            result3.andExpect(jsonPath("$.payload.attributeCode", is("list")));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(2, profileType.getAttributeList().size());
+            Assert.assertNull(profileType.getAttribute("list"));
+        } finally {
+            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            }
+        }
+    }
+
     private ResultActions executeProfileAttributePost(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
         InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
         String jsonPostValid = FileTextReader.getText(isJsonPostValid);
@@ -432,12 +476,21 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
     }
 
     private ResultActions executeProfileAttributePut(String fileName, String typeCode, String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
-        InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
-        String jsonPutValid = FileTextReader.getText(isJsonPostValid);
+        InputStream isJsonPutValid = this.getClass().getResourceAsStream(fileName);
+        String jsonPutValid = FileTextReader.getText(isJsonPutValid);
         ResultActions result = mockMvc
                 .perform(put("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .content(jsonPutValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeProfileAttributeDelete(String typeCode,
+            String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(delete("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;

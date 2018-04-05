@@ -22,8 +22,11 @@ import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -35,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.validation.BindingResult;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ProfileTypeControllerTest extends AbstractControllerTest {
 
@@ -85,6 +89,23 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                         .header("Authorization", "Bearer " + accessToken));
         Mockito.verify(userProfileTypeService, Mockito.times(1)).addUserProfileType(any(ProfileTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testReloadReferences() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{"TST"})
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        Mockito.verify(userProfileTypeService, Mockito.times(1)).reloadProfileTypeReferences(ArgumentMatchers.anyString());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.profileTypeCode", is("TST")));
+        result.andExpect(jsonPath("$.payload.status", is("success")));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
     }
 
 }

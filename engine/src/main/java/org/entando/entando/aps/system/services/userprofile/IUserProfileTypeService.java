@@ -50,4 +50,6 @@ public interface IUserProfileTypeService {
 
     public void deleteUserProfileAttribute(String profileTypeCode, String attributeCode);
 
+    public void reloadProfileTypeReferences(String profileTypeCode);
+
 }

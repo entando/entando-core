@@ -174,18 +174,6 @@ public class ProfileTypeController {
         return new ResponseEntity<>(new RestResponse(attribute), HttpStatus.OK);
     }
 
-    // ********************* ATTRIBUTEs *********************
-    /*
-GET  /profileTypes/<profileTypeCode>/attribute/<attributeCode>
-POST /profileTypes/<profileTypeCode>/attribute/
-PUT  /profileTypes/<profileTypeCode>/attribute/<attributeCode>
-DELETE /profileTypes/<profileTypeCode>/attribute/<attributeCode>
-
--> RELOAD
-
-POST /profileTypes/refresh/<profileTypeCode>
-POST /profileTypes/refresh/
-     */
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileAttribute(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws JsonProcessingException {
@@ -244,6 +232,18 @@ POST /profileTypes/refresh/
         Map<String, String> result = new HashMap<>();
         result.put("profileTypeCode", profileTypeCode);
         result.put("attributeCode", attributeCode);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypes/refresh/{profileTypeCode}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> reloadReferences(@PathVariable String profileTypeCode) throws Throwable {
+        logger.debug("reload references of profile type {}", profileTypeCode);
+        this.getUserProfileTypeService().reloadProfileTypeReferences(profileTypeCode);
+        Map<String, String> result = new HashMap<>();
+        result.put("status", "success");
+        result.put("profileTypeCode", profileTypeCode);
+        logger.debug("started reload references of profile type {}", profileTypeCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 

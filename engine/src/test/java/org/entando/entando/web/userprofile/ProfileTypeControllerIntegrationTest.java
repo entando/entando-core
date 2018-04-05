@@ -34,12 +34,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProfileTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -494,6 +494,46 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
+    }
+
+    @Test
+    public void testRefreshUserProfileType() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("XXX"));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            Assert.assertNotNull(this.userProfileManager.getEntityPrototype(typeCode));
+
+            ResultActions result1 = mockMvc
+                    .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{typeCode})
+                            .content("{}")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isOk());
+            result1.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            result1.andExpect(jsonPath("$.payload.status", is("success")));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = mockMvc
+                    .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{"XXX"})
+                            .content("{}")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isNotFound());
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+            String x = result2.andReturn().getResponse().getContentAsString();
+            System.out.println(x);
+        } finally {
+            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            }
+        }
     }
 
 }

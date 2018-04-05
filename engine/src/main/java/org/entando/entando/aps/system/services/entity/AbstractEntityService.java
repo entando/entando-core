@@ -425,7 +425,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return result;
     }
 
-    public EntityAttributeFullDto updateEntityAttribute(String entityManagerCode,
+    protected EntityAttributeFullDto updateEntityAttribute(String entityManagerCode,
             String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
@@ -463,7 +463,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return result;
     }
 
-    public void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+    protected void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -488,6 +488,16 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             logger.error("Error updating entity type", e);
             throw new RestServerError("error updating entity type", e);
         }
+    }
+
+    protected void reloadEntityTypeReferences(String entityManagerCode, String entityTypeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        entityManager.reloadEntitiesReferences(entityTypeCode);
     }
 
     protected List<IEntityManager> getEntityManagers() {

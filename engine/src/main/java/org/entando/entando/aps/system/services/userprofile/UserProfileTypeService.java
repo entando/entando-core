@@ -99,4 +99,9 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
         super.deleteEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode);
     }
 
+    @Override
+    public void reloadProfileTypeReferences(String profileTypeCode) {
+        super.reloadEntityTypeReferences(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
+    }
+
 }

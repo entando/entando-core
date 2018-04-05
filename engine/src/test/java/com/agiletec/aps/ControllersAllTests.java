@@ -23,6 +23,7 @@ import org.entando.entando.web.database.DatabaseControllerIntegrationTest;
 import org.entando.entando.web.database.DatabaseControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
+import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerIntegrationTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
@@ -73,6 +74,7 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(GuiFragmentValidatorTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(DataObjectModelControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PageModelControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageModelControllerIntegrationTest.class));

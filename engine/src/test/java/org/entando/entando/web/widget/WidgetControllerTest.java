@@ -30,12 +30,13 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.Matchers.any;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -48,7 +49,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
     @Mock
     private WidgetService widgetService;
 
-    @Mock
+    @Spy
     private WidgetValidator widgetValidator;
 
     @InjectMocks
@@ -70,7 +71,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets/1")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
@@ -85,7 +86,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -99,7 +100,7 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 delete("/widgets/1")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -114,9 +115,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 post("/widgets")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(createMockRequest()))
-                .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjectToJsonBytes(createMockRequest()))
+                        .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(status().isOk());
@@ -131,9 +132,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 put("/widgets/test")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(convertObjectToJsonBytes(createMockRequest()))
-                .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(convertObjectToJsonBytes(createMockRequest()))
+                        .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
         assertNotNull(response);
@@ -147,11 +148,11 @@ public class WidgetControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(
                 get("/widgets")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
     private WidgetRequest createMockRequest() {

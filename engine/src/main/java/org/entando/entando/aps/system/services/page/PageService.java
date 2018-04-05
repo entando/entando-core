@@ -71,7 +71,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final String ERRCODE_PAGE_NOT_FOUND = "1";
-    private static final String ERRCODE_RESOURCE_NOT_FOUND = "2";
+    private static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
+    private static final String ERRCODE_GROUP_NOT_FOUND = "2";
+    private static final String ERRCODE_PARENT_NOT_FOUND = "3";
     private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
     private static final String ERRCODE_FRAME_INVALID = "3";
     private static final String ERRCODE_WIDGET_INVALID = "4";
@@ -181,8 +183,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     public PageDto getPage(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
-            logger.warn("no page found with code {}", pageCode);
-            throw new RestRourceNotFoundException(null, "page", pageCode);
+            logger.warn("no page found with code {} and status {}", pageCode, status);
+            DataBinder binder = new DataBinder(pageCode);
+            BindingResult bindingResult = binder.getBindingResult();
+            String errorCode = status.equals(STATUS_DRAFT) ? ERRCODE_PAGE_NOT_FOUND : ERRCODE_PAGE_ONLY_DRAFT;
+            bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.NotFound");
+            throw new RestRourceNotFoundException(bindingResult);
         }
         return this.getDtoBuilder().convert(page);
     }
@@ -223,7 +229,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
-            return this.getDtoBuilder().convert(newPage);
+            PageDto page = this.getDtoBuilder().convert(newPage);
+            page.setPosition(oldPage.getPosition());
+            return page;
         } catch (ApsSystemException e) {
             logger.error("Error updating page {}", pageCode, e);
             throw new RestServerError("error in update page", e);
@@ -489,17 +497,17 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
 
     private void validateRequest(PageRequest request) {
         if (this.getPageModelManager().getPageModel(request.getPageModel()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "pageModel", request.getPageModel());
+            throw new RestRourceNotFoundException(ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", request.getPageModel());
         }
         if (this.getPageManager().getDraftPage(request.getParentCode()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "parent", request.getParentCode());
+            throw new RestRourceNotFoundException(ERRCODE_PARENT_NOT_FOUND, "parent", request.getParentCode());
         }
         if (this.getGroupManager().getGroup(request.getOwnerGroup()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "group", request.getOwnerGroup());
+            throw new RestRourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "group", request.getOwnerGroup());
         }
         Optional.ofNullable(request.getJoinGroups()).ifPresent(groups -> groups.forEach(group -> {
             if (this.getGroupManager().getGroup(group) == null) {
-                throw new RestRourceNotFoundException(ERRCODE_RESOURCE_NOT_FOUND, "joingroup", group);
+                throw new RestRourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "joingroup", group);
             }
         }));
     }

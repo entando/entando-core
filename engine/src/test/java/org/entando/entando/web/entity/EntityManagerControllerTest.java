@@ -64,9 +64,9 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         when(this.entityManagerService.getEntityManagers(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
         ResultActions result = mockMvc.perform(
                 get("/entityManagers")
-                .param("page", "1")
-                .param("pageSize", "4")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("page", "1")
+                        .param("pageSize", "4")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -82,10 +82,10 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         when(this.entityManagerService.getEntityManagers(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
         ResultActions result = mockMvc.perform(
                 get("/entityManagers").param("page", "1")
-                .param("pageSize", "4")
-                .param("filter[0].attribute", "code")
-                .param("filter[0].value", "UserProfileManager")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("pageSize", "4")
+                        .param("filter[0].attribute", "code")
+                        .param("filter[0].value", "UserProfileManager")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -105,7 +105,7 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         );
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
 }

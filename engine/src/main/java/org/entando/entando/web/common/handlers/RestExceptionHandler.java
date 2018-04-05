@@ -23,6 +23,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.EntandoTokenException;
+import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.exceptions.ValidationUpdateSelfException;
@@ -43,6 +44,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.client.ResourceAccessException;
 
 @ControllerAdvice
 public class RestExceptionHandler {
@@ -75,7 +77,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(value = EntandoAuthorizationException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
     public RestResponse processEntandoAuthorizationException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
@@ -88,12 +90,25 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler(value = EntandoTokenException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public RestResponse processEntandoTokenException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED", new Object[]{ex.getUsername(), ex.getRequestURI(), ex.getMethod()}));
+        List<RestError> errors = new ArrayList<>();
+        errors.add(error);
+        response.setErrors(errors);
+        return response;
+    }
+
+    @ExceptionHandler(value = ResourcePermissionsException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public RestResponse processEntandoTokenException(ResourcePermissionsException ex) {
+        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        RestResponse response = new RestResponse();
+        RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED_ON_RESOURCE", new Object[]{ex.getUsername(), ex.getResource()}));
         List<RestError> errors = new ArrayList<>();
         errors.add(error);
         response.setErrors(errors);

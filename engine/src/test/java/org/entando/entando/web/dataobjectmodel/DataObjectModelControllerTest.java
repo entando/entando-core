@@ -73,8 +73,8 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         when(dataObjectModelService.getDataObjectModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<DataModelDto>());
         ResultActions result = mockMvc.perform(
                 get("/dataModels").param("page", "1")
-                .param("pageSize", "4")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("pageSize", "4")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -91,10 +91,10 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         when(dataObjectModelService.getDataObjectModels(any(RestListRequest.class))).thenReturn(new PagedMetadata<DataModelDto>());
         ResultActions result = mockMvc.perform(
                 get("/dataModels").param("page", "1")
-                .param("pageSize", "4")
-                .param("filter[0].attribute", "code")
-                .param("filter[0].value", "1")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("pageSize", "4")
+                        .param("filter[0].attribute", "code")
+                        .param("filter[0].value", "1")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -112,11 +112,11 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(
                 get("/dataModels")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         //String response = result.andReturn().getResponse().getContentAsString();
         //System.out.println(response);
-        result.andExpect(status().isUnauthorized());
+        result.andExpect(status().isForbidden());
     }
 
     @Test

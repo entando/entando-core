@@ -25,6 +25,7 @@ import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -58,9 +59,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RestController
 @SessionAttributes("user")
 public class PageController {
-
+    
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
     public static final String ERRCODE_ONLINE_PAGE = "1";
@@ -70,40 +71,40 @@ public class PageController {
     public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
     public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "1";
     public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "2";
-
+    
     @Autowired
     private IPageService pageService;
-
+    
     @Autowired
     private PageValidator pageValidator;
-
+    
     @Autowired
     private PageAuthorizationService authorizationService;
-
+    
     public IPageService getPageService() {
         return pageService;
     }
-
+    
     public void setPageService(IPageService pageService) {
         this.pageService = pageService;
     }
-
+    
     public PageValidator getPageValidator() {
         return pageValidator;
     }
-
+    
     public void setPageValidator(PageValidator pageValidator) {
         this.pageValidator = pageValidator;
     }
-
+    
     public PageAuthorizationService getAuthorizationService() {
         return authorizationService;
     }
-
+    
     public void setAuthorizationService(PageAuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getPages(@ModelAttribute("user") UserDetails user, @RequestParam(value = "parentCode", required = false, defaultValue = "homepage") String parentCode) {
@@ -113,7 +114,7 @@ public class PageController {
         metadata.put("parentCode", parentCode);
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getPages(@ModelAttribute("user") UserDetails user, PageSearchRequest searchRequest) {
@@ -135,14 +136,14 @@ public class PageController {
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
         logger.debug("updating page {} with request {}", pageCode, pageRequest);
-
+        
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse(new PageDto()), HttpStatus.UNAUTHORIZED);
+            throw new ResourcePermissionsException(bindingResult, user.getUsername(), pageCode);
         }
         //field validations
         if (bindingResult.hasErrors()) {
@@ -152,12 +153,12 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
+        
         PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
@@ -173,13 +174,13 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
+        
         PageDto page = this.getPageService().updatePageStatus(pageCode, pageStatusRequest.getStatus());
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", pageStatusRequest.getStatus());
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addPage(@ModelAttribute("user") UserDetails user, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
@@ -197,7 +198,7 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deletePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode) throws ApsSystemException {
@@ -227,7 +228,7 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(payload, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PagePositionRequest pageRequest, BindingResult bindingResult) {
@@ -255,5 +256,5 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
 }

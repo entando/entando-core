@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -134,7 +135,7 @@ public class LabelService implements ILabelService {
         try {
             BeanPropertyBindingResult validationResult = this.validateAddLabelGroup(labelRequest);
             if (validationResult.hasErrors()) {
-                throw new ValidationGenericException(validationResult);
+                throw new ValidationConflictException(validationResult);
             }
             String code = labelRequest.getKey();
             ApsProperties languages = new ApsProperties();

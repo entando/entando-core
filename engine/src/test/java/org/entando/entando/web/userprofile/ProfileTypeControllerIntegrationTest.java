@@ -374,6 +374,48 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         }
     }
 
+    @Test
+    public void testUpdateUserProfileAttribute() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+
+            ResultActions result1 = this.executeProfileAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isBadRequest());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.errors[0].code", is("15")));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = this.executeProfileAttributePut("4_PUT_attribute_invalid_2.json", typeCode, "list", accessToken, status().isBadRequest());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.errors[0].code", is("16")));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result3 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isBadRequest());
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result3.andExpect(jsonPath("$.errors[0].code", is("6")));
+            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result4 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "list", accessToken, status().isOk());
+            result4.andExpect(jsonPath("$.payload.code", is("list")));
+            result4.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result4.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(4, profileType.getAttributeList().size());
+        } finally {
+            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            }
+        }
+    }
+
     private ResultActions executeProfileAttributePost(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
         InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
         String jsonPostValid = FileTextReader.getText(isJsonPostValid);

@@ -1,0 +1,22 @@
+{
+    "code": "list_wrong",
+    "type": "Monolist",
+    "name": "LIST Description",
+    "roles": [],
+    "mandatory": false,
+    "listFilter": false,
+    "indexable": false,
+    "enumeratorStaticItems": null,
+    "enumeratorStaticItemsSeparator": null,
+    "enumeratorExtractorBean": null,
+    "validationRules": null,
+    "nestedAttribute": {
+        "code": "list",
+        "type": "Text",
+        "name": null,
+        "roles": [],
+        "mandatory": false,
+        "listFilter": false
+    },
+    "compositeAttributes": null
+}

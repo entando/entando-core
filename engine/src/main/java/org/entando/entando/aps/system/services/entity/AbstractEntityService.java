@@ -437,7 +437,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         if (null == oldAttribute) {
             this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
                     bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.notExists");
-        } else if (oldAttribute.getType().equals(bodyRequest.getType())) {
+        } else if (!oldAttribute.getType().equals(bodyRequest.getType())) {
             this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH,
                     bindingResult, new String[]{entityTypeCode,
                         bodyRequest.getCode(), oldAttribute.getType(), bodyRequest.getType()}, "entityType.attribute.typeMismatch");

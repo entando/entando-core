@@ -204,7 +204,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/configuration/applyDefaultWidgets", new Object[]{pageCode})
+                            .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
                                                                                                                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                                                        .header("Authorization", "Bearer " + accessToken));
 

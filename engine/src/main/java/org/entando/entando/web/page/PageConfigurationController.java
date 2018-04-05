@@ -101,14 +101,14 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/restore", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageConfiguration(@PathVariable String pageCode) {
-        logger.debug("resotre configuration on page {}", pageCode);
+        logger.debug("restore configuration on page {}", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().restorePageConfiguration(pageCode);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(pageConfiguration, null, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/pages/{pageCode}/configuration/applyDefaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/pages/{pageCode}/configuration/defaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {
         logger.debug("applying default widgets on page {}", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().applyDefaultWidgets(pageCode);

@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-
 public class PageConfigurationController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -102,8 +101,17 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/restore", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageConfiguration(@PathVariable String pageCode) {
-        logger.debug("requested {} configuration", pageCode);
+        logger.debug("restore configuration on page {}", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().restorePageConfiguration(pageCode);
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(pageConfiguration, null, metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/configuration/defaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {
+        logger.debug("applying default widgets on page {}", pageCode);
+        PageConfigurationDto pageConfiguration = this.getPageService().applyDefaultWidgets(pageCode);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(pageConfiguration, null, metadata), HttpStatus.OK);
     }

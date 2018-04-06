@@ -14,6 +14,7 @@
 package org.entando.entando.web.dataobject;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
@@ -257,19 +258,19 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.metaData.size()", is(0)));
     }
-    /*
+
     // ------------------------------------
     @Test
-    public void testGetUserProfileAttribute() throws Exception {
+    public void testGetDataTypeAttribute() throws Exception {
         try {
-            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
 
             ResultActions result1 = mockMvc
-                    .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"XXX", "TextAttribute"})
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"XXX", "TextAttribute"})
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
@@ -277,7 +278,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             result1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             ResultActions result2 = mockMvc
-                    .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "WrongCpde"})
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "WrongCpde"})
                             .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isNotFound());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
@@ -285,163 +286,163 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             ResultActions result3 = mockMvc
-                    .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "TextAttribute"})
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "TextAttribute"})
                             .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isOk());
             result3.andExpect(jsonPath("$.payload.code", is("TextAttribute")));
             result3.andExpect(jsonPath("$.payload.type", is("Text")));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result3.andExpect(jsonPath("$.metaData.size()", is(1)));
-            result3.andExpect(jsonPath("$.metaData.profileTypeCode", is("TST")));
+            result3.andExpect(jsonPath("$.metaData.dataTypeCode", is("TST")));
 
         } finally {
-            if (null != this.userProfileManager.getEntityPrototype("TST")) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("TST");
+            if (null != this.dataObjectManager.getEntityPrototype("TST")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
             }
         }
     }
 
     @Test
-    public void testAddUserProfileAttribute() throws Exception {
+    public void testAddDataTypeAttribute() throws Exception {
         String typeCode = "TST";
         try {
-            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
 
-            ResultActions result1 = this.executeProfileAttributePost("3_POST_attribute_invalid_1.json", typeCode, accessToken, status().isConflict());
+            ResultActions result1 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_1.json", typeCode, accessToken, status().isConflict());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result1.andExpect(jsonPath("$.errors[0].code", is("14")));
             result1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result2 = this.executeProfileAttributePost("3_POST_attribute_invalid_2.json", typeCode, accessToken, status().isBadRequest());
+            ResultActions result2 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_2.json", typeCode, accessToken, status().isBadRequest());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.errors[0].code", is("53")));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result3 = this.executeProfileAttributePost("3_POST_attribute_invalid_3.json", typeCode, accessToken, status().isBadRequest());
+            ResultActions result3 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_3.json", typeCode, accessToken, status().isBadRequest());
             result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result3.andExpect(jsonPath("$.errors[0].code", is("13")));
             result3.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result4 = this.executeProfileAttributePost("3_POST_attribute_invalid_4.json", typeCode, accessToken, status().isBadRequest());
+            ResultActions result4 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_4.json", typeCode, accessToken, status().isBadRequest());
             result4.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result4.andExpect(jsonPath("$.errors", Matchers.hasSize(2)));
             result4.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result5 = this.executeProfileAttributePost("3_POST_attribute_valid.json", typeCode, accessToken, status().isOk());
+            ResultActions result5 = this.executeDataTypeAttributePost("3_POST_attribute_valid.json", typeCode, accessToken, status().isOk());
             result5.andExpect(jsonPath("$.payload.code", is("added_mt")));
             result5.andExpect(jsonPath("$.payload.roles", Matchers.hasSize(1)));
             result5.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result5.andExpect(jsonPath("$.metaData.size()", is(1)));
-            result5.andExpect(jsonPath("$.metaData.profileTypeCode", is(typeCode)));
+            result5.andExpect(jsonPath("$.metaData.dataTypeCode", is(typeCode)));
 
-            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(4, profileType.getAttributeList().size());
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(4, dataType.getAttributeList().size());
         } finally {
-            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
             }
         }
     }
 
     @Test
-    public void testUpdateUserProfileAttribute() throws Exception {
+    public void testUpdateDataTypeAttribute() throws Exception {
         String typeCode = "TST";
         try {
-            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
 
-            ResultActions result1 = this.executeProfileAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
+            ResultActions result1 = this.executeDataTypeAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result1.andExpect(jsonPath("$.errors[0].code", is("15")));
             result1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result2 = this.executeProfileAttributePut("4_PUT_attribute_invalid_2.json", typeCode, "list", accessToken, status().isBadRequest());
+            ResultActions result2 = this.executeDataTypeAttributePut("4_PUT_attribute_invalid_2.json", typeCode, "list", accessToken, status().isBadRequest());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.errors[0].code", is("16")));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result3 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isConflict());
+            ResultActions result3 = this.executeDataTypeAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isConflict());
             result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result3.andExpect(jsonPath("$.errors[0].code", is("6")));
             result3.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result4 = this.executeProfileAttributePut("4_PUT_attribute_valid.json", typeCode, "list", accessToken, status().isOk());
+            ResultActions result4 = this.executeDataTypeAttributePut("4_PUT_attribute_valid.json", typeCode, "list", accessToken, status().isOk());
             result4.andExpect(jsonPath("$.payload.code", is("list")));
             result4.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result4.andExpect(jsonPath("$.metaData.size()", is(1)));
-            result4.andExpect(jsonPath("$.metaData.profileTypeCode", is(typeCode)));
+            result4.andExpect(jsonPath("$.metaData.dataTypeCode", is(typeCode)));
 
-            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(4, profileType.getAttributeList().size());
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(4, dataType.getAttributeList().size());
         } finally {
-            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
             }
         }
     }
 
     @Test
-    public void testDeleteUserProfileAttribute() throws Exception {
+    public void testDeleteDataAttribute() throws Exception {
         String typeCode = "TST";
         try {
-            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
-            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(3, profileType.getAttributeList().size());
-            Assert.assertNotNull(profileType.getAttribute("list"));
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
+            Assert.assertNotNull(dataType.getAttribute("list"));
 
-            ResultActions result1 = this.executeProfileAttributeDelete("wrongCode", "list_wrong", accessToken, status().isNotFound());
+            ResultActions result1 = this.executeDataTypeAttributeDelete("wrongCode", "list_wrong", accessToken, status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result1.andExpect(jsonPath("$.errors[0].code", is("1")));
             result1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            ResultActions result2 = this.executeProfileAttributeDelete(typeCode, "list_wrong", accessToken, status().isOk());
-            result2.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            ResultActions result2 = this.executeDataTypeAttributeDelete(typeCode, "list_wrong", accessToken, status().isOk());
+            result2.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
             result2.andExpect(jsonPath("$.payload.attributeCode", is("list_wrong")));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(3, profileType.getAttributeList().size());
+            dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
 
-            ResultActions result3 = this.executeProfileAttributeDelete(typeCode, "list", accessToken, status().isOk());
-            result3.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            ResultActions result3 = this.executeDataTypeAttributeDelete(typeCode, "list", accessToken, status().isOk());
+            result3.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
             result3.andExpect(jsonPath("$.payload.attributeCode", is("list")));
             result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result3.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(2, profileType.getAttributeList().size());
-            Assert.assertNull(profileType.getAttribute("list"));
+            dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(2, dataType.getAttributeList().size());
+            Assert.assertNull(dataType.getAttribute("list"));
         } finally {
-            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
             }
         }
     }
 
-    private ResultActions executeProfileAttributePost(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
+    private ResultActions executeDataTypeAttributePost(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
         InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
         String jsonPostValid = FileTextReader.getText(isJsonPostValid);
         ResultActions result = mockMvc
-                .perform(post("/profileTypes/{profileTypeCode}/attribute", new Object[]{typeCode})
+                .perform(post("/dataTypes/{dataTypeCode}/attribute", new Object[]{typeCode})
                         .content(jsonPostValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
@@ -449,11 +450,11 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         return result;
     }
 
-    private ResultActions executeProfileAttributePut(String fileName, String typeCode, String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
+    private ResultActions executeDataTypeAttributePut(String fileName, String typeCode, String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
         InputStream isJsonPutValid = this.getClass().getResourceAsStream(fileName);
         String jsonPutValid = FileTextReader.getText(isJsonPutValid);
         ResultActions result = mockMvc
-                .perform(put("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
+                .perform(put("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .content(jsonPutValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
@@ -461,40 +462,40 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         return result;
     }
 
-    private ResultActions executeProfileAttributeDelete(String typeCode,
+    private ResultActions executeDataTypeAttributeDelete(String typeCode,
             String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
-                .perform(delete("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
+                .perform(delete("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
 
     @Test
-    public void testRefreshUserProfileType() throws Exception {
+    public void testRefreshDataTypeType() throws Exception {
         String typeCode = "TST";
         try {
-            Assert.assertNull(this.userProfileManager.getEntityPrototype(typeCode));
-            Assert.assertNull(this.userProfileManager.getEntityPrototype("XXX"));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("XXX"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
-            Assert.assertNotNull(this.userProfileManager.getEntityPrototype(typeCode));
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            Assert.assertNotNull(this.dataObjectManager.getEntityPrototype(typeCode));
 
             ResultActions result1 = mockMvc
-                    .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{typeCode})
+                    .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{typeCode})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
-            result1.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
+            result1.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
             result1.andExpect(jsonPath("$.payload.status", is("success")));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             ResultActions result2 = mockMvc
-                    .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{"XXX"})
+                    .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{"XXX"})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
@@ -504,10 +505,10 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             String x = result2.andReturn().getResponse().getContentAsString();
             System.out.println(x);
         } finally {
-            if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
-                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
             }
         }
     }
-     */
+
 }

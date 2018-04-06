@@ -55,7 +55,6 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
                                                                                                .content(payload)
                                                                                                .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                                .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
     }
 

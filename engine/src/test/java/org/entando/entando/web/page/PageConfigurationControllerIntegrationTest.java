@@ -1,18 +1,24 @@
 package org.entando.entando.web.page;
 
+import java.util.Map;
+
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageTestUtil;
 import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,7 +40,12 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     private IPageManager pageManager;
 
     @Autowired
+    private IPageModelManager pageModelManager;
+
+    @Autowired
     private IWidgetTypeManager widgetTypeManager;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testPageConfiguration() throws Exception {
@@ -80,7 +91,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     public void testGetPageConfigurationOnLineNotFound() throws Exception {
         String pageCode = "draft_page_100";
         try {
-            Page mockPage = createPage(pageCode);
+            Page mockPage = createPage(pageCode, null);
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));
@@ -113,7 +124,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     public void testPutPageConfiguration() throws Exception {
         String pageCode = "draft_page_100";
         try {
-            Page mockPage = createPage(pageCode);
+            Page mockPage = createPage(pageCode, null);
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));
@@ -125,8 +136,8 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
 
             ResultActions result = mockMvc
                                           .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
-                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                      .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             String getResult = result.andReturn().getResponse().getContentAsString();
 
@@ -152,12 +163,76 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
         } finally {
             this.pageManager.deletePage(pageCode);
         }
-
     }
 
-    protected Page createPage(String pageCode) {
+    /**
+     * creates a page without configured frames than applies the default widgets 
+     */
+    @Test
+    public void testApplyDefautWidgets() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            PageModel pageModel = this.pageModelManager.getPageModel("internal");
+            Page mockPage = createPage(pageCode, pageModel);
+
+            mockPage.setWidgets(new Widget[mockPage.getWidgets().length]);
+
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
+
+                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+
+            Widget[] defaultWidgetConfiguration = pageModel.getDefaultWidget();
+
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.widgets", Matchers.hasSize(pageModel.getConfiguration().length)));
+            for (int i = 0; i < pageModel.getConfiguration().length; i++) {
+                String path = String.format("$.payload.widgets[%d]", i);
+                result.andExpect(jsonPath(path, is(nullValue())));
+            }
+            
+
+            result = mockMvc
+                            .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
+                                                                                                                       .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                                       .header("Authorization", "Bearer " + accessToken));
+
+
+            result.andExpect(status().isOk());
+            for (int i = 0; i < pageModel.getConfiguration().length; i++) {
+                String path = String.format("$.payload.widgets[%d]", i);
+
+                if (null != defaultWidgetConfiguration[i]) {
+                    WidgetConfigurationDto exp = new WidgetConfigurationDto(defaultWidgetConfiguration[i].getType().getCode(), defaultWidgetConfiguration[i].getConfig());
+                    Map actual = mapper.convertValue(exp, Map.class); //jsonPath workaround
+                    result.andExpect(jsonPath(path, is(actual)));
+                } else {
+                    result.andExpect(jsonPath(path, is(nullValue())));
+                }
+            }
+
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    protected Page createPage(String pageCode, PageModel pageModel) {
         IPage parentPage = pageManager.getDraftPage("service");
-        PageModel pageModel = parentPage.getMetadata().getModel();
+        if (null == pageModel) {
+            pageModel = parentPage.getMetadata().getModel();
+        }
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("modelId", "default", "contentId", "EVN24");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this.widgetTypeManager);

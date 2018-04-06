@@ -1,0 +1,31 @@
+{
+    "code": "list",
+    "type": "Monolist",
+    "name": "LIST Description Modified",
+    "roles": [],
+    "mandatory": true,
+    "listFilter": false,
+    "indexable": false,
+    "enumeratorStaticItems": null,
+    "enumeratorStaticItemsSeparator": null,
+    "enumeratorExtractorBean": null,
+    "validationRules": {
+        "ognlValidation": {
+            "ognlExpression": "expression",
+            "applyOnlyToFilledAttr": false,
+            "helpMessage": "Help Message",
+            "keyForHelpMessage": null,
+            "errorMessage": "Error Message",
+            "keyForErrorMessage": null
+        }
+    },
+    "nestedAttribute": {
+        "code": "list",
+        "type": "Text",
+        "name": null,
+        "roles": [],
+        "mandatory": false,
+        "listFilter": false
+    },
+    "compositeAttributes": null
+}

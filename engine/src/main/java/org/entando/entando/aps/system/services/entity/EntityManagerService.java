@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.entity;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,7 +48,7 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     @Override
     public PagedMetadata<String> getEntityManagers(RestListRequest requestList) {
         List<String> codes = new ArrayList<>();
-        Filter[] filters = requestList.getFilter();
+        Filter[] filters = requestList.getFilters();
         List<IEntityManager> managers = this.getEntityManagers();
         Map<String, String> fieldMapping = new HashMap<>();
         fieldMapping.put(RestListRequest.SORT_VALUE_DEFAULT, "name");
@@ -59,8 +58,7 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
             Collections.reverse(codes);
         }
         List<String> sublist = requestList.getSublist(codes);
-        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(codes.size(), sublist);
-        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, codes.size());
         pagedMetadata.setBody(sublist);
         return pagedMetadata;
     }
@@ -94,6 +92,11 @@ public class EntityManagerService extends AbstractEntityService<IApsEntity, Enti
     @Override
     public void deleteEntityType(String entityManagerCode, String entityTypeCode) {
         super.deleteEntityType(entityManagerCode, entityTypeCode);
+    }
+
+    @Override
+    public PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
+        return super.getAttributeTypes(entityManagerCode, requestList);
     }
 
 }

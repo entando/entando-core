@@ -16,8 +16,10 @@ $(function() {
 
     var match = window.location.href.match(/(^.+\/do\/)/ ),
         baseUrl = match ? match[0] : window.location.protocol + '//' + window.location.host,
-        serviceUrl = baseUrl + 'rs/PageModel/frames?code=' + PROPERTY.code,
-        updateUrl = baseUrl + 'rs/PageModel/updateSketch?code=' + PROPERTY.code;
+        pathnameArray = location.pathname.split(";"),
+        pathname = (pathnameArray.length > 0) ? ';'+pathnameArray[1] : '',
+        serviceUrl = baseUrl + 'rs/PageModel/frames' + pathname + '?code=' + PROPERTY.code,
+        updateUrl = baseUrl + 'rs/PageModel/updateSketch' + pathname + '?code=' + PROPERTY.code;
 
 
     /**

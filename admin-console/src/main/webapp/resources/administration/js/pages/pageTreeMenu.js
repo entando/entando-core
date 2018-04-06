@@ -1,16 +1,19 @@
 $(function () {
+    
+    var pathnameArray = location.pathname.split(";");
+    var pathname = (pathnameArray.length > 0) ? ';'+pathnameArray[1] : '';
 
-    var serviceUrl = PROPERTY.baseUrl + 'do/rs/PageModel/frames?code=' + PROPERTY.pagemodel,
-            addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget?code=' + PROPERTY.pagemodel,
-            moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget?code=' + PROPERTY.pagemodel,
-            deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget?code=' + PROPERTY.pagemodel,
-            getPageDetailUrl = PROPERTY.baseUrl + 'do/rs/Page/detail',
-            restoreOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/restoreOnlineConfig',
-            setOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOnline',
-            setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline',
-            configureWidgetUrl = PROPERTY.baseUrl + 'do/Page/editFrame.action',
-            apiMappingsUrl = PROPERTY.baseUrl + 'do/rs/Portal/WidgetType/apiMappings',
-            apiCopyFromWidgetUrl = PROPERTY.baseUrl + 'do/Api/Service/copyFromWidget.action',
+    var serviceUrl = PROPERTY.baseUrl + 'do/rs/PageModel/frames' + pathname + '?code=' + PROPERTY.pagemodel,
+            addWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/joinWidget' + pathname + '?code=' + PROPERTY.pagemodel,
+            moveWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/moveWidget' + pathname + '?code=' + PROPERTY.pagemodel,
+            deleteWidgetUrl = PROPERTY.baseUrl + 'do/rs/Page/deleteWidget' + pathname + '?code=' + PROPERTY.pagemodel,
+            getPageDetailUrl = PROPERTY.baseUrl + 'do/rs/Page/detail' + pathname + '',
+            restoreOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/restoreOnlineConfig' + pathname + '',
+            setOnlineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOnline' + pathname + '',
+            setOfflineUrl = PROPERTY.baseUrl + 'do/rs/Page/setOffline' + pathname + '',
+            configureWidgetUrl = PROPERTY.baseUrl + 'do/Page/editFrame.action' + pathname + '',
+            apiMappingsUrl = PROPERTY.baseUrl + 'do/rs/Portal/WidgetType/apiMappings' + pathname + '',
+            apiCopyFromWidgetUrl = PROPERTY.baseUrl + 'do/Api/Service/copyFromWidget.action' + pathname + '',
             PAGE_IS_SELECTED = !!PROPERTY.pagemodel,
             labels = {
                 "deleteWidget": {

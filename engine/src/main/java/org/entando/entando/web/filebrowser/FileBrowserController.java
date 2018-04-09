@@ -23,6 +23,7 @@ import org.entando.entando.aps.system.services.storage.IFileBrowserService;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,16 +47,20 @@ public class FileBrowserController {
     @Autowired
     private IFileBrowserService fileBrowserService;
 
+    @Autowired
+    private FileBrowserValidator validator;
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> browseFolder(@RequestParam(value = "currentPath", required = false, defaultValue = "") String currentPath,
             @RequestParam(value = "protectedFolder", required = false, defaultValue = "false") Boolean protectedFolder) {
-        logger.debug("browsing forlser {} - protected {}", currentPath, protectedFolder);
+        logger.debug("browsing folder {} - protected {}", currentPath, protectedFolder);
         List<BasicFileAttributeViewDto> result = this.getFileBrowserService().browseFolder(currentPath, protectedFolder);
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("protectedFolder", protectedFolder);
         metadata.put("currentPath", currentPath);
         metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        logger.debug("Content folder -> {}", result);
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
@@ -68,14 +73,43 @@ public class FileBrowserController {
             return path;
         }
         String[] folders = currentPath.split("/");
-        for (String folder : folders) {
-            if (StringUtils.isEmpty(folder)) {
+        if (folders.length == 0) {
+            return folders[0];
+        }
+        for (int i = 0; i < folders.length - 1; i++) {
+            String folderName = folders[i];
+            if (StringUtils.isEmpty(folderName)) {
                 break;
             } else {
-                path += folder;
+                if (i > 0) {
+                    path += "/";
+                }
+                path += folderName;
             }
         }
         return path;
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/file", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getFile(@RequestParam(value = "currentPath", required = false, defaultValue = "") String currentPath,
+            @RequestParam(value = "protectedFolder", required = false, defaultValue = "false") Boolean protectedFolder) {
+        logger.debug("required file {} - protected {}", currentPath, protectedFolder);
+        byte[] base64 = this.getFileBrowserService().getFileStream(currentPath, protectedFolder);
+        Map<String, Object> result = new HashMap<>();
+        result.put("path", currentPath);
+        result.put("filename", this.getFilename(currentPath));
+        result.put("base64", base64);
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("protectedFolder", protectedFolder);
+        metadata.put("currentPath", currentPath);
+        metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    private String getFilename(String currentPath) {
+        String[] sections = currentPath.split("/");
+        return sections[sections.length - 1];
     }
 
     public IFileBrowserService getFileBrowserService() {
@@ -84,6 +118,14 @@ public class FileBrowserController {
 
     public void setFileBrowserService(IFileBrowserService fileBrowserService) {
         this.fileBrowserService = fileBrowserService;
+    }
+
+    public FileBrowserValidator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(FileBrowserValidator validator) {
+        this.validator = validator;
     }
 
 }

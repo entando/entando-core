@@ -13,8 +13,12 @@
  */
 package org.entando.entando.aps.system.services.storage;
 
+import com.agiletec.aps.util.FileTextReader;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
@@ -44,20 +48,53 @@ public class FileBrowserService implements IFileBrowserService {
 
     @Override
     public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder) {
+        this.checkResource(currentPath, protectedFolder);
+        List<BasicFileAttributeViewDto> dtos = null;
+        try {
+            BasicFileAttributeView[] views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
+            dtos = this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
+            dtos.stream().forEach(i -> i.buildPath(currentPath));
+        } catch (Throwable t) {
+            logger.error("error browsing folder {} - type {}", currentPath, protectedFolder);
+            throw new RestServerError("error browsing folder", t);
+        }
+        return dtos;
+    }
+
+    @Override
+    public byte[] getFileStream(String currentPath, boolean protectedFolder) {
+        this.checkResource(currentPath, protectedFolder);
+        File tempFile = null;
+        byte[] bytes = null;
+        try {
+            String[] sections = currentPath.split("/");
+            InputStream stream = this.getStorageManager().getStream(currentPath, protectedFolder);
+            tempFile = FileTextReader.createTempFile(new Random().nextInt(100) + sections[sections.length - 1], stream);
+            bytes = FileTextReader.fileToByteArray(tempFile);
+        } catch (RestRourceNotFoundException r) {
+            throw r;
+        } catch (Throwable t) {
+            logger.error("error extracting stream for path {} - type {}", currentPath, protectedFolder);
+            throw new RestServerError("error extracting stream", t);
+        } finally {
+            if (null != tempFile) {
+                tempFile.delete();
+            }
+        }
+        return bytes;
+    }
+
+    protected void checkResource(String currentPath, boolean protectedFolder) {
         try {
             if (!this.getStorageManager().exists(currentPath, protectedFolder)) {
-                logger.warn("no folder found for path {} - type {}", currentPath, protectedFolder);
-                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_FOLDER_DOES_NOT_EXIST, "folder", currentPath);
+                logger.warn("no resource found for path {} - type {}", currentPath, protectedFolder);
+                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, "resource", currentPath);
             }
-            BasicFileAttributeView[] views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
-            List<BasicFileAttributeViewDto> dtos = this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
-            dtos.stream().forEach(i -> i.buildPath(currentPath));
-            return dtos;
         } catch (RestRourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            logger.error("Error browsing folder {} , protected {} ", currentPath, protectedFolder, e);
-            throw new RestServerError("error browsing folder", e);
+            logger.error("Error checking resource {} , protected {} ", currentPath, protectedFolder, e);
+            throw new RestServerError("error checking resource", e);
         }
     }
 

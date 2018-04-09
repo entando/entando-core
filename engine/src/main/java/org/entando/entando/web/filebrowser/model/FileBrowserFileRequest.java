@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -11,18 +11,30 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.storage;
-
-import java.util.List;
-import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
+package org.entando.entando.web.filebrowser.model;
 
 /**
  * @author E.Santoboni
  */
-public interface IFileBrowserService {
+public class FileBrowserFileRequest extends FileBrowserRequest {
 
-    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder);
+    private String filename;
+    private byte[] base64;
 
-    public byte[] getFileStream(String currentPath, boolean protectedFolder);
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public byte[] getBase64() {
+        return base64;
+    }
+
+    public void setBase64(byte[] base64) {
+        this.base64 = base64;
+    }
 
 }

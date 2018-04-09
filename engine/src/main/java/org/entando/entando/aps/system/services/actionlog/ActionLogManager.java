@@ -13,6 +13,11 @@
  */
 package org.entando.entando.aps.system.services.actionlog;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -21,24 +26,17 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.ManagerConfiguration;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  * @author E.Santoboni - S.Puddu
@@ -52,6 +50,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
         _logger.debug("{} ready", this.getClass().getName());
     }
 
+    @Async
     @Override
     public void addActionRecord(ActionLogRecord actionRecord) throws ApsSystemException {
         try {

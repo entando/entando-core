@@ -31,9 +31,11 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.Comparator;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +43,8 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.entity.model.AttributeRoleDto;
+import org.entando.entando.aps.system.services.entity.model.AttributePropertyDto;
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
@@ -93,14 +96,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
         Map<String, String> fieldMapping = this.getEntityTypeFieldNameMapping();
-        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilter(), fieldMapping));
+        entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilters(), fieldMapping));
         Collections.sort(entityTypes, new BeanComparator(this.getFieldName(requestList.getSort(), fieldMapping)));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }
         List<IApsEntity> sublist = requestList.getSublist(entityTypes);
-        SearcherDaoPaginatedResult<IApsEntity> result = new SearcherDaoPaginatedResult(entityTypes.size(), sublist);
-        PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+        PagedMetadata<EntityTypeShortDto> pagedMetadata = new PagedMetadata<>(requestList, entityTypes.size());
         List<EntityTypeShortDto> body = this.getEntityTypeShortDtoBuilder().convert(sublist);
         for (EntityTypeShortDto entityTypeShortDto : body) {
             String code = entityTypeShortDto.getCode();
@@ -122,12 +124,44 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return ((null != name) ? name : mapping.get(RestListRequest.SORT_VALUE_DEFAULT));
     }
 
+    protected PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        List<AttributeInterface> mainList = new ArrayList<>(entityManager.getEntityAttributePrototypes().values());
+        Stream<AttributeInterface> stream = mainList.stream();
+        //filter
+        List<Predicate<AttributeInterface>> filters = AttributeTypeServiceUtils.getPredicates(requestList);
+        for (Predicate<AttributeInterface> predicate : filters) {
+            stream = stream.filter(predicate);
+        }
+        //sort
+        Comparator<AttributeInterface> comparator = AttributeTypeServiceUtils.getComparator(requestList.getSort(), requestList.getDirection());
+        if (null != comparator) {
+            stream = stream.sorted(comparator);
+        }
+        List<String> attributeCodes = new ArrayList<>();
+        stream.forEach(i -> attributeCodes.add(i.getType()));
+        List<String> sublist = requestList.getSublist(attributeCodes);
+        PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, attributeCodes.size());
+        pagedMetadata.setBody(sublist);
+        return pagedMetadata;
+    }
+
+    protected AttributeTypeDto getAttributeType(String entityManagerCode, String attributeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        AttributeInterface attribute = entityManager.getEntityAttributePrototypes().get(attributeCode);
+        if (null == attribute) {
+            logger.warn("no attribute type found with code {}", attributeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS, "attribute", attributeCode);
+        }
+        return new AttributeTypeDto(attribute, entityManager);
+    }
+
     protected O getFullEntityType(String entityManagerCode, String entityTypeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         I entityType = (I) entityManager.getEntityPrototype(entityTypeCode);
-        if (null == entityManager) {
-            logger.warn("no entity type found with code {}", entityTypeCode);
-            throw new RestRourceNotFoundException("entityTypeCode", entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
         }
         O type = this.convertEntityType(entityManager, entityType);
         type.setStatus(String.valueOf(entityManager.getStatus(entityTypeCode)));
@@ -148,6 +182,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             if (null != entityManager.getEntityPrototype(bodyRequest.getCode())) {
                 this.addError(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS,
                         bindingResult, new String[]{bodyRequest.getCode()}, "entityType.exists");
+                throw new ValidationConflictException(bindingResult);
             }
             I entityPrototype = this.createEntityType(entityManager, bodyRequest, bindingResult);
             if (bindingResult.hasErrors()) {
@@ -156,6 +191,8 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
                 ((IEntityTypesConfigurer) entityManager).addEntityPrototype(entityPrototype);
                 response = builder.convert(entityPrototype);
             }
+        } catch (ValidationConflictException vce) {
+            throw vce;
         } catch (Throwable e) {
             logger.error("Error adding entity type", e);
             throw new RestServerError("error add entity type", e);
@@ -234,9 +271,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         attribute.setName(attributeDto.getCode());
         attribute.setDescription(attributeDto.getName());
         attribute.setIndexingType(attributeDto.isIndexable() ? IndexableAttributeInterface.INDEXING_TYPE_TEXT : null);
-        List<AttributeRoleDto> dtoRoles = attributeDto.getRoles();
+        List<AttributePropertyDto> dtoRoles = attributeDto.getRoles();
         if (null != dtoRoles && !dtoRoles.isEmpty()) {
-            List<String> codes = dtoRoles.stream().map(AttributeRoleDto::getCode).collect(Collectors.toList());
+            List<String> codes = dtoRoles.stream().map(AttributePropertyDto::getCode).collect(Collectors.toList());
             attribute.setRoles(codes.toArray(new String[codes.size()]));
         }
         attribute.setRequired(attributeDto.isMandatory());
@@ -318,7 +355,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
 
     protected boolean filterObjects(Object bean, Filter[] filters, Map<String, String> mapping) {
         try {
-            if (null == filters) {
+            if (null == filters || filters.length == 0) {
                 return true;
             }
             Map<String, Object> properties = BeanUtils.describe(bean);
@@ -338,6 +375,129 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             throw new RestServerError("error filtering bean " + bean.getClass().getName(), e);
         }
         return true;
+    }
+
+    protected EntityAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        AttributeInterface attribute = (AttributeInterface) entityType.getAttribute(attributeCode);
+        if (null == attribute) {
+            logger.warn("no attribute found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS, "Attribute", attributeCode);
+        }
+        return new EntityAttributeFullDto(attribute, entityManager.getAttributeRoles());
+    }
+
+    protected EntityAttributeFullDto addEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        AttributeInterface oldAttribute = (AttributeInterface) entityType.getAttribute(bodyRequest.getCode());
+        if (null != oldAttribute) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_ALREADY_EXISTS,
+                    bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.exists");
+            throw new ValidationConflictException(bindingResult);
+        }
+        Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
+        AttributeInterface attribute = this.buildAttribute(entityTypeCode, bodyRequest, attributeMap, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return null;
+        }
+        EntityAttributeFullDto result = null;
+        try {
+            entityType.addAttribute(attribute);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+            IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
+            AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
+            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+        return result;
+    }
+
+    protected EntityAttributeFullDto updateEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        AttributeInterface oldAttribute = (AttributeInterface) entityType.getAttribute(bodyRequest.getCode());
+        if (null == oldAttribute) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
+                    bindingResult, new String[]{entityTypeCode, bodyRequest.getCode()}, "entityType.attribute.notExists");
+            throw new RestRourceNotFoundException(bindingResult);
+        } else if (!oldAttribute.getType().equals(bodyRequest.getType())) {
+            this.addError(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH,
+                    bindingResult, new String[]{entityTypeCode,
+                        bodyRequest.getCode(), oldAttribute.getType(), bodyRequest.getType()}, "entityType.attribute.typeMismatch");
+        }
+        Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
+        AttributeInterface attribute = this.buildAttribute(entityTypeCode, bodyRequest, attributeMap, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return null;
+        }
+        EntityAttributeFullDto result = null;
+        try {
+            entityType.getAttributeMap().remove(bodyRequest.getCode());
+            entityType.addAttribute(attribute);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+            IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
+            AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
+            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+        return result;
+    }
+
+    protected void deleteEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        if (!entityType.getAttributeMap().containsKey(attributeCode)) {
+            return;
+        }
+        try {
+            List<AttributeInterface> attributes = entityType.getAttributeList();
+            for (int i = 0; i < attributes.size(); i++) {
+                AttributeInterface old = attributes.get(i);
+                if (old.getName().equals(attributeCode)) {
+                    attributes.remove(i);
+                    break;
+                }
+            }
+            entityType.getAttributeMap().remove(attributeCode);
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+    }
+
+    protected void reloadEntityTypeReferences(String entityManagerCode, String entityTypeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        entityManager.reloadEntitiesReferences(entityTypeCode);
     }
 
     protected List<IEntityManager> getEntityManagers() {

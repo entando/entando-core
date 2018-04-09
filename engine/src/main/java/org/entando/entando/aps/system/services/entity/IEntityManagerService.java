@@ -40,4 +40,6 @@ public interface IEntityManagerService {
 
     public void deleteEntityType(String entityManagerCode, String entityTypeCode);
 
+    public PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList);
+
 }

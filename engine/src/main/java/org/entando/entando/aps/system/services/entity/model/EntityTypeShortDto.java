@@ -15,14 +15,17 @@ package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @author E.Santoboni
  */
 public class EntityTypeShortDto {
 
+    @NotBlank(message = "entityType.code.notBlank")
     private String code;
 
+    @NotBlank(message = "entityType.name.notBlank")
     private String name;
 
     private String status = String.valueOf(IEntityManager.STATUS_READY);

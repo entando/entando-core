@@ -47,12 +47,10 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                         .param("page", "1")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.metaData.pageSize", is(2)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.lastPage", is(5)));
-
     }
 
     @Test
@@ -91,7 +89,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is("1")));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test
@@ -118,13 +115,11 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
 
             assertThat(this.ii18nManager.getLabelGroup(code), is(not(nullValue())));
             ApsProperties enlabel = this.ii18nManager.getLabelGroup(code);
             assertThat(enlabel.get(defaultLangCode), is("this label has no name"));
-
             //-------------------------------------------------
             request = new LabelRequest();
             request.setKey(code);
@@ -157,8 +152,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is("2")));
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-
             //-------------------------------------------------
             request = new LabelRequest();
             request.setKey(code);
@@ -183,8 +176,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                     .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
             assertThat(this.ii18nManager.getLabelGroup(code), is(nullValue()));
 
@@ -215,8 +206,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isBadRequest());
+            result.andExpect(status().isConflict());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
@@ -245,8 +235,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isBadRequest());
+            result.andExpect(status().isConflict());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
@@ -276,8 +265,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isBadRequest());
+            result.andExpect(status().isConflict());
 
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
@@ -410,9 +398,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            result.andExpect(status().isBadRequest());
-
+            result.andExpect(status().isConflict());
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
         }

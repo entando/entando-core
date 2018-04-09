@@ -29,9 +29,6 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
 
     public static final String ERRCODE_ENTITY_TYPE_ALREADY_EXISTS = "1";
 
-    public static final String ERRCODE_ENTITY_TYPE_CODE_REQUIRED = "2";
-    public static final String ERRCODE_ENTITY_TYPE_DESCR_REQUIRED = "3";
-
     public static final String ERRCODE_URINAME_MISMATCH = "6";
     public static final String ERRCODE_ENTITY_TYPE_REFERENCES = "7";
 
@@ -41,17 +38,21 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
     public static final String ERRCODE_INVALID_TYPE_DESCR = "12";
     public static final String ERRCODE_INVALID_ATTRIBUTE_TYPE = "13";
 
-    public static final String ERRCODE_INVALID_TEXT_RANGE = "16";
-    public static final String ERRCODE_INVALID_DATE_RANGE_START = "17";
-    public static final String ERRCODE_INVALID_DATE_RANGE_END = "18";
-    public static final String ERRCODE_INVALID_DATE_VALUE = "19";
-    public static final String ERRCODE_INVALID_NUMBER_RANGE = "20";
-    public static final String ERRCODE_INVALID_OGNL_ERROR = "21";
-    public static final String ERRCODE_INVALID_OGNL_HELP = "22";
+    public static final String ERRCODE_ENTITY_ATTRIBUTE_ALREADY_EXISTS = "14";
+    public static final String ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS = "15";
+    public static final String ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH = "16";
 
-    public static final String ERRCODE_INVALID_ENUMERATOR = "25";
-    public static final String ERRCODE_INVALID_LIST = "26";
-    public static final String ERRCODE_INVALID_COMPOSITE = "27";
+    public static final String ERRCODE_INVALID_TEXT_RANGE = "26";
+    public static final String ERRCODE_INVALID_DATE_RANGE_START = "27";
+    public static final String ERRCODE_INVALID_DATE_RANGE_END = "28";
+    public static final String ERRCODE_INVALID_DATE_VALUE = "29";
+    public static final String ERRCODE_INVALID_NUMBER_RANGE = "30";
+    public static final String ERRCODE_INVALID_OGNL_ERROR = "31";
+    public static final String ERRCODE_INVALID_OGNL_HELP = "32";
+
+    public static final String ERRCODE_INVALID_ENUMERATOR = "35";
+    public static final String ERRCODE_INVALID_LIST = "36";
+    public static final String ERRCODE_INVALID_COMPOSITE = "37";
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -60,8 +61,6 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
 
     @Override
     public void validate(Object target, Errors errors) {
-        EntityTypeDtoRequest request = (EntityTypeDtoRequest) target;
-        this.validateBody(request, errors);
     }
 
     public int validateBodyName(String typeCode, EntityTypeDtoRequest request, Errors errors) {
@@ -72,18 +71,6 @@ public abstract class EntityTypeValidator extends AbstractPaginationValidator im
         if (!this.existType(typeCode)) {
             errors.reject(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, new String[]{typeCode}, "entityType.notExists");
             return 404;
-        }
-        return this.validateBody(request, errors);
-    }
-
-    private int validateBody(EntityTypeDtoRequest request, Errors errors) {
-        if (StringUtils.isBlank(request.getCode())) {
-            errors.reject(ERRCODE_ENTITY_TYPE_CODE_REQUIRED, new String[]{}, "entityType.code.notBlank");
-            return 400;
-        }
-        if (StringUtils.isBlank(request.getName())) {
-            errors.reject(ERRCODE_ENTITY_TYPE_DESCR_REQUIRED, new String[]{}, "entityType.name.notBlank");
-            return 400;
         }
         return 0;
     }

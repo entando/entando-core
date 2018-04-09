@@ -13,13 +13,14 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -32,8 +33,6 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
-import java.util.Collections;
-import java.util.logging.Level;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -44,10 +43,10 @@ import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
-import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
-import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -380,6 +379,53 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         }
     }
 
+    @Override
+    public PageConfigurationDto applyDefaultWidgets(String pageCode) {
+        try {
+            IPage page = this.loadPage(pageCode, STATUS_DRAFT);
+            if (null == page) {
+                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            }
+            PageModel pageModel = page.getModel();
+            Widget[] defaultWidgets = pageModel.getDefaultWidget();
+            if (null == defaultWidgets) {
+                logger.info("no default widget configuration for model {}", pageModel.getCode());
+                return new PageConfigurationDto(page, STATUS_DRAFT);
+            }
+
+            Widget[] widgets = mergePageConfiguration(page, defaultWidgets);
+            page.setWidgets(widgets);
+            this.getPageManager().updatePage(page);
+            return new PageConfigurationDto(page, STATUS_DRAFT);
+
+        } catch (ApsSystemException e) {
+            logger.error("Error setting default widgets for page {}", pageCode, e);
+            throw new RestServerError("Error setting default widgets for page " + pageCode, e);
+        }
+    }
+
+    /**
+     * Merge the page configuration with the provided new one.
+     * </p>
+     * @param page
+     * @param newWidgetConfiguration
+     * @return
+     */
+    protected Widget[] mergePageConfiguration(IPage page, Widget[] newWidgetConfiguration) {
+        Widget[] widgets = page.getWidgets();
+        for (int i = 0; i < newWidgetConfiguration.length; i++) {
+            Widget defaultWidget = newWidgetConfiguration[i];
+            if (null != defaultWidget) {
+                if (null == defaultWidget.getType()) {
+                    logger.info("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", page.getModel().getCode(), i, page.getCode());
+                    continue;
+                }
+                widgets[i] = defaultWidget;
+            }
+        }
+        return widgets;
+    }
+
     public WidgetType getWidgetType(String typeCode) {
         return this.getWidgetTypeManager().getWidgetType(typeCode);
     }
@@ -552,4 +598,5 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         result.imposeLimits();
         return result;
     }
+
 }

@@ -1,0 +1,36 @@
+{
+    "code": "TextAttribute",
+    "type": "Monotext",
+    "name": "Description of added monotext attribute",
+    "roles": [{
+            "code": "userprofile:fullname",
+            "descr": "The Attribute containing the full name"
+    }],
+    "mandatory": true,
+    "listFilter": true,
+    "indexable": false,
+    "enumeratorStaticItems": null,
+    "enumeratorStaticItemsSeparator": null,
+    "enumeratorExtractorBean": null,
+    "validationRules": {
+        "minLength": 50,
+        "maxLength": 500,
+        "regex": null,
+        "rangeStartString": null,
+        "rangeEndString": null,
+        "rangeStartStringAttribute": null,
+        "rangeEndStringAttribute": null,
+        "equalString": null,
+        "equalStringAttribute": null,
+        "ognlValidation": {
+            "ognlExpression": "expression",
+            "applyOnlyToFilledAttr": false,
+            "helpMessage": "Help Message",
+            "keyForHelpMessage": null,
+            "errorMessage": "Error Message",
+            "keyForErrorMessage": null
+        }
+    },
+    "nestedAttribute": null,
+    "compositeAttributes": null
+}

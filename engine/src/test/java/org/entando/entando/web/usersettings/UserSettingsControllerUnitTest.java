@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.usersettings;
 
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -17,8 +30,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
-public class UserSettigsControllerUnitTest extends AbstractControllerTest {
+public class UserSettingsControllerUnitTest extends AbstractControllerTest {
 
     @Mock
     private UserSettingsService userSettingsService;
@@ -32,9 +46,9 @@ public class UserSettigsControllerUnitTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .addInterceptors(entandoOauth2Interceptor)
-                                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                                 .build();
+                .addInterceptors(entandoOauth2Interceptor)
+                .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                .build();
         mapper = new ObjectMapper();
     }
 
@@ -46,10 +60,10 @@ public class UserSettigsControllerUnitTest extends AbstractControllerTest {
         UserSettingsRequest userSettingsRequest = new UserSettingsRequest();
 
         ResultActions result = mockMvc.perform(
-                                               put("/usersettings")
-                                                                   .content(mapper.writeValueAsString(userSettingsRequest))
-                                                                   .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                   .header("Authorization", "Bearer " + accessToken));
+                put("/usersettings")
+                .content(mapper.writeValueAsString(userSettingsRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken));
 
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
@@ -65,10 +79,10 @@ public class UserSettigsControllerUnitTest extends AbstractControllerTest {
         userSettingsRequest.setMaxMonthsSinceLastPasswordChange(-3);
 
         ResultActions result = mockMvc.perform(
-                                               put("/usersettings")
-                                                                   .content(mapper.writeValueAsString(userSettingsRequest))
-                                                                   .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                   .header("Authorization", "Bearer " + accessToken));
+                put("/usersettings")
+                .content(mapper.writeValueAsString(userSettingsRequest))
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken));
 
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());

@@ -62,4 +62,6 @@ public interface IPageService {
 
     public PageDto updatePageStatus(String pageCode, String status);
 
+    public PageConfigurationDto applyDefaultWidgets(String pageCode);
+
 }

@@ -35,15 +35,19 @@ public class PagedMetadata<T> {
     }
 
     public PagedMetadata(RestListRequest req, SearcherDaoPaginatedResult<?> result) {
+        this(req, result.getCount());
+    }
+
+    public PagedMetadata(RestListRequest req, Integer totalItems) {
         if (0 == req.getPageSize()) {
             // no pagination
-            req.setPageSize(result.getCount());
+            req.setPageSize(totalItems);
         }
         this.page = req.getPage();
         this.pageSize = req.getPageSize();
-        Double pages = Math.ceil(new Double(result.getCount()) / new Double(req.getPageSize()));
+        Double pages = Math.ceil(new Double(totalItems) / new Double(req.getPageSize()));
         this.lastPage = pages.intValue();
-        this.totalItems = result.getCount();
+        this.totalItems = totalItems;
         this.setSort(req.getSort());
         this.setDirection(req.getDirection());
         if (null != req.getFilters()) {

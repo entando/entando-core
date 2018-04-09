@@ -18,16 +18,20 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  * @author E.Santoboni
  */
 public class EntityAttributeDto {
 
+    @NotEmpty(message = "entityType.attribute.code.notEmpty")
     private String code;
+
+    @NotEmpty(message = "entityType.attribute.type.notEmpty")
     private String type;
     private String name;
-    private List<AttributeRoleDto> roles = new ArrayList<>();
+    private List<AttributePropertyDto> roles = new ArrayList<>();
     private List<String> disablingCodes = new ArrayList<>();
     private boolean mandatory;
     private boolean listFilter;
@@ -44,7 +48,7 @@ public class EntityAttributeDto {
             for (String roleCode : roleCodes) {
                 for (AttributeRole role : roles) {
                     if (role.getName().equals(roleCode)) {
-                        this.roles.add(new AttributeRoleDto(role));
+                        this.roles.add(new AttributePropertyDto(role));
                     }
                 }
             }
@@ -84,11 +88,11 @@ public class EntityAttributeDto {
         this.name = name;
     }
 
-    public List<AttributeRoleDto> getRoles() {
+    public List<AttributePropertyDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<AttributeRoleDto> roles) {
+    public void setRoles(List<AttributePropertyDto> roles) {
         this.roles = roles;
     }
 

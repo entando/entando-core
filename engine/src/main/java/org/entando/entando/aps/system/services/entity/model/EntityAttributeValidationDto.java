@@ -159,6 +159,11 @@ public class EntityAttributeValidationDto {
                     EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_START, "entityType.attribute.date.invalidRangeStart", bindingResult));
             dateValRule.setRangeEnd(this.extractDate(this.getRangeEndDate(), typeCode, attribute.getName(),
                     EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_END, "entityType.attribute.date.invalidRangeEnd", bindingResult));
+            if (null != dateValRule.getRangeStart() && null != dateValRule.getRangeEnd()
+                    && ((Date) dateValRule.getRangeEnd()).before((Date) dateValRule.getRangeStart())) {
+                this.addError(EntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
+                        bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.date.invalidRange");
+            }
             dateValRule.setValue(this.extractDate(this.getEqualDate(), typeCode, attribute.getName(),
                     EntityTypeValidator.ERRCODE_INVALID_DATE_VALUE, "entityType.attribute.date.invalidValue", bindingResult));
             dateValRule.setRangeStartAttribute(this.getRangeStartDateAttribute());

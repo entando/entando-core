@@ -110,7 +110,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result2.andExpect(status().isBadRequest());
         result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
-        result2.andExpect(jsonPath("$.errors[0].code", is("52")));
+        result2.andExpect(jsonPath("$.errors[0].code", is("54")));
     }
 
     @Test
@@ -154,7 +154,15 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            this.executeProfileTypePost("2_POST_invalid.json", accessToken, status().isBadRequest());
+            ResultActions result1 = this.executeProfileTypePost("2_POST_invalid_1.json", accessToken, status().isBadRequest());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
+
+            ResultActions result2 = this.executeProfileTypePost("2_POST_invalid_2.json", accessToken, status().isBadRequest());
+            System.out.println(result2.andReturn().getResponse().getContentAsString());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(3)));
             Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
 
             this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());

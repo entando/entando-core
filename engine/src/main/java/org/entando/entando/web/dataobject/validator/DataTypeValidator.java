@@ -14,7 +14,12 @@
 package org.entando.entando.web.dataobject.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
+import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,4 +56,19 @@ public class DataTypeValidator extends EntityTypeValidator {
         return this.dataObjectManager;
     }
 
+    @Override
+    public boolean isValidField(String fieldName) {
+        List<String> fields = new ArrayList<>();
+        fields = getAllFields(fields, DataTypeDto.class);
+        return fields.contains(fieldName);
+    }
+
+    List<String> getAllFields(List<String> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList()));
+        if (type.getSuperclass() != null) {
+            return getAllFields(fields, type.getSuperclass());
+        }
+        return fields;
+    }
 }

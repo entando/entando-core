@@ -13,6 +13,10 @@
  */
 package org.entando.entando.web.language.validator;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.entando.entando.aps.system.services.language.LanguageDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.language.model.LanguageRequest;
 import org.springframework.stereotype.Component;
@@ -34,4 +38,10 @@ public class LanguageValidator extends AbstractPaginationValidator {
 
     }
 
+    @Override
+    public boolean isValidField(String fieldName) {
+        List<String> fields = Arrays.asList(LanguageDto.class.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList());
+        return fields.contains(fieldName);
+    }
 }

@@ -1,5 +1,9 @@
 package org.entando.entando.web.plugins.jacms.contentmodel.validator;
 
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.model.ContentModelDto;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.plugins.jacms.contentmodel.model.ContentModelRequest;
 import org.springframework.validation.Errors;
@@ -15,7 +19,6 @@ public class ContentModelValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND = "6";
     public static final String ERRCODE_CONTENTMODEL_WRONG_UTILIZER = "7";
 
-
     @Override
     public boolean supports(Class<?> paramClass) {
         return ContentModelRequest.class.equals(paramClass);
@@ -30,5 +33,12 @@ public class ContentModelValidator extends AbstractPaginationValidator {
         if (modelId != contentModelReq.getId().longValue()) {
             errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new Object[]{modelId, contentModelReq.getId()}, "contentmodel.code.mismatch");
         }
+    }
+
+    @Override
+    public boolean isValidField(String fieldName) {
+        List<String> fields = Arrays.asList(ContentModelDto.class.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList());
+        return fields.contains(fieldName);
     }
 }

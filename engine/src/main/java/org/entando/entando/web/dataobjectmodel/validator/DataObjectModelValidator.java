@@ -14,10 +14,14 @@
 package org.entando.entando.web.dataobjectmodel.validator;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,4 +144,10 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
         return 0;
     }
 
+    @Override
+    public boolean isValidField(String fieldName) {
+        List<String> fields = Arrays.asList(DataModelDto.class.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList());
+        return fields.contains(fieldName);
+    }
 }

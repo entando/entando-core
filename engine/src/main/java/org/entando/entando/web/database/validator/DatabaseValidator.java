@@ -13,6 +13,11 @@
  */
 package org.entando.entando.web.database.validator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -35,6 +40,22 @@ public class DatabaseValidator extends AbstractPaginationValidator {
     @Override
     public void validate(Object o, Errors errors) {
         //nothing to do
+    }
+
+    @Override
+    public boolean isValidField(String fieldName) {
+        List<String> fields = new ArrayList<>();
+        fields = getAllFields(fields, DumpReportDto.class);
+        return fields.contains(fieldName);
+    }
+
+    List<String> getAllFields(List<String> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList()));
+        if (type.getSuperclass() != null) {
+            return getAllFields(fields, type.getSuperclass());
+        }
+        return fields;
     }
 
 }

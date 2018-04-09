@@ -52,8 +52,8 @@ public class FileBrowserController {
             @RequestParam(value = "protectedFolder", required = false, defaultValue = "false") Boolean protectedFolder) {
         logger.debug("browsing forlser {} - protected {}", currentPath, protectedFolder);
         List<BasicFileAttributeViewDto> result = this.getFileBrowserService().browseFolder(currentPath, protectedFolder);
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("protectedFolder", protectedFolder.toString());
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("protectedFolder", protectedFolder);
         metadata.put("currentPath", currentPath);
         metadata.put("prevPath", this.getPrevFolderName(currentPath));
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
@@ -64,6 +64,9 @@ public class FileBrowserController {
             return null;
         }
         String path = "";
+        if (!currentPath.contains("/")) {
+            return path;
+        }
         String[] folders = currentPath.split("/");
         for (String folder : folders) {
             if (StringUtils.isEmpty(folder)) {

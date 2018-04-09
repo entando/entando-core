@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.storage.model;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.util.DateConverter;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.storage.BasicFileAttributeView;
 
 /**
@@ -26,6 +27,7 @@ public class BasicFileAttributeViewDto {
     private String lastModifiedTime;
     private Long size;
     private Boolean directory;
+    private String path;
 
     public BasicFileAttributeViewDto() {
     }
@@ -37,6 +39,15 @@ public class BasicFileAttributeViewDto {
             this.setLastModifiedTime(DateConverter.getFormattedDate(bfad.getLastModifiedTime(), SystemConstants.API_DATE_FORMAT));
         }
         this.setSize(bfad.getSize());
+    }
+
+    public void buildPath(String subfolder) {
+        String path = subfolder;
+        if (!StringUtils.isEmpty(path) && !path.endsWith("/")) {
+            path += "/";
+        }
+        path += this.getName();
+        this.setPath(path);
     }
 
     public String getName() {
@@ -69,6 +80,14 @@ public class BasicFileAttributeViewDto {
 
     public void setDirectory(Boolean directory) {
         this.directory = directory;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 
 }

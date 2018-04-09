@@ -17,6 +17,9 @@ import org.entando.entando.web.dataobject.*;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.CoreMatchers;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,6 +27,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class FileBrowserControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -46,14 +50,50 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
     }
 
     @Test
-    public void testBrowseFolder() throws Exception {
+    public void testBrowseFolder_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/fileBrowser", new Object[]{"RAH"})
+                .perform(get("/fileBrowser")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(3)));
+        result.andExpect(jsonPath("$.metaData.currentPath", is("")));
+        result.andExpect(jsonPath("$.metaData.prevPath", is(CoreMatchers.nullValue())));
+        result.andExpect(jsonPath("$.metaData.protectedFolder", is(false)));
+    }
 
+    @Test
+    public void testBrowseFolder_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/fileBrowser").param("currentPath", "conf")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(3)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(3)));
+        result.andExpect(jsonPath("$.metaData.currentPath", is("conf")));
+        result.andExpect(jsonPath("$.metaData.prevPath", is("")));
+        result.andExpect(jsonPath("$.metaData.protectedFolder", is(false)));
+    }
+
+    @Test
+    public void testBrowseFolder_3() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/fileBrowser").param("currentPath", "conf/unexisting")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
     }
 
 }

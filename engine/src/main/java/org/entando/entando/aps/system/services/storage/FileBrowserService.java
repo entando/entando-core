@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -15,10 +15,12 @@ package org.entando.entando.aps.system.services.storage;
 
 import java.util.Arrays;
 import java.util.List;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
+import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +45,16 @@ public class FileBrowserService implements IFileBrowserService {
     @Override
     public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder) {
         try {
+            if (!this.getStorageManager().exists(currentPath, protectedFolder)) {
+                logger.warn("no folder found for path {} - type {}", currentPath, protectedFolder);
+                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_FOLDER_DOES_NOT_EXIST, "folder", currentPath);
+            }
             BasicFileAttributeView[] views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
-            return this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
+            List<BasicFileAttributeViewDto> dtos = this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
+            dtos.stream().forEach(i -> i.buildPath(currentPath));
+            return dtos;
+        } catch (RestRourceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Error browsing folder {} , protected {} ", currentPath, protectedFolder, e);
             throw new RestServerError("error browsing folder", e);

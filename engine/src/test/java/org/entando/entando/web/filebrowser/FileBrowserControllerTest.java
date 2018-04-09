@@ -14,7 +14,10 @@
 package org.entando.entando.web.filebrowser;
 
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import java.util.List;
 import org.entando.entando.aps.system.services.storage.FileBrowserService;
+import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import static org.hamcrest.CoreMatchers.is;
@@ -25,6 +28,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
@@ -52,6 +56,12 @@ public class FileBrowserControllerTest extends AbstractControllerTest {
 
     @Test
     public void testValidRequest() throws Exception {
+        List<BasicFileAttributeViewDto> dtos = new ArrayList<>();
+        BasicFileAttributeViewDto dto = new BasicFileAttributeViewDto();
+        dto.setName("folder");
+        dto.setDirectory(true);
+        dtos.add(dto);
+        when(fileBrowserService.browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean())).thenReturn(dtos);
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -61,9 +71,9 @@ public class FileBrowserControllerTest extends AbstractControllerTest {
         Mockito.verify(fileBrowserService, Mockito.times(1)).browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean());
         result.andExpect(status().isOk());
         System.out.println(result.andReturn().getResponse().getContentAsString());
-        result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
-        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(3)));
     }
 
 }

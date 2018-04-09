@@ -93,19 +93,4 @@ public class GuiFragmentValidator extends AbstractPaginationValidator {
         return 0;
     }
 
-    @Override
-    public boolean isValidField(String fieldName) {
-        List<String> fields = new ArrayList<>();
-        fields = getAllFields(fields, GuiFragmentDto.class);
-        return fields.contains(fieldName);
-    }
-
-    List<String> getAllFields(List<String> fields, Class<?> type) {
-        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList()));
-        if (type.getSuperclass() != null) {
-            return getAllFields(fields, type.getSuperclass());
-        }
-        return fields;
-    }
 }

@@ -55,10 +55,4 @@ public class LabelValidator extends AbstractPaginationValidator {
         }
     }
 
-    @Override
-    public boolean isValidField(String fieldName) {
-        List<String> fields = Arrays.asList(LabelDto.class.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList());
-        return fields.contains(fieldName);
-    }
 }

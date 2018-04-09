@@ -73,7 +73,7 @@ public class PageModelController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getPageModels(RestListRequest requestList) {
         logger.trace("loading page models");
-        this.getPagemModelValidator().validateRestListRequest(requestList);
+        this.getPagemModelValidator().validateRestListRequest(requestList, PageModelDto.class);
         PagedMetadata<PageModelDto> result = this.getPageModelService().getPageModels(requestList);
         this.getPagemModelValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

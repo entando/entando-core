@@ -75,7 +75,7 @@ public class GroupController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getGroups(RestListRequest requestList) throws JsonProcessingException {
-        this.getGroupValidator().validateRestListRequest(requestList);
+        this.getGroupValidator().validateRestListRequest(requestList, GroupDto.class);
         PagedMetadata<GroupDto> result = this.getGroupService().getGroups(requestList);
         this.getGroupValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);

@@ -80,7 +80,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDataTypes(@Valid RestListRequest requestList) throws JsonProcessingException {
-        this.getDataTypeValidator().validateRestListRequest(requestList);
+        this.getDataTypeValidator().validateRestListRequest(requestList, DataTypeDto.class);
         PagedMetadata<EntityTypeShortDto> result = this.getDataObjectService().getShortDataTypes(requestList);
         this.getDataTypeValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);
@@ -157,7 +157,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypeAttributes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDataTypeAttributeTypes(RestListRequest requestList) throws JsonProcessingException {
-        this.getDataTypeValidator().validateRestListRequest(requestList);
+        this.getDataTypeValidator().validateRestListRequest(requestList, AttributeTypeDto.class);
         PagedMetadata<String> result = this.getDataObjectService().getAttributeTypes(requestList);
         logger.debug("Main Response -> {}", result);
         this.getDataTypeValidator().validateRestListResult(requestList, result);

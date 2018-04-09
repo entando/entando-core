@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.common.validator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,7 @@ public abstract class AbstractPaginationValidator implements Validator {
     private static final String[] directions = {"ASC", "DESC"};
     private static final String[] operations = {"eq", "gt", "lt", "not", "like"};
 
-    public void validateRestListRequest(RestListRequest listRequest) {
+    public void validateRestListRequest(RestListRequest listRequest, Class<?> type) {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
         if (listRequest.getPage() < 1) {
             bindingResult.reject(ERRCODE_PAGE_INVALID, new Object[]{}, "pagination.page.invalid");
@@ -51,12 +52,12 @@ public abstract class AbstractPaginationValidator implements Validator {
             bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
             throw new RestRourceNotFoundException(bindingResult);
         }
-        if (!isValidField(listRequest.getSort())) {
+        if (!isValidField(listRequest.getSort(), type)) {
             bindingResult.reject(ERRCODE_SORTING_INVALID, new Object[]{listRequest.getSort()}, "sorting.sort.invalid");
         }
         if (listRequest.getFilters() != null) {
             List<String> attributes = Arrays.asList(listRequest.getFilters()).stream()
-                    .map(filter -> filter.getAttributeName()).filter(attr -> !isValidField(attr)).collect(Collectors.toList());
+                    .map(filter -> filter.getAttributeName()).filter(attr -> !isValidField(attr, type)).collect(Collectors.toList());
             if (attributes.size() > 0) {
                 bindingResult.reject(ERRCODE_FILTERING_ATTR_INVALID, new Object[]{attributes.get(0)}, "filtering.filter.attr.name.invalid");
             }
@@ -85,5 +86,18 @@ public abstract class AbstractPaginationValidator implements Validator {
         }
     }
 
-    public abstract boolean isValidField(String fielName);
+    public boolean isValidField(String fieldName, Class<?> type) {
+        List<String> fields = new ArrayList<>();
+        fields = getAllFields(fields, type);
+        return fields.contains(fieldName);
+    }
+
+    List<String> getAllFields(List<String> fields, Class<?> type) {
+        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
+                .map(field -> field.getName()).collect(Collectors.toList()));
+        if (type.getSuperclass() != null) {
+            return getAllFields(fields, type.getSuperclass());
+        }
+        return fields;
+    }
 }

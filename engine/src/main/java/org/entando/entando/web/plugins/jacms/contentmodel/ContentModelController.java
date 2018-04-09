@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContentModelController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private ContentModelValidator contentModelValidator = new ContentModelValidator();
 
     @Autowired
@@ -63,7 +63,7 @@ public class ContentModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getContentModels(RestListRequest requestList) throws JsonProcessingException {
-        this.getContentModelValidator().validateRestListRequest(requestList);
+        this.getContentModelValidator().validateRestListRequest(requestList, ContentModelDto.class);
         PagedMetadata<ContentModelDto> result = this.getContentModelService().getContentModels(requestList);
         this.getContentModelValidator().validateRestListResult(requestList, result);
         logger.debug("loading contentModel list -> {}", result);
@@ -88,7 +88,6 @@ public class ContentModelController {
         ContentModelDto dto = this.getContentModelService().addContentModel(contentModel);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
-
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{modelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,7 +122,6 @@ public class ContentModelController {
         Map<String, List<String>> references = this.getContentModelService().getPageReferences(modelId);
         return new ResponseEntity<>(new RestResponse(references), HttpStatus.OK);
     }
-
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

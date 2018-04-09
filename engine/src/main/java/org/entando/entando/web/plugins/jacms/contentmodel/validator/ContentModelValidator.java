@@ -35,10 +35,4 @@ public class ContentModelValidator extends AbstractPaginationValidator {
         }
     }
 
-    @Override
-    public boolean isValidField(String fieldName) {
-        List<String> fields = Arrays.asList(ContentModelDto.class.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList());
-        return fields.contains(fieldName);
-    }
 }

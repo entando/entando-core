@@ -81,10 +81,4 @@ public class PageModelValidator extends AbstractPaginationValidator {
 
     }
 
-    @Override
-    public boolean isValidField(String fieldName) {
-        List<String> fields = Arrays.asList(PageModelDto.class.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList());
-        return fields.contains(fieldName);
-    }
 }

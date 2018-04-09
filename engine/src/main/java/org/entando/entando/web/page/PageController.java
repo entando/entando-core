@@ -119,7 +119,7 @@ public class PageController {
     @RequestMapping(value = "/pages/search", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getPages(@ModelAttribute("user") UserDetails user, PageSearchRequest searchRequest) {
         logger.debug("getting page list with request {}", searchRequest);
-        this.getPageValidator().validateRestListRequest(searchRequest);
+        this.getPageValidator().validateRestListRequest(searchRequest, PageDto.class);
         List<String> groups = this.getAuthorizationService().getAllowedGroupCodes(user);
         PagedMetadata<PageDto> result = this.getPageService().searchPages(searchRequest, groups);
         return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);

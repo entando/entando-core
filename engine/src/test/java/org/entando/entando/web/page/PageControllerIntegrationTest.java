@@ -47,8 +47,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                         .param("pageSize", "5")
                         .param("pageCodeToken", "pagin")
                         .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
         System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(6)));
         result.andExpect(jsonPath("$.payload[0].code", is("pagina_1")));
     }

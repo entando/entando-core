@@ -38,19 +38,4 @@ public class ProfileTypeValidator extends EntityTypeValidator {
         return this.userProfileManager;
     }
 
-    @Override
-    public boolean isValidField(String fieldName) {
-        List<String> fields = new ArrayList<>();
-        fields = getAllFields(fields, UserProfileTypeDto.class);
-        return fields.contains(fieldName);
-    }
-
-    List<String> getAllFields(List<String> fields, Class<?> type) {
-        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList()));
-        if (type.getSuperclass() != null) {
-            return getAllFields(fields, type.getSuperclass());
-        }
-        return fields;
-    }
 }

@@ -13,12 +13,15 @@
  */
 package org.entando.entando.web.permission.validator;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.permission.model.PermissionRequest;
 import org.springframework.validation.Errors;
 
 public class PermissionValidator extends AbstractPaginationValidator {
-
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -31,4 +34,3 @@ public class PermissionValidator extends AbstractPaginationValidator {
     }
 
 }
-

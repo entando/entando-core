@@ -74,7 +74,7 @@ public class RoleController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getRoles(RestListRequest requestList) throws JsonProcessingException {
-        this.getRoleValidator().validateRestListRequest(requestList);
+        this.getRoleValidator().validateRestListRequest(requestList, RoleDto.class);
         PagedMetadata<RoleDto> result = this.getRoleService().getRoles(requestList);
         this.getRoleValidator().validateRestListResult(requestList, result);
         logger.debug("loading role list -> {}", result);

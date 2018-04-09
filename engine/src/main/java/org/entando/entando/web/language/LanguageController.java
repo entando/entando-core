@@ -70,7 +70,7 @@ public class LanguageController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
-        this.getLanguageValidator().validateRestListRequest(requestList);
+        this.getLanguageValidator().validateRestListRequest(requestList, LanguageDto.class);
         PagedMetadata<LanguageDto> result = this.getLanguageService().getLanguages(requestList);
         this.getLanguageValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

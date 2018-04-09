@@ -78,7 +78,7 @@ public class DataObjectModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDataObjectModels(RestListRequest requestList) {
-        this.getDataObjectModelValidator().validateRestListRequest(requestList);
+        this.getDataObjectModelValidator().validateRestListRequest(requestList, DataModelDto.class);
         PagedMetadata<DataModelDto> result = this.getDataObjectModelService().getDataObjectModels(requestList);
         this.getDataObjectModelValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);

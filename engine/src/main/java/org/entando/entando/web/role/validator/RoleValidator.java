@@ -13,11 +13,14 @@
  */
 package org.entando.entando.web.role.validator;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.role.model.RoleRequest;
 import org.springframework.validation.Errors;
-
 
 public class RoleValidator extends AbstractPaginationValidator {
 
@@ -26,7 +29,6 @@ public class RoleValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_URINAME_MISMATCH = "3";
     public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
     public static final String ERRCODE_ROLE_REFERENCES = "5";
-
 
     @Override
     public boolean supports(Class<?> paramClass) {

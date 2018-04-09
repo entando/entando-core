@@ -57,11 +57,10 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/pages/search")
-                                                                   .param("pageSize", "5")
-                                                                   .param("pageCodeToken", "pagin")
-                                                                   .header("Authorization", "Bearer " + accessToken));
+                        .param("pageSize", "5")
+                        .param("pageCodeToken", "pagin")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.metaData.totalItems", is(6)));
         result.andExpect(jsonPath("$.payload[0].code", is("pagina_1")));
     }

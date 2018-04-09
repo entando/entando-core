@@ -13,6 +13,11 @@
  */
 package org.entando.entando.web.database.validator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.entando.entando.aps.system.services.database.model.DumpReportDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;

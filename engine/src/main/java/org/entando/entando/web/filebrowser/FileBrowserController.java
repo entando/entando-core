@@ -97,12 +97,11 @@ public class FileBrowserController {
         logger.debug("required file {} - protected {}", currentPath, protectedFolder);
         byte[] base64 = this.getFileBrowserService().getFileStream(currentPath, protectedFolder);
         Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", protectedFolder);
         result.put("path", currentPath);
         result.put("filename", this.getFilename(currentPath));
         result.put("base64", base64);
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("protectedFolder", protectedFolder);
-        metadata.put("currentPath", currentPath);
         metadata.put("prevPath", this.getPrevFolderName(currentPath));
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }

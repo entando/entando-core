@@ -13,9 +13,14 @@
  */
 package org.entando.entando.aps.system.services.storage;
 
+import java.util.List;
+import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
+
 /**
  * @author E.Santoboni
  */
 public interface IFileBrowserService {
+
+    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder);
 
 }

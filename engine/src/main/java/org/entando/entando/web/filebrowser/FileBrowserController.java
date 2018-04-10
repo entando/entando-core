@@ -13,16 +13,21 @@
  */
 package org.entando.entando.web.filebrowser;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.storage.IFileBrowserService;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
 import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -68,26 +75,11 @@ public class FileBrowserController {
         if (StringUtils.isEmpty(currentPath)) {
             return null;
         }
-        String path = "";
         if (!currentPath.contains("/")) {
-            return path;
+            return "";
+        } else {
+            return currentPath.substring(0, currentPath.lastIndexOf("/"));
         }
-        String[] folders = currentPath.split("/");
-        if (folders.length == 0) {
-            return folders[0];
-        }
-        for (int i = 0; i < folders.length - 1; i++) {
-            String folderName = folders[i];
-            if (StringUtils.isEmpty(folderName)) {
-                break;
-            } else {
-                if (i > 0) {
-                    path += "/";
-                }
-                path += folderName;
-            }
-        }
-        return path;
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -103,6 +95,49 @@ public class FileBrowserController {
         result.put("base64", base64);
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/file", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> addFile(@Valid @RequestBody FileBrowserFileRequest request, BindingResult bindingResult) throws ApsSystemException {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getValidator().validate(request, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getFileBrowserService().addFile(request, bindingResult);
+        return this.executeFilePostPutRespose(request);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/file/{filename}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> updateFile(@Valid @RequestBody FileBrowserFileRequest request,
+            @RequestParam String filename, BindingResult bindingResult) throws ApsSystemException {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        if (!request.getFilename().equals(filename)) {
+            bindingResult.rejectValue("filename", FileBrowserValidator.ERRCODE_URINAME_MISMATCH, new String[]{filename, request.getFilename()}, "fileBrowser.filename.mismatch");
+            throw new ValidationConflictException(bindingResult);
+        }
+        this.getValidator().validate(request, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getFileBrowserService().updateFile(request, bindingResult);
+        return this.executeFilePostPutRespose(request);
+    }
+
+    public ResponseEntity<RestResponse> executeFilePostPutRespose(FileBrowserFileRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", request.isProtectedFolder());
+        result.put("path", request.getPath());
+        result.put("filename", this.getFilename(request.getPath()));
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("prevPath", this.getPrevFolderName(request.getPath()));
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 

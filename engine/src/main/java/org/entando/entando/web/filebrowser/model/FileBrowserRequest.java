@@ -13,12 +13,18 @@
  */
 package org.entando.entando.web.filebrowser.model;
 
+import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * @author E.Santoboni
  */
 public class FileBrowserRequest {
 
+    @NotBlank(message = "fileBrowser.path.notBlank")
     private String path;
+    @NotNull(message = "fileBrowser.protectedFolder.notBlank")
+    private boolean protectedFolder;
 
     public String getPath() {
         return path;
@@ -26,6 +32,14 @@ public class FileBrowserRequest {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public boolean isProtectedFolder() {
+        return protectedFolder;
+    }
+
+    public void setProtectedFolder(boolean protectedFolder) {
+        this.protectedFolder = protectedFolder;
     }
 
 }

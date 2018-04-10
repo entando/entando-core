@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.storage;
 
 import com.agiletec.aps.util.FileTextReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -24,9 +25,12 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
 import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -48,7 +52,7 @@ public class FileBrowserService implements IFileBrowserService {
 
     @Override
     public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder) {
-        this.checkResource(currentPath, protectedFolder);
+        this.checkResource(currentPath, "Folder", protectedFolder);
         List<BasicFileAttributeViewDto> dtos = null;
         try {
             BasicFileAttributeView[] views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
@@ -63,7 +67,7 @@ public class FileBrowserService implements IFileBrowserService {
 
     @Override
     public byte[] getFileStream(String currentPath, boolean protectedFolder) {
-        this.checkResource(currentPath, protectedFolder);
+        this.checkResource(currentPath, "File", protectedFolder);
         File tempFile = null;
         byte[] bytes = null;
         try {
@@ -84,11 +88,42 @@ public class FileBrowserService implements IFileBrowserService {
         return bytes;
     }
 
-    protected void checkResource(String currentPath, boolean protectedFolder) {
+    @Override
+    public void addFile(FileBrowserFileRequest request, BindingResult bindingResult) {
+        String path = request.getPath();
+        String parentFolder = path.substring(0, path.lastIndexOf("/"));
+        this.checkResource(parentFolder, "Parent Folder", request.isProtectedFolder());
         try {
-            if (!this.getStorageManager().exists(currentPath, protectedFolder)) {
+            if (this.getStorageManager().exists(request.getPath(), request.isProtectedFolder())) {
+                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST, new String[]{request.getPath()}, "fileBrowser.file.exists");
+                throw new ValidationGenericException(bindingResult);
+            }
+            InputStream is = new ByteArrayInputStream(request.getBase64());
+            this.getStorageManager().saveFile(path, request.isProtectedFolder(), is);
+        } catch (ValidationGenericException vge) {
+            throw vge;
+        } catch (Throwable t) {
+            logger.error("error adding file path {} - type {}", path, request.isProtectedFolder());
+            throw new RestServerError("error adding file", t);
+        }
+    }
+
+    @Override
+    public void updateFile(FileBrowserFileRequest request, BindingResult bindingResult) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteFile(String currentPath, boolean protectedResource) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    protected void checkResource(String currentPath, String objectName, boolean protectedFolder) {
+        try {
+            boolean exists = this.getStorageManager().exists(currentPath, protectedFolder);
+            if (!exists) {
                 logger.warn("no resource found for path {} - type {}", currentPath, protectedFolder);
-                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, "resource", currentPath);
+                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, objectName, currentPath);
             }
         } catch (RestRourceNotFoundException e) {
             throw e;

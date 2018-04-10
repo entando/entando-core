@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.storage.IFileBrowserService;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
@@ -113,15 +112,10 @@ public class FileBrowserController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/file/{filename}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateFile(@Valid @RequestBody FileBrowserFileRequest request,
-            @RequestParam String filename, BindingResult bindingResult) throws ApsSystemException {
+    @RequestMapping(value = "/file", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> updateFile(@Valid @RequestBody FileBrowserFileRequest request, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
-        }
-        if (!request.getFilename().equals(filename)) {
-            bindingResult.rejectValue("filename", FileBrowserValidator.ERRCODE_URINAME_MISMATCH, new String[]{filename, request.getFilename()}, "fileBrowser.filename.mismatch");
-            throw new ValidationConflictException(bindingResult);
         }
         this.getValidator().validate(request, bindingResult);
         if (bindingResult.hasErrors()) {

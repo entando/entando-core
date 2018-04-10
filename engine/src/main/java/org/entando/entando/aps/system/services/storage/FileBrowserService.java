@@ -110,12 +110,29 @@ public class FileBrowserService implements IFileBrowserService {
 
     @Override
     public void updateFile(FileBrowserFileRequest request, BindingResult bindingResult) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String path = request.getPath();
+        this.checkResource(path, "File", request.isProtectedFolder());
+        try {
+            InputStream is = new ByteArrayInputStream(request.getBase64());
+            this.getStorageManager().saveFile(path, request.isProtectedFolder(), is);
+        } catch (ValidationConflictException vge) {
+            throw vge;
+        } catch (Throwable t) {
+            logger.error("error updating file path {} - type {}", path, request.isProtectedFolder());
+            throw new RestServerError("error updating file", t);
+        }
     }
 
     @Override
     public void deleteFile(String currentPath, boolean protectedResource) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            this.getStorageManager().deleteFile(currentPath, protectedResource);
+        } catch (ValidationConflictException vge) {
+            throw vge;
+        } catch (Throwable t) {
+            logger.error("error deleting file path {} - type {}", currentPath, protectedResource);
+            throw new RestServerError("error deleting file", t);
+        }
     }
 
     protected void checkResource(String currentPath, String objectName, boolean protectedFolder) {

@@ -13,7 +13,6 @@
  */
 package org.entando.entando.web.filebrowser;
 
-import org.entando.entando.web.dataobject.*;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
@@ -38,9 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class FileBrowserControllerIntegrationTest extends AbstractControllerIntegrationTest {
-
-    @Autowired
-    private DataTypeController controller;
 
     @Autowired
     private IStorageManager storageManager;
@@ -210,6 +206,65 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         }
     }
 
+    @Test
+    public void testUpdateFile() throws Exception {
+        String folderName = "test_folder_3";
+        boolean protectedFolder = true;
+        Assert.assertFalse(this.storageManager.exists(folderName, protectedFolder));
+        this.storageManager.createDirectory(folderName, protectedFolder);
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String body = this.createBody("test.txt", folderName + "/test.txt", protectedFolder, "test test");
+            this.executeFilePost(body, accessToken, status().isOk());
+            Assert.assertTrue(this.storageManager.exists(folderName + "/test.txt", protectedFolder));
+            String text = this.storageManager.readFile(folderName + "/test.txt", protectedFolder);
+            Assert.assertEquals("test test", text);
+
+            String body1 = this.createBody("wrong.txt", folderName + "/test.txt", protectedFolder, "Modified test test");
+            ResultActions result1 = this.executeFilePut(body1, accessToken, status().isBadRequest());
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+
+            String body2 = this.createBody("test.txt", folderName + "/subfolder/test.txt", protectedFolder, "Modified test test");
+            ResultActions result2 = this.executeFilePut(body2, accessToken, status().isNotFound());
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+
+            String body3 = this.createBody("", folderName + "/test.txt", protectedFolder, "Modified test test");
+            ResultActions result3 = this.executeFilePut(body3, accessToken, status().isBadRequest());
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result3.andExpect(jsonPath("$.errors[0].code", is("52")));
+
+            text = this.storageManager.readFile(folderName + "/test.txt", protectedFolder);
+            Assert.assertEquals("test test", text);
+
+            String body4 = this.createBody("test_test.txt", folderName + "/test_test.txt", protectedFolder, "Modified test test");
+            ResultActions result4 = this.executeFilePut(body4, accessToken, status().isNotFound());
+            result4.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+
+            String body5 = this.createBody("test.txt", folderName + "/test.txt", protectedFolder, null);
+            ResultActions result5 = this.executeFilePut(body5, accessToken, status().isBadRequest());
+            result5.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+
+            String bodyPut = this.createBody("test.txt", folderName + "/test.txt", protectedFolder, "Modified test test");
+            ResultActions result = this.executeFilePut(bodyPut, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.size()", is(3)));
+            result.andExpect(jsonPath("$.payload.protectedFolder", is(protectedFolder)));
+            result.andExpect(jsonPath("$.payload.path", is(folderName + "/test.txt")));
+            result.andExpect(jsonPath("$.payload.filename", is("test.txt")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result.andExpect(jsonPath("$.metaData.prevPath", is(folderName)));
+
+            text = this.storageManager.readFile(folderName + "/test.txt", protectedFolder);
+            Assert.assertEquals("Modified test test", text);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.storageManager.deleteDirectory(folderName, protectedFolder);
+        }
+    }
+
     private String createBody(String filename, String path, boolean isProtected, String content) throws Exception {
         FileBrowserFileRequest request = new FileBrowserFileRequest();
         request.setFilename(filename);
@@ -231,13 +286,13 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         return result;
     }
 
-    private ResultActions executeFilePut(String body, String filename, String accessToken, ResultMatcher expected) throws Exception {
+    private ResultActions executeFilePut(String body, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
-                .perform(put("/fileBrowser/file/{filename}", new Object[]{filename})
-                        .content(body).contentType(MediaType.APPLICATION_JSON_VALUE)
+                .perform(put("/fileBrowser/file")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(expected);
+        result.andExpect(rm);
         return result;
     }
-
 }

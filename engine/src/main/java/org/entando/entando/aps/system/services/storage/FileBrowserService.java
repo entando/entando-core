@@ -75,8 +75,6 @@ public class FileBrowserService implements IFileBrowserService {
             InputStream stream = this.getStorageManager().getStream(currentPath, protectedFolder);
             tempFile = FileTextReader.createTempFile(new Random().nextInt(100) + sections[sections.length - 1], stream);
             bytes = FileTextReader.fileToByteArray(tempFile);
-        } catch (RestRourceNotFoundException r) {
-            throw r;
         } catch (Throwable t) {
             logger.error("error extracting stream for path {} - type {}", currentPath, protectedFolder);
             throw new RestServerError("error extracting stream", t);

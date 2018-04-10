@@ -173,7 +173,7 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
             String accessToken = mockOAuthInterceptor(user);
 
             String body1 = this.createBody("wrong.txt", folderName + "/test.txt", protectedFolder, "test test");
-            ResultActions result1 = this.executeFilePost(body1, accessToken, status().isBadRequest());
+            ResultActions result1 = this.executeFilePost(body1, accessToken, status().isConflict());
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
 
             String body2 = this.createBody("test.txt", folderName + "/subfolder/test.txt", protectedFolder, "test test");
@@ -223,7 +223,7 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
             Assert.assertEquals("test test", text);
 
             String body1 = this.createBody("wrong.txt", folderName + "/test.txt", protectedFolder, "Modified test test");
-            ResultActions result1 = this.executeFilePut(body1, accessToken, status().isBadRequest());
+            ResultActions result1 = this.executeFilePut(body1, accessToken, status().isConflict());
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
 
             String body2 = this.createBody("test.txt", folderName + "/subfolder/test.txt", protectedFolder, "Modified test test");

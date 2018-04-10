@@ -135,6 +135,20 @@ public class FileBrowserController {
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/file", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> deleteFile(@RequestParam String currentPath, @RequestParam Boolean protectedFolder) {
+        logger.debug("delete file {} - protected {}", currentPath, protectedFolder);
+        this.getFileBrowserService().deleteFile(currentPath, protectedFolder);
+        Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", protectedFolder);
+        result.put("path", currentPath);
+        result.put("filename", this.getFilename(currentPath));
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
     private String getFilename(String currentPath) {
         String[] sections = currentPath.split("/");
         return sections[sections.length - 1];

@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -265,6 +266,67 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         }
     }
 
+    @Test
+    public void testDeleteFile_1() throws Exception {
+        String folderName = "test_folder_4";
+        boolean protectedFolder = true;
+        Assert.assertFalse(this.storageManager.exists(folderName, protectedFolder));
+        this.storageManager.createDirectory(folderName, protectedFolder);
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String body = this.createBody("testDelete.txt", folderName + "/testDelete.txt", protectedFolder, "test test");
+            this.executeFilePost(body, accessToken, status().isOk());
+            Assert.assertTrue(this.storageManager.exists(folderName + "/testDelete.txt", protectedFolder));
+            String text = this.storageManager.readFile(folderName + "/testDelete.txt", protectedFolder);
+            Assert.assertEquals("test test", text);
+
+            ResultActions result = mockMvc
+                    .perform(delete("/fileBrowser/file").param("currentPath", folderName + "/testDelete.txt").param("protectedFolder", "true")
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.payload.protectedFolder", is(true)));
+            result.andExpect(jsonPath("$.payload.filename", Matchers.is("testDelete.txt")));
+            result.andExpect(jsonPath("$.payload.path", Matchers.is(folderName + "/testDelete.txt")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result.andExpect(jsonPath("$.metaData.prevPath", is(folderName)));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.storageManager.deleteDirectory(folderName, protectedFolder);
+        }
+    }
+
+    @Test
+    public void testDeleteFile_2() throws Exception {
+        String folderName = "test_folder_5";
+        boolean protectedFolder = true;
+        Assert.assertFalse(this.storageManager.exists(folderName, protectedFolder));
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                    .perform(delete("/fileBrowser/file").param("currentPath", folderName + "/testDelete2.txt").param("protectedFolder", "true")
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+            result.andExpect(jsonPath("$.payload.protectedFolder", is(true)));
+            result.andExpect(jsonPath("$.payload.filename", Matchers.is("testDelete2.txt")));
+            result.andExpect(jsonPath("$.payload.path", Matchers.is(folderName + "/testDelete2.txt")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result.andExpect(jsonPath("$.metaData.prevPath", is(folderName)));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.storageManager.deleteDirectory(folderName, protectedFolder);
+        }
+    }
+
     private String createBody(String filename, String path, boolean isProtected, String content) throws Exception {
         FileBrowserFileRequest request = new FileBrowserFileRequest();
         request.setFilename(filename);
@@ -295,4 +357,5 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(rm);
         return result;
     }
+
 }

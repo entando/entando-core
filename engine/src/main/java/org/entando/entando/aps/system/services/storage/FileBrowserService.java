@@ -137,6 +137,9 @@ public class FileBrowserService implements IFileBrowserService {
     @Override
     public void addDirectory(FileBrowserRequest request, BindingResult bindingResult) {
         String path = request.getPath();
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length()-2);
+        }
         String parentFolder = path.substring(0, path.lastIndexOf("/"));
         this.checkResource(parentFolder, "Parent Folder", request.isProtectedFolder());
         try {

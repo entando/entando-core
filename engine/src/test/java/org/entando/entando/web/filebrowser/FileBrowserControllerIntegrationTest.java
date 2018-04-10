@@ -358,4 +358,55 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         return result;
     }
 
+    @Test
+    public void testAddDeleteDirectory() throws Exception {
+        Assert.assertFalse(this.storageManager.exists("test_folder", false));
+        this.storageManager.createDirectory("test_folder", false);
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            String body = "{\"protectedFolder\":false,\"path\":\"test_folder/subfolder\"}";//this.createBody("test.txt", "test_folder/test.txt", false, "test test");
+            ResultActions result = this.executeDirectoryPost(body, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.size()", is(2)));
+            result.andExpect(jsonPath("$.payload.protectedFolder", is(false)));
+            result.andExpect(jsonPath("$.payload.path", is("test_folder/subfolder")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result.andExpect(jsonPath("$.metaData.prevPath", is("test_folder")));
+            
+            String bodyFile = this.createBody("test.txt", "test_folder/subfolder/test.txt", false, "test test");
+            this.executeFilePost(bodyFile, accessToken, status().isOk());
+            
+            ResultActions result_error = this.executeDirectoryPost(body, accessToken, status().isConflict());
+            result_error.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result_error.andExpect(jsonPath("$.errors[0].code", is("2")));
+            
+            ResultActions result2 = mockMvc
+                    .perform(delete("/fileBrowser/directory")
+                            .param("currentPath", "test_folder/subfolder")
+                            .param("protectedFolder", "false")
+                            .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isOk());
+            System.out.println(result2.andReturn().getResponse().getContentAsString());
+            result2.andExpect(jsonPath("$.payload.protectedFolder", is(false)));
+            result2.andExpect(jsonPath("$.payload.path", Matchers.is("test_folder/subfolder")));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result2.andExpect(jsonPath("$.metaData.prevPath", is("test_folder")));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.storageManager.deleteDirectory("test_folder/", false);
+        }
+    }
+
+    private ResultActions executeDirectoryPost(String body, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(post("/fileBrowser/directory")
+                        .content(body).contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
 }

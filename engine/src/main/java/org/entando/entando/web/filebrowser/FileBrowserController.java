@@ -126,6 +126,16 @@ public class FileBrowserController {
         return this.executeFilePostPutRespose(request);
     }
 
+    public ResponseEntity<RestResponse> executeFilePostPutRespose(FileBrowserRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", request.isProtectedFolder());
+        result.put("path", request.getPath());
+        result.put("filename", this.getFilename(request.getPath()));
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("prevPath", this.getPrevFolderName(request.getPath()));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/file", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteFile(@RequestParam String currentPath, @RequestParam Boolean protectedFolder) {
@@ -151,7 +161,7 @@ public class FileBrowserController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getFileBrowserService().addDirectory(request, bindingResult);
-        return this.executeFilePostPutRespose(request);
+        return this.executeDirectoryRespose(request.getPath(), request.isProtectedFolder());
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -159,22 +169,18 @@ public class FileBrowserController {
     public ResponseEntity<RestResponse> deleteDirectory(@RequestParam String currentPath, @RequestParam Boolean protectedFolder) {
         logger.debug("delete directory {} - protected {}", currentPath, protectedFolder);
         this.getFileBrowserService().deleteDirectory(currentPath, protectedFolder);
-        Map<String, Object> result = new HashMap<>();
-        result.put("protectedFolder", protectedFolder);
-        result.put("path", currentPath);
-        result.put("filename", this.getFilename(currentPath));
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("prevPath", this.getPrevFolderName(currentPath));
-        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+        return this.executeDirectoryRespose(currentPath, protectedFolder);
     }
 
-    public ResponseEntity<RestResponse> executeFilePostPutRespose(FileBrowserRequest request) {
+    public ResponseEntity<RestResponse> executeDirectoryRespose(String path, Boolean protectedFolder) {
         Map<String, Object> result = new HashMap<>();
-        result.put("protectedFolder", request.isProtectedFolder());
-        result.put("path", request.getPath());
-        result.put("filename", this.getFilename(request.getPath()));
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length()-2);
+        }
+        result.put("protectedFolder", protectedFolder);
+        result.put("path", path);
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("prevPath", this.getPrevFolderName(request.getPath()));
+        metadata.put("prevPath", this.getPrevFolderName(path));
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 

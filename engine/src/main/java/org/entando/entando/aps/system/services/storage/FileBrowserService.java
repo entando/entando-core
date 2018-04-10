@@ -27,6 +27,7 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
+import org.entando.entando.web.filebrowser.model.FileBrowserRequest;
 import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -133,6 +134,37 @@ public class FileBrowserService implements IFileBrowserService {
         }
     }
 
+    @Override
+    public void addDirectory(FileBrowserRequest request, BindingResult bindingResult) {
+        String path = request.getPath();
+        String parentFolder = path.substring(0, path.lastIndexOf("/"));
+        this.checkResource(parentFolder, "Parent Folder", request.isProtectedFolder());
+        try {
+            if (this.getStorageManager().exists(request.getPath(), request.isProtectedFolder())) {
+                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST, new String[]{request.getPath()}, "fileBrowser.directory.exists");
+                throw new ValidationConflictException(bindingResult);
+            }
+            this.getStorageManager().createDirectory(path, request.isProtectedFolder());
+        } catch (ValidationConflictException vge) {
+            throw vge;
+        } catch (Throwable t) {
+            logger.error("error adding directory path {} - type {}", path, request.isProtectedFolder());
+            throw new RestServerError("error adding directory", t);
+        }
+    }
+
+    @Override
+    public void deleteDirectory(String currentPath, boolean protectedFolder) {
+        try {
+            this.getStorageManager().deleteDirectory(currentPath, protectedFolder);
+        } catch (ValidationConflictException vge) {
+            throw vge;
+        } catch (Throwable t) {
+            logger.error("error deleting directory path {} - type {}", currentPath, protectedFolder);
+            throw new RestServerError("error deleting directory", t);
+        }
+    }
+    
     protected void checkResource(String currentPath, String objectName, boolean protectedFolder) {
         try {
             boolean exists = this.getStorageManager().exists(currentPath, protectedFolder);

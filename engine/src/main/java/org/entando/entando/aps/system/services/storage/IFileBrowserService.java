@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.storage;
 import java.util.List;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
+import org.entando.entando.web.filebrowser.model.FileBrowserRequest;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -32,5 +33,9 @@ public interface IFileBrowserService {
     public void updateFile(FileBrowserFileRequest request, BindingResult bindingResult);
 
     public void deleteFile(String currentPath, boolean protectedResource);
+
+    public void addDirectory(FileBrowserRequest request, BindingResult bindingResult);
+
+    public void deleteDirectory(String currentPath, boolean protectedFolder);
 
 }

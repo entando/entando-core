@@ -27,6 +27,7 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
+import org.entando.entando.web.filebrowser.model.FileBrowserRequest;
 import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,16 +126,6 @@ public class FileBrowserController {
         return this.executeFilePostPutRespose(request);
     }
 
-    public ResponseEntity<RestResponse> executeFilePostPutRespose(FileBrowserFileRequest request) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("protectedFolder", request.isProtectedFolder());
-        result.put("path", request.getPath());
-        result.put("filename", this.getFilename(request.getPath()));
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("prevPath", this.getPrevFolderName(request.getPath()));
-        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
-    }
-
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/file", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteFile(@RequestParam String currentPath, @RequestParam Boolean protectedFolder) {
@@ -146,6 +137,44 @@ public class FileBrowserController {
         result.put("filename", this.getFilename(currentPath));
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/directory", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> addDirectory(@Valid @RequestBody FileBrowserRequest request, BindingResult bindingResult) throws ApsSystemException {
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getValidator().validate(request, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+        this.getFileBrowserService().addDirectory(request, bindingResult);
+        return this.executeFilePostPutRespose(request);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/directory", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> deleteDirectory(@RequestParam String currentPath, @RequestParam Boolean protectedFolder) {
+        logger.debug("delete directory {} - protected {}", currentPath, protectedFolder);
+        this.getFileBrowserService().deleteDirectory(currentPath, protectedFolder);
+        Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", protectedFolder);
+        result.put("path", currentPath);
+        result.put("filename", this.getFilename(currentPath));
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
+    public ResponseEntity<RestResponse> executeFilePostPutRespose(FileBrowserRequest request) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("protectedFolder", request.isProtectedFolder());
+        result.put("path", request.getPath());
+        result.put("filename", this.getFilename(request.getPath()));
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("prevPath", this.getPrevFolderName(request.getPath()));
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 

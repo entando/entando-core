@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.filebrowser.model;
 
+import javax.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -22,7 +23,7 @@ public class FileBrowserFileRequest extends FileBrowserRequest {
 
     @NotBlank(message = "fileBrowser.filename.notBlank")
     private String filename;
-    @NotBlank(message = "fileBrowser.base64.notBlank")
+    @NotNull(message = "fileBrowser.base64.notBlank")
     private byte[] base64;
 
     public String getFilename() {

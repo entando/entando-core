@@ -25,7 +25,7 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.storage.model.BasicFileAttributeViewDto;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
 import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
@@ -96,11 +96,11 @@ public class FileBrowserService implements IFileBrowserService {
         try {
             if (this.getStorageManager().exists(request.getPath(), request.isProtectedFolder())) {
                 bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST, new String[]{request.getPath()}, "fileBrowser.file.exists");
-                throw new ValidationGenericException(bindingResult);
+                throw new ValidationConflictException(bindingResult);
             }
             InputStream is = new ByteArrayInputStream(request.getBase64());
             this.getStorageManager().saveFile(path, request.isProtectedFolder(), is);
-        } catch (ValidationGenericException vge) {
+        } catch (ValidationConflictException vge) {
             throw vge;
         } catch (Throwable t) {
             logger.error("error adding file path {} - type {}", path, request.isProtectedFolder());

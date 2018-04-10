@@ -20,6 +20,7 @@ import java.util.Set;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
@@ -114,6 +115,25 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
             throw new ApsSystemException("Error loading actionlogger records", t);
         }
         return records;
+    }
+
+    @Override
+    public SearcherDaoPaginatedResult<ActionLogRecord> getPaginatedActionRecords(IActionLogRecordSearchBean searchBean) throws ApsSystemException {
+        SearcherDaoPaginatedResult<ActionLogRecord> pagedResult = null;
+        try {
+            List<ActionLogRecord> actionLogRecords = new ArrayList<>();
+            int count = this.getActionLogDAO().countActionLogRecords(searchBean);
+
+            List<Integer> recordsIs = this.getActionLogDAO().getActionRecords(searchBean);
+            for (Integer recordId : recordsIs) {
+                actionLogRecords.add(this.getActionRecord(recordId));
+            }
+            pagedResult = new SearcherDaoPaginatedResult<ActionLogRecord>(count, actionLogRecords);
+        } catch (Throwable t) {
+            _logger.error("Error searching ActionLogRecord", t);
+            throw new ApsSystemException("Error searching ActionLogRecord", t);
+        }
+        return pagedResult;
     }
 
     @Override

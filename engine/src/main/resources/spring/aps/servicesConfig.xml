@@ -189,6 +189,10 @@
         <property name="authorizationService" ref="AuthorizationService"></property>
     </bean>
 
+    <bean id="ActivityStreamService" class="org.entando.entando.aps.system.services.activitystream.ActivityStreamService" >
+        <property name="authorizationManager" ref="AuthorizationManager" />
+        <property name="actionLogManager" ref="ActionLogManager" />
+    </bean>
 
 
     

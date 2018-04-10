@@ -14,13 +14,12 @@
 package org.entando.entando.aps.system.services.actionlog;
 
 import java.util.List;
+import java.util.Set;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
-
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import java.util.Set;
 
 /**
  * @author E.Santoboni - S.Puddu
@@ -62,5 +61,7 @@ public interface IActionLogDAO {
 	//public void cleanOldActivityStreamLogs(int maxActivitySizeByGroup);
 	
 	public void updateRecordDate(int id);
+
+    public int countActionLogRecords(IActionLogRecordSearchBean searchBean);
 	
 }

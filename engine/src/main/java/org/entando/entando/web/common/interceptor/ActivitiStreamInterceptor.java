@@ -65,7 +65,7 @@ public class ActivitiStreamInterceptor extends HandlerInterceptorAdapter {
         ActionLogRecord record = new ActionLogRecord();
         String username = this.getCurrentUsername(request);
         String namespace = request.getRequestURI();
-        String actionName = request.getRequestURI();
+        String actionName = request.getMethod();
         String parameters = request.getQueryString();
         record.setUsername(username);
         record.setNamespace(namespace);

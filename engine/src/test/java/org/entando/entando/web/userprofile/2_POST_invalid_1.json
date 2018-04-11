@@ -1,0 +1,29 @@
+{
+    "code": "TSTT",
+    "name": "Profile Type TSTT",
+    "attributes": [
+        {
+            "code": "DataAttribute",
+            "type": "Date",
+            "name": "Description of date attribute",
+            "roles": [],
+            "mandatory": true,
+            "listFilter": true,
+            "indexable": true,
+            "enumeratorStaticItems": null,
+            "enumeratorStaticItemsSeparator": null,
+            "enumeratorExtractorBean": null,
+            "validationRules": {
+                "rangeStartDate": "2000-03-24 00:00:00",
+                "rangeEndDate": "2008-03-24 00:00:00",
+                "rangeStartDateAttribute": null,
+                "rangeEndDateAttribute": null,
+                "equalDate": null,
+                "equalDateAttribute": null,
+                "ognlValidation": null
+            },
+            "nestedAttribute": null,
+            "compositeAttributes": null
+        }
+    ]
+}

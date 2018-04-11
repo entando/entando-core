@@ -15,6 +15,8 @@ package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 
 /**
@@ -22,7 +24,8 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class EntityTypeShortDto {
 
-    @NotBlank(message = "entityType.code.notBlank")
+    @Size(min = 3, max = 3, message = "string.size.invalid")
+    @NotNull(message = "entityType.code.notBlank")
     private String code;
 
     @NotBlank(message = "entityType.name.notBlank")

@@ -64,6 +64,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                                       .perform(get("/activitystream")
+                                                                     .param("sort", "createdAt")
                                                                      .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
@@ -81,6 +82,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
         ResultActions result = mockMvc
                                       .perform(get("/activitystream")
+                                                                     .param("sort", "createdAt")
                                                                      .param("filters[0].attribute", "createdAt")
                                                                      .param("filters[0].value", String.format("[%s TO %s]", start, end))
                                                                      .header("Authorization", "Bearer " + accessToken));
@@ -132,9 +134,11 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                                                                                                                                 .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
+            Thread.sleep(500);
             //assert record is present
             result = mockMvc
                             .perform(get("/activitystream")
+                                                           .param("sort", "createdAt")
                                                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
 

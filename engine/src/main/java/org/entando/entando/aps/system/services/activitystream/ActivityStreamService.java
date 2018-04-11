@@ -43,6 +43,7 @@ public class ActivityStreamService implements IActivityStreamService {
     @Autowired
     private IActionLogManager actionLogManager;
 
+    @Autowired
     private ISocialActivityStreamManager socialActivityStreamManager;
 
     @Autowired
@@ -72,6 +73,13 @@ public class ActivityStreamService implements IActivityStreamService {
         this.socialActivityStreamManager = socialActivityStreamManager;
     }
 
+    protected ActionLogRecordDtoBuilder getDtoBuilder() {
+        return dtoBuilder;
+    }
+
+    public void setDtoBuilder(ActionLogRecordDtoBuilder dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
 
     @Override
     public PagedMetadata<ActionLogRecordDto> getActivityStream(RestListRequest requestList, UserDetails userDetails) {
@@ -202,18 +210,8 @@ public class ActivityStreamService implements IActivityStreamService {
             if (f.getAttributeName().equals(KEY_FILTER_PARAMS)) {
                 searchBean.setParams(f.getValue());
             }
-
         }
-
         return searchBean;
-    }
-
-    public ActionLogRecordDtoBuilder getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(ActionLogRecordDtoBuilder dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
     }
 
 }

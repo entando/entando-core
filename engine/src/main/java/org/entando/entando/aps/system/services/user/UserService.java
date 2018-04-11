@@ -20,6 +20,7 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
@@ -34,60 +35,71 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author paddeo
  */
 public class UserService implements IUserService {
-
+    
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
+    
     private static final String ERRCODE_USER_NOT_FOUND = "1";
-
+    
     @Autowired
     private IUserManager userManager;
-
+    
+    @Autowired
+    private IUserProfileManager userProfileManager;
+    
     @Autowired
     private IAuthorizationManager authorizationManager;
-
+    
     @Autowired
     private IAuthenticationProviderManager authenticationProvider;
-
+    
     @Autowired
     private IDtoBuilder<UserDetails, UserDto> dtoBuilder;
-
+    
     public IUserManager getUserManager() {
         return userManager;
     }
-
+    
     public void setUserManager(IUserManager userManager) {
         this.userManager = userManager;
     }
-
+    
+    public IUserProfileManager getUserProfileManager() {
+        return userProfileManager;
+    }
+    
+    public void setUserProfileManager(IUserProfileManager userProfileManager) {
+        this.userProfileManager = userProfileManager;
+    }
+    
     public IAuthorizationManager getAuthorizationManager() {
         return authorizationManager;
     }
-
+    
     public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
         this.authorizationManager = authorizationManager;
     }
-
+    
     public IAuthenticationProviderManager getAuthenticationProvider() {
         return authenticationProvider;
     }
-
+    
     public void setAuthenticationProvider(IAuthenticationProviderManager authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
-
+    
     public IDtoBuilder<UserDetails, UserDto> getDtoBuilder() {
         return dtoBuilder;
     }
-
+    
     public void setDtoBuilder(IDtoBuilder<UserDetails, UserDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
-
+    
     @Override
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
         try {
             List<UserAuthorityDto> authorizations = new ArrayList<>();
-
+            
             final UserDetails user = this.getUserManager().getUser(username);;
             request.forEach(authorization
                     -> {
@@ -107,7 +119,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in add authorities", ex);
         }
     }
-
+    
     @Override
     public void deleteUserAuthorities(String username) {
         try {
@@ -117,7 +129,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in delete authorities", e);
         }
     }
-
+    
     @Override
     public PagedMetadata<UserDto> getUsers(RestListRequest requestList) {
         try {
@@ -127,31 +139,33 @@ public class UserService implements IUserService {
                     .stream()
                     .filter(i -> ((i.getKey() != null) && (UserDto.getEntityFieldName(i.getKey()) != null)))
                     .forEach(i -> i.setKey(UserDto.getEntityFieldName(i.getKey())));
-            List<UserDetails> users = null;
+            List<String> userNames = null;
+            List<UserDetails> users = new ArrayList<>();
             if (filters.size() > 0) {
                 String text = (String) filters.get(0).getValue();
-                users = this.getUserManager().searchUsers(text);
+                userNames = this.getUserManager().searchUsernames(text);
             } else {
-                users = this.getUserManager().getUsers();
+                userNames = this.getUserManager().getUsernames();
             }
+            userNames.forEach(username -> users.add(loadUser(username)));
             List<UserDto> dtoList = dtoBuilder.convert(users);
             SearcherDaoPaginatedResult<UserDetails> result = new SearcherDaoPaginatedResult<>(users.size(), users);
             PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(requestList, result);
             pagedMetadata.setBody(dtoList);
-
+            
             return pagedMetadata;
         } catch (Throwable t) {
             logger.error("error in search groups", t);
             throw new RestServerError("error in search groups", t);
         }
     }
-
+    
     @Override
     public UserDto getUser(String username) {
         UserDetails user = this.loadUser(username);
         return dtoBuilder.convert(user);
     }
-
+    
     @Override
     public UserDto updateUser(UserRequest userRequest) {
         try {
@@ -164,7 +178,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in updating user", e);
         }
     }
-
+    
     @Override
     public UserDto addUser(UserRequest userRequest) {
         try {
@@ -176,7 +190,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in adding user", e);
         }
     }
-
+    
     @Override
     public void removeUser(String username) {
         try {
@@ -186,7 +200,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in deleting user", e);
         }
     }
-
+    
     @Override
     public UserDto updateUserPassword(UserPasswordRequest passwordRequest) {
         UserDetails user = this.loadUser(passwordRequest.getUsername());
@@ -198,7 +212,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in updating password", e);
         }
     }
-
+    
     private UserDetails loadUser(String username) {
         try {
             UserDetails user = this.getUserManager().getUser(username);
@@ -211,7 +225,7 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in loading user", e);
         }
     }
-
+    
     private UserDetails updateUser(UserDetails oldUser, UserRequest userRequest) {
         User user = new User();
         user.setUsername(userRequest.getUsername());
@@ -224,7 +238,7 @@ public class UserService implements IUserService {
         }
         return user;
     }
-
+    
     private UserDetails createUser(UserRequest userRequest) {
         User user = new User();
         user.setUsername(userRequest.getUsername());

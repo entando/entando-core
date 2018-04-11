@@ -82,6 +82,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUsers(RestListRequest requestList) {
         logger.debug("getting users details with request {}", requestList);
+        this.getUserValidator().validateRestListRequest(requestList, UserDto.class);
         PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

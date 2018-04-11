@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.scheduling.annotation.Async;
 
 /**
  * @author E.Santoboni - S.Puddu
@@ -51,7 +50,6 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
         _logger.debug("{} ready", this.getClass().getName());
     }
 
-    @Async
     @Override
     public void addActionRecord(ActionLogRecord actionRecord) throws ApsSystemException {
         try {

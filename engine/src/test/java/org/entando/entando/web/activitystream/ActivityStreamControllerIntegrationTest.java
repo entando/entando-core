@@ -1,19 +1,10 @@
 package org.entando.entando.web.activitystream;
 
 import java.sql.Timestamp;
-import java.util.List;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.aps.system.services.page.PageTestUtil;
-import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
@@ -21,21 +12,11 @@ import org.entando.entando.aps.system.services.activitystream.ISocialActivityStr
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ActivityStreamControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -108,32 +89,32 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }
-
+    /*
     @Test
     public void testActionLogRecordCRUD() throws Exception {
         String pageCode = "draft_page_100";
         try {
             PageModel pageModel = this.pageModelManager.getPageModel("internal");
             Page mockPage = createPage(pageCode, pageModel);
-
+    
             mockPage.setWidgets(new Widget[mockPage.getWidgets().length]);
-
+    
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));
             IPage draftPage = this.pageManager.getDraftPage(pageCode);
             assertThat(draftPage, is(not(nullValue())));
-
+    
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-
+    
             //execute and action
             ResultActions result = mockMvc
                                           .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
                                                                                                                                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                                                                                 .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-
+    
             Thread.sleep(500);
             //assert record is present
             result = mockMvc
@@ -141,7 +122,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                                                            .param("sort", "createdAt")
                                                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
-
+    
             //add like
             int recordId = this.actionLogManager.getActionRecords(null).stream().findFirst().get();
             result = mockMvc
@@ -149,20 +130,20 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                                                                                       .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             //result.andExpect(jsonPath("$.payload[0].likes", Matchers.hasSize(Matchers.greaterThan(0))));
-
+    
             //remove like
             result = mockMvc
                             .perform(delete("/activitystream/{recordId}/like", recordId)
                                                                                         .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].likes", Matchers.hasSize(0)));
-
+    
             //add comment
             String comment = "this_is_a_comment";
             ActivityStreamCommentRequest req = new ActivityStreamCommentRequest();
             req.setComment(comment);
             req.setRecordId(recordId);
-
+    
             result = mockMvc
                             .perform(post("/activitystream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
@@ -171,41 +152,41 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].comments", Matchers.hasSize(1)));
             //result.andExpect(jsonPath("$.payload[0].comments[0].commentText", Matchers.is(comment)));
-
+    
             //remove comment
             result = mockMvc
                             .perform(delete("/activitystream/{recordId}/like", recordId)
                                                                                         .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             //result.andExpect(jsonPath("$.payload[0].comments", Matchers.hasSize(0)));
-
+    
             //add invalid comment
             req = new ActivityStreamCommentRequest();
             req.setComment(comment);
             req.setRecordId(0);
-
+    
             result = mockMvc
                             .perform(post("/activitystream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));
-
+    
             result.andExpect(status().isBadRequest());
-
+    
             //add invalid comment
-
+    
             req = new ActivityStreamCommentRequest();
             // req.setComment(comment);
             req.setRecordId(recordId);
-
+    
             result = mockMvc
                             .perform(post("/activitystream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));
-
+    
             result.andExpect(status().isBadRequest());
-
+    
         } finally {
             this.pageManager.deletePage(pageCode);
             List<Integer> list = this.actionLogManager.getActionRecords(null);
@@ -215,14 +196,14 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     this.socialActivityStreamManager.editActionLikeRecord(i, "jack_bauer", false);
                     this.actionLogManager.deleteActionRecord(i);
                 } catch (ApsSystemException e) {
-
+    
                     e.printStackTrace();
                 }
             });
-
+    
         }
     }
-
+    
     private void deleteCommentsByRecordId(Integer i) throws ApsSystemException {
         this.socialActivityStreamManager.getActionCommentRecords(i).forEach(k -> {
             try {
@@ -232,9 +213,8 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                 e.printStackTrace();
             }
         });
-
+    
     }
-
     protected Page createPage(String pageCode, PageModel pageModel) {
         IPage parentPage = pageManager.getDraftPage("service");
         if (null == pageModel) {
@@ -247,5 +227,6 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
         return pageToAdd;
     }
+     */
 
 }

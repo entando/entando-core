@@ -20,7 +20,6 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.CoreMatchers;
-import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,13 +28,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class FileBrowserControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -65,7 +65,7 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(3)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.size()", is(3)));
         result.andExpect(jsonPath("$.metaData.currentPath", is("")));

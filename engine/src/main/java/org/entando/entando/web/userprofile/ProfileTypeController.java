@@ -81,7 +81,7 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
-        this.getProfileTypeValidator().validateRestListRequest(requestList);
+        this.getProfileTypeValidator().validateRestListRequest(requestList, UserProfileTypeDto.class);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
         logger.debug("Main Response -> {}", result);
         this.getProfileTypeValidator().validateRestListResult(requestList, result);
@@ -158,7 +158,7 @@ public class ProfileTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypeAttributes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getUserProfileAttributeTypes(RestListRequest requestList) throws JsonProcessingException {
-        this.getProfileTypeValidator().validateRestListRequest(requestList);
+        this.getProfileTypeValidator().validateRestListRequest(requestList, AttributeTypeDto.class);
         PagedMetadata<String> result = this.getUserProfileTypeService().getAttributeTypes(requestList);
         logger.debug("Main Response -> {}", result);
         this.getProfileTypeValidator().validateRestListResult(requestList, result);

@@ -108,7 +108,7 @@ public class WidgetController {
     @RequestMapping(value = "/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getWidgets(RestListRequest requestList) {
         logger.trace("get widget list {}", requestList);
-        this.getWidgetValidator().validateRestListRequest(requestList);
+        this.getWidgetValidator().validateRestListRequest(requestList, WidgetDto.class);
         PagedMetadata<WidgetDto> result = this.widgetService.getWidgets(requestList);
         this.getWidgetValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

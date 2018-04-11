@@ -14,7 +14,12 @@
 package org.entando.entando.web.userprofile.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.entity.validator.EntityTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +29,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class ProfileTypeValidator extends EntityTypeValidator {
-    
+
     @Autowired
     private IUserProfileManager userProfileManager;
 

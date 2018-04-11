@@ -1,0 +1,33 @@
+{
+    "code": "added_mt",
+    "type": "Monotext",
+    "name": "Description of added monotext attribute",
+    "roles": [],
+    "mandatory": true,
+    "listFilter": true,
+    "indexable": false,
+    "enumeratorStaticItems": null,
+    "enumeratorStaticItemsSeparator": null,
+    "enumeratorExtractorBean": null,
+    "validationRules": {
+        "minLength": 50,
+        "maxLength": 5,
+        "regex": null,
+        "rangeStartString": null,
+        "rangeEndString": null,
+        "rangeStartStringAttribute": null,
+        "rangeEndStringAttribute": null,
+        "equalString": null,
+        "equalStringAttribute": null,
+        "ognlValidation": {
+            "ognlExpression": "expression",
+            "applyOnlyToFilledAttr": false,
+            "helpMessage": "",
+            "keyForHelpMessage": null,
+            "errorMessage": "Error Message",
+            "keyForErrorMessage": null
+        }
+    },
+    "nestedAttribute": null,
+    "compositeAttributes": null
+}

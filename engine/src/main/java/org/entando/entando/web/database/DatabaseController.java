@@ -56,7 +56,7 @@ public class DatabaseController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDumpReports(@Valid RestListRequest requestList) {
-        this.getDatabaseValidator().validateRestListRequest(requestList);
+        this.getDatabaseValidator().validateRestListRequest(requestList, DumpReportDto.class);
         PagedMetadata<ShortDumpReportDto> result = this.getDatabaseService().getShortDumpReportDtos(requestList);
         this.getDatabaseValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);

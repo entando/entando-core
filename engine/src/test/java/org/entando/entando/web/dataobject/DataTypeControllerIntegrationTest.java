@@ -14,6 +14,7 @@
 package org.entando.entando.web.dataobject;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
+import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
@@ -22,19 +23,23 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DataTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -90,36 +95,16 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            InputStream isJsonPost = this.getClass().getResourceAsStream("1_POST_valid.json");
-            String jsonPost = FileTextReader.getText(isJsonPost);
-            ResultActions result1 = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPost)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result1.andExpect(status().isOk());
+
+            this.executeDataTypePost("1_POST_valid.json", accessToken, status().isOk());
             DataObject addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
             Assert.assertNotNull(addedType);
             Assert.assertEquals("Type AAA", addedType.getTypeDescription());
             Assert.assertEquals(1, addedType.getAttributeList().size());
 
-            InputStream isJsonPutInvalid = this.getClass().getResourceAsStream("1_PUT_invalid.json");
-            String jsonPutInvalid = FileTextReader.getText(isJsonPutInvalid);
-            ResultActions result2 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutInvalid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2.andExpect(status().isBadRequest());
+            this.executeDataTypePut("1_PUT_invalid.json", "AAA", accessToken, status().isBadRequest());
 
-            InputStream isJsonPutValid = this.getClass().getResourceAsStream("1_PUT_valid.json");
-            String jsonPutValid = FileTextReader.getText(isJsonPutValid);
-            ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3.andExpect(status().isOk());
+            this.executeDataTypePut("1_PUT_valid.json", "AAA", accessToken, status().isOk());
 
             addedType = (DataObject) this.dataObjectManager.getEntityPrototype("AAA");
             Assert.assertEquals("Type AAA Modified", addedType.getTypeDescription());
@@ -143,50 +128,20 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            InputStream isJsonPostInvalid = this.getClass().getResourceAsStream("2_POST_invalid.json");
-            String jsonPostInvalid = FileTextReader.getText(isJsonPostInvalid);
-            ResultActions result1 = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostInvalid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result1.andExpect(status().isBadRequest());
+
+            this.executeDataTypePost("2_POST_invalid.json", accessToken, status().isBadRequest());
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
 
-            InputStream isJsonPostValid = this.getClass().getResourceAsStream("2_POST_valid.json");
-            String jsonPostValid = FileTextReader.getText(isJsonPostValid);
-            ResultActions result2 = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2.andExpect(status().isOk());
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
             DataObject addedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
             Assert.assertNotNull(addedDataObject);
             Assert.assertEquals(3, addedDataObject.getAttributeList().size());
 
-            ResultActions result2_bis = mockMvc
-                    .perform(post("/dataTypes")
-                            .content(jsonPostValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result2_bis.andExpect(status().isConflict());
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isConflict());
 
-            InputStream isJsonPutValid = this.getClass().getResourceAsStream("2_PUT_valid.json");
-            String jsonPutValid = FileTextReader.getText(isJsonPutValid);
-            ResultActions result3 = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3.andExpect(status().isBadRequest());
+            this.executeDataTypePut("2_PUT_valid.json", "AAA", accessToken, status().isBadRequest());
 
-            ResultActions result3_bis = mockMvc
-                    .perform(put("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
-                            .content(jsonPutValid)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result3_bis.andExpect(status().isOk());
+            this.executeDataTypePut("2_PUT_valid.json", "TST", accessToken, status().isOk());
 
             DataObject modifiedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
             Assert.assertNotNull(modifiedDataObject);
@@ -200,6 +155,358 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         } finally {
             if (null != this.dataObjectManager.getEntityPrototype("TST")) {
                 ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
+            }
+        }
+    }
+
+    private ResultActions executeDataTypePost(String fileName, String accessToken, ResultMatcher expected) throws Exception {
+        InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
+        String jsonPostValid = FileTextReader.getText(isJsonPostValid);
+        ResultActions result = mockMvc
+                .perform(post("/dataTypes")
+                        .content(jsonPostValid)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeDataTypePut(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
+        InputStream isJsonPutValid = this.getClass().getResourceAsStream(fileName);
+        String jsonPutValid = FileTextReader.getText(isJsonPutValid);
+        ResultActions result = mockMvc
+                .perform(put("/dataTypes/{dataTypeCode}", new Object[]{typeCode})
+                        .content(jsonPutValid)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    // attributes
+    @Test
+    public void testGetDataTypeAttributeTypes_1() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypeAttributes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
+        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+    }
+
+    @Test
+    public void testGetDataTypeAttributeTypes_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypeAttributes").param("pageSize", "5")
+                        .param("sort", "code").param("direction", "DESC")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
+        result.andExpect(jsonPath("$.metaData.lastPage", is(3)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(15)));
+        result.andExpect(jsonPath("$.payload[0]", is("Timestamp")));
+    }
+
+    @Test
+    public void testGetDataTypeAttributeTypes_3() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypeAttributes").param("pageSize", "7")
+                        .param("sort", "code").param("direction", "ASC")
+                        .param("filters[0].attribute", "code").param("filters[0].value", "tex")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
+        result.andExpect(jsonPath("$.metaData.pageSize", is(7)));
+        result.andExpect(jsonPath("$.metaData.lastPage", is(1)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(4)));
+        result.andExpect(jsonPath("$.payload[0]", is("Hypertext")));
+    }
+
+    @Test
+    public void testGetDataTypeAttributeType_1() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypeAttributes/{attributeTypeCode}", new Object[]{"Monotext"})
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.code", is("Monotext")));
+        result.andExpect(jsonPath("$.payload.simple", is(true)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+    }
+
+    @Test
+    public void testGetDataTypeAttributeType_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypeAttributes/{attributeTypeCode}", new Object[]{"WrongTypeCode"})
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+    }
+
+    // ------------------------------------
+    @Test
+    public void testGetDataTypeAttribute() throws Exception {
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+
+            ResultActions result1 = mockMvc
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"XXX", "TextAttribute"})
+                            .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isNotFound());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = mockMvc
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "WrongCpde"})
+                            .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isNotFound());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result3 = mockMvc
+                    .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "TextAttribute"})
+                            .header("Authorization", "Bearer " + accessToken));
+            result3.andExpect(status().isOk());
+            result3.andExpect(jsonPath("$.payload.code", is("TextAttribute")));
+            result3.andExpect(jsonPath("$.payload.type", is("Text")));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result3.andExpect(jsonPath("$.metaData.dataTypeCode", is("TST")));
+
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype("TST")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
+            }
+        }
+    }
+
+    @Test
+    public void testAddDataTypeAttribute() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+
+            ResultActions result1 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_1.json", typeCode, accessToken, status().isConflict());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.errors[0].code", is("14")));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_2.json", typeCode, accessToken, status().isBadRequest());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.errors[0].code", is("53")));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result3 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_3.json", typeCode, accessToken, status().isBadRequest());
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result3.andExpect(jsonPath("$.errors[0].code", is("13")));
+            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result4 = this.executeDataTypeAttributePost("3_POST_attribute_invalid_4.json", typeCode, accessToken, status().isBadRequest());
+            result4.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result4.andExpect(jsonPath("$.errors", Matchers.hasSize(2)));
+            result4.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result5 = this.executeDataTypeAttributePost("3_POST_attribute_valid.json", typeCode, accessToken, status().isOk());
+            result5.andExpect(jsonPath("$.payload.code", is("added_mt")));
+            result5.andExpect(jsonPath("$.payload.roles", Matchers.hasSize(1)));
+            result5.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result5.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result5.andExpect(jsonPath("$.metaData.dataTypeCode", is(typeCode)));
+
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(4, dataType.getAttributeList().size());
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
+            }
+        }
+    }
+
+    @Test
+    public void testUpdateDataTypeAttribute() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+
+            ResultActions result1 = this.executeDataTypeAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.errors[0].code", is("15")));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = this.executeDataTypeAttributePut("4_PUT_attribute_invalid_2.json", typeCode, "list", accessToken, status().isBadRequest());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.errors[0].code", is("16")));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result3 = this.executeDataTypeAttributePut("4_PUT_attribute_valid.json", typeCode, "wrongname", accessToken, status().isConflict());
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result3.andExpect(jsonPath("$.errors[0].code", is("6")));
+            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result4 = this.executeDataTypeAttributePut("4_PUT_attribute_valid.json", typeCode, "list", accessToken, status().isOk());
+            result4.andExpect(jsonPath("$.payload.code", is("list")));
+            result4.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result4.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result4.andExpect(jsonPath("$.metaData.dataTypeCode", is(typeCode)));
+
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(4, dataType.getAttributeList().size());
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
+            }
+        }
+    }
+
+    @Test
+    public void testDeleteDataAttribute() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
+            Assert.assertNotNull(dataType.getAttribute("list"));
+
+            ResultActions result1 = this.executeDataTypeAttributeDelete("wrongCode", "list_wrong", accessToken, status().isNotFound());
+            result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result1.andExpect(jsonPath("$.errors[0].code", is("1")));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = this.executeDataTypeAttributeDelete(typeCode, "list_wrong", accessToken, status().isOk());
+            result2.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
+            result2.andExpect(jsonPath("$.payload.attributeCode", is("list_wrong")));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
+
+            ResultActions result3 = this.executeDataTypeAttributeDelete(typeCode, "list", accessToken, status().isOk());
+            result3.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
+            result3.andExpect(jsonPath("$.payload.attributeCode", is("list")));
+            result3.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(2, dataType.getAttributeList().size());
+            Assert.assertNull(dataType.getAttribute("list"));
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
+            }
+        }
+    }
+
+    private ResultActions executeDataTypeAttributePost(String fileName, String typeCode, String accessToken, ResultMatcher expected) throws Exception {
+        InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
+        String jsonPostValid = FileTextReader.getText(isJsonPostValid);
+        ResultActions result = mockMvc
+                .perform(post("/dataTypes/{dataTypeCode}/attribute", new Object[]{typeCode})
+                        .content(jsonPostValid)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeDataTypeAttributePut(String fileName, String typeCode, String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
+        InputStream isJsonPutValid = this.getClass().getResourceAsStream(fileName);
+        String jsonPutValid = FileTextReader.getText(isJsonPutValid);
+        ResultActions result = mockMvc
+                .perform(put("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
+                        .content(jsonPutValid)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeDataTypeAttributeDelete(String typeCode,
+            String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(delete("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    @Test
+    public void testRefreshDataTypeType() throws Exception {
+        String typeCode = "TST";
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype(typeCode));
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("XXX"));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            Assert.assertNotNull(this.dataObjectManager.getEntityPrototype(typeCode));
+
+            ResultActions result1 = mockMvc
+                    .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{typeCode})
+                            .content("{}")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isOk());
+            result1.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
+            result1.andExpect(jsonPath("$.payload.status", is("success")));
+            result1.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result2 = mockMvc
+                    .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{"XXX"})
+                            .content("{}")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isNotFound());
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+            String x = result2.andReturn().getResponse().getContentAsString();
+            System.out.println(x);
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);
             }
         }
     }

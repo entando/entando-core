@@ -20,8 +20,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 public class Filter {
 
+    private static final String DEFAULT_OP = "like";
+
     private String attribute;
-    private String operator;
+    private String operator = DEFAULT_OP;
     private String value;
 
     public String getAttribute() {

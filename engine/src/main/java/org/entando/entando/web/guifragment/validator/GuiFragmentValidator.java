@@ -13,9 +13,14 @@
  */
 package org.entando.entando.web.guifragment.validator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.slf4j.Logger;

@@ -36,6 +36,8 @@ import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuild
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
+import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
+import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -158,8 +160,43 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     }
 
     @Override
-    public void deleteDataType(String entityTypeCode) {
-        super.deleteEntityType(SystemConstants.DATA_OBJECT_MANAGER, entityTypeCode);
+    public void deleteDataType(String dataTypeCode) {
+        super.deleteEntityType(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
+    }
+
+    @Override
+    public PagedMetadata<String> getAttributeTypes(RestListRequest requestList) {
+        return super.getAttributeTypes(SystemConstants.DATA_OBJECT_MANAGER, requestList);
+    }
+
+    @Override
+    public AttributeTypeDto getAttributeType(String attributeCode) {
+        return super.getAttributeType(SystemConstants.DATA_OBJECT_MANAGER, attributeCode);
+    }
+
+    @Override
+    public EntityAttributeFullDto getDataTypeAttribute(String dataTypeCode, String attributeCode) {
+        return super.getEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, attributeCode);
+    }
+
+    @Override
+    public EntityAttributeFullDto addDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.addEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, bodyRequest, bindingResult);
+    }
+
+    @Override
+    public EntityAttributeFullDto updateDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+        return super.updateEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, bodyRequest, bindingResult);
+    }
+
+    @Override
+    public void deleteDataTypeAttribute(String dataTypeCode, String attributeCode) {
+        super.deleteEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, attributeCode);
+    }
+
+    @Override
+    public void reloadDataTypeReferences(String dataTypeCode) {
+        super.reloadEntityTypeReferences(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
     }
 
     protected IPageManager getPageManager() {

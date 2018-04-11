@@ -24,9 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
@@ -42,7 +45,7 @@ import org.springframework.validation.Validator;
  * @author paddeo
  */
 @Component
-public class PageValidator implements Validator {
+public class PageValidator extends AbstractPaginationValidator {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 

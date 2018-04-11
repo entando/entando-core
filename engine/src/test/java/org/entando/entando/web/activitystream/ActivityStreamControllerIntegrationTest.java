@@ -99,6 +99,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
         ResultActions result = mockMvc
                                       .perform(get("/activitystream")
+                                                                     .param("sort", "createdAt")
                                                                      .param("filters[0].attribute", "createdAt")
                                                                      .param("filters[0].value", String.format("[%s TO %s]", start, end))
                                                                      .header("Authorization", "Bearer " + accessToken));

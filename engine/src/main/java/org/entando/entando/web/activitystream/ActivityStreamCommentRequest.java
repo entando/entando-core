@@ -6,10 +6,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class ActivityStreamCommentRequest {
 
-    @NotNull(message = "ActivityStreamCommentRequest.recordId.required")
+    @NotNull(message = "activityStreamCommentRequest.recordId.required")
     private Integer recordId;
 
-    @NotEmpty(message = "ActivityStreamCommentRequest.comment.required")
+    @NotEmpty(message = "activityStreamCommentRequest.comment.required")
     private String comment;
 
     public Integer getRecordId() {

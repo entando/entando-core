@@ -57,7 +57,7 @@ public class ActivityStreamController {
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getActivityStream(RestListRequest requestList, HttpServletRequest request) throws JsonProcessingException {
-        this.getActivityStreamValidator().validateRestListRequest(requestList);
+        this.getActivityStreamValidator().validateRestListRequest(requestList, ActionLogRecordDto.class);
         PagedMetadata<ActionLogRecordDto> result = this.getActivityStreamService().getActivityStream(requestList, (UserDetails) request.getSession().getAttribute("user"));
         this.getActivityStreamValidator().validateRestListResult(requestList, result);
         logger.debug("loading activity stream list -> {}", result);

@@ -13,7 +13,11 @@
  */
 package org.entando.entando.web.label;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -50,4 +54,5 @@ public class LabelValidator extends AbstractPaginationValidator {
             errors.rejectValue("key", ERRCODE_URINAME_MISMATCH, new String[]{labelCode, labelRequest.getKey()}, "labelRequest.key.mismatch");
         }
     }
+
 }

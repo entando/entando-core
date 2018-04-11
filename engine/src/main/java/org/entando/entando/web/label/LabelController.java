@@ -72,7 +72,7 @@ public class LabelController {
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getLables(RestListRequest requestList) {
         logger.debug("loading labels");
-        this.getLabelValidator().validateRestListRequest(requestList);
+        this.getLabelValidator().validateRestListRequest(requestList, LabelDto.class);
         PagedMetadata<LabelDto> result = this.getLabelService().getLabelGroups(requestList);
         this.getLabelValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

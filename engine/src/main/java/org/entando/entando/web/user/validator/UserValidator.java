@@ -16,6 +16,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.user.UserController;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.model.UserPasswordRequest;
@@ -30,7 +31,7 @@ import org.springframework.validation.Validator;
  * @author paddeo
  */
 @Component
-public class UserValidator implements Validator {
+public class UserValidator extends AbstractPaginationValidator {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 

@@ -202,4 +202,8 @@
         <property name="componentManager" ref="ComponentManager" />
     </bean>
     
+    <bean id="FileBrowserService" class="org.entando.entando.aps.system.services.storage.FileBrowserService" >
+        <property name="storageManager" ref="StorageManager" />
+    </bean>
+    
 </beans>

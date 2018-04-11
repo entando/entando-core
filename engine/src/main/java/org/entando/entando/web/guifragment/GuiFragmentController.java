@@ -74,7 +74,7 @@ public class GuiFragmentController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
-        this.getGuiFragmentValidator().validateRestListRequest(requestList);
+        this.getGuiFragmentValidator().validateRestListRequest(requestList, GuiFragmentDto.class);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
         this.getGuiFragmentValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);

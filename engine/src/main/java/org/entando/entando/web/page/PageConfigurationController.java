@@ -9,6 +9,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.web.common.annotation.ActivityStreamAuditable;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
@@ -72,6 +73,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
     }
 
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageWidget(
@@ -86,6 +88,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
     }
 
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePageWidget(
@@ -98,6 +101,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse(frameId, null, metadata), HttpStatus.OK);
     }
 
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/restore", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageConfiguration(@PathVariable String pageCode) {
@@ -107,6 +111,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse(pageConfiguration, null, metadata), HttpStatus.OK);
     }
 
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/defaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {

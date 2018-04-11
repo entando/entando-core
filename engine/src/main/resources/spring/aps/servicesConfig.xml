@@ -192,6 +192,7 @@
     <bean id="ActivityStreamService" class="org.entando.entando.aps.system.services.activitystream.ActivityStreamService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="actionLogManager" ref="ActionLogManager" />
+        <property name="socialActivityStreamManager" ref="SocialActivityStreamManager" />
     </bean>
 
 

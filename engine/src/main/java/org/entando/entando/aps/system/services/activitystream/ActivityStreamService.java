@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -94,7 +95,7 @@ public class ActivityStreamService implements IActivityStreamService {
     public ActionLogRecordDto addLike(int recordId, UserDetails userDetails) {
         try {
             this.getSocialActivityStreamManager().editActionLikeRecord(recordId, userDetails.getUsername(), true);
-            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            ActionLogRecordDto dto = getFullDto(recordId);
             return dto;
         } catch (Throwable t) {
             logger.error("error add add like for id {}", recordId, t);
@@ -106,7 +107,7 @@ public class ActivityStreamService implements IActivityStreamService {
     public ActionLogRecordDto removeLike(int recordId, UserDetails userDetails) {
         try {
             this.getSocialActivityStreamManager().editActionLikeRecord(recordId, userDetails.getUsername(), false);
-            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            ActionLogRecordDto dto = getFullDto(recordId);
             return dto;
         } catch (Throwable t) {
             logger.error("error in remove like for id {}", recordId, t);
@@ -119,25 +120,48 @@ public class ActivityStreamService implements IActivityStreamService {
         try {
             int recordId = commentRequest.getRecordId();
             if (null == this.getActionLogManager().getActionRecord(recordId)) {
-                logger.warn("no record found with id {}", commentRequest.getRecordId());
+                logger.warn("no record found with id {}", recordId);
                 throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
             }
 
             this.getSocialActivityStreamManager().addActionCommentRecord(attribute.getUsername(), commentRequest.getComment(), recordId);
 
-            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            ActionLogRecordDto dto = this.getDtoBuilder().toDto(this.getActionLogManager().getActionRecord(recordId),
+                                                                this.getSocialActivityStreamManager().getActionLikeRecords(recordId),
+                                                                this.getSocialActivityStreamManager().getActionCommentRecords(recordId));
             return dto;
         } catch (Throwable t) {
             logger.error("error in add comment for id {}", commentRequest.getRecordId(), t);
             throw new RestServerError("error in add comment", t);
         }
-
     }
+
 
     @Override
     public ActionLogRecordDto removeComment(int recordId, int commentId, UserDetails attribute) {
-        // TODO Auto-generated method stub
-        return null;
+        try {
+            if (null == this.getActionLogManager().getActionRecord(recordId)) {
+                logger.warn("no record found with id {}", recordId);
+                throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
+            }
+
+            this.getSocialActivityStreamManager().deleteActionCommentRecord(commentId, recordId);
+
+            ActionLogRecordDto dto = this.getDtoBuilder().toDto(this.getActionLogManager().getActionRecord(recordId),
+                                                                this.getSocialActivityStreamManager().getActionLikeRecords(recordId),
+                                                                this.getSocialActivityStreamManager().getActionCommentRecords(recordId));
+            return dto;
+        } catch (Throwable t) {
+            logger.error("error in delete comment for id {}", recordId, t);
+            throw new RestServerError("error in remove comment", t);
+        }
+    }
+
+    protected ActionLogRecordDto getFullDto(int recordId) throws ApsSystemException {
+        ActionLogRecordDto dto = this.getDtoBuilder().toDto(this.getActionLogManager().getActionRecord(recordId),
+                                                            this.getSocialActivityStreamManager().getActionLikeRecords(recordId),
+                                                            this.getSocialActivityStreamManager().getActionCommentRecords(recordId));
+        return dto;
     }
 
     protected ActionLogRecordSearchBean buildSearchBean(RestListRequest requestList, UserDetails userDetails) {

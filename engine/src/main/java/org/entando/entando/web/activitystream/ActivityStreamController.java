@@ -10,6 +10,7 @@ import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordDt
 import org.entando.entando.aps.system.services.activitystream.IActivityStreamService;
 import org.entando.entando.web.activitystream.valiator.ActivityStreamValidator;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,7 +46,7 @@ public class ActivityStreamController {
         this.activityStreamService = activityStreamService;
     }
 
-    public ActivityStreamValidator getActivityStreamValidator() {
+    protected ActivityStreamValidator getActivityStreamValidator() {
         return activityStreamValidator;
     }
 
@@ -80,7 +82,14 @@ public class ActivityStreamController {
 
     @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{recordId}/comments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addComment(@PathVariable int recordId, @Valid @RequestBody ActivityStreamCommentRequest commentRequest, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<RestResponse> addComment(@PathVariable int recordId,
+                                                   @Valid @RequestBody ActivityStreamCommentRequest commentRequest,
+                                                   BindingResult bindingResult,
+                                                   HttpServletRequest request) throws JsonProcessingException {
+        this.getActivityStreamValidator().validateBodyName(recordId, commentRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         ActionLogRecordDto result = this.getActivityStreamService().addComment(commentRequest, (UserDetails) request.getSession().getAttribute("user"));
         logger.debug("adding comment to activity stream record", result);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);

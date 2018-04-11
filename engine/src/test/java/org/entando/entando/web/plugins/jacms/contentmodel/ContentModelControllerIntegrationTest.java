@@ -33,7 +33,7 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testGetContentModelsSortDefault() throws Exception {
+    public void testGetContentModelsSortId() throws Exception {
 
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -52,6 +52,19 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].id", is(11)));
 
+    }
+
+    @Test
+    public void testGetContentModelDefaultSorting() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get(BASE_URI)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
+        result.andExpect(jsonPath("$.metaData.sort", is("id")));
+        result.andExpect(jsonPath("$.metaData.page", is(1)));
     }
 
     @Test

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
-import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * @author E.Santoboni
  */
 @Component
-public class ProfileTypeValidator extends EntityTypeValidator {
+public class ProfileTypeValidator extends AbstractEntityTypeValidator {
 
     @Autowired
     private IUserProfileManager userProfileManager;

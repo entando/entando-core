@@ -94,7 +94,8 @@ public class FileBrowserService implements IFileBrowserService {
         this.checkResource(parentFolder, "Parent Folder", request.isProtectedFolder());
         try {
             if (this.getStorageManager().exists(request.getPath(), request.isProtectedFolder())) {
-                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST, new String[]{request.getPath()}, "fileBrowser.file.exists");
+                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST,
+                        new String[]{request.getPath(), String.valueOf(request.isProtectedFolder())}, "fileBrowser.file.exists");
                 throw new ValidationConflictException(bindingResult);
             }
             InputStream is = new ByteArrayInputStream(request.getBase64());
@@ -138,13 +139,14 @@ public class FileBrowserService implements IFileBrowserService {
     public void addDirectory(FileBrowserRequest request, BindingResult bindingResult) {
         String path = request.getPath();
         if (path.endsWith("/")) {
-            path = path.substring(0, path.length()-2);
+            path = path.substring(0, path.length() - 2);
         }
         String parentFolder = path.substring(0, path.lastIndexOf("/"));
         this.checkResource(parentFolder, "Parent Folder", request.isProtectedFolder());
         try {
             if (this.getStorageManager().exists(request.getPath(), request.isProtectedFolder())) {
-                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST, new String[]{request.getPath()}, "fileBrowser.directory.exists");
+                bindingResult.reject(FileBrowserValidator.ERRCODE_RESOURCE_ALREADY_EXIST,
+                        new String[]{request.getPath(), String.valueOf(request.isProtectedFolder())}, "fileBrowser.directory.exists");
                 throw new ValidationConflictException(bindingResult);
             }
             this.getStorageManager().createDirectory(path, request.isProtectedFolder());
@@ -167,7 +169,7 @@ public class FileBrowserService implements IFileBrowserService {
             throw new RestServerError("error deleting directory", t);
         }
     }
-    
+
     protected void checkResource(String currentPath, String objectName, boolean protectedFolder) {
         try {
             boolean exists = this.getStorageManager().exists(currentPath, protectedFolder);

@@ -38,7 +38,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
 
     public static final String ERRCODE_RESOURCE_DOES_NOT_EXIST = "1";
     public static final String ERRCODE_RESOURCE_ALREADY_EXIST = "2";
-    public static final String ERRCODE_URINAME_MISMATCH = "3";
+    //public static final String ERRCODE_URINAME_MISMATCH = "3";
     public static final String ERRCODE_INVALID_PATH = "4";
     public static final String ERRCODE_FILENAME_MISMATCH = "5";
     public static final String ERRCODE_INVALID_FILENAME = "6";
@@ -75,7 +75,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
                 FileBrowserFileRequest fileRequest = (FileBrowserFileRequest) target;
                 String extractedFileName = path.substring(path.lastIndexOf("/") + 1, path.length());
                 if (!extractedFileName.equalsIgnoreCase(fileRequest.getFilename())) {
-                    errors.rejectValue("filename", ERRCODE_FILENAME_MISMATCH, new String[]{extractedFileName}, "fileBrowser.filename.body.mismatch");
+                    errors.rejectValue("filename", ERRCODE_FILENAME_MISMATCH, new String[]{fileRequest.getFilename(), extractedFileName}, "fileBrowser.filename.body.mismatch");
                     throw new ValidationConflictException((BindingResult) errors);
                 } else if (!extractedFileName.contains(".")) {
                     errors.rejectValue("filename", ERRCODE_INVALID_FILENAME, new String[]{extractedFileName}, "fileBrowser.filename.invalidFilename");

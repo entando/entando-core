@@ -175,7 +175,7 @@ public class FileBrowserController {
     public ResponseEntity<RestResponse> executeDirectoryRespose(String path, Boolean protectedFolder) {
         Map<String, Object> result = new HashMap<>();
         if (path.endsWith("/")) {
-            path = path.substring(0, path.length()-2);
+            path = path.substring(0, path.length() - 1);
         }
         result.put("protectedFolder", protectedFolder);
         result.put("path", path);

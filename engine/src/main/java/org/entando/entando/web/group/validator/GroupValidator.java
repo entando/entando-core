@@ -14,11 +14,7 @@
 package org.entando.entando.web.group.validator;
 
 import com.agiletec.aps.system.services.group.IGroupManager;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.group.model.GroupDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.group.model.GroupRequest;
 import org.springframework.beans.factory.annotation.Autowired;

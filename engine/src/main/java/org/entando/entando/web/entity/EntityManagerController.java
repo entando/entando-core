@@ -21,6 +21,7 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.entity.validator.EntityManagerValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class EntityManagerController {
     @Autowired
     private IEntityManagerService entityManagerService;
 
+    @Autowired
+    private EntityManagerValidator entityManagerValidator;
+
     protected IEntityManagerService getEntityManagerService() {
         return entityManagerService;
     }
@@ -52,9 +56,18 @@ public class EntityManagerController {
         this.entityManagerService = entityManagerService;
     }
 
+    public EntityManagerValidator getEntityManagerValidator() {
+        return entityManagerValidator;
+    }
+
+    public void setEntityManagerValidator(EntityManagerValidator entityManagerValidator) {
+        this.entityManagerValidator = entityManagerValidator;
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
+        this.getEntityManagerValidator().validateRestListRequest(requestList, null);
         PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
         logger.debug("Main Response -> {}", result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);

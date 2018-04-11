@@ -53,6 +53,9 @@ public abstract class AbstractPaginationValidator implements Validator {
             bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
             throw new RestRourceNotFoundException(bindingResult);
         }
+        if (null == type) {
+            return;
+        }
         if (!isValidField(listRequest.getSort(), type)) {
             bindingResult.reject(ERRCODE_SORTING_INVALID, new Object[]{listRequest.getSort()}, "sorting.sort.invalid");
         }

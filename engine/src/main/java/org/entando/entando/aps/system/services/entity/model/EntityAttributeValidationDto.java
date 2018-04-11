@@ -27,7 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.springframework.validation.BindingResult;
 
 /**
@@ -133,7 +133,7 @@ public class EntityAttributeValidationDto {
                 textValRule.setRegexp(this.getRegex());
             }
             if (null != this.getMinLength() && null != this.getMaxLength() && (this.getMinLength() > this.getMaxLength())) {
-                this.addError(EntityTypeValidator.ERRCODE_INVALID_TEXT_RANGE, bindingResult,
+                this.addError(AbstractEntityTypeValidator.ERRCODE_INVALID_TEXT_RANGE, bindingResult,
                         new String[]{typeCode, attribute.getName()}, "entityType.attribute.text.invalidRange");
             } else {
                 if (null != this.getMinLength()) {
@@ -156,16 +156,16 @@ public class EntityAttributeValidationDto {
         } else if (attribute instanceof DateAttribute) {
             DateAttributeValidationRules dateValRule = (DateAttributeValidationRules) validationRules;
             dateValRule.setRangeStart(this.extractDate(this.getRangeStartDate(), typeCode, attribute.getName(),
-                    EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_START, "entityType.attribute.date.invalidRangeStart", bindingResult));
+                    AbstractEntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_START, "entityType.attribute.date.invalidRangeStart", bindingResult));
             dateValRule.setRangeEnd(this.extractDate(this.getRangeEndDate(), typeCode, attribute.getName(),
-                    EntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_END, "entityType.attribute.date.invalidRangeEnd", bindingResult));
+                    AbstractEntityTypeValidator.ERRCODE_INVALID_DATE_RANGE_END, "entityType.attribute.date.invalidRangeEnd", bindingResult));
             if (null != dateValRule.getRangeStart() && null != dateValRule.getRangeEnd()
                     && ((Date) dateValRule.getRangeEnd()).before((Date) dateValRule.getRangeStart())) {
-                this.addError(EntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
+                this.addError(AbstractEntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
                         bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.date.invalidRange");
             }
             dateValRule.setValue(this.extractDate(this.getEqualDate(), typeCode, attribute.getName(),
-                    EntityTypeValidator.ERRCODE_INVALID_DATE_VALUE, "entityType.attribute.date.invalidValue", bindingResult));
+                    AbstractEntityTypeValidator.ERRCODE_INVALID_DATE_VALUE, "entityType.attribute.date.invalidValue", bindingResult));
             dateValRule.setRangeStartAttribute(this.getRangeStartDateAttribute());
             dateValRule.setRangeEndAttribute(this.getRangeEndDateAttribute());
             dateValRule.setValueAttribute(this.getEqualDateAttribute());
@@ -175,7 +175,7 @@ public class EntityAttributeValidationDto {
             nulValRule.setRangeStart(this.getRangeStartNumber());
             if (null != this.getRangeStartNumber() && null != this.getRangeEndNumber()
                     && (this.getRangeEndNumber() < this.getRangeStartNumber())) {
-                this.addError(EntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
+                this.addError(AbstractEntityTypeValidator.ERRCODE_INVALID_NUMBER_RANGE,
                         bindingResult, new String[]{typeCode, attribute.getName()}, "entityType.attribute.number.invalidRange");
             }
             nulValRule.setValue(this.getEqualNumber());

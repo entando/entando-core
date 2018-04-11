@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
-import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
  * @author E.Santoboni
  */
 @Component
-public class DataTypeValidator extends EntityTypeValidator {
+public class DataTypeValidator extends AbstractEntityTypeValidator {
 
     public static final String ERRCODE_INVALID_DEFAULT_MODEL = "31";
     public static final String ERRCODE_DEFAULT_MODEL_DOES_NOT_EXIST = "32";

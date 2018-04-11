@@ -26,6 +26,8 @@ import org.entando.entando.web.dataobject.DataTypeControllerTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerIntegrationTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
+import org.entando.entando.web.filebrowser.FileBrowserControllerIntegrationTest;
+import org.entando.entando.web.filebrowser.FileBrowserControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
 import org.entando.entando.web.group.GroupControllerUnitTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
@@ -119,6 +121,9 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(ContentModelControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(ContentModelControllerUnitTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(FileBrowserControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(FileBrowserControllerTest.class));
 
         return suite;
     }

@@ -14,11 +14,8 @@
 package org.entando.entando.aps.system.services.database;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import java.io.ByteArrayOutputStream;
+import com.agiletec.aps.util.FileTextReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,6 +120,7 @@ public class DatabaseService implements IDatabaseService {
 
     @Override
     public byte[] getTableDump(String reportCode, String dataSource, String tableName) {
+        File tempFile = null;
         byte[] bytes = null;
         try {
             InputStream stream = this.getDatabaseManager().getTableDump(tableName, dataSource, reportCode);
@@ -133,62 +131,19 @@ public class DatabaseService implements IDatabaseService {
                 throw new RestRourceNotFoundException("code - dataSource - table",
                         "'" + reportCode + "' - '" + dataSource + "' - '" + tableName + "'");
             }
-            File tempFile = this.createTempFile(new Random().nextInt(100) + reportCode + "_" + dataSource + "_" + tableName, stream);
-            bytes = this.fileToByteArray(tempFile);
-            tempFile.delete();
+            tempFile = FileTextReader.createTempFile(new Random().nextInt(100) + reportCode + "_" + dataSource + "_" + tableName, stream);
+            bytes = FileTextReader.fileToByteArray(tempFile);
         } catch (RestRourceNotFoundException r) {
             throw r;
         } catch (Throwable t) {
             logger.error("error extracting database dump with code {}, dataSource {}, table {}", reportCode, dataSource, tableName, t);
             throw new RestServerError("error extracting database dump", t);
+        } finally {
+            if (null != tempFile) {
+                tempFile.delete();
+            }
         }
         return bytes;
-    }
-
-    protected File createTempFile(String filename, InputStream is) throws IOException {
-        String tempDir = System.getProperty("java.io.tmpdir");
-        String filePath = tempDir + File.separator + filename;
-        FileOutputStream outStream = null;
-        try {
-            byte[] buffer = new byte[1024];
-            int length = -1;
-            outStream = new FileOutputStream(filePath);
-            while ((length = is.read(buffer)) != -1) {
-                outStream.write(buffer, 0, length);
-                outStream.flush();
-            }
-        } catch (IOException t) {
-            logger.error("Error on saving temporary file", t);
-            throw t;
-        } finally {
-            if (null != outStream) {
-                outStream.close();
-            }
-            if (null != is) {
-                is.close();
-            }
-        }
-        return new File(filePath);
-    }
-
-    private byte[] fileToByteArray(File file) throws IOException {
-        FileInputStream fis = null;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            fis = new FileInputStream(file);
-            byte[] buf = new byte[1024];
-            for (int readNum; (readNum = fis.read(buf)) != -1;) {
-                bos.write(buf, 0, readNum);
-            }
-        } catch (IOException ex) {
-            logger.error("Error creating byte array", ex);
-            throw ex;
-        } finally {
-            if (null != fis) {
-                fis.close();
-            }
-        }
-        return bos.toByteArray();
     }
 
     public IDatabaseManager getDatabaseManager() {

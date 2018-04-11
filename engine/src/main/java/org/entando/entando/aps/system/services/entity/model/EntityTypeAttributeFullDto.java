@@ -32,7 +32,7 @@ public class EntityTypeAttributeFullDto extends EntityTypeAttributeDto {
     private String enumeratorStaticItemsSeparator;
     private String enumeratorExtractorBean;
 
-    private EntityAttributeValidationDto validationRules;
+    private EntityTypeAttributeValidationDto validationRules;
     private EntityTypeAttributeFullDto nestedAttribute;
     private List<EntityTypeAttributeFullDto> compositeAttributes;
 
@@ -54,7 +54,7 @@ public class EntityTypeAttributeFullDto extends EntityTypeAttributeDto {
                 this.setEnumeratorExtractorBean(enumeratorAttribute.getExtractorBeanName());
             }
         }
-        this.setValidationRules(new EntityAttributeValidationDto(attribute));
+        this.setValidationRules(new EntityTypeAttributeValidationDto(attribute));
         if (attribute instanceof AbstractListAttribute) {
             AttributeInterface nestedAttribute = ((AbstractListAttribute) attribute).getNestedAttributeType();
             this.setNestedAttribute(new EntityTypeAttributeFullDto(nestedAttribute, roles));
@@ -99,11 +99,11 @@ public class EntityTypeAttributeFullDto extends EntityTypeAttributeDto {
         this.enumeratorExtractorBean = enumeratorExtractorBean;
     }
 
-    public EntityAttributeValidationDto getValidationRules() {
+    public EntityTypeAttributeValidationDto getValidationRules() {
         return validationRules;
     }
 
-    public void setValidationRules(EntityAttributeValidationDto validationRules) {
+    public void setValidationRules(EntityTypeAttributeValidationDto validationRules) {
         this.validationRules = validationRules;
     }
 

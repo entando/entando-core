@@ -46,7 +46,7 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.AttributePropertyDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
@@ -291,7 +291,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         }
         IAttributeValidationRules validationRules = attribute.getValidationRules();
         validationRules.setRequired(attributeDto.isMandatory());
-        EntityAttributeValidationDto validationDto = attributeDto.getValidationRules();
+        EntityTypeAttributeValidationDto validationDto = attributeDto.getValidationRules();
         if (null != validationDto) {
             validationDto.buildAttributeValidation(typeCode, attribute, bindingResult);
         }

@@ -41,6 +41,7 @@ public abstract class AbstractPaginationValidator implements Validator {
     private static final String[] operations = {"eq", "gt", "lt", "not", "like"};
 
     public void validateRestListRequest(RestListRequest listRequest, Class<?> type) {
+        this.checkDefaultSortField(listRequest);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
         if (listRequest.getPage() < 1) {
             bindingResult.reject(ERRCODE_PAGE_INVALID, new Object[]{}, "pagination.page.invalid");
@@ -64,7 +65,7 @@ public abstract class AbstractPaginationValidator implements Validator {
             List<String> operations = Arrays.asList(listRequest.getFilters()).stream()
                     .map(filter -> filter.getOperator())
                     .filter(attr -> !Arrays.asList(AbstractPaginationValidator.operations)
-                    .contains(attr)).collect(Collectors.toList());
+                            .contains(attr)).collect(Collectors.toList());
             if (operations.size() > 0) {
                 bindingResult.reject(ERRCODE_FILTERING_OP_INVALID, new Object[]{}, "filtering.filter.operation.invalid");
             }
@@ -100,4 +101,15 @@ public abstract class AbstractPaginationValidator implements Validator {
         }
         return fields;
     }
+
+    private void checkDefaultSortField(RestListRequest listRequest) {
+        if (listRequest.getSort().equals(RestListRequest.SORT_VALUE_DEFAULT)) {
+            listRequest.setSort(this.getDefaultSortProperty());
+        }
+    }
+
+    protected String getDefaultSortProperty() {
+        return RestListRequest.SORT_VALUE_DEFAULT;
+    }
+
 }

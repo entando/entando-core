@@ -24,7 +24,7 @@ import java.util.List;
  */
 public class EntityTypeDto extends EntityTypeShortDto {
 
-    private List<EntityAttributeDto> attributes = new ArrayList<>();
+    private List<EntityTypeAttributeDto> attributes = new ArrayList<>();
 
     public EntityTypeDto() {
         super();
@@ -38,16 +38,16 @@ public class EntityTypeDto extends EntityTypeShortDto {
         super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
-            EntityAttributeDto attributeDto = new EntityAttributeDto(attribute, roles);
+            EntityTypeAttributeDto attributeDto = new EntityTypeAttributeDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
     }
 
-    public List<EntityAttributeDto> getAttributes() {
+    public List<EntityTypeAttributeDto> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<EntityAttributeDto> attributes) {
+    public void setAttributes(List<EntityTypeAttributeDto> attributes) {
         this.attributes = attributes;
     }
 

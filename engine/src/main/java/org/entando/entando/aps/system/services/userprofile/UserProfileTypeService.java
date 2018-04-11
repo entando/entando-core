@@ -18,7 +18,7 @@ import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -80,17 +80,17 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public EntityAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode) {
+    public EntityTypeAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode) {
         return super.getEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode);
     }
 
     @Override
-    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.addEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 
     @Override
-    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.updateEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 

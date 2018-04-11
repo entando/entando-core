@@ -23,7 +23,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 /**
  * @author E.Santoboni
  */
-public class EntityAttributeDto {
+public class EntityTypeAttributeDto {
 
     @NotEmpty(message = "entityType.attribute.code.notEmpty")
     private String code;
@@ -36,10 +36,10 @@ public class EntityAttributeDto {
     private boolean mandatory;
     private boolean listFilter;
 
-    public EntityAttributeDto() {
+    public EntityTypeAttributeDto() {
     }
 
-    public EntityAttributeDto(AttributeInterface attribute, List<AttributeRole> roles) {
+    public EntityTypeAttributeDto(AttributeInterface attribute, List<AttributeRole> roles) {
         this.code = attribute.getName();
         this.type = attribute.getType();
         this.name = attribute.getDescription();

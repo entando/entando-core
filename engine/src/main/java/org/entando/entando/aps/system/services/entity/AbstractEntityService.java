@@ -45,7 +45,7 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.model.AttributePropertyDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityAttributeValidationDto;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
@@ -244,9 +244,9 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             return (I) entityType;
         }
         Map<String, AttributeInterface> attributeMap = entityManager.getEntityAttributePrototypes();
-        List<EntityAttributeFullDto> attributeDtos = dto.getAttributes();
+        List<EntityTypeAttributeFullDto> attributeDtos = dto.getAttributes();
         if (null != attributeDtos) {
-            for (EntityAttributeFullDto attributeDto : attributeDtos) {
+            for (EntityTypeAttributeFullDto attributeDto : attributeDtos) {
                 AttributeInterface attribute = this.buildAttribute(dto.getCode(), attributeDto, attributeMap, bindingResult);
                 if (null != attribute) {
                     entityType.addAttribute(attribute);
@@ -259,7 +259,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
     }
 
     protected AttributeInterface buildAttribute(String typeCode,
-            EntityAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap, BindingResult bindingResult) {
+            EntityTypeAttributeFullDto attributeDto, Map<String, AttributeInterface> attributeMap, BindingResult bindingResult) {
         String type = attributeDto.getType();
         AttributeInterface prototype = attributeMap.get(type);
         if (null == prototype) {
@@ -297,15 +297,15 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         }
         if (attribute instanceof AbstractListAttribute) {
             if (null != attributeDto.getNestedAttribute()) {
-                EntityAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
+                EntityTypeAttributeFullDto nestedAttributeDto = attributeDto.getNestedAttribute();
                 ((AbstractListAttribute) attribute).setNestedAttributeType(this.buildAttribute(typeCode, nestedAttributeDto, attributeMap, bindingResult));
             } else {
                 this.addError(EntityTypeValidator.ERRCODE_INVALID_LIST, bindingResult, new String[]{typeCode, type}, "entityType.attribute.list.missingNestedAttribute");
             }
         } else if (attribute instanceof CompositeAttribute) {
-            List<EntityAttributeFullDto> compositeElementsDto = attributeDto.getCompositeAttributes();
+            List<EntityTypeAttributeFullDto> compositeElementsDto = attributeDto.getCompositeAttributes();
             if (null != compositeElementsDto && !compositeElementsDto.isEmpty()) {
-                for (EntityAttributeFullDto attributeElementDto : compositeElementsDto) {
+                for (EntityTypeAttributeFullDto attributeElementDto : compositeElementsDto) {
                     AttributeInterface attributeElement = this.buildAttribute(typeCode, attributeElementDto, attributeMap, bindingResult);
                     ((CompositeAttribute) attribute).getAttributeMap().put(attributeElement.getName(), attributeElement);
                     ((CompositeAttribute) attribute).getAttributes().add(attributeElement);
@@ -377,7 +377,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return true;
     }
 
-    protected EntityAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
+    protected EntityTypeAttributeFullDto getEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -389,11 +389,11 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             logger.warn("no attribute found with code {}", entityTypeCode);
             throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS, "Attribute", attributeCode);
         }
-        return new EntityAttributeFullDto(attribute, entityManager.getAttributeRoles());
+        return new EntityTypeAttributeFullDto(attribute, entityManager.getAttributeRoles());
     }
 
-    protected EntityAttributeFullDto addEntityAttribute(String entityManagerCode,
-            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    protected EntityTypeAttributeFullDto addEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -411,13 +411,13 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         if (bindingResult.hasErrors()) {
             return null;
         }
-        EntityAttributeFullDto result = null;
+        EntityTypeAttributeFullDto result = null;
         try {
             entityType.addAttribute(attribute);
             ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
             IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
             AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
-            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+            result = new EntityTypeAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
         } catch (Throwable e) {
             logger.error("Error updating entity type", e);
             throw new RestServerError("error updating entity type", e);
@@ -425,8 +425,8 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         return result;
     }
 
-    protected EntityAttributeFullDto updateEntityAttribute(String entityManagerCode,
-            String entityTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    protected EntityTypeAttributeFullDto updateEntityAttribute(String entityManagerCode,
+            String entityTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -448,14 +448,14 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         if (bindingResult.hasErrors()) {
             return null;
         }
-        EntityAttributeFullDto result = null;
+        EntityTypeAttributeFullDto result = null;
         try {
             entityType.getAttributeMap().remove(bodyRequest.getCode());
             entityType.addAttribute(attribute);
             ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
             IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
             AttributeInterface newAttribute = (AttributeInterface) newEntityType.getAttribute(bodyRequest.getCode());
-            result = new EntityAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
+            result = new EntityTypeAttributeFullDto(newAttribute, entityManager.getAttributeRoles());
         } catch (Throwable e) {
             logger.error("Error updating entity type", e);
             throw new RestServerError("error updating entity type", e);

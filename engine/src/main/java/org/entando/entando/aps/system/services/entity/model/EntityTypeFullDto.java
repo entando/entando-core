@@ -31,7 +31,7 @@ public class EntityTypeFullDto extends EntityTypeDto {
         super(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
-            EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
+            EntityTypeAttributeFullDto attributeDto = new EntityTypeAttributeFullDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
     }

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.stream.Collectors;
 
@@ -25,10 +26,15 @@ public class EntityDto implements Serializable {
 
     private String id;
     private String typeCode;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String typeDescription;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String description;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String mainGroup;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Set<String> groups;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<String> categories;
     private List<AttributeInterface> attributes;
 

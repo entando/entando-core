@@ -17,9 +17,9 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import java.util.List;
 import java.util.Set;
 
-import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 public class EntityDto implements Serializable {
@@ -36,7 +36,7 @@ public class EntityDto implements Serializable {
     private Set<String> groups;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<String> categories;
-    private List<AttributeInterface> attributes;
+    private List<EntityAttributeDto> attributes = new ArrayList<>();
 
     public EntityDto() {
     }
@@ -48,9 +48,11 @@ public class EntityDto implements Serializable {
         this.setDescription(src.getDescription());
         this.setMainGroup(src.getMainGroup());
         this.setGroups(src.getGroups());
-        this.setAttributes(src.getAttributeList());
         if (null != src.getCategories()) {
             this.setCategories(src.getCategories().stream().map(i -> i.getCode()).collect(Collectors.toList()));
+        }
+        if (null != src.getAttributeList()) {
+            src.getAttributeList().stream().forEach(i -> this.getAttributes().add(new EntityAttributeDto(i)));
         }
     }
 
@@ -102,11 +104,11 @@ public class EntityDto implements Serializable {
         this.groups = groups;
     }
 
-    public List<AttributeInterface> getAttributes() {
+    public List<EntityAttributeDto> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(List<AttributeInterface> attributes) {
+    public void setAttributes(List<EntityAttributeDto> attributes) {
         this.attributes = attributes;
     }
 

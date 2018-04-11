@@ -11,26 +11,18 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.userprofile.validator;
+package org.entando.entando.aps.system.services.userprofile;
 
-import com.agiletec.aps.system.common.entity.IEntityManager;
-import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
-import org.entando.entando.web.entity.validator.EntityTypeValidator;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.entando.entando.aps.system.services.entity.model.EntityDto;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
  */
-@Component
-public class ProfileTypeValidator extends EntityTypeValidator {
+public interface IUserProfileService {
 
-    @Autowired
-    private IUserProfileManager userProfileManager;
+    public void addUserProfile(EntityDto request, BindingResult bindingResult);
 
-    @Override
-    protected IEntityManager getEntityManager() {
-        return this.userProfileManager;
-    }
+    public void updateUserProfile(EntityDto request, BindingResult bindingResult);
 
 }

@@ -36,7 +36,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class EntityManagerService extends AbstractEntityService<IApsEntity, EntityTypeFullDto> implements IEntityManagerService {
+public class EntityManagerService extends AbstractEntityTypeService<IApsEntity, EntityTypeFullDto> implements IEntityManagerService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

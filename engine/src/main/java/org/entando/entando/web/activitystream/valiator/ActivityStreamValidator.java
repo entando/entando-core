@@ -6,6 +6,8 @@ import org.springframework.validation.Errors;
 
 public class ActivityStreamValidator extends AbstractPaginationValidator {
 
+    public static final String ERRCODE_RECORD_NOT_FOUND = "1";
+
     @Override
     public boolean supports(Class<?> paramClass) {
         return RoleRequest.class.equals(paramClass);

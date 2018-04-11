@@ -3,19 +3,19 @@ package org.entando.entando.aps.system.services.activitystream;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
-import org.entando.entando.aps.system.services.DtoBuilder;
-import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordDto;
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordDtoBuilder;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
+import org.entando.entando.web.activitystream.ActivityStreamCommentRequest;
+import org.entando.entando.web.activitystream.valiator.ActivityStreamValidator;
 import org.entando.entando.web.common.model.DateRange;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -37,10 +37,12 @@ public class ActivityStreamService implements IActivityStreamService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private IDtoBuilder<ActionLogRecord, ActionLogRecordDto> dtoBuilder;
+    private ActionLogRecordDtoBuilder dtoBuilder = new ActionLogRecordDtoBuilder();
 
     @Autowired
     private IActionLogManager actionLogManager;
+
+    private ISocialActivityStreamManager socialActivityStreamManager;
 
     @Autowired
     private IAuthorizationManager authorizationManager;
@@ -61,35 +63,24 @@ public class ActivityStreamService implements IActivityStreamService {
         this.actionLogManager = actionLogManager;
     }
 
-    protected IDtoBuilder<ActionLogRecord, ActionLogRecordDto> getDtoBuilder() {
-        return dtoBuilder;
+    protected ISocialActivityStreamManager getSocialActivityStreamManager() {
+        return socialActivityStreamManager;
     }
 
-    public void setDtoBuilder(IDtoBuilder<ActionLogRecord, ActionLogRecordDto> dtoBuilder) {
-        this.dtoBuilder = dtoBuilder;
+    public void setSocialActivityStreamManager(ISocialActivityStreamManager socialActivityStreamManager) {
+        this.socialActivityStreamManager = socialActivityStreamManager;
     }
 
-    @PostConstruct
-    public void setUp() {
-        this.setDtoBuilder(new DtoBuilder<ActionLogRecord, ActionLogRecordDto>() {
-
-            @Override
-            protected ActionLogRecordDto toDto(ActionLogRecord src) {
-                ActionLogRecordDto dto = new ActionLogRecordDto(src);
-                return dto;
-            }
-        });
-    }
 
     @Override
     public PagedMetadata<ActionLogRecordDto> getActivityStream(RestListRequest requestList, UserDetails userDetails) {
         try {
             ActionLogRecordSearchBean searchBean = buildSearchBean(requestList, userDetails);
-            SearcherDaoPaginatedResult<ActionLogRecord> pager = getActionLogManager().getPaginatedActionRecords(searchBean);
+            SearcherDaoPaginatedResult<ActionLogRecord> pagedResult = getActionLogManager().getPaginatedActionRecords(searchBean);
 
-            List<ActionLogRecordDto> dtoList = getDtoBuilder().convert(pager.getList());
+            List<ActionLogRecordDto> dtoList = this.getDtoBuilder().convert(pagedResult.getList(), this.getSocialActivityStreamManager());
 
-            PagedMetadata<ActionLogRecordDto> pagedMetadata = new PagedMetadata<>(requestList, pager);
+            PagedMetadata<ActionLogRecordDto> pagedMetadata = new PagedMetadata<>(requestList, pagedResult);
             pagedMetadata.setBody(dtoList);
             return pagedMetadata;
 
@@ -99,7 +90,57 @@ public class ActivityStreamService implements IActivityStreamService {
         }
     }
 
-    private ActionLogRecordSearchBean buildSearchBean(RestListRequest requestList, UserDetails userDetails) {
+    @Override
+    public ActionLogRecordDto addLike(int recordId, UserDetails userDetails) {
+        try {
+            this.getSocialActivityStreamManager().editActionLikeRecord(recordId, userDetails.getUsername(), true);
+            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            return dto;
+        } catch (Throwable t) {
+            logger.error("error add add like for id {}", recordId, t);
+            throw new RestServerError("error in add like ", t);
+        }
+    }
+
+    @Override
+    public ActionLogRecordDto removeLike(int recordId, UserDetails userDetails) {
+        try {
+            this.getSocialActivityStreamManager().editActionLikeRecord(recordId, userDetails.getUsername(), false);
+            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            return dto;
+        } catch (Throwable t) {
+            logger.error("error in remove like for id {}", recordId, t);
+            throw new RestServerError("error in remove like ", t);
+        }
+    }
+
+    @Override
+    public ActionLogRecordDto addComment(ActivityStreamCommentRequest commentRequest, UserDetails attribute) {
+        try {
+            int recordId = commentRequest.getRecordId();
+            if (null == this.getActionLogManager().getActionRecord(recordId)) {
+                logger.warn("no record found with id {}", commentRequest.getRecordId());
+                throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
+            }
+
+            this.getSocialActivityStreamManager().addActionCommentRecord(attribute.getUsername(), commentRequest.getComment(), recordId);
+
+            ActionLogRecordDto dto = this.getDtoBuilder().convert(getActionLogManager().getActionRecord(recordId));
+            return dto;
+        } catch (Throwable t) {
+            logger.error("error in add comment for id {}", commentRequest.getRecordId(), t);
+            throw new RestServerError("error in add comment", t);
+        }
+
+    }
+
+    @Override
+    public ActionLogRecordDto removeComment(int recordId, int commentId, UserDetails attribute) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    protected ActionLogRecordSearchBean buildSearchBean(RestListRequest requestList, UserDetails userDetails) {
         ActionLogRecordSearchBean searchBean = new ActionLogRecordSearchBean();
 
         //groups
@@ -140,13 +181,15 @@ public class ActivityStreamService implements IActivityStreamService {
 
         }
 
-
-
-
         return searchBean;
     }
 
+    public ActionLogRecordDtoBuilder getDtoBuilder() {
+        return dtoBuilder;
+    }
 
-
+    public void setDtoBuilder(ActionLogRecordDtoBuilder dtoBuilder) {
+        this.dtoBuilder = dtoBuilder;
+    }
 
 }

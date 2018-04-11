@@ -2,22 +2,17 @@ package org.entando.entando.web.activitystream;
 
 import java.sql.Timestamp;
 
-import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ActivityStreamControllerIntegrationTest extends AbstractControllerIntegrationTest {
-
-    @Autowired
-    private IRoleManager roleManager;
 
     @Test
     public void testGetActivityStream() throws Exception {

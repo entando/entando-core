@@ -35,4 +35,8 @@ public class ContentModelValidator extends AbstractPaginationValidator {
         }
     }
 
+    @Override
+    protected String getDefaultSortProperty() {
+        return "id";
+    }
 }

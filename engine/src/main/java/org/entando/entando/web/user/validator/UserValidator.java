@@ -24,13 +24,16 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.user.UserController;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.model.UserPasswordRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 
 /**
@@ -41,6 +44,8 @@ import org.springframework.validation.Errors;
 public class UserValidator extends AbstractPaginationValidator {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
+
+    public static final String ERRCODE_USER_ALREADY_EXISTS = "1";
 
     public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
 
@@ -92,7 +97,7 @@ public class UserValidator extends AbstractPaginationValidator {
 
     @Override
     public boolean supports(Class<?> paramClass) {
-        return UserAuthoritiesRequest.class.equals(paramClass);
+        return UserAuthoritiesRequest.class.equals(paramClass) || UserRequest.class.equals(paramClass);
     }
 
     @Override
@@ -100,6 +105,21 @@ public class UserValidator extends AbstractPaginationValidator {
         if (target instanceof UserAuthoritiesRequest) {
             UserAuthoritiesRequest request = (UserAuthoritiesRequest) target;
             validateGroupsAndRoles(request, errors);
+        }
+    }
+
+    public void validateUserPost(UserRequest request, BindingResult bindingResult) {
+        String username = request.getUsername();
+        try {
+            if (null != this.getUserManager().getUser(username)) {
+                bindingResult.reject(UserValidator.ERRCODE_USER_ALREADY_EXISTS, new String[]{username}, "user.exists");
+                throw new ValidationConflictException(bindingResult);
+            }
+        } catch (ValidationConflictException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error adding user {}", username, e);
+            throw new RestServerError("Error adding user", e);
         }
     }
 

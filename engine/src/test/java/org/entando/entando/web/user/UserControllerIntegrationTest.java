@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -26,19 +26,20 @@ import static junit.framework.TestCase.assertNull;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import org.springframework.test.web.servlet.ResultMatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- *
  * @author paddeo
  */
 public class UserControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -83,10 +84,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             ResultActions result = mockMvc.perform(
                     put("/users/{target}/authorities", "mockuser")
-                            .sessionAttr("user", user)
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload[0].group", is("group1")));
@@ -98,48 +98,50 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void shouldAddRomoveUser() throws Exception {
+    public void shouldAddRemoveUser() throws Exception {
         try {
-
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
+            String mockJson = "{\"username\": \"newuser\",\"status\": \"active\",\"password\": \"password\"}";
 
-            String mockJson = "{\n"
-                    + "    \"username\": \"newuser\",\n"
-                    + "    \"status\": \"active\",\n"
-                    + "    \"password\": \"password\"\n"
-                    + " }";
-
-            ResultActions result = mockMvc.perform(
-                    post("/users")
-                            .sessionAttr("user", user)
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
-
+            ResultActions result = this.executeUserPost(mockJson, accessToken, status().isOk());
             String response = result.andReturn().getResponse().getContentAsString();
             System.out.println("resp:" + response);
-            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.username", is("newuser")));
+
+            ResultActions result2 = this.executeUserPost(mockJson, accessToken, status().isConflict());
+            System.out.println(result2.andReturn().getResponse().getContentAsString());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.errors[0].code", is("1")));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             ResultActions resultDelete = mockMvc.perform(
                     delete("/users/{username}", "newuser")
-                            .sessionAttr("user", user)
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
-
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is("newuser")));
-            response = resultDelete.andReturn().getResponse().getContentAsString();
-            System.out.println("resp:" + response);
-
+            System.out.println(resultDelete.andReturn().getResponse().getContentAsString());
         } catch (Throwable e) {
+            this.userManager.removeUser("newuser");
             e.printStackTrace();
+            throw e;
         } finally {
             UserDetails user = this.userManager.getUser("newuser");
             assertNull(user);
         }
+    }
+
+    private ResultActions executeUserPost(String body, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(post("/users")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
     }
 
     private Group createGroup(int i) {

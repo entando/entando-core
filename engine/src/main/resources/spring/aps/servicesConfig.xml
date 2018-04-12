@@ -17,6 +17,10 @@
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd">
 
 
+    <!--  async support -->
+    <task:annotation-driven   />
+   
+    
     <!-- === WIDGET VALIDATORS === -->
 
     <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
@@ -185,6 +189,11 @@
         <property name="authorizationService" ref="AuthorizationService"></property>
     </bean>
 
+    <bean id="ActivityStreamService" class="org.entando.entando.aps.system.services.activitystream.ActivityStreamService" >
+        <property name="authorizationManager" ref="AuthorizationManager" />
+        <property name="actionLogManager" ref="ActionLogManager" />
+        <property name="socialActivityStreamManager" ref="SocialActivityStreamManager" />
+    </bean>
 
 
     

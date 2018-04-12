@@ -34,6 +34,7 @@ import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -185,7 +186,7 @@ public class RoleService implements IRoleService {
             }
             BeanPropertyBindingResult validationResult = this.validateRoleForUpdate(role);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
 
             this.getRoleManager().updateRole(role);
@@ -203,7 +204,7 @@ public class RoleService implements IRoleService {
             Role role = this.createRole(roleRequest);
             BeanPropertyBindingResult validationResult = this.validateRoleForAdd(role);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             this.getRoleManager().addRole(role);
             RoleDto dto = this.getDtoBuilder().toDto(role, this.getRoleManager().getPermissionsCodes());
@@ -224,7 +225,7 @@ public class RoleService implements IRoleService {
             }
             BeanPropertyBindingResult validationResult = this.validateRoleForDelete(role);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             this.getRoleManager().removeRole(role);
         } catch (ApsSystemException e) {

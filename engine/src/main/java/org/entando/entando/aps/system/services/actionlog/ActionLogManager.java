@@ -13,30 +13,28 @@
  */
 package org.entando.entando.aps.system.services.actionlog;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.ManagerConfiguration;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 
@@ -115,6 +113,25 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
             throw new ApsSystemException("Error loading actionlogger records", t);
         }
         return records;
+    }
+
+    @Override
+    public SearcherDaoPaginatedResult<ActionLogRecord> getPaginatedActionRecords(IActionLogRecordSearchBean searchBean) throws ApsSystemException {
+        SearcherDaoPaginatedResult<ActionLogRecord> pagedResult = null;
+        try {
+            List<ActionLogRecord> actionLogRecords = new ArrayList<>();
+            int count = this.getActionLogDAO().countActionLogRecords(searchBean);
+
+            List<Integer> recordsIs = this.getActionLogDAO().getActionRecords(searchBean);
+            for (Integer recordId : recordsIs) {
+                actionLogRecords.add(this.getActionRecord(recordId));
+            }
+            pagedResult = new SearcherDaoPaginatedResult<ActionLogRecord>(count, actionLogRecords);
+        } catch (Throwable t) {
+            _logger.error("Error searching ActionLogRecord", t);
+            throw new ApsSystemException("Error searching ActionLogRecord", t);
+        }
+        return pagedResult;
     }
 
     @Override

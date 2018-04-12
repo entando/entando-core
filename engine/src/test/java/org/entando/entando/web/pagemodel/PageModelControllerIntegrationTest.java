@@ -27,8 +27,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/pagemodels")
-                                                                 .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/pageModels")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -64,27 +64,27 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     public void testAddPageModelWithExistingCode() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        String payload = " {\n" +
-                         "    \"code\": \"home\",\n" +
-                         "    \"descr\": \"test\",\n" +
-                         "    \"configuration\": {\n" +
-                         "        \"frames\": [{\n" +
-                         "            \"pos\": 0,\n" +
-                         "            \"descr\": \"test_frame\",\n" +
-                         "            \"mainFrame\": false,\n" +
-                         "            \"defaultWidget\": null,\n" +
-                         "            \"sketch\": null\n" +
-                         "        }]\n" +
-                         "    },\n" +
-                         "    \"pluginCode\": null,\n" +
-                         "    \"template\": \"ciao\"\n" +
-                         " }";
+        String payload = " {\n"
+                + "    \"code\": \"home\",\n"
+                + "    \"descr\": \"test\",\n"
+                + "    \"configuration\": {\n"
+                + "        \"frames\": [{\n"
+                + "            \"pos\": 0,\n"
+                + "            \"descr\": \"test_frame\",\n"
+                + "            \"mainFrame\": false,\n"
+                + "            \"defaultWidget\": null,\n"
+                + "            \"sketch\": null\n"
+                + "        }]\n"
+                + "    },\n"
+                + "    \"pluginCode\": null,\n"
+                + "    \"template\": \"ciao\"\n"
+                + " }";
 
         ResultActions result = mockMvc
-                                      .perform(post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                .perform(post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isConflict());
 
@@ -97,27 +97,27 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-            String payload = " {\n" +
-                             "    \"code\": \"" + pageModelCode + "\"," +
-                    "    \"descr\": \"test\",\n" +
-                    "    \"configuration\": {\n" +
-                    "        \"frames\": [{\n" +
-                    "            \"pos\": 0,\n" +
-                    "            \"descr\": \"test_frame\",\n" +
-                    "            \"mainFrame\": false,\n" +
-                    "            \"defaultWidget\": null,\n" +
-                    "            \"sketch\": null\n" +
-                    "        }]\n" +
-                    "    },\n" +
-                    "    \"pluginCode\": null,\n" +
-                    "    \"template\": \"ciao\"\n" +
-                    " }";
+            String payload = " {\n"
+                    + "    \"code\": \"" + pageModelCode + "\","
+                    + "    \"descr\": \"test\",\n"
+                    + "    \"configuration\": {\n"
+                    + "        \"frames\": [{\n"
+                    + "            \"pos\": 0,\n"
+                    + "            \"descr\": \"test_frame\",\n"
+                    + "            \"mainFrame\": false,\n"
+                    + "            \"defaultWidget\": null,\n"
+                    + "            \"sketch\": null\n"
+                    + "        }]\n"
+                    + "    },\n"
+                    + "    \"pluginCode\": null,\n"
+                    + "    \"template\": \"ciao\"\n"
+                    + " }";
 
             ResultActions result = mockMvc
-                    .perform(post("/pagemodels")
-                             .content(payload)
-                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                             .header("Authorization", "Bearer " + accessToken));
+                    .perform(post("/pageModels")
+                            .content(payload)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
@@ -133,10 +133,9 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
             ResultActions result = mockMvc
-                                          .perform(get("/pagemodels/{code}", pageModelCode)
-
-                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                           .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pageModels/{code}", pageModelCode)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
             //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isNotFound());
         } finally {
@@ -157,10 +156,9 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(delete("/pagemodels/{code}", pageModelCode)
-
-                                                                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                              .header("Authorization", "Bearer " + accessToken));
+                    .perform(delete("/pageModels/{code}", pageModelCode)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
             //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
         } finally {
@@ -174,10 +172,9 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc
-                                      .perform(delete("/pagemodels/{code}", "unexistingPageModel")
-
-                                                                                                  .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                  .header("Authorization", "Bearer " + accessToken));
+                .perform(delete("/pageModels/{code}", "unexistingPageModel")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 

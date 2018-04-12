@@ -46,8 +46,20 @@ import org.slf4j.LoggerFactory;
  */
 public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(ActionLogDAO.class);
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 	
+    @Override
+    public int countActionLogRecords(IActionLogRecordSearchBean searchBean) {
+        Integer groups = null;
+        try {
+            groups = super.countId(this.createFilters(searchBean));
+        } catch (Throwable t) {
+            logger.error("error in count ActionLog Records", t);
+            throw new RuntimeException("error in count ActionLog Records", t);
+        }
+        return groups;
+    }
+
 	@Override
 	public void addActionRecord(ActionLogRecord actionRecord) {
 		Connection conn = null;
@@ -75,7 +87,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on insert actionlogger record",  t);
+            logger.error("Error on insert actionlogger record", t);
 			throw new RuntimeException("Error on insert actionlogger record", t);
 		} finally {
 			closeDaoResources(null, stat, conn);
@@ -104,10 +116,10 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			}
 			stat.executeBatch();
 		} catch (BatchUpdateException e) {
-			_logger.error("Error adding relation for record {}", recordId,  e);
+            logger.error("Error adding relation for record {}", recordId, e);
 			throw new RuntimeException("Error adding relation for record - " + recordId, e.getNextException());
 		} catch (Throwable t) {
-			_logger.error("Error adding relations for record {}", recordId,  t);
+            logger.error("Error adding relations for record {}", recordId, t);
 			throw new RuntimeException("Error adding relations for record - " + recordId, t);
 		} finally {
 			closeDaoResources(null, stat);
@@ -143,7 +155,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				idList.add(result.getInt(1));
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading actionlogger records",  t);
+            logger.error("Error loading actionlogger records", t);
 			throw new RuntimeException("Error loading actionlogger records", t);
 		} finally {
 			closeDaoResources(result, stat, conn);
@@ -163,7 +175,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading actionlogger records",  t);
+            logger.error("Error loading actionlogger records", t);
 			throw new RuntimeException("Error loading actionlogger records", t);
 		}
 		return actionRecords;
@@ -188,7 +200,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				idList.add(result.getInt(1));
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading activity stream records",  t);
+            logger.error("Error loading activity stream records", t);
 			throw new RuntimeException("Error loading activity stream records", t);
 		} finally {
 			closeDaoResources(result, stat, conn);
@@ -205,7 +217,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			index = this.addMetadataFieldFilterStatementBlock(filters, index, stat);
 			index = this.addGroupStatementBlock(groupCodes, index, stat);
 		} catch (Throwable t) {
-			_logger.error("Error creating the statement",  t);
+            logger.error("Error creating the statement", t);
 			throw new RuntimeException("Error creating the statement", t);
 		}
 		return stat;
@@ -340,7 +352,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error loading actionlogger record with id: {}", id, t);
+            logger.error("Error loading actionlogger record with id: {}", id, t);
 			throw new RuntimeException("Error loading actionlogger record with id: " + id, t);
 		} finally {
 			closeDaoResources(res, stat, conn);
@@ -359,7 +371,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error on delete record: {}", id, t);
+            logger.error("Error on delete record: {}", id, t);
 			throw new RuntimeException("Error on delete record: " + id , t);
 		} finally {
 			closeConnection(conn);
@@ -377,7 +389,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 			conn.commit();
 		} catch (Throwable t) {
 			this.executeRollback(conn);
-			_logger.error("Error updating record date: {}", id, t);
+            logger.error("Error updating record date: {}", id, t);
 			throw new RuntimeException("Error updating record date: id " + id , t);
 		} finally {
 			this.closeConnection(conn);
@@ -412,7 +424,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				this.extractRecordToDelete(groupName, maxActivitySizeByGroup, recordsToDelete, conn);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting old Stream logs",  t);
+            logger.error("Error extracting old Stream logs", t);
 			throw new RuntimeException("Error cleaning old Stream logs", t);
 		} finally {
 			this.closeConnection(conn);
@@ -435,7 +447,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error loading actionlogger occurrences",  t);
+            logger.error("Error loading actionlogger occurrences", t);
 			throw new RuntimeException("Error loading actionlogger occurrences", t);
 		} finally {
 			closeDaoResources(res, stat);
@@ -470,7 +482,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error while loading activity stream records to delete : group {}", groupName,  t);
+            logger.error("Error while loading activity stream records to delete : group {}", groupName, t);
 			throw new RuntimeException("Error while loading activity stream records to delete : group '" + groupName + "'", t);
 		} finally {
 			closeDaoResources(result, stat);

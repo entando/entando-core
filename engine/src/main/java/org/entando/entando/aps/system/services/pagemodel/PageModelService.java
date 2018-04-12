@@ -21,7 +21,6 @@ import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.group.validator.GroupValidator;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.pagemodel.validator.PageModelValidator;
@@ -167,7 +166,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
 
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_REFERENCES, "reference", managerName);
+            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getPageModelUtilizer(pageModelCode);
         List<?> subList = restRequest.getSublist(dtoList);

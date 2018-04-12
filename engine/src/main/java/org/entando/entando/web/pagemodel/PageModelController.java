@@ -89,7 +89,7 @@ public class PageModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}/references/{manager}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroupReferences(@PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
+    public ResponseEntity<?> getPageModelReferences(@PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
         PagedMetadata<?> result = this.getPageModelService().getPageModelReferences(code, manager, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

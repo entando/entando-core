@@ -13,17 +13,20 @@
  */
 package org.entando.entando.web.page;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.validation.Valid;
+
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.web.common.annotation.ActivityStreamAuditable;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -137,7 +140,8 @@ public class PageController {
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updatePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) {
@@ -159,7 +163,8 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
@@ -181,7 +186,8 @@ public class PageController {
         metadata.put("status", pageStatusRequest.getStatus());
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addPage(@ModelAttribute("user") UserDetails user, @Valid @RequestBody PageRequest pageRequest, BindingResult bindingResult) throws ApsSystemException {
@@ -199,7 +205,8 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(dto, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deletePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode) throws ApsSystemException {
@@ -229,7 +236,8 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(payload, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
+    @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PagePositionRequest pageRequest, BindingResult bindingResult) {
@@ -257,5 +265,5 @@ public class PageController {
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
-
+    
 }

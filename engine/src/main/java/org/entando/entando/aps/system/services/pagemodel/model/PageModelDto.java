@@ -1,5 +1,9 @@
 package org.entando.entando.aps.system.services.pagemodel.model;
 
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class PageModelDto {
@@ -14,6 +18,14 @@ public class PageModelDto {
     private int mainFrame = NO_MAIN_FRAME;
     private String pluginCode;
     private String template;
+
+    /**
+     * The references grouped by service name.
+     * <p>
+     * Lists all the managers that may contain references by indicating with <code>true</code> the presence of references
+     */
+    @JsonInclude(Include.NON_NULL)
+    private Map<String, Boolean> references;
 
     public String getCode() {
         return code;
@@ -56,6 +68,14 @@ public class PageModelDto {
         this.template = template;
     }
 
+    public Map<String, Boolean> getReferences() {
+        return references;
+    }
+
+    public void setReferences(Map<String, Boolean> references) {
+        this.references = references;
+    }
+
     public static String getEntityFieldName(String dtoFieldName) {
         switch (dtoFieldName) {
             case "description":
@@ -76,6 +96,7 @@ public class PageModelDto {
     public void setConfiguration(PageModelConfigurationDto configuration) {
         this.configuration = configuration;
     }
+
 
 
 }

@@ -381,6 +381,20 @@
         </property>
     </bean>
 
+
+	<bean id="SocialActivityStreamManager" class="org.entando.entando.aps.system.services.activitystream.SocialActivityStreamManager" 
+			parent="abstractService" >
+		<property name="keyGeneratorManager" ref="KeyGeneratorManager" />
+		<property name="userProfileManager" ref="UserProfileManager" />
+		<property name="actionLogManager" ref="ActionLogManager" />
+		<property name="socialActivityStreamDAO">
+			<bean class="org.entando.entando.aps.system.services.activitystream.SocialActivityStreamDAO">
+				<property name="dataSource" ref="servDataSource" />
+			</bean>
+		</property>
+	</bean>
+
+
     <bean id="PageTokenManager" class="org.entando.entando.aps.system.services.page.PageTokenManager" parent="abstractService" >
         <property name="configManager" ref="BaseConfigManager" />
     </bean>

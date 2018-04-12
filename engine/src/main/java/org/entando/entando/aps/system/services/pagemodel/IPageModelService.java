@@ -19,4 +19,6 @@ public interface IPageModelService {
 
     void removePageModel(String code);
 
+    PagedMetadata<?> getPageModelReferences(String pageModelCode, String managerName, RestListRequest restRequest);
+
 }

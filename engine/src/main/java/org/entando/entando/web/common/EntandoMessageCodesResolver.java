@@ -24,6 +24,7 @@ import org.springframework.validation.MessageCodeFormatter;
  */
 public class EntandoMessageCodesResolver extends DefaultMessageCodesResolver {
 
+    public static final String ERR_CODE_URI_PARAMETER = "40";
 
     private static final MessageCodeFormatter DEFAULT_FORMATTER = Format.PREFIX_ERROR_CODE;
     private MessageCodeFormatter formatter = DEFAULT_FORMATTER;

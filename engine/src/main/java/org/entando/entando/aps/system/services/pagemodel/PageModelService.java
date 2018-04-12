@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
@@ -98,7 +99,9 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             logger.warn("no pageModel found with code {}", code);
             throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", code);
         }
-        return this.getDtoBuilder().convert(pageModel);
+        PageModelDto dto = this.getDtoBuilder().convert(pageModel);
+        dto.setReferences(this.getReferencesInfo(pageModel));
+        return dto;
     }
 
     @Override
@@ -150,7 +153,27 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             logger.error("Error in delete pagemodel {}", code, e);
             throw new RestServerError("error in delete pagemodel", e);
         }
+    }
 
+    @Override
+    public PagedMetadata<?> getPageModelReferences(String pageModelCode, String managerName, RestListRequest restRequest) {
+        PageModel pageModel = this.getPageModelManager().getPageModel(pageModelCode);
+        if (null == pageModel) {
+            logger.warn("no pageModel found with code {}", pageModelCode);
+            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelCode);
+        }
+        PageModelServiceUtilizer<?> utilizer = this.getPageModelServiceUtilizer(managerName);
+        if (null == utilizer) {
+            logger.warn("no references found for {}", managerName);
+
+            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_REFERENCES, "reference", managerName);
+        }
+        List<?> dtoList = utilizer.getPageModelUtilizer(pageModelCode);
+        List<?> subList = restRequest.getSublist(dtoList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
+        pagedMetadata.setBody((List<Object>) subList);
+        return pagedMetadata;
     }
 
     protected PageModel createPageModel(PageModelRequest pageModelRequest) {
@@ -239,6 +262,47 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             throw new ApsSystemException("Error on getReferencingObjects methods", t);
         }
         return references;
+    }
+
+    public Map<String, Boolean> getReferencesInfo(PageModel pageModel) {
+        Map<String, Boolean> references = new HashMap<String, Boolean>();
+        try {
+            String[] defNames = applicationContext.getBeanNamesForType(PageModelUtilizer.class);
+            for (int i = 0; i < defNames.length; i++) {
+                Object service = null;
+                try {
+                    service = applicationContext.getBean(defNames[i]);
+                } catch (Throwable t) {
+                    logger.error("error in hasReferencingObjects", t);
+                    service = null;
+                }
+                if (service != null) {
+                    PageModelUtilizer pageModelUtilizer = (PageModelUtilizer) service;
+                    List<?> utilizers = pageModelUtilizer.getPageModelUtilizers(pageModel.getCode());
+                    if (utilizers != null && !utilizers.isEmpty()) {
+                        references.put(pageModelUtilizer.getName(), true);
+                    } else {
+                        references.put(pageModelUtilizer.getName(), false);
+                    }
+                }
+            }
+        } catch (ApsSystemException ex) {
+            logger.error("error loading references for pageModel {}", pageModel.getCode(), ex);
+            throw new RestServerError("error in getReferencingObjects ", ex);
+        }
+        return references;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private PageModelServiceUtilizer<?> getPageModelServiceUtilizer(String managerName) {
+        Map<String, PageModelServiceUtilizer> beans = applicationContext.getBeansOfType(PageModelServiceUtilizer.class);
+        Optional<PageModelServiceUtilizer> defName = beans.values().stream()
+                                                          .filter(service -> service.getManagerName().equals(managerName))
+                                                          .findFirst();
+        if (defName.isPresent()) {
+            return defName.get();
+        }
+        return null;
     }
 
 }

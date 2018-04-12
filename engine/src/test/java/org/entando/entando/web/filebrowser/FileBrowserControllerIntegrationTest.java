@@ -59,13 +59,14 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
 
     @Test
     public void testBrowseFolder_1() throws Exception {
+        this.storageManager.deleteDirectory("cms", false);
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/fileBrowser")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload", Matchers.hasSize(3)));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.size()", is(3)));
         result.andExpect(jsonPath("$.metaData.currentPath", is("")));

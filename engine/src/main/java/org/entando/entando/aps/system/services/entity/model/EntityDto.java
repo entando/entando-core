@@ -14,6 +14,8 @@
 package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.List;
 import java.util.Set;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.validation.BindingResult;
 
 public class EntityDto implements Serializable {
 
@@ -65,19 +68,34 @@ public class EntityDto implements Serializable {
         }
     }
 
-    public void fillEntity(IApsEntity prototype, ICategoryManager categoryManager) {
+    public void fillEntity(IApsEntity prototype, ICategoryManager categoryManager, BindingResult bindingResult) {
         prototype.setId(this.getId());
         prototype.setDescription(this.getDescription());
-        /*
-        prototype.set(this.get);
-        prototype.set(this.get);
-        prototype.set(this.get);
-        prototype.set(this.get);
-        prototype.set(this.get);
-        prototype.set(this.get);
-
+        prototype.setMainGroup(this.getMainGroup());
+        if (null != this.getGroups()) {
+            this.getGroups().stream().forEach(i -> prototype.addGroup(typeCode));
+        }
+        if (null != this.getCategories()) {
+            this.getCategories().stream().forEach(i -> {
+                Category category = categoryManager.getCategory(i);
+                if (null != category) {
+                    prototype.addCategory(category);
+                }
+            });
+        }
         List<EntityAttributeDto> attributeDtos = this.getAttributes();
-         */
+        if (null == attributeDtos) {
+            return;
+        }
+        for (EntityAttributeDto attributeDto : attributeDtos) {
+            String code = attributeDto.getCode();
+            AttributeInterface attribute = prototype.getAttribute(code);
+            if (null != attribute) {
+
+            } else {
+                //ADD LOG
+            }
+        }
     }
 
     public String getId() {

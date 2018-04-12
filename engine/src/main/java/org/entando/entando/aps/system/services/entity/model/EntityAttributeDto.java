@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
@@ -78,6 +79,10 @@ public class EntityAttributeDto {
                 this.getListelements().put(key, dtos);
             });
         }
+    }
+
+    public void fillEntity(AttributeInterface attribute, BindingResult bindingResult) {
+        //TO DO
     }
 
     public String getCode() {

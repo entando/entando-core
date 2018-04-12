@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.entity;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
@@ -31,6 +32,11 @@ import org.springframework.validation.BindingResult;
 public abstract class AbstractEntityService<I extends IApsEntity> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    private List<IEntityManager> entityManagers;
+
+    private ICategoryManager categoryManager;
 
     protected void addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
@@ -50,9 +56,6 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         }
         return (I) entityType.getEntityPrototype();
     }
-
-    @Autowired
-    private List<IEntityManager> entityManagers;
 
     protected IEntityManager extractEntityManager(String entityManagerCode) {
         IEntityManager entityManager = null;
@@ -76,6 +79,14 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
 
     public void setEntityManagers(List<IEntityManager> entityManagers) {
         this.entityManagers = entityManagers;
+    }
+
+    public ICategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
+    public void setCategoryManager(ICategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
     }
 
 }

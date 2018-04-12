@@ -114,6 +114,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
                                                                                                    .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
         } finally {
             this.pageManager.deletePage(pageCode);
         }
@@ -159,6 +160,41 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String putResult = result.andReturn().getResponse().getContentAsString();
             result.andExpect(status().isOk());
             assertThat(putResult, is(getResult));
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
+    public void testGetPageWidgetConfiguration() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode, null);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 999})
+                                                                                                                        .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isNotFound());
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+
+            result = mockMvc
+                            .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "ASD"})
+                                                                                                            .param("status", IPageService.STATUS_DRAFT)
+                                                                                                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is("40")));
+
 
         } finally {
             this.pageManager.deletePage(pageCode);

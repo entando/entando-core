@@ -113,9 +113,13 @@
 
 	<bean id="entandoInterceptor"
 		class="org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor" />
+	<bean id="activitiStreamInterceptor"
+		class="org.entando.entando.web.common.interceptor.ActivitiStreamInterceptor" />
+		
+		
 	<mvc:interceptors>
-
 		<ref bean="entandoInterceptor" />
+		<ref bean="activitiStreamInterceptor" />
 	</mvc:interceptors>
 
 </beans>

@@ -17,17 +17,6 @@
 		</property>
 		<property name="userShortcutsMaxNumber"><value>10</value></property>
 	</bean>
-	
-	<bean id="SocialActivityStreamManager" class="org.entando.entando.apsadmin.system.services.activitystream.SocialActivityStreamManager" 
-			parent="abstractService" >
-		<property name="keyGeneratorManager" ref="KeyGeneratorManager" />
-		<property name="userProfileManager" ref="UserProfileManager" />
-		<property name="actionLogManager" ref="ActionLogManager" />
-		<property name="socialActivityStreamDAO">
-			<bean class="org.entando.entando.apsadmin.system.services.activitystream.SocialActivityStreamDAO">
-				<property name="dataSource" ref="servDataSource" />
-			</bean>
-		</property>
-	</bean>
+
 	
 </beans>

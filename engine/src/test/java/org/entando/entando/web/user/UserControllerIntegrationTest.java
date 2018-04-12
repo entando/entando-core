@@ -21,6 +21,7 @@ import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.net.URLEncoder;
 import java.util.Date;
 import static junit.framework.TestCase.assertNull;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -99,15 +100,23 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void shouldAddRemoveUser() throws Exception {
+        String validUsername = "valid.username_ok";
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-            String mockJson = "{\"username\": \"newuser\",\"status\": \"active\",\"password\": \"password\"}";
 
+            String invalidBody1 = "{\"username\": \"$invalid%%\",\"status\": \"active\",\"password\": \"password\"}";
+            ResultActions resultInvalid1 = this.executeUserPost(invalidBody1, accessToken, status().isBadRequest());
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("2")));
+            resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"password\"}";
             ResultActions result = this.executeUserPost(mockJson, accessToken, status().isOk());
             String response = result.andReturn().getResponse().getContentAsString();
             System.out.println("resp:" + response);
-            result.andExpect(jsonPath("$.payload.username", is("newuser")));
+            result.andExpect(jsonPath("$.payload.username", is(validUsername)));
 
             ResultActions result2 = this.executeUserPost(mockJson, accessToken, status().isConflict());
             System.out.println(result2.andReturn().getResponse().getContentAsString());
@@ -117,19 +126,19 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             ResultActions resultDelete = mockMvc.perform(
-                    delete("/users/{username}", "newuser")
+                    delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
                     .content(mockJson)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
             resultDelete.andExpect(status().isOk());
-            resultDelete.andExpect(jsonPath("$.payload.code", is("newuser")));
+            resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
             System.out.println(resultDelete.andReturn().getResponse().getContentAsString());
         } catch (Throwable e) {
-            this.userManager.removeUser("newuser");
+            this.userManager.removeUser(validUsername);
             e.printStackTrace();
             throw e;
         } finally {
-            UserDetails user = this.userManager.getUser("newuser");
+            UserDetails user = this.userManager.getUser(validUsername);
             assertNull(user);
         }
     }

@@ -21,6 +21,8 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.IApsEncrypter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
@@ -46,6 +48,8 @@ public class UserValidator extends AbstractPaginationValidator {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final String ERRCODE_USER_ALREADY_EXISTS = "1";
+
+    public static final String ERRCODE_USERNAME_FORMAT_INVALID = "2";
 
     public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
 
@@ -114,6 +118,12 @@ public class UserValidator extends AbstractPaginationValidator {
             if (null != this.getUserManager().getUser(username)) {
                 bindingResult.reject(UserValidator.ERRCODE_USER_ALREADY_EXISTS, new String[]{username}, "user.exists");
                 throw new ValidationConflictException(bindingResult);
+            }
+            Pattern pattern = Pattern.compile("([a-zA-Z0-9_\\.])+");
+            Matcher matcherUsername = pattern.matcher(username);
+            int usLength = username.length();
+            if (usLength < 8 || usLength > 20 || !matcherUsername.matches()) {
+                bindingResult.reject(UserValidator.ERRCODE_USERNAME_FORMAT_INVALID, new String[]{username}, "user.username.format.invalid");
             }
         } catch (ValidationConflictException e) {
             throw e;

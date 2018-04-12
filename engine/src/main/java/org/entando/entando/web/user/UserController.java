@@ -112,6 +112,9 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getUserValidator().validateUserPost(userRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
         UserDto dto = this.getUserService().addUser(userRequest);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }

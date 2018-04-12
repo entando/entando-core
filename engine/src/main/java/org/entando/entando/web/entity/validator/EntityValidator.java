@@ -39,6 +39,10 @@ public abstract class EntityValidator extends AbstractPaginationValidator implem
 
     public static final String ERRCODE_URINAME_MISMATCH = "2";
 
+    public static final String ERRCODE_TYPE_MISMATCH = "3";
+
+    public static final String ERRCODE_ATTRIBUTE_INVALID = "4";
+
     @Override
     public boolean supports(Class<?> paramClass) {
         return EntityDto.class.equals(paramClass);

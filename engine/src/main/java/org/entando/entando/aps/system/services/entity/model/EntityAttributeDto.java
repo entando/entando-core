@@ -16,10 +16,14 @@ package org.entando.entando.aps.system.services.entity.model;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,7 +48,7 @@ public class EntityAttributeDto {
     private List<EntityAttributeDto> elements = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
-    private Map<String, List<EntityAttributeDto>> listelements = new HashMap<>();
+    private Map<String, List<EntityAttributeDto>> listElements = new HashMap<>();
 
     public EntityAttributeDto() {
     }
@@ -76,13 +80,56 @@ public class EntityAttributeDto {
                 List<EntityAttributeDto> dtos = new ArrayList<>();
                 List<AttributeInterface> list = map.get(key);
                 list.stream().forEach(element -> dtos.add(new EntityAttributeDto(element)));
-                this.getListelements().put(key, dtos);
+                this.getListElements().put(key, dtos);
             });
         }
     }
 
-    public void fillEntity(AttributeInterface attribute, BindingResult bindingResult) {
-        //TO DO
+    public void fillEntityAttribute(AttributeInterface attribute, BindingResult bindingResult) {
+        if (attribute instanceof ITextAttribute) {
+            ITextAttribute textAttribute = (ITextAttribute) attribute;
+            if (attribute.isMultilingual() && !this.getValues().isEmpty()) {
+                this.getValues().keySet().stream().forEach(langCode -> textAttribute.setText(this.getValues().get(langCode).toString(), langCode));
+            } else if (null != this.getValue()) {
+                textAttribute.setText(this.getValue().toString(), null);
+            }
+        }
+        if (attribute instanceof NumberAttribute && (null != this.getValue())) {
+            BigDecimal number = new BigDecimal(this.getValue().toString());
+            ((NumberAttribute) attribute).setValue(number);
+        }
+        if (attribute instanceof DateAttribute && (null != this.getValue())) {
+            Date date = null;
+            String dateValue = null;
+            try {
+                date = DateConverter.parseDate(this.getValue().toString(), SystemConstants.API_DATE_FORMAT);
+            } catch (Exception e) {
+                dateValue = this.getValue().toString();
+            }
+            ((DateAttribute) attribute).setDate(date);
+            ((DateAttribute) attribute).setFailedDateString(dateValue);
+        }
+        if (attribute instanceof CompositeAttribute && (null != this.getElements())) {
+            this.getElements().stream().forEach(i -> {
+                AttributeInterface compositeElement = ((CompositeAttribute) attribute).getAttribute(i.getCode());
+                i.fillEntityAttribute(compositeElement, bindingResult);
+            });
+        } else if (attribute instanceof MonoListAttribute && (null != this.getElements())) {
+            this.getElements().stream().forEach(i -> {
+                AttributeInterface prototype = ((MonoListAttribute) attribute).addAttribute();
+                prototype.setName(((MonoListAttribute) attribute).getName());
+                i.fillEntityAttribute(prototype, bindingResult);
+            });
+        } else if (attribute instanceof ListAttribute && (null != this.getListElements())) {
+            this.getListElements().keySet().stream().forEach(langCode -> {
+                List<EntityAttributeDto> list = this.getListElements().get(langCode);
+                list.stream().forEach(i -> {
+                    AttributeInterface prototype = ((ListAttribute) attribute).addAttribute(langCode);
+                    prototype.setName(((ListAttribute) attribute).getName());
+                    i.fillEntityAttribute(prototype, bindingResult);
+                });
+            });
+        }
     }
 
     public String getCode() {
@@ -117,12 +164,12 @@ public class EntityAttributeDto {
         this.elements = elements;
     }
 
-    public Map<String, List<EntityAttributeDto>> getListelements() {
-        return listelements;
+    public Map<String, List<EntityAttributeDto>> getListElements() {
+        return listElements;
     }
 
-    public void setListelements(Map<String, List<EntityAttributeDto>> listelements) {
-        this.listelements = listelements;
+    public void setListElements(Map<String, List<EntityAttributeDto>> listElements) {
+        this.listElements = listElements;
     }
 
 }

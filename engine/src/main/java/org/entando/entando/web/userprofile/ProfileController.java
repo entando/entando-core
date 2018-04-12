@@ -75,11 +75,11 @@ public class ProfileController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserProfileService().addUserProfile(bodyRequest, bindingResult);
+        EntityDto response = this.getUserProfileService().addUserProfile(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(bodyRequest), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -91,11 +91,11 @@ public class ProfileController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getProfileValidator().validateBodyName(username, bodyRequest, bindingResult);
-        this.getUserProfileService().updateUserProfile(bodyRequest, bindingResult);
+        EntityDto response = this.getUserProfileService().updateUserProfile(bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(bodyRequest), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
     }
 
 }

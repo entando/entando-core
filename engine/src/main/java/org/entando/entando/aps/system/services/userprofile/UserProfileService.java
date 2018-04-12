@@ -14,6 +14,8 @@
 package org.entando.entando.aps.system.services.userprofile;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.entity.IEntityManager;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.entity.AbstractEntityService;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
@@ -25,13 +27,33 @@ import org.springframework.validation.BindingResult;
 public class UserProfileService extends AbstractEntityService<IUserProfile> implements IUserProfileService {
 
     @Override
-    public void addUserProfile(EntityDto request, BindingResult bindingResult) {
-        super.addEntity(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
+    public EntityDto addUserProfile(EntityDto request, BindingResult bindingResult) {
+        return super.addEntity(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
     }
 
     @Override
-    public void updateUserProfile(EntityDto request, BindingResult bindingResult) {
-        super.updateEntity(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
+    protected void addEntity(IEntityManager entityManager, IUserProfile entityToAdd) {
+        try {
+            ((IUserProfileManager) entityManager).addProfile(entityToAdd.getUsername(), entityToAdd);
+        } catch (Exception e) {
+            logger.error("Error adding profile", e);
+            throw new RestServerError("error adding profile", e);
+        }
+    }
+
+    @Override
+    public EntityDto updateUserProfile(EntityDto request, BindingResult bindingResult) {
+        return super.updateEntity(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
+    }
+
+    @Override
+    protected void updateEntity(IEntityManager entityManager, IUserProfile entityToUpdate) {
+        try {
+            ((IUserProfileManager) entityManager).updateProfile(entityToUpdate.getUsername(), entityToUpdate);
+        } catch (Exception e) {
+            logger.error("Error updating profile", e);
+            throw new RestServerError("error updating profile", e);
+        }
     }
 
 }

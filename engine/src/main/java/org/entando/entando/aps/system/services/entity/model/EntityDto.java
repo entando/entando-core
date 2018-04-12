@@ -91,7 +91,7 @@ public class EntityDto implements Serializable {
             String code = attributeDto.getCode();
             AttributeInterface attribute = prototype.getAttribute(code);
             if (null != attribute) {
-
+                attributeDto.fillEntityAttribute(attribute, bindingResult);
             } else {
                 //ADD LOG
             }

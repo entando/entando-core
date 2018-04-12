@@ -37,7 +37,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/pagemodels/{code}", "home")
+                                      .perform(get("/pageModels/{code}", "home")
                                                                                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
@@ -50,7 +50,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(get(
-                                                   "/pagemodels/{code}/references/{manager}",
+                                                   "/pageModels/{code}/references/{manager}",
                                                    "home", "PageManager")
                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                          .header("Authorization", "Bearer " + accessToken));

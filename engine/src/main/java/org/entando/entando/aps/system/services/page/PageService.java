@@ -370,7 +370,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
                 throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             if (frameId > page.getWidgets().length) {
-                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+                logger.info("the frame to delete with index {} in page {} with model {} does not exists", frameId, pageCode, page.getModel().getCode());
+                return;
             }
             this.pageManager.removeWidget(pageCode, frameId);
         } catch (ApsSystemException e) {

@@ -21,16 +21,20 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.IApsEncrypter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
-import org.entando.entando.web.user.UserController;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.model.UserPasswordRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 
 /**
@@ -41,6 +45,18 @@ import org.springframework.validation.Errors;
 public class UserValidator extends AbstractPaginationValidator {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
+
+    private Pattern pattern = Pattern.compile("([a-zA-Z0-9_\\.])+");
+
+    public static final String ERRCODE_USER_ALREADY_EXISTS = "1";
+
+    public static final String ERRCODE_USERNAME_FORMAT_INVALID = "2";
+
+    public static final String ERRCODE_PASSWORD_FORMAT_INVALID = "3";
+
+    public static final String ERRCODE_USERNAME_MISMATCH = "2";
+    public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
+    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
 
     public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
 
@@ -92,7 +108,7 @@ public class UserValidator extends AbstractPaginationValidator {
 
     @Override
     public boolean supports(Class<?> paramClass) {
-        return UserAuthoritiesRequest.class.equals(paramClass);
+        return UserAuthoritiesRequest.class.equals(paramClass) || UserRequest.class.equals(paramClass);
     }
 
     @Override
@@ -100,6 +116,31 @@ public class UserValidator extends AbstractPaginationValidator {
         if (target instanceof UserAuthoritiesRequest) {
             UserAuthoritiesRequest request = (UserAuthoritiesRequest) target;
             validateGroupsAndRoles(request, errors);
+        }
+    }
+
+    public void validateUserPost(UserRequest request, BindingResult bindingResult) {
+        String username = request.getUsername();
+        try {
+            if (null != this.getUserManager().getUser(username)) {
+                bindingResult.reject(UserValidator.ERRCODE_USER_ALREADY_EXISTS, new String[]{username}, "user.exists");
+                throw new ValidationConflictException(bindingResult);
+            }
+            Matcher matcherUsername = pattern.matcher(username);
+            int usLength = username.length();
+            if (usLength < 8 || usLength > 20 || !matcherUsername.matches()) {
+                bindingResult.reject(UserValidator.ERRCODE_USERNAME_FORMAT_INVALID, new String[]{username}, "user.username.format.invalid");
+            }
+            int pwLength = request.getPassword().length();
+            Matcher matcherPassword = pattern.matcher(request.getPassword());
+            if (pwLength < 8 || pwLength > 20 || !matcherPassword.matches()) {
+                bindingResult.reject(UserValidator.ERRCODE_PASSWORD_FORMAT_INVALID, new String[]{username}, "user.password.format.invalid");
+            }
+        } catch (ValidationConflictException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error adding user {}", username, e);
+            throw new RestServerError("Error adding user", e);
         }
     }
 
@@ -126,21 +167,27 @@ public class UserValidator extends AbstractPaginationValidator {
 
     public void validateBody(String username, String usernameReq, Errors errors) {
         if (!StringUtils.equals(username, usernameReq)) {
-            errors.rejectValue("username", UserController.ERRCODE_USERNAME_MISMATCH, new String[]{username, usernameReq}, "user.username.mismatch");
+            errors.rejectValue("username", ERRCODE_USERNAME_MISMATCH, new String[]{username, usernameReq}, "user.username.mismatch");
         }
     }
 
     public void validatePassword(String username, String password, Errors errors) {
         if (!this.verifyPassword(username, password)) {
-            errors.rejectValue("password", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.invalid");
+            errors.rejectValue("password", ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.invalid");
         }
     }
 
-    public void validatePasswords(UserPasswordRequest passwordRequest, Errors errors) {
+    public void validatePasswords(UserPasswordRequest passwordRequest, BindingResult bindingResult) {
         if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {
-            errors.rejectValue("newPassword", UserController.ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
+            bindingResult.rejectValue("newPassword", ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
         } else if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
-            errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
+            bindingResult.rejectValue("oldPassword", ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
+        } else {
+            int pwLength = passwordRequest.getNewPassword().length();
+            Matcher matcherPassword = pattern.matcher(passwordRequest.getNewPassword());
+            if (pwLength < 8 || pwLength > 20 || !matcherPassword.matches()) {
+                bindingResult.reject(UserValidator.ERRCODE_PASSWORD_FORMAT_INVALID, new String[]{passwordRequest.getUsername()}, "user.password.format.invalid");
+            }
         }
     }
 

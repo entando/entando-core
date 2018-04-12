@@ -11,27 +11,26 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.userprofile.validator;
+package org.entando.entando.web.entity.validator;
 
-import com.agiletec.aps.system.common.entity.IEntityManager;
-import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
-import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
-import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
 
 /**
  * @author E.Santoboni
  */
 @Component
-public class ProfileTypeValidator extends AbstractEntityTypeValidator {
-
-    @Autowired
-    private IUserProfileManager userProfileManager;
+public class EntityManagerValidator extends AbstractPaginationValidator {
 
     @Override
-    protected IEntityManager getEntityManager() {
-        return this.userProfileManager;
+    public boolean supports(Class<?> type) {
+        return true;
+    }
+
+    @Override
+    public void validate(Object o, Errors errors) {
+        // nothing to do
     }
 
 }

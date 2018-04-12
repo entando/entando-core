@@ -1,7 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.web.user.validator;
 
@@ -16,6 +24,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.user.UserController;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.model.UserPasswordRequest;
@@ -23,14 +32,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 /**
  *
  * @author paddeo
  */
 @Component
-public class UserValidator implements Validator {
+public class UserValidator extends AbstractPaginationValidator {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -131,10 +139,8 @@ public class UserValidator implements Validator {
     public void validatePasswords(UserPasswordRequest passwordRequest, Errors errors) {
         if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {
             errors.rejectValue("newPassword", UserController.ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
-        } else {
-            if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
-                errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
-            }
+        } else if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
+            errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
         }
     }
 
@@ -159,6 +165,11 @@ public class UserValidator implements Validator {
             }
             return user.getPassword().equals(encrypdedPassword);
         }
+    }
+
+    @Override
+    protected String getDefaultSortProperty() {
+        return "username";
     }
 
 }

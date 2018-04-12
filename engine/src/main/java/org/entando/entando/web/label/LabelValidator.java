@@ -55,4 +55,8 @@ public class LabelValidator extends AbstractPaginationValidator {
         }
     }
 
+    @Override
+    protected String getDefaultSortProperty() {
+        return "key";
+    }
 }

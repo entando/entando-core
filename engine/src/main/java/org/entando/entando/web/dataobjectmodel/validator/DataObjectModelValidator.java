@@ -144,4 +144,8 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
         return 0;
     }
 
+    @Override
+    protected String getDefaultSortProperty() {
+        return "modelId";
+    }
 }

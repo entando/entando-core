@@ -100,6 +100,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userService.getUsers(any(RestListRequest.class))).thenReturn(mockUsers());
         ResultActions result = mockMvc.perform(
                 get("/users")
+                        .param("sort", "username")
                         .param("filter[0].attribute", "username")
                         .param("filter[0].operator", "like")
                         .param("filter[0].value", "user")

@@ -13,10 +13,23 @@
  */
 package org.entando.entando.aps.system.services.user.model;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.entando.entando.aps.system.services.user.IUserService;
+import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 
 /**
  *
@@ -31,7 +44,7 @@ public class UserDto {
     private String status;
     private boolean accountNotExpired;
     private boolean credentialsNotExpired;
-
+    private Map<String, Object> profileAttributes = new HashMap<>();
     private int maxMonthsSinceLastAccess;
     private int maxMonthsSinceLastPasswordChange;
 
@@ -47,6 +60,9 @@ public class UserDto {
             this.lastPasswordChange = entandoUser.getLastPasswordChange();
             this.maxMonthsSinceLastAccess = entandoUser.getMaxMonthsSinceLastAccess();
             this.maxMonthsSinceLastPasswordChange = entandoUser.getMaxMonthsSinceLastPasswordChange();
+        }
+        if (user.getProfile() != null) {
+            this.profileAttributes = convertUserProfileAttributes((IUserProfile) user.getProfile());
         }
     }
 
@@ -106,6 +122,14 @@ public class UserDto {
         this.credentialsNotExpired = credentialsNotExpired;
     }
 
+    public Map<String, Object> getProfileAttributes() {
+        return profileAttributes;
+    }
+
+    public void setProfileAttributes(Map<String, Object> profileAttributes) {
+        this.profileAttributes = profileAttributes;
+    }
+
     public int getMaxMonthsSinceLastAccess() {
         return maxMonthsSinceLastAccess;
     }
@@ -129,5 +153,48 @@ public class UserDto {
             default:
                 return null;
         }
+    }
+
+    private Map<String, Object> convertUserProfileAttributes(IUserProfile profile) {
+        Map<String, Object> attributes = new HashMap<>();
+        profile.getAttributeList().forEach(elem -> {
+            Optional<String[]> rolesOpt = Optional.ofNullable(elem.getRoles());
+            rolesOpt.ifPresent(roles -> Arrays.asList(roles).forEach(role -> {
+                attributes.put(role.replace("userprofile:", ""), getValue(elem));
+            }));
+            if (!rolesOpt.isPresent()) {
+                attributes.put(elem.getName(), getValue(elem));
+            }
+        });
+        return attributes;
+    }
+
+    private Object getValue(AttributeInterface attribute) {
+        if (null == attribute) {
+            return "";
+        }
+        if (attribute.isTextAttribute()) {
+            return ((ITextAttribute) attribute).getText();
+        } else if (attribute instanceof NumberAttribute) {
+            return ((NumberAttribute) attribute).getValue();
+        } else if (attribute instanceof BooleanAttribute) {
+            return ((BooleanAttribute) attribute).getValue();
+        } else if (attribute instanceof DateAttribute) {
+            Date dateAttr = ((DateAttribute) attribute).getDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            return sdf.format(dateAttr);
+        } else if (!attribute.isSimple()) {
+            String text = "";
+            List<AttributeInterface> attributes = ((AbstractComplexAttribute) attribute).getAttributes();
+            for (int i = 0; i < attributes.size(); i++) {
+                if (i > 0) {
+                    text += ",";
+                }
+                AttributeInterface attributeElem = attributes.get(i);
+                text += this.getValue(attributeElem);
+            }
+            return text;
+        }
+        return null;
     }
 }

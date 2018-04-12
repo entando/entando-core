@@ -21,6 +21,7 @@ import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.entity.validator.EntityManagerValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,9 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
     @Mock
     private EntityManagerService entityManagerService;
 
+    @Mock
+    private EntityManagerValidator entityManagerValidator;
+
     @InjectMocks
     private EntityManagerController controller;
 
@@ -64,9 +68,9 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         when(this.entityManagerService.getEntityManagers(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
         ResultActions result = mockMvc.perform(
                 get("/entityManagers")
-                        .param("page", "1")
-                        .param("pageSize", "4")
-                        .header("Authorization", "Bearer " + accessToken)
+                .param("page", "1")
+                .param("pageSize", "4")
+                .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -82,10 +86,10 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
         when(this.entityManagerService.getEntityManagers(any(RestListRequest.class))).thenReturn(new PagedMetadata<>());
         ResultActions result = mockMvc.perform(
                 get("/entityManagers").param("page", "1")
-                        .param("pageSize", "4")
-                        .param("filter[0].attribute", "code")
-                        .param("filter[0].value", "UserProfileManager")
-                        .header("Authorization", "Bearer " + accessToken)
+                .param("pageSize", "4")
+                .param("filter[0].attribute", "code")
+                .param("filter[0].value", "UserProfileManager")
+                .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();

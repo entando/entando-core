@@ -72,7 +72,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void shouldAddUserAuthorities() throws Exception {
+    public void testAddUserAuthorities() throws Exception {
         Group group = createGroup(1);
         Role role = createRole(1);
         try {
@@ -99,7 +99,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void shouldAddRemoveUser_1() throws Exception {
+    public void testAddRemoveUser_1() throws Exception {
         String validUsername = "valid.username_ok";
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -152,7 +152,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void shouldAddRemoveUser_2() throws Exception {
+    public void testAddRemoveUser_2() throws Exception {
         String validUsername = "valid.username_ok";
         String validPassword = "valid.123_ok";
         try {
@@ -166,7 +166,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            String invalidBody2 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"usernamevelylong_.veryverylong\"}";
+            String invalidBody2 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"upasswordvelylong_.veryverylong\"}";
             ResultActions resultInvalid2 = this.executeUserPost(invalidBody2, accessToken, status().isBadRequest());
             resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("3")));
 
@@ -194,9 +194,72 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         }
     }
 
+    @Test
+    public void testUpdatePassword() throws Exception {
+        String validUsername = "valid.username_ok";
+        String validPassword = "valid.123_ok";
+        String newValidPassword = "valid.1234_ok";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"" + validPassword + "\"}";
+            this.executeUserPost(mockJson, accessToken, status().isOk());
+
+            String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"$invalid%%\"}";
+            ResultActions resultInvalid1 = this.executeUpdatePassword(invalidBody1, validUsername, accessToken, status().isBadRequest());
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
+            resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String invalidBody2 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"upasswordvelylong_.veryverylong\"}";
+            ResultActions resultInvalid2 = this.executeUpdatePassword(invalidBody2, validUsername, accessToken, status().isBadRequest());
+            resultInvalid2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("3")));
+            resultInvalid2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String invalidBody3 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"invalid\",\"newPassword\": \"" + newValidPassword + "\"}";
+            ResultActions resultInvalid3 = this.executeUpdatePassword(invalidBody3, validUsername, accessToken, status().isBadRequest());
+            resultInvalid3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid3.andExpect(jsonPath("$.errors[0].code", is("4")));
+            resultInvalid3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String invalidBody4 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"invalid\",\"newPassword\": \"\"}";
+            ResultActions resultInvalid4 = this.executeUpdatePassword(invalidBody4, validUsername, accessToken, status().isBadRequest());
+            resultInvalid4.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid4.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid4.andExpect(jsonPath("$.errors[0].code", is("52")));
+            resultInvalid4.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String validBody = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
+            ResultActions resultValid = this.executeUpdatePassword(validBody, validUsername, accessToken, status().isOk());
+            resultValid.andExpect(jsonPath("$.payload.username", is(validUsername)));
+            resultValid.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            resultValid.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            this.userManager.removeUser(validUsername);
+        }
+    }
+
     private ResultActions executeUserPost(String body, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(post("/users")
+                        .content(body)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeUpdatePassword(String body, String username, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(post("/users/{username}/password", new Object[]{username})
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));

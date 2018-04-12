@@ -87,7 +87,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@PathVariable String username) {
         logger.debug("getting user {} details", username);
         UserDto user = this.getUserService().getUser(username);
@@ -111,7 +111,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{username:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUser(@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
         logger.debug("updating user {} with request {}", username, userRequest);
         //field validations
@@ -131,7 +131,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{username:.+}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
         logger.debug("changing pasword for user {} with request {}", username, passwordRequest);
         //field validations
@@ -162,7 +162,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
         logger.debug("user {} requesting update authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
@@ -183,7 +183,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("user {} requesting add authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
@@ -204,7 +204,7 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{target}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) throws ApsSystemException {
         logger.debug("user {} requesting delete authorities for username {}", user.getUsername(), target);
         DataBinder binder = new DataBinder(target);

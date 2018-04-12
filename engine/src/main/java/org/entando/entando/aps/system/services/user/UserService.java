@@ -179,7 +179,8 @@ public class UserService implements IUserService {
                 ((User) newUser).setLastPasswordChange(new Date());
             }
             this.getUserManager().updateUser(newUser);
-            return dtoBuilder.convert(newUser);
+            UserDetails modifiedUser = this.getUserManager().getUser(userRequest.getUsername());
+            return dtoBuilder.convert(modifiedUser);
         } catch (ApsSystemException e) {
             logger.error("Error in updating user {}", userRequest.getUsername(), e);
             throw new RestServerError("Error in updating user", e);
@@ -197,7 +198,8 @@ public class UserService implements IUserService {
             }
             UserDetails newUser = this.createUser(userRequest);
             this.getUserManager().addUser(newUser);
-            return dtoBuilder.convert(newUser);
+            UserDetails addedUser = this.getUserManager().getUser(username);
+            return dtoBuilder.convert(addedUser);
         } catch (ApsSystemException e) {
             logger.error("Error in adding user {}", userRequest.getUsername(), e);
             throw new RestServerError("Error in adding user", e);

@@ -91,7 +91,7 @@ public class GroupController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{groupCode}/references/{holder}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGroup(@PathVariable String groupCode, @PathVariable String holder, RestListRequest requestList) {
+    public ResponseEntity<?> getGroupReferences(@PathVariable String groupCode, @PathVariable String holder, RestListRequest requestList) {
         PagedMetadata<?> result = this.getGroupService().getGroupReferences(groupCode, holder, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }

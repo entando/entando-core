@@ -34,7 +34,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/roles")
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }
 
@@ -50,7 +49,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(1)));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test
@@ -63,7 +61,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                         .param("filter[0].attribute", "name")
                         .param("filter[0].value", "gestore")
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
     }
@@ -90,7 +87,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                         .param("sort", "code")
                         .param("direction", "ASC")
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
         result.andExpect(jsonPath("$.payload[0].name", is("Gestore di Contenuti e Risorse")));
@@ -105,7 +101,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}", code)
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.permissions.length()", greaterThan(0)));
     }
@@ -118,7 +113,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}/userreferences", code)
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
     }
@@ -131,7 +125,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}", code)
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
         //result.andExpect(jsonPath("$.payload.permissions.length()", greaterThan(0)));
     }
@@ -174,10 +167,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                             .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-            System.out.println("ADD");
-            //{"payload":{"code":"test","name":"test","permissions":{"enterBackend":false,"managePages":false,"editContents":false,"validateContents":false,"manageResources":false,"superuser":false,"manageCategories":false}},"errors":[],"metaData":{}}
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
             //--------------
             request = new RoleRequest();
@@ -194,9 +184,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isOk());
 
-            System.out.println("UPDATE");
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            //{"payload":{"code":"test","name":"TEST","permissions":{"enterBackend":false,"managePages":false,"editContents":true,"validateContents":false,"manageResources":false,"superuser":false,"manageCategories":false}},"errors":[],"metaData":{}}
 
             //--------------
             request = new RoleRequest();
@@ -214,9 +201,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isBadRequest());
 
-            System.out.println("UPDATE-WRONG");
-            System.out.println(result.andReturn().getResponse().getContentAsString());
-            //{"payload":[],"errors":[{"code":"4","message":"role.permission.notFound"}],"metaData":{}}
             //--------------
 
             request = new RoleRequest();
@@ -235,8 +219,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isOk());
 
-            System.out.println("UPDATE-OK");
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
             //--------------
             result = mockMvc
@@ -246,8 +228,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isOk());
 
-            System.out.println("UPDATE-OK");
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
         } finally {
             Role role = this.roleManager.getRole(code);

@@ -13,17 +13,18 @@
  */
 package org.entando.entando.web.category;
 
+import java.io.InputStream;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import java.io.InputStream;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,14 +32,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import org.hamcrest.Matchers;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CategoryControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -59,7 +60,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/categories")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
@@ -74,7 +74,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/categories")
                         .param("parentCode", "home")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }
 
@@ -87,7 +86,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/categories")
                         .param("parentCode", "invalid_code")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
 
@@ -208,7 +206,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}", new Object[]{categoryCode})
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(rm);
         return result;
     }

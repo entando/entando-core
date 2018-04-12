@@ -111,7 +111,6 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isForbidden());
     }
 
@@ -131,7 +130,6 @@ public class GuiFragmentControllerTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
     }
 
 }

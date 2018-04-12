@@ -19,6 +19,7 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,22 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     protected void addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         //TODO
     }
 
     protected void updateEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         //TODO
+    }
+
+    protected I getEntityPrototype(IEntityManager entityManager, String entityTypeCode) {
+        I entityType = (I) entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        return (I) entityType.getEntityPrototype();
     }
 
     @Autowired

@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.List;
 import java.util.Set;
 
@@ -21,11 +22,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class EntityDto implements Serializable {
 
+    @NotBlank(message = "entity.id.notBlank")
     private String id;
+
+    @Size(min = 3, max = 3, message = "string.size.invalid")
+    @NotNull(message = "entity.typeCode.notBlank")
     private String typeCode;
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String typeDescription;
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -54,6 +63,21 @@ public class EntityDto implements Serializable {
         if (null != src.getAttributeList()) {
             src.getAttributeList().stream().forEach(i -> this.getAttributes().add(new EntityAttributeDto(i)));
         }
+    }
+
+    public void fillEntity(IApsEntity prototype, ICategoryManager categoryManager) {
+        prototype.setId(this.getId());
+        prototype.setDescription(this.getDescription());
+        /*
+        prototype.set(this.get);
+        prototype.set(this.get);
+        prototype.set(this.get);
+        prototype.set(this.get);
+        prototype.set(this.get);
+        prototype.set(this.get);
+
+        List<EntityAttributeDto> attributeDtos = this.getAttributes();
+         */
     }
 
     public String getId() {

@@ -11,8 +11,6 @@
 		<tableMapping>
 			<datasource name="servDataSource">
 				<class>org.entando.entando.aps.system.init.model.servdb.UserShortcut</class>
-				<class>org.entando.entando.aps.system.init.model.servdb.ActionLogLikeRecord</class>
-				<class>org.entando.entando.aps.system.init.model.servdb.ActionLogCommentRecord</class>
 			</datasource>
 		</tableMapping>
 		<environment code="production">

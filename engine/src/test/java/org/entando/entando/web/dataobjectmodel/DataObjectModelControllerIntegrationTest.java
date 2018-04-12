@@ -36,8 +36,8 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get(BASE_URI + "/dictionary")
-                                                                            .header("Authorization", "Bearer " + accessToken));
+                .perform(get(BASE_URI + "/dictionary")
+                        .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
@@ -49,13 +49,12 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get(BASE_URI + "/dictionary")
-                                                                            .param("typeCode", "EVN")
-                                                                            .header("Authorization", "Bearer " + accessToken));
+                .perform(get(BASE_URI + "/dictionary")
+                        .param("typeCode", "EVN")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         System.err.println(result.andReturn().getResponse().getContentAsString());
     }
-
 
     @Test
     public void testGetDataModelDictionaryValidTypeCodeInvalid() throws Exception {
@@ -63,12 +62,25 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get(BASE_URI + "/dictionary")
-                                                                            .param("typeCode", "LOL")
-                                                                            .header("Authorization", "Bearer " + accessToken));
+                .perform(get(BASE_URI + "/dictionary")
+                        .param("typeCode", "LOL")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is("6")));
     }
 
+    @Test
+    public void testGetDataModelsDefaultSorting() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataModels")
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
+        result.andExpect(jsonPath("$.metaData.sort", is("modelId")));
+        result.andExpect(jsonPath("$.metaData.page", is(1)));
+    }
 
 }

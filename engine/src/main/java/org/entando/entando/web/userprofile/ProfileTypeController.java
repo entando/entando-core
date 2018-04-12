@@ -32,7 +32,7 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
-import org.entando.entando.web.entity.validator.EntityTypeValidator;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.slf4j.Logger;
@@ -93,7 +93,7 @@ public class ProfileTypeController {
     public ResponseEntity<RestResponse> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> {}", profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
-            throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
+            throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
         }
         UserProfileTypeDto dto = this.getUserProfileTypeService().getUserProfileType(profileTypeCode);
         logger.debug("Main Response -> {}", dto);
@@ -111,7 +111,7 @@ public class ProfileTypeController {
         }
         //business validations
         if (this.getProfileTypeValidator().existType(bodyRequest.getCode())) {
-            bindingResult.reject(EntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{bodyRequest.getCode()}, "entityType.exists");
+            bindingResult.reject(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_ALREADY_EXISTS, new String[]{bodyRequest.getCode()}, "entityType.exists");
         }
         if (bindingResult.hasErrors()) {
             throw new ValidationConflictException(bindingResult);
@@ -131,7 +131,7 @@ public class ProfileTypeController {
         int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
             if (result == 404) {
-                throw new RestRourceNotFoundException(EntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "profile type", profileTypeCode);
+                throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "profile type", profileTypeCode);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }

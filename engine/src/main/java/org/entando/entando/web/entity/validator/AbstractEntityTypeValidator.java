@@ -23,7 +23,7 @@ import org.springframework.validation.Validator;
 /**
  * @author E.Santoboni
  */
-public abstract class EntityTypeValidator extends AbstractPaginationValidator implements Validator {
+public abstract class AbstractEntityTypeValidator extends AbstractPaginationValidator implements Validator {
 
     public static final String ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST = "1";
 

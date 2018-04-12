@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -53,6 +54,20 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IAuthorizationManager authorizationManager;
+
+    @Test
+    public void testGetUsersDefaultSorting() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/users")
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
+        result.andExpect(jsonPath("$.metaData.sort", is("username")));
+        result.andExpect(jsonPath("$.metaData.page", is(1)));
+    }
 
     @Test
     public void shouldAddUserAuthorities() throws Exception {

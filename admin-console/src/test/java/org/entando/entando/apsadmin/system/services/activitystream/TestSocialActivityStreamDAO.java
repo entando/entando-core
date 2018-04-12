@@ -13,18 +13,20 @@
  */
 package org.entando.entando.apsadmin.system.services.activitystream;
 
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.util.DateConverter;
-
-import java.util.List;
-import javax.sql.DataSource;
 import org.entando.entando.aps.system.services.actionlog.ActionLogDAO;
-
 import org.entando.entando.aps.system.services.actionlog.IActionLogDAO;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
-import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamComment;
+import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamDAO;
+import org.entando.entando.aps.system.services.activitystream.SocialActivityStreamDAO;
+import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamComment;
 
 public class TestSocialActivityStreamDAO extends BaseTestCase {
 

@@ -13,12 +13,13 @@
  */
 package org.entando.entando.web.pagemodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.HashMap;
-import java.util.Map;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -84,6 +85,13 @@ public class PageModelController {
     public ResponseEntity<RestResponse> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = this.getPageModelService().getPageModel(code);
         return new ResponseEntity<>(new RestResponse(pageModelDto), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{code}/references/{manager}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPageModelReferences(@PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
+        PagedMetadata<?> result = this.getPageModelService().getPageModelReferences(code, manager, requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

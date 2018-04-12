@@ -10,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PageModelControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -28,7 +30,34 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                 .perform(get("/pageModels")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testGetPageModel() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/pageModels/{code}", "home")
+                                                                                .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.references.length()", is(1)));
+    }
+
+    @Test
+    public void testGetPageModelReferences() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc.perform(get(
+                                                   "/pageModels/{code}/references/{manager}",
+                                                   "home", "PageManager")
+                                                                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                         .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
+
     }
 
     @Test

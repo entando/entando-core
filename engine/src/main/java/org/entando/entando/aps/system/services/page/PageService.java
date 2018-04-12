@@ -75,7 +75,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
     private static final String ERRCODE_GROUP_NOT_FOUND = "2";
     private static final String ERRCODE_PARENT_NOT_FOUND = "3";
-    private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
+    private static final String ERRCODE_PAGE_ONLY_DRAFT = "3";
     private static final String ERRCODE_FRAME_INVALID = "3";
     private static final String ERRCODE_WIDGET_INVALID = "4";
     private static final String ERRCODE_STATUS_INVALID = "3";

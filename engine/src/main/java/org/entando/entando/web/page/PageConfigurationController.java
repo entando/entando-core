@@ -6,11 +6,14 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import com.agiletec.aps.system.services.role.Permission;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.web.common.EntandoMessageCodesResolver;
 import org.entando.entando.web.common.annotation.ActivityStreamAuditable;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,9 +69,20 @@ public class PageConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageWidget(@PathVariable String pageCode, @PathVariable int frameId, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+    public ResponseEntity<?> getPageWidget(@PathVariable String pageCode,
+                                           @PathVariable String frameId,
+                                           @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status
+                                           ) {
         logger.debug("requested widget detail for page {} and frame {}", pageCode, frameId);
-        WidgetConfigurationDto widgetConfiguration = this.getPageService().getWidgetConfiguration(pageCode, frameId, status);
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(frameId, "frameId");
+        this.validateFrameId(frameId, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        WidgetConfigurationDto widgetConfiguration = this.getPageService().getWidgetConfiguration(pageCode, Integer.valueOf(frameId), status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
@@ -78,11 +93,17 @@ public class PageConfigurationController {
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageWidget(
             @PathVariable String pageCode,
-            @PathVariable int frameId,
+                                              @PathVariable String frameId,
             @Valid @RequestBody WidgetConfigurationRequest widget,
             BindingResult bindingResult) {
         logger.debug("updating widget configuration in page {} and frame {}", pageCode, frameId);
-        WidgetConfigurationDto widgetConfiguration = this.getPageService().updateWidgetConfiguration(pageCode, frameId, widget);
+
+        this.validateFrameId(frameId, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        WidgetConfigurationDto widgetConfiguration = this.getPageService().updateWidgetConfiguration(pageCode, Integer.valueOf(frameId), widget);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", IPageService.STATUS_DRAFT);
         return new ResponseEntity<>(new RestResponse(widgetConfiguration, null, metadata), HttpStatus.OK);
@@ -93,9 +114,16 @@ public class PageConfigurationController {
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePageWidget(
             @PathVariable String pageCode,
-            @PathVariable int frameId) {
+                                              @PathVariable String frameId) {
         logger.debug("removing widget configuration in page {} and frame {}", pageCode, frameId);
-        this.getPageService().deleteWidgetConfiguration(pageCode, frameId);
+
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(frameId, "frameId");
+        this.validateFrameId(frameId, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        this.getPageService().deleteWidgetConfiguration(pageCode, Integer.valueOf(frameId));
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", IPageService.STATUS_DRAFT);
         return new ResponseEntity<>(new RestResponse(frameId, null, metadata), HttpStatus.OK);
@@ -119,6 +147,12 @@ public class PageConfigurationController {
         PageConfigurationDto pageConfiguration = this.getPageService().applyDefaultWidgets(pageCode);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse(pageConfiguration, null, metadata), HttpStatus.OK);
+    }
+
+    protected void validateFrameId(String frameId, BindingResult errors) {
+        if (!StringUtils.isNumeric(frameId)) {
+            errors.reject(EntandoMessageCodesResolver.ERR_CODE_URI_PARAMETER, new Object[]{frameId}, "invalidParameter.framedId");
+        }
     }
 
 }

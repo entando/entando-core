@@ -118,11 +118,7 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserValidator().validateBody(username, userRequest.getUsername(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getUserValidator().validatePassword(username, userRequest.getPassword(), bindingResult);
+        this.getUserValidator().validatePutBody(username, userRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -138,15 +134,16 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserValidator().validateBody(username, passwordRequest.getUsername(), bindingResult);
+        /*
+        this.getUserValidator().validatePutBody(username, passwordRequest.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserValidator().validatePasswords(passwordRequest, bindingResult);
+         */
+        this.getUserValidator().validateChangePasswords(username, passwordRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         UserDto user = this.getUserService().updateUserPassword(passwordRequest);
         return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
     }

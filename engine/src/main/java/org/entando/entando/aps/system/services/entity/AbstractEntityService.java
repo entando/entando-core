@@ -58,6 +58,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         return entityManager;
     }
 
+    public List<IEntityManager> getEntityManagers() {
         return entityManagers;
     }
 

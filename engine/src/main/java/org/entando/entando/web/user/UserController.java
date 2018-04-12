@@ -55,10 +55,6 @@ public class UserController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_USERNAME_MISMATCH = "2";
-    public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
-    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
-
     @Autowired
     private IUserService userService;
 

@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -27,8 +27,6 @@ import de.mkammerer.argon2.Argon2Factory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.entando.entando.aps.system.services.user.UserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
@@ -100,12 +98,12 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userService.getUsers(any(RestListRequest.class))).thenReturn(mockUsers());
         ResultActions result = mockMvc.perform(
                 get("/users")
-                        .param("sort", "username")
-                        .param("filter[0].attribute", "username")
-                        .param("filter[0].operator", "like")
-                        .param("filter[0].value", "user")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .param("sort", "username")
+                .param("filter[0].attribute", "username")
+                .param("filter[0].operator", "like")
+                .param("filter[0].value", "user")
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -119,11 +117,11 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userService.getUser(any(String.class))).thenReturn(mockUser());
         ResultActions result = mockMvc.perform(
                 get("/users/{username}", "user")
-                        .param("filter[0].attribute", "username")
-                        .param("filter[0].operator", "like")
-                        .param("filter[0].value", "user")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .param("filter[0].attribute", "username")
+                .param("filter[0].operator", "like")
+                .param("filter[0].value", "user")
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -144,10 +142,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userManager.getUser(any(String.class))).thenReturn(mockUserDetails());
         ResultActions result = mockMvc.perform(
                 put("/users/{username}", "user")
-                        .sessionAttr("user", user)
-                        .content(mockJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(mockJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors[0].message", is("Password is not valid")));
@@ -166,14 +164,15 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userManager.getUser(any(String.class))).thenReturn(mockUserDetails());
         ResultActions result = mockMvc.perform(
                 post("/users/{username}/password", "user")
-                        .sessionAttr("user", user)
-                        .content(mockJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(mockJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
-        result.andExpect(jsonPath("$.errors[0].code", is(UserController.ERRCODE_NEW_PASSWORD_FORMAT)));
+        System.out.println(response);
+        result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_NEW_PASSWORD_FORMAT)));
     }
 
     @Test
@@ -189,10 +188,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.controller.getUserService().addUserAuthorities(any(String.class), any(UserAuthoritiesRequest.class))).thenReturn(authorities);
         ResultActions result = mockMvc.perform(
                 put("/users/{target}/authorities", "mockuser")
-                        .sessionAttr("user", user)
-                        .content(mockJson)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(mockJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
     }

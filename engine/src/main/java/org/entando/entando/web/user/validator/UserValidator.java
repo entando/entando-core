@@ -28,7 +28,6 @@ import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
-import org.entando.entando.web.user.UserController;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.model.UserPasswordRequest;
 import org.entando.entando.web.user.model.UserRequest;
@@ -50,6 +49,12 @@ public class UserValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_USER_ALREADY_EXISTS = "1";
 
     public static final String ERRCODE_USERNAME_FORMAT_INVALID = "2";
+
+    public static final String ERRCODE_PASSWORD_FORMAT_INVALID = "3";
+
+    public static final String ERRCODE_USERNAME_MISMATCH = "2";
+    public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
+    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
 
     public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
 
@@ -125,6 +130,11 @@ public class UserValidator extends AbstractPaginationValidator {
             if (usLength < 8 || usLength > 20 || !matcherUsername.matches()) {
                 bindingResult.reject(UserValidator.ERRCODE_USERNAME_FORMAT_INVALID, new String[]{username}, "user.username.format.invalid");
             }
+            int pwLength = request.getPassword().length();
+            Matcher matcherPassword = pattern.matcher(request.getPassword());
+            if (pwLength < 8 || pwLength > 20 || !matcherPassword.matches()) {
+                bindingResult.reject(UserValidator.ERRCODE_PASSWORD_FORMAT_INVALID, new String[]{username}, "user.password.format.invalid");
+            }
         } catch (ValidationConflictException e) {
             throw e;
         } catch (Exception e) {
@@ -156,21 +166,21 @@ public class UserValidator extends AbstractPaginationValidator {
 
     public void validateBody(String username, String usernameReq, Errors errors) {
         if (!StringUtils.equals(username, usernameReq)) {
-            errors.rejectValue("username", UserController.ERRCODE_USERNAME_MISMATCH, new String[]{username, usernameReq}, "user.username.mismatch");
+            errors.rejectValue("username", ERRCODE_USERNAME_MISMATCH, new String[]{username, usernameReq}, "user.username.mismatch");
         }
     }
 
     public void validatePassword(String username, String password, Errors errors) {
         if (!this.verifyPassword(username, password)) {
-            errors.rejectValue("password", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.invalid");
+            errors.rejectValue("password", ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.invalid");
         }
     }
 
     public void validatePasswords(UserPasswordRequest passwordRequest, Errors errors) {
         if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {
-            errors.rejectValue("newPassword", UserController.ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
+            errors.rejectValue("newPassword", ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
         } else if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
-            errors.rejectValue("oldPassword", UserController.ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
+            errors.rejectValue("oldPassword", ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
         }
     }
 

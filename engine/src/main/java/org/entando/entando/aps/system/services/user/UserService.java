@@ -14,6 +14,7 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -173,6 +174,10 @@ public class UserService implements IUserService {
         UserDetails user = this.loadUser(userRequest.getUsername());
         try {
             UserDetails newUser = this.updateUser(user, userRequest);
+            if (userRequest.isReset() && (user instanceof User)) {
+                ((User) newUser).setLastAccess(new Date());
+                ((User) newUser).setLastPasswordChange(new Date());
+            }
             this.getUserManager().updateUser(newUser);
             return dtoBuilder.convert(newUser);
         } catch (ApsSystemException e) {
@@ -241,7 +246,7 @@ public class UserService implements IUserService {
         user.setUsername(userRequest.getUsername());
         user.setPassword(userRequest.getPassword());
         user.setDisabled(userRequest.getStatus() != null && !userRequest.getStatus().equals(IUserService.STATUS_ACTIVE));
-        if (oldUser.isEntandoUser()) {
+        if (oldUser instanceof User) {
             User userToClone = (User) oldUser;
             user.setLastAccess(userToClone.getLastAccess());
             user.setLastPasswordChange(userToClone.getLastPasswordChange());

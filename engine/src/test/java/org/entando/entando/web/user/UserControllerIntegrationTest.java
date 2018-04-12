@@ -221,7 +221,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions resultInvalid3 = this.executeUserPut(invalidBody3, "invalidUsername", accessToken, status().isConflict());
             resultInvalid3.andExpect(jsonPath("$.errors[0].code", is("2")));
 
-            String valid = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"12345678\"}";
+            String valid = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"12345678\",\"reset\": true}";
             ResultActions result = this.executeUserPut(valid, validUsername, accessToken, status().isOk());
             String response = result.andReturn().getResponse().getContentAsString();
             System.out.println("resp:" + response);

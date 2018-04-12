@@ -32,6 +32,8 @@ public class UserRequest {
     @Size(min = 6, message = "user.password.size")
     private String password;
 
+    private boolean reset;
+
     public String getUsername() {
         return username;
     }
@@ -54,6 +56,14 @@ public class UserRequest {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setReset(boolean reset) {
+        this.reset = reset;
     }
 
     @Override

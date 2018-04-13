@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
@@ -65,6 +66,8 @@ public class EntityAttributeDto {
             } else if (value instanceof Date) {
                 String stringDate = DateConverter.getFormattedDate((Date) value, SystemConstants.API_DATE_FORMAT);
                 this.setValue(stringDate);
+            } else if (value instanceof Boolean) {
+                this.setValue((Boolean) value);
             } else if (value instanceof Map) {
                 this.setValues((Map) value);
             }
@@ -97,6 +100,9 @@ public class EntityAttributeDto {
         if (attribute instanceof NumberAttribute && (null != this.getValue())) {
             BigDecimal number = new BigDecimal(this.getValue().toString());
             ((NumberAttribute) attribute).setValue(number);
+        }
+        if (attribute instanceof BooleanAttribute && (null != this.getValue())) {
+            ((BooleanAttribute) attribute).setBooleanValue(Boolean.parseBoolean(this.getValue().toString()));
         }
         if (attribute instanceof DateAttribute && (null != this.getValue())) {
             Date date = null;

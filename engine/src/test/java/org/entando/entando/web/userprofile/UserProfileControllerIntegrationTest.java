@@ -42,10 +42,12 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/userProfile/{username}", new Object[]{"editorCoach"})
+                .perform(get("/userProfiles/{username}", new Object[]{"editorCoach"})
                         .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
+        System.out.println("----------------------------------------");
         System.out.println(result.andReturn().getResponse().getContentAsString());
+        System.out.println("----------------------------------------");
+        result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
@@ -57,7 +59,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/userProfile/{username}", new Object[]{"xxxxx"})
+                .perform(get("/userProfiles/{username}", new Object[]{"xxxxx"})
                         .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());

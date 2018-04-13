@@ -32,6 +32,7 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +44,7 @@ import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
+import org.entando.entando.aps.system.services.pagemodel.PageModelServiceUtilizer;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
@@ -65,7 +67,7 @@ import org.springframework.validation.DataBinder;
  *
  * @author paddeo
  */
-public class PageService implements IPageService, GroupServiceUtilizer<PageDto> {
+public class PageService implements IPageService, GroupServiceUtilizer<PageDto>, PageModelServiceUtilizer<PageDto> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -73,8 +75,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
     private static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
     private static final String ERRCODE_GROUP_NOT_FOUND = "2";
     private static final String ERRCODE_PARENT_NOT_FOUND = "3";
-    private static final String ERRCODE_PAGE_ONLY_DRAFT = "2";
-    private static final String ERRCODE_FRAME_INVALID = "3";
+    private static final String ERRCODE_PAGE_ONLY_DRAFT = "3";
+    private static final String ERRCODE_FRAME_INVALID = "2";
     private static final String ERRCODE_WIDGET_INVALID = "4";
     private static final String ERRCODE_STATUS_INVALID = "3";
 
@@ -370,7 +372,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
                 throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             if (frameId > page.getWidgets().length) {
-                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+                logger.info("the frame to delete with index {} in page {} with model {} does not exists", frameId, pageCode, page.getModel().getCode());
+                return;
             }
             this.pageManager.removeWidget(pageCode, frameId);
         } catch (ApsSystemException e) {
@@ -575,6 +578,18 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         }
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PageDto> getPageModelUtilizer(String pageModelCode) {
+        try {
+            List<IPage> pages = ((PageModelUtilizer) this.getPageManager()).getPageModelUtilizers(pageModelCode);
+            return this.getDtoBuilder().convert(pages);
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading page references for pagemodel {}", pageModelCode, ex);
+            throw new RestServerError("Error loading page references for pagemodel " + pageModelCode, ex);
+        }
+    }
+
     @Override
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
         try {
@@ -598,5 +613,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto> 
         result.imposeLimits();
         return result;
     }
+
 
 }

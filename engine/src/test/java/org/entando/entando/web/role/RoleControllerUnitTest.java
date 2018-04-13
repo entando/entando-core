@@ -58,8 +58,6 @@ public class RoleControllerUnitTest extends AbstractControllerTest {
                                                              .content(payload)
                                                              .header("Authorization", "Bearer " + accessToken));
 
-        String x = result.andReturn().getResponse().getContentAsString();
-        System.out.println(x);
         result.andExpect(status().isBadRequest());
     }
 
@@ -81,8 +79,6 @@ public class RoleControllerUnitTest extends AbstractControllerTest {
                                                              .content(payload)
                                                              .header("Authorization", "Bearer " + accessToken));
 
-        String x = result.andReturn().getResponse().getContentAsString();
-        System.out.println(x);
         result.andExpect(status().isBadRequest());
     }
 

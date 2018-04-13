@@ -73,8 +73,6 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
         result.andExpect(status().isOk());
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-
         result.andExpect(jsonPath("$.payload.restrictionsActive", is(Boolean.parseBoolean(params.get(UserSettingsDto.EXTENDED_PRIVACY_MODULE_ENABLED)))));
         result.andExpect(jsonPath("$.payload.enableGravatarIntegration", is(Boolean.parseBoolean(params.get(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED)))));
         result.andExpect(jsonPath("$.payload.maxMonthsSinceLastAccess", is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
@@ -103,7 +101,6 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
             result.andExpect(jsonPath("$.payload.restrictionsActive",
                     is(Boolean.parseBoolean(params.get(UserSettingsDto.EXTENDED_PRIVACY_MODULE_ENABLED)))));
@@ -131,7 +128,6 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
                     .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-            System.out.println(result.andReturn().getResponse().getContentAsString());
 
             result.andExpect(jsonPath("$.payload.restrictionsActive", is(true)));
             result.andExpect(jsonPath("$.payload.enableGravatarIntegration", is(true)));

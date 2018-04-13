@@ -11,31 +11,27 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.system.services.activitystream;
+package org.entando.entando.aps.system.services.activitystream;
+
+import java.util.List;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
-
-import java.util.List;
-
 import org.aspectj.lang.annotation.Before;
-
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
+import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamComment;
+import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamLikeInfo;
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.event.ProfileChangedEvent;
 import org.entando.entando.aps.system.services.userprofile.event.ProfileChangedObserver;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
-import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamComment;
-import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamLikeInfo;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 

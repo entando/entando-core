@@ -13,17 +13,17 @@
  */
 package org.entando.entando.web.userprofile;
 
+import java.io.InputStream;
+
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import java.io.InputStream;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,11 +33,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,7 +62,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/profileTypes")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
@@ -85,7 +85,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         ResultActions result = mockMvc
                 .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"XXX"})
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
 
@@ -160,7 +159,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
 
             ResultActions result2 = this.executeProfileTypePost("2_POST_invalid_2.json", accessToken, status().isBadRequest());
-            System.out.println(result2.andReturn().getResponse().getContentAsString());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(3)));
             Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
@@ -225,7 +223,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/profileTypeAttributes")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
@@ -536,7 +533,6 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
             String x = result2.andReturn().getResponse().getContentAsString();
-            System.out.println(x);
         } finally {
             if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);

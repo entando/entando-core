@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.system.services.activitystream.model;
+package org.entando.entando.aps.system.services.activitystream.model;
 
 import java.util.Date;
 

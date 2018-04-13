@@ -85,9 +85,8 @@ public class PageModelControllerTest extends AbstractControllerTest {
         PagedMetadata<PageModelDto> meta = new PagedMetadata<>(new RestListRequest(), sdpr);
         meta.setBody(dtos);
         when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(meta);
-        ResultActions result = mockMvc.perform(get("/pagemodels")
+        ResultActions result = mockMvc.perform(get("/pageModels")
                 .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
         Mockito.verify(pageModelService, Mockito.times(1)).getPageModels(restListReq);
@@ -101,10 +100,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String payload = mapper.writeValueAsString(pageModel);
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(3)));
     }
@@ -122,10 +121,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String payload = mapper.writeValueAsString(pageModel);
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
     }
@@ -144,10 +143,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         ObjectMapper mapper = new ObjectMapper();
         String payload = mapper.writeValueAsString(pageModel);
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
     }
@@ -174,10 +173,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors.length()", is(1)));
 
@@ -203,10 +202,10 @@ public class PageModelControllerTest extends AbstractControllerTest {
         String payload = mapper.writeValueAsString(pageModel);
 
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
 
     }
@@ -217,28 +216,27 @@ public class PageModelControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String payload = " {\n" +
-                         "    \"code\": \"test\",\n" +
-                         "    \"descr\": \"test\",\n" +
-                         "    \"configuration\": {\n" +
-                         "        \"frames\": [{\n" +
-                         "            \"pos\": 0,\n" +
-                         "            \"descr\": \"test_frame\",\n" +
-                         "            \"mainFrame\": false,\n" +
-                         "            \"defaultWidget\": null,\n" +
-                         "            \"sketch\": null\n" +
-                         "        }]\n" +
-                         "    },\n" +
-                         "    \"pluginCode\": null,\n" +
-                         "    \"template\": \"ciao\"\n" +
-                         " }";
+        String payload = " {\n"
+                + "    \"code\": \"test\",\n"
+                + "    \"descr\": \"test\",\n"
+                + "    \"configuration\": {\n"
+                + "        \"frames\": [{\n"
+                + "            \"pos\": 0,\n"
+                + "            \"descr\": \"test_frame\",\n"
+                + "            \"mainFrame\": false,\n"
+                + "            \"defaultWidget\": null,\n"
+                + "            \"sketch\": null\n"
+                + "        }]\n"
+                + "    },\n"
+                + "    \"pluginCode\": null,\n"
+                + "    \"template\": \"ciao\"\n"
+                + " }";
 
-        //System.out.println(payload);
         ResultActions result = mockMvc.perform(
-                post("/pagemodels")
-                .content(payload)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         Mockito.verify(pageModelService, Mockito.times(1)).addPageModel(Mockito.any());
 
@@ -250,43 +248,41 @@ public class PageModelControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String payload = "{\n" +
-                         "    \"code\": \"home\",\n" +
-                         "    \"descr\": \"Home Page\",\n" +
-                         "    \"configuration\": {\n" +
-                         "        \"frames\": [{\n" +
-                         "                \"pos\": \"0\",\n" +
-                         "                \"descr\": \"Navbar\",\n" +
-                         "                \"sketch\": {\n" +
-                         "                    \"x1\": \"0\",\n" +
-                         "                    \"y1\": \"0\",\n" +
-                         "                    \"x2\": \"2\",\n" +
-                         "                    \"y2\": \"0\"\n" +
-                         "                }\n" +
-                         "            },\n" +
-                         "            {\n" +
-                         "                \"pos\": \"1\",\n" +
-                         "                \"descr\": \"Navbar 2\",\n" +
-                         "                \"sketch\": {\n" +
-                         "                    \"x1\": \"3\",\n" +
-                         "                    \"y1\": \"0\",\n" +
-                         "                    \"x2\": \"5\",\n" +
-                         "                    \"y2\": \"0\"\n" +
-                         "                }\n" +
-                         "            }\n" +
-                         "        ]\n" +
-                         "    },\n" +
-                         "    \"template\": \"<html></html>\"\n" +
-                         "}";
+        String payload = "{\n"
+                + "    \"code\": \"home\",\n"
+                + "    \"descr\": \"Home Page\",\n"
+                + "    \"configuration\": {\n"
+                + "        \"frames\": [{\n"
+                + "                \"pos\": \"0\",\n"
+                + "                \"descr\": \"Navbar\",\n"
+                + "                \"sketch\": {\n"
+                + "                    \"x1\": \"0\",\n"
+                + "                    \"y1\": \"0\",\n"
+                + "                    \"x2\": \"2\",\n"
+                + "                    \"y2\": \"0\"\n"
+                + "                }\n"
+                + "            },\n"
+                + "            {\n"
+                + "                \"pos\": \"1\",\n"
+                + "                \"descr\": \"Navbar 2\",\n"
+                + "                \"sketch\": {\n"
+                + "                    \"x1\": \"3\",\n"
+                + "                    \"y1\": \"0\",\n"
+                + "                    \"x2\": \"5\",\n"
+                + "                    \"y2\": \"0\"\n"
+                + "                }\n"
+                + "            }\n"
+                + "        ]\n"
+                + "    },\n"
+                + "    \"template\": \"<html></html>\"\n"
+                + "}";
 
-        // System.out.println(payload);
         ResultActions result = mockMvc.perform(
-                                               post("/pagemodels")
-                                                                  .content(payload)
-                                                                  .contentType(MediaType.APPLICATION_JSON)
-                                                                  .header("Authorization", "Bearer " + accessToken));
+                post("/pageModels")
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
-        // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         Mockito.verify(pageModelService, Mockito.times(1)).addPageModel(Mockito.any());
 

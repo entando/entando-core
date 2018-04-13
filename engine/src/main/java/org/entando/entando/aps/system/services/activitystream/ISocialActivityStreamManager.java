@@ -11,14 +11,13 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.system.services.activitystream;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
+package org.entando.entando.aps.system.services.activitystream;
 
 import java.util.List;
 
-import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamComment;
-import org.entando.entando.apsadmin.system.services.activitystream.model.ActivityStreamLikeInfo;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamComment;
+import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamLikeInfo;
 
 /**
  * @author E.Santoboni - S.Puddu

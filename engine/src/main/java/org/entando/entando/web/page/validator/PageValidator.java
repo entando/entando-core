@@ -13,6 +13,11 @@
  */
 package org.entando.entando.web.page.validator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
@@ -20,15 +25,9 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.page.IPageService;
-import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 
 /**
  *
@@ -46,6 +44,8 @@ import org.springframework.validation.Validator;
  */
 @Component
 public class PageValidator extends AbstractPaginationValidator {
+
+    private static final String ERRCODE_FRAMEID_INVALID = null;
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -192,5 +192,6 @@ public class PageValidator extends AbstractPaginationValidator {
             }
         }
     }
+
 
 }

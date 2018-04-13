@@ -28,6 +28,10 @@ public class ProfileValidator extends EntityValidator {
     @Autowired
     private IUserProfileManager userProfileManager;
 
+    public boolean existProfile(String username) {
+        return super.existEntity(username);
+    }
+
     @Override
     protected IEntityManager getEntityManager() {
         return this.userProfileManager;

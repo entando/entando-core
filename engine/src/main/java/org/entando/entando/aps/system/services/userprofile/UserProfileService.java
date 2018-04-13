@@ -27,6 +27,11 @@ import org.springframework.validation.BindingResult;
 public class UserProfileService extends AbstractEntityService<IUserProfile> implements IUserProfileService {
 
     @Override
+    public EntityDto getUserProfile(String username) {
+        return super.getEntity(SystemConstants.USER_PROFILE_MANAGER, username);
+    }
+
+    @Override
     public EntityDto addUserProfile(EntityDto request, BindingResult bindingResult) {
         return super.addEntity(SystemConstants.USER_PROFILE_MANAGER, request, bindingResult);
     }

@@ -46,6 +46,22 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
 
     private ICategoryManager categoryManager;
 
+    protected EntityDto getEntity(String entityManagerCode, String id) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        try {
+            I entity = (I) entityManager.getEntity(id);
+            if (null == entity) {
+                throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Entity", id);
+            }
+            return new EntityDto(entity);
+        } catch (RestRourceNotFoundException rnf) {
+            throw rnf;
+        } catch (Exception e) {
+            logger.error("Error updating entity", e);
+            throw new RestServerError("error updating entity", e);
+        }
+    }
+
     protected EntityDto addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {

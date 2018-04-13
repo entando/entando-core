@@ -14,12 +14,15 @@
 package org.entando.entando.web.userprofile;
 
 import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import javax.validation.Valid;
+import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileService;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.entity.validator.EntityValidator;
 import org.entando.entando.web.userprofile.validator.ProfileValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +65,18 @@ public class ProfileController {
 
     public void setProfileValidator(ProfileValidator profileValidator) {
         this.profileValidator = profileValidator;
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/userProfiles/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getUserProfile(@PathVariable String username) throws JsonProcessingException {
+        logger.debug("Requested profile -> {}", username);
+        if (!this.getProfileValidator().existProfile(username)) {
+            throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Profile", username);
+        }
+        EntityDto dto = this.getUserProfileService().getUserProfile(username);
+        logger.debug("Main Response -> {}", dto);
+        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

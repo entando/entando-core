@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
  */
 public interface IUserProfileService {
 
+    public EntityDto getUserProfile(String username);
+
     public EntityDto addUserProfile(EntityDto request, BindingResult bindingResult);
 
     public EntityDto updateUserProfile(EntityDto request, BindingResult bindingResult);

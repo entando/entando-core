@@ -1,30 +1,31 @@
 package org.entando.entando.web.label;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
-import java.util.Map;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import org.hamcrest.Matchers;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
-import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +44,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
         ResultActions result = mockMvc
                 .perform(get("/labels")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
@@ -61,7 +61,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                         .param("pageSize", "2")
                         .param("page", "1")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.pageSize", is(2)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
@@ -78,7 +77,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                         .param("direction", FieldSearchFilter.DESC_ORDER).param("sort", "key")
                         .param("filter[0].attribute", "titles").param("filter[0].value", "gina")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", hasSize(10)));
     }
@@ -92,7 +90,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                         .param("direction", FieldSearchFilter.DESC_ORDER).param("sort", "invalid")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", Matchers.is("100")));
@@ -163,7 +160,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isBadRequest());
 
-            //System.out.println(result.andReturn().getResponse().getContentAsString());
             //-------------------------------------------------
             request = new LabelRequest();
             request.setKey(code);
@@ -327,7 +323,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isBadRequest());
 
         } finally {
@@ -362,7 +357,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isBadRequest());
 
         } finally {
@@ -393,7 +387,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isNotFound());
 
         } finally {

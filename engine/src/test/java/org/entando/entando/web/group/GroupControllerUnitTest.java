@@ -178,7 +178,6 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
 
-        // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
 
     }
@@ -195,7 +194,6 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
                 delete("/groups/{code}", code)
                         .header("Authorization", "Bearer " + accessToken));
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.payload.code", is(code)));

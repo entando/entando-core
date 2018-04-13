@@ -112,9 +112,7 @@ public class PageConfigurationController {
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deletePageWidget(
-            @PathVariable String pageCode,
-                                              @PathVariable String frameId) {
+    public ResponseEntity<?> deletePageWidget(@PathVariable String pageCode, @PathVariable String frameId) {
         logger.debug("removing widget configuration in page {} and frame {}", pageCode, frameId);
 
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(frameId, "frameId");

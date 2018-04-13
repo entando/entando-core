@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 public class UserSettingsControllerUnitTest extends AbstractControllerTest {
 
@@ -65,7 +64,6 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
     }
 
@@ -84,7 +82,6 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
     }
 

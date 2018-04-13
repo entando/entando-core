@@ -58,7 +58,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(1)));
@@ -74,7 +73,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(1)));
@@ -90,7 +88,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(7)));
@@ -124,7 +121,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
             result.andExpect(status().isOk());
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.metaData.pageSize", is(1)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(31)));
             result.andExpect(jsonPath("$.metaData.page", is(7)));
@@ -161,7 +157,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .param("pageSize", "4")
                 .param("direction", "ASC")
                 .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
@@ -186,7 +181,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isConflict());
 
     }
@@ -205,7 +199,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 get("/groups/{code}", "invalid_code")
                 .header("Authorization", "Bearer " + accessToken));
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
 
@@ -229,7 +222,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
 
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
 
@@ -245,7 +237,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(6)));
 
@@ -284,7 +275,6 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken));
 
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isBadRequest());
 
     }

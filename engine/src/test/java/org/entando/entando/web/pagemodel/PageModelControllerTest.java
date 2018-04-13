@@ -87,7 +87,6 @@ public class PageModelControllerTest extends AbstractControllerTest {
         when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(meta);
         ResultActions result = mockMvc.perform(get("/pageModels")
                 .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
         Mockito.verify(pageModelService, Mockito.times(1)).getPageModels(restListReq);
@@ -233,7 +232,6 @@ public class PageModelControllerTest extends AbstractControllerTest {
                 + "    \"template\": \"ciao\"\n"
                 + " }";
 
-        //System.out.println(payload);
         ResultActions result = mockMvc.perform(
                 post("/pageModels")
                         .content(payload)
@@ -279,14 +277,12 @@ public class PageModelControllerTest extends AbstractControllerTest {
                 + "    \"template\": \"<html></html>\"\n"
                 + "}";
 
-        // System.out.println(payload);
         ResultActions result = mockMvc.perform(
                 post("/pageModels")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
 
-        // System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         Mockito.verify(pageModelService, Mockito.times(1)).addPageModel(Mockito.any());
 

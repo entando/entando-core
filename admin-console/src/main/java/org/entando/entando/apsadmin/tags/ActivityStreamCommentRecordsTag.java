@@ -15,8 +15,8 @@ package org.entando.entando.apsadmin.tags;
 
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.tags.AbstractObjectInfoTag;
+import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamManager;
 
-import org.entando.entando.apsadmin.system.services.activitystream.ISocialActivityStreamManager;
 
 /**
  * Returns the list of like records of an activity through the code.

@@ -13,13 +13,12 @@
  */
 package org.entando.entando.apsadmin.common;
 
+import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.apsadmin.system.BaseAction;
+import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.apsadmin.system.BaseAction;
-
-import org.entando.entando.apsadmin.system.services.activitystream.ISocialActivityStreamManager;
 
 /**
  * @author E.Santoboni

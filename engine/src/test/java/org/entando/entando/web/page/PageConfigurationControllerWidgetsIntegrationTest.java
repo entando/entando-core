@@ -71,7 +71,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
             //-------------------
@@ -91,7 +90,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
         } finally {
@@ -134,7 +132,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
             String validContentIdWithIncompatibleGroup = "{\n"
@@ -152,7 +149,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isConflict());
 
         } finally {
@@ -218,7 +214,6 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
 
             //checking page draft config

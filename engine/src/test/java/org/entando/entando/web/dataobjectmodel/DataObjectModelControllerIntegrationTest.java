@@ -38,7 +38,6 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
         ResultActions result = mockMvc
                 .perform(get(BASE_URI + "/dictionary")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
     }
@@ -53,7 +52,6 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
                         .param("typeCode", "EVN")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.err.println(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test
@@ -76,7 +74,6 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
         ResultActions result = mockMvc
                 .perform(get("/dataModels")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
         result.andExpect(jsonPath("$.metaData.sort", is("modelId")));

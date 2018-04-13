@@ -139,7 +139,6 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         ResultActions result = mockMvc
                 .perform(get(BASE_URI + "/{modelId}", "0")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is("1")));
     }
@@ -152,7 +151,6 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
         ResultActions result = mockMvc
                 .perform(get(BASE_URI + "/dictionary")
                         .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
     }
@@ -167,7 +165,6 @@ public class ContentModelControllerIntegrationTest extends AbstractControllerInt
                         .param("typeCode", "EVN")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.err.println(result.andReturn().getResponse().getContentAsString());
     }
 
     @Test

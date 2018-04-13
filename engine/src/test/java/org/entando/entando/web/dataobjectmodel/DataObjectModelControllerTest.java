@@ -37,8 +37,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -114,8 +114,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
                 get("/dataModels")
                         .header("Authorization", "Bearer " + accessToken)
         );
-        //String response = result.andReturn().getResponse().getContentAsString();
-        //System.out.println(response);
+
         result.andExpect(status().isForbidden());
     }
 

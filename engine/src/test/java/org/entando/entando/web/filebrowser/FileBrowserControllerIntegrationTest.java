@@ -50,7 +50,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
@@ -82,7 +81,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser").param("currentPath", "conf")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(3)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.size()", is(3)));
@@ -99,7 +97,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser").param("currentPath", "conf/unexisting")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.metaData.size()", is(0)));
@@ -113,7 +110,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser/file").param("currentPath", "conf/systemParams.properties")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.payload.protectedFolder", is(false)));
         result.andExpect(jsonPath("$.payload.filename", Matchers.is("systemParams.properties")));
         result.andExpect(jsonPath("$.payload.path", Matchers.is("conf/systemParams.properties")));
@@ -131,7 +127,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/fileBrowser/file").param("currentPath", "conf/unexisting.txt")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.metaData.size()", is(0)));
@@ -287,7 +282,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                     .perform(delete("/fileBrowser/file").param("currentPath", folderName + "/testDelete.txt").param("protectedFolder", "true")
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.payload.protectedFolder", is(true)));
             result.andExpect(jsonPath("$.payload.filename", Matchers.is("testDelete.txt")));
             result.andExpect(jsonPath("$.payload.path", Matchers.is(folderName + "/testDelete.txt")));
@@ -314,7 +308,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                     .perform(delete("/fileBrowser/file").param("currentPath", folderName + "/testDelete2.txt").param("protectedFolder", "true")
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(jsonPath("$.payload.protectedFolder", is(true)));
             result.andExpect(jsonPath("$.payload.filename", Matchers.is("testDelete2.txt")));
             result.andExpect(jsonPath("$.payload.path", Matchers.is(folderName + "/testDelete2.txt")));
@@ -388,7 +381,6 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                             .param("protectedFolder", "false")
                             .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isOk());
-            System.out.println(result2.andReturn().getResponse().getContentAsString());
             result2.andExpect(jsonPath("$.payload.protectedFolder", is(false)));
             result2.andExpect(jsonPath("$.payload.path", Matchers.is("test_folder/subfolder")));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));

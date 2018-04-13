@@ -13,9 +13,10 @@
  */
 package org.entando.entando.web.entity;
 
+import java.util.ArrayList;
+
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
-import java.util.ArrayList;
 import org.entando.entando.aps.system.services.entity.EntityManagerService;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.Filter;
@@ -108,7 +109,6 @@ public class EntityManagerControllerTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isForbidden());
     }
 

@@ -35,7 +35,6 @@ public class PermissionControllerIntegrationTest extends AbstractControllerInteg
         ResultActions result = mockMvc
                                       .perform(get("/permissions")
                                                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }
 
@@ -52,7 +51,6 @@ public class PermissionControllerIntegrationTest extends AbstractControllerInteg
                                                                   .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(3)));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
     }
 
 
@@ -66,7 +64,6 @@ public class PermissionControllerIntegrationTest extends AbstractControllerInteg
                                                             .param("filter[0].attribute", "descr")
                                                             .param("filter[0].value", "Accesso")
                                                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(1)));
     }

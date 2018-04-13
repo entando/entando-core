@@ -76,7 +76,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private static final String ERRCODE_GROUP_NOT_FOUND = "2";
     private static final String ERRCODE_PARENT_NOT_FOUND = "3";
     private static final String ERRCODE_PAGE_ONLY_DRAFT = "3";
-    private static final String ERRCODE_FRAME_INVALID = "3";
+    private static final String ERRCODE_FRAME_INVALID = "2";
     private static final String ERRCODE_WIDGET_INVALID = "4";
     private static final String ERRCODE_STATUS_INVALID = "3";
 
@@ -372,7 +372,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             if (frameId > page.getWidgets().length) {
-                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+                logger.info("the frame to delete with index {} in page {} with model {} does not exists", frameId, pageCode, page.getModel().getCode());
+                return;
             }
             this.pageManager.removeWidget(pageCode, frameId);
         } catch (ApsSystemException e) {

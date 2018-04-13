@@ -150,8 +150,6 @@ public class WidgetControllerTest extends AbstractControllerTest {
                 get("/widgets")
                         .header("Authorization", "Bearer " + accessToken)
         );
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
         result.andExpect(status().isForbidden());
     }
 

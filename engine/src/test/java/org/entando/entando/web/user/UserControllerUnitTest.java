@@ -13,6 +13,10 @@
  */
 package org.entando.entando.web.user;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
@@ -24,9 +28,6 @@ import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.IApsEncrypter;
 import de.mkammerer.argon2.Argon2Factory;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import org.entando.entando.aps.system.services.user.UserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
@@ -38,22 +39,23 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 /**
  *
@@ -106,8 +108,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println("users: " + response);
+       
     }
 
     @Test
@@ -124,8 +125,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-        String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println("users: " + response);
+        
     }
 
     @Test
@@ -196,7 +196,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
-        System.out.println(response);
+       
         result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_NEW_PASSWORD_FORMAT)));
     }
 

@@ -45,7 +45,6 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         PageConfigurationDto pageConfigurationDto = (PageConfigurationDto) this.pageService.getPageConfiguration(draftRoot.getCode(), IPageService.STATUS_DRAFT);
         ObjectMapper mapper = new ObjectMapper();
         String out = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pageConfigurationDto);
-        System.out.println(out);
     }
 
     public void testGetPageWidget() throws JsonProcessingException {

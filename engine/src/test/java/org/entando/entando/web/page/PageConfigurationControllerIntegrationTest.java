@@ -28,6 +28,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -167,6 +168,128 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     }
 
     @Test
+    public void testPutPageConfigurationInvalidFrame() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode, null);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
+                                                                                                                          .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                          .header("Authorization", "Bearer " + accessToken));
+            String getResult = result.andReturn().getResponse().getContentAsString();
+            result.andExpect(status().isBadRequest());
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
+    public void testPutPageConfigurationWrongFrame() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode, null);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "500"})
+                                                                                                                          .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                          .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isNotFound());
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
+    public void testDeletePageConfigurationWithInvalidFrameId() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode, null);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                      .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            result = mockMvc
+                            .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
+                                                                                                               .param("status", IPageService.STATUS_DRAFT)
+                                                                                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                               .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isBadRequest());
+
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is("40")));
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
+    public void testDeletePageConfigurationWithWrongFrameId() throws Exception {
+        String pageCode = "draft_page_100";
+        try {
+            Page mockPage = createPage(pageCode, null);
+            this.pageManager.addPage(mockPage);
+            IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
+            assertThat(onlinePage, is(nullValue()));
+            IPage draftPage = this.pageManager.getDraftPage(pageCode);
+            assertThat(draftPage, is(not(nullValue())));
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            ResultActions result = mockMvc
+                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
+                                                                                                                      .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            result = mockMvc
+                            .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 9999})
+                                                                                                              .param("status", IPageService.STATUS_DRAFT)
+                                                                                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                                                              .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
     public void testGetPageWidgetConfiguration() throws Exception {
         String pageCode = "draft_page_100";
         try {
@@ -185,7 +308,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
                                                                                                                         .param("status", IPageService.STATUS_DRAFT)
                                                                                                                         .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isNotFound());
-            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
 
             result = mockMvc
                             .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "ASD"})

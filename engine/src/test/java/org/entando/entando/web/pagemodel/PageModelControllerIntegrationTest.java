@@ -54,7 +54,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                                                    "home", "PageManager")
                                                                          .contentType(MediaType.APPLICATION_JSON_VALUE)
                                                                          .header("Authorization", "Bearer " + accessToken));
-        System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
 
@@ -85,7 +84,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isConflict());
 
     }
@@ -119,7 +117,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
 
-            //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
         } finally {
             this.pageModelManager.deletePageModel(pageModelCode);
@@ -136,7 +133,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                     .perform(get("/pageModels/{code}", pageModelCode)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isNotFound());
         } finally {
             this.pageModelManager.deletePageModel(pageModelCode);
@@ -159,7 +155,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                     .perform(delete("/pageModels/{code}", pageModelCode)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-            //System.out.println(result.andReturn().getResponse().getContentAsString());
             result.andExpect(status().isOk());
         } finally {
             this.pageModelManager.deletePageModel(pageModelCode);
@@ -175,7 +170,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                 .perform(delete("/pageModels/{code}", "unexistingPageModel")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        //System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
     }

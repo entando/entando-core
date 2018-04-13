@@ -108,7 +108,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-       
+
     }
 
     @Test
@@ -121,74 +121,70 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .param("filter[0].attribute", "username")
                 .param("filter[0].operator", "like")
                 .param("filter[0].value", "user")
-                .sessionAttr("user", user)
+                //.sessionAttr("user", user)
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-        
+
     }
 
     @Test
-    public void shouldExecutePasswordUserPut() throws Exception {
+    public void shouldExecuteUserPut() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String mockJson = "{\n"
+                + "    \"username\": \"username_test\",\n"
+                + "    \"status\": \"inactive\",\n"
+                + "    \"password\": \"different_password\"\n"
+                + " }";
+        when(this.userManager.getUser("username_test")).thenReturn(this.mockUserDetails("username_test"));
+        ResultActions result = mockMvc.perform(
+                put("/users/{username}", "username_test")
+                //.sessionAttr("user", user)
+                .content(mockJson)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println("users: " + response);
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldValidateUserPut() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
         String mockJson = "{\n"
-                + "    \"username\": \"user\",\n"
+                + "    \"username\": \"username_test\",\n"
                 + "    \"status\": \"inactive\",\n"
-                + "    \"password\": \"different_password\"\n"
+                + "    \"password\": \"invalid spaces\"\n"
                 + " }";
 
-        when(this.userManager.getUser(any(String.class))).thenReturn(mockUserDetails());
+        when(this.userManager.getUser(any(String.class))).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
-                put("/users/{username}", "user")
+                put("/users/{target}", "mismach")
                 .sessionAttr("user", user)
                 .content(mockJson)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
+        result.andExpect(status().isConflict());
     }
-
-    //    @Test
-    //    public void shouldValidatePasswordUserPut() throws Exception {
-    //        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-    //        String accessToken = mockOAuthInterceptor(user);
-    //
-    //        String mockJson = "{\n"
-    //                + "    \"username\": \"user\",\n"
-    //                + "    \"status\": \"inactive\",\n"
-    //                + "    \"password\": \"different_password\"\n"
-    //                + " }";
-    //
-    //        when(this.userManager.getUser(any(String.class))).thenReturn(mockUserDetails());
-    //        ResultActions result = mockMvc.perform(
-    //                put("/users/{username}", "mismach")
-    //                .sessionAttr("user", user)
-    //                .content(mockJson)
-    //                .contentType(MediaType.APPLICATION_JSON)
-    //                .header("Authorization", "Bearer " + accessToken));
-    //
-    //        result.andExpect(status().isConflict());
-    //        String response = result.andReturn().getResponse().getContentAsString();
-    //        System.out.println("users: " + response);
-    //    }
 
     @Test
     public void shouldValidatePasswordsUserPasswordPost() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
 
-        String mockJson = "{\"username\": \"user\",\n"
+        String mockJson = "{\"username\": \"username_test\",\n"
                 + "    \"oldPassword\": \"same_password\",\n"
                 + "    \"newPassword\": \"same_password\"\n"
                 + "}";
 
-        when(this.userManager.getUser(any(String.class))).thenReturn(mockUserDetails());
+        when(this.userManager.getUser(any(String.class))).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
-                post("/users/{username}/password", "user")
+                post("/users/{username}/password", "username_test")
                 .sessionAttr("user", user)
                 .content(mockJson)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -196,8 +192,8 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
-       
-        result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_NEW_PASSWORD_FORMAT)));
+        System.out.println(response);
+        result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_NEW_PASSWORD_EQUALS)));
     }
 
     @Test
@@ -287,9 +283,9 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         return new UserDto(user1);
     }
 
-    private UserDetails mockUserDetails() {
+    private UserDetails mockUserDetails(String username) {
         User user1 = new User();
-        user1.setUsername("user");
+        user1.setUsername(username);
         user1.setDisabled(false);
         user1.setLastAccess(new Date());
         user1.setLastPasswordChange(new Date());

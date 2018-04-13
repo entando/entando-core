@@ -59,11 +59,11 @@ public class UserValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_USERNAME_MISMATCH = "2";
     public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
-    public static final String ERRCODE_NEW_PASSWORD_FORMAT = "5";
+    public static final String ERRCODE_NEW_PASSWORD_EQUALS = "5";
 
     public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
 
-    public static final String ERRCODE_AUTHORITIES_SELF_UPDATE = "2";
+    public static final String ERRCODE_SELF_UPDATE = "6";
 
     @Autowired
     IUserManager userManager;
@@ -154,7 +154,7 @@ public class UserValidator extends AbstractPaginationValidator {
 
     public void validateUpdateSelf(String username, String currentUser, Errors errors) {
         if (username.equals(currentUser)) {
-            errors.reject(ERRCODE_AUTHORITIES_SELF_UPDATE, new String[]{username}, "user.authorities.self.update");
+            errors.reject(ERRCODE_SELF_UPDATE, new String[]{username}, "user.authorities.self.update");
         }
     }
 
@@ -165,17 +165,21 @@ public class UserValidator extends AbstractPaginationValidator {
         } else {
             UserDetails user = this.extractUser(username);
             if (null == user) {
-                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "user", username);
+                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "username", username);
             }
             this.checkNewPassword(username, userRequest.getPassword(), bindingResult);
         }
     }
 
     public void validateChangePasswords(String username, UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+        UserDetails user = this.extractUser(username);
         if (!StringUtils.equals(username, passwordRequest.getUsername())) {
             bindingResult.rejectValue("username", ERRCODE_USERNAME_MISMATCH, new String[]{username, passwordRequest.getUsername()}, "user.username.mismatch");
+            throw new ValidationConflictException(bindingResult);
+        } else if (null == user) {
+            throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "username", username);
         } else if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {
-            bindingResult.rejectValue("newPassword", ERRCODE_NEW_PASSWORD_FORMAT, new String[]{}, "user.passwords.same");
+            bindingResult.rejectValue("newPassword", ERRCODE_NEW_PASSWORD_EQUALS, new String[]{}, "user.passwords.same");
         } else if (!this.verifyPassword(passwordRequest.getUsername(), passwordRequest.getOldPassword())) {
             bindingResult.rejectValue("oldPassword", ERRCODE_OLD_PASSWORD_FORMAT, new String[]{}, "user.password.old.invalid");
         } else {

@@ -52,11 +52,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
-                                   "classpath*:spring/testpropertyPlaceholder.xml",
-                                   "classpath*:spring/baseSystemConfig.xml",
-                                   "classpath*:spring/aps/**/**.xml",
-                                   "classpath*:spring/plugins/**/aps/**/**.xml",
-                                   "classpath*:spring/web/**.xml",})
+    "classpath*:spring/testpropertyPlaceholder.xml",
+    "classpath*:spring/baseSystemConfig.xml",
+    "classpath*:spring/aps/**/**.xml",
+    "classpath*:spring/plugins/**/aps/**/**.xml",
+    "classpath*:spring/web/**.xml",})
 
 @WebAppConfiguration(value = "")
 public class UserControllerDeleteAuthoritiesIntegrationTest {
@@ -82,7 +82,6 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
-
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -92,8 +91,8 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                                 .addFilters(new CORSFilter())
-                                 .build();
+                .addFilters(new CORSFilter())
+                .build();
 
         //workaround for dirty context
         entandoOauth2Interceptor.setAuthenticationProviderManager(authenticationProviderManager);
@@ -134,12 +133,10 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
         String accessToken = "ok";
         when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(currentUserName, "ok"));
         try {
-
             ResultActions result = this.executeDeleteUserAuthorities(currentUserName, accessToken);
             result.andExpect(status().isBadRequest());
-            result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_AUTHORITIES_SELF_UPDATE)));
+            result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_SELF_UPDATE)));
             assertThat(this.authorizationManager.getUserAuthorizations(currentUserName).size(), is(Matchers.greaterThanOrEqualTo(1)));
-
         } catch (Throwable e) {
             throw e;
         }
@@ -153,14 +150,11 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
         this.authorizationManager.addUserAuthorization(username, groupName, roleName);
     }
 
-
     private ResultActions executeDeleteUserAuthorities(String username, String accessToken) throws Exception {
         ResultActions result = mockMvc
-                                      .perform(delete("/users/{username}/authorities", new Object[]{username})
-                                                                                                              .header("Authorization", "Bearer " + accessToken));
+                .perform(delete("/users/{username}/authorities", new Object[]{username})
+                        .header("Authorization", "Bearer " + accessToken));
         return result;
     }
 
 }
-
-

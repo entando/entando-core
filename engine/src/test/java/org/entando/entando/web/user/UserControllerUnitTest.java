@@ -108,7 +108,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-       
+
     }
 
     @Test
@@ -125,7 +125,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
-        
+
     }
 
     @Test
@@ -162,7 +162,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
         when(this.userManager.getUser(any(String.class))).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
-                put("/users/{username}", "mismach")
+                put("/users/{target}", "mismach")
                 .sessionAttr("user", user)
                 .content(mockJson)
                 .contentType(MediaType.APPLICATION_JSON)

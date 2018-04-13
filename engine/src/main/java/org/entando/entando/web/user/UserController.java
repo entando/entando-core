@@ -111,15 +111,15 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUser(/*@ModelAttribute("user") UserDetails user, */@PathVariable String username, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
-        logger.debug("updating user {} with request {}", username, userRequest);
+    @RequestMapping(value = "/{target:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> updateUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+        logger.debug("updating user {} with request {}", target, userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getUserValidator().validatePutBody(username, userRequest, bindingResult);
-        //this.getUserValidator().validateUpdateSelf(username, user.getUsername(), bindingResult);
+        this.getUserValidator().validatePutBody(target, userRequest, bindingResult);
+        this.getUserValidator().validateUpdateSelf(target, user.getUsername(), bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }

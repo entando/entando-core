@@ -68,15 +68,15 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
-                get("/usersettings")
-                .header("Authorization", "Bearer " + accessToken));
+                get("/userSettings")
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
 
         result.andExpect(jsonPath("$.payload.restrictionsActive", is(Boolean.parseBoolean(params.get(UserSettingsDto.EXTENDED_PRIVACY_MODULE_ENABLED)))));
         result.andExpect(jsonPath("$.payload.enableGravatarIntegration", is(Boolean.parseBoolean(params.get(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED)))));
-        result.andExpect(jsonPath("$.payload.maxMonthsSinceLastAccess", is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
-        result.andExpect(jsonPath("$.payload.maxMonthsSinceLastPasswordChange", is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE)))));
+        result.andExpect(jsonPath("$.payload.lastAccessPasswordExpirationMonths", is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
+        result.andExpect(jsonPath("$.payload.maxMonthsPasswordValid", is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE)))));
 
     }
 
@@ -96,8 +96,8 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc.perform(
-                    get("/usersettings")
-                    .header("Authorization", "Bearer " + accessToken));
+                    get("/userSettings")
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -108,10 +108,10 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             result.andExpect(jsonPath("$.payload.enableGravatarIntegration",
                     is(Boolean.parseBoolean(params.get(SystemConstants.CONFIG_PARAM_GRAVATAR_INTEGRATION_ENABLED)))));
 
-            result.andExpect(jsonPath("$.payload.maxMonthsSinceLastAccess",
+            result.andExpect(jsonPath("$.payload.lastAccessPasswordExpirationMonths",
                     is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTACCESS)))));
 
-            result.andExpect(jsonPath("$.payload.maxMonthsSinceLastPasswordChange",
+            result.andExpect(jsonPath("$.payload.maxMonthsPasswordValid",
                     is(Integer.valueOf(params.get(UserSettingsDto.MAX_MONTHS_SINCE_LASTPASSWORDCHANGE)))));
 
             //-------------
@@ -122,17 +122,17 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             userSettingsRequest.setMaxMonthsSinceLastPasswordChange(30);
 
             result = mockMvc.perform(
-                    put("/usersettings")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .content(mapper.writeValueAsString(userSettingsRequest))
-                    .header("Authorization", "Bearer " + accessToken));
+                    put("/userSettings")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .content(mapper.writeValueAsString(userSettingsRequest))
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
             result.andExpect(jsonPath("$.payload.restrictionsActive", is(true)));
             result.andExpect(jsonPath("$.payload.enableGravatarIntegration", is(true)));
-            result.andExpect(jsonPath("$.payload.maxMonthsSinceLastAccess", is(60)));
-            result.andExpect(jsonPath("$.payload.maxMonthsSinceLastPasswordChange", is(30)));
+            result.andExpect(jsonPath("$.payload.lastAccessPasswordExpirationMonths", is(60)));
+            result.andExpect(jsonPath("$.payload.maxMonthsPasswordValid", is(30)));
 
             //-------------
             userSettingsRequest = new UserSettingsRequest();
@@ -142,10 +142,10 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
             userSettingsRequest.setMaxMonthsSinceLastPasswordChange(3);
 
             result = mockMvc.perform(
-                    put("/usersettings")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .content(mapper.writeValueAsString(userSettingsRequest))
-                    .header("Authorization", "Bearer " + accessToken));
+                    put("/userSettings")
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .content(mapper.writeValueAsString(userSettingsRequest))
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 

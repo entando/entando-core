@@ -229,7 +229,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testUpdatePassword() throws Exception {
+    public void testUpdatePassword_1() throws Exception {
         String validUsername = "valid.username_ok";
         String validPassword = "valid.123_ok";
         String newValidPassword = "valid.1234_ok";
@@ -267,6 +267,46 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             resultInvalid4.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid4.andExpect(jsonPath("$.errors[0].code", is("52")));
             resultInvalid4.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String validBody = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
+            ResultActions resultValid = this.executeUpdatePassword(validBody, validUsername, accessToken, status().isOk());
+            resultValid.andExpect(jsonPath("$.payload.username", is(validUsername)));
+            resultValid.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            resultValid.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            this.userManager.removeUser(validUsername);
+        }
+    }
+
+    @Test
+    public void testUpdatePassword_2() throws Exception {
+        String validUsername = "valid_ok.2";
+        String validPassword = "valid.123_ok";
+        String newValidPassword = "valid.1234_ok";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"" + validPassword + "\"}";
+            this.executeUserPost(mockJson, accessToken, status().isOk());
+
+            String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
+            ResultActions resultInvalid1 = this.executeUpdatePassword(invalidBody1, "no_same_username", accessToken, status().isConflict());
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("2")));
+            resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String noExistingUser = "test12345";
+            String invalidBody2 = "{\"username\": \"" + noExistingUser + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
+            ResultActions resultInvalid2 = this.executeUpdatePassword(invalidBody2, noExistingUser, accessToken, status().isNotFound());
+            resultInvalid2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("1")));
+            resultInvalid2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String validBody = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultValid = this.executeUpdatePassword(validBody, validUsername, accessToken, status().isOk());

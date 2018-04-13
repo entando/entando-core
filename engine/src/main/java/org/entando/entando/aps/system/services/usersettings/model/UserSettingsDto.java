@@ -15,9 +15,14 @@ public class UserSettingsDto {
     @JsonProperty("enableGravatarIntegration")
     private boolean gravatarIntegrationEnabled;
 
+    @JsonProperty("lastAccessPasswordExpirationMonths")
     private int maxMonthsSinceLastAccess;
+
+    @JsonProperty("maxMonthsPasswordValid")
     private int maxMonthsSinceLastPasswordChange;
-    
+
+    private boolean passwordAlwaysActive;
+
     public boolean isExtendedPrivacyModuleEnabled() {
         return extendedPrivacyModuleEnabled;
     }
@@ -29,14 +34,15 @@ public class UserSettingsDto {
     public boolean isGravatarIntegrationEnabled() {
         return gravatarIntegrationEnabled;
     }
+
     public void setGravatarIntegrationEnabled(boolean gravatarIntegrationEnabled) {
         this.gravatarIntegrationEnabled = gravatarIntegrationEnabled;
     }
 
-
     public int getMaxMonthsSinceLastAccess() {
         return maxMonthsSinceLastAccess;
     }
+
     public void setMaxMonthsSinceLastAccess(int maxMonthsSinceLastAccess) {
         this.maxMonthsSinceLastAccess = maxMonthsSinceLastAccess;
     }
@@ -49,7 +55,12 @@ public class UserSettingsDto {
         this.maxMonthsSinceLastPasswordChange = maxMonthsSinceLastPasswordChange;
     }
 
+    public boolean isPasswordAlwaysActive() {
+        return passwordAlwaysActive;
+    }
 
-
+    public void setPasswordAlwaysActive(boolean passwordAlwaysActive) {
+        this.passwordAlwaysActive = passwordAlwaysActive;
+    }
 
 }

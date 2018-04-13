@@ -59,10 +59,10 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
         UserSettingsRequest userSettingsRequest = new UserSettingsRequest();
 
         ResultActions result = mockMvc.perform(
-                put("/usersettings")
-                .content(mapper.writeValueAsString(userSettingsRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                put("/userSettings")
+                        .content(mapper.writeValueAsString(userSettingsRequest))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -77,10 +77,10 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
         userSettingsRequest.setMaxMonthsSinceLastPasswordChange(-3);
 
         ResultActions result = mockMvc.perform(
-                put("/usersettings")
-                .content(mapper.writeValueAsString(userSettingsRequest))
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                put("/userSettings")
+                        .content(mapper.writeValueAsString(userSettingsRequest))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }

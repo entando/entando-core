@@ -54,6 +54,14 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     @Autowired
     private IAuthorizationManager authorizationManager;
 
+    protected IAuthenticationProviderManager getAuthenticationProviderManager() {
+        return authenticationProviderManager;
+    }
+
+    public void setAuthenticationProviderManager(IAuthenticationProviderManager authenticationProviderManager) {
+        this.authenticationProviderManager = authenticationProviderManager;
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
@@ -91,7 +99,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     }
 
     protected void checkAuthorization(String username, String permission, HttpServletRequest request) throws ApsSystemException {
-        UserDetails user = authenticationProviderManager.getUser(username);
+        UserDetails user = getAuthenticationProviderManager().getUser(username);
         if (user != null) {
             request.getSession().setAttribute("user", user);
             logger.debug("User {} requesting resource that requires {} permission ", username, permission);
@@ -115,5 +123,6 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             throw new EntandoTokenException("expired token", request, "guest");
         }
     }
+
 
 }

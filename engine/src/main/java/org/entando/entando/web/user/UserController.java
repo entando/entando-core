@@ -134,12 +134,6 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        /*
-        this.getUserValidator().validatePutBody(username, passwordRequest.getUsername(), bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-         */
         this.getUserValidator().validateChangePasswords(username, passwordRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);

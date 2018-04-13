@@ -165,13 +165,17 @@ public class UserValidator extends AbstractPaginationValidator {
         } else {
             UserDetails user = this.extractUser(username);
             if (null == user) {
-                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "user", username);
+                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "username", username);
             }
             this.checkNewPassword(username, userRequest.getPassword(), bindingResult);
         }
     }
 
     public void validateChangePasswords(String username, UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+        UserDetails user = this.extractUser(username);
+        if (null == user) {
+            throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "username", username);
+        }
         if (!StringUtils.equals(username, passwordRequest.getUsername())) {
             bindingResult.rejectValue("username", ERRCODE_USERNAME_MISMATCH, new String[]{username, passwordRequest.getUsername()}, "user.username.mismatch");
         } else if (StringUtils.equals(passwordRequest.getNewPassword(), passwordRequest.getOldPassword())) {

@@ -450,7 +450,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
         }
         EntityAttributeFullDto result = null;
         try {
-            entityType.getAttributeMap().remove(bodyRequest.getCode());
+            this.removeAttribute(entityType, bodyRequest.getCode());
             entityType.addAttribute(attribute);
             ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
             IApsEntity newEntityType = entityManager.getEntityPrototype(entityTypeCode);
@@ -474,20 +474,24 @@ public abstract class AbstractEntityService<I extends IApsEntity, O extends Enti
             return;
         }
         try {
-            List<AttributeInterface> attributes = entityType.getAttributeList();
-            for (int i = 0; i < attributes.size(); i++) {
-                AttributeInterface old = attributes.get(i);
-                if (old.getName().equals(attributeCode)) {
-                    attributes.remove(i);
-                    break;
-                }
-            }
-            entityType.getAttributeMap().remove(attributeCode);
+            this.removeAttribute(entityType, attributeCode);
             ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
         } catch (Throwable e) {
             logger.error("Error updating entity type", e);
             throw new RestServerError("error updating entity type", e);
         }
+    }
+
+    private void removeAttribute(IApsEntity entityType, String attributeToRemove) {
+        List<AttributeInterface> attributes = entityType.getAttributeList();
+        for (int i = 0; i < attributes.size(); i++) {
+            AttributeInterface old = attributes.get(i);
+            if (old.getName().equals(attributeToRemove)) {
+                attributes.remove(i);
+                break;
+            }
+        }
+        entityType.getAttributeMap().remove(attributeToRemove);
     }
 
     protected void reloadEntityTypeReferences(String entityManagerCode, String entityTypeCode) {

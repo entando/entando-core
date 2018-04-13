@@ -390,6 +390,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             String accessToken = mockOAuthInterceptor(user);
 
             this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, profileType.getAttributeList().size());
 
             ResultActions result1 = this.executeProfileAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
@@ -415,8 +417,9 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             result4.andExpect(jsonPath("$.metaData.size()", is(1)));
             result4.andExpect(jsonPath("$.metaData.profileTypeCode", is(typeCode)));
 
-            IApsEntity profileType = this.userProfileManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(4, profileType.getAttributeList().size());
+            profileType = this.userProfileManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, profileType.getAttributeList().size());
+            Assert.assertNotNull(profileType.getAttribute("list"));
         } finally {
             if (null != this.userProfileManager.getEntityPrototype(typeCode)) {
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);

@@ -195,6 +195,45 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    public void testUpdateUser() throws Exception {
+        String validUsername = "test_test";
+        String validPassword = "password";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"" + validPassword + "\"}";
+            this.executeUserPost(mockJson, accessToken, status().isOk());
+
+            String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"$invalid%%\"}";
+            ResultActions resultInvalid1 = this.executeUserPut(invalidBody1, validUsername, accessToken, status().isBadRequest());
+            System.out.println(resultInvalid1.andReturn().getResponse().getContentAsString());
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
+            resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            String invalidBody2 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"upasswordvelylong_.veryverylong\"}";
+            ResultActions resultInvalid2 = this.executeUserPut(invalidBody2, validUsername, accessToken, status().isBadRequest());
+            resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("3")));
+
+            String invalidBody3 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"" + validPassword + "\"}";
+            ResultActions resultInvalid3 = this.executeUserPut(invalidBody3, "invalidUsername", accessToken, status().isConflict());
+            resultInvalid3.andExpect(jsonPath("$.errors[0].code", is("2")));
+
+            String valid = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"12345678\",\"reset\": true}";
+            ResultActions result = this.executeUserPut(valid, validUsername, accessToken, status().isOk());
+            String response = result.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + response);
+            result.andExpect(jsonPath("$.payload.username", is(validUsername)));
+        } catch (Throwable e) {
+            throw e;
+        } finally {
+            this.userManager.removeUser(validUsername);
+        }
+    }
+
+    @Test
     public void testUpdatePassword() throws Exception {
         String validUsername = "valid.username_ok";
         String validPassword = "valid.123_ok";
@@ -252,6 +291,15 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                 .perform(post("/users")
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
+    private ResultActions executeUserPut(String body, String username, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(put("/users/{username}", new Object[]{username})
+                        .content(body).contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;

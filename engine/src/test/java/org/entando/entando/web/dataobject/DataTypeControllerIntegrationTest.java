@@ -358,6 +358,8 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             String accessToken = mockOAuthInterceptor(user);
 
             this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
 
             ResultActions result1 = this.executeDataTypeAttributePut("4_PUT_attribute_invalid_1.json", typeCode, "list_wrong", accessToken, status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
@@ -383,8 +385,9 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             result4.andExpect(jsonPath("$.metaData.size()", is(1)));
             result4.andExpect(jsonPath("$.metaData.dataTypeCode", is(typeCode)));
 
-            IApsEntity dataType = this.dataObjectManager.getEntityPrototype(typeCode);
-            Assert.assertEquals(4, dataType.getAttributeList().size());
+            dataType = this.dataObjectManager.getEntityPrototype(typeCode);
+            Assert.assertEquals(3, dataType.getAttributeList().size());
+            Assert.assertNotNull(dataType.getAttribute("list"));
         } finally {
             if (null != this.dataObjectManager.getEntityPrototype(typeCode)) {
                 ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype(typeCode);

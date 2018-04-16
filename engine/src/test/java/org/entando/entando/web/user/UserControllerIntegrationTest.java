@@ -95,9 +95,23 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     .content(mockJson)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
-
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("group1")));
+
+            ResultActions result3 = mockMvc.perform(
+                    get("/users/{target}/authorities", "wrongUser")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result3.andExpect(status().isNotFound());
+
+            ResultActions result4 = mockMvc.perform(
+                    get("/users/{target}/authorities", "mockuser")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result4.andExpect(status().isOk());
+            result4.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
+            result4.andExpect(jsonPath("$.payload[0].group", is("group1")));
+            result4.andExpect(jsonPath("$.payload[0].role", is("role1")));
         } finally {
             this.authorizationManager.deleteUserAuthorizations("mockuser");
             this.groupManager.removeGroup(group);

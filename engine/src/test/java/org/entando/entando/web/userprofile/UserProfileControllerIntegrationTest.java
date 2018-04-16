@@ -125,11 +125,18 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
             Date date = (Date) profile.getAttribute("Date").getValue();
             Assert.assertEquals("2017-09-21", DateConverter.getFormattedDate(date, "yyyy-MM-dd"));
 
-            ResultActions result3 = this.executeProfilePut("5_PUT_valid.json", "new_user", accessToken, status().isOk());
-            result3.andExpect(jsonPath("$.payload.id", is("new_user")));
-            result3.andExpect(jsonPath("$.errors.size()", is(0)));
+            ResultActions result3 = this.executeProfilePut("5_PUT_valid.json", "invalid", accessToken, status().isConflict());
+            result3.andExpect(jsonPath("$.payload.size()", is(0)));
+            result3.andExpect(jsonPath("$.errors.size()", is(1)));
+            result3.andExpect(jsonPath("$.errors[0].code", is("2")));
             result3.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions result4 = this.executeProfilePut("5_PUT_valid.json", "new_user", accessToken, status().isOk());
+            result4.andExpect(jsonPath("$.payload.id", is("new_user")));
+            result4.andExpect(jsonPath("$.errors.size()", is(0)));
+            result4.andExpect(jsonPath("$.metaData.size()", is(0)));
             profile = this.userProfileManager.getProfile("new_user");
+
             ListAttribute list = (ListAttribute) profile.getAttribute("multilist");
             Assert.assertEquals(4, list.getAttributeList("en").size());
         } finally {

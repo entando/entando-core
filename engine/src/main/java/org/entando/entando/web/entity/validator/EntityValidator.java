@@ -52,13 +52,13 @@ public abstract class EntityValidator extends AbstractPaginationValidator implem
     public void validate(Object target, Errors errors) {
         EntityDto request = (EntityDto) target;
         if (this.existEntity(request.getId())) {
-            errors.reject(ERRCODE_ENTITY_DOES_NOT_EXIST, new String[]{request.getId()}, "entity.notExists");
+            errors.reject(ERRCODE_ENTITY_ALREADY_EXISTS, new String[]{request.getId()}, "entity.exists");
         }
     }
 
     public void validateBodyName(String id, EntityDto request, BindingResult bindingResult) {
         if (!StringUtils.equals(id, request.getId())) {
-            bindingResult.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{id, request.getId()}, "entity.code.mismatch");
+            bindingResult.rejectValue("id", ERRCODE_URINAME_MISMATCH, new String[]{id, request.getId()}, "entity.id.mismatch");
             throw new ValidationConflictException(bindingResult);
         }
         if (!this.existEntity(id)) {

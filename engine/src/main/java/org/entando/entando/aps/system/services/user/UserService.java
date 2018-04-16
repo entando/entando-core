@@ -130,25 +130,23 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
-        try {
-            List<UserAuthorityDto> authorizations = new ArrayList<>();
-            final UserDetails user = this.getUserManager().getUser(username);
-            request.forEach(authorization -> {
-                try {
-                    if (!this.getAuthorizationManager().isAuthOnGroupAndRole(user, authorization.getGroup(), authorization.getRole(), true)) {
-                        this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
-                    }
-                } catch (ApsSystemException ex) {
-                    logger.error("Error in add authorities for {}", username, ex);
-                    throw new RestServerError("Error in add authorities", ex);
-                }
-                authorizations.add(new UserAuthorityDto(authorization.getGroup(), authorization.getRole()));
-            });
-            return authorizations;
-        } catch (ApsSystemException ex) {
-            logger.error("Error in add authorities for {}", username, ex);
-            throw new RestServerError("Error in add authorities", ex);
+        UserDetails user = this.loadUser(username);
+        if (null == user) {
+            return null;
         }
+        List<UserAuthorityDto> authorizations = new ArrayList<>();
+        request.forEach(authorization -> {
+            try {
+                if (!this.getAuthorizationManager().isAuthOnGroupAndRole(user, authorization.getGroup(), authorization.getRole(), true)) {
+                    this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
+                }
+            } catch (ApsSystemException ex) {
+                logger.error("Error in add authorities for {}", username, ex);
+                throw new RestServerError("Error in add authorities", ex);
+            }
+            authorizations.add(new UserAuthorityDto(authorization.getGroup(), authorization.getRole()));
+        });
+        return authorizations;
     }
 
     @Override

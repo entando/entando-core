@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
@@ -61,7 +62,7 @@ public class UserValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_OLD_PASSWORD_FORMAT = "4";
     public static final String ERRCODE_NEW_PASSWORD_EQUALS = "5";
 
-    public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "1";
+    public static final String ERRCODE_AUTHORITIES_INVALID_REQ = "2";
 
     public static final String ERRCODE_SELF_UPDATE = "6";
 
@@ -152,9 +153,10 @@ public class UserValidator extends AbstractPaginationValidator {
         }
     }
 
-    public void validateUpdateSelf(String username, String currentUser, Errors errors) {
+    public void validateUpdateSelf(String username, String currentUser, BindingResult bindingResult) {
         if (username.equals(currentUser)) {
-            errors.reject(ERRCODE_SELF_UPDATE, new String[]{username}, "user.authorities.self.update");
+            bindingResult.reject(ERRCODE_SELF_UPDATE, new String[]{username}, "user.authorities.self.update");
+            throw new ResourcePermissionsException(bindingResult);
         }
     }
 

@@ -1,126 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
-	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
-	http://www.springframework.org/schema/context  
-	http://www.springframework.org/schema/context/spring-context-4.0.xsd
-	http://www.springframework.org/schema/tx 
-	http://www.springframework.org/schema/tx/spring-tx.xsd
-	http://www.springframework.org/schema/mvc  
-	http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
-	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd
-	">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context  http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 
-	<!-- scans for annotated classes -->
-	<context:component-scan base-package="org.entando.entando.web.*" />
-	<context:annotation-config />
+    <!-- scans for annotated classes -->
+    <context:component-scan base-package="org.entando.entando.web.*" />
+    <context:annotation-config />
 
-	<mvc:annotation-driven conversion-service="conversionService"
-		message-codes-resolver="messageCodesResolver">
-		<mvc:message-converters>
-			<bean id="jacksonMessageConverter" name="jacksonMessageConverter"
-				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-				<property name="supportedMediaTypes">
-					<list>
-						<value>application/json;charset=UTF-8</value>
-					</list>
-				</property>
-			</bean>
-		</mvc:message-converters>
-	</mvc:annotation-driven>
+    <mvc:annotation-driven conversion-service="conversionService"
+                           message-codes-resolver="messageCodesResolver">
+        <mvc:message-converters>
+            <bean id="jacksonMessageConverter" name="jacksonMessageConverter"
+                  class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10485760" />
+    </bean>
+
+    <util:map id="validationCodesMapping" map-class="java.util.HashMap">
+        <entry key="NotNull">
+            <value>51</value>
+        </entry>
+        <entry key="NotBlank">
+            <value>52</value>
+        </entry>
+        <entry key="NotEmpty">
+            <value>53</value>
+        </entry>
+        <entry key="Size">
+            <value>54</value>
+        </entry>
+        <entry key="Min">
+            <value>55</value>
+        </entry>
+    </util:map>
+
+    <bean id="messageCodesResolver"
+          class="org.entando.entando.web.common.EntandoMessageCodesResolver">
+        <property name="validationErrorCodeMapping" ref="validationCodesMapping" />
+    </bean>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="basename">
+            <value>rest/messages</value>
+        </property>
+        <property name="fallbackToSystemLocale" value="true" />
+    </bean>
+
+    <bean
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix">
+            <value>/WEB-INF/jsp/entando/</value>
+        </property>
+        <property name="suffix">
+            <value>.jsp</value>
+        </property>
+    </bean>
+
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="registerDefaultFormatters" value="false" />
+        <property name="formatters">
+            <set>
+                <bean class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
+            </set>
+        </property>
+        <property name="formatterRegistrars">
+            <set>
+                <bean class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
+                    <!-- consider also timeFormatter and dateTimeFormatter -->
+                    <property name="dateFormatter">
+                        <bean class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
+                            <property name="pattern" value="dd/MM/yyyy" />
+                        </bean>
+                    </property>
+                </bean>
+            </set>
+        </property>
+    </bean>
+
+    <bean id="entandoInterceptor"
+          class="org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor" />
+    <bean id="activitiStreamInterceptor"
+          class="org.entando.entando.web.common.interceptor.ActivitiStreamInterceptor" />
 
 
-	<mvc:resources mapping="/resources/**" location="/resources/" />
-
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="10485760" />
-	</bean>
-
-
-	<util:map id="validationCodesMapping" map-class="java.util.HashMap">
-		<entry key="NotNull">
-			<value>51</value>
-		</entry>
-		<entry key="NotBlank">
-			<value>52</value>
-		</entry>
-		<entry key="NotEmpty">
-			<value>53</value>
-		</entry>
-		<entry key="Size">
-			<value>54</value>
-		</entry>
-		<entry key="Min">
-			<value>55</value>
-		</entry>
-	</util:map>
-
-
-	<bean id="messageCodesResolver"
-		class="org.entando.entando.web.common.EntandoMessageCodesResolver">
-		<property name="validationErrorCodeMapping" ref="validationCodesMapping" />
-	</bean>
-
-	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="useCodeAsDefaultMessage" value="true" />
-		<property name="basename">
-			<value>rest/messages</value>
-		</property>
-		<property name="fallbackToSystemLocale" value="true" />
-	</bean>
-
-	<bean
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix">
-			<value>/WEB-INF/jsp/entando/</value>
-		</property>
-		<property name="suffix">
-			<value>.jsp</value>
-		</property>
-	</bean>
-
-	<bean id="conversionService"
-		class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
-		<property name="registerDefaultFormatters" value="false" />
-		<property name="formatters">
-			<set>
-				<bean
-					class="org.springframework.format.number.NumberFormatAnnotationFormatterFactory" />
-			</set>
-		</property>
-		<property name="formatterRegistrars">
-			<set>
-				<bean
-					class="org.springframework.format.datetime.joda.JodaTimeFormatterRegistrar">
-					<!-- consider also timeFormatter and dateTimeFormatter -->
-					<property name="dateFormatter">
-						<bean
-							class="org.springframework.format.datetime.joda.DateTimeFormatterFactoryBean">
-							<property name="pattern" value="dd/MM/yyyy" />
-						</bean>
-					</property>
-				</bean>
-			</set>
-		</property>
-	</bean>
-
-	<bean id="entandoInterceptor"
-		class="org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor" />
-	<bean id="activitiStreamInterceptor"
-		class="org.entando.entando.web.common.interceptor.ActivitiStreamInterceptor" />
-		
-		
-	<mvc:interceptors>
-		<ref bean="entandoInterceptor" />
-		<ref bean="activitiStreamInterceptor" />
-	</mvc:interceptors>
+    <mvc:interceptors>
+        <ref bean="entandoInterceptor" />
+        <ref bean="activitiStreamInterceptor" />
+    </mvc:interceptors>
 
 </beans>
 

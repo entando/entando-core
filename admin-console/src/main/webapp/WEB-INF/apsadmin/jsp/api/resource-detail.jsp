@@ -78,7 +78,7 @@
         <tr>
             <th class="td-pagetree-width"><s:text name="label.api.resource.uri" /></th>
             <td>
-                <c:set var="resourceUriVar"><wp:info key="systemParam" paramName="applicationBaseURL" />api/rs/<wp:info key="defaultLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" /></c:set>
+                <c:set var="resourceUriVar"><wp:info key="systemParam" paramName="applicationBaseURL" />legacyapi/rs/<wp:info key="defaultLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" /></c:set>
                 <a href="<c:out value="${resourceUriVar}" escapeXml="false" />">
                     <span class="icon fa fa-globe"></span>&#32;
                     <c:out value="${resourceUriVar}" escapeXml="false" />

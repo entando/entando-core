@@ -11,7 +11,7 @@ public class LanguageDto {
     private String description;
 
     @JsonProperty("isActive")
-    private boolean active;
+    private boolean isActive;
 
     @JsonProperty("isDefault")
     private boolean defaultLang;
@@ -48,12 +48,13 @@ public class LanguageDto {
         this.description = description;
     }
 
+    @JsonProperty("isActive")
     public boolean isActive() {
-        return active;
+        return isActive;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
 
     public boolean isDefaultLang() {
@@ -74,4 +75,5 @@ public class LanguageDto {
                 return dtoFieldName;
         }
     }
+
 }

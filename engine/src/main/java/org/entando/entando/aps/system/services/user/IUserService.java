@@ -23,7 +23,6 @@ import org.entando.entando.web.user.model.UserPasswordRequest;
 import org.entando.entando.web.user.model.UserRequest;
 
 /**
- *
  * @author paddeo
  */
 public interface IUserService {
@@ -33,6 +32,8 @@ public interface IUserService {
     public final static String STATUS_ACTIVE = "active";
 
     public final static String STATUS_DISABLED = "inactive";
+
+    public List<UserAuthorityDto> getUserAuthorities(String username);
 
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request);
 

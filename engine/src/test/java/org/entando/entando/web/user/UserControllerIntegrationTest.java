@@ -76,26 +76,47 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     public void testAddUserAuthorities() throws Exception {
         Group group = createGroup(1);
         Role role = createRole(1);
+        UserDetails mockuser = this.createUser("mockuser");
         try {
             this.groupManager.addGroup(group);
             this.roleManager.addRole(role);
+            this.userManager.addUser(mockuser);
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-
             String mockJson = "[{\"group\":\"group1\", \"role\":\"role1\"}]";
-
-            ResultActions result = mockMvc.perform(
+            ResultActions result1 = mockMvc.perform(
+                    put("/users/{target}/authorities", "wrongUser")
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isNotFound());
+            ResultActions result2 = mockMvc.perform(
                     put("/users/{target}/authorities", "mockuser")
                     .content(mockJson)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isOk());
+            result2.andExpect(jsonPath("$.payload[0].group", is("group1")));
 
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload[0].group", is("group1")));
+            ResultActions result3 = mockMvc.perform(
+                    get("/users/{target}/authorities", "wrongUser")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result3.andExpect(status().isNotFound());
+
+            ResultActions result4 = mockMvc.perform(
+                    get("/users/{target}/authorities", "mockuser")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result4.andExpect(status().isOk());
+            result4.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
+            result4.andExpect(jsonPath("$.payload[0].group", is("group1")));
+            result4.andExpect(jsonPath("$.payload[0].role", is("role1")));
         } finally {
             this.authorizationManager.deleteUserAuthorizations("mockuser");
             this.groupManager.removeGroup(group);
             this.roleManager.removeRole(role);
+            this.userManager.removeUser("mockuser");
         }
     }
 
@@ -140,7 +161,6 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
             this.userManager.removeUser(validUsername);
-            e.printStackTrace();
             throw e;
         } finally {
             UserDetails user = this.userManager.getUser(validUsername);
@@ -169,7 +189,6 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"" + validPassword + "\"}";
             ResultActions result = this.executeUserPost(mockJson, accessToken, status().isOk());
-            String response = result.andReturn().getResponse().getContentAsString();
             result.andExpect(jsonPath("$.payload.username", is(validUsername)));
 
             ResultActions resultDelete = mockMvc.perform(
@@ -181,7 +200,6 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
             this.userManager.removeUser(validUsername);
-            e.printStackTrace();
             throw e;
         } finally {
             UserDetails user = this.userManager.getUser(validUsername);
@@ -364,15 +382,15 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         return role;
     }
 
-    private UserDetails createUser(int i) {
+    private UserDetails createUser(String username) {
         User user = new User();
-        user.setUsername("user" + i);
+        user.setUsername(username);
         user.setDisabled(false);
         user.setLastAccess(new Date());
         user.setLastPasswordChange(new Date());
         user.setMaxMonthsSinceLastAccess(2);
         user.setMaxMonthsSinceLastPasswordChange(1);
-        user.setPassword("password" + i);
+        user.setPassword("password");
         return user;
     }
 

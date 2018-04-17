@@ -175,6 +175,14 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) {
+        logger.debug("requesting authorities for username {}", target);
+        List<UserAuthorityDto> authorities = this.getUserService().getUserAuthorities(target);
+        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("user {} requesting add authorities for username {} with req {}", user.getUsername(), target, authRequest);

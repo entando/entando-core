@@ -44,7 +44,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.client.ResourceAccessException;
 
 @ControllerAdvice
 public class RestExceptionHandler {
@@ -107,11 +106,17 @@ public class RestExceptionHandler {
     @ResponseBody
     public RestResponse processEntandoTokenException(ResourcePermissionsException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
-        RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED_ON_RESOURCE", new Object[]{ex.getUsername(), ex.getResource()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
+        RestResponse response = null;
+        if (null != ex.getBindingResult()) {
+            BindingResult result = ex.getBindingResult();
+            response = processAllErrors(result);
+        } else {
+            response = new RestResponse();
+            RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED_ON_RESOURCE", new Object[]{ex.getUsername(), ex.getResource()}));
+            List<RestError> errors = new ArrayList<>();
+            errors.add(error);
+            response.setErrors(errors);
+        }
         return response;
     }
 

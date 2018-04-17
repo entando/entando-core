@@ -134,7 +134,9 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
         when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(currentUserName, "ok"));
         try {
             ResultActions result = this.executeDeleteUserAuthorities(currentUserName, accessToken);
-            result.andExpect(status().isBadRequest());
+            result.andExpect(status().isForbidden());
+            String response = result.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + response);
             result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_SELF_UPDATE)));
             assertThat(this.authorizationManager.getUserAuthorizations(currentUserName).size(), is(Matchers.greaterThanOrEqualTo(1)));
         } catch (Throwable e) {

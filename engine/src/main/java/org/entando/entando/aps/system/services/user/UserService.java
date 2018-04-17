@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.user;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
@@ -109,28 +110,43 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
-        try {
-            List<UserAuthorityDto> authorizations = new ArrayList<>();
-
-            final UserDetails user = this.getUserManager().getUser(username);;
-            request.forEach(authorization
-                    -> {
-                try {
-                    if (!this.getAuthorizationManager().isAuthOnGroupAndRole(user, authorization.getGroup(), authorization.getRole(), true)) {
-                        this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
-                    }
-                } catch (ApsSystemException ex) {
-                    logger.error("Error in add authorities for {}", username, ex);
-                    throw new RestServerError("Error in add authorities", ex);
-                }
-                authorizations.add(new UserAuthorityDto(authorization.getGroup(), authorization.getRole()));
-            });
-            return authorizations;
-        } catch (ApsSystemException ex) {
-            logger.error("Error in add authorities for {}", username, ex);
-            throw new RestServerError("Error in add authorities", ex);
+    public List<UserAuthorityDto> getUserAuthorities(String username) {
+        UserDetails user = this.loadUser(username);
+        if (null == user) {
+            return null;
         }
+        List<UserAuthorityDto> dtos = new ArrayList<>();
+        try {
+            List<Authorization> auths = this.getAuthorizationManager().getUserAuthorizations(username);
+            if (null != auths) {
+                auths.forEach(auth -> dtos.add(new UserAuthorityDto(auth)));
+            }
+        } catch (ApsSystemException e) {
+            logger.error("Error extracting auths for user {}", username, e);
+            throw new RestServerError("Error extracting auths for user " + username, e);
+        }
+        return dtos;
+    }
+
+    @Override
+    public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request) {
+        UserDetails user = this.loadUser(username);
+        if (null == user) {
+            return null;
+        }
+        List<UserAuthorityDto> authorizations = new ArrayList<>();
+        request.forEach(authorization -> {
+            try {
+                if (!this.getAuthorizationManager().isAuthOnGroupAndRole(user, authorization.getGroup(), authorization.getRole(), true)) {
+                    this.getAuthorizationManager().addUserAuthorization(username, authorization.getGroup(), authorization.getRole());
+                }
+            } catch (ApsSystemException ex) {
+                logger.error("Error in add authorities for {}", username, ex);
+                throw new RestServerError("Error in add authorities", ex);
+            }
+            authorizations.add(new UserAuthorityDto(authorization.getGroup(), authorization.getRole()));
+        });
+        return authorizations;
     }
 
     @Override

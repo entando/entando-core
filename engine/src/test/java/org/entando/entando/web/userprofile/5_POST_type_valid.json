@@ -1,0 +1,77 @@
+{
+    "code": "TST",
+    "name": "Profile Type TST",
+    "attributes": [
+        {
+            "code": "Title",
+            "type": "Monotext",
+            "name": "Description of text attribute",
+            "mandatory": false
+        },{
+            "code": "Subtitle",
+            "type": "Text",
+            "name": "Description of subtitle attribute",
+            "mandatory": true
+        },{
+            "code": "Number",
+            "type": "Number",
+            "name": "Description of number attribute",
+            "mandatory": false
+        },{
+            "code": "ThreeState",
+            "type": "ThreeState",
+            "name": "Description of Boolean attribute",
+            "mandatory": false
+        },{
+            "code": "Date",
+            "type": "Date",
+            "name": "Description of date attribute",
+            "mandatory": true
+        }, {
+            "code": "monolist",
+            "type": "Monolist",
+            "name": "MonoLIST Description",
+            "mandatory": true,
+            "nestedAttribute": {
+                "code": "monolist",
+                "type": "Text"
+            },
+            "compositeAttributes": null
+        }, {
+            "code": "list",
+            "type": "List",
+            "name": "LIST Description",
+            "mandatory": false,
+            "nestedAttribute": {
+                "code": "list",
+                "type": "Monotext"
+            },
+            "compositeAttributes": null
+        }, {
+            "code": "multilist",
+            "type": "List",
+            "name": "LIST Description",
+            "mandatory": true,
+            "nestedAttribute": {
+                "code": "multilist",
+                "type": "Monotext"
+            }
+        }, {
+            "code": "composite",
+            "type": "Composite",
+            "name": "Composite Description",
+            "mandatory": false,
+            "compositeAttributes":[
+                {
+                    "code": "TitleSub",
+                    "type": "Monotext",
+                    "name": "Description of text attribute"
+                },{
+                    "code": "SubtitleSub",
+                    "type": "Text",
+                    "name": "Description of subtitle attribute"
+                }
+            ]
+        }
+    ]
+}

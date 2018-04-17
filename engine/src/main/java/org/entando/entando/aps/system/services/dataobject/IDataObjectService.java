@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.dataobject;
 
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -43,11 +43,11 @@ public interface IDataObjectService {
     public AttributeTypeDto getAttributeType(String attributeCode);
 
     // ----------------------------------
-    public EntityAttributeFullDto getDataTypeAttribute(String dataTypeCode, String attributeCode);
+    public EntityTypeAttributeFullDto getDataTypeAttribute(String dataTypeCode, String attributeCode);
 
-    public EntityAttributeFullDto addDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
+    public EntityTypeAttributeFullDto addDataTypeAttribute(String dataTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult);
 
-    public EntityAttributeFullDto updateDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult);
+    public EntityTypeAttributeFullDto updateDataTypeAttribute(String dataTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult);
 
     public void deleteDataTypeAttribute(String dataTypeCode, String attributeCode);
 

@@ -35,9 +35,9 @@ import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDtoBuilder;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
-import org.entando.entando.aps.system.services.entity.AbstractEntityService;
+import org.entando.entando.aps.system.services.entity.AbstractEntityTypeService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -50,7 +50,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class DataObjectService extends AbstractEntityService<DataObject, DataTypeDto>
+public class DataObjectService extends AbstractEntityTypeService<DataObject, DataTypeDto>
         implements IDataObjectService, GroupServiceUtilizer<DataObjectDto>, CategoryServiceUtilizer<DataObjectDto> {
 
     private IPageManager pageManager;
@@ -175,17 +175,17 @@ public class DataObjectService extends AbstractEntityService<DataObject, DataTyp
     }
 
     @Override
-    public EntityAttributeFullDto getDataTypeAttribute(String dataTypeCode, String attributeCode) {
+    public EntityTypeAttributeFullDto getDataTypeAttribute(String dataTypeCode, String attributeCode) {
         return super.getEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, attributeCode);
     }
 
     @Override
-    public EntityAttributeFullDto addDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto addDataTypeAttribute(String dataTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.addEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, bodyRequest, bindingResult);
     }
 
     @Override
-    public EntityAttributeFullDto updateDataTypeAttribute(String dataTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto updateDataTypeAttribute(String dataTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.updateEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, bodyRequest, bindingResult);
     }
 

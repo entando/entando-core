@@ -16,9 +16,9 @@ package org.entando.entando.aps.system.services.userprofile;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.entity.AbstractEntityService;
+import org.entando.entando.aps.system.services.entity.AbstractEntityTypeService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -32,7 +32,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class UserProfileTypeService extends AbstractEntityService<IUserProfile, UserProfileTypeDto> implements IUserProfileTypeService {
+public class UserProfileTypeService extends AbstractEntityTypeService<IUserProfile, UserProfileTypeDto> implements IUserProfileTypeService {
 
     @Override
     public PagedMetadata<EntityTypeShortDto> getShortUserProfileTypes(RestListRequest requestList) {
@@ -80,17 +80,17 @@ public class UserProfileTypeService extends AbstractEntityService<IUserProfile, 
     }
 
     @Override
-    public EntityAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode) {
+    public EntityTypeAttributeFullDto getUserProfileAttribute(String profileTypeCode, String attributeCode) {
         return super.getEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode);
     }
 
     @Override
-    public EntityAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto addUserProfileAttribute(String profileTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.addEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 
     @Override
-    public EntityAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityAttributeFullDto bodyRequest, BindingResult bindingResult) {
+    public EntityTypeAttributeFullDto updateUserProfileAttribute(String profileTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         return super.updateEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, bodyRequest, bindingResult);
     }
 

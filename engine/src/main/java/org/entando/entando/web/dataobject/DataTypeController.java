@@ -25,7 +25,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -177,7 +177,7 @@ public class DataTypeController {
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute/{attributeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDataTypeAttribute(@PathVariable String dataTypeCode, @PathVariable String attributeCode) throws JsonProcessingException {
         logger.debug("Requested data type {} - attribute {}", dataTypeCode, attributeCode);
-        EntityAttributeFullDto dto = this.getDataObjectService().getDataTypeAttribute(dataTypeCode, attributeCode);
+        EntityTypeAttributeFullDto dto = this.getDataObjectService().getDataTypeAttribute(dataTypeCode, attributeCode);
         logger.debug("Main Response -> {}", dto);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("dataTypeCode", dataTypeCode);
@@ -186,13 +186,13 @@ public class DataTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addDataTypeAttribute(@PathVariable String dataTypeCode, @Valid @RequestBody EntityAttributeFullDto bodyRequest,
+    public ResponseEntity<RestResponse> addDataTypeAttribute(@PathVariable String dataTypeCode, @Valid @RequestBody EntityTypeAttributeFullDto bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Data type {} - Adding attribute {}", dataTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        EntityAttributeFullDto result = this.getDataObjectService().addDataTypeAttribute(dataTypeCode, bodyRequest, bindingResult);
+        EntityTypeAttributeFullDto result = this.getDataObjectService().addDataTypeAttribute(dataTypeCode, bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -205,7 +205,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute/{attributeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> updateDataTypeAttribute(@PathVariable String dataTypeCode,
-            @PathVariable String attributeCode, @Valid @RequestBody EntityAttributeFullDto bodyRequest, BindingResult bindingResult) throws JsonProcessingException {
+            @PathVariable String attributeCode, @Valid @RequestBody EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Data type {} - Updating attribute {}", dataTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -213,7 +213,7 @@ public class DataTypeController {
             bindingResult.rejectValue("code", DataTypeValidator.ERRCODE_URINAME_MISMATCH, new String[]{attributeCode, bodyRequest.getCode()}, "entityType.attribute.code.mismatch");
             throw new ValidationConflictException(bindingResult);
         }
-        EntityAttributeFullDto result = this.getDataObjectService().updateDataTypeAttribute(dataTypeCode, bodyRequest, bindingResult);
+        EntityTypeAttributeFullDto result = this.getDataObjectService().updateDataTypeAttribute(dataTypeCode, bodyRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }

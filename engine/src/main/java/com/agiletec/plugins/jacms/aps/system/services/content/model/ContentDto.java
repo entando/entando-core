@@ -1,9 +1,23 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package com.agiletec.plugins.jacms.aps.system.services.content.model;
 
+import java.io.Serializable;
+import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import java.util.Date;
-import java.util.stream.Collectors;
 
-public class ContentDto extends EntityDto {
+public class ContentDto extends EntityDto implements Serializable {
 
     private String status;
     private boolean onLine;
@@ -18,38 +32,22 @@ public class ContentDto extends EntityDto {
     private String firstEditor;
     private String lastEditor;
 
-    public ContentDto() {}
+    public ContentDto() {
+        super();
+    }
 
     public ContentDto(Content src) {
-
-        this.setId(src.getId());
-        this.setTypeCode(src.getTypeCode());
-        this.setTypeDescription(src.getTypeDescription());
-        this.setDescription(src.getDescription());
-        this.setMainGroup(src.getMainGroup());
-        this.setGroups(src.getGroups());
-        //this.setAttributeList(src.getAttributeList());
-
-        if (null != src.getCategories()) {
-            this.setCategories(src.getCategories().stream().map(i -> i.getCode()).collect(Collectors.toList()));
-        }
-
-        //this.setRenderingLang(src.getRenderingLang());
-        //this.setDefaultLang(src.getDefaultLang());
-
+        super(src);
         this.setStatus(src.getStatus());
         this.setOnLine(src.isOnLine());
         this.setViewPage(src.getViewPage());
         this.setListModel(src.getListModel());
         this.setDefaultModel(src.getDefaultModel());
-
         this.setCreated(src.getCreated());
         this.setLastModified(src.getLastModified());
-
         this.setVersion(src.getVersion());
         this.setFirstEditor(src.getFirstEditor());
         this.setLastEditor(src.getLastEditor());
-
     }
 
     public String getStatus() {

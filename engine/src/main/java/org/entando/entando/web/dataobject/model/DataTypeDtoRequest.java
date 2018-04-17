@@ -18,7 +18,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
-import org.entando.entando.aps.system.services.entity.model.EntityAttributeFullDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 
 /**
@@ -46,7 +46,7 @@ public class DataTypeDtoRequest extends EntityTypeDtoRequest {
         this(entityType);
         List<AttributeInterface> entityAttributes = entityType.getAttributeList();
         for (AttributeInterface attribute : entityAttributes) {
-            EntityAttributeFullDto attributeDto = new EntityAttributeFullDto(attribute, roles);
+            EntityTypeAttributeFullDto attributeDto = new EntityTypeAttributeFullDto(attribute, roles);
             this.getAttributes().add(attributeDto);
         }
     }

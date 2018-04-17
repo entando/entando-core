@@ -33,7 +33,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class EntityAttributeValidationDto {
+public class EntityTypeAttributeValidationDto {
 
     private Integer minLength;
     private Integer maxLength;
@@ -59,20 +59,20 @@ public class EntityAttributeValidationDto {
     private Integer equalNumber;
     private String equalNumberAttribute;
 
-    private EntityAttributeOgnlValidationDto ognlValidation;
+    private EntityTypeAttributeOgnlValidationDto ognlValidation;
 
-    public EntityAttributeValidationDto() {
+    public EntityTypeAttributeValidationDto() {
 
     }
 
-    public EntityAttributeValidationDto(IAttributeValidationRules validationRules) {
+    public EntityTypeAttributeValidationDto(IAttributeValidationRules validationRules) {
         OgnlValidationRule ognlValidationRule = validationRules.getOgnlValidationRule();
         if (null != ognlValidationRule) {
-            this.setOgnlValidation(new EntityAttributeOgnlValidationDto(ognlValidationRule));
+            this.setOgnlValidation(new EntityTypeAttributeOgnlValidationDto(ognlValidationRule));
         }
     }
 
-    public EntityAttributeValidationDto(AttributeInterface attribute) {
+    public EntityTypeAttributeValidationDto(AttributeInterface attribute) {
         IAttributeValidationRules validationRules = attribute.getValidationRules();
         if (null == validationRules) {
             return;
@@ -117,12 +117,12 @@ public class EntityAttributeValidationDto {
         }
         OgnlValidationRule ognlValidationRule = validationRules.getOgnlValidationRule();
         if (null != ognlValidationRule) {
-            this.setOgnlValidation(new EntityAttributeOgnlValidationDto(ognlValidationRule));
+            this.setOgnlValidation(new EntityTypeAttributeOgnlValidationDto(ognlValidationRule));
         }
     }
 
     public void buildAttributeValidation(String typeCode, AttributeInterface attribute, BindingResult bindingResult) {
-        EntityAttributeOgnlValidationDto ognlValidationDto = this.getOgnlValidation();
+        EntityTypeAttributeOgnlValidationDto ognlValidationDto = this.getOgnlValidation();
         if (null != ognlValidationDto) {
             ognlValidationDto.buildAttributeOgnlValidation(typeCode, attribute, bindingResult);
         }
@@ -372,11 +372,11 @@ public class EntityAttributeValidationDto {
         this.equalNumberAttribute = equalNumberAttribute;
     }
 
-    public EntityAttributeOgnlValidationDto getOgnlValidation() {
+    public EntityTypeAttributeOgnlValidationDto getOgnlValidation() {
         return ognlValidation;
     }
 
-    public void setOgnlValidation(EntityAttributeOgnlValidationDto ognlValidation) {
+    public void setOgnlValidation(EntityTypeAttributeOgnlValidationDto ognlValidation) {
         this.ognlValidation = ognlValidation;
     }
 

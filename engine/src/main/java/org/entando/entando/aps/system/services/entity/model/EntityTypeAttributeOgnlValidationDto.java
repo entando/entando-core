@@ -23,7 +23,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class EntityAttributeOgnlValidationDto {
+public class EntityTypeAttributeOgnlValidationDto {
 
     private String ognlExpression;
     private boolean applyOnlyToFilledAttr;
@@ -32,11 +32,11 @@ public class EntityAttributeOgnlValidationDto {
     private String errorMessage;
     private String keyForErrorMessage;
 
-    public EntityAttributeOgnlValidationDto() {
+    public EntityTypeAttributeOgnlValidationDto() {
 
     }
 
-    public EntityAttributeOgnlValidationDto(OgnlValidationRule ognlValidationRule) {
+    public EntityTypeAttributeOgnlValidationDto(OgnlValidationRule ognlValidationRule) {
         this.setApplyOnlyToFilledAttr(ognlValidationRule.isEvalExpressionOnValuedAttribute());
         this.setErrorMessage(ognlValidationRule.getErrorMessage());
         this.setHelpMessage(ognlValidationRule.getHelpMessage());

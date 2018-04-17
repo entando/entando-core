@@ -1,0 +1,103 @@
+{
+    "id": "new_user",
+    "typeCode":"TST",
+    "typeDescription":"Type for test",
+    "description":"Profile of user",
+    "mainGroup":"free",
+    "groups":[
+        "group1",
+        "group2"
+    ],
+    "attributes": [
+        {
+            "code": "Title",
+            "value": "Mio titolo"
+        }, {
+            "code": "Subtitle",
+            "values": {
+                "it": "multilingua IT",
+                "en": "multilingual EN"
+            }
+        }, {
+            "code": "Number",
+            "value": 2
+        }, {
+            "code": "ThreeState",
+            "value": true
+        }, {
+            "code": "Date",
+            "value": "2018-03-21 00:00:00"
+        }, {
+            "code": "monolist",
+            "elements": [
+                {
+                    "code": "monolist",
+                    "values": {
+                        "it": "multilingua IT_1",
+                        "en": "multilingual EN_1"
+                    }
+                }, {
+                    "code": "monolist",
+                    "values": {
+                        "it": "multilingua IT_2",
+                        "en": "multilingual EN_2"
+                    }
+                }, {
+                    "code": "monolist",
+                    "values": {
+                        "it": "multilingua IT_3",
+                        "en": "multilingual EN_3"
+                    }
+                }, {
+                    "code": "monolist",
+                    "values": {
+                        "it": "multilingua IT_3",
+                        "en": "multilingual EN_3"
+                    }
+                }
+            ]
+        }, {
+            "code": "multilist",
+            "listElements": {
+                "it": [
+                    {
+                        "code": "multilist",
+                        "value": "value_it_1"
+                    }, {
+                        "code": "multilist",
+                        "value": "value_it_2"
+                    }
+                ],
+                "en": [
+                    {
+                        "code": "multilist",
+                        "value": "value_en_1"
+                    }, {
+                        "code": "multilist",
+                        "value": "value_en_2"
+                    }, {
+                        "code": "multilist",
+                        "value": "value_en_3"
+                    }, {
+                        "code": "multilist",
+                        "value": "value_en_4"
+                    }
+                ]
+            }
+        }, {
+            "code": "composite",
+            "compositeelements": [
+                {
+                    "code": "SubtitleSub",
+                    "values": {
+                        "it": "multilingua IT",
+                        "en": "multilingual EN"
+                    }
+                }, {
+                    "code": "TitleSub",
+                    "value": "Mio titolo"
+                }
+            ]
+        }
+    ]
+}

@@ -15,8 +15,7 @@ package org.entando.entando.web.userprofile.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
-import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
-import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
+import org.entando.entando.web.entity.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,10 +23,14 @@ import org.springframework.stereotype.Component;
  * @author E.Santoboni
  */
 @Component
-public class ProfileTypeValidator extends AbstractEntityTypeValidator {
+public class ProfileValidator extends EntityValidator {
 
     @Autowired
     private IUserProfileManager userProfileManager;
+
+    public boolean existProfile(String username) {
+        return super.existEntity(username);
+    }
 
     @Override
     protected IEntityManager getEntityManager() {

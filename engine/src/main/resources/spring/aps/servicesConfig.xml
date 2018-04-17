@@ -161,6 +161,8 @@
 
     <bean id="UserProfileTypeService" class="org.entando.entando.aps.system.services.userprofile.UserProfileTypeService" />
 
+    <bean id="UserProfileService" class="org.entando.entando.aps.system.services.userprofile.UserProfileService" />
+
     <bean id="UserSettingsService" class="org.entando.entando.aps.system.services.usersettings.UserSettingsService">
     	<property name="configManager" ref="BaseConfigManager" />
     </bean>

@@ -12,7 +12,7 @@ public class LanguageRequest {
     @NotNull(message = "language.active.required")
     @JsonProperty("isActive")
     @JsonDeserialize(using = BooleanStringDeserializer.class)
-    private Boolean active;
+    private Boolean isActive;
 
     public LanguageRequest() {
 
@@ -20,15 +20,16 @@ public class LanguageRequest {
 
     @JsonIgnore
     public boolean getStatus() {
-        return true == this.getActive();
+        return true == this.getIsActive();
     }
 
-    public Boolean getActive() {
-        return active;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
+
 
 }

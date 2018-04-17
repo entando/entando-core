@@ -43,6 +43,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                                       .perform(get("/languages")
                                                                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+        System.out.println(result.andReturn().getResponse().getContentAsString());
 
 
         /**
@@ -54,6 +55,22 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+    }
+
+    @Test
+    public void testGetLangsByActive() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/languages")
+                                                                .param("filter[0].attribute", "isActive")
+                                                                .param("filter[0].value", "true")
+                                                                .header("Authorization", "Bearer " + accessToken));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(status().isOk());
+
+
     }
 
     @Test

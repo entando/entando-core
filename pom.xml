@@ -82,7 +82,7 @@
         <test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
         <test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 		
-        <spring.version>4.1.6.RELEASE</spring.version>
+        <spring.version>5.0.5.RELEASE</spring.version>
         <struts2.version>2.5.10.1</struts2.version>
         <cxf.version>2.7.14</cxf.version>
         <oltu.version>1.0.2</oltu.version>
@@ -658,15 +658,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.3.1</version>
+            <version>4.4.9</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.3.2</version>
+            <version>4.5.1</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -690,6 +692,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!--
         <dependency>
             <groupId>net.oauth.core</groupId>
             <artifactId>oauth</artifactId>
@@ -702,6 +705,7 @@
             <version>20100527</version>
             <type>jar</type>
         </dependency>
+        -->
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-core</artifactId>
@@ -732,14 +736,14 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.16</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.16</version>
         </dependency>
 		
 		

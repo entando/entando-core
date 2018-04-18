@@ -13,12 +13,15 @@
  */
 package org.entando.entando.web.guifragment;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
@@ -70,6 +73,7 @@ public class GuiFragmentController {
     public void setGuiFragmentValidator(GuiFragmentValidator guiFragmentValidator) {
         this.guiFragmentValidator = guiFragmentValidator;
     }
+
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -131,6 +135,15 @@ public class GuiFragmentController {
         Map<String, String> result = new HashMap<>();
         result.put("code", fragmentCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/info/plugins", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getPluginCodes() throws ApsSystemException {
+        logger.info("loading plugin list");
+        List<String> plugins = this.getGuiFragmentService().getPluginCodes();
+
+        return new ResponseEntity<>(new RestResponse(plugins), HttpStatus.OK);
     }
 
 }

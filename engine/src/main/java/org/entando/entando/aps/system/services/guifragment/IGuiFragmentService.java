@@ -13,6 +13,8 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
+import java.util.List;
+
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -30,5 +32,7 @@ public interface IGuiFragmentService {
 	public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
 
 	public void removeGuiFragment(String guiFragmentCode);
+
+    public List<String> getPluginCodes();
 
 }

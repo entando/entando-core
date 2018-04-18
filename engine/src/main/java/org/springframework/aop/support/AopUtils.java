@@ -51,6 +51,13 @@ import org.springframework.util.ReflectionUtils;
  * of framework-specific AOP utility methods which depend on internals of
  * Spring's AOP framework implementation.
  *
+ * <p>
+ * The class has been inserted into the entando core to preserve Apache CXF
+ * functionality that requires two methods (isCglibProxyClass(Class) and
+ * isCglibProxyClassName(String)) that in the 5.0.x version of Spring framework
+ * there are no more. The new AopUtils class has been inserted with the old
+ * methods necessary for cxf.
+ *
  * @author Rod Johnson
  * @author Juergen Hoeller
  * @author Rob Harrop

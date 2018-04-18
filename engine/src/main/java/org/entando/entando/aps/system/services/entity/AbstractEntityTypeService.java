@@ -30,15 +30,18 @@ import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribu
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.util.EnumeratorAttributeItemsExtractor;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
@@ -58,6 +61,10 @@ import org.entando.entando.web.entity.model.EntityTypeDtoRequest;
 import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -67,9 +74,11 @@ import org.springframework.validation.BindingResult;
  * @param <I>
  * @param <O>
  */
-public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends EntityTypeFullDto> {
+public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends EntityTypeFullDto> implements BeanFactoryAware {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private BeanFactory beanFactory;
 
     @Autowired
     private List<IEntityManager> entityManagers;
@@ -153,7 +162,13 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
             logger.warn("no attribute type found with code {}", attributeCode);
             throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS, "attribute", attributeCode);
         }
-        return new AttributeTypeDto(attribute, entityManager);
+        AttributeTypeDto dto = new AttributeTypeDto(attribute, entityManager);
+        if (dto.isEnumeratorMapOptionsSupported()) {
+            dto.setEnumeratorMapExtractorBeans(this.getEnumeratorMapExtractorBeans());
+        } else if (dto.isEnumeratorOptionsSupported()) {
+            dto.setEnumeratorExtractorBeans(this.getEnumeratorExtractorBeans());
+        }
+        return dto;
     }
 
     protected O getFullEntityType(String entityManagerCode, String entityTypeCode) {
@@ -504,12 +519,42 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         entityManager.reloadEntitiesReferences(entityTypeCode);
     }
 
+    public List<String> getEnumeratorExtractorBeans() {
+        return this.getEnumeratorExtractorBeans(EnumeratorAttributeItemsExtractor.class);
+    }
+
+    public List<String> getEnumeratorMapExtractorBeans() {
+        return this.getEnumeratorExtractorBeans(EnumeratorMapAttributeItemsExtractor.class);
+    }
+
+    protected List<String> getEnumeratorExtractorBeans(Class type) {
+        List<String> extractors = null;
+        try {
+            ListableBeanFactory factory = (ListableBeanFactory) this.getBeanFactory();
+            String[] defNames = factory.getBeanNamesForType(type);
+            extractors = Arrays.asList(defNames);
+        } catch (Throwable t) {
+            logger.error("Error while extracting enumerator extractor beans", t);
+            throw new RuntimeException("Error while extracting enumerator extractor beans", t);
+        }
+        return extractors;
+    }
+
     protected List<IEntityManager> getEntityManagers() {
         return entityManagers;
     }
 
     public void setEntityManagers(List<IEntityManager> entityManagers) {
         this.entityManagers = entityManagers;
+    }
+
+    protected BeanFactory getBeanFactory() {
+        return beanFactory;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
     }
 
 }

@@ -14,12 +14,17 @@
 package org.entando.entando.aps.system.services.entity.model;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
+import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.EnumeratorAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.aps.system.common.entity.model.attribute.EnumeratorMapAttribute;
 
 /**
  * @author E.Santoboni
@@ -30,6 +35,16 @@ public class AttributeTypeDto implements Serializable {
     private boolean multilingual;
     private boolean textAttribute;
     private boolean simple;
+    private boolean searchableOptionSupported;
+    private boolean indexableOptionSupported;
+    private boolean textFilterSupported;
+    private boolean dateFilterSupported;
+    private boolean numberFilterSupported;
+    private boolean enumeratorOptionsSupported;
+    private boolean enumeratorMapOptionsSupported;
+    private boolean listAttribute;
+    private List<String> enumeratorExtractorBeans = new ArrayList<>();
+    private List<String> enumeratorMapExtractorBeans = new ArrayList<>();
     private List<AttributePropertyDto> allowedRoles = new ArrayList<>();
     private List<AttributePropertyDto> allowedDisablingCodes = new ArrayList<>();
 
@@ -51,6 +66,16 @@ public class AttributeTypeDto implements Serializable {
             roles.stream().filter(i -> i.getAllowedAttributeTypes().contains(attribute.getType()))
                     .forEach(i -> this.allowedRoles.add(new AttributePropertyDto(i.getName(), i.getDescription())));
         }
+        this.setSearchableOptionSupported(attribute.isSearchableOptionSupported());
+        this.setTextFilterSupported(attribute.isTextAttribute());
+        this.setDateFilterSupported(attribute instanceof DateAttribute);
+        this.setNumberFilterSupported(attribute instanceof NumberAttribute);
+        if (attribute instanceof EnumeratorMapAttribute) {
+            this.setEnumeratorMapOptionsSupported(true);
+        } else {
+            this.setEnumeratorOptionsSupported(attribute instanceof EnumeratorAttribute);
+        }
+        this.setListAttribute(attribute instanceof AbstractListAttribute);
     }
 
     public String getCode() {
@@ -85,6 +110,78 @@ public class AttributeTypeDto implements Serializable {
         this.simple = simple;
     }
 
+    public boolean isSearchableOptionSupported() {
+        return searchableOptionSupported;
+    }
+
+    public void setSearchableOptionSupported(boolean searchableOptionSupported) {
+        this.searchableOptionSupported = searchableOptionSupported;
+    }
+
+    public boolean isIndexableOptionSupported() {
+        return indexableOptionSupported;
+    }
+
+    public void setIndexableOptionSupported(boolean indexableOptionSupported) {
+        this.indexableOptionSupported = indexableOptionSupported;
+    }
+
+    public boolean isTextFilterSupported() {
+        return textFilterSupported;
+    }
+
+    public void setTextFilterSupported(boolean textFilterSupported) {
+        this.textFilterSupported = textFilterSupported;
+    }
+
+    public boolean isDateFilterSupported() {
+        return dateFilterSupported;
+    }
+
+    public void setDateFilterSupported(boolean dateFilterSupported) {
+        this.dateFilterSupported = dateFilterSupported;
+    }
+
+    public boolean isNumberFilterSupported() {
+        return numberFilterSupported;
+    }
+
+    public void setNumberFilterSupported(boolean numberFilterSupported) {
+        this.numberFilterSupported = numberFilterSupported;
+    }
+
+    public boolean isEnumeratorOptionsSupported() {
+        return enumeratorOptionsSupported;
+    }
+
+    public void setEnumeratorOptionsSupported(boolean enumeratorOptionsSupported) {
+        this.enumeratorOptionsSupported = enumeratorOptionsSupported;
+    }
+
+    public boolean isEnumeratorMapOptionsSupported() {
+        return enumeratorMapOptionsSupported;
+    }
+
+    public void setEnumeratorMapOptionsSupported(boolean enumeratorMapOptionsSupported) {
+        this.enumeratorMapOptionsSupported = enumeratorMapOptionsSupported;
+    }
+
+    public List<String> getEnumeratorExtractorBeans() {
+        return enumeratorExtractorBeans;
+    }
+
+    public void setEnumeratorExtractorBeans(List<String> enumeratorExtractorBeans) {
+        this.enumeratorExtractorBeans = enumeratorExtractorBeans;
+    }
+
+    public List<String> getEnumeratorMapExtractorBeans() {
+        return enumeratorMapExtractorBeans;
+    }
+
+    public void setEnumeratorMapExtractorBeans(List<String> enumeratorMapExtractorBeans) {
+        this.enumeratorMapExtractorBeans = enumeratorMapExtractorBeans;
+    }
+
     public List<AttributePropertyDto> getAllowedRoles() {
         return allowedRoles;
     }
@@ -99,6 +196,14 @@ public class AttributeTypeDto implements Serializable {
 
     public void setAllowedDisablingCodes(List<AttributePropertyDto> allowedDisablingCodes) {
         this.allowedDisablingCodes = allowedDisablingCodes;
+    }
+
+    public boolean isListAttribute() {
+        return listAttribute;
+    }
+
+    public void setListAttribute(boolean listAttribute) {
+        this.listAttribute = listAttribute;
     }
 
 }

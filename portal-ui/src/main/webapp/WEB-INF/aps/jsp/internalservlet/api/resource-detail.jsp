@@ -49,7 +49,7 @@
 		</dd>
 	<dt><wp:i18n key="ENTANDO_API_RESOURCE_URI" /></dt>
 		<dd>
-			<a href="<wp:info key="systemParam" paramName="applicationBaseURL" />api/rs/<wp:info key="currentLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" />"><wp:info key="systemParam" paramName="applicationBaseURL" />api/rs/<wp:info key="currentLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" /></a>
+			<a href="<wp:info key="systemParam" paramName="applicationBaseURL" />legacyapi/rs/<wp:info key="currentLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" />"><wp:info key="systemParam" paramName="applicationBaseURL" />legacyapi/rs/<wp:info key="currentLang" /><s:if test="null != #apiResourceVar.namespace">/<s:property value="#apiResourceVar.namespace" /></s:if>/<s:property value="#apiResourceVar.resourceName" /></a>
 		</dd>
 	<dt>
 		<wp:i18n key="ENTANDO_API_EXTENSION" />

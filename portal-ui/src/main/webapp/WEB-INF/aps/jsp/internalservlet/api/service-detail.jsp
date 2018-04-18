@@ -63,7 +63,7 @@
 		</dd>
 	<dt><wp:i18n key="ENTANDO_API_SERVICE_URI" /></dt>
 		<dd>
-			<a href="<wp:info key="systemParam" paramName="applicationBaseURL" />api/rs/<wp:info key="currentLang" />/getService?key=<s:property value="serviceKey" />"><wp:info key="systemParam" paramName="applicationBaseURL" />api/rs/<wp:info key="currentLang" />/getService?key=<s:property value="serviceKey" /></a>
+			<a href="<wp:info key="systemParam" paramName="applicationBaseURL" />legacyapi/rs/<wp:info key="currentLang" />/getService?key=<s:property value="serviceKey" />"><wp:info key="systemParam" paramName="applicationBaseURL" />legacyapi/rs/<wp:info key="currentLang" />/getService?key=<s:property value="serviceKey" /></a>
 		</dd>
 	<dt>
 		<wp:i18n key="ENTANDO_API_EXTENSION" />

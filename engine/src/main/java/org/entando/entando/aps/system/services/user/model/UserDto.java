@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.user.model;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
@@ -21,6 +22,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.DateConverter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -38,9 +40,9 @@ import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 public class UserDto {
 
     private String username;
-    private Date registration;
-    private Date lastLogin;
-    private Date lastPasswordChange;
+    private String registration;
+    private String lastLogin;
+    private String lastPasswordChange;
     private String status;
     private boolean accountNotExpired;
     private boolean credentialsNotExpired;
@@ -55,9 +57,15 @@ public class UserDto {
         this.credentialsNotExpired = user.isCredentialsNotExpired();
         if (user instanceof User) {
             User entandoUser = (User) user;
-            this.registration = entandoUser.getCreationDate();
-            this.lastLogin = entandoUser.getLastAccess();
-            this.lastPasswordChange = entandoUser.getLastPasswordChange();
+            if (null != entandoUser.getCreationDate()) {
+                this.registration = DateConverter.getFormattedDate(entandoUser.getCreationDate(), SystemConstants.API_DATE_FORMAT);
+            }
+            if (null != entandoUser.getLastAccess()) {
+                this.lastLogin = DateConverter.getFormattedDate(entandoUser.getLastAccess(), SystemConstants.API_DATE_FORMAT);
+            }
+            if (null != entandoUser.getLastPasswordChange()) {
+                this.lastPasswordChange = DateConverter.getFormattedDate(entandoUser.getLastPasswordChange(), SystemConstants.API_DATE_FORMAT);
+            }
             this.maxMonthsSinceLastAccess = entandoUser.getMaxMonthsSinceLastAccess();
             this.maxMonthsSinceLastPasswordChange = entandoUser.getMaxMonthsSinceLastPasswordChange();
         }
@@ -74,27 +82,27 @@ public class UserDto {
         this.username = username;
     }
 
-    public Date getRegistration() {
+    public String getRegistration() {
         return registration;
     }
 
-    public void setRegistration(Date registration) {
+    public void setRegistration(String registration) {
         this.registration = registration;
     }
 
-    public Date getLastLogin() {
+    public String getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(Date lastLogin) {
+    public void setLastLogin(String lastLogin) {
         this.lastLogin = lastLogin;
     }
 
-    public Date getLastPasswordChange() {
+    public String getLastPasswordChange() {
         return lastPasswordChange;
     }
 
-    public void setLastPasswordChange(Date lastPasswordChange) {
+    public void setLastPasswordChange(String lastPasswordChange) {
         this.lastPasswordChange = lastPasswordChange;
     }
 

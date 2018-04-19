@@ -131,7 +131,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateGroup(@PathVariable String dataModelId,
+    public ResponseEntity<RestResponse> updateDataObjectModel(@PathVariable String dataModelId,
             @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Updating data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
@@ -161,7 +161,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteGroup(@PathVariable String dataModelId) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteDataObjectModel(@PathVariable String dataModelId) throws ApsSystemException {
         logger.info("deleting data object model -> {}", dataModelId);
         MapBindingResult bindingResult = new MapBindingResult(new HashMap<>(), "dataModels");
         Long dataId = this.getDataObjectModelValidator().checkValidModelId(dataModelId, bindingResult);

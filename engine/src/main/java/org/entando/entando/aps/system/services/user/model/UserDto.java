@@ -189,6 +189,9 @@ public class UserDto {
             return ((BooleanAttribute) attribute).getValue();
         } else if (attribute instanceof DateAttribute) {
             Date dateAttr = ((DateAttribute) attribute).getDate();
+            if (null == dateAttr) {
+                return "";
+            }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return sdf.format(dateAttr);
         } else if (!attribute.isSimple()) {

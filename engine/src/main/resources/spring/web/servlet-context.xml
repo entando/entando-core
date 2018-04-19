@@ -12,7 +12,7 @@
 
 
     <!-- scans for annotated classes -->
-    <context:component-scan base-package="org.entando.entando.web.*" />
+    <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
     <context:annotation-config />
 
     <mvc:annotation-driven conversion-service="conversionService"

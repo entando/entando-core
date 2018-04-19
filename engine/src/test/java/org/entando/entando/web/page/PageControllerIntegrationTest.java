@@ -13,6 +13,10 @@
  */
 package org.entando.entando.web.page;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
@@ -26,6 +30,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.page.model.PagePositionRequest;
+import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +39,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +60,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
+
+    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void testPageSearch() throws Exception {
@@ -67,7 +79,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testMove() throws Throwable {
-        ObjectMapper mapper = new ObjectMapper();
+
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         try {
@@ -131,6 +143,97 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage("page_b");
             this.pageManager.deletePage("page_a");
             this.pageManager.deletePage("page_root");
+        }
+    }
+
+    @Test
+    public void testAddPublishUnpublishDelete() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String code = "testAddDelete";
+        try {
+            
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCode(code);
+            pageRequest.setPageModel("home");
+            pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
+            Map<String, String> titles = new HashMap<>();
+            titles.put("it", code);
+            titles.put("en", code);
+            pageRequest.setTitles(titles);
+            pageRequest.setParentCode("service");
+           
+            ResultActions result = mockMvc
+                                          .perform(post("/pages")
+                                                                 .content(mapper.writeValueAsString(pageRequest))
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            
+            IPage page = this.pageManager.getDraftPage(code);
+            assertThat(page, is(not(nullValue())));
+
+            //put
+            pageRequest.getTitles().put("it", code.toUpperCase());
+            result = mockMvc
+                            .perform(put("/pages/{code}", code)
+                                                               .content(mapper.writeValueAsString(pageRequest))
+                                                               .contentType(MediaType.APPLICATION_JSON)
+                                                               .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            page = this.pageManager.getDraftPage(code);
+            assertThat(page, is(not(nullValue())));
+            assertThat(page.getTitle("it"), is(code.toUpperCase()));
+
+            
+            //status
+            PageStatusRequest pageStatusRequest = new PageStatusRequest();
+            pageStatusRequest.setStatus("published");
+           
+            
+            result = mockMvc
+                    .perform(put("/pages/{code}/status", code)
+                             .content(mapper.writeValueAsString(pageStatusRequest))
+                             .contentType(MediaType.APPLICATION_JSON)
+                             .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            
+            page = this.pageManager.getDraftPage(code);
+            assertThat(page, is(not(nullValue())));
+
+            IPage onlinePage = this.pageManager.getOnlinePage(code);
+            assertThat(onlinePage, is(not(nullValue())));
+
+           
+            pageStatusRequest.setStatus("draft");
+            result = mockMvc
+                            .perform(put("/pages/{code}/status", code)
+                                                                      .content(mapper.writeValueAsString(pageStatusRequest))
+                                                                      .contentType(MediaType.APPLICATION_JSON)
+                                                                      .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            page = this.pageManager.getDraftPage(code);
+            assertThat(page, is(not(nullValue())));
+            
+            onlinePage = this.pageManager.getOnlinePage(code);
+            assertThat(onlinePage, is(nullValue()));
+            
+            //delete
+            result = mockMvc
+                            .perform(delete("/pages/{code}", code)
+                                                                  //.content(payload)
+                                                                  .contentType(MediaType.APPLICATION_JSON)
+                                                                  .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
+            page = this.pageManager.getDraftPage(code);
+            assertThat(page, is(nullValue()));
+
+        } finally {
+            this.pageManager.deletePage(code);
+
         }
     }
 

@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
+import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentDto;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -29,10 +30,11 @@ import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.category.CategoryServiceUtilizer;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
+import org.entando.entando.aps.system.services.page.PageServiceUtilizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ContentService implements GroupServiceUtilizer<ContentDto>, CategoryServiceUtilizer<ContentDto> {
+public class ContentService implements GroupServiceUtilizer<ContentDto>, CategoryServiceUtilizer<ContentDto>, PageServiceUtilizer<ContentDto> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -89,6 +91,17 @@ public class ContentService implements GroupServiceUtilizer<ContentDto>, Categor
         } catch (ApsSystemException ex) {
             logger.error("Error loading content references for category {}", categoryCode, ex);
             throw new RestServerError("Error loading content references for category", ex);
+        }
+    }
+
+    @Override
+    public List<ContentDto> getPageUtilizer(String pageCode) {
+        try {
+            List<String> contentIds = ((PageUtilizer) this.getContentManager()).getPageUtilizers(pageCode);
+            return this.buildDtoList(contentIds);
+        } catch (ApsSystemException ex) {
+            logger.error("Error loading content references for page {}", pageCode, ex);
+            throw new RestServerError("Error loading content references for page", ex);
         }
     }
 

@@ -131,7 +131,7 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/search/group/free", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getFreePages(@ModelAttribute("user") UserDetails user, RestListRequest restListRequest) {
+    public ResponseEntity<RestResponse> getFreeOnlinePages(@ModelAttribute("user") UserDetails user, RestListRequest restListRequest) {
         logger.debug("getting free pages list with request {}", restListRequest);
         this.getPageValidator().validateRestListRequest(restListRequest, PageDto.class);
         PagedMetadata<PageDto> result = this.getPageService().searchOnlineFreePages(restListRequest);

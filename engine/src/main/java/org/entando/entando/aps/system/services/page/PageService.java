@@ -614,8 +614,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
             return this.getPagedResult(request, pages);
         } catch (ApsSystemException ex) {
-            logger.error("Error searching free pages ", ex);
-            throw new RestServerError("Error searching free pages", ex);
+            logger.error("Error searching free online pages ", ex);
+            throw new RestServerError("Error searching free online pages", ex);
         }
     }
 

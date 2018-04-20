@@ -32,6 +32,7 @@ import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
@@ -125,6 +126,16 @@ public class PageController {
         this.getPageValidator().validateRestListRequest(searchRequest, PageDto.class);
         List<String> groups = this.getAuthorizationService().getAllowedGroupCodes(user);
         PagedMetadata<PageDto> result = this.getPageService().searchPages(searchRequest, groups);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RequestMapping(value = "/pages/search/group/free", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getFreePages(@ModelAttribute("user") UserDetails user, RestListRequest restListRequest) {
+        logger.debug("getting free pages list with request {}", restListRequest);
+        this.getPageValidator().validateRestListRequest(restListRequest, PageDto.class);
+        //List<String> groups = this.getAuthorizationService().getAllowedGroupCodes(user);
+        PagedMetadata<PageDto> result = this.getPageService().searchFreePages(restListRequest);
         return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);
     }
 

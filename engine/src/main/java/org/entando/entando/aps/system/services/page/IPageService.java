@@ -19,6 +19,7 @@ import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -48,6 +49,8 @@ public interface IPageService {
 
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
 
+    public PagedMetadata<PageDto> searchFreePages(RestListRequest request);
+
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest);
 
     public PageConfigurationDto getPageConfiguration(String pageCode, String status);
@@ -63,5 +66,6 @@ public interface IPageService {
     public PageDto updatePageStatus(String pageCode, String status);
 
     public PageConfigurationDto applyDefaultWidgets(String pageCode);
+
 
 }

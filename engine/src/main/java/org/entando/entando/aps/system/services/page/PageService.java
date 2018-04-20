@@ -23,6 +23,7 @@ import java.util.Optional;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
@@ -52,12 +53,14 @@ import org.entando.entando.aps.system.services.widgettype.validators.WidgetValid
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
@@ -600,6 +603,27 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
             throw new RestServerError("Error searching pages", ex);
         }
+    }
+
+    @Override
+    public PagedMetadata<PageDto> searchFreePages(RestListRequest request) {
+        try {
+            List<String> groups = new ArrayList<>();
+            groups.add(Group.FREE_GROUP_NAME);
+            List<IPage> rawPages = this.getPageManager().searchPages(null, groups);
+            List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
+            return this.getPagedResult(request, pages);
+        } catch (ApsSystemException ex) {
+            logger.error("Error searching free pages ", ex);
+            throw new RestServerError("Error searching free pages", ex);
+        }
+    }
+
+    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
+        PageSearchRequest pageSearchReq = new PageSearchRequest();
+        BeanUtils.copyProperties(request, pageSearchReq);
+
+        return getPagedResult(pageSearchReq, pages);
     }
 
     private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {

@@ -78,6 +78,20 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    public void testPageSearchFreePages() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/pages/search/group/free")
+                                                                              .param("pageSize", "50")
+
+                                                                   .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.totalItems", is(13)));
+    }
+
+
+    @Test
     public void testMove() throws Throwable {
 
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();

@@ -134,8 +134,7 @@ public class PageController {
     public ResponseEntity<RestResponse> getFreePages(@ModelAttribute("user") UserDetails user, RestListRequest restListRequest) {
         logger.debug("getting free pages list with request {}", restListRequest);
         this.getPageValidator().validateRestListRequest(restListRequest, PageDto.class);
-        //List<String> groups = this.getAuthorizationService().getAllowedGroupCodes(user);
-        PagedMetadata<PageDto> result = this.getPageService().searchFreePages(restListRequest);
+        PagedMetadata<PageDto> result = this.getPageService().searchOnlineFreePages(restListRequest);
         return new ResponseEntity<>(new RestResponse(result.getBody(), new ArrayList<>(), result), HttpStatus.OK);
     }
 

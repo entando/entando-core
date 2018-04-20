@@ -145,6 +145,8 @@ public interface IPageManager extends ITreeNodeManager {
 	 */
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException;
 
+    public List<IPage> searchOnlinePages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException;
+
 	public List<IPage> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 
 	public List<IPage> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
@@ -159,5 +161,6 @@ public interface IPageManager extends ITreeNodeManager {
 	public PagesStatus getPagesStatus();
 
 	public List<IPage> loadLastUpdatedPages(int size) throws ApsSystemException;
+
 
 }

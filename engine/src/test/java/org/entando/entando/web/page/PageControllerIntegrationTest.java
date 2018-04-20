@@ -87,7 +87,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
                                                                    .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData.totalItems", is(13)));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
 
 

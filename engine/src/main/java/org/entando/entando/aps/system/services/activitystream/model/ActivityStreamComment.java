@@ -14,11 +14,12 @@
 package org.entando.entando.aps.system.services.activitystream.model;
 
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * @author S.Loru
  */
-public class ActivityStreamComment {
+public class ActivityStreamComment implements Serializable {
 
 	public int getId() {
 		return _id;

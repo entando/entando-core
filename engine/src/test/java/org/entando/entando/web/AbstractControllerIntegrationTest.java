@@ -38,9 +38,10 @@ import static org.mockito.Mockito.when;
     "classpath*:spring/testpropertyPlaceholder.xml",
     "classpath*:spring/baseSystemConfig.xml",
     "classpath*:spring/aps/**/**.xml",
+    "classpath*:spring/apsadmin/**/**.xml",
     "classpath*:spring/plugins/**/aps/**/**.xml",
+    "classpath*:spring/plugins/**/apsadmin/**/**.xml",
     "classpath*:spring/web/**.xml",})
-
 @WebAppConfiguration(value = "")
 public class AbstractControllerIntegrationTest {
     

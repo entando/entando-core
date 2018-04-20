@@ -681,10 +681,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         Map<String, Boolean> references = new HashMap<String, Boolean>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(PageUtilizer.class);
-            for (int i = 0; i < defNames.length; i++) {
+            for (String defName : defNames) {
                 Object service = null;
                 try {
-                    service = applicationContext.getBean(defNames[i]);
+                    service = applicationContext.getBean(defName);
                 } catch (Throwable t) {
                     logger.error("error in hasReferencingObjects", t);
                     service = null;
@@ -709,12 +709,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @SuppressWarnings("rawtypes")
     private PageServiceUtilizer<?> getPageServiceUtilizer(String managerName) {
         Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
-        Optional<PageServiceUtilizer> defName = beans.values().stream()
-                                                     .filter(service -> service.getManagerName().equals(managerName))
-                                                     .findFirst();
-        if (defName.isPresent()) {
-            return defName.get();
-        }
-        return null;
+        PageServiceUtilizer defName = beans.values().stream()
+                                           .filter(service -> service.getManagerName().equals(managerName))
+                                           .findFirst().orElse(null);
+        return defName;
+
     }
 }

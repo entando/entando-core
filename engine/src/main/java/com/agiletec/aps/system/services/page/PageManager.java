@@ -443,6 +443,23 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	}
 
 	@Override
+    public List<IPage> searchOnlinePages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
+        List<IPage> searchResult = new ArrayList<IPage>();
+        try {
+            if (null == allowedGroups || allowedGroups.isEmpty()) {
+                return searchResult;
+            }
+            IPage root = this.getOnlineRoot();
+            this.searchPages(root, pageCodeToken, allowedGroups, searchResult);
+        } catch (Throwable t) {
+            String message = "Error during searching pages online with token " + pageCodeToken;
+            _logger.error("Error during searching online pages with token {}", pageCodeToken, t);
+            throw new ApsSystemException(message, t);
+        }
+        return searchResult;
+    }
+
+    @Override
 	public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
 		List<IPage> searchResult = new ArrayList<IPage>();
 		try {

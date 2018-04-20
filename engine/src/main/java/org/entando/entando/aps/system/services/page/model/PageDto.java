@@ -13,8 +13,6 @@
  */
 package org.entando.entando.aps.system.services.page.model;
 
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.services.page.IPageService;
 
 /**

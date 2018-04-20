@@ -49,7 +49,12 @@ public interface IPageService {
 
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
 
-    public PagedMetadata<PageDto> searchFreePages(RestListRequest request);
+    /**
+     * Search against online pages
+     * @param request
+     * @return
+     */
+    public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request);
 
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest);
 

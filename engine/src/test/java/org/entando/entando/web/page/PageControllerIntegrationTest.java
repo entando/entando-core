@@ -78,7 +78,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testPageSearchFreePages() throws Exception {
+    public void testPageSearchFreeOnlinePages() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -87,7 +87,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
                                                                    .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData.totalItems", is(13)));
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
 
 

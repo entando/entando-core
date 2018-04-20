@@ -606,16 +606,16 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
-    public PagedMetadata<PageDto> searchFreePages(RestListRequest request) {
+    public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request) {
         try {
             List<String> groups = new ArrayList<>();
             groups.add(Group.FREE_GROUP_NAME);
-            List<IPage> rawPages = this.getPageManager().searchPages(null, groups);
+            List<IPage> rawPages = this.getPageManager().searchOnlinePages(null, groups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
             return this.getPagedResult(request, pages);
         } catch (ApsSystemException ex) {
-            logger.error("Error searching free pages ", ex);
-            throw new RestServerError("Error searching free pages", ex);
+            logger.error("Error searching free online pages ", ex);
+            throw new RestServerError("Error searching free online pages", ex);
         }
     }
 

@@ -170,7 +170,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         this.widgetTypeManager = widgetTypeManager;
     }
 
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -214,7 +213,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;
     }
-
 
     @Override
     public PageDto addPage(PageRequest pageRequest) {
@@ -388,7 +386,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
-                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+                logger.debug("Deleting a widget into a page not found - page ''{}'', pos ''{}''", pageCode, frameId);
+                return;
             }
             if (frameId >= page.getWidgets().length) {
                 logger.info("the frame to delete with index {} in page {} with model {} does not exists", frameId, pageCode, page.getModel().getCode());
@@ -708,8 +707,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private PageServiceUtilizer<?> getPageServiceUtilizer(String managerName) {
         Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
         PageServiceUtilizer defName = beans.values().stream()
-                                           .filter(service -> service.getManagerName().equals(managerName))
-                                           .findFirst().orElse(null);
+                .filter(service -> service.getManagerName().equals(managerName))
+                .findFirst().orElse(null);
         return defName;
 
     }

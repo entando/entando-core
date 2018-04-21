@@ -23,6 +23,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import org.springframework.test.web.servlet.ResultMatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -157,7 +158,7 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
     }
 
     @Test
-    public void testConigurationRestore() throws Exception {
+    public void testConfigurationRestore() throws Exception {
         String pageCode = "draft_page_100";
         try {
             Page mockPage = createPage(pageCode);
@@ -171,11 +172,7 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
             String accessToken = mockOAuthInterceptor(user);
 
             //checking page draft config
-            ResultActions result = mockMvc
-                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                            .param("status", IPageService.STATUS_DRAFT)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isOk());
+            ResultActions result = this.executeGetPageConfig(pageCode, IPageService.STATUS_DRAFT, accessToken, status().isOk());
             result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
             result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
 
@@ -183,18 +180,14 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
             String putPageOnlinePayload = "{\"status\": \"published\"}";
             result = mockMvc.perform(
                     put("/pages/{pageCode}/status", pageCode)
-                            .sessionAttr("user", user)
-                            .content(putPageOnlinePayload)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .sessionAttr("user", user)
+                    .content(putPageOnlinePayload)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
             //checking page online config
-            result = mockMvc
-                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                            .param("status", IPageService.STATUS_ONLINE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isOk());
+            result = this.executeGetPageConfig(pageCode, IPageService.STATUS_ONLINE, accessToken, status().isOk());
             result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
             result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
 
@@ -206,22 +199,12 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                     + "      \"modelId\": \"default\"\n"
                     + "  }\n"
                     + "}";
-
-            result = mockMvc
-                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
-                            .param("status", IPageService.STATUS_DRAFT)
-                            .content(payloadWithValidContentId)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-
-            result.andExpect(status().isOk());
+            result = this.executePutPageConfig(payloadWithValidContentId,
+                    pageCode, 0, IPageService.STATUS_DRAFT, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.config.contentId", is("ART187")));
 
             //checking page draft config
-            result = mockMvc
-                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                            .param("status", IPageService.STATUS_DRAFT)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isOk());
+            result = this.executeGetPageConfig(pageCode, IPageService.STATUS_DRAFT, accessToken, status().isOk());
             result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
             result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART187")));
 
@@ -232,10 +215,7 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
             result.andExpect(status().isOk());
 
             //checking page draft config
-            result = mockMvc
-                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                            .param("status", IPageService.STATUS_DRAFT)
-                            .header("Authorization", "Bearer " + accessToken));
+            result = this.executeGetPageConfig(pageCode, IPageService.STATUS_DRAFT, accessToken, status().isOk());
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.widgets", hasSize(4)));
             result.andExpect(jsonPath("$.payload.widgets[0].config.contentId", is("ART11")));
@@ -246,6 +226,37 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
         }
     }
 
+    private ResultActions executeGetPageConfig(String pageCode, String pageStatus, String accessToken, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                        .param("status", pageStatus)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+        return result;
+    }
+
+    private ResultActions executePutPageConfig(String payload, String pageCode,
+            Integer pos, String status, String accessToken, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, pos})
+                        .param("status", status)
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+        return result;
+    }
+
+    /*
+    private ResultActions executeDeletePageConfig(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
+        ResultActions result = mockMvc
+                .perform(delete("/categories/{categoryCode}", new Object[]{categoryCode})
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(rm);
+        return result;
+    }
+     */
     protected Page createPage(String pageCode) {
         IPage parentPage = pageManager.getDraftPage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();

@@ -276,4 +276,12 @@ public class PageController {
         return new ResponseEntity<>(new RestResponse(page, new ArrayList<>(), metadata), HttpStatus.OK);
     }
     
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/references/{manager}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPageReferences(@PathVariable String pageCode, @PathVariable String manager, RestListRequest requestList) {
+        logger.debug("loading references for page {} and manager {}", pageCode, manager);
+        PagedMetadata<?> result = this.getPageService().getPageReferences(pageCode, manager, requestList);
+        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
 }

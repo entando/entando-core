@@ -16,12 +16,14 @@ package org.entando.entando.aps.system.services.page;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.IManager;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
@@ -30,6 +32,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -61,7 +64,10 @@ import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -70,7 +76,7 @@ import org.springframework.validation.DataBinder;
  *
  * @author paddeo
  */
-public class PageService implements IPageService, GroupServiceUtilizer<PageDto>, PageModelServiceUtilizer<PageDto> {
+public class PageService implements IPageService, GroupServiceUtilizer<PageDto>, PageModelServiceUtilizer<PageDto>, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -82,6 +88,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private static final String ERRCODE_FRAME_INVALID = "2";
     private static final String ERRCODE_WIDGET_INVALID = "4";
     private static final String ERRCODE_STATUS_INVALID = "3";
+
+    private static final String ERRCODE_PAGE_REFERENCES = "5";
 
     @Autowired
     private IPageManager pageManager;
@@ -103,6 +111,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
+
+    private ApplicationContext applicationContext;
 
     protected IPageManager getPageManager() {
         return pageManager;
@@ -160,6 +170,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         this.widgetTypeManager = widgetTypeManager;
     }
 
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -194,8 +210,11 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.NotFound");
             throw new RestRourceNotFoundException(bindingResult);
         }
-        return this.getDtoBuilder().convert(page);
+        PageDto pageDto = this.getDtoBuilder().convert(page);
+        pageDto.setReferences(this.getReferencesInfo(page));
+        return pageDto;
     }
+
 
     @Override
     public PageDto addPage(PageRequest pageRequest) {
@@ -606,6 +625,26 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
+    public PagedMetadata<?> getPageReferences(String pageCode, String managerName, RestListRequest requestList) {
+        IPage page = this.getPageManager().getDraftPage(pageCode);
+        if (null == page) {
+            logger.warn("no page found with code {}", pageCode);
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+        }
+        PageServiceUtilizer<?> utilizer = this.getPageServiceUtilizer(managerName);
+        if (null == utilizer) {
+            logger.warn("no references found for {}", managerName);
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_REFERENCES, "reference", managerName);
+        }
+        List<?> dtoList = utilizer.getPageUtilizer(pageCode);
+        List<?> subList = requestList.getSublist(dtoList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(requestList, pagedResult);
+        pagedMetadata.setBody((List<Object>) subList);
+        return pagedMetadata;
+    }
+
+    @Override
     public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request) {
         try {
             List<String> groups = new ArrayList<>();
@@ -638,5 +677,42 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return result;
     }
 
+    private Map<String, Boolean> getReferencesInfo(IPage page) {
+        Map<String, Boolean> references = new HashMap<String, Boolean>();
+        try {
+            String[] defNames = applicationContext.getBeanNamesForType(PageUtilizer.class);
+            for (String defName : defNames) {
+                Object service = null;
+                try {
+                    service = applicationContext.getBean(defName);
+                } catch (Throwable t) {
+                    logger.error("error in hasReferencingObjects", t);
+                    service = null;
+                }
+                if (service != null) {
+                    PageUtilizer pageUtilizer = (PageUtilizer) service;
+                    List<?> utilizers = pageUtilizer.getPageUtilizers(page.getCode());
+                    if (utilizers != null && !utilizers.isEmpty()) {
+                        references.put(pageUtilizer.getName(), true);
+                    } else {
+                        references.put(pageUtilizer.getName(), false);
+                    }
+                }
+            }
+        } catch (ApsSystemException ex) {
+            logger.error("error loading references for page {}", page.getCode(), ex);
+            throw new RestServerError("error in getReferencingObjects ", ex);
+        }
+        return references;
+    }
 
+    @SuppressWarnings("rawtypes")
+    private PageServiceUtilizer<?> getPageServiceUtilizer(String managerName) {
+        Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
+        PageServiceUtilizer defName = beans.values().stream()
+                                           .filter(service -> service.getManagerName().equals(managerName))
+                                           .findFirst().orElse(null);
+        return defName;
+
+    }
 }

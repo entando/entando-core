@@ -231,30 +231,20 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
     public void testGetGroupDetails() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-
         ResultActions result = mockMvc.perform(
                 get("/groups/{code}", Group.FREE_GROUP_NAME)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
-
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(6)));
-
         String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
-
         for (String managerName : managers) {
-
             result = mockMvc.perform(
-                    get(
-                            "/groups/{code}/references/{manager}",
-                            Group.FREE_GROUP_NAME, managerName)
-                    .param("page", "1")
-                    .param("pageSize", "3")
+                    get("/groups/{code}/references/{manager}", Group.FREE_GROUP_NAME, managerName)
+                    .param("page", "1").param("pageSize", "3")
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .header("Authorization", "Bearer " + accessToken));
-
         }
-
     }
 
     @Test

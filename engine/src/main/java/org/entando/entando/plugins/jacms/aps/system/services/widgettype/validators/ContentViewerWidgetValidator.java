@@ -76,9 +76,7 @@ public class ContentViewerWidgetValidator implements WidgetConfigurationValidato
         String contentModel = WidgetValidatorCmsHelper.extractConfigParam(widget, WIDGET_CONFIG_KEY_MODEL_ID);
         String contentId = WidgetValidatorCmsHelper.extractConfigParam(widget, WIDGET_CONFIG_KEY_CONTENT_ID);
         String typeCode = contentId.substring(0, 3);
-
         WidgetValidatorCmsHelper.validateContentModel(widget.getCode(), typeCode, contentModel, this.getContentModelManager(), errors);
-
     }
 
 }

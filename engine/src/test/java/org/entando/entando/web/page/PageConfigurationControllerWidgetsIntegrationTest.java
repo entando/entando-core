@@ -136,8 +136,8 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                     pageCode, "xxx", accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors", hasSize(1)));
             result.andExpect(jsonPath("$.errors[0].code", is("40")));
-
             System.out.println(result.andReturn().getResponse().getContentAsString());
+
             String validContentIdWithIncompatibleGroup = "{\n"
                     + "  \"code\": \"content_viewer\",\n"
                     + "  \"config\": {\n"
@@ -149,6 +149,33 @@ public class PageConfigurationControllerWidgetsIntegrationTest extends AbstractC
                     pageCode, "0", accessToken, status().isConflict());
             result.andExpect(jsonPath("$.errors", hasSize(1)));
             System.out.println(result.andReturn().getResponse().getContentAsString());
+
+            String validContent_1 = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentId\": \"ART1\",\n"
+                    + "      \"modelId\": \"default\"\n"
+                    + "  }\n"
+                    + "}";
+            result = this.executePutPageConfig(validContent_1,
+                    pageCode, "0", accessToken, status().isOk());
+            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.payload.code", is("content_viewer")));
+            result.andExpect(jsonPath("$.payload.config.size()", is(2)));
+            System.out.println(result.andReturn().getResponse().getContentAsString());
+
+            String validContent_2 = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + "      \"contentId\": \"ART1\"\n"
+                    + "  }\n"
+                    + "}";
+            result = this.executePutPageConfig(validContent_2,
+                    pageCode, "0", accessToken, status().isOk());
+            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.payload.code", is("content_viewer")));
+            result.andExpect(jsonPath("$.payload.config.size()", is(1)));
+
         } finally {
             this.pageManager.deletePage(pageCode);
         }

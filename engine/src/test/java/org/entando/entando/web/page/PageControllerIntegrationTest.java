@@ -78,6 +78,33 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    public void testPageGet() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/pages/{code}", "pagina_11")
+
+                                                                            .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.code", is("pagina_11")));
+        result.andExpect(jsonPath("$.payload.references.length()", is(1)));
+    }
+
+    @Test
+    public void testPageGetReferences() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                                      .perform(get("/pages/{code}/references/{manager}", "pagina_11", "jacmsContentManager")
+
+                                                                                                                            .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData.totalItems", is(2)));
+    }
+
+    @Test
     public void testPageSearchFreeOnlinePages() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -87,7 +114,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
                                                                    .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        System.out.println(result.andReturn().getResponse().getContentAsString());
+
         result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
 

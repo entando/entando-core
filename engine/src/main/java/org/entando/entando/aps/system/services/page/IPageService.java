@@ -72,5 +72,6 @@ public interface IPageService {
 
     public PageConfigurationDto applyDefaultWidgets(String pageCode);
 
+    public PagedMetadata<?> getPageReferences(String pageCode, String manager, RestListRequest requestList);
 
 }

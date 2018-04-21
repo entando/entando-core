@@ -23,6 +23,8 @@ import java.util.Set;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.entando.entando.aps.system.services.page.IPageService;
 
 /**
@@ -45,6 +47,14 @@ public class PageDto {
     private List<String> joinGroups = new ArrayList<>();
     private List<String> children = new ArrayList<>();
     private int position;
+
+    /**
+     * The references grouped by service name.
+     * <p>
+     * Lists all the managers that may contain references by indicating with <code>true</code> the presence of references
+     */
+    @JsonInclude(Include.NON_NULL)
+    private Map<String, Boolean> references;
 
     public PageDto() {
     }
@@ -202,6 +212,14 @@ public class PageDto {
             default:
                 return dtoFieldName;
         }
+    }
+
+    public Map<String, Boolean> getReferences() {
+        return references;
+    }
+
+    public void setReferences(Map<String, Boolean> references) {
+        this.references = references;
     }
 
 }

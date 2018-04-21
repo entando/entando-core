@@ -58,8 +58,8 @@ import org.entando.entando.web.user.UserControllerUnitTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerIntegrationTest;
 import org.entando.entando.web.userprofile.ProfileTypeControllerTest;
 import org.entando.entando.web.userprofile.UserProfileControllerIntegrationTest;
-import org.entando.entando.web.usersettings.UserSettingsControllerUnitTest;
 import org.entando.entando.web.usersettings.UserSettingsControllerIntegrationTest;
+import org.entando.entando.web.usersettings.UserSettingsControllerUnitTest;
 import org.entando.entando.web.widget.WidgetControllerIntegrationTest;
 import org.entando.entando.web.widget.WidgetControllerTest;
 

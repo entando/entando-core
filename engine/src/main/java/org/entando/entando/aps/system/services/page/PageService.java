@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -170,7 +170,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         this.widgetTypeManager = widgetTypeManager;
     }
 
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
@@ -214,7 +213,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;
     }
-
 
     @Override
     public PageDto addPage(PageRequest pageRequest) {
@@ -364,14 +362,11 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             if (null == this.getWidgetType(widgetReq.getCode())) {
                 throw new RestRourceNotFoundException(ERRCODE_WIDGET_INVALID, "widget", String.valueOf(widgetReq.getCode()));
             }
-
             BeanPropertyBindingResult validation = this.getWidgetValidatorFactory().get(widgetReq.getCode()).validate(widgetReq, page);
             if (null != validation && validation.hasErrors()) {
                 throw new ValidationConflictException(validation);
             }
-
             ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfiguration(widgetReq);
-
             WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
             Widget widget = new Widget();
             widget.setType(widgetType);
@@ -391,9 +386,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
-                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+                logger.debug("Deleting a widget into a page not found - page ''{}'', pos ''{}''", pageCode, frameId);
+                return;
             }
-            if (frameId > page.getWidgets().length) {
+            if (frameId >= page.getWidgets().length) {
                 logger.info("the frame to delete with index {} in page {} with model {} does not exists", frameId, pageCode, page.getModel().getCode());
                 return;
             }
@@ -432,6 +428,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     /**
      * Merge the page configuration with the provided new one.
      * </p>
+     *
      * @param page
      * @param newWidgetConfiguration
      * @return
@@ -710,8 +707,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private PageServiceUtilizer<?> getPageServiceUtilizer(String managerName) {
         Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
         PageServiceUtilizer defName = beans.values().stream()
-                                           .filter(service -> service.getManagerName().equals(managerName))
-                                           .findFirst().orElse(null);
+                .filter(service -> service.getManagerName().equals(managerName))
+                .findFirst().orElse(null);
         return defName;
 
     }

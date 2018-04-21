@@ -64,7 +64,7 @@ public class EntityDto implements Serializable {
             this.setCategories(src.getCategories().stream().map(i -> i.getCode()).collect(Collectors.toList()));
         }
         if (null != src.getAttributeList()) {
-            src.getAttributeList().stream().forEach(i -> this.getAttributes().add(new EntityAttributeDto(i)));
+            src.getAttributeList().stream().forEach(j -> this.getAttributes().add(new EntityAttributeDto(j)));
         }
     }
 

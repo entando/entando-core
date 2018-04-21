@@ -69,7 +69,14 @@ public class EntityAttributeDto {
             } else if (value instanceof Boolean) {
                 this.setValue((Boolean) value);
             } else if (value instanceof Map) {
-                this.setValues((Map) value);
+                ((Map) value).keySet().stream().forEach(key -> {
+                    Object mapValue = ((Map) value).get(key);
+                    if (mapValue instanceof AttributeInterface) {
+                        this.getValues().put(key.toString(), new EntityAttributeDto((AttributeInterface) mapValue));
+                    } else {
+                        this.getValues().put(key.toString(), mapValue.toString());
+                    }
+                });
             }
         } else if (src instanceof MonoListAttribute) {
             List<AttributeInterface> list = ((MonoListAttribute) src).getAttributes();

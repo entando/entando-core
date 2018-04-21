@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.page;
 
 import java.util.HashMap;
@@ -70,9 +83,9 @@ public class PageConfigurationController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getPageWidget(@PathVariable String pageCode,
-                                           @PathVariable String frameId,
-                                           @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status
-                                           ) {
+            @PathVariable String frameId,
+            @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status
+    ) {
         logger.debug("requested widget detail for page {} and frame {}", pageCode, frameId);
 
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(frameId, "frameId");
@@ -93,7 +106,7 @@ public class PageConfigurationController {
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updatePageWidget(
             @PathVariable String pageCode,
-                                              @PathVariable String frameId,
+            @PathVariable String frameId,
             @Valid @RequestBody WidgetConfigurationRequest widget,
             BindingResult bindingResult) {
         logger.debug("updating widget configuration in page {} and frame {}", pageCode, frameId);
@@ -114,17 +127,17 @@ public class PageConfigurationController {
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deletePageWidget(@PathVariable String pageCode, @PathVariable String frameId) {
         logger.debug("removing widget configuration in page {} and frame {}", pageCode, frameId);
-
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(frameId, "frameId");
         this.validateFrameId(frameId, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
         this.getPageService().deleteWidgetConfiguration(pageCode, Integer.valueOf(frameId));
+        Map<String, String> result = new HashMap<>();
+        result.put("code", frameId);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", IPageService.STATUS_DRAFT);
-        return new ResponseEntity<>(new RestResponse(frameId, null, metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse(result, null, metadata), HttpStatus.OK);
     }
 
     @ActivityStreamAuditable

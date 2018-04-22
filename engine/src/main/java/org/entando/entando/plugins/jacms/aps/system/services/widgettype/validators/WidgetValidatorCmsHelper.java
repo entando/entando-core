@@ -44,6 +44,10 @@ public class WidgetValidatorCmsHelper {
     public static final String ERRCODE_CONTENT_INVALID = "12";
 
     public static void validateContentModel(String widgetCode, String typeCode, String modelId, IContentModelManager contentModelManager, BeanPropertyBindingResult errors) {
+        if (null == modelId) {
+            //the model id can be null, default model will be used
+            return;
+        }
         List<String> contentModels = contentModelManager.getModelsForContentType(typeCode).stream().map(i -> String.valueOf(i.getId())).collect(Collectors.toList());
         contentModels.add("list");
         contentModels.add("default");

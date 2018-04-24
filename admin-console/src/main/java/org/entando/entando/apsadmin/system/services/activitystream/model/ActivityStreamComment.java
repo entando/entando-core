@@ -13,57 +13,58 @@
  */
 package org.entando.entando.apsadmin.system.services.activitystream.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * @author S.Loru
  */
-public class ActivityStreamComment {
+public class ActivityStreamComment implements Serializable {
 
-	public int getId() {
-		return _id;
-	}
+    public int getId() {
+        return _id;
+    }
 
-	public void setId(int id) {
-		this._id = id;
-	}
-	
-	public String getUsername() {
-		return _username;
-	}
+    public void setId(int id) {
+        this._id = id;
+    }
 
-	public void setUsername(String username) {
-		this._username = username;
-	}
+    public String getUsername() {
+        return _username;
+    }
 
-	public String getDisplayName() {
-		return _displayName;
-	}
+    public void setUsername(String username) {
+        this._username = username;
+    }
 
-	public void setDisplayName(String displayName) {
-		this._displayName = displayName;
-	}
+    public String getDisplayName() {
+        return _displayName;
+    }
 
-	public Date getCommentDate() {
-		return _commentDate;
-	}
+    public void setDisplayName(String displayName) {
+        this._displayName = displayName;
+    }
 
-	public void setCommentDate(Date commentDate) {
-		this._commentDate = commentDate;
-	}
+    public Date getCommentDate() {
+        return _commentDate;
+    }
 
-	public String getCommentText() {
-		return _commentText;
-	}
+    public void setCommentDate(Date commentDate) {
+        this._commentDate = commentDate;
+    }
 
-	public void setCommentText(String commentText) {
-		this._commentText = commentText;
-	}
-	
-	private int _id;
-	private String _username;
-	private String _displayName;
-	private Date _commentDate;
-	private String _commentText;
+    public String getCommentText() {
+        return _commentText;
+    }
+
+    public void setCommentText(String commentText) {
+        this._commentText = commentText;
+    }
+
+    private int _id;
+    private String _username;
+    private String _displayName;
+    private Date _commentDate;
+    private String _commentText;
 
 }

@@ -35,7 +35,6 @@
 			</tr>
 		</thead>
 		<tbody>
-			<s:set var="selectedTreeNode" value="selectedNode" />
 			<s:set var="inputFieldName" value="'categoryCode'" />
 			<s:set var="selectedTreeNode" value="categoryCode" />
 			<s:set var="liClassName" value="'category'" />

@@ -195,8 +195,8 @@ public class DataObjectService extends AbstractEntityTypeService<DataObject, Dat
     }
 
     @Override
-    public void moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult) {
-        super.moveEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, attributeCode, moveUp, bindingResult);
+    public void moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp) {
+        super.moveEntityAttribute(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode, attributeCode, moveUp);
     }
 
     @Override

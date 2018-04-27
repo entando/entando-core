@@ -41,6 +41,7 @@ public abstract class AbstractEntityTypeValidator extends AbstractPaginationVali
     public static final String ERRCODE_ENTITY_ATTRIBUTE_ALREADY_EXISTS = "14";
     public static final String ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS = "15";
     public static final String ERRCODE_ENTITY_ATTRIBUTE_TYPE_MISMATCH = "16";
+    public static final String ERRCODE_ENTITY_ATTRIBUTE_INVALID_MOVEMENT = "18";
 
     public static final String ERRCODE_INVALID_TEXT_RANGE = "26";
     public static final String ERRCODE_INVALID_DATE_RANGE_START = "27";

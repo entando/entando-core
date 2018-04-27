@@ -248,20 +248,20 @@ public class DataTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute/{attributeCode}/moveUp", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> moveDataTypeAttributeUp(@PathVariable String dataTypeCode, @PathVariable String attributeCode, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> moveDataTypeAttributeUp(@PathVariable String dataTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
         logger.debug("Move UP attribute {} from data type {}", attributeCode, dataTypeCode);
-        return this.moveDataTypeAttribute(dataTypeCode, attributeCode, true, bindingResult);
+        return this.moveDataTypeAttribute(dataTypeCode, attributeCode, true);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute/{attributeCode}/moveDown", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> moveDataTypeAttributeDown(@PathVariable String dataTypeCode, @PathVariable String attributeCode, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse> moveDataTypeAttributeDown(@PathVariable String dataTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
         logger.debug("Move DOWN attribute {} from data type {}", attributeCode, dataTypeCode);
-        return this.moveDataTypeAttribute(dataTypeCode, attributeCode, false, bindingResult);
+        return this.moveDataTypeAttribute(dataTypeCode, attributeCode, false);
     }
 
-    private ResponseEntity<RestResponse> moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult) throws ApsSystemException {
-        this.getDataObjectService().moveDataTypeAttribute(dataTypeCode, attributeCode, moveUp, bindingResult);
+    private ResponseEntity<RestResponse> moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp) throws ApsSystemException {
+        this.getDataObjectService().moveDataTypeAttribute(dataTypeCode, attributeCode, moveUp);
         Map<String, String> result = new HashMap<>();
         result.put("dataTypeCode", dataTypeCode);
         result.put("attributeCode", attributeCode);

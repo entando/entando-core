@@ -100,8 +100,8 @@ public class UserProfileTypeService extends AbstractEntityTypeService<IUserProfi
     }
 
     @Override
-    public void moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult) {
-        super.moveEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, moveUp, bindingResult);
+    public void moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp) {
+        super.moveEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, moveUp);
     }
 
     @Override

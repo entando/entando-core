@@ -54,6 +54,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -509,8 +510,7 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         entityType.getAttributeMap().remove(attributeToRemove);
     }
 
-    protected void moveEntityAttribute(String entityManagerCode,
-            String entityTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult) {
+    protected void moveEntityAttribute(String entityManagerCode, String entityTypeCode, String attributeCode, boolean moveUp) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
@@ -527,13 +527,17 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
                 index = i;
             }
         }
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(entityType, "entityType");
         if (null == attributeToMove) {
             this.addError(AbstractEntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
                     bindingResult, new String[]{entityTypeCode, attributeCode}, "entityType.attribute.notExists");
             throw new RestRourceNotFoundException(bindingResult);
         }
         if ((index == 0 && moveUp) || (index == attributes.size() - 1 && !moveUp)) {
-            return;
+            String movement = (moveUp) ? "UP" : "DOWN";
+            this.addError(AbstractEntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_INVALID_MOVEMENT,
+                    bindingResult, new String[]{entityTypeCode, attributeCode, movement}, "entityType.attribute.movement.invalid");
+            throw new ValidationGenericException(bindingResult);
         }
         attributes.remove(index);
         if (moveUp) {

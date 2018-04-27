@@ -51,6 +51,8 @@ public interface IUserProfileTypeService {
 
     public void deleteUserProfileAttribute(String profileTypeCode, String attributeCode);
 
+    public void moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult);
+
     public void reloadProfileTypeReferences(String profileTypeCode);
 
 }

@@ -164,9 +164,15 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            // result.andExpect(jsonPath("$.payload[0].comments.length()", is(1)));
-            //result.andExpect(jsonPath("$.payload[0].comments[0].commentText", Matchers.is(comment)));
+            //result.andExpect(jsonPath("$.payload[0].comments.length()", is(1)));
     
+            result = mockMvc
+                            .perform(get("/activityStream")
+                                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                                .content(mapper.writeValueAsString(req))
+                                                                                .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+
             //remove comment
             result = mockMvc
                             .perform(delete("/activityStream/{recordId}/like", recordId)

@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -51,6 +52,7 @@ public interface IPageService {
 
     /**
      * Search against online pages
+     *
      * @param request
      * @return
      */
@@ -73,5 +75,7 @@ public interface IPageService {
     public PageConfigurationDto applyDefaultWidgets(String pageCode);
 
     public PagedMetadata<?> getPageReferences(String pageCode, String manager, RestListRequest requestList);
+
+    public PagesStatusDto getPagesStatus();
 
 }

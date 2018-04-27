@@ -509,6 +509,46 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         entityType.getAttributeMap().remove(attributeToRemove);
     }
 
+    protected void moveEntityAttribute(String entityManagerCode,
+            String entityTypeCode, String attributeCode, boolean moveUp, BindingResult bindingResult) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn("no type found with code {}", entityTypeCode);
+            throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+        }
+        int index = -1;
+        AttributeInterface attributeToMove = null;
+        List<AttributeInterface> attributes = entityType.getAttributeList();
+        for (int i = 0; i < attributes.size(); i++) {
+            AttributeInterface attribute = attributes.get(i);
+            if (attribute.getName().equals(attributeCode)) {
+                attributeToMove = attribute;
+                index = i;
+            }
+        }
+        if (null == attributeToMove) {
+            this.addError(AbstractEntityTypeValidator.ERRCODE_ENTITY_ATTRIBUTE_NOT_EXISTS,
+                    bindingResult, new String[]{entityTypeCode, attributeCode}, "entityType.attribute.notExists");
+            throw new RestRourceNotFoundException(bindingResult);
+        }
+        if ((index == 0 && moveUp) || (index == attributes.size() - 1 && !moveUp)) {
+            return;
+        }
+        attributes.remove(index);
+        if (moveUp) {
+            attributes.add(index - 1, attributeToMove);
+        } else {
+            attributes.add(index + 1, attributeToMove);
+        }
+        try {
+            ((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entityType);
+        } catch (Throwable e) {
+            logger.error("Error updating entity type", e);
+            throw new RestServerError("error updating entity type", e);
+        }
+    }
+
     protected void reloadEntityTypeReferences(String entityManagerCode, String entityTypeCode) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);

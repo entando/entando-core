@@ -511,4 +511,60 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         }
     }
 
+    @Test
+    public void testMoveAttribute() throws Exception {
+        try {
+            Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeDataTypePost("2_POST_valid.json", accessToken, status().isOk());
+            DataObject addedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            Assert.assertNotNull(addedDataObject);
+            Assert.assertEquals(3, addedDataObject.getAttributeList().size());
+            Assert.assertEquals("TextAttribute", addedDataObject.getAttributeList().get(0).getName());
+            Assert.assertEquals("DataAttribute", addedDataObject.getAttributeList().get(1).getName());
+            Assert.assertEquals("list", addedDataObject.getAttributeList().get(2).getName());
+
+            this.executeMoveAttribute("TST", "TextAttribute", true, accessToken, status().isBadRequest());
+            this.executeMoveAttribute("TST", "TextAttribute", false, accessToken, status().isOk());
+            DataObject modified = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            Assert.assertEquals(3, modified.getAttributeList().size());
+            Assert.assertEquals("DataAttribute", modified.getAttributeList().get(0).getName());
+            Assert.assertEquals("TextAttribute", modified.getAttributeList().get(1).getName());
+            Assert.assertEquals("list", modified.getAttributeList().get(2).getName());
+
+            this.executeMoveAttribute("TST", "TextAttribute", false, accessToken, status().isOk());
+            modified = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            Assert.assertEquals(3, modified.getAttributeList().size());
+            Assert.assertEquals("DataAttribute", modified.getAttributeList().get(0).getName());
+            Assert.assertEquals("list", modified.getAttributeList().get(1).getName());
+            Assert.assertEquals("TextAttribute", modified.getAttributeList().get(2).getName());
+
+            this.executeMoveAttribute("TST", "TextAttribute", false, accessToken, status().isBadRequest());
+
+            this.executeMoveAttribute("TST", "TextAttribute", true, accessToken, status().isOk());
+            modified = (DataObject) this.dataObjectManager.getEntityPrototype("TST");
+            Assert.assertEquals(3, modified.getAttributeList().size());
+            Assert.assertEquals("DataAttribute", modified.getAttributeList().get(0).getName());
+            Assert.assertEquals("TextAttribute", modified.getAttributeList().get(1).getName());
+            Assert.assertEquals("list", modified.getAttributeList().get(2).getName());
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype("TST")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TST");
+            }
+        }
+    }
+
+    private ResultActions executeMoveAttribute(String typeCode, String attributeCode, boolean moveUp, String accessToken, ResultMatcher expected) throws Exception {
+        String suffix = (moveUp) ? "moveUp" : "moveDown";
+        ResultActions result = mockMvc
+                .perform(put("/dataTypes/{dataTypeCode}/attribute/{attributeCode}/" + suffix, new Object[]{typeCode, attributeCode})
+                        .content("{}")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+
 }

@@ -61,7 +61,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/activitystream")
+                                      .perform(get("/activityStream")
                                                                      .param("sort", "createdAt")
                                                                      .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
@@ -78,7 +78,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
 
         ResultActions result = mockMvc
-                                      .perform(get("/activitystream")
+                                      .perform(get("/activityStream")
                                                                      .param("sort", "createdAt")
                                                                      .param("filters[0].attribute", "createdAt")
                                                                      .param("filters[0].value", String.format("[%s TO %s]", start, end))
@@ -96,7 +96,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         String end = new Timestamp(DateConverter.parseDate("2018/05/01", "yyyy/MM/dd").getTime()).toString();
 
         ResultActions result = mockMvc
-                                      .perform(get("/activitystream")
+                                      .perform(get("/activityStream")
                                                                      .param("sort", "createdAt")
                                                                      .param("filters[0].attribute", "createdAt")
                                                                      .param("filters[0].value", String.format("[%s TO %s]", start, end))
@@ -132,7 +132,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             Thread.sleep(500);
             //assert record is present
             result = mockMvc
-                            .perform(get("/activitystream")
+                            .perform(get("/activityStream")
                                                            .param("sort", "createdAt")
                                                            .header("Authorization", "Bearer " + accessToken));
             // result.andExpect(jsonPath("$.payload.length()", is(1)));
@@ -140,14 +140,14 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             //add like
             int recordId = this.actionLogManager.getActionRecords(null).stream().findFirst().get();
             result = mockMvc
-                            .perform(post("/activitystream/{recordId}/like", recordId)
+                            .perform(post("/activityStream/{recordId}/like", recordId)
                                                                                       .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].likes.length()", is(1)));
     
             //remove like
             result = mockMvc
-                            .perform(delete("/activitystream/{recordId}/like", recordId)
+                            .perform(delete("/activityStream/{recordId}/like", recordId)
                                                                                         .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].likes.length()", is(0)));
@@ -159,7 +159,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             req.setRecordId(recordId);
     
             result = mockMvc
-                            .perform(post("/activitystream/{recordId}/comments", recordId)
+                            .perform(post("/activityStream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));
@@ -169,7 +169,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
     
             //remove comment
             result = mockMvc
-                            .perform(delete("/activitystream/{recordId}/like", recordId)
+                            .perform(delete("/activityStream/{recordId}/like", recordId)
                                                                                         .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             //result.andExpect(jsonPath("$.payload[0].comments", Matchers.hasSize(0)));
@@ -180,7 +180,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             req.setRecordId(0);
     
             result = mockMvc
-                            .perform(post("/activitystream/{recordId}/comments", recordId)
+                            .perform(post("/activityStream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));
@@ -194,7 +194,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             req.setRecordId(recordId);
     
             result = mockMvc
-                            .perform(post("/activitystream/{recordId}/comments", recordId)
+                            .perform(post("/activityStream/{recordId}/comments", recordId)
                                                                                           .contentType(MediaType.APPLICATION_JSON)
                                                                                           .content(mapper.writeValueAsString(req))
                                                                                           .header("Authorization", "Bearer " + accessToken));

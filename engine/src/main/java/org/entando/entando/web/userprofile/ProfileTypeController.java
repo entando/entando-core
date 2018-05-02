@@ -247,4 +247,28 @@ public class ProfileTypeController {
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}/moveUp", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> moveUserProfileAttributeUp(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
+        logger.debug("Move UP attribute {} from profile type {}", attributeCode, profileTypeCode);
+        return this.moveUserProfileAttribute(profileTypeCode, attributeCode, true);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}/moveDown", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> moveUserProfileAttributeDown(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
+        logger.debug("Move DOWN attribute {} from profile type {}", attributeCode, profileTypeCode);
+        return this.moveUserProfileAttribute(profileTypeCode, attributeCode, false);
+    }
+
+    private ResponseEntity<RestResponse> moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp) throws ApsSystemException {
+        this.getUserProfileTypeService().moveUserProfileAttribute(profileTypeCode, attributeCode, moveUp);
+        Map<String, String> result = new HashMap<>();
+        result.put("profileTypeCode", profileTypeCode);
+        result.put("attributeCode", attributeCode);
+        String movement = (moveUp) ? "UP" : "DOWN";
+        result.put("movement", movement);
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
 }

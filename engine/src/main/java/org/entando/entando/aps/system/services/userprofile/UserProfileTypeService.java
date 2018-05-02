@@ -100,6 +100,11 @@ public class UserProfileTypeService extends AbstractEntityTypeService<IUserProfi
     }
 
     @Override
+    public void moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp) {
+        super.moveEntityAttribute(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode, attributeCode, moveUp);
+    }
+
+    @Override
     public void reloadProfileTypeReferences(String profileTypeCode) {
         super.reloadEntityTypeReferences(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
     }

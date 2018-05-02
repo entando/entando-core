@@ -51,6 +51,8 @@ public interface IDataObjectService {
 
     public void deleteDataTypeAttribute(String dataTypeCode, String attributeCode);
 
+    public void moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp);
+
     public void reloadDataTypeReferences(String dataTypeCode);
 
 }

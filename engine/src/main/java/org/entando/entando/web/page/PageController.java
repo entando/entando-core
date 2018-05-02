@@ -26,7 +26,6 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
-import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.web.common.annotation.ActivityStreamAuditable;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
@@ -283,15 +282,6 @@ public class PageController {
         logger.debug("loading references for page {} and manager {}", pageCode, manager);
         PagedMetadata<?> result = this.getPageService().getPageReferences(pageCode, manager, requestList);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
-    }
-
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/pages/dashboard/status", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPagesStatus(@ModelAttribute("user") UserDetails user) {
-        logger.debug("getting pages status count");
-        PagesStatusDto result = this.getPageService().getPagesStatus();
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }
 
 }

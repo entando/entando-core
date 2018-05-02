@@ -34,13 +34,12 @@
 			<s:set var="selectedTreeNode" value="categoryCode" />
 			<s:set var="liClassName" value="'category'" />
 			<s:set var="treeItemIconName" value="'fa-folder'" />
-		
-			<s:if test="#categoryTreeStyleVar == 'classic'">
-				<s:set var="currentRoot" value="categoryRoot" />
+			<s:if test="%{#categoryTreeStyleVar == 'classic'}">
+				<s:set var="currentRoot" value="%{allowedTreeRootNode}" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
 			</s:if>
-			<s:elseif test="#categoryTreeStyleVar == 'request'">
-				<s:set var="currentRoot" value="showableTree" />
+			<s:elseif test="%{#categoryTreeStyleVar == 'request'}">
+				<s:set var="currentRoot" value="%{showableTree}" />
 				<s:set var="openTreeActionName" value="'backToContentList'" />
 				<s:set var="closeTreeActionName" value="'backToContentList'" />
 				<s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />

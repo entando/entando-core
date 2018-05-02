@@ -25,4 +25,9 @@ public class ActivityStreamValidator extends AbstractPaginationValidator {
         }
     }
 
+    @Override
+    protected String getDefaultSortProperty() {
+        return "createdAt";
+    }
+
 }

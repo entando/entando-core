@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/activitystream")
+@RequestMapping(value = "/activityStream")
 public class ActivityStreamController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

@@ -42,7 +42,7 @@ public class ActionLogRecordDto {
             actionLikeRecords.stream().forEach(i -> likes.add(new LikeInfo(i)));
         }
         if (null != actionCommentRecords) {
-            actionCommentRecords.stream().forEach(i -> likes.add(new CommentInfo(i)));
+            actionCommentRecords.stream().forEach(i -> comments.add(new CommentInfo(i)));
         }
     }
 

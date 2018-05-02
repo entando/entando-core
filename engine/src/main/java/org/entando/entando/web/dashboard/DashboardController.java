@@ -14,6 +14,7 @@
 package org.entando.entando.web.dashboard;
 
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,8 @@ import java.util.Map;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
+import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
@@ -48,6 +51,9 @@ public class DashboardController {
     @Autowired
     private IApiCatalogManager apiCatalogManager;
 
+    @Autowired
+    private IPageService pageService;
+
     public IComponentManager getComponentManager() {
         return componentManager;
     }
@@ -62,6 +68,14 @@ public class DashboardController {
 
     public void setApiCatalogManager(IApiCatalogManager apiCatalogManager) {
         this.apiCatalogManager = apiCatalogManager;
+    }
+
+    public IPageService getPageService() {
+        return pageService;
+    }
+
+    public void setPageService(IPageService pageService) {
+        this.pageService = pageService;
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -105,4 +119,14 @@ public class DashboardController {
         }
         return count;
     }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pageStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getPagesStatus() {
+        logger.debug("getting pages status count");
+        PagesStatusDto result = this.getPageService().getPagesStatus();
+        Map<String, String> metadata = new HashMap<>();
+        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+    }
+
 }

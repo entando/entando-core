@@ -20,6 +20,7 @@ import junit.framework.TestSuite;
 import org.entando.entando.web.activitystream.ActivityStreamControllerIntegrationTest;
 import org.entando.entando.web.category.CategoryControllerIntegrationTest;
 import org.entando.entando.web.category.CategoryControllerTest;
+import org.entando.entando.web.dashboard.DashboardControllerIntegrationTest;
 import org.entando.entando.web.database.DatabaseControllerIntegrationTest;
 import org.entando.entando.web.database.DatabaseControllerTest;
 import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
@@ -132,6 +133,8 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(FileBrowserControllerTest.class));
 
         suite.addTest(new JUnit4TestAdapter(ActivityStreamControllerIntegrationTest.class));
+
+        suite.addTest(new JUnit4TestAdapter(DashboardControllerIntegrationTest.class));
 
         return suite;
     }

@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -149,7 +149,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             assertThat(pageManager.getDraftPage("page_b").getPosition(), is(1));
             assertThat(pageManager.getDraftPage("page_c").getPosition(), is(2));
 
-            //-- 
+            //--
             request = new PagePositionRequest();
             request.setCode("page_a");
             request.setParentCode("page_root");
@@ -263,20 +263,6 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage(code);
 
         }
-    }
-
-    @Test
-    public void testPagesStatusGet() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/pages/dashboard/status")
-                        .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.published", is(16)));
-        result.andExpect(jsonPath("$.payload.unpublished", is(1)));
-        result.andExpect(jsonPath("$.payload.draft", is(1)));
     }
 
     protected Page createPage(String pageCode, PageModel pageModel, String parent) {

@@ -23,14 +23,13 @@ import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.system.BaseAction;
-import java.util.Collections;
-
-import java.util.List;
 import org.apache.commons.beanutils.BeanComparator;
-
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Classe action delegata alla gestione delle operazioni di associazione 
@@ -133,7 +132,6 @@ public class UserAuthorizationAction extends BaseAction {
 			this.getAuthorizationManager().updateUserAuthorizations(username, authsBean.getAuthorizations());
 			this.getRequest().getSession().removeAttribute(CURRENT_FORM_USER_AUTHS_PARAM_NAME);
 		} catch (Throwable t) {
-			t.printStackTrace();
 			_logger.error("error in save", t);
 			return FAILURE;
 		}

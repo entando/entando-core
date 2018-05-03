@@ -13,21 +13,20 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.content.command;
 
-import java.util.List;
-import java.util.Map;
-
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.ContentBulkCommandContext;
 import org.entando.entando.plugins.jacms.aps.system.services.content.helper.IContentHelper;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import java.util.List;
+import java.util.Map;
 
 public class RemoveOnlineContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
-	public static String BEAN_NAME = "jacmsRemoveOnlineContentBulkCommand";
-	public static String COMMAND_NAME = "content.offline";
+	public static final String BEAN_NAME = "jacmsRemoveOnlineContentBulkCommand";
+	public static final String COMMAND_NAME = "content.offline";
 
 	@Override
 	public String getName() {

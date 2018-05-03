@@ -229,7 +229,7 @@ public interface SystemConstants {
 
     public static final String API_PRODUCES_MEDIA_TYPE_PARAMETER = "apiMethod:producesMediaType";
 
-    public static String[] API_RESERVED_PARAMETERS = {API_LANG_CODE_PARAMETER, API_USER_PARAMETER,
+    public static final String[] API_RESERVED_PARAMETERS = {API_LANG_CODE_PARAMETER, API_USER_PARAMETER,
         API_OAUTH_CONSUMER_PARAMETER, API_APPLICATION_BASE_URL_PARAMETER, API_PRODUCES_MEDIA_TYPE_PARAMETER};
 
     public static final String OAUTH_CONSUMER_MANAGER = "OAuthConsumerManager";

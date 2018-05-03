@@ -13,17 +13,16 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.content.command.group;
 
-import java.util.Collection;
-
-import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
+
+import java.util.Collection;
 
 public class JoinGroupBulkCommand extends BaseContentGroupBulkCommand {
 
-	public static String BEAN_NAME = "jacmsJoinGroupBulkCommand";
-	public static String COMMAND_NAME = "content.group.join";
+	public static final String BEAN_NAME = "jacmsJoinGroupBulkCommand";
+	public static final String COMMAND_NAME = "content.group.join";
 
 	@Override
 	public String getName() {

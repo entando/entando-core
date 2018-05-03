@@ -13,19 +13,18 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.content.command.category;
 
-import java.util.Collection;
-
-import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
-import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
+import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentPropertyBulkCommand;
+
+import java.util.Collection;
 
 public class JoinCategoryBulkCommand extends BaseContentPropertyBulkCommand<Category> {
 
-	public static String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
-	public static String COMMAND_NAME = "content.category.join";
+	public static final String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
+	public static final String COMMAND_NAME = "content.category.join";
 
 	@Override
 	public String getName() {

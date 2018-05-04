@@ -13,21 +13,19 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource.model.imageresizer;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URLConnection;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
-import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.net.URLConnection;
 
 /**
  * Classe astratta base a servizio delle classi delegate al redimensionameno e salvataggio di file tipo immagine.
@@ -53,7 +51,11 @@ public abstract class AbstractImageResizer implements IImageResizer {
 			//resizedInstance.setMimeType(bean.getMimeType());
 			long realLength = tempFile.length() / 1000;
 			resizedInstance.setFileLength(String.valueOf(realLength) + " Kb");
-			tempFile.delete();
+			boolean deleted = tempFile.delete();
+
+			if(!deleted) {
+				_logger.warn("Failed to delete temp file {}",tempFile);
+			}
 		} catch (Throwable t) {
 			_logger.error("Error creating resized Image", t);
 			String msg = "Error creating resigned Image";

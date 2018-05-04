@@ -14,12 +14,6 @@
 package org.entando.entando.aps.system.services.storage;
 
 import com.agiletec.aps.util.FileTextReader;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
@@ -32,6 +26,13 @@ import org.entando.entando.web.filebrowser.validator.FileBrowserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author E.Santoboni
@@ -81,7 +82,11 @@ public class FileBrowserService implements IFileBrowserService {
             throw new RestServerError("error extracting stream", t);
         } finally {
             if (null != tempFile) {
-                tempFile.delete();
+                boolean deleted = tempFile.delete();
+
+                if(!deleted) {
+                    logger.warn("Failed to delete temp file {}", tempFile.getAbsolutePath());
+                }
             }
         }
         return bytes;

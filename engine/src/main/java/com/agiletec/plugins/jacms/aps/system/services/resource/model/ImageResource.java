@@ -122,7 +122,10 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
 			this.getStorageManager().saveFile(subPath, 
 					this.isProtectedResource(), new FileInputStream(tempMasterFile));
-			tempMasterFile.delete();
+			boolean deleted = tempMasterFile.delete();
+			if(!deleted) {
+				_logger.warn("Failed to delete temp file {}",tempMasterFile);
+			}
 		} catch (Throwable t) {
 			_logger.error("Error saving image resource instances", t);
 			throw new ApsSystemException("Error saving image resource instances", t);
@@ -143,7 +146,12 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			bean.setFileName(masterFileName);
 			bean.setMimeType(masterInstance.getMimeType());
 			this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
-			tempMasterFile.delete();
+			boolean deleted  = tempMasterFile.delete();
+
+			if(!deleted) {
+				_logger.warn("Failed to delete temp file {}",tempMasterFile);
+			}
+
 		} catch (Throwable t) {
 			_logger.error("Error reloading image resource instances", t);
 			throw new ApsSystemException("Error reloading image resource instances", t);
@@ -210,7 +218,11 @@ public class ImageResource extends AbstractMultiInstanceResource {
 			imOper.addImage();
 			convertCmd.run(imOper, bean.getFile().getAbsolutePath(), tempFile.getAbsolutePath());
 			this.getStorageManager().saveFile(subPath, this.isProtectedResource(), new FileInputStream(tempFile));
-			tempFile.delete();
+			boolean deleted = tempFile.delete();
+
+			if(!deleted) {
+				_logger.warn("Failed to delete temp file {}",tempFile);
+			}
 		} catch (Throwable t) {
 			_logger.error("Error creating resource file instance '{}'", subPath, t);
 			throw new ApsSystemException("Error creating resource file instance '" + subPath + "'", t);

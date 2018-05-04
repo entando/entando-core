@@ -45,9 +45,9 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class TableDataUtils {
-
+    
     private static final Logger _logger = LoggerFactory.getLogger(TableDataUtils.class);
-
+    
     public static void valueDatabase(String script, String databaseName,
             DataSource dataSource, DataInstallationReport schemaReport) throws ApsSystemException {
         try {
@@ -71,7 +71,7 @@ public class TableDataUtils {
             throw new ApsSystemException("Error executing script into db " + databaseName, t);
         }
     }
-
+    
     public static void executeQueries(DataSource dataSource, String[] queries, boolean traceException) throws ApsSystemException {
         if (null == queries || queries.length == 0) {
             return;
@@ -83,8 +83,8 @@ public class TableDataUtils {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
             stat = conn.createStatement();
-            for (int i = 0; i < queries.length; i++) {
-                currentQuery = queries[i];
+            for (String querie : queries) {
+                currentQuery = querie;
                 stat.addBatch(currentQuery);
             }
             stat.executeBatch();
@@ -119,7 +119,7 @@ public class TableDataUtils {
             }
         }
     }
-
+    
     public static TableDumpReport dumpTable(BufferedWriter br, DataSource dataSource, String tableName) throws ApsSystemException {
         TableDumpReport report = new TableDumpReport(tableName);
         StringBuilder scriptPrefix = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
@@ -129,7 +129,8 @@ public class TableDataUtils {
         long start = System.currentTimeMillis();
         try {
             conn = dataSource.getConnection();
-            String query = "SELECT * FROM " + tableName;
+            String query = "SELECT * FROM $tablename";
+            query = query.replace("$tablename", tableName);
             stat = conn.createStatement();
             res = stat.executeQuery(query);
             ResultSetMetaData metaData = res.getMetaData();
@@ -202,7 +203,7 @@ public class TableDataUtils {
         report.setRequiredTime(time);
         return report;
     }
-
+    
     private static Object getColumnValue(ResultSet res, int columnIndex, int[] columnTypes) throws SQLException {
         int type = columnTypes[columnIndex];
         int resIndex = columnIndex + 1;
@@ -322,7 +323,7 @@ public class TableDataUtils {
         }
         //return null;
     }
-
+    
     protected static String getClobAsString(Clob clob) {
         if (null == clob) {
             return null;
@@ -339,14 +340,14 @@ public class TableDataUtils {
         }
         return strOut.toString().trim();
     }
-
+    
     private static String getDateAsString(Date date) {
         if (null == date) {
             return null;
         }
         return DateConverter.getFormattedDate(date, "yyyy-MM-dd HH:mm:ss");
     }
-
+    
     private static String getTimeAsString(Time time) {
         if (null == time) {
             return null;
@@ -354,7 +355,7 @@ public class TableDataUtils {
         Date date = new Date(time.getTime());
         return getDateAsString(date);
     }
-
+    
     private static String getTimestampAsString(Timestamp time) {
         if (null == time) {
             return null;
@@ -362,7 +363,7 @@ public class TableDataUtils {
         Date date = new Date(time.getTime());
         return getDateAsString(date);
     }
-
+    
     private static boolean isDataNeedsQuotes(int type) {
         switch (type) {
             case Types.BIGINT:
@@ -391,5 +392,5 @@ public class TableDataUtils {
                 return true;
         }
     }
-
+    
 }

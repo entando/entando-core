@@ -158,12 +158,12 @@ public class BlowfishApsEncrypter implements IApsEncrypter {
     }
 
     public static void main(String[] args) throws ApsSystemException {
-        String pwd = "adminadmin";
-        String encrypted = encryptString(pwd);
+        String example = "example";
+        String encrypted = encryptString(example);
         System.out.println("encrypted pwd: " + encrypted);
 //        String decrypted = decrypt(encrypted);
 //        System.out.println("decrypted pwd: " + decrypted);
-        byte[] encoding = encryptBytes(pwd);
+        byte[] encoding = encryptBytes(example);
         System.out.println("Base64:\t " + DatatypeConverter.printBase64Binary(encoding));
         System.out.println("HEX:\t " + bytesToHex(encoding));
     }

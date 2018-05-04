@@ -33,7 +33,7 @@ import org.entando.entando.aps.system.services.page.IPageService;
  * @author paddeo
  */
 public class PageDto {
-
+    
     private String code;
     private String status;
     private boolean displayedInMenu;
@@ -58,13 +58,13 @@ public class PageDto {
      */
     @JsonInclude(Include.NON_NULL)
     private Map<String, Boolean> references;
-
+    
     public PageDto() {
     }
-
+    
     public PageDto(IPage page) {
         this.setCode(page.getCode());
-        this.setStatus(page.isOnlineInstance() ? IPageService.STATUS_ONLINE : IPageService.STATUS_DRAFT);
+        this.setStatus(getPageStatus(page));
         this.setDisplayedInMenu(page.isShowable());
         this.setPageModel(page.getModel().getCode());
         this.setCharset(page.getCharset());
@@ -89,135 +89,135 @@ public class PageDto {
                 .collect(Collectors.toList())
                 .size()));
     }
-
+    
     public String getCode() {
         return code;
     }
-
+    
     public void setCode(String code) {
         this.code = code;
     }
-
+    
     public String getStatus() {
         return status;
     }
-
+    
     public void setStatus(String status) {
         this.status = status;
     }
-
+    
     public boolean isDisplayedInMenu() {
         return displayedInMenu;
     }
-
+    
     public void setDisplayedInMenu(boolean displayedInMenu) {
         this.displayedInMenu = displayedInMenu;
     }
-
+    
     public String getPageModel() {
         return pageModel;
     }
-
+    
     public void setPageModel(String pageModel) {
         this.pageModel = pageModel;
     }
-
+    
     public String getCharset() {
         return charset;
     }
-
+    
     public void setCharset(String charset) {
         this.charset = charset;
     }
-
+    
     public String getContentType() {
         return contentType;
     }
-
+    
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-
+    
     public String getParentCode() {
         return parentCode;
     }
-
+    
     public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
     }
-
+    
     public boolean isSeo() {
         return seo;
     }
-
+    
     public void setSeo(boolean seo) {
         this.seo = seo;
     }
-
+    
     public Map<String, String> getTitles() {
         return titles;
     }
-
+    
     public void setTitles(Map<String, String> titles) {
         this.titles = titles;
     }
-
+    
     public Map<String, String> getFullTitles() {
         return fullTitles;
     }
-
+    
     public void setFullTitles(Map<String, String> fullTitles) {
         this.fullTitles = fullTitles;
     }
-
+    
     public String getOwnerGroup() {
         return ownerGroup;
     }
-
+    
     public void setOwnerGroup(String ownerGroup) {
         this.ownerGroup = ownerGroup;
     }
-
+    
     public List<String> getJoinGroups() {
         return joinGroups;
     }
-
+    
     public void setJoinGroups(List<String> joinGroups) {
         this.joinGroups = joinGroups;
     }
-
+    
     public void addJoinGroup(String joinGroup) {
         this.joinGroups.add(joinGroup);
     }
-
+    
     public List<String> getChildren() {
         return children;
     }
-
+    
     public void setChildren(List<String> children) {
         this.children = children;
     }
-
+    
     public void addChild(String child) {
         this.children.add(child);
     }
-
+    
     public int getPosition() {
         return position;
     }
-
+    
     public void setPosition(int position) {
         this.position = position;
     }
-
+    
     public int getNumWidget() {
         return numWidget;
     }
-
+    
     public void setNumWidget(int numWidget) {
         this.numWidget = numWidget;
     }
-
+    
     public static String getEntityFieldName(String dtoFieldName) {
         switch (dtoFieldName) {
             case "code":
@@ -228,13 +228,24 @@ public class PageDto {
                 return dtoFieldName;
         }
     }
-
+    
     public Map<String, Boolean> getReferences() {
         return references;
     }
-
+    
     public void setReferences(Map<String, Boolean> references) {
         this.references = references;
     }
-
+    
+    private String getPageStatus(IPage page) {
+        if (page.isOnline()) {
+            if (page.isChanged()) {
+                return "draft";
+            } else {
+                return "published";
+            }
+        } else {
+            return "unpublished";
+        }
+    }
 }

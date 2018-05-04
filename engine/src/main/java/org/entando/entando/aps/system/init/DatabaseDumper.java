@@ -151,7 +151,6 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
                 }
             } catch (IOException t2) {
                 _logger.error("Error closing FileInputstream of temp file '{}'", filename, t2);
-                throw new ApsSystemException("Error closing FileInputstream of temp file '{}'", t2);
             }
             if (null != tempFile) {
                 boolean deleted = tempFile.delete();

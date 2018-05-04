@@ -116,7 +116,12 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 			String[] filesName = dir.list();
 			for (int i = 0; i < filesName.length; i++) {
 				File fileToDelete = new File(dirName + File.separator + filesName[i]);
-				fileToDelete.delete();
+				boolean fileDeleted = fileToDelete.delete();
+
+				if(!fileDeleted) {
+					_logger.warn("Failed to delete file {} ",fileToDelete.getAbsolutePath());
+				}
+
 			}
 			boolean deleted = dir.delete();
 			if(!deleted) {

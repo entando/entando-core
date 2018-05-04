@@ -15,21 +15,6 @@ package org.entando.entando.aps.system.init;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.DateConverter;
-
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 import org.entando.entando.aps.system.init.model.SystemInstallationReport;
@@ -40,6 +25,13 @@ import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+
+import javax.sql.DataSource;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -162,7 +154,10 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
                 throw new ApsSystemException("Error closing FileInputstream of temp file '{}'", t2);
             }
             if (null != tempFile) {
-                tempFile.delete();
+                boolean deleted = tempFile.delete();
+                if(!deleted) {
+                    _logger.warn("Failed to delete temp file {} ",tempFile.getAbsolutePath());
+                }
             }
         }
     }
@@ -172,7 +167,10 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
             String tempDir = System.getProperty("java.io.tmpdir");
             String filePath = tempDir + File.separator + filename;
             File file = new File(filePath);
-            file.createNewFile();
+            boolean created = file.createNewFile();
+            if(!created) {
+                _logger.warn("Failed to create a temp file {} ",created);
+            }
             return file;
         } catch (Throwable t) {
             _logger.error("Error saving new temp file '{}'", filename, t);

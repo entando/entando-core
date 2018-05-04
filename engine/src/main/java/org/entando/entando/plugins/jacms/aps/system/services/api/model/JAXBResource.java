@@ -13,33 +13,24 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.api.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.FileNameMap;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
+import java.io.*;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author E.Santoboni
@@ -75,7 +66,13 @@ public class JAXBResource {
 				File tempFile = this.createTempFile(new Random().nextInt(100) + resource.getMasterFileName(), stream);
 				byte[] bytes = this.fileToByteArray(tempFile);
 				this.setBase64(bytes);
-				tempFile.delete();
+				boolean deleted = tempFile.delete();
+
+				if(!deleted) {
+					_logger.warn("Failed to delete temp file {} ",tempFile.getAbsolutePath());
+				}
+
+
 			}
 		} catch (IOException t) {
 			_logger.error("Error creating jaxb resource", t);

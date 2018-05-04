@@ -14,18 +14,13 @@
 package org.entando.entando.aps.system.services.storage;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.util.Arrays;
 
 /**
  * @author E.Santoboni
@@ -105,7 +100,11 @@ public class LocalStorageManager implements IStorageManager {
 					File fileToDelete = new File(file.getAbsoluteFile() + File.separator + filesName[i]);
 					this.delete(fileToDelete);
 				}
-				file.delete();
+				boolean deleted = file.delete();
+
+				if(!deleted) {
+					_logger.warn("Failed to delete  file {}", file.getAbsolutePath());
+				}
 			} else {
 				return file.delete();
 			}
@@ -186,7 +185,11 @@ public class LocalStorageManager implements IStorageManager {
 			throw new ApsSystemException("Error editing file", t);
 		} finally {
 			if (null != tempFilePath) {
-				new File(tempFilePath).delete();
+				boolean deleted = new File(tempFilePath).delete();
+
+				if(!deleted) {
+					_logger.warn("Failed to delete  file {}", tempFilePath);
+				}
 			}
 		}
 	}

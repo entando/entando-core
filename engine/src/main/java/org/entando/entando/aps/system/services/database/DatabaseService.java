@@ -15,11 +15,6 @@ package org.entando.entando.aps.system.services.database;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.util.FileTextReader;
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.IComponentManager;
@@ -34,6 +29,12 @@ import org.entando.entando.web.database.validator.DatabaseValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * @author E.Santoboni
@@ -140,7 +141,10 @@ public class DatabaseService implements IDatabaseService {
             throw new RestServerError("error extracting database dump", t);
         } finally {
             if (null != tempFile) {
-                tempFile.delete();
+                boolean deleted = tempFile.delete();
+                if(!deleted) {
+                    logger.warn("Failed to create temp file {}", tempFile.getAbsolutePath());
+                }
             }
         }
         return bytes;

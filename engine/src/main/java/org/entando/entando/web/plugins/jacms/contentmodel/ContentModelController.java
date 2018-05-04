@@ -118,7 +118,7 @@ public class ContentModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{modelId}/pagereferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getReferences(@PathVariable Long modelId) {
-        logger.debug("loading contentModel references {}");
+        logger.debug("loading contentModel references for model {}", modelId);
         Map<String, List<String>> references = this.getContentModelService().getPageReferences(modelId);
         return new ResponseEntity<>(new RestResponse(references), HttpStatus.OK);
     }
@@ -126,7 +126,7 @@ public class ContentModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
-        logger.debug("loading contentModel dictionary {}");
+        logger.debug("loading contentModel dictionary for type {}", typeCode);
         IEntityModelDictionary dictionary = this.getContentModelService().getContentModelDictionary(typeCode);
         return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);
     }

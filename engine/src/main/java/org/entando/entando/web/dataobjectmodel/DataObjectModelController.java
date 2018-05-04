@@ -177,7 +177,7 @@ public class DataObjectModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
-        logger.debug("loading data model dictionary {}");
+        logger.debug("loading data model dictionary {}", typeCode);
         IEntityModelDictionary dictionary = this.getDataObjectModelService().getDataModelDictionary(typeCode);
         return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);
     }

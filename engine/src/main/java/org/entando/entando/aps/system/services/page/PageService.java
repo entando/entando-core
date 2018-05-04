@@ -212,6 +212,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestRourceNotFoundException(bindingResult);
         }
         PageDto pageDto = this.getDtoBuilder().convert(page);
+        pageDto.setStatus(status);
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;
     }

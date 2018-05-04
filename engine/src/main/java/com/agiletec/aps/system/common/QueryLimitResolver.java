@@ -11,7 +11,6 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
 package com.agiletec.aps.system.common;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,22 +40,22 @@ public class QueryLimitResolver {
         String driverClassName = extractDriverClassName(dataSource);
         logger.trace("detected driver: {}", driverClassName);
         if (driverClassName.equalsIgnoreCase(JDBC_DRIVER_DERBY_EMBEDDED)) {
-            limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", new Object[]{offset, limit});
+            limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", offset, limit);
         } else if (driverClassName.equalsIgnoreCase(JDBC_DRIVER_POSTGRES)) {
-            limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", new Object[]{offset, limit});
+            limitBlock = String.format(" OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ", offset, limit);
         } else if (driverClassName.equalsIgnoreCase(JDBC_DRIVER_MYSQL)) {
-            limitBlock = String.format(" LIMIT %d OFFSET %d ", new Object[]{limit, offset});
-        }  else {
+            limitBlock = String.format(" LIMIT %d OFFSET %d ", limit, offset);
+        } else {
             logger.warn("driver {} not implemented", driverClassName);
             throw new UnsupportedOperationException(driverClassName + " not implemented!");
         }
         logger.trace("sql limit: {}", limitBlock);
         return limitBlock;
     }
-    
 
     /**
      * TODO MAKE IT SMARTER AND JBOSS COMPLIANT
+     *
      * @param dataSource
      * @return
      * @throws NoSuchMethodException

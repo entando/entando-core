@@ -13,22 +13,21 @@
  */
 package org.entando.entando.plugins.jacms.aps.system.services.content.command;
 
-import java.util.List;
-
+import com.agiletec.aps.system.common.entity.model.FieldError;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.common.command.constants.ApsCommandErrorCode;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.BaseContentBulkCommand;
 import org.entando.entando.plugins.jacms.aps.system.services.content.command.common.ContentBulkCommandContext;
 
-import com.agiletec.aps.system.common.entity.model.FieldError;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.IGroupManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import java.util.List;
 
 public class InsertOnlineContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
-	public static String BEAN_NAME = "jacmsInsertOnlineContentBulkCommand";
-	public static String COMMAND_NAME = "content.online";
+	public static final String BEAN_NAME = "jacmsInsertOnlineContentBulkCommand";
+	public static final String COMMAND_NAME = "content.online";
 
 	@Override
 	public String getName() {

@@ -17,9 +17,13 @@
 package com.agiletec.aps.system.services.category;
 
 import com.agiletec.aps.system.services.category.thread.NotifyingThread;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReloadingCategoryReferencesThread extends NotifyingThread {
-	
+
+	private static final Logger _logger = LoggerFactory.getLogger(ReloadingCategoryReferencesThread.class);
+
 	/**
 	 * Setup the thread for the references reloading
 	 * @param categoryManager 
@@ -43,7 +47,7 @@ public class ReloadingCategoryReferencesThread extends NotifyingThread {
 			((CategoryManager)this._categoryManager).reloadCategoryReferencesByBeanName(_beanName, _categoryCode);
 			//System.out.println(this._label + " ENDED");
 		} catch (Throwable e) {
-			e.printStackTrace();
+			_logger.error("failed to reload in category manager ",e);
 		}
 	}
 	

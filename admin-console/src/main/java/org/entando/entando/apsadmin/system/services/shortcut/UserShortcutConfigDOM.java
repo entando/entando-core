@@ -13,9 +13,7 @@
  */
 package org.entando.entando.apsadmin.system.services.shortcut;
 
-import java.io.StringReader;
-import java.util.List;
-
+import com.agiletec.aps.system.exception.ApsSystemException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -24,7 +22,8 @@ import org.jdom.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
+import java.io.StringReader;
+import java.util.List;
 
 /**
  * @author E.Santoboni
@@ -101,8 +100,8 @@ public class UserShortcutConfigDOM {
 		return doc;
 	}
 	
-	public static String ROOT_ELEMENT_NAME = "shortcuts";
-	public static String BOX_ELEMENT_NAME = "box";
-	public static String POS_ATTRIBUTE_NAME = "pos";
+	public static final String ROOT_ELEMENT_NAME = "shortcuts";
+	public static final String BOX_ELEMENT_NAME = "box";
+	public static final String POS_ATTRIBUTE_NAME = "pos";
 	
 }

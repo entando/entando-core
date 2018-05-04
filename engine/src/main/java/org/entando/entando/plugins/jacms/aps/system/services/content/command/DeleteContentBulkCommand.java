@@ -22,8 +22,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 public class DeleteContentBulkCommand extends BaseContentBulkCommand<ContentBulkCommandContext> {
 
-	public static String BEAN_NAME = "jacmsDeleteContentBulkCommand";
-	public static String COMMAND_NAME = "content.delete";
+	public static final String BEAN_NAME = "jacmsDeleteContentBulkCommand";
+	public static final String COMMAND_NAME = "content.delete";
 
 	@Override
 	public String getName() {

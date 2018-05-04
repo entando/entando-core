@@ -13,20 +13,10 @@
  */
 package org.entando.entando.web.common.handlers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.RestErrorCodes;
-import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
-import org.entando.entando.web.common.exceptions.EntandoTokenException;
-import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.exceptions.ValidationUpdateSelfException;
+import org.entando.entando.web.common.exceptions.*;
 import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
@@ -44,6 +34,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 @ControllerAdvice
 public class RestExceptionHandler {
@@ -71,7 +66,6 @@ public class RestExceptionHandler {
         List<RestError> errors = new ArrayList<>();
         errors.add(error);
         response.setErrors(errors);
-        ex.printStackTrace();
         return response;
     }
 

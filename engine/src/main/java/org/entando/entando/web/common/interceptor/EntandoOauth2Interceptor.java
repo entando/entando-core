@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -68,6 +68,9 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             HandlerMethod method = (HandlerMethod) handler;
             if (method.getMethod().isAnnotationPresent(RequestMapping.class)) {
                 RestAccessControl rqm = method.getMethodAnnotation(RestAccessControl.class);
+                if (null == rqm) {
+                    return true;
+                }
                 String permission = rqm.permission();
                 this.extractOAuthParameters(request, permission);
             }
@@ -123,6 +126,5 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             throw new EntandoTokenException("expired token", request, "guest");
         }
     }
-
 
 }

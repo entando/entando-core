@@ -13,15 +13,14 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.searchengine;
 
-import java.io.File;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Classe factory degli elementi ad uso del SearchEngine.
@@ -119,8 +118,12 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 				File fileToDelete = new File(dirName + File.separator + filesName[i]);
 				fileToDelete.delete();
 			}
-			dir.delete();
-			_logger.debug("Deleted subfolder {}", subDirectory);
+			boolean deleted = dir.delete();
+			if(!deleted) {
+				_logger.warn("Failed to delete file {}", deleted);
+			}else {
+				_logger.debug("Deleted subfolder {}", subDirectory);
+			}
 		}
 	}
 

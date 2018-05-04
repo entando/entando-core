@@ -14,15 +14,14 @@
 package org.entando.entando.aps.system.services.dataobjectsearchengine;
 
 import com.agiletec.aps.system.SystemConstants;
-import java.io.File;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 /**
  * Classe factory degli elementi ad uso del SearchEngine.
@@ -118,10 +117,17 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 			String[] filesName = dir.list();
 			for (int i = 0; i < filesName.length; i++) {
 				File fileToDelete = new File(dirName + File.separator + filesName[i]);
-				fileToDelete.delete();
+				boolean fileDeleted = fileToDelete.delete();
+				if(!fileDeleted) {
+					_logger.warn("Failed to delete temp file {}",fileToDelete.getName());
+				}
 			}
-			dir.delete();
-			_logger.debug("Deleted subfolder {}", subDirectory);
+			boolean deleted = dir.delete();
+			if(!deleted) {
+				_logger.warn("Failed to delete temp file {}",dirName);
+			}else {
+				_logger.debug("Deleted subfolder {}", subDirectory);
+			}
 		}
 	}
 

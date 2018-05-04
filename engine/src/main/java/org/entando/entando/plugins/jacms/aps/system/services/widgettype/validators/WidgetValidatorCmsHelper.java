@@ -123,7 +123,7 @@ public class WidgetValidatorCmsHelper {
         if (null != config) {
             Object entry = config.get(key);
             if (null != entry && entry instanceof String) {
-                logger.warn("the config entry {} is supposed to be complex, but is a String");
+                logger.warn("the config entry {} is supposed to be complex, but is a String", entry.toString());
                 return null;
             }
             return (List<Object>) entry;

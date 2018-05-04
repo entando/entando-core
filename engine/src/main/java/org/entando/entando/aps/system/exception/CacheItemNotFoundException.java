@@ -20,7 +20,7 @@ public class CacheItemNotFoundException extends RuntimeException {
     }
 
     public CacheItemNotFoundException(String entryKey, String cacheName) {
-        super(String.format("the cache entry %s was not found in %s cache", new Object[]{entryKey, cacheName}));
+        super(String.format("the cache entry %s was not found in %s cache", entryKey, cacheName));
     }
 
     public CacheItemNotFoundException(String message, Throwable cause) {

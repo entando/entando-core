@@ -38,7 +38,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
 
     public static final String ERRCODE_RESOURCE_DOES_NOT_EXIST = "1";
     public static final String ERRCODE_RESOURCE_ALREADY_EXIST = "2";
-    //public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_REQUIRED_FOLDER_TYPE = "3";
     public static final String ERRCODE_INVALID_PATH = "4";
     public static final String ERRCODE_FILENAME_MISMATCH = "5";
     public static final String ERRCODE_INVALID_FILENAME = "6";

@@ -60,13 +60,18 @@ public class FileBrowserController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> browseFolder(@RequestParam(value = "currentPath", required = false, defaultValue = "") String currentPath,
-            @RequestParam(value = "protectedFolder", required = false, defaultValue = "false") Boolean protectedFolder) {
+            @RequestParam(value = "protectedFolder", required = false) Boolean protectedFolder) {
         logger.debug("browsing folder {} - protected {}", currentPath, protectedFolder);
         List<BasicFileAttributeViewDto> result = this.getFileBrowserService().browseFolder(currentPath, protectedFolder);
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("protectedFolder", protectedFolder);
+        if (null != protectedFolder) {
+            metadata.put("protectedFolder", protectedFolder);
+        }
         metadata.put("currentPath", currentPath);
-        metadata.put("prevPath", this.getPrevFolderName(currentPath));
+        String prevPath = this.getPrevFolderName(currentPath);
+        if (null != currentPath) {
+            metadata.put("prevPath", prevPath);
+        }
         logger.debug("Content folder -> {}", result);
         return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
     }

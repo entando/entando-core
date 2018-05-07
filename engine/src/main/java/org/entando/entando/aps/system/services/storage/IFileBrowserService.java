@@ -24,18 +24,18 @@ import org.springframework.validation.BindingResult;
  */
 public interface IFileBrowserService {
 
-    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder);
+    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, Boolean protectedFolder);
 
-    public byte[] getFileStream(String currentPath, boolean protectedFolder);
+    public byte[] getFileStream(String currentPath, Boolean protectedFolder);
 
     public void addFile(FileBrowserFileRequest request, BindingResult bindingResult);
 
     public void updateFile(FileBrowserFileRequest request, BindingResult bindingResult);
 
-    public void deleteFile(String currentPath, boolean protectedResource);
+    public void deleteFile(String currentPath, Boolean protectedResource);
 
     public void addDirectory(FileBrowserRequest request, BindingResult bindingResult);
 
-    public void deleteDirectory(String currentPath, boolean protectedFolder);
+    public void deleteDirectory(String currentPath, Boolean protectedFolder);
 
 }

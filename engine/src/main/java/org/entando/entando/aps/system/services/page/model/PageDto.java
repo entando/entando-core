@@ -25,6 +25,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.page.IPageService;
 
@@ -49,6 +50,8 @@ public class PageDto {
     private List<String> children = new ArrayList<>();
     private int position;
     private int numWidget;
+    private String lastModified;
+    private String fullPath;
 
     /**
      * The references grouped by service name.
@@ -88,6 +91,11 @@ public class PageDto {
                 .filter(widget -> widget != null)
                 .collect(Collectors.toList())
                 .size()));
+        if (null != page.getMetadata().getUpdatedAt()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            this.setLastModified(sdf.format(page.getMetadata().getUpdatedAt()));
+        }
+        this.setFullPath(page.getPath());
     }
     
     public String getCode() {
@@ -216,6 +224,22 @@ public class PageDto {
     
     public void setNumWidget(int numWidget) {
         this.numWidget = numWidget;
+    }
+    
+    public String getLastModified() {
+        return lastModified;
+    }
+    
+    public void setLastModified(String lastModified) {
+        this.lastModified = lastModified;
+    }
+    
+    public String getFullPath() {
+        return fullPath;
+    }
+    
+    public void setFullPath(String fullPath) {
+        this.fullPath = fullPath;
     }
     
     public static String getEntityFieldName(String dtoFieldName) {

@@ -57,8 +57,7 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
     }
 
     @Test
-    public void testBrowseFolder_1() throws Exception {
-        this.storageManager.deleteDirectory("cms", false);
+    public void testBrowseRootFolder() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -66,6 +65,32 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+        result.andExpect(jsonPath("$.payload[0].name", is("public")));
+        result.andExpect(jsonPath("$.payload[0].protectedFolder", is(false)));
+        result.andExpect(jsonPath("$.payload[1].name", is("protected")));
+        result.andExpect(jsonPath("$.payload[1].protectedFolder", is(true)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(2)));
+        result.andExpect(jsonPath("$.metaData.currentPath", is("")));
+        result.andExpect(jsonPath("$.metaData.prevPath", is(CoreMatchers.nullValue())));
+    }
+
+    @Test
+    public void testBrowseFolder_1() throws Exception {
+        this.storageManager.deleteDirectory("cms", false);
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/fileBrowser").param("protectedFolder", "false")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+        result.andExpect(jsonPath("$.payload[0].name", is("conf")));
+        result.andExpect(jsonPath("$.payload[0].protectedFolder", is(false)));
+        result.andExpect(jsonPath("$.payload[0].directory", is(true)));
+        result.andExpect(jsonPath("$.payload[1].name", is("entando_logo.jpg")));
+        result.andExpect(jsonPath("$.payload[1].protectedFolder", is(false)));
+        result.andExpect(jsonPath("$.payload[1].directory", is(false)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.size()", is(3)));
         result.andExpect(jsonPath("$.metaData.currentPath", is("")));
@@ -79,6 +104,14 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/fileBrowser").param("currentPath", "conf")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isBadRequest());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is("3")));
+
+        result = mockMvc
+                .perform(get("/fileBrowser").param("currentPath", "conf").param("protectedFolder", "false")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(3)));
@@ -94,7 +127,7 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/fileBrowser").param("currentPath", "conf/unexisting")
+                .perform(get("/fileBrowser").param("currentPath", "conf/unexisting").param("protectedFolder", "false")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
@@ -367,14 +400,14 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
             result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result.andExpect(jsonPath("$.metaData.size()", is(1)));
             result.andExpect(jsonPath("$.metaData.prevPath", is("test_folder")));
-            
+
             String bodyFile = this.createBody("test.txt", "test_folder/subfolder/test.txt", false, "test test");
             this.executeFilePost(bodyFile, accessToken, status().isOk());
-            
+
             ResultActions result_error = this.executeDirectoryPost(body, accessToken, status().isConflict());
             result_error.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result_error.andExpect(jsonPath("$.errors[0].code", is("2")));
-            
+
             ResultActions result2 = mockMvc
                     .perform(delete("/fileBrowser/directory")
                             .param("currentPath", "test_folder/subfolder")

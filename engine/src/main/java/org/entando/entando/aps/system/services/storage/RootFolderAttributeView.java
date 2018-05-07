@@ -11,28 +11,27 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.apsadmin.filebrowser;
-
-import org.entando.entando.aps.system.services.storage.BasicFileAttributeView;
+package org.entando.entando.aps.system.services.storage;
 
 /**
  * @author E.Santoboni
  */
 public class RootFolderAttributeView extends BasicFileAttributeView {
-	
-	protected RootFolderAttributeView(String name, boolean isProtected) {
-		this.setName(name);
-		this.setDirectory(true);
-		this.setProtectedFolder(isProtected);
-	}
-	
-	public boolean isProtectedFolder() {
-		return _protectedFolder;
-	}
-	protected void setProtectedFolder(boolean protectedFolder) {
-		this._protectedFolder = protectedFolder;
-	}
-	
-	private boolean _protectedFolder;
-	
+
+    public RootFolderAttributeView(String name, boolean isProtected) {
+        this.setName(name);
+        this.setDirectory(true);
+        this.setProtectedFolder(isProtected);
+    }
+
+    public boolean isProtectedFolder() {
+        return _protectedFolder;
+    }
+
+    protected void setProtectedFolder(boolean protectedFolder) {
+        this._protectedFolder = protectedFolder;
+    }
+
+    private boolean _protectedFolder;
+
 }

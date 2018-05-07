@@ -23,6 +23,7 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.opensymphony.xwork2.Action;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
+import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
 
 /**
  * @author E.Santoboni

@@ -33,6 +33,9 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.springframework.validation.BeanPropertyBindingResult;
 
 /**
  * @author E.Santoboni
@@ -53,13 +56,21 @@ public class FileBrowserService implements IFileBrowserService {
     }
 
     @Override
-    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, boolean protectedFolder) {
+    public List<BasicFileAttributeViewDto> browseFolder(String currentPath, Boolean protectedFolder) {
         this.checkResource(currentPath, "Folder", protectedFolder);
         List<BasicFileAttributeViewDto> dtos = null;
         try {
-            BasicFileAttributeView[] views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
+            BasicFileAttributeView[] views = null;
+            if (null == protectedFolder) {
+                views = new BasicFileAttributeView[]{this.getRootFolder(false), this.getRootFolder(true)};
+            } else {
+                views = this.getStorageManager().listAttributes(currentPath, protectedFolder);
+            }
             dtos = this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
             dtos.stream().forEach(i -> i.buildPath(currentPath));
+            if (null != protectedFolder) {
+                dtos.stream().forEach(i -> i.setProtectedFolder(protectedFolder));
+            }
         } catch (Throwable t) {
             logger.error("error browsing folder {} - type {}", currentPath, protectedFolder);
             throw new RestServerError("error browsing folder", t);
@@ -67,8 +78,13 @@ public class FileBrowserService implements IFileBrowserService {
         return dtos;
     }
 
+    private RootFolderAttributeView getRootFolder(boolean protectedFolder) {
+        String folderName = (protectedFolder) ? "protected" : "public";
+        return new RootFolderAttributeView(folderName, protectedFolder);
+    }
+
     @Override
-    public byte[] getFileStream(String currentPath, boolean protectedFolder) {
+    public byte[] getFileStream(String currentPath, Boolean protectedFolder) {
         this.checkResource(currentPath, "File", protectedFolder);
         File tempFile = null;
         byte[] bytes = null;
@@ -84,7 +100,7 @@ public class FileBrowserService implements IFileBrowserService {
             if (null != tempFile) {
                 boolean deleted = tempFile.delete();
 
-                if(!deleted) {
+                if (!deleted) {
                     logger.warn("Failed to delete temp file {}", tempFile.getAbsolutePath());
                 }
             }
@@ -129,7 +145,7 @@ public class FileBrowserService implements IFileBrowserService {
     }
 
     @Override
-    public void deleteFile(String currentPath, boolean protectedResource) {
+    public void deleteFile(String currentPath, Boolean protectedResource) {
         try {
             this.getStorageManager().deleteFile(currentPath, protectedResource);
         } catch (ValidationConflictException vge) {
@@ -164,7 +180,7 @@ public class FileBrowserService implements IFileBrowserService {
     }
 
     @Override
-    public void deleteDirectory(String currentPath, boolean protectedFolder) {
+    public void deleteDirectory(String currentPath, Boolean protectedFolder) {
         try {
             this.getStorageManager().deleteDirectory(currentPath, protectedFolder);
         } catch (ValidationConflictException vge) {
@@ -175,7 +191,15 @@ public class FileBrowserService implements IFileBrowserService {
         }
     }
 
-    protected void checkResource(String currentPath, String objectName, boolean protectedFolder) {
+    protected void checkResource(String currentPath, String objectName, Boolean protectedFolder) {
+        if (null == protectedFolder && !StringUtils.isEmpty(currentPath)) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(objectName, objectName);
+            bindingResult.reject(FileBrowserValidator.ERRCODE_REQUIRED_FOLDER_TYPE, "fileBrowser.browser.protectedFolder.required");
+            throw new ValidationGenericException(bindingResult);
+        }
+        if (null == protectedFolder) {
+            return;
+        }
         try {
             boolean exists = this.getStorageManager().exists(currentPath, protectedFolder);
             if (!exists) {

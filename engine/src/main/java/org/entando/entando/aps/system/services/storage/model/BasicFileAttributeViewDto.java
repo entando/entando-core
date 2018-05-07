@@ -17,6 +17,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.util.DateConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.storage.BasicFileAttributeView;
+import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
 
 /**
  * @author E.Santoboni
@@ -28,6 +29,7 @@ public class BasicFileAttributeViewDto {
     private Long size;
     private Boolean directory;
     private String path;
+    private Boolean protectedFolder;
 
     public BasicFileAttributeViewDto() {
     }
@@ -39,6 +41,9 @@ public class BasicFileAttributeViewDto {
             this.setLastModifiedTime(DateConverter.getFormattedDate(bfad.getLastModifiedTime(), SystemConstants.API_DATE_FORMAT));
         }
         this.setSize(bfad.getSize());
+        if (bfad instanceof RootFolderAttributeView) {
+            this.setProtectedFolder(((RootFolderAttributeView) bfad).isProtectedFolder());
+        }
     }
 
     public void buildPath(String subfolder) {
@@ -88,6 +93,14 @@ public class BasicFileAttributeViewDto {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public Boolean getProtectedFolder() {
+        return protectedFolder;
+    }
+
+    public void setProtectedFolder(Boolean protectedFolder) {
+        this.protectedFolder = protectedFolder;
     }
 
 }

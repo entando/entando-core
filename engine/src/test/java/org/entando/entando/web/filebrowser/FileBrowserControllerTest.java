@@ -63,18 +63,18 @@ public class FileBrowserControllerTest extends AbstractControllerTest {
         dto.setName("folder");
         dto.setDirectory(true);
         dtos.add(dto);
-        when(fileBrowserService.browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean())).thenReturn(dtos);
+        when(fileBrowserService.browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.any())).thenReturn(dtos);
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/fileBrowser")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        Mockito.verify(fileBrowserService, Mockito.times(1)).browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.anyBoolean());
+        Mockito.verify(fileBrowserService, Mockito.times(1)).browseFolder(ArgumentMatchers.anyString(), ArgumentMatchers.any());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
-        result.andExpect(jsonPath("$.metaData.size()", is(3)));
+        result.andExpect(jsonPath("$.metaData.size()", is(2)));
     }
 
 }

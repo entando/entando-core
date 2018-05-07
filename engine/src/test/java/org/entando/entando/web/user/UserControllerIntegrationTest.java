@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.user;
 
+import com.agiletec.aps.system.services.authorization.Authorization;
 import java.net.URLEncoder;
 import java.util.Date;
 
@@ -24,6 +25,7 @@ import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.List;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
@@ -35,6 +37,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
+import org.junit.Assert;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -73,7 +76,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testAddUserAuthorities() throws Exception {
+    public void testAddUserAuthorities_1() throws Exception {
         Group group = createGroup(1);
         Role role = createRole(1);
         UserDetails mockuser = this.createUser("mockuser");
@@ -112,6 +115,67 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             result4.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
             result4.andExpect(jsonPath("$.payload[0].group", is("group1")));
             result4.andExpect(jsonPath("$.payload[0].role", is("role1")));
+        } finally {
+            this.authorizationManager.deleteUserAuthorizations("mockuser");
+            this.groupManager.removeGroup(group);
+            this.roleManager.removeRole(role);
+            this.userManager.removeUser("mockuser");
+        }
+    }
+
+    @Test
+    public void testAddUserAuthorities_2() throws Exception {
+        Group group = createGroup(1);
+        Role role = createRole(1);
+        UserDetails mockuser = this.createUser("mockuser");
+        try {
+            this.groupManager.addGroup(group);
+            this.roleManager.addRole(role);
+            this.userManager.addUser(mockuser);
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            String mockJson1 = "[{\"group\":\"group1\", \"role\":\"role1\"}]";
+            ResultActions result1 = mockMvc.perform(
+                    post("/users/{target}/authorities", "mockuser")
+                    .content(mockJson1).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isOk());
+            result1.andExpect(jsonPath("$.payload[0].group", is("group1")));
+
+            List<Authorization> auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            Assert.assertEquals(1, auths.size());
+
+            String mockJson2 = "[{\"group\":\"customers\", \"role\":\"supervisor\"}]";
+            ResultActions result2 = mockMvc.perform(
+                    post("/users/{target}/authorities", "mockuser")
+                    .content(mockJson2).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isOk());
+            result2.andExpect(jsonPath("$.payload[0].group", is("customers")));
+
+            auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            Assert.assertEquals(2, auths.size());
+
+            ResultActions result3 = mockMvc.perform(
+                    get("/users/{target}/authorities", "mockuser")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result3.andExpect(status().isOk());
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+
+            String mockJson4 = "[{\"group\":\"helpdesk\", \"role\":\"pageManager\"}]";
+
+            ResultActions result4 = mockMvc.perform(
+                    put("/users/{target}/authorities", "mockuser")
+                    .content(mockJson4).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result4.andExpect(status().isOk());
+            result4.andExpect(jsonPath("$.payload[0].group", is("helpdesk")));
+
+            auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            Assert.assertEquals(1, auths.size());
+            Assert.assertEquals("helpdesk", auths.get(0).getGroup().getName());
+
         } finally {
             this.authorizationManager.deleteUserAuthorizations("mockuser");
             this.groupManager.removeGroup(group);

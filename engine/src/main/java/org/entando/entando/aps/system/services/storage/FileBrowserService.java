@@ -68,6 +68,9 @@ public class FileBrowserService implements IFileBrowserService {
             }
             dtos = this.getFileAttributeViewDtoDtoBuilder().convert(Arrays.asList(views));
             dtos.stream().forEach(i -> i.buildPath(currentPath));
+            if (null != protectedFolder) {
+                dtos.stream().forEach(i -> i.setProtectedFolder(protectedFolder));
+            }
         } catch (Throwable t) {
             logger.error("error browsing folder {} - type {}", currentPath, protectedFolder);
             throw new RestServerError("error browsing folder", t);

@@ -37,6 +37,8 @@ public interface IUserService {
 
     public List<UserAuthorityDto> addUserAuthorities(String username, UserAuthoritiesRequest request);
 
+    public List<UserAuthorityDto> updateUserAuthorities(String username, UserAuthoritiesRequest request);
+
     public void deleteUserAuthorities(String username);
 
     public PagedMetadata<UserDto> getUsers(RestListRequest requestList);

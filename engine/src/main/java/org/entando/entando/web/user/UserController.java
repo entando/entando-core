@@ -170,7 +170,7 @@ public class UserController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        List<UserAuthorityDto> authorities = this.getUserService().addUserAuthorities(target, authRequest);
+        List<UserAuthorityDto> authorities = this.getUserService().updateUserAuthorities(target, authRequest);
         return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
     }
 

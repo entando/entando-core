@@ -150,6 +150,12 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public List<UserAuthorityDto> updateUserAuthorities(String username, UserAuthoritiesRequest request) {
+        this.deleteUserAuthorities(username);
+        return this.addUserAuthorities(username, request);
+    }
+
+    @Override
     public void deleteUserAuthorities(String username) {
         try {
             this.getAuthorizationManager().deleteUserAuthorizations(username);

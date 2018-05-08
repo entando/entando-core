@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -58,12 +59,16 @@ public class PageSearchDto extends PagedMetadata<PageDto> {
     }
 
     public void imposeLimits() {
-        int start = ((this.getPage() - 1) * this.getPageSize()) <= this.getBody().size() ? (this.getPage() - 1) * this.getPageSize() : 0;
-        int end = (this.getPage() * this.getPageSize() - 1) <= this.getBody().size() ? (this.getPage() * this.getPageSize() - 1)
-                : (this.getBody().size() - this.getPage() * this.getPageSize() - 1) > 0 ? (this.getBody().size() - this.getPage() * this.getPageSize() - 1)
-                : this.getBody().size() - start > 0 ? this.getBody().size() - start : this.getBody().size();
-        this.setBody(IntStream.range(start, end)
-                .mapToObj(this.getBody()::get)
-                .collect(Collectors.toList()));
+        if (((this.getPage() - 1) * this.getPageSize()) > this.getBody().size()) {
+            this.setBody(new ArrayList<>());
+        } else {
+            int start = ((this.getPage() - 1) * this.getPageSize());
+            int end = (this.getPage() * this.getPageSize()) <= this.getBody().size() ? (this.getPage() * this.getPageSize())
+                    : (this.getBody().size() - this.getPage() * this.getPageSize()) > 0 ? (this.getBody().size() - this.getPage() * this.getPageSize())
+                    : this.getBody().size();
+            this.setBody(IntStream.range(start, end)
+                    .mapToObj(this.getBody()::get)
+                    .collect(Collectors.toList()));
+        }
     }
 }

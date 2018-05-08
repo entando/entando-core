@@ -229,7 +229,7 @@
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
         </action>
         
-        <action name="joinCategory" class="jacmsContentCategoryAction" method="joinCategory">
+        <action name="joinCategory*" class="jacmsContentCategoryAction" method="joinCategory">
             <result type="redirectAction">
             	<param name="actionName">entryContent</param>
             	<param name="categoryCode">${categoryCode}</param>

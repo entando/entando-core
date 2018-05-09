@@ -29,25 +29,29 @@ import com.agiletec.aps.system.common.entity.model.FieldError;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
- * This class represents the Attribute of type "Multi-language List", composed by several
- * homogeneous attributes; there is a list for every language in the system.
+ * This class represents the Attribute of type "Multi-language List", composed
+ * by several homogeneous attributes; there is a list for every language in the
+ * system.
+ *
  * @author M.Diana
  */
 public class ListAttribute extends AbstractListAttribute {
-	
-	private static final Logger _logger = LoggerFactory.getLogger(ListAttribute.class);
-	
-	/**
+
+    private static final Logger _logger = LoggerFactory.getLogger(ListAttribute.class);
+
+    /**
      * Initialize the data structure.
      */
     public ListAttribute() {
         this._listMap = new HashMap<>();
     }
-	
+
     /**
      * Add a new empty attribute to the list in the specified language.
+     *
      * @param langCode The code of the language.
-     * @return The attribute added to the list, ready to be populated with the data.
+     * @return The attribute added to the list, ready to be populated with the
+     * data.
      */
     public AttributeInterface addAttribute(String langCode) {
         AttributeInterface newAttr = (AttributeInterface) this.getNestedAttributeType().getAttributePrototype();
@@ -57,9 +61,10 @@ public class ListAttribute extends AbstractListAttribute {
         attrList.add(newAttr);
         return newAttr;
     }
-	
+
     /**
      * Return the list of attributes of the desired language.
+     *
      * @param langCode The language code.
      * @return A list of homogeneous attributes.
      */
@@ -71,20 +76,23 @@ public class ListAttribute extends AbstractListAttribute {
         }
         return attrList;
     }
-	
+
     /**
-	 * Return the list of attributes in the current rendering language.
+     * Return the list of attributes in the current rendering language.
+     *
      * @return A list of homogeneous attributes.
      */
-	@Override
+    @Override
     public Object getRenderingAttributes() {
         List<AttributeInterface> attrList = this.getAttributeList(this.getRenderingLang());
         return attrList;
     }
-	
+
     /**
      * Remove from the list one of the attributes of the given language.
-     * @param langCode The code of the language of the list where to delete the attribute from.
+     *
+     * @param langCode The code of the language of the list where to delete the
+     * attribute from.
      * @param index The index of the attribute in the list.
      */
     public void removeAttribute(String langCode, int index) {
@@ -94,7 +102,7 @@ public class ListAttribute extends AbstractListAttribute {
             this._listMap.remove(langCode);
         }
     }
-	
+
     @Override
     public void setDefaultLangCode(String langCode) {
         super.setDefaultLangCode(langCode);
@@ -108,10 +116,10 @@ public class ListAttribute extends AbstractListAttribute {
             }
         }
     }
-	
+
     @Override
     public Element getJDOMElement() {
-		Element listElement = this.createRootElement("list");
+        Element listElement = this.createRootElement("list");
         listElement.setAttribute("nestedtype", this.getNestedAttributeTypeCode());
         Iterator<String> langIter = _listMap.keySet().iterator();
         while (langIter.hasNext()) {
@@ -131,15 +139,17 @@ public class ListAttribute extends AbstractListAttribute {
         }
         return listElement;
     }
-	
+
     /**
-     * Return a Map containing all the localized versions of the associated list.
+     * Return a Map containing all the localized versions of the associated
+     * list.
+     *
      * @return A map indexed by the language code.
      */
     public Map<String, List<AttributeInterface>> getAttributeListMap() {
         return _listMap;
     }
-	
+
     @Override
     public List<AttributeInterface> getAttributes() {
         List<AttributeInterface> attributes = new ArrayList<>();
@@ -149,51 +159,57 @@ public class ListAttribute extends AbstractListAttribute {
         }
         return attributes;
     }
-	
+
     @Override
     public Object getValue() {
         return this.getAttributeListMap();
     }
-	
-	@Override
-	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
-		JAXBListAttribute jaxbAttribute = (JAXBListAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbAttribute) return null;
-		List<AttributeInterface> attributes = this.getAttributeList(langCode);
+
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBListAttribute jaxbAttribute = (JAXBListAttribute) super.createJAXBAttribute(langCode);
+        if (null == jaxbAttribute) {
+            return null;
+        }
+        List<AttributeInterface> attributes = this.getAttributeList(langCode);
         if (null == attributes) {
             return null;
         }
         List<AbstractJAXBAttribute> jaxbList = this.extractJAXBListAttributes(attributes, langCode);
-		jaxbAttribute.setAttributes(jaxbList);
-		return jaxbAttribute;
-	}
-	
+        jaxbAttribute.setAttributes(jaxbList);
+        return jaxbAttribute;
+    }
+
     @Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-		super.valueFrom(jaxbAttribute);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        super.valueFrom(jaxbAttribute, langCode);
         JAXBListAttribute jaxbListAttribute = (JAXBListAttribute) jaxbAttribute;
-        if (null == jaxbListAttribute) return;
+        if (null == jaxbListAttribute) {
+            return;
+        }
         List<AbstractJAXBAttribute> attributes = jaxbListAttribute.getAttributes();
-        if (null == attributes) return;
+        if (null == attributes) {
+            return;
+        }
         for (int i = 0; i < attributes.size(); i++) {
             AbstractJAXBAttribute jaxbAttributeElement = attributes.get(i);
             AttributeInterface attribute = this.addAttribute(this.getDefaultLangCode());
-            attribute.valueFrom(jaxbAttributeElement);
+            attribute.valueFrom(jaxbAttributeElement, langCode);
         }
     }
-    
-	@Override
-	public Status getStatus() {
-		Lang defaultLang = super.getLangManager().getDefaultLang();
-		List<AttributeInterface> attributeList = this.getAttributeList(defaultLang.getCode());
-		boolean valued = (null != attributeList && !attributeList.isEmpty());
-		if (valued) {
-			return Status.VALUED;
-		} else {
-			return Status.EMPTY;
-		}
-	}
-    
+
+    @Override
+    public Status getStatus() {
+        Lang defaultLang = super.getLangManager().getDefaultLang();
+        List<AttributeInterface> attributeList = this.getAttributeList(defaultLang.getCode());
+        boolean valued = (null != attributeList && !attributeList.isEmpty());
+        if (valued) {
+            return Status.VALUED;
+        } else {
+            return Status.EMPTY;
+        }
+    }
+
     @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
@@ -226,7 +242,7 @@ public class ListAttribute extends AbstractListAttribute {
         }
         return errors;
     }
-    
+
     private Map<String, List<AttributeInterface>> _listMap;
-    
+
 }

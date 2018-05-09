@@ -230,8 +230,8 @@ public abstract class AbstractResourceAttribute extends TextAttribute
     }
 
     @Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-        super.valueFrom(jaxbAttribute);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        super.valueFrom(jaxbAttribute, langCode);
         JAXBResourceValue value = ((JAXBResourceAttribute) jaxbAttribute).getResource();
         if (null == value) {
             return;
@@ -249,7 +249,8 @@ public abstract class AbstractResourceAttribute extends TextAttribute
             if (null == text) {
                 return;
             }
-            this.getTextMap().put(this.getDefaultLangCode(), text.toString());
+            String langToSet = (null != langCode) ? langCode : this.getDefaultLangCode();
+            this.getTextMap().put(langToSet, text.toString());
         } catch (Exception e) {
             logger.error("Error extracting resource from jaxbAttribute", e);
         }

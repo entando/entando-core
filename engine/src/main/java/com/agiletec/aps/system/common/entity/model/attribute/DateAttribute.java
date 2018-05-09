@@ -32,14 +32,17 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeVali
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
- * This class describes the "Date" attribute; obviously it does not support multiple
- * languages (mono-language)
+ * This class describes the "Date" attribute; obviously it does not support
+ * multiple languages (mono-language)
+ *
  * @author W.Ambu - E.Santoboni
  */
 public class DateAttribute extends AbstractAttribute {
 
     /**
-     * Get the FULLy qualified date such as Tuesday, April 12, 1952 AD or 3:30:42pm PST.
+     * Get the FULLy qualified date such as Tuesday, April 12, 1952 AD or
+     * 3:30:42pm PST.
+     *
      * @return The date format as formatted by the FULL DateFormat.
      */
     public String getFullDate() {
@@ -47,7 +50,8 @@ public class DateAttribute extends AbstractAttribute {
     }
 
     /**
-     * LONG return the dates such as January 12, 1952 or 3:30:32pm 
+     * LONG return the dates such as January 12, 1952 or 3:30:32pm
+     *
      * @return The date formatted using the DateFormat LONG.
      */
     public String getLongDate() {
@@ -56,7 +60,8 @@ public class DateAttribute extends AbstractAttribute {
 
     /**
      * MEDIUM is longer, such as Jan 12, 1952
-     * @return The date formatted using the  DateFormat MEDIUM.
+     *
+     * @return The date formatted using the DateFormat MEDIUM.
      */
     public String getMediumDate() {
         return this.getFormattedDate(DateFormat.MEDIUM);
@@ -64,7 +69,8 @@ public class DateAttribute extends AbstractAttribute {
 
     /**
      * SHORT is completely numeric, such as 12.13.52 or 3:30pm
-     * @return The date formatted using the  DateFormat SHORT.
+     *
+     * @return The date formatted using the DateFormat SHORT.
      */
     public String getShortDate() {
         return this.getFormattedDate(DateFormat.SHORT);
@@ -87,6 +93,7 @@ public class DateAttribute extends AbstractAttribute {
 
     /**
      * Return the date formatted using the given pattern.
+     *
      * @param formatPattern The pattern to format the date with.
      * @return The date in the requested format.
      */
@@ -102,10 +109,10 @@ public class DateAttribute extends AbstractAttribute {
         }
         return date;
     }
-	
+
     @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         if (null != this.getDate()) {
             Element dateElement = new Element("date");
             dateElement.setText(this.getFormattedDate(SystemConstants.SYSTEM_DATE_FORMAT));
@@ -113,7 +120,7 @@ public class DateAttribute extends AbstractAttribute {
         }
         return attributeElement;
     }
-	
+
     @Override
     public Object getValue() {
         return this.getDate();
@@ -121,6 +128,7 @@ public class DateAttribute extends AbstractAttribute {
 
     /**
      * Return the Date object.
+     *
      * @return The date held by the attribute.
      */
     public Date getDate() {
@@ -129,6 +137,7 @@ public class DateAttribute extends AbstractAttribute {
 
     /**
      * Set up the date this attribute will carry.
+     *
      * @param date The date of this attribute
      */
     public void setDate(Date date) {
@@ -157,43 +166,48 @@ public class DateAttribute extends AbstractAttribute {
     }
 
     /**
-     * Set up the "date" as submitted in the back-office area.
-     * This method is used to handle the entity in the back-office
-     * @param failedDateString The date string as submitted in the back-office area
+     * Set up the "date" as submitted in the back-office area. This method is
+     * used to handle the entity in the back-office
+     *
+     * @param failedDateString The date string as submitted in the back-office
+     * area
      */
     public void setFailedDateString(String failedDateString) {
         this._failedDateString = failedDateString;
     }
 
     /**
-     * Return the "date" string as submitted in the back-office area.
-     * This method is used to handle the entity in the back-office.
+     * Return the "date" string as submitted in the back-office area. This
+     * method is used to handle the entity in the back-office.
+     *
      * @return The date string as submitted in the back-office area
      */
     public String getFailedDateString() {
         return _failedDateString;
     }
-	
-	@Override
-	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
-		return new JAXBDateAttribute();
-	}
-	
-	@Override
-	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
-		JAXBDateAttribute jaxbAttribute = (JAXBDateAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbAttribute) return null;
-		jaxbAttribute.setDate(this.getDate());
-		return jaxbAttribute;
-	}
-	
-	@Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-        super.valueFrom(jaxbAttribute);
-		Date date = ((JAXBDateAttribute) jaxbAttribute).getDate();
-		this.setDate(date);
+
+    @Override
+    protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+        return new JAXBDateAttribute();
     }
-	
+
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBDateAttribute jaxbAttribute = (JAXBDateAttribute) super.createJAXBAttribute(langCode);
+        if (null == jaxbAttribute) {
+            return null;
+        }
+        jaxbAttribute.setDate(this.getDate());
+        return jaxbAttribute;
+    }
+
+    @Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        super.valueFrom(jaxbAttribute, langCode);
+        Date date = ((JAXBDateAttribute) jaxbAttribute).getDate();
+        this.setDate(date);
+    }
+
     @Override
     public Status getStatus() {
         if (null != this.getDate() || null != this.getFailedDateString()) {
@@ -201,7 +215,7 @@ public class DateAttribute extends AbstractAttribute {
         }
         return Status.EMPTY;
     }
-    
+
     @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer) {
         List<AttributeFieldError> errors = super.validate(tracer);
@@ -210,8 +224,8 @@ public class DateAttribute extends AbstractAttribute {
         }
         return errors;
     }
-    
+
     private Date _date;
     private String _failedDateString;
-    
+
 }

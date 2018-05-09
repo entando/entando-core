@@ -22,13 +22,16 @@ import com.agiletec.aps.system.common.entity.model.AttributeSearchInfo;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
- * This class implements a text attribute that must be the same for all the languages in the system.
+ * This class implements a text attribute that must be the same for all the
+ * languages in the system.
+ *
  * @author W.Ambu
  */
 public class MonoTextAttribute extends AbstractTextAttribute {
-    
+
     /**
      * Return the text field to index.
+     *
      * @return Returns The text field to index.
      */
     @Override
@@ -38,6 +41,7 @@ public class MonoTextAttribute extends AbstractTextAttribute {
 
     /**
      * Return the text held by this attribute.
+     *
      * @return Returns the text.
      */
     @Override
@@ -47,17 +51,17 @@ public class MonoTextAttribute extends AbstractTextAttribute {
         }
         return "";
     }
-    
+
     @Override
     public String getTextForLang(String langCode) {
         return this.getText();
     }
-    
+
     @Override
     public void setText(String text, String langCode) {
         this.setText(text);
     }
-    
+
     @Override
     public boolean needToConvertSpecialCharacter() {
         return true;
@@ -65,17 +69,18 @@ public class MonoTextAttribute extends AbstractTextAttribute {
 
     /**
      * Associate the given text to the attribute
+     *
      * @param text The text to set.
      */
     public void setText(String text) {
         this._text = text;
     }
-    
+
     @Override
     public boolean isSearchableOptionSupported() {
         return true;
     }
-    
+
     @Override
     public List<AttributeSearchInfo> getSearchInfos(List<Lang> systemLangs) {
         if (this.getText() != null) {
@@ -90,10 +95,10 @@ public class MonoTextAttribute extends AbstractTextAttribute {
         }
         return null;
     }
-    
+
     @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         if (null != this.getText() && this.getText().trim().length() > 0) {
             Element monotextElement = new Element("monotext");
             monotextElement.setText(this.getText().trim());
@@ -101,18 +106,18 @@ public class MonoTextAttribute extends AbstractTextAttribute {
         }
         return attributeElement;
     }
-    
+
     @Override
     public Object getValue() {
         return this.getText();
     }
-	
+
     @Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-        super.valueFrom(jaxbAttribute);
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        super.valueFrom(jaxbAttribute, langCode);
         this.setText(((JAXBTextAttribute) jaxbAttribute).getText());
     }
-    
+
     @Override
     public Status getStatus() {
         if (null != this.getText() && this.getText().trim().length() > 0) {
@@ -120,7 +125,7 @@ public class MonoTextAttribute extends AbstractTextAttribute {
         }
         return Status.EMPTY;
     }
-    
+
     private String _text;
-    
+
 }

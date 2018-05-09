@@ -35,154 +35,154 @@ import com.agiletec.aps.util.SelectItem;
  */
 public class EnumeratorMapAttribute extends EnumeratorAttribute {
 
-	private static final Logger _logger = LoggerFactory.getLogger(EnumeratorMapAttribute.class);
+    private static final Logger _logger = LoggerFactory.getLogger(EnumeratorMapAttribute.class);
 
-	@Override
-	public Object getAttributePrototype() {
-		EnumeratorMapAttribute prototype = (EnumeratorMapAttribute) super.getAttributePrototype();
-		prototype.setMapItems(this.getMapItems());
-		return prototype;
-	}
+    @Override
+    public Object getAttributePrototype() {
+        EnumeratorMapAttribute prototype = (EnumeratorMapAttribute) super.getAttributePrototype();
+        prototype.setMapItems(this.getMapItems());
+        return prototype;
+    }
 
-	@Override
-	protected void initItems() {
-		if (null != this.getStaticItems() && this.getStaticItems().trim().length() > 0) {
-			this.setMapItems(this.extractStaticItems());
-		}
-		if (null != this.getExtractorBeanName()) {
-			try {
-				EnumeratorMapAttributeItemsExtractor extractor = (EnumeratorMapAttributeItemsExtractor) this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorMapAttributeItemsExtractor.class);
-				if (null != extractor) {
-					List<SelectItem> items = extractor.getMapItems();
-					if (items != null && items.size() > 0) {
-						this.addExtractedItems(items);
-					}
-				}
-			} catch (Throwable t) {
-				_logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
-			}
-		}
-	}
+    @Override
+    protected void initItems() {
+        if (null != this.getStaticItems() && this.getStaticItems().trim().length() > 0) {
+            this.setMapItems(this.extractStaticItems());
+        }
+        if (null != this.getExtractorBeanName()) {
+            try {
+                EnumeratorMapAttributeItemsExtractor extractor = (EnumeratorMapAttributeItemsExtractor) this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorMapAttributeItemsExtractor.class);
+                if (null != extractor) {
+                    List<SelectItem> items = extractor.getMapItems();
+                    if (items != null && items.size() > 0) {
+                        this.addExtractedItems(items);
+                    }
+                }
+            } catch (Throwable t) {
+                _logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
+            }
+        }
+    }
 
-	private void addExtractedItems(List<SelectItem> items) {
-		SelectItem[] values = null;
-		if (null == this.getMapItems() || this.getMapItems().length == 0) {
-			values = new SelectItem[items.size()];
-			for (int i = 0; i < items.size(); i++) {
-				SelectItem item = items.get(i);
-				values[i] = item;
-			}
-		} else {
-			values = new SelectItem[this.getMapItems().length + items.size()];
-			for (int i = 0; i < this.getMapItems().length; i++) {
-				SelectItem item = this.getMapItems()[i];
-				values[i] = item;
-			}
-			for (int i = 0; i < items.size(); i++) {
-				SelectItem item = items.get(i);
-				values[i + this.getMapItems().length] = item;
-			}
-		}
-		this.setMapItems(values);
-	}
+    private void addExtractedItems(List<SelectItem> items) {
+        SelectItem[] values = null;
+        if (null == this.getMapItems() || this.getMapItems().length == 0) {
+            values = new SelectItem[items.size()];
+            for (int i = 0; i < items.size(); i++) {
+                SelectItem item = items.get(i);
+                values[i] = item;
+            }
+        } else {
+            values = new SelectItem[this.getMapItems().length + items.size()];
+            for (int i = 0; i < this.getMapItems().length; i++) {
+                SelectItem item = this.getMapItems()[i];
+                values[i] = item;
+            }
+            for (int i = 0; i < items.size(); i++) {
+                SelectItem item = items.get(i);
+                values[i + this.getMapItems().length] = item;
+            }
+        }
+        this.setMapItems(values);
+    }
 
-	private SelectItem[] extractStaticItems() {
-		List<SelectItem> items = new ArrayList<SelectItem>();
-		if (!StringUtils.isEmpty(this.getStaticItems())) {
-			String[] entries = this.getStaticItems().split(this.getCustomSeparator());
-			for (String entry : entries) {
-				if (!StringUtils.isEmpty(entry) && entry.contains(DEFAULT_KEY_VALUE_SEPARATOR)) {
-					String[] keyValue = entry.split(DEFAULT_KEY_VALUE_SEPARATOR);
-					if (keyValue.length == 2) {
-						items.add(new SelectItem(keyValue[0].trim(), keyValue[1].trim()));
-					}
-				}
-			}
-		}
-		BeanComparator c = new BeanComparator("value");
-		Collections.sort(items, c);
-		SelectItem[] array = new SelectItem[items.size()];
-		for (int i = 0; i < items.size(); i++) {
-			array[i] = items.get(i);
-		}
-		return array;
-	}
+    private SelectItem[] extractStaticItems() {
+        List<SelectItem> items = new ArrayList<SelectItem>();
+        if (!StringUtils.isEmpty(this.getStaticItems())) {
+            String[] entries = this.getStaticItems().split(this.getCustomSeparator());
+            for (String entry : entries) {
+                if (!StringUtils.isEmpty(entry) && entry.contains(DEFAULT_KEY_VALUE_SEPARATOR)) {
+                    String[] keyValue = entry.split(DEFAULT_KEY_VALUE_SEPARATOR);
+                    if (keyValue.length == 2) {
+                        items.add(new SelectItem(keyValue[0].trim(), keyValue[1].trim()));
+                    }
+                }
+            }
+        }
+        BeanComparator c = new BeanComparator("value");
+        Collections.sort(items, c);
+        SelectItem[] array = new SelectItem[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            array[i] = items.get(i);
+        }
+        return array;
+    }
 
-	@Override
-	public Element getJDOMElement() {
-		Element rootElement = this.createRootElement("attribute");
-		if (StringUtils.isNotEmpty(this.getMapKey())) {
-			Element keyElement = new Element("key");
-			keyElement.setText(this.getMapKey().trim());
-			rootElement.addContent(keyElement);
-			Element valueElement = new Element("value");
-			if (StringUtils.isNotEmpty(this.getMapValue())) {
-				valueElement.setText(this.getMapValue().trim());
-			}
-			rootElement.addContent(valueElement);
-		}
-		return rootElement;
-	}
+    @Override
+    public Element getJDOMElement() {
+        Element rootElement = this.createRootElement("attribute");
+        if (StringUtils.isNotEmpty(this.getMapKey())) {
+            Element keyElement = new Element("key");
+            keyElement.setText(this.getMapKey().trim());
+            rootElement.addContent(keyElement);
+            Element valueElement = new Element("value");
+            if (StringUtils.isNotEmpty(this.getMapValue())) {
+                valueElement.setText(this.getMapValue().trim());
+            }
+            rootElement.addContent(valueElement);
+        }
+        return rootElement;
+    }
 
-	public String getMapKey() {
-		return super.getText();
-	}
+    public String getMapKey() {
+        return super.getText();
+    }
 
-	public String getMapValue() {
-		String key = this.getMapKey();
-		if (StringUtils.isEmpty(key)) {
-			return key;
-		}
-		if (null == this.getMapItems()) {
-			return "";
-		}
-		for (int i = 0; i < this.getMapItems().length; i++) {
-			SelectItem item = this.getMapItems()[i];
-			if (null != item && key.equals(item.getKey())) {
-				return item.getValue();
-			}
-		}
-		return "";
-	}
+    public String getMapValue() {
+        String key = this.getMapKey();
+        if (StringUtils.isEmpty(key)) {
+            return key;
+        }
+        if (null == this.getMapItems()) {
+            return "";
+        }
+        for (int i = 0; i < this.getMapItems().length; i++) {
+            SelectItem item = this.getMapItems()[i];
+            if (null != item && key.equals(item.getKey())) {
+                return item.getValue();
+            }
+        }
+        return "";
+    }
 
-	@Override
-	protected AbstractJAXBAttribute getJAXBAttributeInstance() {
-		return new JAXBEnumeratorMapAttribute();
-	}
+    @Override
+    protected AbstractJAXBAttribute getJAXBAttributeInstance() {
+        return new JAXBEnumeratorMapAttribute();
+    }
 
-	@Override
-	public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
-		JAXBEnumeratorMapAttribute jaxbAttribute = (JAXBEnumeratorMapAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbAttribute) {
-			return null;
-		}
-		JAXBEnumeratorMapValue value = new JAXBEnumeratorMapValue();
-		value.setKey(this.getMapKey());
-		value.setValue(this.getMapValue());
-		jaxbAttribute.setMapValue(value);
-		return jaxbAttribute;
-	}
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBEnumeratorMapAttribute jaxbAttribute = (JAXBEnumeratorMapAttribute) super.createJAXBAttribute(langCode);
+        if (null == jaxbAttribute) {
+            return null;
+        }
+        JAXBEnumeratorMapValue value = new JAXBEnumeratorMapValue();
+        value.setKey(this.getMapKey());
+        value.setValue(this.getMapValue());
+        jaxbAttribute.setMapValue(value);
+        return jaxbAttribute;
+    }
 
-	@Override
-	public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-		if (null == jaxbAttribute) {
-			return;
-		}
-		JAXBEnumeratorMapValue value = ((JAXBEnumeratorMapAttribute) jaxbAttribute).getMapValue();
-		if (null != value) {
-			this.setText(value.getKey());
-		}
-	}
+    @Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        if (null == jaxbAttribute) {
+            return;
+        }
+        JAXBEnumeratorMapValue value = ((JAXBEnumeratorMapAttribute) jaxbAttribute).getMapValue();
+        if (null != value) {
+            this.setText(value.getKey());
+        }
+    }
 
-	public SelectItem[] getMapItems() {
-		return _mapItems;
-	}
+    public SelectItem[] getMapItems() {
+        return _mapItems;
+    }
 
-	public void setMapItems(SelectItem[] mapItems) {
-		this._mapItems = mapItems;
-	}
+    public void setMapItems(SelectItem[] mapItems) {
+        this._mapItems = mapItems;
+    }
 
-	private SelectItem[] _mapItems;
-	private final String DEFAULT_KEY_VALUE_SEPARATOR = "=";
+    private SelectItem[] _mapItems;
+    private final String DEFAULT_KEY_VALUE_SEPARATOR = "=";
 
 }

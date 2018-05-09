@@ -24,17 +24,19 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * This class represents a 'Hypertext' Attribute.
+ *
  * @author W.Ambu
  */
 public class HypertextAttribute extends TextAttribute {
-    
+
     @Override
     public boolean needToConvertSpecialCharacter() {
         return false;
     }
-    
+
     /**
      * Return the field to index after having eventually removed the HTML tags.
+     *
      * @return The text field to index
      */
     @Override
@@ -43,13 +45,15 @@ public class HypertextAttribute extends TextAttribute {
         String parsedText = htmlhandler.getParsedText(super.getText());
         return StringEscapeUtils.unescapeHtml(parsedText);
     }
-    
-    /** 
-     * Return the requested number of characters of the text associated to this attribute, in the current 
-     * language purged by the HTML tags, if any.
-     * @param n The number of characters to return 
+
+    /**
+     * Return the requested number of characters of the text associated to this
+     * attribute, in the current language purged by the HTML tags, if any.
+     *
+     * @param n The number of characters to return
      * @return The string of text with the desired length.
-     * @deprecated It might return less characters than requested. Use the getHeadEscaped instead
+     * @deprecated It might return less characters than requested. Use the
+     * getHeadEscaped instead
      */
     public String getHead(int n) {
         HtmlHandler htmlhandler = new HtmlHandler();
@@ -63,30 +67,31 @@ public class HypertextAttribute extends TextAttribute {
         }
         return head;
     }
-    
+
     /**
-     * Return the requested number of characters rounded on word boundary of 
-     * the text associated to this attribute, in the current language,
-     * stripping HTML tags, if any. 
+     * Return the requested number of characters rounded on word boundary of the
+     * text associated to this attribute, in the current language, stripping
+     * HTML tags, if any.
+     *
      * @param n The minimum number of characters to return
      * @return The string of text with the desired length.
      */
     public String getEscapedHead(int n) {
-    	String parsedText = super.getText().replaceAll("<[^<>]+>", "").trim();
-    	String head = parsedText;
+        String parsedText = super.getText().replaceAll("<[^<>]+>", "").trim();
+        String head = parsedText;
 
-    	if (n < parsedText.length()) {
-    		while ((Character.isLetterOrDigit(parsedText.charAt(n)) || (parsedText.charAt(n) == ';')) && (n < parsedText.length())) {
-    			n++;
-    		}
-    		head = parsedText.substring(0, n);
-    	}
-    	return head;
+        if (n < parsedText.length()) {
+            while ((Character.isLetterOrDigit(parsedText.charAt(n)) || (parsedText.charAt(n) == ';')) && (n < parsedText.length())) {
+                n++;
+            }
+            head = parsedText.substring(0, n);
+        }
+        return head;
     }
-    
+
     @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         Iterator<String> langIter = this.getTextMap().keySet().iterator();
         while (langIter.hasNext()) {
             String currentLangCode = langIter.next();
@@ -101,45 +106,49 @@ public class HypertextAttribute extends TextAttribute {
         }
         return attributeElement;
     }
-	
+
     /**
-     * Since this kind of attribute cannot be searchable we have overridden the abstract so to
-     * always return false.
+     * Since this kind of attribute cannot be searchable we have overridden the
+     * abstract so to always return false.
+     *
      * @return Return always false.
      */
     @Override
     public boolean isSearchable() {
         return false;
     }
-    
+
     @Override
     public boolean isSearchableOptionSupported() {
         return false;
     }
-    
+
     @Override
     protected JAXBHypertextAttribute getJAXBAttributeInstance() {
         return new JAXBHypertextAttribute();
     }
-    
+
     @Override
     public JAXBHypertextAttribute getJAXBAttribute(String langCode) {
         JAXBHypertextAttribute jaxbHypertexAttribute = (JAXBHypertextAttribute) super.createJAXBAttribute(langCode);
-		if (null == jaxbHypertexAttribute) return null;
-		String text = this.getTextForLang(langCode);
-		if (StringUtils.isNotEmpty(text)) {
-			jaxbHypertexAttribute.setHtmlValue(text);
-		}
-		return jaxbHypertexAttribute;
+        if (null == jaxbHypertexAttribute) {
+            return null;
+        }
+        String text = this.getTextForLang(langCode);
+        if (StringUtils.isNotEmpty(text)) {
+            jaxbHypertexAttribute.setHtmlValue(text);
+        }
+        return jaxbHypertexAttribute;
     }
-    
+
     @Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
         JAXBHypertextAttribute jaxbHypertextAttribute = (JAXBHypertextAttribute) jaxbAttribute;
         String value = jaxbHypertextAttribute.getHtmlValue();
         if (null != value) {
-            this.getTextMap().put(this.getDefaultLangCode(), value);
+            String langToSet = (null != langCode) ? langCode : this.getDefaultLangCode();
+            this.getTextMap().put(langToSet, value);
         }
     }
-    
+
 }

@@ -501,12 +501,23 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         assertEquals(1, action.getActionErrors().size());
 
         result = this.executeTrashPage("pagina_12", "admin");
-        assertEquals(Action.SUCCESS, result);
+        assertEquals("pageTree", result);
         action = this.getAction();
-        assertEquals(0, action.getActionErrors().size());
+        assertEquals(1, action.getActionErrors().size());
+
+        try {
+            this._pageManager.setPageOffline("pagina_12");
+            result = this.executeTrashPage("pagina_12", "admin");
+            assertEquals(Action.SUCCESS, result);
+            action = this.getAction();
+            assertEquals(0, action.getActionErrors().size());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this._pageManager.setPageOnline("pagina_12");
+        }
     }
 
-    // TODO Fare test di forzatura invocazione trash
     private String executeTrashPage(String selectedPageCode, String username) throws Throwable {
         this.setUserOnSession(username);
         this.initAction("/do/Page", "trash");

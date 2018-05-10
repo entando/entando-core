@@ -103,9 +103,14 @@ public class DatabaseService implements IDatabaseService {
 
     @Override
     public List<ComponentDto> getCurrentComponents() {
+        ComponentDto mainDto = new ComponentDto();
+        mainDto.setCode("core");
+        mainDto.setDescription("Core");
+        mainDto.buildTableMapping(this.getDatabaseManager().getEntandoTableMapping());
         List<ComponentDto> dtos = new ArrayList<>();
         this.getComponentManager().getCurrentComponents()
                 .stream().forEach(component -> dtos.add(new ComponentDto(component)));
+        dtos.add(0, mainDto);
         return dtos;
     }
 
@@ -142,7 +147,7 @@ public class DatabaseService implements IDatabaseService {
         } finally {
             if (null != tempFile) {
                 boolean deleted = tempFile.delete();
-                if(!deleted) {
+                if (!deleted) {
                     logger.warn("Failed to create temp file {}", tempFile.getAbsolutePath());
                 }
             }

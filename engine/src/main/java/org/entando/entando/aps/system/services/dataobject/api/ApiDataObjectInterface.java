@@ -264,7 +264,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
             if (null == prototype) {
                 throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject type with code '" + typeCode + "' does not exist", Response.Status.CONFLICT);
             }
-            DataObject dataObject = (DataObject) jaxbDataObject.buildEntity(prototype, this.getCategoryManager());
+            DataObject dataObject = (DataObject) jaxbDataObject.buildEntity(prototype, this.getCategoryManager(), null);
             if (null != dataObject.getId()) {
                 throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "You cannot specify DataObject Id", Response.Status.CONFLICT);
             }
@@ -289,7 +289,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
             if (null == prototype) {
                 throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject type with code '" + typeCode + "' does not exist", Response.Status.CONFLICT);
             }
-            DataObject content = (DataObject) jaxbDataObject.buildEntity(prototype, this.getCategoryManager());
+            DataObject content = (DataObject) jaxbDataObject.buildEntity(prototype, this.getCategoryManager(), null);
             DataObject masterData = this.getDataObjectManager().loadDataObject(content.getId(), false);
             if (null == masterData) {
                 throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "DataObject with code '" + content.getId() + "' does not exist", Response.Status.CONFLICT);

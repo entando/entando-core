@@ -26,17 +26,18 @@ import com.agiletec.aps.system.services.lang.Lang;
 
 /**
  * This class implements the Text Attribute. It can support multiple languages.
+ *
  * @author M.Diana
  */
 public class TextAttribute extends AbstractTextAttribute {
-    
+
     /**
      * Initialize the map of the texts.
      */
     public TextAttribute() {
         this._textMap = new HashMap<>();
     }
-    
+
     @Override
     public boolean isMultilingual() {
         return true;
@@ -44,6 +45,7 @@ public class TextAttribute extends AbstractTextAttribute {
 
     /**
      * Return the text field to index.
+     *
      * @return The text field to index.
      */
     @Override
@@ -52,8 +54,10 @@ public class TextAttribute extends AbstractTextAttribute {
     }
 
     /**
-     * Return the associated text in the current language (set using the 'setLangCode' method)
-     * or the default language if the former is not available.
+     * Return the associated text in the current language (set using the
+     * 'setLangCode' method) or the default language if the former is not
+     * available.
+     *
      * @return The requested text.
      */
     @Override
@@ -75,8 +79,9 @@ public class TextAttribute extends AbstractTextAttribute {
 
     /**
      * Set up the associated text in the given language.
+     *
      * @param text The text string to set up.
-     * @param langCode The code of the native language of the given text. 
+     * @param langCode The code of the native language of the given text.
      */
     @Override
     public void setText(String text, String langCode) {
@@ -89,8 +94,9 @@ public class TextAttribute extends AbstractTextAttribute {
     }
 
     /**
-     * Return the Map containing all the versions available of the associated text, one per
-     * language.
+     * Return the Map containing all the versions available of the associated
+     * text, one per language.
+     *
      * @return A map indexed by the language code.
      */
     public Map<String, String> getTextMap() {
@@ -98,8 +104,10 @@ public class TextAttribute extends AbstractTextAttribute {
     }
 
     /**
-     * Set up a map containing all the versions available of the associated text, one per language.
-     * This will overwrite, and possibly delete, all the previous values of the attribute.
+     * Set up a map containing all the versions available of the associated
+     * text, one per language. This will overwrite, and possibly delete, all the
+     * previous values of the attribute.
+     *
      * @param textMap A map indexed by the language code.
      */
     public void setTextMap(Map<String, String> textMap) {
@@ -135,17 +143,19 @@ public class TextAttribute extends AbstractTextAttribute {
         }
         return infos;
     }
-	
+
     @Override
     public Element getJDOMElement() {
-		Element attributeElement = this.createRootElement("attribute");
+        Element attributeElement = this.createRootElement("attribute");
         this.addTextElements(attributeElement);
         return attributeElement;
     }
-    
+
     /**
-     * Add the elements, related to the texts inserted in the attribute, needed in order
-     * to prepare the element to finally insert in the XML of the entity.
+     * Add the elements, related to the texts inserted in the attribute, needed
+     * in order to prepare the element to finally insert in the XML of the
+     * entity.
+     *
      * @param attributeElement The element to complete.
      */
     protected void addTextElements(Element attributeElement) {
@@ -164,21 +174,24 @@ public class TextAttribute extends AbstractTextAttribute {
             }
         }
     }
-    
-	@Override
+
+    @Override
     public Object getValue() {
         return this.getTextMap();
     }
-    
-	@Override
-    public void valueFrom(AbstractJAXBAttribute jaxbAttribute) {
-        super.valueFrom(jaxbAttribute);
+
+    @Override
+    public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCode) {
+        super.valueFrom(jaxbAttribute, langCode);
         Object value = ((JAXBTextAttribute) jaxbAttribute).getText();
-        if (null == value) return;
-        this.getTextMap().put(this.getDefaultLangCode(), value.toString());
+        if (null == value) {
+            return;
+        }
+        String langToSet = (null != langCode) ? langCode : this.getDefaultLangCode();
+        this.getTextMap().put(langToSet, value.toString());
     }
-    
-	@Override
+
+    @Override
     public Status getStatus() {
         String text = this.getTextMap().get(this.getDefaultLangCode());
         if (null != text && text.trim().length() > 0) {
@@ -186,7 +199,7 @@ public class TextAttribute extends AbstractTextAttribute {
         }
         return Status.EMPTY;
     }
-    
+
     private Map<String, String> _textMap;
-    
+
 }

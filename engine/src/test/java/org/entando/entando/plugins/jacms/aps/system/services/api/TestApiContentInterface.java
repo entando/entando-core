@@ -32,12 +32,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
+import static junit.framework.TestCase.assertEquals;
 import org.entando.entando.aps.system.services.api.ApiBaseTestCase;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
-import org.entando.entando.aps.system.services.api.model.StringApiResponse;
 import org.entando.entando.aps.system.services.api.server.IResponseBuilder;
+import org.entando.entando.plugins.jacms.aps.system.services.api.model.CmsApiResponse;
 import org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContent;
 
 /**
@@ -85,11 +86,14 @@ public class TestApiContentInterface extends ApiBaseTestCase {
 			jaxbContent.setId(null);
 			Object response = this.getResponseBuilder().createResponse(postMethod, jaxbContent, properties);
 			assertNotNull(response);
-			assertTrue(response instanceof StringApiResponse);
-			assertEquals(IResponseBuilder.SUCCESS, ((StringApiResponse) response).getResult());
+			assertTrue(response instanceof CmsApiResponse);
+                        assertEquals(IResponseBuilder.SUCCESS, 
+                                ((CmsApiResponse) response).getResult().getStatus());
 			ids = this._contentManager.searchId(filters);
 			assertEquals(1, ids.size());
 			String newContentId = ids.get(0);
+                        assertEquals(newContentId,
+                                ((CmsApiResponse) response).getResult().getId());
 			Content newContent = this._contentManager.loadContent(newContentId, false);
 			Content masterContent = this._contentManager.loadContent(contentId, true);
 			List<AttributeInterface> attributes = masterContent.getAttributeList();

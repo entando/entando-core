@@ -76,6 +76,7 @@
                 <parameter key="insertOnLine" required="false">
                     <description>If 'true', update the new content online. Entries 'true' or 'false', default value 'false'</description>
                 </parameter>
+                <parameter key="merge" required="false" />
             </parameters>
         </method>
         <method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="validateContents">

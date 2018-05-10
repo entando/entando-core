@@ -52,10 +52,11 @@ import org.entando.entando.aps.system.common.entity.model.attribute.JAXBEnumerat
 @XmlSeeAlso({ArrayList.class, HashMap.class, JAXBBooleanAttribute.class, JAXBEnumeratorMapAttribute.class, JAXBCompositeAttribute.class, JAXBDateAttribute.class, JAXBHypertextAttribute.class, JAXBListAttribute.class, JAXBNumberAttribute.class, JAXBTextAttribute.class})
 public class JAXBEntity implements Serializable {
 
-	private static final Logger _logger = LoggerFactory.getLogger(JAXBEntity.class);
-	
-    public JAXBEntity() {}
-    
+    private static final Logger _logger = LoggerFactory.getLogger(JAXBEntity.class);
+
+    public JAXBEntity() {
+    }
+
     public JAXBEntity(IApsEntity mainEntity, String langCode) {
         try {
             this.setDescription(mainEntity.getDescription());
@@ -77,12 +78,12 @@ public class JAXBEntity implements Serializable {
                 }
             }
         } catch (Throwable t) {
-        	_logger.error("Error creating JAXBEntity", t);
+            _logger.error("Error creating JAXBEntity", t);
             throw new RuntimeException("Error creating JAXBEntity", t);
         }
     }
-    
-    public IApsEntity buildEntity(IApsEntity prototype, ICategoryManager categoryManager) {
+
+    public IApsEntity buildEntity(IApsEntity prototype, ICategoryManager categoryManager, String langCode) {
         try {
             prototype.setDescription(this.getDescription());
             prototype.setId(this.getId());
@@ -112,35 +113,38 @@ public class JAXBEntity implements Serializable {
                 AbstractJAXBAttribute jaxrAttribute = this.getAttributes().get(i);
                 AttributeInterface attribute = (AttributeInterface) prototype.getAttribute(jaxrAttribute.getName());
                 if (null != attribute && attribute.getType().equals(jaxrAttribute.getType())) {
-                    attribute.valueFrom(jaxrAttribute);
+                    attribute.valueFrom(jaxrAttribute, langCode);
                 }
             }
         } catch (Throwable t) {
-        	_logger.error("Error creating Entity", t);
+            _logger.error("Error creating Entity", t);
             throw new RuntimeException("Error creating Entity", t);
         }
         return prototype;
     }
-    
+
     /**
      * Return the ID of the Entity.
+     *
      * @return The identification string of the Entity.
      */
     @XmlElement(name = "id", required = true)
     public String getId() {
         return this._id;
     }
-    
+
     /**
      * Associate the Entity to the given ID code.
+     *
      * @param id The identification string of the Entity.
      */
     public void setId(String id) {
         this._id = id;
     }
-    
+
     /**
      * Return the code of the Entity Type.
+     *
      * @return The code of the Entity Type.
      */
     @XmlElement(name = "typeCode", required = true)
@@ -150,6 +154,7 @@ public class JAXBEntity implements Serializable {
 
     /**
      * Set up the code of the Entity Type.
+     *
      * @param typeCode The Entity Type code.
      */
     protected void setTypeCode(String typeCode) {
@@ -158,6 +163,7 @@ public class JAXBEntity implements Serializable {
 
     /**
      * Return the description of the Content Type.
+     *
      * @return The description of the Content Type.
      */
     @XmlElement(name = "typeDescription", required = true)
@@ -167,23 +173,26 @@ public class JAXBEntity implements Serializable {
 
     /**
      * Set up the description of the Entity Type.
+     *
      * @param typeDescription The description of the Entity Type.
      */
     protected void setTypeDescription(String typeDescription) {
         this._typeDescription = typeDescription;
     }
-	
+
     /**
      * Return the description of the Entity.
+     *
      * @return The Entity description.
      */
     @XmlElement(name = "description", required = true)
     public String getDescription() {
         return this._description;
     }
-	
+
     /**
      * Set up the description of the Entity.
+     *
      * @param description The description to associate to the Entity.
      */
     protected void setDescription(String description) {
@@ -192,6 +201,7 @@ public class JAXBEntity implements Serializable {
 
     /**
      * Return the string that identifies the main group this Entity belongs to.
+     *
      * @return The main group this Entity belongs to.
      */
     @XmlElement(name = "mainGroup", required = true)
@@ -201,6 +211,7 @@ public class JAXBEntity implements Serializable {
 
     /**
      * Set the string that identifies the main group this Entity belongs to.
+     *
      * @param mainGroup The main group this Entity belongs to.
      */
     protected void setMainGroup(String mainGroup) {
@@ -208,8 +219,9 @@ public class JAXBEntity implements Serializable {
     }
 
     /**
-     * Return the set of codes of the additional groups. 
-     * @return The set of codes belonging to the additional groups. 
+     * Return the set of codes of the additional groups.
+     *
+     * @return The set of codes belonging to the additional groups.
      */
     @XmlElement(name = "group", required = true)
     @XmlElementWrapper(name = "groups")
@@ -222,8 +234,9 @@ public class JAXBEntity implements Serializable {
     }
 
     /**
-     * Return the set of codes of the additional categories. 
-     * @return The set of codes belonging to the additional categories. 
+     * Return the set of codes of the additional categories.
+     *
+     * @return The set of codes belonging to the additional categories.
      */
     @XmlElement(name = "category", required = true)
     @XmlElementWrapper(name = "categories")
@@ -234,7 +247,7 @@ public class JAXBEntity implements Serializable {
     protected void setCategories(Set<String> categories) {
         this._categories = categories;
     }
-    
+
     protected void setCategories(List<Category> categories) {
         if (null != categories && categories.size() > 0) {
             this.setCategories(new HashSet<String>());
@@ -246,16 +259,17 @@ public class JAXBEntity implements Serializable {
             }
         }
     }
-    
+
     @XmlElement(name = "attribute", required = true)
     @XmlElementWrapper(name = "attributes")
     public List<AbstractJAXBAttribute> getAttributes() {
         return _attributes;
     }
+
     protected void setAttributes(List<AbstractJAXBAttribute> attributes) {
         this._attributes = attributes;
     }
-    
+
     private String _id;
     private String _typeCode;
     private String _typeDescription;
@@ -264,5 +278,5 @@ public class JAXBEntity implements Serializable {
     private Set<String> _groups;
     private Set<String> _categories;
     private List<AbstractJAXBAttribute> _attributes = new ArrayList<>();
-    
+
 }

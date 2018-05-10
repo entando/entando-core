@@ -55,7 +55,6 @@ public class LanguageService implements ILanguageService {
     @Override
     public PagedMetadata<LanguageDto> getLanguages(RestListRequest requestList) {
         try {
-
             List<Lang> sysLangs = this.getLangManager().getAssignableLangs();
             List<LanguageDto> langs = this.getLanguageDtoBuilder().convert(sysLangs);
 
@@ -78,10 +77,9 @@ public class LanguageService implements ILanguageService {
             //page
             SearcherDaoPaginatedResult<LanguageDto> langsResult = new SearcherDaoPaginatedResult<>(langs.size(), langs);
             langsResult.setCount(langs.size());
-            requestList.setPageSize(langs.size());
             PagedMetadata<LanguageDto> pagedMetadata = new PagedMetadata<>(requestList, langsResult);
             pagedMetadata.setBody(langs);
-
+            pagedMetadata.imposeLimits();
             return pagedMetadata;
         } catch (Throwable t) {
             logger.error("error in search langs", t);
@@ -142,7 +140,7 @@ public class LanguageService implements ILanguageService {
                 throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
             }
             //idempotent
-            if (null == this.getLangManager().getLang(code)) {                
+            if (null == this.getLangManager().getLang(code)) {
                 logger.warn("the lang {} is already active", code);
                 this.getLangManager().addLang(lang.getCode());
             }

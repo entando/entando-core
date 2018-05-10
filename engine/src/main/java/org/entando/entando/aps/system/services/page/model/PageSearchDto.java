@@ -58,17 +58,4 @@ public class PageSearchDto extends PagedMetadata<PageDto> {
         this.setPageCodeToken(req.getPageCodeToken());
     }
 
-    public void imposeLimits() {
-        if (((this.getPage() - 1) * this.getPageSize()) > this.getBody().size()) {
-            this.setBody(new ArrayList<>());
-        } else {
-            int start = ((this.getPage() - 1) * this.getPageSize());
-            int end = (this.getPage() * this.getPageSize()) <= this.getBody().size() ? (this.getPage() * this.getPageSize())
-                    : (this.getBody().size() - this.getPage() * this.getPageSize()) > 0 ? (this.getBody().size() - this.getPage() * this.getPageSize())
-                    : this.getBody().size();
-            this.setBody(IntStream.range(start, end)
-                    .mapToObj(this.getBody()::get)
-                    .collect(Collectors.toList()));
-        }
-    }
 }

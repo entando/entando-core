@@ -61,7 +61,7 @@
                     </li>
                     <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
-                        <span class="">Edit </span>
+                        <span class="">Edit</span>
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="doConfigure" type="button" title="%{getText('page.options.configure')}" cssClass="btn btn-info" data-toggle="tooltip">
@@ -69,16 +69,11 @@
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="detail" type="button" title="%{getText('page.options.detail')}" cssClass="btn btn-info" data-toggle="tooltip">
-                        <span class="">Detail</span>
+                        <span class="">Details</span>
                     </wpsf:submit>
                 </li>
                 <li><wpsf:submit action="copy" type="button" title="%{getText('page.options.copy')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Clone</span>
-                    </wpsf:submit>
-                </li>
-                <li>
-                    <wpsf:submit action="trash" type="button" title="%{getText('page.options.delete')}" cssClass="btn btn-warning" data-toggle="tooltip">
-                        <span class="">Delete</span>
                     </wpsf:submit>
                 </li>
                 <s:if test="%{#currentRoot.getEntity().online}">
@@ -88,6 +83,13 @@
                     </wpsf:submit>
                 </li>
                 </s:if>
+                <s:else>
+                <li>
+                    <wpsf:submit action="trash" type="button" title="%{getText('page.options.delete')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="label.delete" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:else>
                 <s:if test="%{!#currentRoot.getEntity().online || #currentRoot.getEntity().changed}">
                 <li>
                     <wpsf:submit action="checkSetOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">

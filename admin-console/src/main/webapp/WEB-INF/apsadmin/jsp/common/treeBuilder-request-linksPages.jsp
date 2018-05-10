@@ -114,18 +114,20 @@
                         <s:text name="title.clonePage" />
                     </wpsf:submit>
                 </li>
+                <s:if test="%{#currentRoot.getOrigin().online}">
+                <li>
+                    <wpsf:submit action="checkSetOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
+                        <span class=""><s:text name="page.options.offline" /></span>
+                    </wpsf:submit>
+                </li>
+                </s:if>
+                <s:else>
                 <li>
                     <wpsf:submit action="trash" type="button" title="%{getText('page.options.delete')}" cssClass="btn btn-warning" data-toggle="tooltip">
                         <s:text name="label.delete" />
                     </wpsf:submit>
                 </li>
-                <s:if test="%{#currentRoot.getOrigin().online}">
-                    <li>
-                        <wpsf:submit action="checkSetOffline" type="button" title="%{getText('page.options.offline')}" cssClass="btn btn-warning" data-toggle="tooltip">
-                            <span class=""><s:text name="page.options.offline" /></span>
-                        </wpsf:submit>
-                    </li>
-                </s:if>
+                </s:else>
                 <s:if test="%{!#currentRoot.getOrigin().online || #currentRoot.getOrigin().changed}">
                     <li>
                         <wpsf:submit action="checkSetOnline" type="button" title="%{getText('page.options.online')}" cssClass="btn btn-warning" data-toggle="tooltip">

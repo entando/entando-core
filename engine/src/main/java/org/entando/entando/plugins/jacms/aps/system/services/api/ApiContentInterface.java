@@ -52,6 +52,8 @@ import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.ContentRenderizationInfo;
 import com.agiletec.plugins.jacms.aps.system.services.dispenser.IContentDispenser;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
+import org.entando.entando.plugins.jacms.aps.system.services.api.model.CmsApiResponse;
+import org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBCmsResult;
 
 /**
  * @author E.Santoboni
@@ -260,8 +262,8 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
         return modelIdInteger;
     }
 
-    public StringApiResponse addContent(JAXBContent jaxbContent, Properties properties) throws Throwable {
-        StringApiResponse response = new StringApiResponse();
+    public CmsApiResponse addContent(JAXBContent jaxbContent, Properties properties) throws Throwable {
+        CmsApiResponse response = new CmsApiResponse();
         try {
             String typeCode = jaxbContent.getTypeCode();
             Content prototype = (Content) this.getContentManager().getEntityPrototype(typeCode);
@@ -285,8 +287,8 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
         return response;
     }
 
-    public StringApiResponse updateContent(JAXBContent jaxbContent, Properties properties) throws Throwable {
-        StringApiResponse response = new StringApiResponse();
+    public CmsApiResponse updateContent(JAXBContent jaxbContent, Properties properties) throws Throwable {
+        CmsApiResponse response = new CmsApiResponse();
         try {
             String typeCode = jaxbContent.getTypeCode();
             Content prototype = (Content) this.getContentManager().getEntityPrototype(typeCode);
@@ -317,8 +319,8 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
         return response;
     }
 
-    protected StringApiResponse validateAndSaveContent(Content content, Properties properties) throws ApiException, Throwable {
-        StringApiResponse response = new StringApiResponse();
+    protected CmsApiResponse validateAndSaveContent(Content content, Properties properties) throws ApiException, Throwable {
+        CmsApiResponse response = new CmsApiResponse();
         try {
             UserDetails user = (UserDetails) properties.get(SystemConstants.API_USER_PARAMETER);
             if (null == user) {
@@ -342,7 +344,12 @@ public class ApiContentInterface extends AbstractCmsApiInterface {
             } else {
                 this.getContentManager().insertOnLineContent(content);
             }
-            response.setResult(IResponseBuilder.SUCCESS, null);
+            JAXBCmsResult cms = new JAXBCmsResult();
+            
+            cms.setId(content.getId());
+            cms.setStatus(IResponseBuilder.SUCCESS);
+//            response.setResult(IResponseBuilder.SUCCESS, null);
+            response.setResult(cms, null);
         } catch (ApiException ae) {
             response.addErrors(ae.getErrors());
             response.setResult(IResponseBuilder.FAILURE, null);

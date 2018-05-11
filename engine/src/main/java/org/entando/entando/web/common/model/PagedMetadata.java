@@ -143,12 +143,15 @@ public class PagedMetadata<T> {
     }
 
     public void imposeLimits() {
+        // if the start of the requested paginated list is greater than the size of the entire list,
+        // the returned payload is an empty array
         if (((this.getPage() - 1) * this.getActualSize()) > this.getBody().size()) {
             this.setBody(new ArrayList<>());
         } else {
             int start = ((this.getPage() - 1) * this.getActualSize());
+            // if the end of the requested paginated list is greater than the size of the entire list,
+            // the end is set on the size
             int end = (this.getPage() * this.getActualSize()) <= this.getBody().size() ? (this.getPage() * this.getActualSize())
-                    : (this.getBody().size() - this.getPage() * this.getActualSize()) > 0 ? (this.getBody().size() - this.getPage() * this.getActualSize())
                     : this.getBody().size();
             this.setBody(IntStream.range(start, end)
                     .mapToObj(this.getBody()::get)

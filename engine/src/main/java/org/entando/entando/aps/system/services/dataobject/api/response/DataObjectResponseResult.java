@@ -16,17 +16,17 @@ package org.entando.entando.aps.system.services.dataobject.api.response;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.entando.entando.aps.system.services.api.model.AbstractApiResponseResult;
-import org.entando.entando.plugins.jacms.aps.system.services.api.model.JAXBContent;
+import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObject;
 
 /**
  * @author E.Santoboni
  */
 public class DataObjectResponseResult extends AbstractApiResponseResult {
 
-	@Override
-	@XmlElement(name = "item", required = false)
-	public JAXBContent getResult() {
-		return (JAXBContent) this.getMainResult();
-	}
+    @Override
+    @XmlElement(name = "item", required = false)
+    public JAXBDataObject getResult() {
+        return (JAXBDataObject) this.getMainResult();
+    }
 
 }

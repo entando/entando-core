@@ -13,37 +13,34 @@
  */
 package com.agiletec.apsadmin.portal;
 
-import java.util.Collection;
-
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 
 /**
  * @author E.Santoboni
  */
 public class TestPageActionReferences extends ApsAdminBaseTestCase {
 
-	private static final String TEST_PAGE_CODE = "delete_me_001";
-	private static final String CONTENT_ID = "ART1";
+    ****************
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-		Page testPage = createPage(TEST_PAGE_CODE);
-		this._pageManager.addPage(testPage);
-	}
+    private static final String TEST_PAGE_CODE = "delete_me_001";
+    private static final String CONTENT_ID = "ART1";
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+        Page testPage = createPage(TEST_PAGE_CODE);
+        this._pageManager.addPage(testPage);
+    }
+
+    /*
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
@@ -99,36 +96,34 @@ public class TestPageActionReferences extends ApsAdminBaseTestCase {
 
 		return this.executeAction();
 	}
+     */
+    private Page createPage(String code) {
+        Page page = new Page();
+        Page parent = (Page) this._pageManager.getDraftRoot();
+        page.setParentCode(parent.getCode());
+        page.setParent(parent);
+        page.setTitle("it", code);
+        page.setTitle("en", code);
+        page.setGroup(Group.FREE_GROUP_NAME);
+        page.setModel(this.pageModelManager.getPageModel("internal"));
+        page.setCode(code);
+        return page;
+    }
 
-	private Page createPage(String code) {
-		Page page = new Page();
-		Page parent = (Page) this._pageManager.getDraftRoot();
-		page.setParentCode(parent.getCode());
-		page.setParent(parent);
-		page.setTitle("it", code);
-		page.setTitle("en", code);
-		page.setGroup(Group.FREE_GROUP_NAME);
-		page.setModel(this.pageModelManager.getPageModel("internal"));
-		page.setCode(code);
-		return page;
+    private void init() throws Exception {
+        try {
+            this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+            this.pageModelManager = (IPageModelManager) this.getService(SystemConstants.PAGE_MODEL_MANAGER);
+            this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
+            //this.contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
+        } catch (Throwable t) {
+            throw new Exception(t);
+        }
+    }
 
-	}
-
-	private void init() throws Exception {
-		try {
-			this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-			this.pageModelManager = (IPageModelManager) this.getService(SystemConstants.PAGE_MODEL_MANAGER);
-			this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
-			this.contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-
-		} catch (Throwable t) {
-			throw new Exception(t);
-		}
-	}
-
-	private IPageManager _pageManager = null;
-	private IPageModelManager pageModelManager = null;
-	private IContentManager contentManager;
-	private IWidgetTypeManager _widgetTypeManager;
+    private IPageManager _pageManager = null;
+    private IPageModelManager pageModelManager = null;
+    //private IContentManager contentManager;
+    private IWidgetTypeManager _widgetTypeManager;
 
 }

@@ -19,19 +19,11 @@ import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.agiletec.plugins.jacms.apsadmin.content.AbstractContentAction;
-import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 
 import com.opensymphony.xwork2.Action;
-import java.util.Date;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,80 +37,80 @@ import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
-import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 
 /**
  * @author E.Santoboni
  */
 public class TestActivityStream extends ApsAdminBaseTestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-		this._helper.cleanRecords();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+        this._helper.cleanRecords();
+    }
 
-	public void testLogAddPage() throws Throwable {
-		String pageCode = "activity_stream_test_test";
-		try {
-			this.addPage(pageCode);
-			super.waitThreads(IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX);
-			ActionLogRecordSearchBean searchBean = this._helper.createSearchBean("admin", null, null, null, null, null);
-			List<Integer> ids = this._actionLoggerManager.getActionRecords(searchBean);
-			assertEquals(1, ids.size());
-			ActionLogRecord record = this._actionLoggerManager.getActionRecord(ids.get(0));
-			assertEquals("/do/Page", record.getNamespace());
-			assertEquals("save", record.getActionName());
-			ActivityStreamInfo asi = record.getActivityStreamInfo();
-			assertNotNull(asi);
-			assertEquals(1, asi.getActionType());
-			assertEquals("edit", asi.getLinkActionName());
-			assertEquals("/do/Page", asi.getLinkNamespace());
-			Properties parameters = asi.getLinkParameters();
-			assertEquals(1, parameters.size());
-			assertEquals(pageCode, parameters.getProperty("selectedNode"));
+    public void testLogAddPage() throws Throwable {
+        String pageCode = "activity_stream_test_test";
+        try {
+            this.addPage(pageCode);
+            super.waitThreads(IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX);
+            ActionLogRecordSearchBean searchBean = this._helper.createSearchBean("admin", null, null, null, null, null);
+            List<Integer> ids = this._actionLoggerManager.getActionRecords(searchBean);
+            assertEquals(1, ids.size());
+            ActionLogRecord record = this._actionLoggerManager.getActionRecord(ids.get(0));
+            assertEquals("/do/Page", record.getNamespace());
+            assertEquals("save", record.getActionName());
+            ActivityStreamInfo asi = record.getActivityStreamInfo();
+            assertNotNull(asi);
+            assertEquals(1, asi.getActionType());
+            assertEquals("edit", asi.getLinkActionName());
+            assertEquals("/do/Page", asi.getLinkNamespace());
+            Properties parameters = asi.getLinkParameters();
+            assertEquals(1, parameters.size());
+            assertEquals(pageCode, parameters.getProperty("selectedNode"));
 
-		} catch (Throwable t) {
-			throw t;
-		} finally {
-			this._pageManager.deletePage(pageCode);
-		}
-	}
+        } catch (Throwable t) {
+            throw t;
+        } finally {
+            this._pageManager.deletePage(pageCode);
+        }
+    }
 
-	private void addPage(String pageCode) throws Throwable {
-		assertNull(this._pageManager.getDraftPage(pageCode));
-		try {
-			IPage root = this._pageManager.getOnlineRoot();
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
-			params.put("parentPageCode", root.getCode());
-			List<Lang> langs = this._langManager.getLangs();
-			for (int i = 0; i < langs.size(); i++) {
-				Lang lang = langs.get(i);
-				params.put("lang" + lang.getCode(), "Page " + lang.getDescr());
-			}
-			params.put("model", "home");
-			params.put("group", Group.FREE_GROUP_NAME);
-			params.put("pageCode", pageCode);
-			String result = this.executeSave(params, "admin");
-			assertEquals(Action.SUCCESS, result);
-			IPage addedPage = this._pageManager.getDraftPage(pageCode);
-			assertNotNull(addedPage);
-		} catch (Throwable t) {
-			throw t;
-		}
-	}
+    private void addPage(String pageCode) throws Throwable {
+        assertNull(this._pageManager.getDraftPage(pageCode));
+        try {
+            IPage root = this._pageManager.getOnlineRoot();
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
+            params.put("parentPageCode", root.getCode());
+            List<Lang> langs = this._langManager.getLangs();
+            for (int i = 0; i < langs.size(); i++) {
+                Lang lang = langs.get(i);
+                params.put("lang" + lang.getCode(), "Page " + lang.getDescr());
+            }
+            params.put("model", "home");
+            params.put("group", Group.FREE_GROUP_NAME);
+            params.put("pageCode", pageCode);
+            String result = this.executeSave(params, "admin");
+            assertEquals(Action.SUCCESS, result);
+            IPage addedPage = this._pageManager.getDraftPage(pageCode);
+            assertNotNull(addedPage);
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
 
-	private String executeSave(Map<String, String> params, String username) throws Throwable {
-		this.setUserOnSession(username);
-		this.initAction("/do/Page", "save");
-		this.addParameters(params);
-		String result = this.executeAction();
-		return result;
-	}
+    private String executeSave(Map<String, String> params, String username) throws Throwable {
+        this.setUserOnSession(username);
+        this.initAction("/do/Page", "save");
+        this.addParameters(params);
+        String result = this.executeAction();
+        return result;
+    }
 
-	// ----------------------------------------------
+    // ----------------------------------------------
+    /*
 	public void testSaveNewContent_1() throws Throwable {
 		Content content = this._contentManager.loadContent("ART1", false);
 		String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(content, ApsAdminSystemConstants.ADD);
@@ -309,25 +301,25 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 		this.initAction(namespace, name);
 		this.addParameter("contentOnSessionMarker", contentOnSessionMarker);
 	}
+     */
+    private void init() {
+        this._actionLoggerManager = (IActionLogManager) this.getService(SystemConstants.ACTION_LOGGER_MANAGER);
+        this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
+        this._langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
+        //this._contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
+        this._helper = new ActionLoggerTestHelper(this.getApplicationContext());
+    }
 
-	private void init() {
-		this._actionLoggerManager = (IActionLogManager) this.getService(SystemConstants.ACTION_LOGGER_MANAGER);
-		this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
-		this._langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
-		this._contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-		this._helper = new ActionLoggerTestHelper(this.getApplicationContext());
-	}
+    @Override
+    protected void tearDown() throws Exception {
+        this._helper.cleanRecords();
+        super.tearDown();
+    }
 
-	@Override
-	protected void tearDown() throws Exception {
-		this._helper.cleanRecords();
-		super.tearDown();
-	}
-
-	private IActionLogManager _actionLoggerManager;
-	private IPageManager _pageManager = null;
-	private ILangManager _langManager = null;
-	private IContentManager _contentManager = null;
-	private ActionLoggerTestHelper _helper;
+    private IActionLogManager _actionLoggerManager;
+    private IPageManager _pageManager = null;
+    private ILangManager _langManager = null;
+    //private IContentManager _contentManager = null;
+    private ActionLoggerTestHelper _helper;
 
 }

@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -13,26 +13,15 @@
  */
 package org.entando.entando.web.page.validator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.PageUtilizer;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestServerError;
-import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.PageStatusRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,9 +44,6 @@ public class PageValidator extends AbstractPaginationValidator {
     @Autowired
     PageUtilizer pageUtilizer;
 
-    @Autowired
-    IContentManager contentManager;
-
     public IPageManager getPageManager() {
         return pageManager;
     }
@@ -72,14 +58,6 @@ public class PageValidator extends AbstractPaginationValidator {
 
     public void setPageUtilizer(PageUtilizer pageUtilizer) {
         this.pageUtilizer = pageUtilizer;
-    }
-
-    public IContentManager getContentManager() {
-        return contentManager;
-    }
-
-    public void setContentManager(IContentManager contentManager) {
-        this.contentManager = contentManager;
     }
 
     @Override
@@ -120,9 +98,8 @@ public class PageValidator extends AbstractPaginationValidator {
         if (!StringUtils.equals(pageCode, pageRequest.getCode())) {
             errors.rejectValue("code", PageController.ERRCODE_URINAME_MISMATCH, new String[]{pageCode, pageRequest.getCode()}, "page.code.mismatch");
         }
-        IPage parent = null;
         if (pageRequest.getParentCode() == null || pageRequest.getPosition() <= 0
-                || (parent = this.getPageManager().getDraftPage(pageRequest.getParentCode())) == null) {
+                || this.getPageManager().getDraftPage(pageRequest.getParentCode()) == null) {
             errors.reject(PageController.ERRCODE_CHANGE_POSITION_INVALID_REQUEST, new String[]{pageCode}, "page.move.position.invalid");
         }
     }
@@ -144,6 +121,7 @@ public class PageValidator extends AbstractPaginationValidator {
         }
     }
 
+    /*
     public void validateReferences(String pageCode, PageStatusRequest pageStatusRequest, Errors errors) {
         List<Content> contents = new ArrayList<>();
         List<String> invalidRefs = new ArrayList<>();
@@ -192,6 +170,5 @@ public class PageValidator extends AbstractPaginationValidator {
             }
         }
     }
-
-
+     */
 }

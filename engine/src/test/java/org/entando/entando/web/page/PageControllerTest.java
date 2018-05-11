@@ -27,7 +27,6 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -71,9 +70,6 @@ public class PageControllerTest extends AbstractControllerTest {
     IPageManager pageManager;
 
     @Mock
-    IContentManager contentManager;
-
-    @Mock
     PageUtilizer pageUtilizer;
 
     @Mock
@@ -98,7 +94,6 @@ public class PageControllerTest extends AbstractControllerTest {
                 .build();
         PageValidator pageValidator = new PageValidator();
         pageValidator.setPageManager(pageManager);
-        pageValidator.setContentManager(contentManager);
         pageValidator.setPageUtilizer(pageUtilizer);
         this.controller.setPageValidator(pageValidator);
     }
@@ -185,9 +180,9 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 get("/pages").
-                        param("parentCode", "service")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken)
+                param("parentCode", "service")
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(status().isOk());
@@ -225,10 +220,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}", "wrong_page")
-                        .sessionAttr("user", user)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mockJsonResult)
-                        .header("Authorization", "Bearer " + accessToken)
+                .sessionAttr("user", user)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mockJsonResult)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -265,10 +260,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/status", "page_to_publish")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -297,10 +292,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/status", "page_to_publish")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -317,8 +312,8 @@ public class PageControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pages/{parentCode}", "mock_page")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken)
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -339,10 +334,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 post("/pages")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(page))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(page))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isConflict());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -358,8 +353,8 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getOnlinePage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "online_page")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -379,8 +374,8 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(page);
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "page_with_children")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -400,10 +395,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -435,10 +430,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -470,10 +465,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();

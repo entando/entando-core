@@ -16,7 +16,6 @@ package org.entando.entando.web.page.validator;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.PageUtilizer;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.page.PageController;
@@ -39,11 +38,10 @@ public class PageValidator extends AbstractPaginationValidator {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    IPageManager pageManager;
+    private IPageManager pageManager;
 
-    @Autowired
-    PageUtilizer pageUtilizer;
-
+    //@Autowired
+    //PageUtilizer pageUtilizer;
     public IPageManager getPageManager() {
         return pageManager;
     }
@@ -52,6 +50,7 @@ public class PageValidator extends AbstractPaginationValidator {
         this.pageManager = pageManager;
     }
 
+    /*
     public PageUtilizer getPageUtilizer() {
         return pageUtilizer;
     }
@@ -59,7 +58,7 @@ public class PageValidator extends AbstractPaginationValidator {
     public void setPageUtilizer(PageUtilizer pageUtilizer) {
         this.pageUtilizer = pageUtilizer;
     }
-
+     */
     @Override
     public boolean supports(Class<?> paramClass) {
 

@@ -22,13 +22,6 @@
         <property name="internalServletWidgetCode"><value>${widgets.internalServlet}</value></property>
     </bean>
     
-    <!-- 
-    <bean id="pageActionHelper" class="com.agiletec.apsadmin.portal.helper.PageActionHelper" parent="abstractBaseActionHelper">
-        <property name="pageManager" ref="PageManager" />
-        <property name="configService" ref="BaseConfigManager" />
-    </bean>
-     -->
-    
     <bean id="pageTreeAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.PageTreeAction" parent="abstractBaseAction">
         <property name="treeHelper" ref="pageActionHelperDraft" />
@@ -63,12 +56,10 @@
 	
     <bean id="pageActionReferencesHelper" scope="prototype" 
               class="com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper">
-        <property name="contentManager" ref="jacmsContentManager" />
+        <!-- <property name="contentManager" ref="jacmsContentManager" /> -->
     </bean>
 	
-	
-	
-	
+    
     <bean id="pageSettingsAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.PageSettingsAction" parent="baseAdminAction">
     </bean>

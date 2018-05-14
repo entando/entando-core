@@ -25,36 +25,9 @@
 
     <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
     
-    <bean id="ContentViewerWidgetValidator" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.ContentViewerWidgetValidator">
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="contentModelManager" ref="jacmsContentModelManager" />
-    </bean>
-
-    <bean id="AbstractListViewerWidgetValidator" abstract="true" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.AbstractListViewerWidgetValidator">
-        <property name="langManager" ref="LangManager" />
-        <property name="pageManager" ref="PageManager" />
-    </bean>
-
-    <bean id="RowContentListViewerWidgetValidator" parent="AbstractListViewerWidgetValidator"
-          class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.RowContentListViewerWidgetValidator" >
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="contentModelManager" ref="jacmsContentModelManager" />
-    </bean>
-
-    <bean id="ContentListViewerWidgetValidator"  parent="AbstractListViewerWidgetValidator"
-          class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.ContentListViewerWidgetValidator">
-        <property name="widgetTypeManager" ref="WidgetTypeManager" />
-        <property name="contentManager" ref="jacmsContentManager" />
-        <property name="contentModelManager" ref="jacmsContentModelManager" />
-    </bean>
-
-
     <!-- === WIDGET PROCESSORS === -->
 
     <bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory" />
-
-    <bean id="RowContentListViewerConfigProcessor" class="org.entando.entando.plugins.jacms.aps.system.services.widgettype.validators.RowContentListViewerConfigProcessor" />
-
 
     <!-- === BUILDERS === -->
 
@@ -175,14 +148,6 @@
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
-    </bean>
-
-    <bean id="ResourceService" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceService" >
-        <property name="resourceManager" ref="jacmsResourceManager" />
-    </bean>
-
-    <bean id="ContentService" class="com.agiletec.plugins.jacms.aps.system.services.content.ContentService" >
-        <property name="contentManager" ref="jacmsContentManager" />
     </bean>
 
     <bean id="RoleService" class="org.entando.entando.aps.system.services.role.RoleService" >

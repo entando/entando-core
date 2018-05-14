@@ -39,6 +39,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Iterator;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -59,6 +60,7 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -79,9 +81,9 @@ import org.springframework.validation.DataBinder;
  * @author paddeo
  */
 public class PageService implements IPageService, GroupServiceUtilizer<PageDto>, PageModelServiceUtilizer<PageDto>, ApplicationContextAware {
-    
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
+
     private static final String ERRCODE_PAGE_NOT_FOUND = "1";
     private static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
     private static final String ERRCODE_GROUP_NOT_FOUND = "2";
@@ -90,93 +92,93 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private static final String ERRCODE_FRAME_INVALID = "2";
     private static final String ERRCODE_WIDGET_INVALID = "4";
     private static final String ERRCODE_STATUS_INVALID = "3";
-    
+
     private static final String ERRCODE_PAGE_REFERENCES = "5";
-    
+
     @Autowired
     private IPageManager pageManager;
-    
+
     @Autowired
     private IPageModelManager pageModelManager;
-    
+
     @Autowired
     private IGroupManager groupManager;
-    
+
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
-    
+
     @Autowired
     private WidgetValidatorFactory widgetValidatorFactory;
-    
+
     @Autowired
     private WidgetProcessorFactory widgetProcessorFactory;
-    
+
     @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
-    
+
     private ApplicationContext applicationContext;
-    
+
     protected IPageManager getPageManager() {
         return pageManager;
     }
-    
+
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
     }
-    
+
     protected IPageModelManager getPageModelManager() {
         return pageModelManager;
     }
-    
+
     public void setPageModelManager(IPageModelManager pageModelManager) {
         this.pageModelManager = pageModelManager;
     }
-    
+
     public IGroupManager getGroupManager() {
         return groupManager;
     }
-    
+
     public void setGroupManager(IGroupManager groupManager) {
         this.groupManager = groupManager;
     }
-    
+
     protected IDtoBuilder<IPage, PageDto> getDtoBuilder() {
         return dtoBuilder;
     }
-    
+
     public void setDtoBuilder(IDtoBuilder<IPage, PageDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
-    
+
     protected WidgetValidatorFactory getWidgetValidatorFactory() {
         return widgetValidatorFactory;
     }
-    
+
     public void setWidgetValidatorFactory(WidgetValidatorFactory widgetValidatorFactory) {
         this.widgetValidatorFactory = widgetValidatorFactory;
     }
-    
+
     protected WidgetProcessorFactory getWidgetProcessorFactory() {
         return widgetProcessorFactory;
     }
-    
+
     public void setWidgetProcessorFactory(WidgetProcessorFactory widgetProcessorFactory) {
         this.widgetProcessorFactory = widgetProcessorFactory;
     }
-    
+
     protected IWidgetTypeManager getWidgetTypeManager() {
         return widgetTypeManager;
     }
-    
+
     public void setWidgetTypeManager(IWidgetTypeManager widgetTypeManager) {
         this.widgetTypeManager = widgetTypeManager;
     }
-    
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -199,7 +201,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         })));
         return res;
     }
-    
+
     @Override
     public PageDto getPage(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
@@ -216,7 +218,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;
     }
-    
+
     @Override
     public PageDto addPage(PageRequest pageRequest) {
         this.validateRequest(pageRequest);
@@ -229,7 +231,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error add page", e);
         }
     }
-    
+
     @Override
     public void removePage(String pageCode) {
         try {
@@ -242,7 +244,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in delete page", e);
         }
     }
-    
+
     @Override
     public PageDto updatePage(String pageCode, PageRequest pageRequest) {
         IPage oldPage = this.getPageManager().getDraftPage(pageCode);
@@ -261,7 +263,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in update page", e);
         }
     }
-    
+
     @Override
     public PageDto updatePageStatus(String pageCode, String status) {
         IPage newPage = null;
@@ -270,16 +272,31 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 this.getPageManager().setPageOnline(pageCode);
                 newPage = this.getPageManager().getOnlinePage(pageCode);
             } else if (status != null && status.equals(STATUS_DRAFT)) {
+                Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
+                if (null != beans) {
+                    Iterator<PageServiceUtilizer> iter = beans.values().iterator();
+                    while (iter.hasNext()) {
+                        PageServiceUtilizer serviceUtilizer = iter.next();
+                        List utilizer = serviceUtilizer.getPageUtilizer(pageCode);
+                        if (null != utilizer && utilizer.size() > 0) {
+                            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
+                            bindingResult.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
+                            throw new ValidationGenericException(bindingResult);
+                        }
+                    }
+                }
                 this.getPageManager().setPageOffline(pageCode);
                 newPage = this.getPageManager().getDraftPage(pageCode);
             }
             return this.getDtoBuilder().convert(newPage);
+        } catch (ValidationGenericException e) {
+            throw e;
         } catch (ApsSystemException e) {
             logger.error("Error updating page {} status", pageCode, e);
             throw new RestServerError("error in update page status", e);
         }
     }
-    
+
     @Override
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
@@ -300,7 +317,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         return this.getDtoBuilder().convert(page);
     }
-    
+
     @Override
     public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
@@ -310,7 +327,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(page, status);
         return pageConfigurationDto;
     }
-    
+
     @Override
     public PageConfigurationDto restorePageConfiguration(String pageCode) {
         try {
@@ -335,7 +352,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in restoring page configuration", e);
         }
     }
-    
+
     @Override
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status) {
         IPage page = this.loadPage(pageCode, status);
@@ -351,7 +368,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         return new WidgetConfigurationDto(widget);
     }
-    
+
     @Override
     public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, WidgetConfigurationRequest widgetReq) {
         try {
@@ -375,7 +392,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             widget.setType(widgetType);
             widget.setConfig(properties);
             this.getPageManager().joinWidget(pageCode, widget, frameId);
-            
+
             ApsProperties outProperties = this.getWidgetProcessorFactory().get(widgetReq.getCode()).extractConfiguration(widget.getConfig());
             return new WidgetConfigurationDto(widget.getType().getCode(), outProperties);
         } catch (ApsSystemException e) {
@@ -383,7 +400,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in update widget configuration", e);
         }
     }
-    
+
     @Override
     public void deleteWidgetConfiguration(String pageCode, int frameId) {
         try {
@@ -402,7 +419,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in delete widget configuration", e);
         }
     }
-    
+
     @Override
     public PageConfigurationDto applyDefaultWidgets(String pageCode) {
         try {
@@ -416,12 +433,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 logger.info("no default widget configuration for model {}", pageModel.getCode());
                 return new PageConfigurationDto(page, STATUS_DRAFT);
             }
-            
+
             Widget[] widgets = mergePageConfiguration(page, defaultWidgets);
             page.setWidgets(widgets);
             this.getPageManager().updatePage(page);
             return new PageConfigurationDto(page, STATUS_DRAFT);
-            
+
         } catch (ApsSystemException e) {
             logger.error("Error setting default widgets for page {}", pageCode, e);
             throw new RestServerError("Error setting default widgets for page " + pageCode, e);
@@ -450,11 +467,11 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         return widgets;
     }
-    
+
     public WidgetType getWidgetType(String typeCode) {
         return this.getWidgetTypeManager().getWidgetType(typeCode);
     }
-    
+
     private IPage createPage(PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -486,7 +503,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         page.setMetadata(metadata);
         return page;
     }
-    
+
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -519,7 +536,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         page.setMetadata(metadata);
         return page;
     }
-    
+
     private void valueMetadataFromRequest(PageMetadata metadata, PageRequest request) {
         if (metadata.getModel() == null || !metadata.getModel().getCode().equals(request.getPageModel())) {
             // Ho cambiato modello e allora cancello tutte le showlets
@@ -541,11 +558,11 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }));
         String charset = request.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
-        
+
         String mimetype = request.getContentType();
         metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
     }
-    
+
     private IPage loadPage(String pageCode, String status) {
         IPage page = null;
         switch (status) {
@@ -565,7 +582,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         return page;
     }
-    
+
     private void validateRequest(PageRequest request) {
         if (this.getPageModelManager().getPageModel(request.getPageModel()) == null) {
             throw new RestRourceNotFoundException(ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", request.getPageModel());
@@ -582,12 +599,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             }
         }));
     }
-    
+
     @Override
     public String getManagerName() {
         return ((IManager) this.getPageManager()).getName();
     }
-    
+
     @Override
     @SuppressWarnings("unchecked")
     public List<PageDto> getGroupUtilizer(String groupName) {
@@ -599,7 +616,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("Error loading page references for group", ex);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public List<PageDto> getPageModelUtilizer(String pageModelCode) {
@@ -611,7 +628,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("Error loading page references for pagemodel " + pageModelCode, ex);
         }
     }
-    
+
     @Override
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
         try {
@@ -623,7 +640,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("Error searching pages", ex);
         }
     }
-    
+
     @Override
     public PagedMetadata<?> getPageReferences(String pageCode, String managerName, RestListRequest requestList) {
         IPage page = this.getPageManager().getDraftPage(pageCode);
@@ -643,7 +660,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;
     }
-    
+
     @Override
     public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request) {
         try {
@@ -657,14 +674,14 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("Error searching free online pages", ex);
         }
     }
-    
+
     private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
         PageSearchRequest pageSearchReq = new PageSearchRequest();
         BeanUtils.copyProperties(request, pageSearchReq);
-        
+
         return getPagedResult(pageSearchReq, pages);
     }
-    
+
     private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
         BeanComparator comparator = new BeanComparator(request.getSort());
         if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
@@ -676,7 +693,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         result.imposeLimits();
         return result;
     }
-    
+
     private Map<String, Boolean> getReferencesInfo(IPage page) {
         Map<String, Boolean> references = new HashMap<String, Boolean>();
         try {
@@ -705,7 +722,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         return references;
     }
-    
+
     @SuppressWarnings("rawtypes")
     private PageServiceUtilizer<?> getPageServiceUtilizer(String managerName) {
         Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
@@ -713,9 +730,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 .filter(service -> service.getManagerName().equals(managerName))
                 .findFirst().orElse(null);
         return defName;
-        
+
     }
-    
+
     @Override
     public PagesStatusDto getPagesStatus() {
         PagesStatus raw = this.getPageManager().getPagesStatus();

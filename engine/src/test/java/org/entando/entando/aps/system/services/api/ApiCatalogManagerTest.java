@@ -26,79 +26,79 @@ import org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper
 
 public class ApiCatalogManagerTest {
 
-	@Mock
-	private ApiServiceCacheWrapper cacheWrapper;
+    @Mock
+    private ApiServiceCacheWrapper cacheWrapper;
 
-	@Mock
-	private ApiResourceCacheWrapper resourceCacheWrapper;
+    @Mock
+    private ApiResourceCacheWrapper resourceCacheWrapper;
 
-	@Mock
-	private ApiCatalogDAO apiCatalogDAO;
+    @Mock
+    private ApiCatalogDAO apiCatalogDAO;
 
-	@InjectMocks
-	private ApiCatalogManager apiCatalogManager;
+    @InjectMocks
+    private ApiCatalogManager apiCatalogManager;
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-	}
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
-	@Test
-	public void testResources() throws ApsSystemException {
-		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
-		Map<String, ApiResource> resources = this.apiCatalogManager.getResources();
-		assertThat(resources.size(), is(33));
-	}
+    @Test
+    public void testResources() throws ApsSystemException {
+        when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
+        Map<String, ApiResource> resources = this.apiCatalogManager.getResources();
+        assertThat(resources.size(), is(23));
+    }
 
-	@Test
-	public void testGetMethod() throws Throwable {
-		when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
-		ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
-		assertNotNull(method);
-		assertTrue(method.isActive());
-	}
+    @Test
+    public void testGetMethod() throws Throwable {
+        when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
+        ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
+        assertNotNull(method);
+        assertTrue(method.isActive());
+    }
 
-	@Test
-	public void testGetMethods() throws Throwable {
-		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
-		List<ApiMethod> methods = this.apiCatalogManager.getMethods(ApiMethod.HttpMethod.GET);
-		assertNotNull(methods);
-		assertTrue(methods.size() > 0);
-	}
+    @Test
+    public void testGetMethods() throws Throwable {
+        when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
+        List<ApiMethod> methods = this.apiCatalogManager.getMethods(ApiMethod.HttpMethod.GET);
+        assertNotNull(methods);
+        assertTrue(methods.size() > 0);
+    }
 
-	@Test
-	public void testUpdateMethodStatus() throws Throwable {
-		when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
-		ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
-		method.setStatus(false);
-		this.apiCatalogManager.updateMethodConfig(method);
-		method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
-		assertFalse(method.isActive());
-	}
+    @Test
+    public void testUpdateMethodStatus() throws Throwable {
+        when(resourceCacheWrapper.getMasterResource("getService")).thenReturn(createResource(null, "getService"));
+        ApiMethod method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
+        method.setStatus(false);
+        this.apiCatalogManager.updateMethodConfig(method);
+        method = this.apiCatalogManager.getMethod(ApiMethod.HttpMethod.GET, "getService");
+        assertFalse(method.isActive());
+    }
 
-	@Test
-	public void testGetServices() throws Throwable {
-		when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
-		Map<String, ApiService> services = this.apiCatalogManager.getServices();
-		assertNotNull(services);
-		assertTrue(services.isEmpty());
-	}
+    @Test
+    public void testGetServices() throws Throwable {
+        when(resourceCacheWrapper.getMasterResources()).thenReturn(createResources());
+        Map<String, ApiService> services = this.apiCatalogManager.getServices();
+        assertNotNull(services);
+        assertTrue(services.isEmpty());
+    }
 
-	private Map<String, ApiResource> createResources() throws ApsSystemException {
-		ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
-		Map<String, ApiResource> res = loader.getResources();
-		Map<String, ApiResource> resources = new HashMap<>();
-		for (Map.Entry<String, ApiResource> entry : res.entrySet()) {
-			resources.put(entry.getKey(), entry.getValue());
-		}
-		return resources;
-	}
+    private Map<String, ApiResource> createResources() throws ApsSystemException {
+        ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
+        Map<String, ApiResource> res = loader.getResources();
+        Map<String, ApiResource> resources = new HashMap<>();
+        for (Map.Entry<String, ApiResource> entry : res.entrySet()) {
+            resources.put(entry.getKey(), entry.getValue());
+        }
+        return resources;
+    }
 
-	private ApiResource createResource(String namespace, String resourceName) throws ApsSystemException {
-		ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
-		Map<String, ApiResource> resources = loader.getResources();
-		String resourceCode = ApiResource.getCode(namespace, resourceName);
-		return resources.get(resourceCode);
-	}
+    private ApiResource createResource(String namespace, String resourceName) throws ApsSystemException {
+        ApiResourceLoader loader = new ApiResourceLoader(ApiCatalogManager.DEFAULT_LOCATION_PATTERN);
+        Map<String, ApiResource> resources = loader.getResources();
+        String resourceCode = ApiResource.getCode(namespace, resourceName);
+        return resources.get(resourceCode);
+    }
 
 }

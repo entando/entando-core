@@ -201,14 +201,17 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto updateUser(UserRequest userRequest) {
-        UserDetails user = this.loadUser(userRequest.getUsername());
+        UserDetails oldUser = this.loadUser(userRequest.getUsername());
         try {
-            UserDetails newUser = this.updateUser(user, userRequest);
-            if (userRequest.isReset() && (user instanceof User)) {
+            UserDetails newUser = this.updateUser(oldUser, userRequest);
+            if (userRequest.isReset() && (oldUser instanceof User)) {
                 ((User) newUser).setLastAccess(new Date());
                 ((User) newUser).setLastPasswordChange(new Date());
             }
             this.getUserManager().updateUser(newUser);
+            if (null != userRequest.getPassword()) {
+                this.getUserManager().changePassword(userRequest.getUsername(), userRequest.getPassword());
+            }
             UserDetails modifiedUser = this.getUserManager().getUser(userRequest.getUsername());
             return dtoBuilder.convert(modifiedUser);
         } catch (ApsSystemException e) {

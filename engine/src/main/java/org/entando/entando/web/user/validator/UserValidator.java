@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
@@ -169,7 +170,9 @@ public class UserValidator extends AbstractPaginationValidator {
             if (null == user) {
                 throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "username", username);
             }
-            this.checkNewPassword(username, userRequest.getPassword(), bindingResult);
+            if (null != userRequest.getPassword()) {
+                this.checkNewPassword(username, userRequest.getPassword(), bindingResult);
+            }
         }
     }
 
@@ -190,6 +193,10 @@ public class UserValidator extends AbstractPaginationValidator {
     }
 
     private void checkNewPassword(String username, String password, BindingResult bindingResult) {
+        if (null == password) {
+            bindingResult.reject(RestErrorCodes.NOT_NULL, new String[]{username}, "user.password.NotBlank");
+            return;
+        }
         int pwLength = password.length();
         Matcher matcherPassword = pattern.matcher(password);
         if (pwLength < 8 || pwLength > 20 || !matcherPassword.matches()) {

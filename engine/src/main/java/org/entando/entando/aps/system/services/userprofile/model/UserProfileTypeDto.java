@@ -13,10 +13,8 @@
  */
 package org.entando.entando.aps.system.services.userprofile.model;
 
-import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
 import java.util.List;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 
 /**
@@ -30,11 +28,6 @@ public class UserProfileTypeDto extends EntityTypeFullDto {
 
     public UserProfileTypeDto(IUserProfile userProfile, List<AttributeRole> roles) {
         super(userProfile, roles);
-        List<AttributeInterface> entityAttributes = userProfile.getAttributeList();
-        for (AttributeInterface attribute : entityAttributes) {
-            EntityTypeAttributeDto attributeDto = new EntityTypeAttributeDto(attribute, roles);
-            this.getAttributes().add(attributeDto);
-        }
     }
-    
+
 }

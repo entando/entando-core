@@ -73,8 +73,6 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
             }
             GuiFragment guiFragment = new GuiFragment();
             guiFragment.setCode(codeMaster);
-            assertNull(guiFragment.getGui());
-            assertNotNull(guiFragment.getDefaultGui());
             String newGui = "<@wp.fragment code=\"" + codeSlave + "\" escapeXml=false /> " + guiFragment.getDefaultGui();
             guiFragment.setGui(newGui);
             this._guiFragmentManager.addGuiFragment(guiFragment);

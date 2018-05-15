@@ -113,6 +113,34 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
     }
 
     @Test
+    public void testAddGetUserProfileType_1() throws Exception {
+        try {
+            Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            this.executeProfileTypePost("2_POST_valid.json", accessToken, status().isOk());
+
+            UserProfile addedType = (UserProfile) this.userProfileManager.getEntityPrototype("TST");
+            Assert.assertNotNull(addedType);
+            Assert.assertEquals("Profile Type TST", addedType.getTypeDescription());
+            Assert.assertEquals(3, addedType.getAttributeList().size());
+
+            ResultActions result = mockMvc
+                    .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"TST"})
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is("TST")));
+            result.andExpect(jsonPath("$.payload.attributes.size()", is(3)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        } finally {
+            if (null != this.userProfileManager.getEntityPrototype("TST")) {
+                ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("TST");
+            }
+        }
+    }
+
+    @Test
     public void testAddUpdateUserProfileType_1() throws Exception {
         try {
             Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
@@ -121,8 +149,8 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             this.executeProfileTypePost("1_POST_valid.json", accessToken, status().isOk());
 
-            Assert.assertNotNull(this.userProfileManager.getEntityPrototype("AAA"));
             UserProfile addedType = (UserProfile) this.userProfileManager.getEntityPrototype("AAA");
+            Assert.assertNotNull(addedType);
             Assert.assertEquals("Profile Type AAA", addedType.getTypeDescription());
             Assert.assertEquals(1, addedType.getAttributeList().size());
 

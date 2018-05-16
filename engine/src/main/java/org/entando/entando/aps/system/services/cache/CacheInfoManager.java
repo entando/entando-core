@@ -148,17 +148,17 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
         Date expirationTime = DateUtils.addSeconds(new Date(), (int) expiresInSeconds);
         this.setExpirationTime(targetCache, key, expirationTime);
     }
-    
+
     public void setExpirationTime(String targetCache, String key, Date expirationTime) {
         Cache cache = this.getCache(CACHE_INFO_MANAGER_CACHE_NAME);
         Map<String, Date> expirationTimes = this.get(cache, EXPIRATIONS_CACHE_NAME_PREFIX + targetCache, Map.class);
         if (null == expirationTimes) {
-            expirationTimes = new HashMap<>();
+            expirationTimes = new HashMap<String, Date>();
         }
         expirationTimes.put(key, expirationTime);
         cache.put(EXPIRATIONS_CACHE_NAME_PREFIX + targetCache, expirationTimes);
     }
-    
+
     @Override
     public void updateFromPageChanged(PageChangedEvent event) {
         IPage page = event.getPage();

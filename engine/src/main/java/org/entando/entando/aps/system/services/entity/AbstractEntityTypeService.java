@@ -579,8 +579,6 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         }
         for (String entityTypeCode : entityTypeCodes) {
             entityManager.reloadEntitiesReferences(entityTypeCode);
-        }
-        for (String entityTypeCode : entityTypeCodes) {
             status.put(entityTypeCode, entityManager.getStatus(entityTypeCode));
         }
         return status;

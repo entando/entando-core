@@ -13,9 +13,12 @@
  */
 package org.entando.entando.aps.system.services.userprofile;
 
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -54,5 +57,9 @@ public interface IUserProfileTypeService {
     public void moveUserProfileAttribute(String profileTypeCode, String attributeCode, boolean moveUp);
 
     public void reloadProfileTypeReferences(String profileTypeCode);
+
+    public Map<String, Integer> reloadProfileTypesReferences(List<String> profileTypeCodes);
+
+    public EntityTypesStatusDto getProfileTypesRefreshStatus();
 
 }

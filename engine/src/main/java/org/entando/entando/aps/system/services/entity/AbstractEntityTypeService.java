@@ -53,6 +53,7 @@ import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeV
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
@@ -561,6 +562,31 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
             throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
         }
         entityManager.reloadEntitiesReferences(entityTypeCode);
+    }
+
+    protected Map<String, Integer> reloadEntityTypesReferences(String entityManagerCode, List<String> entityTypeCodes) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        Map<String, Integer> status = new HashMap<>();
+        if (null == entityTypeCodes || entityTypeCodes.isEmpty()) {
+            return status;
+        }
+        for (String entityTypeCode : entityTypeCodes) {
+            IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+            if (null == entityType) {
+                logger.warn("no type found with code {}", entityTypeCode);
+                throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+            }
+        }
+        for (String entityTypeCode : entityTypeCodes) {
+            entityManager.reloadEntitiesReferences(entityTypeCode);
+            status.put(entityTypeCode, entityManager.getStatus(entityTypeCode));
+        }
+        return status;
+    }
+
+    protected EntityTypesStatusDto getEntityTypesRefreshStatus(String entityManagerCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        return new EntityTypesStatusDto(entityManager);
     }
 
     public List<String> getEnumeratorExtractorBeans() {

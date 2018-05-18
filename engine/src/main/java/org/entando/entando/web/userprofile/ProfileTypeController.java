@@ -24,6 +24,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -34,6 +35,7 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
+import org.entando.entando.web.userprofile.model.ProfileTypeRefreshRequest;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -245,6 +247,28 @@ public class ProfileTypeController {
         result.put("profileTypeCode", profileTypeCode);
         logger.debug("started reload references of profile type {}", profileTypeCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypesStatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> reloadReferences(@Valid @RequestBody ProfileTypeRefreshRequest bodyRequest,
+            BindingResult bindingResult) throws Throwable {
+        logger.debug("reload references of profile types {}", bodyRequest.getProfileTypeCodes());
+        Map<String, Integer> status = this.getUserProfileTypeService().reloadProfileTypesReferences(bodyRequest.getProfileTypeCodes());
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("profileTypeCodes", status);
+        logger.debug("started reload references of profile types {}", bodyRequest.getProfileTypeCodes());
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/profileTypesStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> extractStatus() throws Throwable {
+        logger.debug("Extract profile types status");
+        EntityTypesStatusDto status = this.getUserProfileTypeService().getProfileTypesRefreshStatus();
+        logger.debug("Extracted profile types status {}", status);
+        return new ResponseEntity<>(new RestResponse(status), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

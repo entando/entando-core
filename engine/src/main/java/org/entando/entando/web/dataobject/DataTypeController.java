@@ -27,6 +27,7 @@ import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
@@ -34,6 +35,7 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
+import org.entando.entando.web.dataobject.model.DataTypeRefreshRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,7 +228,7 @@ public class DataTypeController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dataTypes/{dataTypeCode}/attribute/{attributeCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> deleteDataTypeAttribute(@PathVariable String dataTypeCode, @PathVariable String attributeCode) throws ApsSystemException {
-        logger.debug("Deleting attribute {} from profile type {}", attributeCode, dataTypeCode);
+        logger.debug("Deleting attribute {} from data type {}", attributeCode, dataTypeCode);
         this.getDataObjectService().deleteDataTypeAttribute(dataTypeCode, attributeCode);
         Map<String, String> result = new HashMap<>();
         result.put("dataTypeCode", dataTypeCode);
@@ -242,8 +244,30 @@ public class DataTypeController {
         Map<String, String> result = new HashMap<>();
         result.put("status", "success");
         result.put("dataTypeCode", dataTypeCode);
-        logger.debug("started reload references of profile type {}", dataTypeCode);
+        logger.debug("started reload references of data type {}", dataTypeCode);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/dataTypesStatus", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> reloadReferences(@Valid @RequestBody DataTypeRefreshRequest bodyRequest,
+            BindingResult bindingResult) throws Throwable {
+        logger.debug("reload references of data types {}", bodyRequest.getDataTypeCodes());
+        Map<String, Integer> status = this.getDataObjectService().reloadDataTypesReferences(bodyRequest.getDataTypeCodes());
+        Map<String, Object> result = new HashMap<>();
+        result.put("result", "success");
+        result.put("dataTypeCodes", status);
+        logger.debug("started reload references of data types {}", bodyRequest.getDataTypeCodes());
+        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/dataTypesStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> extractStatus() throws Throwable {
+        logger.debug("Extract data types status");
+        EntityTypesStatusDto status = this.getDataObjectService().getDataTypesRefreshStatus();
+        logger.debug("Extracted data types status {}", status);
+        return new ResponseEntity<>(new RestResponse(status), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

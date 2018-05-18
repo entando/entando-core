@@ -52,6 +52,7 @@ public class PageDto {
     private int numWidget;
     private String lastModified;
     private String fullPath;
+    private String token;
 
     /**
      * The references grouped by service name.
@@ -240,6 +241,14 @@ public class PageDto {
 
     public void setFullPath(String fullPath) {
         this.fullPath = fullPath;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public static String getEntityFieldName(String dtoFieldName) {

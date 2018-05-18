@@ -512,6 +512,48 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
+    public void testGetDataTypesStatus() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/dataTypesStatus")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.size()", is(3)));
+        result.andExpect(jsonPath("$.payload.ready", Matchers.hasSize(4)));
+        result.andExpect(jsonPath("$.payload.toRefresh", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.payload.refreshing", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+    }
+
+    @Test
+    public void testRefreshUserProfileTypes() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(post("/dataTypesStatus")
+                        .content("{\"dataTypeCodes\":[\"AAA\",\"BBB\"]}")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+
+        result = mockMvc
+                .perform(post("/dataTypesStatus")
+                        .content("{\"dataTypeCodes\":[\"ALL\",\"ART\",\"EVN\"]}")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.size()", is(2)));
+        result.andExpect(jsonPath("$.payload.result", is("success")));
+        result.andExpect(jsonPath("$.payload.dataTypeCodes.size()", is(3)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+    }
+
+    @Test
     public void testMoveAttribute() throws Exception {
         try {
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));

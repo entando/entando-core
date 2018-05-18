@@ -15,11 +15,14 @@ package org.entando.entando.aps.system.services.userprofile;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityManager;
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.entity.AbstractEntityTypeService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDtoBuilder;
@@ -107,6 +110,16 @@ public class UserProfileTypeService extends AbstractEntityTypeService<IUserProfi
     @Override
     public void reloadProfileTypeReferences(String profileTypeCode) {
         super.reloadEntityTypeReferences(SystemConstants.USER_PROFILE_MANAGER, profileTypeCode);
+    }
+
+    @Override
+    public Map<String, Integer> reloadProfileTypesReferences(List<String> profileTypeCodes) {
+        return super.reloadEntityTypesReferences(SystemConstants.USER_PROFILE_MANAGER, profileTypeCodes);
+    }
+
+    @Override
+    public EntityTypesStatusDto getProfileTypesRefreshStatus() {
+        return super.getEntityTypesRefreshStatus(SystemConstants.USER_PROFILE_MANAGER);
     }
 
 }

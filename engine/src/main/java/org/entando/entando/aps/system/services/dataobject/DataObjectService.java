@@ -24,6 +24,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.page.IPageManager;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
@@ -39,6 +40,7 @@ import org.entando.entando.aps.system.services.entity.AbstractEntityTypeService;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -202,6 +204,16 @@ public class DataObjectService extends AbstractEntityTypeService<DataObject, Dat
     @Override
     public void reloadDataTypeReferences(String dataTypeCode) {
         super.reloadEntityTypeReferences(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCode);
+    }
+
+    @Override
+    public Map<String, Integer> reloadDataTypesReferences(List<String> dataTypeCodes) {
+        return super.reloadEntityTypesReferences(SystemConstants.DATA_OBJECT_MANAGER, dataTypeCodes);
+    }
+
+    @Override
+    public EntityTypesStatusDto getDataTypesRefreshStatus() {
+        return super.getEntityTypesRefreshStatus(SystemConstants.DATA_OBJECT_MANAGER);
     }
 
     protected IPageManager getPageManager() {

@@ -13,10 +13,13 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
+import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
@@ -54,5 +57,9 @@ public interface IDataObjectService {
     public void moveDataTypeAttribute(String dataTypeCode, String attributeCode, boolean moveUp);
 
     public void reloadDataTypeReferences(String dataTypeCode);
+
+    public Map<String, Integer> reloadDataTypesReferences(List<String> dataTypeCodes);
+
+    public EntityTypesStatusDto getDataTypesRefreshStatus();
 
 }

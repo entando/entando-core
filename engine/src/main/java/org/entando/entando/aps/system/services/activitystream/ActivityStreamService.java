@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.activitystream;
 
 import java.util.List;
@@ -84,15 +97,12 @@ public class ActivityStreamService implements IActivityStreamService {
     @Override
     public PagedMetadata<ActionLogRecordDto> getActivityStream(RestListRequest requestList, UserDetails userDetails) {
         try {
-            ActionLogRecordSearchBean searchBean = buildSearchBean(requestList, userDetails);
+            ActionLogRecordSearchBean searchBean = this.buildSearchBean(requestList, userDetails);
             SearcherDaoPaginatedResult<ActionLogRecord> pagedResult = getActionLogManager().getPaginatedActionRecords(searchBean);
-
             List<ActionLogRecordDto> dtoList = this.getDtoBuilder().convert(pagedResult.getList(), this.getSocialActivityStreamManager());
-
             PagedMetadata<ActionLogRecordDto> pagedMetadata = new PagedMetadata<>(requestList, pagedResult);
             pagedMetadata.setBody(dtoList);
             return pagedMetadata;
-
         } catch (Throwable t) {
             logger.error("error searching actionLog ", t);
             throw new RestServerError("error searching actionLog ", t);
@@ -176,30 +186,25 @@ public class ActivityStreamService implements IActivityStreamService {
 
     protected ActionLogRecordSearchBean buildSearchBean(RestListRequest requestList, UserDetails userDetails) {
         ActionLogRecordSearchBean searchBean = new ActionLogRecordSearchBean();
-
         //groups
         List<Group> userGroups = this.getAuthorizationManager().getUserGroups(userDetails);
         searchBean.setUserGroupCodes(userGroups.stream().map(i -> i.getAuthority()).collect(Collectors.toList()));
-
         if (null == requestList.getFilters() || requestList.getFilters().length == 0) {
             return searchBean;
         }
         for (Filter f : requestList.getFilters()) {
-
             //creation date range
             if (f.getAttributeName().equals(KEY_FILTER_CREATION)) {
                 DateRange range = new DateRange(f.getValue());
                 searchBean.setStartCreation(range.getStart());
                 searchBean.setEndCreation(range.getEnd());
             }
-
             //update date range
             if (f.getAttributeName().equals(KEY_FILTER_UPDATE)) {
                 DateRange range = new DateRange(f.getValue());
                 searchBean.setStartCreation(range.getStart());
                 searchBean.setEndCreation(range.getEnd());
             }
-
             if (f.getAttributeName().equals(KEY_FILTER_USERNAME)) {
                 searchBean.setUsername(f.getValue());
             }

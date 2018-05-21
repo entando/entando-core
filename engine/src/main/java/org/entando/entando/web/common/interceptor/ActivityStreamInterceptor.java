@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -31,8 +31,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-
-public class ActivitiStreamInterceptor extends HandlerInterceptorAdapter {
+public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -44,7 +43,6 @@ public class ActivitiStreamInterceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
             if (method.getMethod().isAnnotationPresent(RequestMapping.class) && method.getMethod().isAnnotationPresent(ActivityStreamAuditable.class)) {
-
                 this.logMethod(request);
             }
         }
@@ -60,7 +58,6 @@ public class ActivitiStreamInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-
     private ActionLogRecord buildActionRecord(HttpServletRequest request) {
         ActionLogRecord record = new ActionLogRecord();
         String username = this.getCurrentUsername(request);
@@ -73,7 +70,6 @@ public class ActivitiStreamInterceptor extends HandlerInterceptorAdapter {
         record.setParameters(parameters);
         return record;
     }
-
 
     private String getCurrentUsername(HttpServletRequest request) {
         UserDetails user = (UserDetails) request.getSession().getAttribute("user");

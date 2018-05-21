@@ -14,19 +14,13 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.SystemConstants;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,6 +29,8 @@ import java.util.stream.Collectors;
  */
 public class PageDto {
 
+    private static final String DEFAULT_CHARSET = "utf8";
+    private static final String DEFAULT_CONTENT_TYPE= "text/html";
     private String code;
     private String status;
     private boolean displayedInMenu;
@@ -71,8 +67,20 @@ public class PageDto {
         this.setStatus(getPageStatus(page));
         this.setDisplayedInMenu(page.isShowable());
         this.setPageModel(page.getModel().getCode());
-        this.setCharset(page.getCharset());
-        this.setContentType(page.getMimeType());
+
+        if(page.getCharset() == null) {
+            this.setCharset(DEFAULT_CHARSET);
+        }else {
+            this.setCharset(page.getCharset());
+        }
+
+        if(page.getMimeType() != null) {
+            this.setContentType(page.getMimeType());
+        }
+        else{
+            this.setContentType(DEFAULT_CONTENT_TYPE);
+        }
+
         this.setParentCode(page.getParentCode());
         this.setSeo(page.isUseExtraTitles());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());

@@ -117,7 +117,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
 
     private ApplicationContext applicationContext;
-
+    
+    @Autowired
+    private IPageTokenManager pageTokenManager;
+    
     protected IPageManager getPageManager() {
         return pageManager;
     }
@@ -178,7 +181,15 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-
+    
+    public IPageTokenManager getPageTokenManager() {
+        return pageTokenManager;
+    }
+    
+    public void setPageTokenManager(IPageTokenManager pageTokenManager) {
+        this.pageTokenManager = pageTokenManager;
+    }
+    
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -213,7 +224,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.NotFound");
             throw new RestRourceNotFoundException(bindingResult);
         }
+        String token = this.getPageTokenManager().encrypt(pageCode);
         PageDto pageDto = this.getDtoBuilder().convert(page);
+        pageDto.setToken(token);
         pageDto.setStatus(status);
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;

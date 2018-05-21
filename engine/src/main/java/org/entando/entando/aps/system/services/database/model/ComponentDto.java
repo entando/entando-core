@@ -50,6 +50,10 @@ public class ComponentDto {
         this.setCode(component.getCode());
         this.setDescription(component.getDescription());
         Map<String, List<String>> mapping = component.getTableMapping();
+        this.buildTableMapping(mapping);
+    }
+
+    public void buildTableMapping(Map<String, List<String>> mapping) {
         if (null == mapping) {
             return;
         }
@@ -67,8 +71,8 @@ public class ComponentDto {
                 this.getTableMapping().put(key, tableNames);
             }
         } catch (Throwable t) {
-            logger.error("error starting backup", t);
-            throw new RestServerError("error starting backup", t);
+            logger.error("error building table mapping", t);
+            throw new RestServerError("error building table mapping", t);
         }
     }
 

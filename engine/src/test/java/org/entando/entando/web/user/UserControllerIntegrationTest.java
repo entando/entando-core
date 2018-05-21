@@ -22,6 +22,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Role;
+import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -61,6 +62,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IAuthorizationManager authorizationManager;
+
+    @Autowired
+    private IAuthenticationProviderManager authenticationProviderManager;
 
     @Test
     public void testGetUsersDefaultSorting() throws Exception {
@@ -298,11 +302,23 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions resultInvalid3 = this.executeUserPut(invalidBody3, "invalidUsername", accessToken, status().isConflict());
             resultInvalid3.andExpect(jsonPath("$.errors[0].code", is("2")));
 
-            String valid = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"12345678\",\"reset\": true}";
-            ResultActions result = this.executeUserPut(valid, validUsername, accessToken, status().isOk());
-            String response = result.andReturn().getResponse().getContentAsString();
-            System.out.println("resp:" + response);
-            result.andExpect(jsonPath("$.payload.username", is(validUsername)));
+            String valid1 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"reset\": true}";
+            ResultActions resultValid1 = this.executeUserPut(valid1, validUsername, accessToken, status().isOk());
+            String responseValid1 = resultValid1.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + responseValid1);
+            resultValid1.andExpect(jsonPath("$.payload.username", is(validUsername)));
+            UserDetails authUser = this.authenticationProviderManager.getUser(validUsername, validPassword);
+            Assert.assertNotNull(authUser);
+
+            String valid2 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"12345678\",\"reset\": true}";
+            ResultActions resultValid2 = this.executeUserPut(valid2, validUsername, accessToken, status().isOk());
+            String responseValid2 = resultValid2.andReturn().getResponse().getContentAsString();
+            System.out.println("resp:" + responseValid2);
+            resultValid2.andExpect(jsonPath("$.payload.username", is(validUsername)));
+            authUser = this.authenticationProviderManager.getUser(validUsername, validPassword);
+            Assert.assertNull(authUser);
+            authUser = this.authenticationProviderManager.getUser(validUsername, "12345678");
+            Assert.assertNotNull(authUser);
         } catch (Throwable e) {
             throw e;
         } finally {

@@ -14,12 +14,9 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.entando.entando.web.common.model.PagedMetadata;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.page.model.PageSearchRequest;
 
@@ -44,11 +41,13 @@ public class PageSearchDto extends PagedMetadata<PageDto> {
     public PageSearchDto(PageSearchRequest req, List<PageDto> body) {
         if (0 == req.getPageSize()) {
             // no pagination
-            req.setPageSize(body.size());
+            this.setActualSize(body.size());
+        } else {
+            this.setActualSize(req.getPageSize());
         }
         this.setPage(req.getPage());
         this.setPageSize(req.getPageSize());
-        Double pages = Math.ceil(new Double(body.size()) / new Double(req.getPageSize()));
+        Double pages = Math.ceil(new Double(body.size()) / new Double(this.getActualSize()));
         this.setLastPage(pages.intValue());
         this.setTotalItems(body.size());
         this.setSort(req.getSort());
@@ -58,17 +57,4 @@ public class PageSearchDto extends PagedMetadata<PageDto> {
         this.setPageCodeToken(req.getPageCodeToken());
     }
 
-    public void imposeLimits() {
-        if (((this.getPage() - 1) * this.getPageSize()) > this.getBody().size()) {
-            this.setBody(new ArrayList<>());
-        } else {
-            int start = ((this.getPage() - 1) * this.getPageSize());
-            int end = (this.getPage() * this.getPageSize()) <= this.getBody().size() ? (this.getPage() * this.getPageSize())
-                    : (this.getBody().size() - this.getPage() * this.getPageSize()) > 0 ? (this.getBody().size() - this.getPage() * this.getPageSize())
-                    : this.getBody().size();
-            this.setBody(IntStream.range(start, end)
-                    .mapToObj(this.getBody()::get)
-                    .collect(Collectors.toList()));
-        }
-    }
 }

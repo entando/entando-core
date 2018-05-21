@@ -11,23 +11,24 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.userprofile.model;
+package org.entando.entando.web.dataobject.model;
 
-import com.agiletec.aps.system.common.entity.model.attribute.AttributeRole;
+import java.util.ArrayList;
 import java.util.List;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeFullDto;
 
 /**
  * @author E.Santoboni
  */
-public class UserProfileTypeDto extends EntityTypeFullDto {
+public class DataTypeRefreshRequest {
 
-    public UserProfileTypeDto() {
-        super();
+    private List<String> dataTypeCodes = new ArrayList<>();
+
+    public List<String> getDataTypeCodes() {
+        return dataTypeCodes;
     }
 
-    public UserProfileTypeDto(IUserProfile userProfile, List<AttributeRole> roles) {
-        super(userProfile, roles);
+    public void setDataTypeCodes(List<String> dataTypeCodes) {
+        this.dataTypeCodes = dataTypeCodes;
     }
 
 }

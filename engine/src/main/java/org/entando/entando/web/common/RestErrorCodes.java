@@ -15,7 +15,14 @@ package org.entando.entando.web.common;
 
 public interface RestErrorCodes {
 
+    public static final String NOT_NULL = "51";
+
+    public static final String NOT_BLANK = "52";
+
+    public static final String NOT_EMPTY = "53";
+
     public static final String INTERNAL_ERROR = "101";
 
     public static final String UNAUTHORIZED = "120";
+
 }

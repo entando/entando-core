@@ -22,7 +22,9 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import java.util.List;
+import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
+import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -34,6 +36,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,7 +50,7 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
     private IPageManager pageManager;
 
     @Autowired
-    private IWidgetTypeManager widgetTypeManager;
+    private IActionLogManager actionLogManager;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -57,12 +60,13 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
         String accessToken = mockOAuthInterceptor(user);
         String code = "testAddDelete";
         try {
+            IActionLogRecordSearchBean searchBean = null;
+            List<Integer> logs1 = actionLogManager.getActionRecords(searchBean);
+            int size1 = logs1.size();
             pageManager.addPage(createPage(code, null, null));
-
             //status
             PageStatusRequest pageStatusRequest = new PageStatusRequest();
             pageStatusRequest.setStatus("published");
-
             IPage page = this.pageManager.getDraftPage(code);
             assertThat(page, is(not(nullValue())));
             ResultActions result = mockMvc
@@ -71,13 +75,29 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-
+            this.waitActionLoggerThread();
+            List<Integer> logs2 = actionLogManager.getActionRecords(searchBean);
+            int size2 = logs2.size();
+            Assert.assertEquals(1, (size2 - size1));
             page = this.pageManager.getDraftPage(code);
             assertThat(page, is(not(nullValue())));
             IPage onlinePage = this.pageManager.getOnlinePage(code);
             assertThat(onlinePage, is(not(nullValue())));
         } finally {
             this.pageManager.deletePage(code);
+        }
+    }
+
+    protected void waitActionLoggerThread() throws InterruptedException {
+        Thread[] threads = new Thread[Thread.activeCount()];
+        Thread.enumerate(threads);
+        String threadNamePrefix = IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX;
+        for (int i = 0; i < threads.length; i++) {
+            Thread currentThread = threads[i];
+            if (currentThread != null
+                    && currentThread.getName().startsWith(threadNamePrefix)) {
+                currentThread.join();
+            }
         }
     }
 

@@ -61,9 +61,9 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/activityStream")
-                                                                     .param("sort", "createdAt")
-                                                                     .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/activityStream")
+                        .param("sort", "createdAt")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -76,13 +76,12 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         String start = new Timestamp(DateConverter.parseDate("2017/01/01", "yyyy/MM/dd").getTime()).toString();
         String end = new Timestamp(DateConverter.parseDate("2017/01/01", "yyyy/MM/dd").getTime()).toString();
 
-
         ResultActions result = mockMvc
-                                      .perform(get("/activityStream")
-                                                                     .param("sort", "createdAt")
-                                                                     .param("filters[0].attribute", "createdAt")
-                                                                     .param("filters[0].value", String.format("[%s TO %s]", start, end))
-                                                                     .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/activityStream")
+                        .param("sort", "createdAt")
+                        .param("filters[0].attribute", "createdAt")
+                        .param("filters[0].value", String.format("[%s TO %s]", start, end))
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -96,11 +95,11 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         String end = new Timestamp(DateConverter.parseDate("2018/05/01", "yyyy/MM/dd").getTime()).toString();
 
         ResultActions result = mockMvc
-                                      .perform(get("/activityStream")
-                                                                     .param("sort", "createdAt")
-                                                                     .param("filters[0].attribute", "createdAt")
-                                                                     .param("filters[0].value", String.format("[%s TO %s]", start, end))
-                                                                     .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/activityStream")
+                        .param("sort", "createdAt")
+                        .param("filters[0].attribute", "createdAt")
+                        .param("filters[0].value", String.format("[%s TO %s]", start, end))
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -110,103 +109,102 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         try {
             PageModel pageModel = this.pageModelManager.getPageModel("internal");
             Page mockPage = createPage(pageCode, pageModel);
-    
+
             mockPage.setWidgets(new Widget[mockPage.getWidgets().length]);
-    
+
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));
             IPage draftPage = this.pageManager.getDraftPage(pageCode);
             assertThat(draftPage, is(not(nullValue())));
-    
+
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
-    
+
             //execute and action
             ResultActions result = mockMvc
-                                          .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
-                                                                                                                                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                                                .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-    
+
             Thread.sleep(500);
             //assert record is present
             result = mockMvc
-                            .perform(get("/activityStream")
-                                                           .param("sort", "createdAt")
-                                                           .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/activityStream")
+                            .param("sort", "createdAt")
+                            .header("Authorization", "Bearer " + accessToken));
             // result.andExpect(jsonPath("$.payload.length()", is(1)));
-    
+
             //add like
             int recordId = this.actionLogManager.getActionRecords(null).stream().findFirst().get();
             result = mockMvc
-                            .perform(post("/activityStream/{recordId}/like", recordId)
-                                                                                      .header("Authorization", "Bearer " + accessToken));
+                    .perform(post("/activityStream/{recordId}/like", recordId)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].likes.length()", is(1)));
-    
+
             //remove like
             result = mockMvc
-                            .perform(delete("/activityStream/{recordId}/like", recordId)
-                                                                                        .header("Authorization", "Bearer " + accessToken));
+                    .perform(delete("/activityStream/{recordId}/like", recordId)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             // result.andExpect(jsonPath("$.payload[0].likes.length()", is(0)));
-    
+
             //add comment
             String comment = "this_is_a_comment";
             ActivityStreamCommentRequest req = new ActivityStreamCommentRequest();
             req.setComment(comment);
             req.setRecordId(recordId);
-    
+
             result = mockMvc
-                            .perform(post("/activityStream/{recordId}/comments", recordId)
-                                                                                          .contentType(MediaType.APPLICATION_JSON)
-                                                                                          .content(mapper.writeValueAsString(req))
-                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(post("/activityStream/{recordId}/comments", recordId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(req))
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             //result.andExpect(jsonPath("$.payload[0].comments.length()", is(1)));
-    
+
             result = mockMvc
-                            .perform(get("/activityStream")
-                                                                                .contentType(MediaType.APPLICATION_JSON)
-                                                                                .content(mapper.writeValueAsString(req))
-                                                                                .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/activityStream")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(req))
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
             //remove comment
             result = mockMvc
-                            .perform(delete("/activityStream/{recordId}/like", recordId)
-                                                                                        .header("Authorization", "Bearer " + accessToken));
+                    .perform(delete("/activityStream/{recordId}/like", recordId)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             //result.andExpect(jsonPath("$.payload[0].comments", Matchers.hasSize(0)));
-    
+
             //add invalid comment
             req = new ActivityStreamCommentRequest();
             req.setComment(comment);
             req.setRecordId(0);
-    
+
             result = mockMvc
-                            .perform(post("/activityStream/{recordId}/comments", recordId)
-                                                                                          .contentType(MediaType.APPLICATION_JSON)
-                                                                                          .content(mapper.writeValueAsString(req))
-                                                                                          .header("Authorization", "Bearer " + accessToken));
-    
+                    .perform(post("/activityStream/{recordId}/comments", recordId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(req))
+                            .header("Authorization", "Bearer " + accessToken));
+
             result.andExpect(status().isBadRequest());
-    
+
             //add invalid comment
-    
             req = new ActivityStreamCommentRequest();
             // req.setComment(comment);
             req.setRecordId(recordId);
-    
+
             result = mockMvc
-                            .perform(post("/activityStream/{recordId}/comments", recordId)
-                                                                                          .contentType(MediaType.APPLICATION_JSON)
-                                                                                          .content(mapper.writeValueAsString(req))
-                                                                                          .header("Authorization", "Bearer " + accessToken));
-    
+                    .perform(post("/activityStream/{recordId}/comments", recordId)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(mapper.writeValueAsString(req))
+                            .header("Authorization", "Bearer " + accessToken));
+
             result.andExpect(status().isBadRequest());
-    
+
         } finally {
             this.pageManager.deletePage(pageCode);
             List<Integer> list = this.actionLogManager.getActionRecords(null);
@@ -216,14 +214,14 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     this.socialActivityStreamManager.editActionLikeRecord(i, "jack_bauer", false);
                     this.actionLogManager.deleteActionRecord(i);
                 } catch (ApsSystemException e) {
-    
+
                     e.printStackTrace();
                 }
             });
-    
+
         }
     }
-    
+
     private void deleteCommentsByRecordId(Integer i) throws ApsSystemException {
         this.socialActivityStreamManager.getActionCommentRecords(i).forEach(k -> {
             try {
@@ -233,8 +231,9 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                 e.printStackTrace();
             }
         });
-    
+
     }
+
     protected Page createPage(String pageCode, PageModel pageModel) {
         IPage parentPage = pageManager.getDraftPage("service");
         if (null == pageModel) {
@@ -247,6 +246,5 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
         return pageToAdd;
     }
-
 
 }

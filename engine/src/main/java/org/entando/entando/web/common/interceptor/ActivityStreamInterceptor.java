@@ -17,10 +17,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.FileTextReader;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
@@ -54,27 +57,23 @@ public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
     }
 
     protected void logMethod(String mapping, HttpServletRequest request) {
-        try {
-            ActionLogRecord record = this.buildActionRecord(mapping, request);
-            this.actionLogManager.addActionRecord(record);
-        } catch (ApsSystemException ex) {
-            logger.error("System exception {}", ex.getMessage());
-            throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
-        }
-    }
-
-    private ActionLogRecord buildActionRecord(String mapping, HttpServletRequest request) {
         ActionLogRecord record = new ActionLogRecord();
-        String username = this.getCurrentUsername(request);
-        String namespace = request.getRequestURI();
-        String actionName = request.getMethod();
-        String parameters = this.createParamsFromUri(namespace, mapping);
-        parameters = this.createParamsFromQueryString(parameters, request.getQueryString());
-        record.setUsername(username);
-        record.setNamespace(namespace);
-        record.setActionName(actionName);
-        record.setParameters(parameters);
-        return record;
+        try {
+            String username = this.getCurrentUsername(request);
+            String namespace = request.getRequestURI();
+            String actionName = request.getMethod();
+            String parameters = this.createParamsFromUri(namespace, mapping);
+            parameters = this.addParamsFromQueryString(parameters, request.getQueryString());
+            parameters = this.addParamsFromRequestBody(parameters, request.getInputStream());
+            record.setUsername(username);
+            record.setNamespace(namespace);
+            record.setActionName(actionName);
+            record.setParameters(parameters);
+            this.actionLogManager.addActionRecord(record);
+        } catch (Exception ex) {
+            logger.error("System exception {}", ex.getMessage(), ex);
+            throw new EntandoTokenException("error parsing request", request, "guest");
+        }
     }
 
     private String createParamsFromUri(String namespace, String mapping) {
@@ -98,7 +97,7 @@ public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
         return this.addParameters("", params);
     }
 
-    private String createParamsFromQueryString(String prev, String queryString) {
+    private String addParamsFromQueryString(String prev, String queryString) {
         if (StringUtils.isEmpty(queryString)) {
             return prev;
         }
@@ -110,6 +109,15 @@ public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
                 params.put(param[0], param[1]);
             }
         }
+        return this.addParameters(prev, params);
+    }
+
+    private String addParamsFromRequestBody(String prev, InputStream is) throws Exception {
+        CloseShieldInputStream cloned = new CloseShieldInputStream(is);
+        String body = FileTextReader.getText(cloned);
+        byte[] bytes = body.getBytes();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> params = objectMapper.readValue(bytes, HashMap.class);
         return this.addParameters(prev, params);
     }
 

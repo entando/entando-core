@@ -37,8 +37,8 @@ public class DashboardControllerIntegrationTest extends AbstractControllerIntegr
                 .perform(get("/dashboard/integration")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.components", is("1")));
-        result.andExpect(jsonPath("$.payload.apis", is("24")));
+        result.andExpect(jsonPath("$.payload.components", is("0")));
+        result.andExpect(jsonPath("$.payload.apis", is("0")));
     }
 
     @Test

@@ -146,7 +146,6 @@ public class ActivityStreamService implements IActivityStreamService {
                 throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
             }
             this.getSocialActivityStreamManager().addActionCommentRecord(attribute.getUsername(), commentRequest.getComment(), recordId);
-
             ActionLogRecordDto dto = this.getDtoBuilder().toDto(this.getActionLogManager().getActionRecord(recordId),
                     this.getSocialActivityStreamManager().getActionLikeRecords(recordId),
                     this.getSocialActivityStreamManager().getActionCommentRecords(recordId));

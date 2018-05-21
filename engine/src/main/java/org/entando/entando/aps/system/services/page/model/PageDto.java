@@ -68,10 +68,10 @@ public class PageDto {
         this.setDisplayedInMenu(page.isShowable());
         this.setPageModel(page.getModel().getCode());
 
-        if(page.getCharset() == null) {
-            this.setCharset(DEFAULT_CHARSET);
-        }else {
+        if(page.getCharset() != null) {
             this.setCharset(page.getCharset());
+        }else {
+            this.setCharset(DEFAULT_CHARSET);
         }
 
         if(page.getMimeType() != null) {

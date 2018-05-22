@@ -1,11 +1,11 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -14,6 +14,8 @@
 package org.entando.entando.aps.system.services.page;
 
 import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +33,7 @@ import org.junit.Test;
 public class PageServiceIntegrationTest extends BaseTestCase {
 
     private IPageService pageService;
+    private IPageManager pageManager;
 
     @Override
     protected void setUp() throws Exception {
@@ -41,6 +44,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
     private void init() throws Exception {
         try {
             pageService = (IPageService) this.getApplicationContext().getBean(IPageService.BEAN_NAME);
+            pageManager = (IPageManager) this.getApplicationContext().getBean(SystemConstants.PAGE_MANAGER);
         } catch (Exception e) {
             throw e;
         }
@@ -89,30 +93,43 @@ public class PageServiceIntegrationTest extends BaseTestCase {
 
     @Test
     public void testUpdatePage() {
-        PageDto oldPages = pageService.getPage("pagina_12", "draft");
-        assertNotNull(oldPages);
-        assertEquals(2, oldPages.getTitles().size());
-        assertEquals("Pagina 1-2", oldPages.getTitles().get("it"));
+        String newCode = "pagina_13";
+        PageDto pageToClone = pageService.getPage("pagina_12", "draft");
+        try {
+            assertNotNull(pageToClone);
+            assertEquals(2, pageToClone.getTitles().size());
+            assertEquals("Pagina 1-2", pageToClone.getTitles().get("it"));
+            PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+            pageRequest.setCode(newCode);
+            pageRequest.getTitles().put("en", "Page 1-3");
+            pageRequest.getTitles().put("it", "Pagina 1-3");
+            PageDto addedPage = pageService.addPage(pageRequest);
 
-        PageRequest pageRequest = this.createRequestFromDto(oldPages);
-        pageRequest.getTitles().put("it", "Pagina 1-2 mod");
-        PageDto modPage = pageService.updatePage("pagina_12", pageRequest);
-        assertNotNull(modPage);
-        assertEquals(2, modPage.getTitles().size());
-        assertEquals("Pagina 1-2 mod", modPage.getTitles().get("it"));
+            PageRequest newPageRequest = this.createRequestFromDto(addedPage);
+            newPageRequest.getTitles().put("it", "Pagina 1-3 mod");
+            PageDto modPage = pageService.updatePage(newCode, newPageRequest);
+            assertNotNull(modPage);
+            assertEquals(2, modPage.getTitles().size());
+            assertEquals("Pagina 1-3 mod", modPage.getTitles().get("it"));
 
-        modPage = pageService.getPage("pagina_12", "draft");
-        assertNotNull(modPage);
-        assertEquals(2, modPage.getTitles().size());
-        assertEquals("Pagina 1-2 mod", modPage.getTitles().get("it"));
+            modPage = pageService.getPage(newCode, "draft");
+            assertNotNull(modPage);
+            assertEquals(2, modPage.getTitles().size());
+            assertEquals("Pagina 1-3 mod", modPage.getTitles().get("it"));
 
-        pageRequest.getTitles().put("it", "Pagina 1-2");
-        modPage = pageService.updatePage("pagina_12", pageRequest);
+            newPageRequest.getTitles().put("it", "Pagina 1-3");
+            modPage = pageService.updatePage(newCode, newPageRequest);
 
-        modPage = pageService.getPage("pagina_12", "draft");
-        assertNotNull(modPage);
-        assertEquals(2, modPage.getTitles().size());
-        assertEquals("Pagina 1-2", modPage.getTitles().get("it"));
+            modPage = pageService.getPage(newCode, "draft");
+            assertNotNull(modPage);
+            assertEquals(2, modPage.getTitles().size());
+            assertEquals("Pagina 1-3", modPage.getTitles().get("it"));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.pageService.removePage(newCode);
+            assertNull(pageManager.getDraftPage(newCode));
+        }
     }
 
     @Test
@@ -204,7 +221,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         request.setPageModel(pageToClone.getPageModel());
         request.setParentCode(pageToClone.getParentCode());
         request.setSeo(pageToClone.isSeo());
-        request.setStatus(pageToClone.getStatus());
+        //request.setStatus(pageToClone.getStatus());
         Map<String, String> titles = new HashMap<>();
         pageToClone.getTitles().keySet().forEach(lang -> titles.put(lang, pageToClone.getTitles().get(lang)));
         request.setTitles(titles);

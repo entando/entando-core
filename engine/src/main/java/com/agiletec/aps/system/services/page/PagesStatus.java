@@ -18,48 +18,60 @@ import java.util.Date;
 
 public class PagesStatus implements Serializable {
 
-	public int getTotal() {
-		return this.getOnline() + this.getOnlineWithChanges() + this.getDraft();
-	}
-	
-	@Override
-	public String toString() {
-		return "PagesStatus [online=" + _online + ", onlineWithChanges=" + _onlineWithChanges + ", draft=" + _draft + "]";
-	}
-	
+    public int getTotal() {
+        return this.getOnline() + this.getOnlineWithChanges() + this.getUnpublished();
+    }
 
-	public int getOnline() {
-		return _online;
-	}
-	public void setOnline(int online) {
-		this._online = online;
-	}
-	
-	public int getOnlineWithChanges() {
-		return _onlineWithChanges;
-	}
-	public void setOnlineWithChanges(int onlineWithChanges) {
-		this._onlineWithChanges = onlineWithChanges;
-	}
-	
-	public int getDraft() {
-		return _draft;
-	}
-	public void setDraft(int draft) {
-		this._draft = draft;
-	}
+    @Override
+    public String toString() {
+        return "PagesStatus [online=" + online + ", onlineWithChanges=" + onlineWithChanges + ", unpublished=" + unpublished + "]";
+    }
 
-	public Date getLastUpdate() {
-		return _lastUpdate;
-	}
-	public void setLastUpdate(Date lastUpdate) {
-		this._lastUpdate = lastUpdate;
-	}
-	
-	private int _online;
-	private int _onlineWithChanges;
-	private int _draft;
-	private Date _lastUpdate;
-	
+    public int getOnline() {
+        return online;
+    }
+
+    public void setOnline(int online) {
+        this.online = online;
+    }
+
+    public int getOnlineWithChanges() {
+        return onlineWithChanges;
+    }
+
+    public void setOnlineWithChanges(int onlineWithChanges) {
+        this.onlineWithChanges = onlineWithChanges;
+    }
+
+    public int getUnpublished() {
+        return unpublished;
+    }
+
+    public void setUnpublished(int unpublished) {
+        this.unpublished = unpublished;
+    }
+
+    @Deprecated
+    public int getDraft() {
+        return this.getUnpublished();
+    }
+
+    @Deprecated
+    public void setDraft(int draft) {
+        this.setUnpublished(draft);
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    private int online;
+    private int onlineWithChanges;
+    private int unpublished;
+    private Date lastUpdate;
+
 }
-

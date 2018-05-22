@@ -47,12 +47,6 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         String out = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(pageConfigurationDto);
     }
 
-    public void testGetPageWidget() throws JsonProcessingException {
-        IPage draftRoot = this.pageManager.getDraftRoot();
-        WidgetConfigurationDto widgetConfigurationDto = this.pageService.getWidgetConfiguration(draftRoot.getCode(), 0, IPageService.STATUS_DRAFT);
-        assertThat(widgetConfigurationDto.getCode(), is("content_viewer_list"));
-    }
-
     public void testUpdatePageWidget() throws JsonProcessingException, ApsSystemException {
         String pageCode = "temp001";
         IPage parentPage = pageManager.getDraftRoot();

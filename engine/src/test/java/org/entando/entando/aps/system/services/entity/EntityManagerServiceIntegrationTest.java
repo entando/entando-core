@@ -49,13 +49,13 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
         RestListRequest restListRequest = new RestListRequest();
         restListRequest.setPageSize(5);
         PagedMetadata<String> res = this.entityManagerService.getEntityManagers(restListRequest);
-        assertThat(res.getPage(), is(1));
-        assertThat(res.getPageSize(), is(5));
-        assertThat(res.getLastPage(), is(1));
-        assertThat(res.getTotalItems(), is(3));
+        assertEquals(1, res.getPage());
+        assertEquals(5, res.getPageSize());
+        assertEquals(1, res.getLastPage());
+        assertEquals(2, res.getTotalItems());
         List<String> result = res.getBody();
         assertNotNull(result);
-        assertEquals(3, result.size());
+        assertEquals(2, result.size());
     }
 
     @Test

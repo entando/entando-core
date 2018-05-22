@@ -33,7 +33,7 @@ public class PagesStatusDto {
 
     public PagesStatusDto(PagesStatus pagesStatus) {
         this.published = pagesStatus.getOnline();
-        this.unpublished = pagesStatus.getDraft();
+        this.unpublished = pagesStatus.getUnpublished();
         this.draft = pagesStatus.getOnlineWithChanges();
         if (null == pagesStatus.getLastUpdate()) {
             this.lastUpdate = "";

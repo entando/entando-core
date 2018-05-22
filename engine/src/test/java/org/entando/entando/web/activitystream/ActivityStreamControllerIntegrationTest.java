@@ -16,6 +16,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamManager;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
@@ -29,11 +30,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ActivityStreamControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -57,7 +60,6 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
     @Test
     public void testGetActivityStream() throws Exception {
-
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -69,13 +71,10 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
     @Test
     public void testGetActivityStreamDate() throws Exception {
-
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-
         String start = new Timestamp(DateConverter.parseDate("2017/01/01", "yyyy/MM/dd").getTime()).toString();
         String end = new Timestamp(DateConverter.parseDate("2017/01/01", "yyyy/MM/dd").getTime()).toString();
-
         ResultActions result = mockMvc
                 .perform(get("/activityStream")
                         .param("sort", "createdAt")
@@ -87,13 +86,10 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
     @Test
     public void testGetActivityStreamDate_2() throws Exception {
-
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-
         String start = new Timestamp(DateConverter.parseDate("2018/03/01", "yyyy/MM/dd").getTime()).toString();
         String end = new Timestamp(DateConverter.parseDate("2018/05/01", "yyyy/MM/dd").getTime()).toString();
-
         ResultActions result = mockMvc
                 .perform(get("/activityStream")
                         .param("sort", "createdAt")
@@ -107,6 +103,10 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
     public void testActionLogRecordCRUD() throws Exception {
         String pageCode = "draft_page_100";
         try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            Integer startSize = this.extractCurrentSize(accessToken);
+
             PageModel pageModel = this.pageModelManager.getPageModel("internal");
             Page mockPage = createPage(pageCode, pageModel);
 
@@ -118,9 +118,6 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             IPage draftPage = this.pageManager.getDraftPage(pageCode);
             assertThat(draftPage, is(not(nullValue())));
 
-            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-            String accessToken = mockOAuthInterceptor(user);
-
             //execute and action
             ResultActions result = mockMvc
                     .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
@@ -130,11 +127,8 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
 
             Thread.sleep(500);
             //assert record is present
-            result = mockMvc
-                    .perform(get("/activityStream")
-                            .param("sort", "createdAt")
-                            .header("Authorization", "Bearer " + accessToken));
-            // result.andExpect(jsonPath("$.payload.length()", is(1)));
+            Integer secondSize = this.extractCurrentSize(accessToken);
+            Assert.assertEquals(1, (secondSize - startSize));
 
             //add like
             int recordId = this.actionLogManager.getActionRecords(null).stream().findFirst().get();
@@ -142,14 +136,14 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     .perform(post("/activityStream/{recordId}/like", recordId)
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            // result.andExpect(jsonPath("$.payload[0].likes.length()", is(1)));
+            result.andExpect(jsonPath("$.payload.likes.size()", is(1)));
 
             //remove like
             result = mockMvc
                     .perform(delete("/activityStream/{recordId}/like", recordId)
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            // result.andExpect(jsonPath("$.payload[0].likes.length()", is(0)));
+            result.andExpect(jsonPath("$.payload.likes.size()", is(0)));
 
             //add comment
             String comment = "this_is_a_comment";
@@ -163,7 +157,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                             .content(mapper.writeValueAsString(req))
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            //result.andExpect(jsonPath("$.payload[0].comments.length()", is(1)));
+            //result.andExpect(jsonPath("$.payload.comments.length()", is(1)));
 
             result = mockMvc
                     .perform(get("/activityStream")
@@ -245,6 +239,16 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         Widget[] widgets = {widgetToAdd};
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
         return pageToAdd;
+    }
+
+    private int extractCurrentSize(String accessToken) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/activityStream")
+                        .param("sort", "createdAt")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        String bodyResult = result.andReturn().getResponse().getContentAsString();
+        return JsonPath.read(bodyResult, "$.payload.size()");
     }
 
 }

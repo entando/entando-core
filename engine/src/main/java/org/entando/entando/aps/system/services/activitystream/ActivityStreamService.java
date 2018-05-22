@@ -25,6 +25,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
+import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordApiSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordDto;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordDtoBuilder;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
@@ -184,8 +185,21 @@ public class ActivityStreamService implements IActivityStreamService {
     }
 
     protected ActionLogRecordSearchBean buildSearchBean(RestListRequest requestList, UserDetails userDetails) {
-        ActionLogRecordSearchBean searchBean = new ActionLogRecordSearchBean();
+        ActionLogRecordApiSearchBean searchBean = new ActionLogRecordApiSearchBean();
         //groups
+        if (null != requestList.getSort()) {
+            String direction = requestList.getDirection();
+            direction = (null != direction && (direction.equalsIgnoreCase("ASC") || direction.equalsIgnoreCase("DESC"))) ? direction : "DESC";
+            searchBean.setOrderBy(ActionLogRecordDto.getEntityFieldName(requestList.getSort()));
+            searchBean.setDirection(direction);
+        }
+        int offset = 0;
+        int page = requestList.getPage() - 1;
+        if (null != requestList.getPage() && requestList.getPage() != 0) {
+            offset = requestList.getPageSize() * page;
+        }
+        searchBean.setOffset(offset);
+        searchBean.setPageSize(requestList.getPageSize());
         List<Group> userGroups = this.getAuthorizationManager().getUserGroups(userDetails);
         searchBean.setUserGroupCodes(userGroups.stream().map(i -> i.getAuthority()).collect(Collectors.toList()));
         if (null == requestList.getFilters() || requestList.getFilters().length == 0) {

@@ -24,7 +24,8 @@ public class ActionLogRecordDto {
     private List<LikeInfo> likes = new ArrayList<>();
     private List<CommentInfo> comments = new ArrayList<>();
 
-    public ActionLogRecordDto() {}
+    public ActionLogRecordDto() {
+    }
 
     public ActionLogRecordDto(ActionLogRecord src) {
         this.setActionName(src.getActionName());
@@ -118,12 +119,24 @@ public class ActionLogRecordDto {
         this.comments = comments;
     }
 
+    public static String getEntityFieldName(String dtoFieldName) {
+        switch (dtoFieldName) {
+            case "createdAt":
+                return "actiondate";
+            case "updatedAt":
+                return "updatedate";
+            default:
+                return dtoFieldName;
+        }
+    }
+
     protected class LikeInfo {
 
         private String username;
         private String displayName;
 
-        public LikeInfo() {}
+        public LikeInfo() {
+        }
 
         public LikeInfo(ActivityStreamLikeInfo src) {
             BeanUtils.copyProperties(src, this);

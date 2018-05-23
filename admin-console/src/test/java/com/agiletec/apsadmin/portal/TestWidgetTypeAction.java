@@ -132,23 +132,23 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             WidgetType type = this.createNewLogicWidgetType(widgetTypeCode);
             this._widgetTypeManager.addWidgetType(type);
             ApsProperties newProperties = new ApsProperties();
-            newProperties.put("contentId", "EVN191");
+            newProperties.put("actionPath", "/do/dologin");
             String result = this.executeUpdate(widgetTypeCode, "Titolo modificato", "Modified title", "admin", newProperties, "**GUI**");
             assertEquals(Action.SUCCESS, result);
             WidgetType extracted = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(extracted);
             assertEquals("Titolo modificato", extracted.getTitles().get("it"));
             assertEquals("Modified title", extracted.getTitles().get("en"));
-            assertEquals("EVN191", extracted.getConfig().getProperty("contentId"));
+            assertEquals("/do/dologin", extracted.getConfig().getProperty("actionPath"));
 
-            newProperties.put("contentId", "EVN194");
+            newProperties.put("actionPath", "/do/api/dologin");
             result = this.executeUpdate(widgetTypeCode, "Titolo modificato 2", "Modified title 2", "pageManagerCoach", newProperties, "*GUI*");
             assertEquals(Action.SUCCESS, result);
             extracted = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(extracted);
             assertEquals("Titolo modificato 2", extracted.getTitles().get("it"));
             assertEquals("Modified title 2", extracted.getTitles().get("en"));
-            assertEquals("EVN191", extracted.getConfig().getProperty("contentId"));
+            assertEquals("/do/api/dologin", extracted.getConfig().getProperty("actionPath"));
         } catch (Throwable t) {
             throw t;
         } finally {

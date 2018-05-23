@@ -161,7 +161,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         assertEquals("Content Publishing", pageToShow.getTitles().getProperty("en"));
         Widget widget = page.getWidgets()[page.getModel().getMainFrame()];
         if (null != widget) {
-            assertEquals("content_viewer", widget.getType().getCode());
+            assertEquals("formAction", widget.getType().getCode());
             assertTrue(null == widget.getConfig() || widget.getConfig().isEmpty());
         }
     }

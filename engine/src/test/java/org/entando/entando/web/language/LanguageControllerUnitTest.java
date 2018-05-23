@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.language;
 
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -29,11 +42,10 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                                 .addInterceptors(entandoOauth2Interceptor)
-                                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
-                                 .build();
+                .addInterceptors(entandoOauth2Interceptor)
+                .setHandlerExceptionResolvers(createHandlerExceptionResolver())
+                .build();
     }
-
 
     @Test
     public void testUpdateNoPayload() throws Exception {
@@ -41,10 +53,10 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         String payload = "{}";
         ResultActions result = mockMvc
-                                      .perform(put("/languages/{code}", new Object[]{"de"})
-                                                                                           .content(payload)
-                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                           .header("Authorization", "Bearer " + accessToken));
+                .perform(put("/languages/{code}", new Object[]{"de"})
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
     }
 
@@ -54,13 +66,12 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         String payload = "{\"isActive\": \"WRONG\"}";
         ResultActions result = mockMvc
-                                      .perform(put("/languages/{code}", new Object[]{"de"})
-                                                                                           .content(payload)
-                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                           .header("Authorization", "Bearer " + accessToken));
+                .perform(put("/languages/{code}", new Object[]{"de"})
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
     }
-
 
     @Test
     public void testUpdatePayloadOk() throws Exception {
@@ -68,10 +79,10 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         String payload = "{\"isActive\": false}";
         ResultActions result = mockMvc
-                                      .perform(put("/languages/{code}", new Object[]{"de"})
-                                                                                           .content(payload)
-                                                                                           .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                           .header("Authorization", "Bearer " + accessToken));
+                .perform(put("/languages/{code}", new Object[]{"de"})
+                        .content(payload)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         Mockito.verify(languageService, Mockito.times(1)).updateLanguage("de", false);
         result.andExpect(status().isOk());
     }

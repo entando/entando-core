@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.activitystream;
 
 import java.util.List;
@@ -197,31 +210,31 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             this.initTestObjects(accessToken, pageCode1, pageCode2);
 
             //assert record is present
-            Integer secondSize = this.extractCurrentSize(accessToken);
-            Assert.assertEquals(2, (secondSize - startSize));
+            Integer actualSize = this.extractCurrentSize(accessToken);
+            Assert.assertEquals(2, (actualSize - startSize));
             ResultActions result = mockMvc
                     .perform(get("/activityStream")
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             String bodyResult = result.andReturn().getResponse().getContentAsString();
-            Integer firstId_1 = JsonPath.read(bodyResult, "$.payload[0].id");
-            Integer secondId_1 = JsonPath.read(bodyResult, "$.payload[1].id");
+            Integer firstId = JsonPath.read(bodyResult, "$.payload[0].id");
+            Integer secondId = JsonPath.read(bodyResult, "$.payload[1].id");
 
             result = mockMvc
                     .perform(get("/activityStream")
                             .param("direction", "DESC")
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(actualSize)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
             result.andExpect(jsonPath("$.metaData.lastPage", is(1)));
-            result.andExpect(jsonPath("$.metaData.totalItems", is(secondSize - startSize)));
+            result.andExpect(jsonPath("$.metaData.totalItems", is(actualSize)));
             bodyResult = result.andReturn().getResponse().getContentAsString();
-            Integer firstId_2 = JsonPath.read(bodyResult, "$.payload[0].id");
-            Integer secondId_2 = JsonPath.read(bodyResult, "$.payload[1].id");
+            Integer firstIdInNewPos = JsonPath.read(bodyResult, "$.payload[" + (actualSize - 1) + "].id");
+            Integer secondIdInNewPos = JsonPath.read(bodyResult, "$.payload[" + (actualSize - 2) + "].id");
 
-            Assert.assertEquals(firstId_1, secondId_2);
-            Assert.assertEquals(firstId_2, secondId_1);
+            Assert.assertEquals(firstId, firstIdInNewPos);
+            Assert.assertEquals(secondId, secondIdInNewPos);
 
             result = mockMvc
                     .perform(get("/activityStream")
@@ -230,8 +243,8 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(1)));
-            result.andExpect(jsonPath("$.metaData.lastPage", is(secondSize - startSize)));
-            result.andExpect(jsonPath("$.metaData.totalItems", is(secondSize - startSize)));
+            result.andExpect(jsonPath("$.metaData.lastPage", is(actualSize)));
+            result.andExpect(jsonPath("$.metaData.totalItems", is(actualSize)));
 
         } finally {
             this.destroyLogs(pageCode1, pageCode2);

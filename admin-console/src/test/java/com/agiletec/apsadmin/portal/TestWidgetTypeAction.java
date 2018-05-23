@@ -55,6 +55,10 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 
         result = this.executeUpdate("content_viewer", "italian title", "", "admin", null);
         assertEquals(Action.INPUT, result);
+        assertEquals(2, this.getAction().getFieldErrors().size());
+
+        result = this.executeUpdate("leftmenu", "italian title", "", "admin", null);
+        assertEquals(Action.INPUT, result);
         assertEquals(1, this.getAction().getFieldErrors().size());
 
         result = this.executeUpdate("invalidWidgetTitles", "italian title", "english title", "admin", "*GUI*");

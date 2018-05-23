@@ -364,10 +364,10 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         result = this.executeNewUserWidgetType("admin", "logic_type");
         assertEquals("inputWidgetTypes", result);
 
-        result = this.executeNewUserWidgetType("admin", "content_viewer_list");
+        result = this.executeNewUserWidgetType("admin", "formAction");
         assertEquals(Action.SUCCESS, result);
 
-        result = this.executeNewUserWidgetType("admin", "content_viewer_list");
+        result = this.executeNewUserWidgetType("admin", "leftmenu");
         assertEquals(Action.SUCCESS, result);
     }
 
@@ -402,7 +402,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
     public void testFailureAddNewWidgetType() throws Throwable {
         String widgetTypeCode = "randomWidgetCode";
         try {
-            String result = this.executeAddUserWidgetType("editorCustomers", widgetTypeCode, "en", "it", "content_viewer_list");
+            String result = this.executeAddUserWidgetType("editorCustomers", widgetTypeCode, "en", "it", "leftmenu");
             assertEquals("userNotAllowed", result);
 
             result = this.executeAddUserWidgetType("admin", widgetTypeCode, "en", "it", "messages_system");
@@ -431,13 +431,6 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertEquals(2, fieldErrors.size());
             assertEquals(1, fieldErrors.get("widgetTypeCode").size());
             assertEquals(1, fieldErrors.get("italianTitle").size());
-
-            result = this.executePasteUserWidgetType("admin", "content_viewer_list", null, "it", "customers_page", "2");
-            assertEquals(Action.INPUT, result);
-            fieldErrors = this.getAction().getFieldErrors();
-            assertEquals(2, fieldErrors.size());
-            assertEquals(1, fieldErrors.get("widgetTypeCode").size());
-            assertEquals(1, fieldErrors.get("englishTitle").size());
         } catch (Throwable t) {
             this._widgetTypeManager.deleteWidgetType(widgetTypeCode);
             throw t;
@@ -447,20 +440,20 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
     public void testValidateAddNewUserWidgetType() throws Throwable {
         String widgetTypeCode = "randomWidgetCode";
         try {
-            String result = this.executeAddUserWidgetType("admin", widgetTypeCode, "enTitle", "", "content_viewer_list");
+            String result = this.executeAddUserWidgetType("admin", widgetTypeCode, "enTitle", "", "leftmenu");
             assertEquals(Action.INPUT, result);
             Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
             assertEquals(1, fieldErrors.size());
             assertEquals(1, fieldErrors.get("italianTitle").size());
 
-            result = this.executeAddUserWidgetType("admin", "ht$", "enTitle", "", "content_viewer_list");
+            result = this.executeAddUserWidgetType("admin", "ht$", "enTitle", "", "leftmenu");
             assertEquals(Action.INPUT, result);
             fieldErrors = this.getAction().getFieldErrors();
             assertEquals(2, fieldErrors.size());
             assertEquals(1, fieldErrors.get("widgetTypeCode").size());
             assertEquals(1, fieldErrors.get("italianTitle").size());
 
-            result = this.executeAddUserWidgetType("admin", "messages_system", null, "it", "content_viewer_list");
+            result = this.executeAddUserWidgetType("admin", "messages_system", null, "it", "leftmenu");
             assertEquals(Action.INPUT, result);
             fieldErrors = this.getAction().getFieldErrors();
             assertEquals(2, fieldErrors.size());

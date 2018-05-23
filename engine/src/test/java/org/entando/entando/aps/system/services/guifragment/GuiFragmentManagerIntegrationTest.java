@@ -56,7 +56,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
 
     public void testReferences() throws Exception {
         List<String> codes = this._guiFragmentManager.searchGuiFragments(null);
-        assertEquals(0, codes.size());
+        assertEquals(1, codes.size());
         String codeMaster = "masterCode_1";
         String codeSlave = "mockCrud_2";
         try {
@@ -95,7 +95,7 @@ public class GuiFragmentManagerIntegrationTest extends BaseTestCase {
             this._guiFragmentManager.deleteGuiFragment(codeSlave);
             this._guiFragmentManager.deleteGuiFragment(codeMaster);
             codes = this._guiFragmentManager.searchGuiFragments(null);
-            assertEquals(0, codes.size());
+            assertEquals(1, codes.size());
         }
     }
 

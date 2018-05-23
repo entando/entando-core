@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.pagemodel;
 
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -37,8 +50,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/pageModels/{code}", "home")
-                                                                                .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(1)));
@@ -50,10 +63,10 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(get(
-                                                   "/pageModels/{code}/references/{manager}",
-                                                   "home", "PageManager")
-                                                                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                         .header("Authorization", "Bearer " + accessToken));
+                "/pageModels/{code}/references/{manager}",
+                "home", "PageManager")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
 

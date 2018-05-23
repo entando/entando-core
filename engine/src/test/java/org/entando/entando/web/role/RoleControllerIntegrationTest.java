@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.role;
 
 import com.agiletec.aps.system.services.role.IRoleManager;
@@ -168,7 +181,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isOk());
 
-
             //--------------
             request = new RoleRequest();
             request.setCode(code);
@@ -183,7 +195,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                             .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-
 
             //--------------
             request = new RoleRequest();
@@ -202,7 +213,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(status().isBadRequest());
 
             //--------------
-
             request = new RoleRequest();
             request.setCode(code);
             request.setName(code.toUpperCase());
@@ -219,7 +229,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
 
             result.andExpect(status().isOk());
 
-
             //--------------
             result = mockMvc
                     .perform(delete("/roles/{code}", code)
@@ -227,7 +236,6 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                             .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-
 
         } finally {
             Role role = this.roleManager.getRole(code);

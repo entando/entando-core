@@ -5,11 +5,24 @@ import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamComment;
 import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamLikeInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 
 public class ActionLogRecordDto {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private int id;
 
@@ -20,20 +33,54 @@ public class ActionLogRecordDto {
     private String username;
     private String namespace;
     private String actionName;
-    private String parameters;
+    private Map<String, String> parameters = new HashMap<>();
     private List<LikeInfo> likes = new ArrayList<>();
     private List<CommentInfo> comments = new ArrayList<>();
 
-    public ActionLogRecordDto() {}
+    public ActionLogRecordDto() {
+    }
 
     public ActionLogRecordDto(ActionLogRecord src) {
         this.setActionName(src.getActionName());
         this.setCreatedAt(src.getActionDate());
         this.setId(src.getId());
         this.setNamespace(src.getNamespace());
-        this.setParameters(src.getParameters());
+        if (!StringUtils.isEmpty(src.getParameters())) {
+            List<String> lines = this.readLines(src.getParameters());
+            for (String line : lines) {
+                String[] sections = line.split("=");
+                if (sections.length == 2) {
+                    this.getParameters().put(sections[0], sections[1]);
+                }
+            }
+        }
         this.setUpdatedAt(src.getUpdateDate());
         this.setUsername(src.getUsername());
+    }
+
+    private List<String> readLines(String text) {
+        InputStream is = null;
+        List<String> lines = new ArrayList<>();
+        try {
+            is = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                lines.add(strLine);
+            }
+        } catch (Throwable t) {
+            logger.error("Error reading lines", t);
+            throw new RuntimeException("Error reading lines", t);
+        } finally {
+            if (null != is) {
+                try {
+                    is.close();
+                } catch (IOException ex) {
+                    throw new RuntimeException("Error cloasing stream", ex);
+                }
+            }
+        }
+        return lines;
     }
 
     public ActionLogRecordDto(ActionLogRecord src, List<ActivityStreamLikeInfo> actionLikeRecords, List<ActivityStreamComment> actionCommentRecords) {
@@ -94,11 +141,11 @@ public class ActionLogRecordDto {
         this.actionName = actionName;
     }
 
-    public String getParameters() {
+    public Map<String, String> getParameters() {
         return parameters;
     }
 
-    public void setParameters(String parameters) {
+    public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
     }
 
@@ -118,12 +165,24 @@ public class ActionLogRecordDto {
         this.comments = comments;
     }
 
+    public static String getEntityFieldName(String dtoFieldName) {
+        switch (dtoFieldName) {
+            case "createdAt":
+                return "actiondate";
+            case "updatedAt":
+                return "updatedate";
+            default:
+                return dtoFieldName;
+        }
+    }
+
     protected class LikeInfo {
 
         private String username;
         private String displayName;
 
-        public LikeInfo() {}
+        public LikeInfo() {
+        }
 
         public LikeInfo(ActivityStreamLikeInfo src) {
             BeanUtils.copyProperties(src, this);

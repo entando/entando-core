@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.group;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -65,8 +78,8 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         when(groupService.getGroups(any(RestListRequest.class))).thenReturn(new PagedMetadata<GroupDto>());
         ResultActions result = mockMvc.perform(
                 get("/groups").param("page", "1")
-                        .param("pageSize", "4")
-                        .header("Authorization", "Bearer " + accessToken)
+                .param("pageSize", "4")
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isOk());
@@ -86,10 +99,10 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/groups").param("page", "1")
-                        .param("pageSize", "4")
-                        .param("filter[0].attribute", "code")
-                        .param("filter[0].value", "free")
-                        .header("Authorization", "Bearer " + accessToken)
+                .param("pageSize", "4")
+                .param("filter[0].attribute", "code")
+                .param("filter[0].value", "free")
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isOk());
@@ -110,7 +123,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/groups")
-                        .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         result.andExpect(status().isForbidden());
@@ -131,9 +144,9 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(
                 put("/groups/{groupCode}",
                         "helpdesk")
-                        .content(payload)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -153,8 +166,8 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(
                 delete("/groups/{groupName}",
                         groupName)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
@@ -174,9 +187,9 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
         this.controller.setGroupValidator(new GroupValidator());
         ResultActions result = mockMvc.perform(
                 post("/groups")
-                        .content(payload)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .content(payload)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
 
@@ -192,7 +205,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 delete("/groups/{code}", code)
-                        .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken));
 
         result
                 .andExpect(status().isOk())

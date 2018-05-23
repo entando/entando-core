@@ -121,7 +121,6 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
         try {
             List<ActionLogRecord> actionLogRecords = new ArrayList<>();
             int count = this.getActionLogDAO().countActionLogRecords(searchBean);
-
             List<Integer> recordsIs = this.getActionLogDAO().getActionRecords(searchBean);
             for (Integer recordId : recordsIs) {
                 actionLogRecords.add(this.getActionRecord(recordId));

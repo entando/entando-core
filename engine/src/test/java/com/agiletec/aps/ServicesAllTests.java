@@ -30,6 +30,7 @@ import org.entando.entando.aps.system.services.guifragment.GuiFragmentServiceTes
 import org.entando.entando.aps.system.services.page.PageAuthorizationServiceIntegrationTest;
 import org.entando.entando.aps.system.services.page.PageServiceIntegrationTest;
 import org.entando.entando.aps.system.services.page.PageServiceWidgetIntegrationTest;
+import org.entando.entando.aps.system.services.page.model.PageDtoBuilderTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
@@ -62,6 +63,7 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(PageControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(EntandoMessageCodesResolverTest.class));
+        suite.addTest(new JUnit4TestAdapter(PageDtoBuilderTest.class));
         return suite;
     }
 

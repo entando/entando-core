@@ -432,23 +432,22 @@ public class TestPageManager extends BaseTestCase {
             PagesStatus newStatus = this._pageManager.getPagesStatus();
             assertEquals(newStatus.getOnline(), status.getOnline());
             assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getDraft(), status.getDraft() + 1);
+            assertEquals(newStatus.getUnpublished(), status.getUnpublished() + 1);
             assertEquals(newStatus.getTotal(), status.getTotal() + 1);
             this._pageManager.setPageOnline(testCode);
             newStatus = this._pageManager.getPagesStatus();
             assertEquals(newStatus.getOnline(), status.getOnline() + 1);
             assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getDraft(), status.getDraft());
+            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
             assertEquals(newStatus.getTotal(), status.getTotal() + 1);
             IPage test = this._pageManager.getDraftPage(testCode);
             test.getMetadata().setTitle("it", "modxxxx");
             this._pageManager.updatePage(test);
             test = this._pageManager.getDraftPage(testCode);
-            assertEquals("modxxxx", test.getMetadata().getTitle("it"));
             newStatus = this._pageManager.getPagesStatus();
             assertEquals(newStatus.getOnline(), status.getOnline());
             assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges() + 1);
-            assertEquals(newStatus.getDraft(), status.getDraft());
+            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
             assertEquals(newStatus.getTotal(), status.getTotal() + 1);
         } finally {
             this._pageManager.deletePage(testCode);

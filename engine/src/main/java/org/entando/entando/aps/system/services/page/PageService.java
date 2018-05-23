@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -117,10 +117,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
 
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private IPageTokenManager pageTokenManager;
-    
+
     protected IPageManager getPageManager() {
         return pageManager;
     }
@@ -181,15 +181,15 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
-    
+
     public IPageTokenManager getPageTokenManager() {
         return pageTokenManager;
     }
-    
+
     public void setPageTokenManager(IPageTokenManager pageTokenManager) {
         this.pageTokenManager = pageTokenManager;
     }
-    
+
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -238,7 +238,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage page = this.createPage(pageRequest);
             this.getPageManager().addPage(page);
-            return this.getDtoBuilder().convert(page);
+            IPage addedPage = this.getPageManager().getDraftPage(page.getCode());
+            return this.getDtoBuilder().convert(addedPage);
         } catch (ApsSystemException e) {
             logger.error("Error adding page", e);
             throw new RestServerError("error add page", e);
@@ -268,7 +269,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
-            PageDto page = this.getDtoBuilder().convert(newPage);
+            IPage updatePage = this.getPageManager().getDraftPage(pageCode);
+            PageDto page = this.getDtoBuilder().convert(updatePage);
             page.setPosition(oldPage.getPosition());
             return page;
         } catch (ApsSystemException e) {

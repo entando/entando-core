@@ -59,6 +59,10 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 
         result = this.executeUpdate("leftmenu", "italian title", "", "admin", null);
         assertEquals(Action.INPUT, result);
+        assertEquals(2, this.getAction().getFieldErrors().size());
+
+        result = this.executeUpdate("leftmenu", "italian title", "", "admin", "*GUI*");
+        assertEquals(Action.INPUT, result);
         assertEquals(1, this.getAction().getFieldErrors().size());
 
         result = this.executeUpdate("invalidWidgetTitles", "italian title", "english title", "admin", "*GUI*");
@@ -148,7 +152,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertNotNull(extracted);
             assertEquals("Titolo modificato 2", extracted.getTitles().get("it"));
             assertEquals("Modified title 2", extracted.getTitles().get("en"));
-            assertEquals("/do/api/dologin", extracted.getConfig().getProperty("actionPath"));
+            assertEquals("/do/dologin", extracted.getConfig().getProperty("actionPath"));
         } catch (Throwable t) {
             throw t;
         } finally {
@@ -337,13 +341,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         result = this.executeCopyWidgetType("admin", "customers_page", null);
         assertEquals("inputWidgetTypes", result);
 
-        result = this.executeCopyWidgetType("admin", "customers_page", "3");
-        assertEquals("inputWidgetTypes", result);
-
-        result = this.executeCopyWidgetType("admin", "customers_page", "2");
-        assertEquals(Action.SUCCESS, result);
-
-        result = this.executeCopyWidgetType("admin", "customers_page", "2");
+        result = this.executeCopyWidgetType("admin", "pagina_2", "2");
         assertEquals(Action.SUCCESS, result);
     }
 

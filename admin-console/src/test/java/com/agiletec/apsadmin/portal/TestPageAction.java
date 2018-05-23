@@ -162,7 +162,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         Widget widget = page.getWidgets()[page.getModel().getMainFrame()];
         if (null != widget) {
             assertEquals("formAction", widget.getType().getCode());
-            assertTrue(null == widget.getConfig() || widget.getConfig().isEmpty());
+            assertTrue(null != widget.getConfig() && !widget.getConfig().isEmpty());
         }
     }
 

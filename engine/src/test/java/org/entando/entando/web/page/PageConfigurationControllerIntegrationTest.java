@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.web.page;
 
 import java.util.Map;
@@ -54,8 +67,8 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                                      .perform(get("/pages/{pageCode}/configuration", "homepage")
-                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/pages/{pageCode}/configuration", "homepage")
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
         result.andExpect(jsonPath("$.payload.online", is(true)));
@@ -72,20 +85,12 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     }
 
     /**
-     * Given:
-     *  a page only in draft
-     * When:
-     *  the user request the configuration for status draft
-     * Then
-     *  the result is ok
-     *  
-     * Given:
-     *  a page only in draft
-     * When:
-     *  the user request the configuration for status published
-     * Then
-     *  an error with status code 400 is raised
-     *  
+     * Given: a page only in draft When: the user request the configuration for
+     * status draft Then the result is ok
+     *
+     * Given: a page only in draft When: the user request the configuration for
+     * status published Then an error with status code 400 is raised
+     *
      * @throws Exception
      */
     @Test
@@ -103,16 +108,15 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
-
             result = mockMvc
-                            .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                                                                                                   .param("status", IPageService.STATUS_ONLINE)
-                                                                                                   .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_ONLINE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is("3")));
@@ -137,26 +141,26 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
-                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                      .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             String getResult = result.andReturn().getResponse().getContentAsString();
 
-            String payloadWithInvalidModelId = "{\n" +
-                                               "  \"code\": \"content_viewer\",\n" +
-                                               "  \"config\": {\n" +
-                                               " \"contentId\": \"EVN24\",\n" +
-                                               " \"modelId\": \"default\"\n" +
-                                               "  }\n" +
-                                               "}";
+            String payloadWithInvalidModelId = "{\n"
+                    + "  \"code\": \"content_viewer\",\n"
+                    + "  \"config\": {\n"
+                    + " \"contentId\": \"EVN24\",\n"
+                    + " \"modelId\": \"default\"\n"
+                    + "  }\n"
+                    + "}";
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
-                                                                                                        .param("status", IPageService.STATUS_DRAFT)
-                                                                                                        .content(payloadWithInvalidModelId)
-                                                                                                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                        .header("Authorization", "Bearer " + accessToken));
+                    .perform(put("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .content(payloadWithInvalidModelId)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             String putResult = result.andReturn().getResponse().getContentAsString();
             result.andExpect(status().isOk());
@@ -182,9 +186,9 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
-                                                                                                                          .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             String getResult = result.andReturn().getResponse().getContentAsString();
             result.andExpect(status().isBadRequest());
 
@@ -208,9 +212,9 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "500"})
-                                                                                                                          .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                          .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "500"})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isNotFound());
             result.andExpect(jsonPath("$.errors[0].code", is("2")));
 
@@ -234,16 +238,16 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
-                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                      .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
             result = mockMvc
-                            .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
-                                                                                                               .param("status", IPageService.STATUS_DRAFT)
-                                                                                                               .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                               .header("Authorization", "Bearer " + accessToken));
+                    .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "XXX"})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isBadRequest());
 
@@ -270,19 +274,18 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
-                                                                                                                      .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                      .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 0})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
             result = mockMvc
-                            .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 9999})
-                                                                                                              .param("status", IPageService.STATUS_DRAFT)
-                                                                                                              .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                              .header("Authorization", "Bearer " + accessToken));
+                    .perform(delete("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 9999})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
-
 
         } finally {
             this.pageManager.deletePage(pageCode);
@@ -304,20 +307,19 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 999})
-                                                                                                                        .param("status", IPageService.STATUS_DRAFT)
-                                                                                                                        .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, 999})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isNotFound());
             result.andExpect(jsonPath("$.errors[0].code", is("2")));
 
             result = mockMvc
-                            .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "ASD"})
-                                                                                                            .param("status", IPageService.STATUS_DRAFT)
-                                                                                                            .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/widgets/{frame}", new Object[]{pageCode, "ASD"})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is("40")));
-
 
         } finally {
             this.pageManager.deletePage(pageCode);
@@ -325,7 +327,7 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
     }
 
     /**
-     * creates a page without configured frames than applies the default widgets 
+     * creates a page without configured frames than applies the default widgets
      */
     @Test
     public void testApplyDefautWidgets() throws Exception {
@@ -345,12 +347,10 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
 
-
             ResultActions result = mockMvc
-                                          .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
-                                                                                                                 .param("status", IPageService.STATUS_DRAFT)
-
-                                                                                                                 .header("Authorization", "Bearer " + accessToken));
+                    .perform(get("/pages/{pageCode}/configuration", new Object[]{pageCode})
+                            .param("status", IPageService.STATUS_DRAFT)
+                            .header("Authorization", "Bearer " + accessToken));
 
             Widget[] defaultWidgetConfiguration = pageModel.getDefaultWidget();
 
@@ -360,13 +360,11 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
                 String path = String.format("$.payload.widgets[%d]", i);
                 result.andExpect(jsonPath(path, is(nullValue())));
             }
-            
 
             result = mockMvc
-                            .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
-                                                                                                                       .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                                                                                       .header("Authorization", "Bearer " + accessToken));
-
+                    .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
             for (int i = 0; i < pageModel.getConfiguration().length; i++) {
@@ -380,7 +378,6 @@ public class PageConfigurationControllerIntegrationTest extends AbstractControll
                     result.andExpect(jsonPath(path, is(nullValue())));
                 }
             }
-
 
         } finally {
             this.pageManager.deletePage(pageCode);

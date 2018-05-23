@@ -291,7 +291,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
     }
 
     //TODO REMOVE VARS per prepared statement
-    private void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
+    protected void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
         try {
             if (null == filters || filters.length == 0) {
                 logger.warn("no filters");
@@ -365,22 +365,18 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 } else {
                     query.append("= ? ");
                 }
-            } else {
-                if (null != filter.getStart()) {
-                    query.append(">= ? ");
-                    if (null != filter.getEnd()) {
-                        query.append("AND ").append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
-                        query.append("<= ? ");
-                    }
-                } else if (null != filter.getEnd()) {
+            } else if (null != filter.getStart()) {
+                query.append(">= ? ");
+                if (null != filter.getEnd()) {
+                    query.append("AND ").append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
                     query.append("<= ? ");
-                } else {
-                    if (filter.isNullOption()) {
-                        query.append(" IS NULL ");
-                    } else {
-                        query.append(" IS NOT NULL ");
-                    }
                 }
+            } else if (null != filter.getEnd()) {
+                query.append("<= ? ");
+            } else if (filter.isNullOption()) {
+                query.append(" IS NULL ");
+            } else {
+                query.append(" IS NOT NULL ");
             }
         }
         return hasAppendWhereClause;

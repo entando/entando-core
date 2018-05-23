@@ -469,7 +469,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         String widgetTypeCode = "randomShowletCode_1";
         try {
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
-            String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "customers_page", "2");
+            String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "pagina_1", "2");
             assertEquals(Action.SUCCESS, result);
 
             Widget copiedWidget = this._pageManager.getDraftPage("customers_page").getWidgets()[2];
@@ -494,9 +494,9 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         String widgetTypeCode = "randomWidgetCode-2";
         String pageDest = "pagina_1";
         int frameDest = 1;
-        Widget temp = this._pageManager.getDraftPage("pagina_11").getWidgets()[2];
+        Widget temp = this._pageManager.getDraftPage("pagina_2").getWidgets()[2];
         assertNotNull(temp);
-        assertEquals("content_viewer", temp.getType().getCode());
+        assertEquals("formAction", temp.getType().getCode());
         IPage page = this._pageManager.getDraftPage(pageDest);
         try {
             assertNull(page.getWidgets()[frameDest]);
@@ -544,10 +544,9 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             this.addParameter("widgetTypeCode", widgetTypeCode);
             this.addParameter("englishTitle", "en");
             this.addParameter("italianTitle", "it");
-            this.addParameter("parentWidgetTypeCode", "content_viewer_list");
+            this.addParameter("parentWidgetTypeCode", "formAction");
             this.addParameter("strutsAction", WidgetTypeAction.NEW_USER_WIDGET);
-            this.addParameter("maxElemForItem", "5");
-            this.addParameter("contentType", "EVN");
+            this.addParameter("actionPath", "/myjsp.jsp");
             String result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
 
@@ -555,8 +554,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertNotNull(addedType);
             ApsProperties config = addedType.getConfig();
             assertEquals(2, config.size());
-            assertEquals("EVN", config.getProperty("contentType"));
-            assertEquals("5", config.getProperty("maxElemForItem"));
+            assertEquals("/myjsp.jsp", config.getProperty("actionPath"));
         } catch (Throwable t) {
             throw t;
         } finally {

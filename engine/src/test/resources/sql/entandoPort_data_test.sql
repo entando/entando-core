@@ -476,6 +476,10 @@ INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES (
 ');
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('dataObjectview', 1, 'login_form', NULL);
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 1, 'login_form', NULL);
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('contentview', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>');
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_2', 0, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="navSpec">abs(1).subtree(2)</property>
@@ -491,15 +495,15 @@ INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES (
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 1, 'leftmenu', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="navSpec">abs(1).subtree(2)</property>
-</properties>
-
-');
+</properties>');
 INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('pagina_draft', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="actionPath">/do/login</property>
-</properties>
-
-');
+</properties>');
+INSERT INTO widgetconfig_draft (pagecode, framepos, widgetcode, config) VALUES ('coach_page', 2, 'formAction', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="actionPath">/do/login</property>
+</properties>');
 
 
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'langs', 'Definition of the system languages', '<?xml version="1.0" encoding="UTF-8"?>

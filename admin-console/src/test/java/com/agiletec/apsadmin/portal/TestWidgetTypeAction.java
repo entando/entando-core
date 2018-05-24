@@ -472,7 +472,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "pagina_1", "2");
             assertEquals(Action.SUCCESS, result);
 
-            Widget copiedWidget = this._pageManager.getDraftPage("customers_page").getWidgets()[2];
+            Widget copiedWidget = this._pageManager.getDraftPage("coach_page").getWidgets()[2];
             assertNotNull(copiedWidget);
             assertNotNull(copiedWidget.getConfig());
             WidgetType addedType = this._widgetTypeManager.getWidgetType(widgetTypeCode);
@@ -553,7 +553,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             WidgetType addedType = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(addedType);
             ApsProperties config = addedType.getConfig();
-            assertEquals(2, config.size());
+            assertEquals(1, config.size());
             assertEquals("/myjsp.jsp", config.getProperty("actionPath"));
         } catch (Throwable t) {
             throw t;

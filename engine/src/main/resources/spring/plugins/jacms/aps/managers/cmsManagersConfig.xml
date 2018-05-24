@@ -18,6 +18,7 @@
         <property name="resourceDAO" >
             <bean class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceDAO">
                 <property name="dataSource" ref="portDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
             </bean>
         </property>
         <property name="resourceTypes">
@@ -66,10 +67,14 @@
     
     <bean id="jacmsPublicContentSearcherDAO" class="com.agiletec.plugins.jacms.aps.system.services.content.PublicContentSearcherDAO">
         <property name="dataSource" ref="portDataSource" />
+        <property name="dataSourceClassName">
+            <jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" />
+        </property>
     </bean>
     
     <bean id="jacmsWorkContentSearcherDAO"  class="com.agiletec.plugins.jacms.aps.system.services.content.WorkContentSearcherDAO">
         <property name="dataSource" ref="portDataSource" />
+        <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
     </bean>
     
     <bean id="jacmsContentAuthorizationHelper" class="com.agiletec.plugins.jacms.aps.system.services.content.helper.ContentAuthorizationHelper" >

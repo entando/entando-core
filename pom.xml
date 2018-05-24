@@ -84,7 +84,7 @@
 		
         <spring.version>5.0.5.RELEASE</spring.version>
         <struts2.version>2.5.10.1</struts2.version>
-        <cxf.version>2.7.14</cxf.version>
+        <cxf.version>3.0.4</cxf.version>
         <oltu.version>1.0.2</oltu.version>
         <jackson.version>2.9.5</jackson.version>
 		
@@ -629,6 +629,32 @@
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
+        
+        
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-extension-providers</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        
+        
+        <!-- OLD CXF
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
@@ -738,6 +764,9 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        -->
+        
+        
         <!--
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

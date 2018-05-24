@@ -13,22 +13,27 @@
  */
 package org.entando.entando.aps.system.services.api.provider.json;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.apache.cxf.staxutils.transform.IgnoreNamespacesWriter;
+import org.apache.cxf.staxutils.transform.OutTransformWriter;
 import org.entando.entando.aps.system.services.api.model.CDataAdapter;
 
 /**
  * @author E.Santoboni
  */
-public class CDataIgnoreNamespacesWriter extends IgnoreNamespacesWriter {
-	
-    public CDataIgnoreNamespacesWriter(XMLStreamWriter writer, boolean ignoreNamespaces) {
-        super(writer, ignoreNamespaces);
+public class CDataOutTransformWriter extends OutTransformWriter {
+    
+    public CDataOutTransformWriter(XMLStreamWriter writer, 
+            Map<String, String> outMap, Map<String, String> append, 
+            List<String> dropEls, boolean attributesToElements, String defaultNamespace) {
+        super(writer, outMap, append, dropEls, attributesToElements, defaultNamespace);
     }
     
-	@Override
+    @Override
     public void writeCharacters(String text) throws XMLStreamException {
         if (CDataAdapter.isCdata(text)) {
             String parsedCDataText = CDataAdapter.parse(text);
@@ -37,5 +42,5 @@ public class CDataIgnoreNamespacesWriter extends IgnoreNamespacesWriter {
             super.writeCharacters(text);
         }
     }
-	
+    
 }

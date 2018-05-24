@@ -469,7 +469,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         String widgetTypeCode = "randomShowletCode_1";
         try {
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
-            String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "pagina_1", "2");
+            String result = this.executePasteUserWidgetType("admin", widgetTypeCode, "en", "it", "coach_page", "2");
             assertEquals(Action.SUCCESS, result);
 
             Widget copiedWidget = this._pageManager.getDraftPage("coach_page").getWidgets()[2];

@@ -653,6 +653,17 @@
             <version>${cxf.version}</version>
         </dependency>
         
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20180130</version>
+        </dependency>
         
         <!-- OLD CXF
         <dependency>

@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,9 +60,12 @@ public class PageSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updatePageSettings(@Valid @RequestBody PageSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse> updatePageSettings(@RequestBody PageSettingsRequest request) {
         //params validations
-        if (bindingResult.hasErrors()) {
+        if (request == null || request.isEmpty()) {
+            DataBinder binder = new DataBinder(request);
+            BindingResult bindingResult = binder.getBindingResult();
+            bindingResult.reject("NotEmpty.pagesettings.params");
             throw new ValidationGenericException(bindingResult);
         }
         PageSettingsDto pageSettings = this.getPageSettingsService().updatePageSettings(request);

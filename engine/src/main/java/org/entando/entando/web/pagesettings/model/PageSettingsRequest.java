@@ -13,24 +13,15 @@
  */
 package org.entando.entando.web.pagesettings.model;
 
-import java.util.List;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.util.HashMap;
 
 /**
  *
  * @author paddeo
  */
-public class PageSettingsRequest {
+public class PageSettingsRequest extends HashMap<String, String> {
 
-    @NotEmpty(message = "NotEmpty.pagesettings.params")
-    private List<Param> params;
-
-    public List<Param> getParams() {
-        return params;
-    }
-
-    public void setParams(List<Param> params) {
-        this.params = params;
+    public PageSettingsRequest() {
     }
 
 }

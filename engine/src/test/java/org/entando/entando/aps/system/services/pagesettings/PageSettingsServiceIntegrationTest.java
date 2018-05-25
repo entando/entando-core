@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
 import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
-import org.entando.entando.web.pagesettings.model.Param;
 import org.junit.Test;
 
 /**
@@ -47,34 +46,26 @@ public class PageSettingsServiceIntegrationTest extends BaseTestCase {
     public void testGetSettings() {
         PageSettingsDto settings = pageSettingsService.getPageSettings();
         assertNotNull(settings);
-        assertNotNull(settings.getParams());
-        assertTrue(settings.getParams().size() > 0);
-        assertTrue(settings.getParams().stream().anyMatch(param -> param.getName().equals("baseUrl")));
-        assertEquals("static", settings.getParams().stream().filter(param -> param.getName().equals("baseUrl")).findFirst().get().getValue());
+        assertTrue(settings.size() > 0);
+        assertTrue(settings.keySet().stream().anyMatch(param -> param.equals("baseUrl")));
+        assertEquals("static", settings.get(settings.keySet().stream().filter(param -> param.equals("baseUrl")).findFirst().get()));
     }
 
     @Test
     public void testUpdateSettings() {
         PageSettingsRequest request = new PageSettingsRequest();
-        List<Param> params = new ArrayList<>();
-        Param baseUrl = new Param();
-        baseUrl.setName("baseUrlContext");
-        baseUrl.setValue("false");
-        params.add(baseUrl);
-        request.setParams(params);
+        request.put("baseUrlContext", "false");
         PageSettingsDto settings = pageSettingsService.updatePageSettings(request);
         assertNotNull(settings);
-        assertNotNull(settings.getParams());
-        assertTrue(settings.getParams().size() > 1);
-        assertTrue(settings.getParams().stream().anyMatch(param -> param.getName().equals("baseUrlContext")));
-        assertEquals("false", settings.getParams().stream().filter(param -> param.getName().equals("baseUrlContext")).findFirst().get().getValue());
+        assertTrue(settings.size() > 1);
+        assertTrue(settings.keySet().stream().anyMatch(param -> param.equals("baseUrlContext")));
+        assertEquals("false", settings.get(settings.keySet().stream().filter(param -> param.equals("baseUrlContext")).findFirst().get()));
 
         settings = pageSettingsService.getPageSettings();
         assertNotNull(settings);
-        assertNotNull(settings.getParams());
-        assertTrue(settings.getParams().size() > 1);
-        assertTrue(settings.getParams().stream().anyMatch(param -> param.getName().equals("baseUrlContext")));
-        assertEquals("false", settings.getParams().stream().filter(param -> param.getName().equals("baseUrlContext")).findFirst().get().getValue());
+        assertTrue(settings.size() > 1);
+        assertTrue(settings.keySet().stream().anyMatch(param -> param.equals("baseUrlContext")));
+        assertEquals("false", settings.get(settings.keySet().stream().filter(param -> param.equals("baseUrlContext")).findFirst().get()));
     }
 
 }

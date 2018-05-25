@@ -89,7 +89,7 @@ public class TestPageModelManager extends BaseTestCase {
         String[] frames = pageModel.getFrames();
         assertEquals(frames[0], "Box sinistra alto");
         int mainFrame = pageModel.getMainFrame();
-        assertEquals(mainFrame, 2);
+        assertEquals(mainFrame, 3);
     }
 
     public void testGetPageModels() throws ApsSystemException {

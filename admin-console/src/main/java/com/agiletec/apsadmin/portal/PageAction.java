@@ -574,8 +574,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
             }
-
-            boolean success = this.getPageActionReferencesHelper().checkContentsForSetOnline(page, this);
+            boolean success = this.getPageActionReferencesHelper().checkForSetOnline(page, this);
             if (!success) {
                 this.addActionError(this.getText("error.page.setOnline.scanContentRefs"));
                 return "pageTree";

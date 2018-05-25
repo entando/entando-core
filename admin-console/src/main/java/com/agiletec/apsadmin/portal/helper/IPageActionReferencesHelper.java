@@ -18,18 +18,6 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public interface IPageActionReferencesHelper {
 
-	/**
-	 * Check if the page contains valid contents.
-	 * <p>
-	 * For each invalid content found, adds an actionErrot to the action
-	 * 
-	 * @param page
-	 * the page to scan
-	 * @param action
-	 * current action
-	 * @return true if the scan is performed without exceptions, even when
-	 * invalid contents are found
-	 */
-	boolean checkContentsForSetOnline(IPage page, ActionSupport action);
+	public boolean checkForSetOnline(IPage page, ActionSupport action);
 
 }

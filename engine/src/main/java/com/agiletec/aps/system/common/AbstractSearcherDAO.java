@@ -37,6 +37,10 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractSearcherDAO extends AbstractDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSearcherDAO.class);
+    private static final String DEFAULT_LIKE_CLAUSE = "LIKE ? ";
+
+    private String likeClause;
+    private String dataSourceClassName;
 
     protected List<String> searchId(FieldSearchFilter[] filters) {
         Connection conn = null;
@@ -299,7 +303,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             }
             for (FieldSearchFilter filter : filters) {
                 if (filter.getOffset() != null && filter.getLimit() != null) {
-                    query.append(QueryLimitResolver.createLimitBlock(filter, this.getDataSource()));
+                    query.append(QueryLimitResolver.createLimitBlock(filter, this.getDataSource(), this.getDataSourceClassName()));
                     break;
                 }
             }
@@ -429,22 +433,10 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
      */
     protected abstract String getMasterTableIdFieldName();
 
-    protected String getLikeClause() {
-        if (null == this._likeClause || this._likeClause.trim().length() == 0) {
-            return DEFAULT_LIKE_CLAUSE;
-        }
-        return _likeClause;
-    }
-
-    public void setLikeClause(String likeClause) {
-        this._likeClause = likeClause;
-    }
-
     protected boolean hasLikeFilters(FieldSearchFilter[] filters) {
         if (null == filters || filters.length == 0) {
             return false;
         }
-
         for (FieldSearchFilter filter : filters) {
             if (filter.isLikeOption()) {
                 return true;
@@ -453,7 +445,23 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return false;
     }
 
-    private String _likeClause;
-    private static final String DEFAULT_LIKE_CLAUSE = "LIKE ? ";
+    protected String getLikeClause() {
+        if (null == this.likeClause || this.likeClause.trim().length() == 0) {
+            return DEFAULT_LIKE_CLAUSE;
+        }
+        return likeClause;
+    }
 
+    public void setLikeClause(String likeClause) {
+        this.likeClause = likeClause;
+    }
+
+    protected String getDataSourceClassName() {
+        return dataSourceClassName;
+    }
+
+    public void setDataSourceClassName(String dataSourceClassName) {
+        this.dataSourceClassName = dataSourceClassName;
+    }
+    
 }

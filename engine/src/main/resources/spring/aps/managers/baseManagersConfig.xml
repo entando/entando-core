@@ -150,6 +150,7 @@
         <property name="groupDAO" >
             <bean class="com.agiletec.aps.system.services.group.GroupDAO">
                 <property name="dataSource" ref="servDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
         <property name="cacheWrapper">
@@ -203,6 +204,7 @@
         <property name="authorizationDAO" >
             <bean class="com.agiletec.aps.system.services.authorization.AuthorizationDAO">
                 <property name="dataSource" ref="servDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
     </bean>
@@ -269,6 +271,7 @@
         <property name="guiFragmentDAO">
             <bean class="org.entando.entando.aps.system.services.guifragment.GuiFragmentDAO">
                 <property name="dataSource" ref="portDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
             </bean>
         </property>
     </bean>
@@ -283,6 +286,7 @@
             <bean class="com.agiletec.aps.system.services.pagemodel.PageModelDAO">
                 <property name="dataSource" ref="portDataSource" />
                 <property name="widgetTypeManager" ref="WidgetTypeManager" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
             </bean>
         </property>
         <property name="cacheWrapper">
@@ -367,6 +371,7 @@
         <property name="actionLogDAO">
             <bean class="org.entando.entando.aps.system.services.actionlog.ActionLogDAO">
                 <property name="dataSource" ref="servDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
         <property name="managerConfiguration" ref="ActionLogManagerConfiguration" />

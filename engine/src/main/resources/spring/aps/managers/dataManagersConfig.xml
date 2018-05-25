@@ -3,15 +3,20 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
 
     <bean id="DataObjectModelManager" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManager"
           parent="abstractService" >
         <property name="dataModelDAO" >
             <bean class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDAO">
                 <property name="dataSource" ref="servDataSource" />
+                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
 		<property name="cacheWrapper">
@@ -48,6 +53,9 @@
 
     <bean id="DataObjectSearcherDAO" class="org.entando.entando.aps.system.services.dataobject.DataObjectSearcherDAO">
         <property name="dataSource" ref="servDataSource" />
+        <property name="dataSourceClassName">
+            <jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" />
+        </property>
     </bean>
 
     <bean id="DataObjectAuthorizationHelper" class="org.entando.entando.aps.system.services.dataobject.helper.DataAuthorizationHelper" >

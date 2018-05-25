@@ -1,48 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-		xmlns:context="http://www.springframework.org/schema/context"
-		xmlns:aop="http://www.springframework.org/schema/aop"
-		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jee="http://www.springframework.org/schema/jee"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
     
-	<aop:aspectj-autoproxy />
+    <aop:aspectj-autoproxy />
     
-	<bean id="UserProfileEntityTypeDom" 
-		  class="org.entando.entando.aps.system.services.userprofile.parse.UserProfileTypeDOM" parent="baseEntityTypeDom" >
-	</bean>
+    <bean id="UserProfileEntityTypeDom" 
+          class="org.entando.entando.aps.system.services.userprofile.parse.UserProfileTypeDOM" parent="baseEntityTypeDom" >
+    </bean>
     
-	<bean id="UserProfileManager" class="org.entando.entando.aps.system.services.userprofile.UserProfileManager" parent="abstractEntityManager" >
-		<property name="entityClassName" value="org.entando.entando.aps.system.services.userprofile.model.UserProfile"/>
-		<property name="configItemName" value="userProfileTypes" />
-		<property name="xmlAttributeRootElementName" value="profile" />
-		<property name="entityTypeDom" ref="UserProfileEntityTypeDom" />
-		<property name="profileDAO" >
-			<bean class="org.entando.entando.aps.system.services.userprofile.UserProfileDAO" parent="abstractEntityDAO">
-				<property name="dataSource" ref="servDataSource" />
-			</bean>
-		</property>
-		<property name="entitySearcherDAO" >
-			<bean class="org.entando.entando.aps.system.services.userprofile.UserProfileSearcherDAO">
-				<property name="dataSource" ref="servDataSource" />
-			</bean>
-		</property>
-	</bean>
+    <bean id="UserProfileManager" class="org.entando.entando.aps.system.services.userprofile.UserProfileManager" parent="abstractEntityManager" >
+        <property name="entityClassName" value="org.entando.entando.aps.system.services.userprofile.model.UserProfile"/>
+        <property name="configItemName" value="userProfileTypes" />
+        <property name="xmlAttributeRootElementName" value="profile" />
+        <property name="entityTypeDom" ref="UserProfileEntityTypeDom" />
+        <property name="profileDAO" >
+            <bean class="org.entando.entando.aps.system.services.userprofile.UserProfileDAO" parent="abstractEntityDAO">
+                <property name="dataSource" ref="servDataSource" />
+            </bean>
+        </property>
+        <property name="entitySearcherDAO" >
+            <bean class="org.entando.entando.aps.system.services.userprofile.UserProfileSearcherDAO">
+                <property name="dataSource" ref="servDataSource" />
+                <property name="dataSourceClassName">
+                    <jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" />
+                </property>
+            </bean>
+        </property>
+    </bean>
     
     <!-- API -->
     
     <bean id="ApiMyProfileInterface" 
-            class="org.entando.entando.aps.system.services.userprofile.api.ApiMyUserProfileInterface" >
+          class="org.entando.entando.aps.system.services.userprofile.api.ApiMyUserProfileInterface" >
     </bean>
     
     <bean id="ApiUserProfileTypeInterface" 
-            class="org.entando.entando.aps.system.services.userprofile.api.ApiUserProfileTypeInterface" >
+          class="org.entando.entando.aps.system.services.userprofile.api.ApiUserProfileTypeInterface" >
         <property name="userProfileManager" ref="UserProfileManager" />
     </bean>
     
     <bean id="ApiUserProfileInterface" 
-            class="org.entando.entando.aps.system.services.userprofile.api.ApiUserProfileInterface" >
+          class="org.entando.entando.aps.system.services.userprofile.api.ApiUserProfileInterface" >
         <property name="userProfileManager" ref="UserProfileManager" />
         <property name="groupManager" ref="GroupManager" />
     </bean>

@@ -22,16 +22,11 @@
                 <s:text name="title.group.widgetTypes" />
             </a>
         </li>
-        <li>
-            <a data-toggle="tab" class="no-decorations" href="#contents">
-                <s:text name="title.group.contents" />
-            </a>
-        </li>
-        <li>
-            <a data-toggle="tab" class="no-decorations" href="#resources">
-                <s:text name="title.group.resources" />
-            </a>
-        </li>
+        <wpsa:hookPoint key="core.groupReferences.tabs" objectName="hookPointElements_core_groupReferencesTabs">
+            <s:iterator value="#hookPointElements_core_groupReferencesTabs" var="hookPointElement">
+                <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+            </s:iterator>
+        </wpsa:hookPoint>
     </ul>
     <div class="tab-content">
         <div id="pages" class="tab-pane fade in active">

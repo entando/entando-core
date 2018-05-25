@@ -59,10 +59,13 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
+import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
+import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -264,6 +267,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
         this.validateRequest(pageRequest);
+        if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
+            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, 
+                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.parentcode.invalid");
+            throw new ValidationGenericException(bindingResult);
+        }
         try {
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);

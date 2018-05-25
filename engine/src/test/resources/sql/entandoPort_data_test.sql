@@ -102,8 +102,8 @@ INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('LABEL_WITH_PA
 INSERT INTO pagemodels (code, descr, frames, plugincode) VALUES ('home', 'Modello home page', '<frames>
 	<frame pos="0"><descr>Box sinistra alto</descr></frame>
 	<frame pos="1"><descr>Box sinistra basso</descr></frame>
-	<frame pos="2" main="true"><descr>Box centrale 1</descr></frame>
-	<frame pos="3"><descr>Box centrale 2</descr></frame>
+	<frame pos="2"><descr>Box centrale 1</descr></frame>
+	<frame pos="3" main="true"><descr>Box centrale 2</descr></frame>
 	<frame pos="4"><descr>Box destra alto</descr></frame>
 	<frame pos="5"><descr>Box destra basso</descr></frame>
 </frames>', NULL);

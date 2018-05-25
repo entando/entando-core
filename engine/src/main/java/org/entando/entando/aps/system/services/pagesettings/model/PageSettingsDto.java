@@ -13,27 +13,15 @@
  */
 package org.entando.entando.aps.system.services.pagesettings.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  *
  * @author paddeo
  */
-public class PageSettingsDto {
+public class PageSettingsDto extends HashMap<String, String> {
 
-    List<ParamDto> params = new ArrayList<>();
-
-    public List<ParamDto> getParams() {
-        return params;
-    }
-
-    public void setParams(List<ParamDto> params) {
-        this.params = params;
-    }
-
-    public void addParam(ParamDto param) {
-        params.add(param);
+    public PageSettingsDto() {
     }
 
 }

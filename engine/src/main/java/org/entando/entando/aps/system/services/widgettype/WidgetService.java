@@ -22,9 +22,12 @@ import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +37,9 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetDetails;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -146,6 +151,32 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     }
 
     @Override
+    public WidgetInfoDto getWidgetInfo(String widgetCode) {
+        try {
+            List<IPage> publishedUtilizer = this.getPageManager().getOnlineWidgetUtilizers(widgetCode);
+            List<IPage> draftUtilizer = this.getPageManager().getDraftWidgetUtilizers(widgetCode);
+            WidgetInfoDto info = new WidgetInfoDto();
+            info.setCode(widgetCode);
+            publishedUtilizer.stream().forEach(page -> info.addPublishedUtilizer(getWidgetDetails(page, widgetCode)));
+            draftUtilizer.stream().forEach(page -> info.addDraftUtilizer(getWidgetDetails(page, widgetCode)));
+            return info;
+        } catch (ApsSystemException e) {
+            logger.error("Failed to load widget info for widgetCode {} ", widgetCode);
+            throw new RestServerError("error in loading widget info", e);
+        }
+    }
+
+    private WidgetDetails getWidgetDetails(IPage page, String widgetCode) {
+        List<Widget> list = Arrays.asList(page.getWidgets());
+        int index = list.indexOf(list.stream().filter(widget -> widget != null && widget.getType().getCode().equals(widgetCode)).findFirst().get());
+        WidgetDetails details = new WidgetDetails();
+        details.setFrameIndex(index);
+        details.setFrame(page.getModel().getFrames()[index]);
+        details.setPageCode(page.getCode());
+        details.setPageFullPath(page.getPath());
+        return details;
+    }
+
     public WidgetDto addWidget(WidgetRequest widgetRequest) {
         WidgetType widgetType = new WidgetType();
         this.processWidgetType(widgetType, widgetRequest);
@@ -300,6 +331,5 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         }
         return bindingResult;
     }
-
 
 }

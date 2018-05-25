@@ -78,6 +78,19 @@ public class WidgetControllerTest extends AbstractControllerTest {
     }
 
     @Test
+    public void testGetWidgetInfo() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        // @formatter:off
+        ResultActions result = mockMvc.perform(
+                get("/widgets/1/info")
+                        .header("Authorization", "Bearer " + accessToken)
+        );
+        String response = result.andReturn().getResponse().getContentAsString();
+        assertNotNull(response);
+    }
+
+    @Test
     public void testGetWidgetList() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);

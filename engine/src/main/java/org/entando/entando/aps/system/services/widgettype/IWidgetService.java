@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.widgettype;
 
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
@@ -31,4 +32,6 @@ public interface IWidgetService {
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restRequest);
 
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest);
+
+    public WidgetInfoDto getWidgetInfo(String widgetCode);
 }

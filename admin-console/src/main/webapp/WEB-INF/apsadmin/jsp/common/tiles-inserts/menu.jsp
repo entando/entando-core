@@ -1,5 +1,4 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core" %>
@@ -225,7 +224,36 @@
             </div>
         </li>
     </c:if>
-    
+
+    <!-- APPS -->
+    <li class="list-group-item secondary-nav-item-pf" data-target="#apps-secondary">
+        <a>
+            <span class="fa fa-rocket" data-toggle="tooltip" title="<s:text name="menu.APPS" />"></span>
+            <span class="list-group-item-value"><s:text name="menu.APPS" /></span>
+        </a>
+        <!--Integrations secondary-->
+        <div id="apps-secondary" class="nav-pf-secondary-nav">
+            <div class="nav-item-pf-header">
+                <a class="secondary-collapse-toggle-pf" data-toggle="collapse-secondary-nav"></a>
+                <span><s:text name="menu.APPS" /></span>
+            </div>
+            <ul class="list-group">
+                <wpsa:hookPoint key="core.menu.apps" objectName="hookPointElements_core_menu_apps">
+                    <s:iterator value="#hookPointElements_core_menu_apps" var="hookPointElement">
+                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                    </s:iterator>
+                </wpsa:hookPoint>
+                <li class="list-group-item disabled">
+                    <a>
+                        <span class="ml-5"><s:text name="menu.APPS.IoT" /></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+
+
+
     <!-- DATA TYPE -->
     <c:if test="${isSuperUser}">
         <li class="list-group-item secondary-nav-item-pf" data-target="#datatype-secondary">

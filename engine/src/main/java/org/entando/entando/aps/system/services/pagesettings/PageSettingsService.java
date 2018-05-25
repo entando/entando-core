@@ -70,10 +70,9 @@ public class PageSettingsService implements IPageSettingsService {
     @Override
     public PageSettingsDto updatePageSettings(PageSettingsRequest request) {
         try {
-            Map<String, String> params = this.createParamsMap(request);
             Map<String, String> systemParams = this.getSystemParams();
-            params.keySet().forEach((param) -> {
-                systemParams.put(param, params.get(param));
+            request.keySet().forEach((param) -> {
+                systemParams.put(param, request.get(param));
             });
             String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
             String newXmlParams = SystemParamsUtils.getNewXmlParams(xmlParams, systemParams);
@@ -89,14 +88,6 @@ public class PageSettingsService implements IPageSettingsService {
     private Map<String, String> getSystemParams() throws Throwable {
         String xmlParams = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
         return SystemParamsUtils.getParams(xmlParams);
-    }
-
-    private Map<String, String> createParamsMap(PageSettingsRequest request) {
-        Map<String, String> params = new HashMap<>();
-        request.getParams().forEach((param) -> {
-            params.put(param.getName(), param.getValue());
-        });
-        return params;
     }
 
 }

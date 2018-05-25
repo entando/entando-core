@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.pagesettings.model;
 
+import java.util.Arrays;
 import java.util.Map;
 import org.entando.entando.aps.system.services.DtoBuilder;
 
@@ -22,18 +23,28 @@ import org.entando.entando.aps.system.services.DtoBuilder;
  */
 public class PageSettingsDtoBuilder extends DtoBuilder<Map<String, String>, PageSettingsDto> {
 
+    private final String[] acceptedParams = {"urlStyle",
+        "treeStyle_page",
+        "startLangFromBrowser",
+        "baseUrl",
+        "baseUrlContext",
+        "useJsessionId",
+        "notFoundPageCode",
+        "homePageCode",
+        "errorPageCode",
+        "loginPageCode"};
+
     @Override
     protected PageSettingsDto toDto(Map<String, String> sysParams) {
         PageSettingsDto dest = new PageSettingsDto();
-        sysParams.keySet().stream().map((name) -> {
-            ParamDto param = new ParamDto();
-            param.setName(name);
-            param.setValue(sysParams.get(name));
-            return param;
-        }).forEachOrdered((param) -> {
-            dest.addParam(param);
+        sysParams.keySet().stream().filter(param -> pageSettingCheck(param)).forEachOrdered((param) -> {
+            dest.put(param, sysParams.get(param));
         });
         return dest;
+    }
+
+    private boolean pageSettingCheck(String param) {
+        return Arrays.asList(acceptedParams).contains(param);
     }
 
 }

@@ -19,10 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsService;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
-import org.entando.entando.aps.system.services.pagesettings.model.ParamDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
-import org.entando.entando.web.pagesettings.model.Param;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,33 +113,22 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     private PageSettingsDto createMockDto() {
         PageSettingsDto dto = new PageSettingsDto();
-        List<ParamDto> params = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            ParamDto param = new ParamDto();
-            param.setName("param_" + i);
-            param.setValue("value_" + i);
-            params.add(param);
+            dto.put("param_" + i, "value_" + i);
         }
-        dto.setParams(params);
         return dto;
     }
 
     private PageSettingsRequest createMockRequestEmptyParams() {
         PageSettingsRequest request = new PageSettingsRequest();
-        request.setParams(new ArrayList<>());
         return request;
     }
 
     private PageSettingsRequest createMockRequest() {
         PageSettingsRequest request = new PageSettingsRequest();
-        List<Param> params = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
-            Param param = new Param();
-            param.setName("param_" + i);
-            param.setValue("value_" + i);
-            params.add(param);
+            request.put("param_" + i, "value_" + i);
         }
-        request.setParams(params);
         return request;
     }
 

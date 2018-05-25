@@ -45,7 +45,6 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
     private ObjectMapper mapper = new ObjectMapper();
 
-
     @Test
     public void testGetCategories() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -67,10 +66,24 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets/1")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
+    }
+
+    @Test
+    public void testGetWidgetInfo() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        // @formatter:off
+        ResultActions result = mockMvc.perform(
+                get("/widgets/login_form/info")
+                        .header("Authorization", "Bearer " + accessToken)
+        );
+        String response = result.andReturn().getResponse().getContentAsString();
+        assertNotNull(response);
+        result.andExpect(jsonPath("$.payload.publishedUtilizers", Matchers.hasSize(2)));
     }
 
     @Test
@@ -80,7 +93,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets").param("pageSize", "100")
-                .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(10)));
@@ -97,8 +110,8 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets").param("pageSize", "5")
-                .param("sort", "code").param("direction", "DESC")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("sort", "code").param("direction", "DESC")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
@@ -116,9 +129,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets").param("pageSize", "5")
-                .param("sort", "code").param("direction", "DESC")
-                .param("filters[0].attribute", "typology").param("filters[0].value", "oc")
-                .header("Authorization", "Bearer " + accessToken)
+                        .param("sort", "code").param("direction", "DESC")
+                        .param("filters[0].attribute", "typology").param("filters[0].value", "oc")
+                        .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
@@ -144,10 +157,10 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
         String payload = mapper.writeValueAsString(request);
         ResultActions result = mockMvc.perform(
-                                               put("/widgets/" + code)
-                                                                         .contentType(MediaType.APPLICATION_JSON)
-                                                                         .content(payload)
-                                                                         .header("Authorization", "Bearer " + accessToken));
+                put("/widgets/" + code)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payload)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED)));

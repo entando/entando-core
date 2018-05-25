@@ -22,6 +22,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -112,6 +113,14 @@ public class WidgetController {
         PagedMetadata<WidgetDto> result = this.widgetService.getWidgets(requestList);
         this.getWidgetValidator().validateRestListResult(requestList, result);
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/widgets/{widgetCode}/info", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RestResponse> getWidgetInfo(@PathVariable String widgetCode) {
+        logger.trace("getWidgetInfo by code {}", widgetCode);
+        WidgetInfoDto info = this.widgetService.getWidgetInfo(widgetCode);
+        return new ResponseEntity<>(new RestResponse(info), HttpStatus.OK);
     }
 
     public IWidgetService getWidgetService() {

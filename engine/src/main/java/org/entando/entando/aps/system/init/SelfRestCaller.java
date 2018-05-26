@@ -152,7 +152,12 @@ public class SelfRestCaller implements IPostProcessor, BeanFactoryAware {
 		path.append(method.getResourceName());
 		StringBuilder log = new StringBuilder();
 		StringWriter writer = new StringWriter();
-		marshaller.marshal(result, writer);
+        try {
+            marshaller.marshal(result, writer);
+        } catch (Exception e) {
+            _logger.info("Error extracting body response : " + e.getMessage());
+            writer.append(".......");
+        }
 		log.append("*************** Self Rest Call - response ***************\n");
 		log.append(method.getHttpMethod().toString()).append(" ");
 		log.append(path.toString()).append("\n");

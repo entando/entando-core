@@ -27,52 +27,52 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
  * @author E.Santoboni
  */
 public abstract class AbstractTestPageModelAction extends ApsAdminBaseTestCase {
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-	}
-	
-	protected PageModel createMockPageModel(String code) {
-		PageModel model = new PageModel();
-		model.setCode(code);
-		model.setDescription("Description of model " + code);
-		Frame frame0 = new Frame();
-		frame0.setPos(0);
-		frame0.setDescription("Freme 0");
-		frame0.setMainFrame(true);
-		Frame frame1 = new Frame();
-		frame1.setPos(1);
-		frame1.setDescription("Freme 1");
-		Widget defWidg1 = new Widget();
-		defWidg1.setType(this._widgetTypeManager.getWidgetType("content_viewer_list"));
-		ApsProperties props1 = new ApsProperties();
-		props1.setProperty("contentType", "ART");
-		defWidg1.setConfig(props1);
-		frame1.setDefaultWidget(defWidg1);
-		Frame frame2 = new Frame();
-		frame2.setPos(1);
-		frame2.setDescription("Freme 2");
-		Widget defWidg2 = new Widget();
-		defWidg2.setType(this._widgetTypeManager.getWidgetType("login_form"));
-		frame2.setDefaultWidget(defWidg2);
-		Frame[] configuration = {frame0, frame1, frame2};
-		model.setConfiguration(configuration);
-		model.setTemplate("<strong>Freemarker template content</strong>");
-		return model;
-	}
-	
-	private void init() throws Exception {
-    	try {
-			this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
-    		this._pageModelManager = (IPageModelManager) this.getService(SystemConstants.PAGE_MODEL_MANAGER);
-    	} catch (Throwable t) {
-    		throw new Exception(t);
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
+
+    protected PageModel createMockPageModel(String code) {
+        PageModel model = new PageModel();
+        model.setCode(code);
+        model.setDescription("Description of model " + code);
+        Frame frame0 = new Frame();
+        frame0.setPos(0);
+        frame0.setDescription("Frame 0");
+        frame0.setMainFrame(true);
+        Frame frame1 = new Frame();
+        frame1.setPos(1);
+        frame1.setDescription("Frame 1");
+        Widget defWidg1 = new Widget();
+        defWidg1.setType(this._widgetTypeManager.getWidgetType("formAction"));
+        ApsProperties props1 = new ApsProperties();
+        props1.setProperty("actionPath", "/do/login");
+        defWidg1.setConfig(props1);
+        frame1.setDefaultWidget(defWidg1);
+        Frame frame2 = new Frame();
+        frame2.setPos(1);
+        frame2.setDescription("Frame 2");
+        Widget defWidg2 = new Widget();
+        defWidg2.setType(this._widgetTypeManager.getWidgetType("login_form"));
+        frame2.setDefaultWidget(defWidg2);
+        Frame[] configuration = {frame0, frame1, frame2};
+        model.setConfiguration(configuration);
+        model.setTemplate("<strong>Freemarker template content</strong>");
+        return model;
+    }
+
+    private void init() throws Exception {
+        try {
+            this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
+            this._pageModelManager = (IPageModelManager) this.getService(SystemConstants.PAGE_MODEL_MANAGER);
+        } catch (Throwable t) {
+            throw new Exception(t);
         }
     }
-    
-	protected IWidgetTypeManager _widgetTypeManager;
+
+    protected IWidgetTypeManager _widgetTypeManager;
     protected IPageModelManager _pageModelManager = null;
-	
+
 }

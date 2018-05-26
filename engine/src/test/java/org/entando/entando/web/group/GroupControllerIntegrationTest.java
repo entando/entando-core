@@ -249,8 +249,8 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.references.length()", is(6)));
-        String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,jacmsResourceManager,AuthorizationManager,jacmsContentManager".split(",");
+        result.andExpect(jsonPath("$.payload.references.length()", is(4)));
+        String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,AuthorizationManager".split(",");
         for (String managerName : managers) {
             result = mockMvc.perform(
                     get("/groups/{code}/references/{manager}", Group.FREE_GROUP_NAME, managerName)

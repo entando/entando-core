@@ -96,9 +96,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                         .header("Authorization", "Bearer " + accessToken)
         );
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload", Matchers.hasSize(10)));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(6)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
-        result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(6)));
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
     }
@@ -116,9 +116,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
-        result.andExpect(jsonPath("$.metaData.totalItems", is(10)));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(6)));
         String response = result.andReturn().getResponse().getContentAsString();
-        result.andExpect(jsonPath("$.payload[0].code", is("search_result")));
+        result.andExpect(jsonPath("$.payload[0].code", is("messages_system")));
         assertNotNull(response);
     }
 

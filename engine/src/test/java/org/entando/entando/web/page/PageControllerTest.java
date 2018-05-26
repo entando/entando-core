@@ -14,7 +14,6 @@
 package org.entando.entando.web.page;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Validation;
@@ -25,9 +24,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -38,7 +35,6 @@ import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.page.validator.PageValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -71,12 +67,6 @@ public class PageControllerTest extends AbstractControllerTest {
     IPageManager pageManager;
 
     @Mock
-    IContentManager contentManager;
-
-    @Mock
-    PageUtilizer pageUtilizer;
-
-    @Mock
     private PageService pageService;
 
     @Mock
@@ -98,8 +88,6 @@ public class PageControllerTest extends AbstractControllerTest {
                 .build();
         PageValidator pageValidator = new PageValidator();
         pageValidator.setPageManager(pageManager);
-        pageValidator.setContentManager(contentManager);
-        pageValidator.setPageUtilizer(pageUtilizer);
         this.controller.setPageValidator(pageValidator);
     }
 
@@ -185,9 +173,9 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 get("/pages").
-                        param("parentCode", "service")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken)
+                param("parentCode", "service")
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken)
         );
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(status().isOk());
@@ -225,10 +213,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}", "wrong_page")
-                        .sessionAttr("user", user)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mockJsonResult)
-                        .header("Authorization", "Bearer " + accessToken)
+                .sessionAttr("user", user)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mockJsonResult)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -236,76 +224,6 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_URINAME_MISMATCH)));
 
-    }
-
-    @Test
-    public void shouldValidateStatusPutDraftRef() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-
-        PageStatusRequest request = new PageStatusRequest();
-        request.setStatus("draft");
-
-        PageM pageToUnpublish = new PageM(true);
-        pageToUnpublish.setCode("page_to_unpublish");
-        pageToUnpublish.setParentCode("service");
-        pageToUnpublish.setChildrenCodes(new String[]{"child_page"});
-
-        PageM child = new PageM(true);
-        child.setCode("child_page");
-        child.setParentCode("page_to_unpublish");
-
-        PageM root = new PageM(true);
-        root.setCode("home");
-        root.setParentCode("home");
-
-        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
-        when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(pageToUnpublish, child);
-        when(this.controller.getPageValidator().getPageManager().getOnlineRoot()).thenReturn(root);
-        when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
-        ResultActions result = mockMvc.perform(
-                put("/pages/{pageCode}/status", "page_to_publish")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isBadRequest());
-        String response = result.andReturn().getResponse().getContentAsString();
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_ONLINE_PAGE)));
-    }
-
-    @Test
-    public void shouldValidateStatusPutOnlineRef() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-
-        PageStatusRequest request = new PageStatusRequest();
-        request.setStatus("published");
-
-        PageM pageToPublish = new PageM(false);
-        pageToPublish.setCode("page_to_publish");
-        pageToPublish.setParentCode("unpublished");
-
-        PageM unpublished = new PageM(false);
-        unpublished.setCode("unpublished");
-        unpublished.setParentCode("service");
-
-        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
-        when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(pageToPublish, unpublished);
-        when(this.controller.getPageValidator().getPageUtilizer().getPageUtilizers(any(String.class))).thenReturn(new ArrayList());
-        ResultActions result = mockMvc.perform(
-                put("/pages/{pageCode}/status", "page_to_publish")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isBadRequest());
-        String response = result.andReturn().getResponse().getContentAsString();
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_REFERENCED_DRAFT_PAGE)));
     }
 
     @Test
@@ -317,8 +235,8 @@ public class PageControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pages/{parentCode}", "mock_page")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken)
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken)
         );
 
         String response = result.andReturn().getResponse().getContentAsString();
@@ -339,10 +257,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 post("/pages")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(page))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(page))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isConflict());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -358,8 +276,8 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getOnlinePage(any(String.class))).thenReturn(new Page());
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "online_page")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -379,8 +297,8 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage(any(String.class))).thenReturn(page);
         ResultActions result = mockMvc.perform(
                 delete("/pages/{pageCode}", "page_with_children")
-                        .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -400,10 +318,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -435,10 +353,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -470,10 +388,10 @@ public class PageControllerTest extends AbstractControllerTest {
         when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
         ResultActions result = mockMvc.perform(
                 put("/pages/{pageCode}/position", "page_to_move")
-                        .sessionAttr("user", user)
-                        .content(convertObjectToJsonBytes(request))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                .sessionAttr("user", user)
+                .content(convertObjectToJsonBytes(request))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();

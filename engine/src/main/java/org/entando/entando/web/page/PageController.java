@@ -187,10 +187,6 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getPageValidator().validateReferences(pageCode, pageStatusRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
         PageDto page = this.getPageService().updatePageStatus(pageCode, pageStatusRequest.getStatus());
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", pageStatusRequest.getStatus());

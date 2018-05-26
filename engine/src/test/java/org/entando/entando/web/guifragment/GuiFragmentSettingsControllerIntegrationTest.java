@@ -91,7 +91,7 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = this.executeGet("/fragments/info/plugins", accessToken, status().isOk());
-        result.andExpect(jsonPath("$.payload", Matchers.containsInAnyOrder(new String[]{"jacms"})));
+        result.andExpect(jsonPath("$.payload.size()", is(0)));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
             String accessToken = mockOAuthInterceptor(user);
 
             ResultActions result = this.executeGet("/fragments/info/plugins", accessToken, status().isOk());
-            result.andExpect(jsonPath("$.payload", Matchers.containsInAnyOrder(new String[]{"jacms"})));
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
 
             ResultActions resultFragment = this.executeGet("/fragments/info", accessToken, status().isOk());
             resultFragment.andExpect(jsonPath("$.payload.code", is(code)));
@@ -116,12 +116,11 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
         }
     }
 
-
     private ResultActions executeGet(String uri, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
-                                      .perform(get(uri)
-                                                       .contentType(MediaType.APPLICATION_JSON_VALUE)
-                                                       .header("Authorization", "Bearer " + accessToken));
+                .perform(get(uri)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }

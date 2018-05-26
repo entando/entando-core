@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps;
 
+import com.agiletec.aps.system.TestApplicationContext;
 import com.agiletec.aps.system.common.entity.TestEntityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorityManager;
 import com.agiletec.aps.system.services.authorization.TestAuthorizationManager;
@@ -20,6 +21,7 @@ import com.agiletec.aps.system.services.baseconfig.TestBaseConfigService;
 import com.agiletec.aps.system.services.baseconfig.TestConfigItemDAO;
 import com.agiletec.aps.system.services.category.TestCategoryManager;
 import com.agiletec.aps.system.services.group.TestGroupManager;
+import com.agiletec.aps.system.services.group.TestGroupUtilizer;
 import com.agiletec.aps.system.services.i18n.I18nManagerIntegrationTest;
 import com.agiletec.aps.system.services.i18n.I18nManagerTest;
 import com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapperTest;
@@ -45,9 +47,6 @@ import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
 import com.agiletec.aps.util.TestHtmlHandler;
-import com.agiletec.plugins.jacms.aps.system.TestApplicationContext;
-import com.agiletec.plugins.jacms.aps.system.services.content.TestGroupUtilizer;
-import com.agiletec.plugins.jacms.aps.system.services.searchengine.TestSearchEngineManager;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -76,6 +75,7 @@ import org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObject
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDAOIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
+import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;

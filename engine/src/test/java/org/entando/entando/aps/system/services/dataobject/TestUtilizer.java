@@ -21,28 +21,28 @@ import com.agiletec.aps.system.services.group.GroupUtilizer;
 
 public class TestUtilizer extends BaseTestCase {
 
-	public void testGetGroupsUtilizers() throws Throwable {
-		String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
-		assertTrue(names.length >= 4);
-		for (int i = 0; i < names.length; i++) {
-			GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
-			List utilizers = service.getGroupUtilizers("coach");
-			if (names[i].equals("DataTypeManager")) {
-				assertEquals(6, utilizers.size());
-			}
-		}
-	}
+    public void testGetGroupsUtilizers() throws Throwable {
+        String[] names = this.getApplicationContext().getBeanNamesForType(GroupUtilizer.class);
+        assertTrue(names.length >= 2);
+        for (int i = 0; i < names.length; i++) {
+            GroupUtilizer service = (GroupUtilizer) this.getApplicationContext().getBean(names[i]);
+            List utilizers = service.getGroupUtilizers("coach");
+            if (names[i].equals("DataTypeManager")) {
+                assertEquals(6, utilizers.size());
+            }
+        }
+    }
 
-	public void testGetCategoryUtilizers() throws Throwable {
-		String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
-		assertTrue(names.length >= 2);
-		for (int i = 0; i < names.length; i++) {
-			CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
-			List utilizers = service.getCategoryUtilizers("evento");
-			if (names[i].equals("DataTypeManager")) {
-				assertTrue(utilizers.size() == 2);
-			}
-		}
-	}
+    public void testGetCategoryUtilizers() throws Throwable {
+        String[] names = this.getApplicationContext().getBeanNamesForType(CategoryUtilizer.class);
+        assertTrue(names.length >= 1);
+        for (int i = 0; i < names.length; i++) {
+            CategoryUtilizer service = (CategoryUtilizer) this.getApplicationContext().getBean(names[i]);
+            List utilizers = service.getCategoryUtilizers("evento");
+            if (names[i].equals("DataTypeManager")) {
+                assertTrue(utilizers.size() == 2);
+            }
+        }
+    }
 
 }

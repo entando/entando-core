@@ -28,23 +28,25 @@ import com.agiletec.aps.system.services.lang.ILangManager;
  * @author M.Diana
  */
 public class TestWidgetTypeDAO extends BaseTestCase {
-	
+
     public void testLoadWidgetTypes() throws Throwable {
-    	DataSource dataSource = (DataSource) this.getApplicationContext().getBean("portDataSource");
-    	WidgetTypeDAO widgetTypeDao = new WidgetTypeDAO();
-    	widgetTypeDao.setDataSource(dataSource);
-    	ILangManager langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
-    	widgetTypeDao.setLangManager(langManager);
-    	Map<String, WidgetType> types = null;
-		try {
-			types = widgetTypeDao.loadWidgetTypes();
-		} catch (Throwable t) {
+        DataSource dataSource = (DataSource) this.getApplicationContext().getBean("portDataSource");
+        WidgetTypeDAO widgetTypeDao = new WidgetTypeDAO();
+        widgetTypeDao.setDataSource(dataSource);
+        ILangManager langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
+        widgetTypeDao.setLangManager(langManager);
+        Map<String, WidgetType> types = null;
+        try {
+            types = widgetTypeDao.loadWidgetTypes();
+        } catch (Throwable t) {
             throw t;
         }
-		WidgetType showletType = (WidgetType) types.get("content_viewer");
-		assertNotNull(showletType);
-		showletType = (WidgetType) types.get("content_viewer_list");
-		assertNotNull(showletType);
-	}    
-	
+        WidgetType widgetType = (WidgetType) types.get("formAction");
+        assertNotNull(widgetType);
+        widgetType = (WidgetType) types.get("login_form");
+        assertNotNull(widgetType);
+        widgetType = (WidgetType) types.get("content_viewer_list");
+        assertNull(widgetType);
+    }
+
 }

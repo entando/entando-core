@@ -103,8 +103,8 @@ public class TestPageManager extends BaseTestCase {
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
                 true, "pagina temporanea", null, null, false, null, null);
-        ApsProperties config = PageTestUtil.createProperties("temp", "tempValue", "contentId", "ART11");
-        Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+        ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
+        Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
         Page pageToAdd = PageTestUtil.createPage("temp", parentPage, "free", metadata, widgets);
         _pageManager.addPage(pageToAdd);
@@ -144,8 +144,8 @@ public class TestPageManager extends BaseTestCase {
         onlineMetadata.setTitle("en", "temptitle1");
         onlineMetadata.setShowable(true);
 
-        ApsProperties config = PageTestUtil.createProperties("temp1", "temp1", "contentId", "ART11");
-        Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
+        ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
+        Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
         pageToUpdate.getWidgets()[2] = widgetToAdd;
         _pageManager.setPageOnline(pageToUpdate.getCode());
 
@@ -157,8 +157,6 @@ public class TestPageManager extends BaseTestCase {
 
         assertEquals(1, pageToUpdate.getMetadata().getTitles().size());
         PageTestUtil.compareWidgets(pageToUpdate.getWidgets(), updatedPage.getWidgets());
-        // assertNotNull(updatedPage.getWidgets()[2]);
-        // assertEquals(widgetToAdd, updatedPage.getWidgets()[2]);
     }
 
     private void checkPutOnlineOfflinePage() throws Exception {
@@ -374,7 +372,7 @@ public class TestPageManager extends BaseTestCase {
     }
 
     public void testSearchPage() throws Throwable {
-        List<String> allowedGroupCodes = new ArrayList<String>();
+        List<String> allowedGroupCodes = new ArrayList<>();
         allowedGroupCodes.add(Group.ADMINS_GROUP_NAME);
         try {
             List<IPage> pagesFound = this._pageManager.searchPages("aGIna_", allowedGroupCodes);
@@ -419,17 +417,6 @@ public class TestPageManager extends BaseTestCase {
         assertNotNull(pageUtilizers3);
         assertEquals(1, pageUtilizers3.size());
         assertEquals("pagina_1", pageUtilizers3.get(0).getCode());
-
-        List<IPage> pageUtilizers4 = this._pageManager.getDraftWidgetUtilizers("content_viewer");
-        assertNotNull(pageUtilizers4);
-        assertEquals(7, pageUtilizers4.size());
-        assertEquals("homepage", pageUtilizers4.get(0).getCode());
-        assertEquals("contentview", pageUtilizers4.get(1).getCode());
-        assertEquals("pagina_11", pageUtilizers4.get(2).getCode());
-        assertEquals("pagina_2", pageUtilizers4.get(3).getCode());
-        assertEquals("coach_page", pageUtilizers4.get(4).getCode());
-        assertEquals("customers_page", pageUtilizers4.get(5).getCode());
-        assertEquals("customer_subpage_2", pageUtilizers4.get(6).getCode());
     }
 
     public void testPageStatus() throws ApsSystemException {

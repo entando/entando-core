@@ -6,12 +6,13 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <jsp:useBean id="now" class="java.util.Date"/>
-<wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
 <fmt:formatDate value="${now}" pattern="EEEE, dd MMMM yyyy" var="currentDate"/>
 
 <!-- Admin console Breadcrumbs -->
+<%--
 <s:url action="results" namespace="/do/jacms/Content" var="contentListURL"/>
 <s:text name="note.goToSomewhere" var="contentListURLTitle"/>
+--%>
 
 <!-- Page Title -->
 <s:set var="dataContent" value="%{'help block'}" />
@@ -76,29 +77,13 @@
                                     </wp:ifauthorized>
                                 </div>
                             </div>
-
-                            <!-- Contents -->
-                            <div class="col-xs-12 col-lg-8">
-                                <div class="card-pf card-pf-utilization card-pf-accented card-pf-aggregate-status">
-                                    <h2 class="card-pf-title no-mb text-left bold">
-                                        <s:text name="dashboard.contentStatus" />
-                                    </h2>
-                                    <div class="text-left"><span id="lastUpdate-contents"></span></div>
-                                    <div class="card-pf-body" id="content-status">
-                                        <div id="contents-donut-chart"
-                                             class="example-donut-chart-right-legend">
-                                            <div class="spinner spinner-lg"></div>
-                                        </div>
-                                    </div>
-                                    <wp:ifauthorized permission="manageContents">
-                                        <s:url action="results" namespace="/do/jacms/Content" var="contentListURL" />
-                                        <a href="${contentListURL}" class="bottom-link display-block text-right" title="<s:text name="note.goToSomewhere" />:
-                                           <s:text name="dashboard.contents.contentList" />">
-                                            <s:text name="dashboard.contents.contentList" />
-                                        </a>
-                                    </wp:ifauthorized>
-                                </div>
-                            </div>
+                            
+                            <wpsa:hookPoint key="core.dashboard.status" objectName="hookPointElements_core_dashboard_status">
+                                <s:iterator value="#hookPointElements_core_dashboard_status" var="hookPointElement">
+                                    <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                                </s:iterator>
+                            </wpsa:hookPoint>
+                            
                         </div>
                     </div>
                 </div>
@@ -151,78 +136,13 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Content Table -->
-                <div class="row">
-                    <div class="container-fluid container-cards-pf">
-                        <div class="row row-cards-pf">
-                            <div class="col-xs-12">
-                                <div class="card-pf card-pf-utilization">
-                                    <div class="card-pf-heading">
-                                        <wp:ifauthorized permission="editContents">
-                                            <span class="card-pf-heading-details">
-                                                <wpsa:entityTypes entityManagerName="jacmsContentManager" var="contentTypesVar" />
-                                                <span class="btn-group">
-                                                    <button type="button" class="btn btn-primary dropdown-toggle"
-                                                            data-toggle="dropdown">
-                                                        <s:text name="label.add"/>&#32;
-                                                        <span class="caret"></span>
-                                                    </button>
-                                                    <ul class="dropdown-menu" role="menu">
-                                                        <s:iterator var="contentTypeVar" value="#contentTypesVar">
-                                                            <jacmswpsa:contentType
-                                                                typeCode="%{#contentTypeVar.typeCode}"
-                                                                property="isAuthToEdit" var="isAuthToEditVar" />
-                                                            <s:if test="%{#isAuthToEditVar}">
-                                                                <li>
-                                                                    <s:url action="createNew" namespace="/do/jacms/Content" var="addContentURL">
-                                                                        <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-                                                                    </s:url>
-                                                                    <a href="${addContentURL}"
-                                                                       title="<s:property value="%{#contentTypeVar.typeDescr}" />">
-                                                                        <s:property value="%{#contentTypeVar.typeDescr}" />
-                                                                    </a>
-                                                                </li>
-                                                            </s:if>
-                                                        </s:iterator>
-                                                    </ul>
-                                                </span>
-                                            </span>
-                                        </wp:ifauthorized>
-                                        <h2 class="card-pf-title">
-                                            <s:text name="dashboard.contentList" />
-                                        </h2>
-                                    </div>
-                                    <div class="card-pf-body" id="content-table">
-                                        <div class="table-responsive hidden">
-                                            <table class="table table-striped table-bordered no-mb">
-                                                <thead>
-                                                    <tr>
-                                                        <th><s:text name="dashboard.contents.description" /></th>
-                                                        <th><s:text name="dashboard.contents.author" /></th>
-                                                        <th><s:text name="dashboard.contents.type" /></th>
-                                                        <th class="text-center table-w-10"><s:text name="dashboard.contents.status" /></th>
-                                                        <th class="text-center w20perc"><s:text name="dashboard.contents.lastModified" /></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <wp:ifauthorized permission="editContents">
-                                        <s:url action="list" namespace="/do/jacms/Content" var="contentListURL" />
-                                        <a href="${contentListURL}"
-                                           class="bottom-link display-block text-right"
-                                           title="<s:text name="note.goToSomewhere" />: <s:text name="dashboard.contentList" />">
-                                            <s:text name="dashboard.contentList" />
-                                        </a>
-                                    </wp:ifauthorized>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                
+                <wpsa:hookPoint key="core.dashboard.tables" objectName="hookPointElements_core_dashboard_tables">
+                    <s:iterator value="#hookPointElements_core_dashboard_tables" var="hookPointElement">
+                        <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                    </s:iterator>
+                </wpsa:hookPoint>
+                
             </div>
 
             <!-- Right Column -->
@@ -269,62 +189,7 @@
                     </div>
                 </div>
                 <div class="bottom-actions">
-                    <wp:ifauthorized permission="editContents">
-                        <div class="btn-group dropup w100perc mt-10 mb-10">
-                            <button type="button" class="btn btn-primary dropdown-toggle btn-block"
-                                    data-toggle="dropdown">
-                                <s:text name="dashboard.addContent"/>&#32;
-                                <span class="caret dashboard-caret-right"></span>
-                            </button>
-                            <ul class="dropdown-menu w100perc" role="menu">
-                                <s:iterator var="contentTypeVar" value="#contentTypesVar">
-                                    <jacmswpsa:contentType typeCode="%{#contentTypeVar.typeCode}"
-                                                           property="isAuthToEdit" var="isAuthToEditVar" />
-                                    <s:if test="%{#isAuthToEditVar}">
-                                        <li>
-                                            <s:url action="createNew" namespace="/do/jacms/Content" var="newContentURL">
-                                                <s:param name="contentTypeCode" value="%{#contentTypeVar.typeCode}" />
-                                            </s:url>
-                                            <a href="${newContentURL}"
-                                               title="<s:text name="label.add" />&#32;<s:property value="%{#contentTypeVar.typeDescr}" />">
-                                                <s:property value="%{#contentTypeVar.typeDescr}" />
-                                            </a>
-                                        </li>
-                                    </s:if>
-                                </s:iterator>
-                            </ul>
-                        </div>
-                    </wp:ifauthorized>
-
-                    <wp:ifauthorized permission="manageResources">
-                        <div class="btn-group dropup w100perc mt-10 mb-10">
-                            <button type="button" class="btn btn-primary dropdown-toggle btn-block"
-                                    data-toggle="dropdown">
-                                <s:text name="dashboard.addAsset"/>&#32;
-                                <span class="caret dashboard-caret-right"></span>
-                            </button>
-                            <ul class="dropdown-menu w100perc" role="menu">
-                                <li>
-                                    <s:url namespace="/do/jacms/Resource" action="new" var="addImageURL">
-                                        <s:param name="resourceTypeCode" value="'Image'" />
-                                    </s:url>
-                                    <a href="${addImageURL}"
-                                       title="<s:text name="label.new" />&#32;<s:text name="label.image"/>">
-                                        <s:text name="label.image"/>
-                                    </a>
-                                </li>
-                                <li>
-                                    <s:url namespace="/do/jacms/Resource" action="new" var="addAttachURL">
-                                        <s:param name="resourceTypeCode" value="'Attach'" />
-                                    </s:url>
-                                    <a href="${addAttachURL}"
-                                       title="<s:text name="label.new" />&#32;<s:text name="label.attach"/>">
-                                        <s:text name="label.attach"/>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </wp:ifauthorized>
+                    
                     <wp:ifauthorized permission="editUsers">
                         <s:url namespace="/do/User" action="new" var="addUserURL" />
                         <a href="${addUserURL}" class="btn btn-primary btn-block mt-10 mb-10"
@@ -332,6 +197,13 @@
                             <s:text name="dashboard.addUser" />
                         </a>
                     </wp:ifauthorized>
+                    
+                    <wpsa:hookPoint key="core.dashboard.bottomActions" objectName="hookPointElements_core_dashboard_bottomActions">
+                        <s:iterator value="#hookPointElements_core_dashboard_bottomActions" var="hookPointElement">
+                            <wpsa:include value="%{#hookPointElement.filePath}"></wpsa:include>
+                        </s:iterator>
+                    </wpsa:hookPoint>
+                    
                 </div>
             </div>
         </div>

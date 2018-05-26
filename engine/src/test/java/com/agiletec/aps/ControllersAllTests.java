@@ -41,16 +41,12 @@ import org.entando.entando.web.label.LabelControllerIntegrationTest;
 import org.entando.entando.web.label.LabelControllerUnitTest;
 import org.entando.entando.web.language.LanguageControllerIntegrationTest;
 import org.entando.entando.web.language.LanguageControllerUnitTest;
-import org.entando.entando.web.page.PageConfigurationControllerIntegrationTest;
-import org.entando.entando.web.page.PageConfigurationControllerWidgetsIntegrationTest;
 import org.entando.entando.web.page.PageControllerIntegrationTest;
 import org.entando.entando.web.page.PageControllerTest;
 import org.entando.entando.web.pagemodel.PageModelControllerIntegrationTest;
 import org.entando.entando.web.pagemodel.PageModelControllerTest;
 import org.entando.entando.web.pagesettings.PageSettingsControllerTest;
 import org.entando.entando.web.permission.PermissionControllerIntegrationTest;
-import org.entando.entando.web.plugins.jacms.contentmodel.ContentModelControllerIntegrationTest;
-import org.entando.entando.web.plugins.jacms.contentmodel.ContentModelControllerUnitTest;
 import org.entando.entando.web.role.RoleControllerIntegrationTest;
 import org.entando.entando.web.role.RoleControllerUnitTest;
 import org.entando.entando.web.system.ReloadConfigurationControllerTest;
@@ -85,8 +81,6 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(PageModelControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PageSettingsControllerTest.class));
-        suite.addTest(new JUnit4TestAdapter(PageConfigurationControllerIntegrationTest.class));
-        suite.addTest(new JUnit4TestAdapter(PageConfigurationControllerWidgetsIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(PageControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(PageControllerIntegrationTest.class));
 
@@ -126,9 +120,6 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(RoleControllerUnitTest.class));
 
         suite.addTest(new JUnit4TestAdapter(PermissionControllerIntegrationTest.class));
-
-        suite.addTest(new JUnit4TestAdapter(ContentModelControllerIntegrationTest.class));
-        suite.addTest(new JUnit4TestAdapter(ContentModelControllerUnitTest.class));
 
         suite.addTest(new JUnit4TestAdapter(FileBrowserControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(FileBrowserControllerTest.class));

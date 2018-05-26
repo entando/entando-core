@@ -24,7 +24,6 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.tags.util.HeadInfoContainer;
 import com.agiletec.aps.util.ApsProperties;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.dataobject.helper.PublicDataTypeAuthorizationInfo;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectdispenser.DataObjectRenderizationInfo;
@@ -132,7 +131,7 @@ public class DataObjectViewerHelper implements IDataObjectViewerHelper {
         }
         Integer currentFrame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);
         if (currentFrame == page.getMetadata().getModel().getMainFrame() && null != renderInfo) {
-            Object extraTitle = renderInfo.getAttributeValues().get(JacmsSystemConstants.ATTRIBUTE_ROLE_TITLE);
+            Object extraTitle = renderInfo.getAttributeValues().get(SystemConstants.DATA_TYPE_ATTRIBUTE_ROLE_TITLE);
             if (null != extraTitle) {
                 reqCtx.addExtraParam(SystemConstants.EXTRAPAR_EXTRA_PAGE_TITLES, extraTitle);
             }

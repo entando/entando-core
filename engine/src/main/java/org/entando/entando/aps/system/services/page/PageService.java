@@ -39,6 +39,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Iterator;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -294,10 +295,25 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 this.getPageManager().setPageOnline(pageCode);
                 newPage = this.getPageManager().getOnlinePage(pageCode);
             } else if (status != null && status.equals(STATUS_DRAFT)) {
+                Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
+                if (null != beans) {
+                    Iterator<PageServiceUtilizer> iter = beans.values().iterator();
+                    while (iter.hasNext()) {
+                        PageServiceUtilizer serviceUtilizer = iter.next();
+                        List utilizer = serviceUtilizer.getPageUtilizer(pageCode);
+                        if (null != utilizer && utilizer.size() > 0) {
+                            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
+                            bindingResult.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
+                            throw new ValidationGenericException(bindingResult);
+                        }
+                    }
+                }
                 this.getPageManager().setPageOffline(pageCode);
                 newPage = this.getPageManager().getDraftPage(pageCode);
             }
             return this.getDtoBuilder().convert(newPage);
+        } catch (ValidationGenericException e) {
+            throw e;
         } catch (ApsSystemException e) {
             logger.error("Error updating page {} status", pageCode, e);
             throw new RestServerError("error in update page status", e);

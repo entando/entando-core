@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobject;
 
+import com.agiletec.aps.system.SystemConstants;
 import java.sql.BatchUpdateException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,7 +37,6 @@ import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.util.DateConverter;
-import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
 
@@ -62,8 +62,8 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
         dataobjectVo.setDescription(res.getString(3));
         dataobjectVo.setStatus(res.getString(4));
         String xmlWork = res.getString(5);
-        dataobjectVo.setCreate(DateConverter.parseDate(res.getString(6), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
-        dataobjectVo.setModify(DateConverter.parseDate(res.getString(7), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+        dataobjectVo.setCreate(DateConverter.parseDate(res.getString(6), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT));
+        dataobjectVo.setModify(DateConverter.parseDate(res.getString(7), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT));
         String xmlOnLine = res.getString(8);
         dataobjectVo.setOnLine(null != xmlOnLine && xmlOnLine.length() > 0);
         dataobjectVo.setSync(xmlWork.equals(xmlOnLine));
@@ -96,7 +96,7 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
         stat.setString(3, dataobject.getDescription());
         stat.setString(4, dataobject.getStatus());
         stat.setString(5, dataobject.getXML());
-        String currentDate = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
+        String currentDate = DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT);
         stat.setString(6, currentDate);
         stat.setString(7, currentDate);
         stat.setString(8, dataobject.getXML());
@@ -175,7 +175,7 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
         stat.setString(index++, dataobject.getStatus());
         stat.setString(index++, dataobject.getXML());
         if (updateDate) {
-            stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+            stat.setString(index++, DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT));
         }
         stat.setString(index++, dataobject.getMainGroup());
         stat.setString(index++, dataobject.getVersion());
@@ -253,7 +253,7 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
             String xml = dataobject.getXML();
             stat.setString(index++, xml);
             if (updateDate) {
-                stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+                stat.setString(index++, DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT));
             }
             stat.setString(index++, xml);
             stat.setString(index++, dataobject.getMainGroup());
@@ -353,7 +353,7 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
             stat.setString(index++, dataobject.getStatus());
             stat.setString(index++, dataobject.getXML());
             if (updateDate) {
-                stat.setString(index++, DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT));
+                stat.setString(index++, DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT));
             }
             stat.setString(index++, dataobject.getVersion());
             stat.setString(index++, dataobject.getLastEditor());

@@ -13,19 +13,15 @@
  */
 package org.entando.entando;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Properties;
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class TestEntandoJndiUtils {
 
@@ -70,7 +66,8 @@ public class TestEntandoJndiUtils {
         builder.bind("java:comp/env/protectedResourceDiskRootFolder", testConfig.getProperty("protectedResourceDiskRootFolder"));
 
         builder.bind("java:comp/env/indexDiskRootFolder", testConfig.getProperty("indexDiskRootFolder"));
-
+        builder.bind("java:comp/env/portDataSourceClassName", testConfig.getProperty("portDataSourceClassName"));
+        builder.bind("java:comp/env/servDataSourceClassName", testConfig.getProperty("servDataSourceClassName"));
         Iterator<Entry<Object, Object>> configIter = testConfig.entrySet().iterator();
         while (configIter.hasNext()) {
             Entry<Object, Object> entry = configIter.next();

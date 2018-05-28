@@ -33,8 +33,8 @@
     <div class="col-md-6 v-align ">
         <div class="center1">
             <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg"/>
-            <p class="ux_brand"><strong>THE DXP PLATFORM</strong></p>
-            <p class="ux_brand_subtitle"> FOR UX CONVERGENCE</p>
+            <p class="ux_brand"><strong>THE LEADING DXP PLATFORM</strong></p>
+            <p class="ux_brand_subtitle"> FOR CLOUD NATIVE APPLICATIONS</p>
             <div class="spacer-login"></div>
             <div class="entando-intro">
                 Entando is the lightest, open source Digital Experience Platform (DXP) for

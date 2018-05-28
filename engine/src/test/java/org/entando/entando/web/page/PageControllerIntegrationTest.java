@@ -112,7 +112,6 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                         .param("pageSize", "50")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-
         result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
 
@@ -206,6 +205,19 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             assertThat(page, is(not(nullValue())));
 
             //put
+            pageRequest.setParentCode("homepage");
+            pageRequest.getTitles().put("it", code.toUpperCase());
+            result = mockMvc
+                    .perform(put("/pages/{code}", code)
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+
+            //put
+            pageRequest.setParentCode("service");
             pageRequest.getTitles().put("it", code.toUpperCase());
             result = mockMvc
                     .perform(put("/pages/{code}", code)
@@ -256,13 +268,10 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
-
             page = this.pageManager.getDraftPage(code);
             assertThat(page, is(nullValue()));
-
         } finally {
             this.pageManager.deletePage(code);
-
         }
     }
 
@@ -275,8 +284,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             pageModel = parentPage.getMetadata().getModel();
         }
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
-        ApsProperties config = PageTestUtil.createProperties("modelId", "default", "contentId", "EVN24");
-        Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this.widgetTypeManager);
+        ApsProperties config = new ApsProperties();
+        config.put("actionPath", "/mypage.jsp");
+        Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this.widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
         return pageToAdd;

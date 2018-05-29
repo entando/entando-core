@@ -11,35 +11,30 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.common.annotation;
+package org.entando.entando.web.user.annotation;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.TYPE;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import org.entando.entando.web.common.validator.StringValidator;
+import org.entando.entando.web.user.validator.UserAuthorityValidator;
 
 /**
  *
  * @author paddeo
  */
 @Documented
-@Constraint(validatedBy = StringValidator.class)
-@Target({TYPE, FIELD, ANNOTATION_TYPE})
-@Retention(RUNTIME)
-public @interface ValidateString {
+@Constraint(validatedBy = UserAuthorityValidator.class)
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface GroupOrRoleNotBlank {
 
-    String[] acceptedValues() default {};
-
-    String message() default "string.notValid";
+    String message() default "user.authorities.group.role.NotBlank";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
-
 }

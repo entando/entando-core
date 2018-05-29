@@ -11,22 +11,28 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.user.model;
+package org.entando.entando.web.user.validator;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.user.annotation.GroupOrRoleNotBlank;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 
 /**
  *
  * @author paddeo
  */
-@GroupOrRoleNotBlank
-public class UserAuthoritiesRequest extends ArrayList<UserAuthority> {
+public class UserAuthorityValidator implements
+        ConstraintValidator<GroupOrRoleNotBlank, UserAuthoritiesRequest> {
 
     @Override
-    public String toString() {
-        return "UserAuthoritiesRequest: [" + this.stream().map(e -> e.toString()).collect(Collectors.joining(",")) + "]";
+    public void initialize(GroupOrRoleNotBlank a) {
+    }
+
+    @Override
+    public boolean isValid(UserAuthoritiesRequest req, ConstraintValidatorContext cvc) {
+        return req.stream().anyMatch(authority -> !(StringUtils.isBlank(authority.getGroup()) && StringUtils.isBlank(authority.getRole())));
     }
 
 }

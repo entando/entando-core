@@ -40,8 +40,6 @@ public class PageValidator extends AbstractPaginationValidator {
     @Autowired
     private IPageManager pageManager;
 
-    //@Autowired
-    //PageUtilizer pageUtilizer;
     public IPageManager getPageManager() {
         return pageManager;
     }
@@ -50,15 +48,6 @@ public class PageValidator extends AbstractPaginationValidator {
         this.pageManager = pageManager;
     }
 
-    /*
-    public PageUtilizer getPageUtilizer() {
-        return pageUtilizer;
-    }
-
-    public void setPageUtilizer(PageUtilizer pageUtilizer) {
-        this.pageUtilizer = pageUtilizer;
-    }
-     */
     @Override
     public boolean supports(Class<?> paramClass) {
 
@@ -104,10 +93,10 @@ public class PageValidator extends AbstractPaginationValidator {
     }
 
     public void validateGroups(String pageCode, PagePositionRequest pageRequest, Errors errors) {
-        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
-                page = this.getPageManager().getDraftPage(pageCode);
-        if (!page.getGroup().equals(Group.FREE_GROUP_NAME)
-                && !page.getGroup().equals(parent.getGroup())) {
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
+        IPage page = this.getPageManager().getDraftPage(pageCode);
+        if (!parent.getGroup().equals(Group.FREE_GROUP_NAME) 
+                && (!page.getGroup().equals(Group.FREE_GROUP_NAME) && !page.getGroup().equals(parent.getGroup()))) {
             errors.reject(PageController.ERRCODE_GROUP_MISMATCH, new String[]{pageCode}, "page.move.group.mismatch");
         }
     }

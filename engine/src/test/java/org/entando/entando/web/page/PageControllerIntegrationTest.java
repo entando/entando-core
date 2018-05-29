@@ -218,6 +218,19 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
             //put
             pageRequest.setParentCode("service");
+            pageRequest.setOwnerGroup(Group.ADMINS_GROUP_NAME);
+            pageRequest.getTitles().put("it", code.toUpperCase());
+            result = mockMvc
+                    .perform(put("/pages/{code}", code)
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+            
+            //put
+            pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
             pageRequest.getTitles().put("it", code.toUpperCase());
             result = mockMvc
                     .perform(put("/pages/{code}", code)
@@ -272,6 +285,96 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             assertThat(page, is(nullValue()));
         } finally {
             this.pageManager.deletePage(code);
+        }
+    }
+    
+    @Test
+    public void testMovePage() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String codeParent = "testToMoveParent";
+        String codeChild = "testToMoveChild";
+        try {
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCode(codeParent);
+            pageRequest.setPageModel("home");
+            pageRequest.setOwnerGroup("customers");
+            Map<String, String> titles = new HashMap<>();
+            titles.put("it", codeParent);
+            titles.put("en", codeParent);
+            pageRequest.setTitles(titles);
+            pageRequest.setParentCode("customers_page");
+            ResultActions result = mockMvc
+                    .perform(post("/pages")
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            
+            pageRequest.setCode(codeChild);
+            pageRequest.setPageModel("home");
+            pageRequest.setOwnerGroup("customers");
+            titles = new HashMap<>();
+            titles.put("it", codeChild);
+            titles.put("en", codeChild);
+            pageRequest.setTitles(titles);
+            pageRequest.setParentCode(codeParent);
+            result = mockMvc
+                    .perform(post("/pages")
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            
+            PagePositionRequest movementRequest = new PagePositionRequest();
+            movementRequest.setCode(codeParent);
+            movementRequest.setParentCode(codeParent);
+            movementRequest.setPosition(1);
+            
+            //put
+            result = mockMvc
+                    .perform(put("/pages/{code}/position", codeParent)
+                            .content(mapper.writeValueAsString(movementRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+            
+            //put
+            movementRequest.setParentCode(codeChild);
+            result = mockMvc
+                    .perform(put("/pages/{code}/position", codeParent)
+                            .content(mapper.writeValueAsString(movementRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+            
+            //put
+            movementRequest.setParentCode("coach_page");
+            result = mockMvc
+                    .perform(put("/pages/{code}/position", codeParent)
+                            .content(mapper.writeValueAsString(movementRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+            
+            //put
+            movementRequest.setParentCode("service");
+            result = mockMvc
+                    .perform(put("/pages/{code}/position", codeParent)
+                            .content(mapper.writeValueAsString(movementRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            
+        } finally {
+            this.pageManager.deletePage(codeChild);
+            this.pageManager.deletePage(codeParent);
         }
     }
 

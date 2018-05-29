@@ -274,7 +274,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
+            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
                     new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
@@ -340,7 +340,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         String parentGroup = parent.getGroup();
         if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, 
+            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH, 
                     new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
             throw new ValidationGenericException(bindingResult);
         }

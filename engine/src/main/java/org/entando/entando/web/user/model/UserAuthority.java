@@ -13,18 +13,14 @@
  */
 package org.entando.entando.web.user.model;
 
-import org.hibernate.validator.constraints.NotBlank;
-
 /**
  *
  * @author paddeo
  */
 public class UserAuthority {
 
-    @NotBlank(message = "user.authorities.group.blank")
     private String group;
 
-    @NotBlank(message = "user.authorities.role.blank")
     private String role;
 
     public String getGroup() {

@@ -142,10 +142,10 @@ public class UserValidator extends AbstractPaginationValidator {
     public void validateGroupsAndRoles(UserAuthoritiesRequest request, Errors errors) {
         List<String> invalidAuths = new ArrayList<>();
         request.forEach(authority -> {
-            if (this.getGroupManager().getGroup(authority.getGroup()) == null) {
+            if (authority.getGroup() != null && this.getGroupManager().getGroup(authority.getGroup()) == null) {
                 invalidAuths.add(authority.getGroup());
             }
-            if (this.getRoleManager().getRole(authority.getRole()) == null) {
+            if (authority.getRole() != null && this.getRoleManager().getRole(authority.getRole()) == null) {
                 invalidAuths.add(authority.getRole());
             }
         });

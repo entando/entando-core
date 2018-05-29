@@ -269,7 +269,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
             bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
-                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.parentcode.invalid");
+                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
+            throw new ValidationGenericException(bindingResult);
+        }
+        if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
+            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
+                    new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         try {
@@ -320,8 +326,24 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Override
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
-        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
-                page = this.getPageManager().getDraftPage(pageCode);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
+        if (pageCode.equals(pageRequest.getParentCode())) {
+            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, new String[]{pageCode}, "page.movement.parent.invalid.1");
+            throw new ValidationGenericException(bindingResult);
+        }
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
+        IPage page = this.getPageManager().getDraftPage(pageCode);
+        if (parent.isChildOf(pageCode)) {
+            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, 
+                    new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
+            throw new ValidationGenericException(bindingResult);
+        }
+        String parentGroup = parent.getGroup();
+        if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
+            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH, 
+                    new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
+            throw new ValidationGenericException(bindingResult);
+        }
         boolean moved = true;
         int iterations = Math.abs(page.getPosition() - pageRequest.getPosition());
         boolean moveUp = page.getPosition() > pageRequest.getPosition();

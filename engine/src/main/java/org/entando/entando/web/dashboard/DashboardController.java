@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
@@ -83,13 +84,13 @@ public class DashboardController {
     public ResponseEntity<RestResponse> getIntegrationInfos() {
         logger.debug("dashboard - getting integration");
         Map<String, String> infos = new HashMap<>();
-        infos.put("components", String.valueOf(this.extractNumberOfComponents()));
         infos.put("apis", String.valueOf(this.extractNumberOfApis()));
+        infos.put("components", String.valueOf(this.extractNumberOfComponents()));
         return new ResponseEntity<>(new RestResponse(infos), HttpStatus.OK);
     }
 
     private int extractNumberOfComponents() {
-        return this.getComponentManager().getCurrentComponents().size();
+        return this.getComponentManager().getCurrentComponents().stream().filter(component -> component.getArtifactGroupId() != null && component.getArtifactGroupId().equals("org.entando.entando.plugins")).collect(Collectors.toList()).size();
     }
 
     private int extractNumberOfApis() {

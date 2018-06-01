@@ -18,6 +18,8 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.Hashtable;
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestServerError;
+import org.entando.entando.aps.system.init.IComponentManager;
+import org.entando.entando.aps.system.init.model.Component;
 
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -32,6 +34,8 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
     private IPageManager pageManager;
 
     private String stockWidgetCodes;
+
+    private IComponentManager componentManager;
 
     @Override
     protected WidgetDto toDto(WidgetType src) {
@@ -51,7 +55,9 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
         }
         dest.setUsed(count);
         String pluginCode = src.getPluginCode();
+        Component plugin = this.getComponentManager().getInstalledComponent(pluginCode);
         dest.setPluginCode(pluginCode);
+        dest.setPluginDesc(plugin != null ? plugin.getDescription() : null);
         List<WidgetTypeParameter> params = src.getTypeParameters();
         dest.setHasConfig(null != params && params.size() > 0);
         if (null != pluginCode && pluginCode.trim().length() > 0) {
@@ -80,6 +86,14 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
 
     public void setStockWidgetCodes(String stockWidgetCodes) {
         this.stockWidgetCodes = stockWidgetCodes;
+    }
+
+    public IComponentManager getComponentManager() {
+        return componentManager;
+    }
+
+    public void setComponentManager(IComponentManager componentManager) {
+        this.componentManager = componentManager;
     }
 
 }

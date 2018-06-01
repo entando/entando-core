@@ -19,12 +19,12 @@
 
     <!--  async support -->
     <task:annotation-driven   />
-   
-    
+
+
     <!-- === WIDGET VALIDATORS === -->
 
     <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
-    
+
     <!-- === WIDGET PROCESSORS === -->
 
     <bean id="WidgetProcessorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory" />
@@ -35,7 +35,10 @@
 
     <bean id="WidgetDtoBuilder" class="org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder" >
         <property name="pageManager" ref="PageManager" />
-        <property name="stockWidgetCodes"><value>${widgets.stock}</value></property>
+        <property name="stockWidgetCodes">
+            <value>${widgets.stock}</value>
+        </property>
+        <property name="componentManager" ref="ComponentManager" />
     </bean>
 
     <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
@@ -54,12 +57,12 @@
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />
 
-	<bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDtoBuilder">
-		<property name="roleManager" ref="RoleManager" />
-	</bean>
-	
+    <bean id="RoleDtoBuilder" class="org.entando.entando.aps.system.services.role.RoleDtoBuilder">
+        <property name="roleManager" ref="RoleManager" />
+    </bean>
+
     <bean id="UserDtoBuilder" class="org.entando.entando.aps.system.services.user.model.UserDtoBuilder" />
-    
+
     <!-- === SERVICES === -->
 
     <bean id="GroupService" class="org.entando.entando.aps.system.services.group.GroupService" >
@@ -137,14 +140,14 @@
     <bean id="UserProfileService" class="org.entando.entando.aps.system.services.userprofile.UserProfileService" />
 
     <bean id="UserSettingsService" class="org.entando.entando.aps.system.services.usersettings.UserSettingsService">
-    	<property name="configManager" ref="BaseConfigManager" />
+        <property name="configManager" ref="BaseConfigManager" />
     </bean>
-    
-	
+
+
     <bean id="CategoryService" class="org.entando.entando.aps.system.services.category.CategoryService" >
         <property name="categoryManager" ref="CategoryManager" />
     </bean>
-    
+
     <bean id="UserService" class="org.entando.entando.aps.system.services.user.UserService" >
         <property name="authorizationManager" ref="AuthorizationManager" />
         <property name="authenticationProvider" ref="AuthenticationProviderManager"/>
@@ -163,14 +166,14 @@
     </bean>
 
 
-    
+
     <bean id="DatabaseService" class="org.entando.entando.aps.system.services.database.DatabaseService" >
         <property name="databaseManager" ref="DatabaseManager" />
         <property name="componentManager" ref="ComponentManager" />
     </bean>
-    
+
     <bean id="FileBrowserService" class="org.entando.entando.aps.system.services.storage.FileBrowserService" >
         <property name="storageManager" ref="StorageManager" />
     </bean>
-    
+
 </beans>

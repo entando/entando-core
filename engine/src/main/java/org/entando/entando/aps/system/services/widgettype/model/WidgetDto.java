@@ -30,6 +30,7 @@ public class WidgetDto {
     private String typology;
     private String group;
     private String pluginCode;
+    private String pluginDesc;
     private List<GuiFragmentRef> guiFragments = new ArrayList<>();
     private boolean hasConfig = false;
 
@@ -122,6 +123,14 @@ public class WidgetDto {
 
     public void setPluginCode(String pluginCode) {
         this.pluginCode = pluginCode;
+    }
+
+    public String getPluginDesc() {
+        return pluginDesc;
+    }
+
+    public void setPluginDesc(String pluginDesc) {
+        this.pluginDesc = pluginDesc;
     }
 
     public List<GuiFragmentRef> getGuiFragments() {

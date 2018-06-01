@@ -60,7 +60,7 @@ public class SocialActivityStreamManager extends AbstractService implements ISoc
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamLikeRecords_id_'.concat(#id)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamLikeRecords_id_'.concat(#id)")
     @CacheableInfo(groups = "'ActivityStreamLikeRecords_cacheGroup'")
     public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) throws ApsSystemException {
         List<ActivityStreamLikeInfo> infos = null;
@@ -123,7 +123,7 @@ public class SocialActivityStreamManager extends AbstractService implements ISoc
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#id)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#id)")
     @CacheableInfo(groups = "'ActivityStreamCommentRecords_cacheGroup'")
     public List<ActivityStreamComment> getActionCommentRecords(int id) throws ApsSystemException {
         List<ActivityStreamComment> infos = null;

@@ -134,7 +134,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActionLogRecord_'.concat(#id)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActionLogRecord_'.concat(#id)")
     public ActionLogRecord getActionRecord(int id) throws ApsSystemException {
         ActionLogRecord record = null;
         try {

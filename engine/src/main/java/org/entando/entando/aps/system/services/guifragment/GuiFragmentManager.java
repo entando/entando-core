@@ -51,7 +51,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_'.concat(#code)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_'.concat(#code)")
     public GuiFragment getGuiFragment(String code) throws ApsSystemException {
         GuiFragment guiFragment = null;
         try {
@@ -162,7 +162,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_uniqueByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_uniqueByWidgetTypeGroup'")//TODO improve group handling
     public GuiFragment getUniqueGuiFragmentByWidgetType(String widgetTypeCode) throws ApsSystemException {
         GuiFragment guiFragment = null;
@@ -182,7 +182,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_codesByWidgetType_'.concat(#widgetTypeCode)")
     @CacheableInfo(groups = "'GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
     public List<String> getGuiFragmentCodesByWidgetType(String widgetTypeCode) throws ApsSystemException {
         List<String> codes = null;
@@ -249,7 +249,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'GuiFragment_pluginCodes'")
     public List<String> loadGuiFragmentPluginCodes() throws ApsSystemException {
         List<String> codes = null;
         try {

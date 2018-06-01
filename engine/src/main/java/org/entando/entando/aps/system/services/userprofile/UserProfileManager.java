@@ -171,7 +171,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     }
 
     @Override
-    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)", condition = "#result != null")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
     @CacheableInfo(groups = "'UserProfileTypes_cacheGroup'")
     public IUserProfile getProfile(String username) throws ApsSystemException {
         IUserProfile profile = null;

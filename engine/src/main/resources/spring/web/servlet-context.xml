@@ -52,6 +52,12 @@
         <entry key="Min">
             <value>55</value>
         </entry>
+        <entry key="Max">
+            <value>56</value>
+        </entry>
+        <entry key="ValidateString">
+            <value>57</value>
+        </entry>
     </util:map>
 
     <bean id="messageCodesResolver"

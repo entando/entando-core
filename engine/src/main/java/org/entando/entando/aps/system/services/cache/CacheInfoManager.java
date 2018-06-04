@@ -222,7 +222,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 
     @Override
     public void putInGroup(String targetCache, String key, String[] groups) {
-        this.accessOnGroupMapping(DEFAULT_CACHE_NAME, 1, groups, key);
+        this.accessOnGroupMapping(targetCache, 1, groups, key);
     }
 
     @Override
@@ -234,6 +234,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
     protected synchronized void accessOnGroupMapping(String targetCache, int operationId, String[] groups, String key) {
         Cache cache = this.getCache(CACHE_INFO_MANAGER_CACHE_NAME);
         Map<String, List<String>> objectsByGroup = this.get(cache, GROUP_CACHE_NAME_PREFIX + targetCache, Map.class);
+        boolean updateMapInCache = false;
         if (operationId > 0) {
             //add
             if (null == objectsByGroup) {
@@ -247,6 +248,7 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
                 }
                 if (!objectKeys.contains(key)) {
                     objectKeys.add(key);
+                    updateMapInCache = true;
                 }
             }
         } else {
@@ -261,10 +263,13 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
                         this.flushEntry(targetCache, extractedKey);
                     }
                     objectsByGroup.remove(group);
+                    updateMapInCache = true;
                 }
             }
         }
-        cache.put(GROUP_CACHE_NAME_PREFIX + targetCache, objectsByGroup);
+        if (updateMapInCache) {
+            cache.put(GROUP_CACHE_NAME_PREFIX + targetCache, objectsByGroup);
+        }
     }
 
     protected Object evaluateExpression(String expression, Method method, Object[] args, Object target, Class<?> targetClass) {

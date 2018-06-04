@@ -36,7 +36,7 @@ import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author E.Santoboni - S.Puddu
@@ -134,7 +134,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
     }
 
     @Override
-    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActionLogRecord_'.concat(#id)")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActionLogRecord_'.concat(#id)")
     public ActionLogRecord getActionRecord(int id) throws ApsSystemException {
         ActionLogRecord record = null;
         try {

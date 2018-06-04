@@ -150,7 +150,7 @@ public class CacheInfoManagerTest {
 		event.setPage(page);
         cacheInfoManager.updateFromPageChanged(event);
 		Mockito.verify(cache, Mockito.times(1)).get(Mockito.anyString());
-		Mockito.verify(cache, Mockito.times(1)).put(Mockito.anyString(), Mockito.any(Map.class));
+		Mockito.verify(cache, Mockito.times(0)).put(Mockito.anyString(), Mockito.any(Map.class));
 		Object requiredMap = cacheInfoManager.getFromCache(ICacheInfoManager.CACHE_INFO_MANAGER_CACHE_NAME, 
 				ICacheInfoManager.GROUP_CACHE_NAME_PREFIX + ICacheInfoManager.CACHE_INFO_MANAGER_CACHE_NAME);
 		Assert.assertTrue(requiredMap instanceof Map);

@@ -77,6 +77,9 @@ public class PageController {
     public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "1";
     public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "2";
 
+    public static final String ERRCODE_PAGE_WITH_PUBLIC_CHILD = "8";
+    public static final String ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT = "9";
+
     @Autowired
     private IPageService pageService;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -54,7 +54,6 @@ public class CustomConcurrentMapCacheFactoryBean implements FactoryBean<CustomCo
 	 * Set whether to allow {@code null} values
 	 * (adapting them to an internal null holder value).
 	 * <p>Default is "true".
-     * @param allowNullValues The value to set
 	 */
 	public void setAllowNullValues(boolean allowNullValues) {
 		this.allowNullValues = allowNullValues;
@@ -72,6 +71,7 @@ public class CustomConcurrentMapCacheFactoryBean implements FactoryBean<CustomCo
 		this.cache = (this.store != null ? new CustomConcurrentMapCache(this.name, this.store, this.allowNullValues) :
 				new CustomConcurrentMapCache(this.name, this.allowNullValues));
 	}
+
 
 	@Override
 	public CustomConcurrentMapCache getObject() {

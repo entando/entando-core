@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  * 
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -37,6 +37,9 @@ public class StringValidator implements ConstraintValidator<ValidateString, Stri
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+        if (null == value) {
+            return true;
+        }
         if (!valueList.contains(value.toUpperCase())) {
             return false;
         }

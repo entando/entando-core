@@ -284,7 +284,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         IPage currentPage = this.getPageManager().getDraftPage(pageCode);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
         if (null == currentPage) {
-            throw new RestRourceNotFoundException(null, "page", pageCode);
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         if (status.equals(STATUS_DRAFT) && null == this.getPageManager().getOnlinePage(pageCode)) {
             return this.getDtoBuilder().convert(currentPage);

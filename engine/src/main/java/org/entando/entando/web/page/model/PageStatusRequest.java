@@ -14,13 +14,15 @@
 package org.entando.entando.web.page.model;
 
 import org.entando.entando.web.common.annotation.ValidateString;
+import org.hibernate.validator.constraints.NotEmpty;
 
 /**
  *
  * @author paddeo
  */
 public class PageStatusRequest {
-
+    
+    @NotEmpty(message = "page.status.invalid")
     @ValidateString(acceptedValues = {"draft", "published"}, message = "page.status.invalid")
     private String status;
 

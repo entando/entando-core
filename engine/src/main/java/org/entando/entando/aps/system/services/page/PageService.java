@@ -293,12 +293,35 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Override
     public PageDto updatePageStatus(String pageCode, String status) {
-        IPage newPage = null;
+        IPage currentPage = this.getPageManager().getDraftPage(pageCode);
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
+        if (null == currentPage) {
+            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+        }
+        if (status.equals(STATUS_DRAFT) && null == this.getPageManager().getOnlinePage(pageCode)) {
+            return this.getDtoBuilder().convert(currentPage);
+        }
         try {
-            if (status != null && status.equals(STATUS_ONLINE)) {
+            IPage newPage = null;
+            if (status.equals(STATUS_ONLINE)) {
+                IPage publicParent = this.getPageManager().getOnlinePage(currentPage.getParentCode());
+                if (null == publicParent) {
+                    bindingResult.reject(PageController.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT, 
+                            new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
+                    throw new ValidationGenericException(bindingResult);
+                }
                 this.getPageManager().setPageOnline(pageCode);
                 newPage = this.getPageManager().getOnlinePage(pageCode);
-            } else if (status != null && status.equals(STATUS_DRAFT)) {
+            } else if (status.equals(STATUS_DRAFT)) {
+                String[] childCodes = currentPage.getChildrenCodes();
+                for (String childCode : childCodes) {
+                    IPage publicChild = this.getPageManager().getOnlinePage(childCode);
+                    if (null != publicChild) {
+                        bindingResult.reject(PageController.ERRCODE_PAGE_WITH_PUBLIC_CHILD, 
+                                new String[]{pageCode}, "page.status.publicChild");
+                        throw new ValidationGenericException(bindingResult);
+                    }
+                }
                 Map<String, PageServiceUtilizer> beans = applicationContext.getBeansOfType(PageServiceUtilizer.class);
                 if (null != beans) {
                     Iterator<PageServiceUtilizer> iter = beans.values().iterator();
@@ -306,7 +329,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                         PageServiceUtilizer serviceUtilizer = iter.next();
                         List utilizer = serviceUtilizer.getPageUtilizer(pageCode);
                         if (null != utilizer && utilizer.size() > 0) {
-                            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
                             bindingResult.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
                             throw new ValidationGenericException(bindingResult);
                         }

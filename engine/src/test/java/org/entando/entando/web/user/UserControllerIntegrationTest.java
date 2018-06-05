@@ -65,7 +65,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IAuthenticationProviderManager authenticationProviderManager;
-    /*
+    
     @Test
     public void testGetUsersDefaultSorting() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -418,7 +418,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             this.userManager.removeUser(validUsername);
         }
     }
-    */
+    
     @Test
     public void testUserPagination() throws Exception {
         String userPrefix = "test_pager_";

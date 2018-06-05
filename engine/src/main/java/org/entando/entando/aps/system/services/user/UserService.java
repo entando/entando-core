@@ -181,10 +181,10 @@ public class UserService implements IUserService {
             } else {
                 userNames = this.getUserManager().getUsernames();
             }
-            userNames.forEach(username -> users.add(this.loadUser(username)));
-            List<UserDto> dtoList = dtoBuilder.convert(users);
-            SearcherDaoPaginatedResult<UserDetails> result = new SearcherDaoPaginatedResult<>(users.size(), users);
-            PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(requestList, result);
+            List<String> sublist = requestList.getSublist(userNames);
+            sublist.forEach(username -> users.add(this.loadUser(username)));
+            List<UserDto> dtoList = this.dtoBuilder.convert(users);
+            PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(requestList, userNames.size());
             pagedMetadata.setBody(dtoList);
             return pagedMetadata;
         } catch (Throwable t) {

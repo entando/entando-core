@@ -194,21 +194,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
         IPage parent = this.getPageManager().getDraftPage(parentCode);
-        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
-            IPage childO = this.getPageManager().getOnlinePage(childCode),
-                    childD = this.getPageManager().getDraftPage(childCode);
-            PageDto child = null;
-            if (childO != null) {
-                child = dtoBuilder.convert(childO);
-                if (childO.isChanged()) {
-                    child.setStatus(STATUS_DRAFT);
-                }
-            } else {
-                child = dtoBuilder.convert(childD);
-                child.setStatus(STATUS_UNPUBLISHED);
-            }
-            child.setChildren(Arrays.asList(childD.getChildrenCodes()));
-            res.add(child);
+        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(root.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
+            IPage childD = this.getPageManager().getDraftPage(childCode);
+            res.add(dtoBuilder.convert(childD));
         })));
         return res;
     }
@@ -269,13 +257,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
             bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
-                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
-            throw new ValidationGenericException(bindingResult);
-        }
-        if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
-                    new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
+                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.parentcode.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         try {
@@ -326,24 +308,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Override
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
-        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
-        if (pageCode.equals(pageRequest.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, new String[]{pageCode}, "page.movement.parent.invalid.1");
-            throw new ValidationGenericException(bindingResult);
-        }
-        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
-        IPage page = this.getPageManager().getDraftPage(pageCode);
-        if (parent.isChildOf(pageCode)) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, 
-                    new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
-            throw new ValidationGenericException(bindingResult);
-        }
-        String parentGroup = parent.getGroup();
-        if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH, 
-                    new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
-            throw new ValidationGenericException(bindingResult);
-        }
+        IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
+                page = this.getPageManager().getDraftPage(pageCode);
         boolean moved = true;
         int iterations = Math.abs(page.getPosition() - pageRequest.getPosition());
         boolean moveUp = page.getPosition() > pageRequest.getPosition();

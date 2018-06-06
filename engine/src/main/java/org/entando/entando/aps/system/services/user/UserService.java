@@ -14,7 +14,6 @@
 package org.entando.entando.aps.system.services.user;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;

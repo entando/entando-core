@@ -131,7 +131,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     public void testAddUserAuthorities_2() throws Exception {
         Group group = createGroup(1);
         Role role = createRole(1);
-        UserDetails mockuser = this.createUser("mockuser");
+        String username = "mockuser_1";
+        UserDetails mockuser = this.createUser(username);
         try {
             this.groupManager.addGroup(group);
             this.roleManager.addRole(role);
@@ -140,28 +141,28 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             String accessToken = mockOAuthInterceptor(user);
             String mockJson1 = "[{\"group\":\"group1\", \"role\":\"role1\"}]";
             ResultActions result1 = mockMvc.perform(
-                    post("/users/{target}/authorities", "mockuser")
+                    post("/users/{target}/authorities", username)
                     .content(mockJson1).contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
             result1.andExpect(jsonPath("$.payload[0].group", is("group1")));
 
-            List<Authorization> auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            List<Authorization> auths = this.authorizationManager.getUserAuthorizations(username);
             Assert.assertEquals(1, auths.size());
 
             String mockJson2 = "[{\"group\":\"customers\", \"role\":\"supervisor\"}]";
             ResultActions result2 = mockMvc.perform(
-                    post("/users/{target}/authorities", "mockuser")
+                    post("/users/{target}/authorities", username)
                     .content(mockJson2).contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("customers")));
 
-            auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            auths = this.authorizationManager.getUserAuthorizations(username);
             Assert.assertEquals(2, auths.size());
 
             ResultActions result3 = mockMvc.perform(
-                    get("/users/{target}/authorities", "mockuser")
+                    get("/users/{target}/authorities", username)
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isOk());
@@ -170,21 +171,95 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             String mockJson4 = "[{\"group\":\"helpdesk\", \"role\":\"pageManager\"}]";
 
             ResultActions result4 = mockMvc.perform(
-                    put("/users/{target}/authorities", "mockuser")
+                    put("/users/{target}/authorities", username)
                     .content(mockJson4).contentType(MediaType.APPLICATION_JSON)
                     .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             result4.andExpect(jsonPath("$.payload[0].group", is("helpdesk")));
 
-            auths = this.authorizationManager.getUserAuthorizations("mockuser");
+            auths = this.authorizationManager.getUserAuthorizations(username);
+            Assert.assertEquals(1, auths.size());
+            Assert.assertEquals("helpdesk", auths.get(0).getGroup().getName());
+            
+            String mockJson5 = "[{\"group\":\"wrong_group\", \"role\":\"pageManager\"}]";
+            ResultActions result5 = mockMvc.perform(
+                    put("/users/{target}/authorities", username)
+                    .content(mockJson5).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result5.andExpect(status().isBadRequest());
+            result5.andExpect(jsonPath("$.errors.size()", is(1)));
+            result5.andExpect(jsonPath("$.errors[0].code", is("2")));
+            
+            auths = this.authorizationManager.getUserAuthorizations(username);
             Assert.assertEquals(1, auths.size());
             Assert.assertEquals("helpdesk", auths.get(0).getGroup().getName());
 
         } finally {
-            this.authorizationManager.deleteUserAuthorizations("mockuser");
+            this.authorizationManager.deleteUserAuthorizations(username);
             this.groupManager.removeGroup(group);
             this.roleManager.removeRole(role);
-            this.userManager.removeUser("mockuser");
+            this.userManager.removeUser(username);
+        }
+    }
+
+    @Test
+    public void testAddUserAuthorities_3() throws Exception {
+        Group group = this.createGroup(100);
+        Role role = this.createRole(100);
+        String username = "mockuser_2";
+        UserDetails mockuser = this.createUser(username);
+        try {
+            this.groupManager.addGroup(group);
+            this.roleManager.addRole(role);
+            this.userManager.addUser(mockuser);
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            String mockJson1 = "[{\"group\":null, \"role\":\"role100\"}]";
+            ResultActions result1 = mockMvc.perform(
+                    post("/users/{target}/authorities", username)
+                    .content(mockJson1).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result1.andExpect(status().isOk());
+            result1.andExpect(jsonPath("$.payload[0].role", is("role100")));
+
+            List<Authorization> auths = this.authorizationManager.getUserAuthorizations(username);
+            Assert.assertEquals(1, auths.size());
+            
+            String mockJson2 = "[{\"group\":\"customers\", \"role\":null}]";
+            ResultActions result2 = mockMvc.perform(
+                    post("/users/{target}/authorities", username)
+                    .content(mockJson2).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result2.andExpect(status().isOk());
+            result2.andExpect(jsonPath("$.payload[0].group", is("customers")));
+
+            auths = this.authorizationManager.getUserAuthorizations(username);
+            Assert.assertEquals(2, auths.size());
+            
+            ResultActions result3 = mockMvc.perform(
+                    get("/users/{target}/authorities", username)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result3.andExpect(status().isOk());
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
+
+            String mockJson4 = "[{\"group\":null, \"role\":null}]";
+
+            ResultActions result4 = mockMvc.perform(
+                    put("/users/{target}/authorities", username)
+                    .content(mockJson4).contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
+            result4.andExpect(status().isBadRequest());
+            result4.andExpect(jsonPath("$.errors.size()", is(1)));
+
+            auths = this.authorizationManager.getUserAuthorizations(username);
+            Assert.assertEquals(2, auths.size());
+            
+        } finally {
+            this.authorizationManager.deleteUserAuthorizations(username);
+            this.groupManager.removeGroup(group);
+            this.roleManager.removeRole(role);
+            this.userManager.removeUser(username);
         }
     }
 

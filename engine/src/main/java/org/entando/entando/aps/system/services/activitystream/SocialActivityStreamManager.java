@@ -33,7 +33,7 @@ import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * @author E.Santoboni - S.Puddu
@@ -60,7 +60,7 @@ public class SocialActivityStreamManager extends AbstractService implements ISoc
     }
 
     @Override
-    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamLikeRecords_id_'.concat(#id)")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamLikeRecords_id_'.concat(#id)")
     @CacheableInfo(groups = "'ActivityStreamLikeRecords_cacheGroup'")
     public List<ActivityStreamLikeInfo> getActionLikeRecords(int id) throws ApsSystemException {
         List<ActivityStreamLikeInfo> infos = null;
@@ -123,7 +123,7 @@ public class SocialActivityStreamManager extends AbstractService implements ISoc
     }
 
     @Override
-    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#id)")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'ActivityStreamCommentRecords_id_'.concat(#id)")
     @CacheableInfo(groups = "'ActivityStreamCommentRecords_cacheGroup'")
     public List<ActivityStreamComment> getActionCommentRecords(int id) throws ApsSystemException {
         List<ActivityStreamComment> infos = null;

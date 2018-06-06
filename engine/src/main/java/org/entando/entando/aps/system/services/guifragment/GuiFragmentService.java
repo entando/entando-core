@@ -75,10 +75,12 @@ public class GuiFragmentService implements IGuiFragmentService {
     public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq) {
         PagedMetadata<GuiFragmentDtoSmall> pagedMetadata = null;
         try {
-            if (Arrays.asList(restListReq.getFilters()).stream().anyMatch(filter -> filter.getAttribute().equals("widgetType"))) {
-                int index = Arrays.asList(restListReq.getFilters()).indexOf(Arrays.asList(restListReq.getFilters())
-                        .stream().filter(filter -> filter.getAttribute().equals("widgetType")).findAny().get());
-                restListReq.getFilters()[index].setAttribute("widgetTypeCode");
+            if (null != restListReq.getFilters() && restListReq.getFilters().length > 0) {
+                if (Arrays.asList(restListReq.getFilters()).stream().anyMatch(filter -> filter.getAttribute().equals("widgetType"))) {
+                    int index = Arrays.asList(restListReq.getFilters()).indexOf(Arrays.asList(restListReq.getFilters())
+                            .stream().filter(filter -> filter.getAttribute().equals("widgetType")).findAny().get());
+                    restListReq.getFilters()[index].setAttribute("widgetTypeCode");
+                }
             }
             SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.buildFieldSearchFilters());
             List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());

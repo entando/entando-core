@@ -33,6 +33,7 @@ import org.entando.entando.web.filebrowser.FileBrowserControllerIntegrationTest;
 import org.entando.entando.web.filebrowser.FileBrowserControllerTest;
 import org.entando.entando.web.group.GroupControllerIntegrationTest;
 import org.entando.entando.web.group.GroupControllerUnitTest;
+import org.entando.entando.web.guifragment.GuiFragmentControllerIntegrationTest;
 import org.entando.entando.web.guifragment.GuiFragmentControllerTest;
 import org.entando.entando.web.guifragment.GuiFragmentSettingsControllerIntegrationTest;
 import org.entando.entando.web.guifragment.GuiFragmentSettingsControllerTest;
@@ -65,11 +66,12 @@ public class ControllersAllTests extends TestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite(ControllersAllTests.class.getName());
-
+        
         suite.addTest(new JUnit4TestAdapter(GroupControllerUnitTest.class));
         suite.addTest(new JUnit4TestAdapter(GroupControllerIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(GuiFragmentControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(GuiFragmentControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentSettingsControllerTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentSettingsControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(GuiFragmentValidatorTest.class));
@@ -128,7 +130,7 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(StreamInterceptorIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DashboardControllerIntegrationTest.class));
-
+        
         return suite;
     }
 

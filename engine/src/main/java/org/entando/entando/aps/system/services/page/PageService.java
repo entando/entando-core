@@ -194,21 +194,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
         IPage parent = this.getPageManager().getDraftPage(parentCode);
-        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
-            IPage childO = this.getPageManager().getOnlinePage(childCode),
-                    childD = this.getPageManager().getDraftPage(childCode);
-            PageDto child = null;
-            if (childO != null) {
-                child = dtoBuilder.convert(childO);
-                if (childO.isChanged()) {
-                    child.setStatus(STATUS_DRAFT);
-                }
-            } else {
-                child = dtoBuilder.convert(childD);
-                child.setStatus(STATUS_UNPUBLISHED);
-            }
-            child.setChildren(Arrays.asList(childD.getChildrenCodes()));
-            res.add(child);
+        Optional.ofNullable(parent).ifPresent(root -> Optional.ofNullable(root.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
+            IPage childD = this.getPageManager().getDraftPage(childCode);
+            res.add(dtoBuilder.convert(childD));
         })));
         return res;
     }
@@ -356,13 +344,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
         IPage page = this.getPageManager().getDraftPage(pageCode);
         if (parent.isChildOf(pageCode)) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, 
+            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
                     new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
             throw new ValidationGenericException(bindingResult);
         }
         String parentGroup = parent.getGroup();
         if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH, 
+            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
                     new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
             throw new ValidationGenericException(bindingResult);
         }

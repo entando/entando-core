@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.util.Arrays;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -34,46 +35,53 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
 
 public class GuiFragmentService implements IGuiFragmentService {
-
+    
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
+    
     @Autowired
     private IGuiFragmentManager guiFragmentManager;
-
+    
     @Autowired
     private IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder;
-
+    
     @Autowired
     private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
-
+    
     protected IGuiFragmentManager getGuiFragmentManager() {
         return guiFragmentManager;
     }
-
+    
     public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
         this.guiFragmentManager = guiFragmentManager;
     }
-
+    
     protected IDtoBuilder<GuiFragment, GuiFragmentDto> getDtoBuilder() {
         return dtoBuilder;
     }
-
+    
     public void setDtoBuilder(IDtoBuilder<GuiFragment, GuiFragmentDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
-
+    
     protected IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> getDtoSmallBuilder() {
         return dtoSmallBuilder;
     }
-
+    
     public void setDtoSmallBuilder(IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder) {
         this.dtoSmallBuilder = dtoSmallBuilder;
     }
-
+    
     @Override
     public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq) {
         PagedMetadata<GuiFragmentDtoSmall> pagedMetadata = null;
         try {
+            if (null != restListReq.getFilters() && restListReq.getFilters().length > 0) {
+                if (Arrays.asList(restListReq.getFilters()).stream().anyMatch(filter -> filter.getAttribute().equals("widgetType"))) {
+                    int index = Arrays.asList(restListReq.getFilters()).indexOf(Arrays.asList(restListReq.getFilters())
+                            .stream().filter(filter -> filter.getAttribute().equals("widgetType")).findAny().get());
+                    restListReq.getFilters()[index].setAttribute("widgetTypeCode");
+                }
+            }
             SearcherDaoPaginatedResult<GuiFragment> fragments = this.getGuiFragmentManager().getGuiFragments(restListReq.buildFieldSearchFilters());
             List<GuiFragmentDtoSmall> dtoList = this.getDtoSmallBuilder().convert(fragments.getList());
             pagedMetadata = new PagedMetadata<>(restListReq, fragments);
@@ -84,7 +92,7 @@ public class GuiFragmentService implements IGuiFragmentService {
         }
         return pagedMetadata;
     }
-
+    
     @Override
     public GuiFragmentDto getGuiFragment(String code) {
         GuiFragment fragment = null;
@@ -100,7 +108,7 @@ public class GuiFragmentService implements IGuiFragmentService {
         }
         return this.getDtoBuilder().convert(fragment);
     }
-
+    
     @Override
     public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
         try {
@@ -112,7 +120,7 @@ public class GuiFragmentService implements IGuiFragmentService {
             throw new RestServerError("error add fragment", e);
         }
     }
-
+    
     @Override
     public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
         String code = guiFragmentRequest.getCode();
@@ -131,7 +139,7 @@ public class GuiFragmentService implements IGuiFragmentService {
             throw new RestServerError("error in update fragment", e);
         }
     }
-
+    
     @Override
     public void removeGuiFragment(String guiFragmentCode) {
         try {
@@ -150,7 +158,7 @@ public class GuiFragmentService implements IGuiFragmentService {
             throw new RestServerError("error in delete guiFragmentCode", e);
         }
     }
-
+    
     @Override
     public List<String> getPluginCodes() {
         try {
@@ -160,14 +168,14 @@ public class GuiFragmentService implements IGuiFragmentService {
             throw new RestServerError("Error loading plugin codes", e);
         }
     }
-
+    
     private GuiFragment createGuiFragment(GuiFragmentRequestBody guiFragmentRequest) {
         GuiFragment fragment = new GuiFragment();
         fragment.setCode(guiFragmentRequest.getCode());
         fragment.setGui(guiFragmentRequest.getGuiCode());
         return fragment;
     }
-
+    
     protected BeanPropertyBindingResult checkFragmentForDelete(GuiFragment fragment, GuiFragmentDto dto) throws ApsSystemException {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(fragment, "fragment");
         if (null == fragment) {
@@ -177,12 +185,12 @@ public class GuiFragmentService implements IGuiFragmentService {
             List<String> fragments = dto.getFragments().stream().map(GuiFragmentDto.FragmentRef::getCode).collect(Collectors.toList());
             List<String> pagemodels = dto.getPageModels().stream().map(GuiFragmentDto.PageModelRef::getCode).collect(Collectors.toList());
             bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_REFERENCES,
-                                 new Object[]{fragment.getCode(), fragments, pagemodels}, "guifragment.cannot.delete.references");
+                    new Object[]{fragment.getCode(), fragments, pagemodels}, "guifragment.cannot.delete.references");
         }
         if (fragment.isLocked()) {
             bindingResult.reject(GuiFragmentValidator.ERRCODE_FRAGMENT_LOCKED, new Object[]{fragment.getCode()}, "guifragment.cannot.delete.locked");
         }
         return bindingResult;
     }
-
+    
 }

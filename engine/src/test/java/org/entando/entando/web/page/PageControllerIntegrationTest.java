@@ -64,6 +64,63 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
+    public void testPageTree() throws Throwable {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String newPageCode = "test_page";
+        try {
+            ResultActions result = mockMvc
+                .perform(get("/pages")
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.size()", is(7)));
+            result.andExpect(jsonPath("$.payload[0].code", is("service")));
+            result.andExpect(jsonPath("$.metaData.parentCode", is("homepage")));
+            
+            IPage newPage = this.createPage(newPageCode, null, this.pageManager.getDraftRoot().getCode());
+            newPage.setTitle("it", "Title IT");
+            newPage.setTitle("en", "Title EN");
+            this.pageManager.addPage(newPage);
+            
+            result = mockMvc
+                .perform(get("/pages")
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(jsonPath("$.payload.size()", is(8)));
+            result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload[7].status", is("unpublished")));
+            result.andExpect(jsonPath("$.payload[7].titles.it", is("Title IT")));
+            result.andExpect(jsonPath("$.payload[7].titles.en", is("Title EN")));
+            
+            this.pageManager.setPageOnline(newPageCode);
+            
+            result = mockMvc
+                .perform(get("/pages")
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(jsonPath("$.payload.size()", is(8)));
+            result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload[7].status", is("published")));
+            result.andExpect(jsonPath("$.payload[7].titles.it", is("Title IT")));
+            result.andExpect(jsonPath("$.payload[7].titles.en", is("Title EN")));
+            
+            IPage extracted = this.pageManager.getDraftPage(newPageCode);
+            extracted.setTitle("it", "DRAFT title IT");
+            extracted.setTitle("en", "DRAFT title EN");
+            this.pageManager.updatePage(extracted);
+            
+            result = mockMvc
+                .perform(get("/pages")
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(jsonPath("$.payload.size()", is(8)));
+            result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload[7].status", is("draft")));
+            result.andExpect(jsonPath("$.payload[7].titles.it", is("DRAFT title IT")));
+            result.andExpect(jsonPath("$.payload[7].titles.en", is("DRAFT title EN")));
+        } finally {
+            this.pageManager.deletePage(newPageCode);
+        }
+    }
+    
+    @Test
     public void testPageSearch() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -89,20 +146,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         result.andExpect(jsonPath("$.payload.code", is("pagina_11")));
         result.andExpect(jsonPath("$.payload.references.length()", is(0)));
     }
-
-    /*
-    @Test
-    public void testPageGetReferences() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/pages/{code}/references/{manager}", "pagina_11", "jacmsContentManager")
-                        .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData.totalItems", is(2)));
-    }
-     */
+    
     @Test
     public void testPageSearchFreeOnlinePages() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -377,7 +421,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage(codeParent);
         }
     }
-
+    
     protected Page createPage(String pageCode, PageModel pageModel, String parent) {
         if (null == parent) {
             parent = "service";

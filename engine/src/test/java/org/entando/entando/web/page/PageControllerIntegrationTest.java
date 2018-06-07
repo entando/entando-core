@@ -215,6 +215,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.size()", is(8)));
             result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
             result.andExpect(jsonPath("$.payload[7].status", is("published")));
@@ -229,6 +230,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.size()", is(8)));
             result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
             result.andExpect(jsonPath("$.payload[7].status", is("draft")));

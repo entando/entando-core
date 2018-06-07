@@ -125,6 +125,23 @@ public class DatabaseService implements IDatabaseService {
     }
 
     @Override
+    public void startDatabaseRestore(String reportCode) {
+        try {
+            DataSourceDumpReport report = this.getDatabaseManager().getBackupReport(reportCode);
+            if (null == report) {
+                logger.warn("no dump found with code {}", reportCode);
+                throw new RestRourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
+            }
+            this.getDatabaseManager().dropAndRestoreBackup(reportCode);
+        } catch (RestRourceNotFoundException r) {
+            throw r;
+        } catch (Throwable t) {
+            logger.error("error starting restore", t);
+            throw new RestServerError("error starting restore", t);
+        }
+    }
+
+    @Override
     public byte[] getTableDump(String reportCode, String dataSource, String tableName) {
         File tempFile = null;
         byte[] bytes = null;

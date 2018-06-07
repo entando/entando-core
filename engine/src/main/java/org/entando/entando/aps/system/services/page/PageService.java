@@ -215,7 +215,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         String token = this.getPageTokenManager().encrypt(pageCode);
         PageDto pageDto = this.getDtoBuilder().convert(page);
         pageDto.setToken(token);
-        pageDto.setStatus(status);
         pageDto.setReferences(this.getReferencesInfo(page));
         return pageDto;
     }

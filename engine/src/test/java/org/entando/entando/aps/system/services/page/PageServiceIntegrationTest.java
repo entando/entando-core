@@ -134,80 +134,95 @@ public class PageServiceIntegrationTest extends BaseTestCase {
 
     @Test
     public void testUpdatePageStatus() {
-        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
-        assertNotNull(pageToClone);
-        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
-        pageRequest.setCode("pagina_13");
-        PageDto addedPage = pageService.addPage(pageRequest);
-        assertNotNull(addedPage);
-        assertEquals("pagina_13", addedPage.getCode());
-        assertEquals("pagina_1", addedPage.getParentCode());
+        String newPageCode = "pagina_13";
+        try {
+            PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+            assertNotNull(pageToClone);
+            PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+            pageRequest.setCode(newPageCode);
+            PageDto addedPage = pageService.addPage(pageRequest);
+            assertNotNull(addedPage);
+            assertEquals(newPageCode, addedPage.getCode());
+            assertEquals("pagina_1", addedPage.getParentCode());
 
-        addedPage = pageService.getPage("pagina_13", "draft");
-        assertEquals("draft", addedPage.getStatus());
+            addedPage = pageService.getPage(newPageCode, "draft");
+            assertEquals("unpublished", addedPage.getStatus());
 
-        PageStatusRequest pageStatusRequest = new PageStatusRequest();
-        pageStatusRequest.setStatus("published");
-        PageDto modPage = pageService.updatePageStatus("pagina_13", pageStatusRequest.getStatus());
-        assertNotNull(modPage);
-        assertEquals("published", modPage.getStatus());
+            PageStatusRequest pageStatusRequest = new PageStatusRequest();
+            pageStatusRequest.setStatus("published");
+            PageDto modPage = pageService.updatePageStatus(newPageCode, pageStatusRequest.getStatus());
+            assertNotNull(modPage);
+            assertEquals("published", modPage.getStatus());
 
-        addedPage = pageService.getPage("pagina_13", "published");
-        assertNotNull(addedPage);
-        assertEquals("published", addedPage.getStatus());
-
-        pageService.removePage("pagina_13");
+            addedPage = pageService.getPage(newPageCode, "published");
+            assertNotNull(addedPage);
+            assertEquals("published", addedPage.getStatus());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            pageService.removePage(newPageCode);
+        }
     }
 
     @Test
     public void testChangeOnlyPosition() {
-        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
-        assertNotNull(pageToClone);
-        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
-        pageRequest.setCode("pagina_13");
-        PageDto addedPage = pageService.addPage(pageRequest);
-        assertNotNull(addedPage);
-        assertEquals("pagina_1", addedPage.getParentCode());
-        assertEquals(3, addedPage.getPosition());
+        String newPageCode = "pagina_13";
+        try {
+            PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+            assertNotNull(pageToClone);
+            PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+            pageRequest.setCode(newPageCode);
+            PageDto addedPage = pageService.addPage(pageRequest);
+            assertNotNull(addedPage);
+            assertEquals("pagina_1", addedPage.getParentCode());
+            assertEquals(3, addedPage.getPosition());
 
-        PagePositionRequest pagePosRequest = new PagePositionRequest();
-        pagePosRequest.setCode("pagina_13");
-        pagePosRequest.setParentCode("pagina_1");
-        pagePosRequest.setPosition(1);
-        addedPage = pageService.movePage("pagina_13", pagePosRequest);
-        assertNotNull(addedPage);
-        assertEquals("pagina_1", addedPage.getParentCode());
-        assertEquals(1, addedPage.getPosition());
-
-        pageService.removePage("pagina_13");
+            PagePositionRequest pagePosRequest = new PagePositionRequest();
+            pagePosRequest.setCode(newPageCode);
+            pagePosRequest.setParentCode("pagina_1");
+            pagePosRequest.setPosition(1);
+            addedPage = pageService.movePage(newPageCode, pagePosRequest);
+            assertNotNull(addedPage);
+            assertEquals("pagina_1", addedPage.getParentCode());
+            assertEquals(1, addedPage.getPosition());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            pageService.removePage(newPageCode);
+        }
     }
 
     @Test
     public void testChangeNode() {
-        PageDto pageToClone = pageService.getPage("pagina_11", "draft");
-        assertNotNull(pageToClone);
-        PageRequest pageRequest = this.createRequestFromDto(pageToClone);
-        pageRequest.setCode("pagina_13");
-        PageDto addedPage = pageService.addPage(pageRequest);
-        assertNotNull(addedPage);
-        assertEquals("pagina_1", addedPage.getParentCode());
-        assertEquals(3, addedPage.getPosition());
+        String newPageCode = "pagina_13";
+        try {
+            PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+            assertNotNull(pageToClone);
+            PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+            pageRequest.setCode(newPageCode);
+            PageDto addedPage = pageService.addPage(pageRequest);
+            assertNotNull(addedPage);
+            assertEquals("pagina_1", addedPage.getParentCode());
+            assertEquals(3, addedPage.getPosition());
 
-        PagePositionRequest pagePosRequest = new PagePositionRequest();
-        pagePosRequest.setCode("pagina_13");
-        pagePosRequest.setParentCode("pagina_2");
-        pagePosRequest.setPosition(1);
-        addedPage = pageService.movePage("pagina_13", pagePosRequest);
-        assertNotNull(addedPage);
-        assertEquals("pagina_2", addedPage.getParentCode());
-        assertEquals(1, addedPage.getPosition());
+            PagePositionRequest pagePosRequest = new PagePositionRequest();
+            pagePosRequest.setCode(newPageCode);
+            pagePosRequest.setParentCode("pagina_2");
+            pagePosRequest.setPosition(1);
+            addedPage = pageService.movePage(newPageCode, pagePosRequest);
+            assertNotNull(addedPage);
+            assertEquals("pagina_2", addedPage.getParentCode());
+            assertEquals(1, addedPage.getPosition());
 
-        List<PageDto> pages = pageService.getPages("pagina_2");
-        assertNotNull(pages);
-        assertEquals(1, pages.size());
-        assertEquals("pagina_13", pages.get(0).getCode());
-
-        pageService.removePage("pagina_13");
+            List<PageDto> pages = pageService.getPages("pagina_2");
+            assertNotNull(pages);
+            assertEquals(1, pages.size());
+            assertEquals(newPageCode, pages.get(0).getCode());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            pageService.removePage(newPageCode);
+        }
     }
 
     private PageRequest createRequestFromDto(PageDto pageToClone) {

@@ -95,11 +95,11 @@ public class DatabaseController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/restoreBackup/{reportCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> restoreBackup(@PathVariable String reportCode) throws Throwable {
-        logger.debug("Starting database restore");
+        logger.debug("Starting database restore -> code {}", reportCode);
         this.getDatabaseService().startDatabaseRestore(reportCode);
         Map<String, String> response = new HashMap<>();
         response.put("status", String.valueOf(this.getDatabaseService().getStatus()));
-        logger.debug("Database restore started");
+        logger.debug("Database restore started -> code {}", reportCode);
         return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
     }
 

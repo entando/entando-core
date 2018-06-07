@@ -32,6 +32,8 @@ public interface IDatabaseService {
     public List<ComponentDto> getCurrentComponents();
 
     public void startDatabaseBackup();
+    
+    public void startDatabaseRestore(String reportCode);
 
     public DumpReportDto getDumpReportDto(String reportCode);
 

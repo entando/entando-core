@@ -33,6 +33,7 @@ import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -86,6 +87,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.size()", is(8)));
             result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
             result.andExpect(jsonPath("$.payload[7].status", is("unpublished")));
@@ -97,6 +99,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.size()", is(8)));
             result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
             result.andExpect(jsonPath("$.payload[7].status", is("published")));
@@ -111,6 +114,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.size()", is(8)));
             result.andExpect(jsonPath("$.payload[7].code", is(newPageCode)));
             result.andExpect(jsonPath("$.payload[7].status", is("draft")));
@@ -136,16 +140,71 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testPageGet() throws Exception {
+    public void testGetPage_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/pages/{code}", "pagina_11")
                         .header("Authorization", "Bearer " + accessToken));
-
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.code", is("pagina_11")));
         result.andExpect(jsonPath("$.payload.references.length()", is(0)));
+    }
+    
+    @Test
+    public void testGetPage_2() throws Throwable {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String newPageCode = "test_page";
+        try {
+            ResultActions result = mockMvc
+                .perform(get("/pages/{code}", newPageCode)
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isNotFound());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            
+            IPage newPage = this.createPage(newPageCode, null, this.pageManager.getDraftRoot().getCode());
+            newPage.setTitle("it", "Title IT");
+            newPage.setTitle("en", "Title EN");
+            this.pageManager.addPage(newPage);
+            
+            result = mockMvc
+                .perform(get("/pages/{code}", newPageCode)
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload.status", is("unpublished")));
+            result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
+            result.andExpect(jsonPath("$.payload.titles.en", is("Title EN")));
+            
+            this.pageManager.setPageOnline(newPageCode);
+            
+            result = mockMvc
+                .perform(get("/pages/{code}", newPageCode)
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload.status", is("published")));
+            result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
+            result.andExpect(jsonPath("$.payload.titles.en", is("Title EN")));
+            
+            IPage extracted = this.pageManager.getDraftPage(newPageCode);
+            extracted.setTitle("it", "DRAFT title IT");
+            extracted.setTitle("en", "DRAFT title EN");
+            this.pageManager.updatePage(extracted);
+            
+            result = mockMvc
+                .perform(get("/pages/{code}", newPageCode)
+                        .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(newPageCode)));
+            result.andExpect(jsonPath("$.payload.status", is("draft")));
+            result.andExpect(jsonPath("$.payload.titles.it", is("DRAFT title IT")));
+            result.andExpect(jsonPath("$.payload.titles.en", is("DRAFT title EN")));
+        } finally {
+            this.pageManager.deletePage(newPageCode);
+        }
     }
 
     @Test

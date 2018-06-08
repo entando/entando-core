@@ -152,14 +152,33 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             result.andExpect(jsonPath("$.errors[0].code", is("53")));
             result.andExpect(jsonPath("$.metaData.size()", is(0)));
             
+            code = "veryLongCategoryCode_veryLongCategoryCode_veryLongCategoryCode";
+            request.setKey(code);
+            
+            result = this.executePost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("54")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
+            code = "Special_$_12&";
+            request.setKey(code);
+            
+            result = this.executePost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("58")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
         } catch (Exception e) {
             this.ii18nManager.deleteLabelGroup(code);
+            throw e;
         }
     }
 
     @Test
     public void testCrudLabelGroup() throws Exception {
-        String code = "THIS_LABEL_HAS_NO_NAME";
+        String code = "Label_KEY_123";
         ObjectMapper mapper = new ObjectMapper();
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -455,10 +474,13 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     private ResultActions executePost(LabelRequest request, String accessToken, ResultMatcher expected) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         String payLoad = mapper.writeValueAsString(request);
-        ResultActions result= mockMvc.perform(post("/labels")
+        ResultActions result = mockMvc.perform(post("/labels")
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
+        System.out.println("--------------");
+        System.out.println(result.andReturn().getResponse().getContentAsString());
+        System.out.println("--------------");
         result.andExpect(expected);
         return result;
     }

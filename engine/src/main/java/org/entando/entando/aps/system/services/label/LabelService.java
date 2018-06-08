@@ -113,7 +113,6 @@ public class LabelService implements ILabelService {
                 throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             return this.getDtoBuilder().convert(code, labelGroup);
-
         } catch (ApsSystemException t) {
             logger.error("error in get label group with code {}", code, t);
             throw new RestServerError("error in get label group", t);
@@ -180,7 +179,6 @@ public class LabelService implements ILabelService {
         try {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(labelDto, "labelGroup");
             String defaultLang = this.getLangManager().getDefaultLang().getCode();
-
             boolean isDefaultLangValid = validateDefaultLang(labelDto, bindingResult, defaultLang);
             if (!isDefaultLangValid) {
                 return bindingResult;
@@ -218,9 +216,7 @@ public class LabelService implements ILabelService {
     protected void validateLabelEntry(LabelDto labelDto, String defaultLang, BeanPropertyBindingResult bindingResult) throws ApsSystemException {
         List<String> configuredLangs = this.getLangManager().getLangs().stream().map(i -> i.getCode()).collect(Collectors.toList());
         List<String> systemLangs = this.getLangManager().getAssignableLangs().stream()
-                                       .map(i -> i.getCode())
-
-                                       .collect(Collectors.toList());
+                                       .map(i -> i.getCode()).collect(Collectors.toList());
         labelDto.getTitles().entrySet().forEach(i -> validateLangEntry(i, systemLangs, configuredLangs, defaultLang, bindingResult));
     }
 
@@ -239,13 +235,11 @@ public class LabelService implements ILabelService {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_INVALID_LANG, new String[]{currentLangCode}, "labelGroup.langs.lang.invalid");
             return;
         }
-
         if (!configuredLangs.contains(currentLangCode)) {
             bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_NOT_ACTIVE_LANG, new String[]{currentLangCode}, "labelGroup.langs.lang.notActive");
         }
-
         if (currentLangCode.equals(defaultLangCode) && StringUtils.isBlank(entry.getValue())) {
-            bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_TEXT_REQURED, new String[]{currentLangCode}, "labelGroup.langs.defaultLang.textRequired");
+            bindingResult.reject(LabelValidator.ERRCODE_LABELGROUP_LANGS_TEXT_REQUIRED, new String[]{currentLangCode}, "labelGroup.langs.defaultLang.textRequired");
         }
     }
 

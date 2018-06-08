@@ -33,7 +33,7 @@ public class LabelValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_LABELGROUP_LANGS_INVALID_LANG = "4";
 
-    public static final String ERRCODE_LABELGROUP_LANGS_TEXT_REQURED = "4";
+    public static final String ERRCODE_LABELGROUP_LANGS_TEXT_REQUIRED = "4";
 
     @Override
     public boolean supports(Class<?> paramClass) {

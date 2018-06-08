@@ -478,9 +478,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
                             .content(payLoad)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .header("Authorization", "Bearer " + accessToken));
-        System.out.println("--------------");
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-        System.out.println("--------------");
         result.andExpect(expected);
         return result;
     }

@@ -32,7 +32,9 @@
             <result name="failure" type="json">
                 <param name="root">pageResponse</param>
             </result>
-            <interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoActionLogger" >
+                <param name="includeActionProperties">pageCode</param>
+            </interceptor-ref>
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
@@ -55,7 +57,9 @@
             <result name="failure" type="json">
                 <param name="root">pageResponse</param>
             </result>
-            <interceptor-ref name="entandoActionLogger" />
+            <interceptor-ref name="entandoActionLogger" >
+                <param name="includeActionProperties">pageCode</param>
+            </interceptor-ref>
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
@@ -85,7 +89,6 @@
             <result name="failure" type="json">
                 <param name="root">moveWidgetResponse</param>
             </result>
-
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
@@ -109,7 +112,6 @@
             <result name="configureSpecialWidget" type="json">
                 <param name="root">joinWidgetResponse</param>
             </result>
-
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
@@ -117,7 +119,6 @@
         </action>
 
         <action name="deleteWidget" class="pageConfigAction" method="deleteWidgetJson">
-
             <result type="json">
                 <param name="root">deleteWidgetResponse</param>
             </result>
@@ -130,7 +131,6 @@
             <result name="failure" type="json">
                 <param name="root">deleteWidgetResponse</param>
             </result>
-
             <interceptor-ref name="jsonStack" />
             <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>

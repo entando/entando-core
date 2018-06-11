@@ -34,164 +34,174 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.BaseAction;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import java.lang.reflect.InvocationTargetException;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author E.Santoboni - S.Puddu
  */
 public class ActionLoggerInterceptor extends AbstractInterceptor {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(ActionLoggerInterceptor.class);
-	
-	@Override
-	public String intercept(ActionInvocation invocation) throws Exception {
-		ActionLogRecord actionRecord = null;
-		String result = null;
-		try {
-			actionRecord = this.buildActionRecord(invocation);
-			result = invocation.invoke();
-			List<ActivityStreamInfo> asiList = null;
-			Object actionObject = invocation.getAction();
-			if (actionObject instanceof BaseAction) {
-				BaseAction action = (BaseAction) actionObject;
-				asiList = action.getActivityStreamInfos();
-			}
-			if (null == asiList || asiList.isEmpty()) {
-				this.getActionLoggerManager().addActionRecord(actionRecord);
-			} else {
-				for (int i = 0; i < asiList.size(); i++) {
-					ActivityStreamInfo asi = asiList.get(i);
-					ActionLogRecord clone = this.createClone(actionRecord);
-					clone.setActivityStreamInfo(asi);
-					this.getActionLoggerManager().addActionRecord(clone);
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("error in intercept", t);
-			//ApsSystemUtils.logThrowable(t, this, "intercept");
-		}
-		return result;
-	}
-	
-	private ActionLogRecord createClone(ActionLogRecord record) {
-		ActionLogRecord clone = new ActionLogRecord();
-		clone.setActionDate(new Date());
-		clone.setActionName(record.getActionName());
-		clone.setId(-1);
-		clone.setNamespace(record.getNamespace());
-		clone.setParameters(record.getParameters());
-		clone.setUsername(record.getUsername());
-		return clone;
-	}
-	
-	/**
-	 * Build an {@link ActionLoggerRecord} object related to the current action
-	 * @param invocation
-	 * @return an {@link ActionLoggerRecord} for the current action
-	 */
-	private ActionLogRecord buildActionRecord(ActionInvocation invocation) {
-		ActionLogRecord record = new ActionLogRecord();
-		String username = this.getCurrentUsername();
-		String namespace = invocation.getProxy().getNamespace();
-		String actionName = invocation.getProxy().getActionName();
-		String parameters = this.getParameters();
-		record.setUsername(username);
-		record.setNamespace(namespace);
-		record.setActionName(actionName);
-		record.setParameters(parameters);
-		return record;
-	}
-	
-	/**
-	 * Gets the username of the user in session
-	 * @return the username of the current user
-	 */
-	private String getCurrentUsername() {
-		String username = null;
-		UserDetails currentUser = this.getCurrentUser();
-		if (null == currentUser) {
-			username = "ANONYMOUS";
-		} else {
-			username = currentUser.getUsername();
-		}
-		return username;
-	}
-	
-	private String getParameters() {
-		String[] paramsToExclude = this.getExcludeRequestParameters().split(",");
-		StringBuilder params = new StringBuilder();
-		Map<String, String[]> reqParams = this.getRequest().getParameterMap();
-		if (null != reqParams && !reqParams.isEmpty()) {
-			for (Entry<String, String[]> pair : reqParams.entrySet()) {
-				String key = pair.getKey();
-				if (!this.isParamToExclude(key, paramsToExclude)) {
-					params.append(key).append("=");
-					String[] values = pair.getValue();
-					if (null != values) {
-						for (int i = 0; i < values.length; i++) {
-							params.append(values[i]).append(",");
-						}
-					}
-					params.deleteCharAt(params.length() - 1);
-					params.append("\n");
-				}
-			}
-		}
-		return params.toString();
-	}
-	
-	private boolean isParamToExclude(String key, String[] paramsToExclude) {
-		for (int i = 0; i < paramsToExclude.length; i++) {
-			if (key.equals(paramsToExclude[i])) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private UserDetails getCurrentUser() {
-		HttpSession session = this.getRequest().getSession();
-		return (UserDetails) session.getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
-	}
-	
-	private HttpServletRequest getRequest() {
-		return ServletActionContext.getRequest();
-	}
-	
-	private IActionLogManager getActionLoggerManager() {
-		return (IActionLogManager) ApsWebApplicationUtils.getBean(SystemConstants.ACTION_LOGGER_MANAGER, this.getRequest());
-	}
-	
-	public String getExcludeRequestParameters() {
-		return _excludeRequestParameters;
-	}
-	public void setExcludeRequestParameters(String excludeRequestParameters) {
-		this._excludeRequestParameters = excludeRequestParameters;
-	}
-	
-	public String getIncludeSessionParameters() {
-		return _includeSessionParameters;
-	}
-	public void setIncludeSessionParameters(String includeSessionParameters) {
-		this._includeSessionParameters = includeSessionParameters;
-	}
-	
-	/*
-	public String getExcludeParams() {
-		return _excludeParams;
-	}
-	public void setExcludeParams(String excludeParams) {
-		this._excludeParams = excludeParams;
-	}
-	*/
-	/*
-	public String getIncludeSessionParameters() {
-		return _excludeParams;
-	}
-	public void setIncludeSessionParameters(String excludeParams) {
-		this._excludeParams = excludeParams;
-	}
-	*/
-	private String _excludeRequestParameters = "";
-	private String _includeSessionParameters = "";
-	
+    private static final Logger _logger = LoggerFactory.getLogger(ActionLoggerInterceptor.class);
+
+    private String excludeRequestParameters = "";
+    private String includeActionProperties = "";
+
+    @Override
+    public String intercept(ActionInvocation invocation) throws Exception {
+        ActionLogRecord actionRecord = null;
+        String result = null;
+        try {
+            actionRecord = this.buildActionRecord(invocation);
+            result = invocation.invoke();
+            List<ActivityStreamInfo> asiList = null;
+            Object actionObject = invocation.getAction();
+            if (actionObject instanceof BaseAction) {
+                BaseAction action = (BaseAction) actionObject;
+                asiList = action.getActivityStreamInfos();
+            }
+            this.includeActionProperties(actionRecord, actionObject);
+            if (null == asiList || asiList.isEmpty()) {
+                this.getActionLoggerManager().addActionRecord(actionRecord);
+            } else {
+                for (ActivityStreamInfo asi : asiList) {
+                    ActionLogRecord clone = this.createClone(actionRecord);
+                    clone.setActivityStreamInfo(asi);
+                    this.getActionLoggerManager().addActionRecord(clone);
+                }
+            }
+        } catch (Throwable t) {
+            _logger.error("error in intercept", t);
+        }
+        return result;
+    }
+
+    private ActionLogRecord createClone(ActionLogRecord record) {
+        ActionLogRecord clone = new ActionLogRecord();
+        clone.setActionDate(new Date());
+        clone.setActionName(record.getActionName());
+        clone.setId(-1);
+        clone.setNamespace(record.getNamespace());
+        clone.setParameters(record.getParameters());
+        clone.setUsername(record.getUsername());
+        return clone;
+    }
+
+    /**
+     * Build an {@link ActionLoggerRecord} object related to the current action
+     *
+     * @param invocation
+     * @return an {@link ActionLoggerRecord} for the current action
+     */
+    private ActionLogRecord buildActionRecord(ActionInvocation invocation) {
+        ActionLogRecord record = new ActionLogRecord();
+        String username = this.getCurrentUsername();
+        String namespace = invocation.getProxy().getNamespace();
+        String actionName = invocation.getProxy().getActionName();
+        String parameters = this.getParameters();
+        record.setUsername(username);
+        record.setNamespace(namespace);
+        record.setActionName(actionName);
+        record.setParameters(parameters);
+        return record;
+    }
+
+    /**
+     * Gets the username of the user in session
+     *
+     * @return the username of the current user
+     */
+    private String getCurrentUsername() {
+        String username = null;
+        UserDetails currentUser = this.getCurrentUser();
+        if (null == currentUser) {
+            username = "ANONYMOUS";
+        } else {
+            username = currentUser.getUsername();
+        }
+        return username;
+    }
+
+    private String getParameters() {
+        String[] paramsToExclude = this.getExcludeRequestParameters().split(",");
+        StringBuilder params = new StringBuilder();
+        Map<String, String[]> reqParams = this.getRequest().getParameterMap();
+        if (null != reqParams && !reqParams.isEmpty()) {
+            for (Entry<String, String[]> pair : reqParams.entrySet()) {
+                String key = pair.getKey();
+                if (!this.isParamToExclude(key, paramsToExclude)) {
+                    params.append(key).append("=");
+                    String[] values = pair.getValue();
+                    if (null != values) {
+                        for (int i = 0; i < values.length; i++) {
+                            params.append(values[i]).append(",");
+                        }
+                    }
+                    params.deleteCharAt(params.length() - 1);
+                    params.append("\n");
+                }
+            }
+        }
+        return params.toString();
+    }
+
+    private void includeActionProperties(ActionLogRecord actionRecord, Object action) {
+        if (StringUtils.isEmpty(this.getIncludeActionProperties())) {
+            return;
+        }
+        String[] propertyToInclude = this.getIncludeActionProperties().split(",");
+        StringBuilder params = new StringBuilder(actionRecord.getParameters());
+        for (String property : propertyToInclude) {
+            try {
+                Object value = BeanUtils.getProperty(action, property);
+                if (null != value) {
+                    params.append(property).append("=").append(value.toString());
+                    params.append("\n");
+                }
+            } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+                _logger.debug("Error extracting property " + property + " from action", ex);
+            }
+        }
+        actionRecord.setParameters(params.toString());
+    }
+
+    private boolean isParamToExclude(String key, String[] paramsToExclude) {
+        for (int i = 0; i < paramsToExclude.length; i++) {
+            if (key.equals(paramsToExclude[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private UserDetails getCurrentUser() {
+        HttpSession session = this.getRequest().getSession();
+        return (UserDetails) session.getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+    }
+
+    private HttpServletRequest getRequest() {
+        return ServletActionContext.getRequest();
+    }
+
+    private IActionLogManager getActionLoggerManager() {
+        return (IActionLogManager) ApsWebApplicationUtils.getBean(SystemConstants.ACTION_LOGGER_MANAGER, this.getRequest());
+    }
+
+    public String getExcludeRequestParameters() {
+        return excludeRequestParameters;
+    }
+
+    public void setExcludeRequestParameters(String excludeRequestParameters) {
+        this.excludeRequestParameters = excludeRequestParameters;
+    }
+
+    public String getIncludeActionProperties() {
+        return includeActionProperties;
+    }
+
+    public void setIncludeActionProperties(String includeActionParameters) {
+        this.includeActionProperties = includeActionParameters;
+    }
+
 }

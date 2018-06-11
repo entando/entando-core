@@ -18,6 +18,8 @@ import java.util.List;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,6 +32,7 @@ public class PagedMetadata<T> {
     private String sort;
     private String direction;
     private Filter[] filters = new Filter[0];
+    private Map<String, String> additionalParams = new HashMap();
 
     @JsonIgnore
     private int actualSize;
@@ -140,6 +143,18 @@ public class PagedMetadata<T> {
 
     public void setActualSize(int actualSize) {
         this.actualSize = actualSize;
+    }
+
+    public Map<String, String> getAdditionalParams() {
+        return additionalParams;
+    }
+
+    public void setAdditionalParams(Map<String, String> additionalParams) {
+        this.additionalParams = additionalParams;
+    }
+
+    public void addAdditionalParams(String key, String value) {
+        this.additionalParams.put(key, value);
     }
 
     public void imposeLimits() {

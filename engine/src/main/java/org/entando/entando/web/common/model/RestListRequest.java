@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -107,7 +108,7 @@ public class RestListRequest {
     public List<FieldSearchFilter> buildFieldSearchFilters() {
         List<FieldSearchFilter> fieldSearchFilters = new ArrayList<>();
         if (null != filters && filters.length > 0) {
-            Arrays.stream(filters).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
+            Arrays.stream(filters).filter(filter -> filter.getAttribute() != null).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
         FieldSearchFilter pageFilter = this.buildPaginationFilter();
         if (null != pageFilter) {
@@ -116,6 +117,15 @@ public class RestListRequest {
         FieldSearchFilter sortFilter = this.buildSortFilter();
         if (null != sortFilter) {
             fieldSearchFilters.add(sortFilter);
+        }
+        return fieldSearchFilters;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public List<EntitySearchFilter> buildEntitySearchFilters() {
+        List<EntitySearchFilter> fieldSearchFilters = new ArrayList<>();
+        if (null != filters && filters.length > 0) {
+            Arrays.stream(filters).filter(filter -> filter.getEntityAttr() != null).forEach(i -> fieldSearchFilters.add(i.getEntitySearchFilter()));
         }
         return fieldSearchFilters;
     }

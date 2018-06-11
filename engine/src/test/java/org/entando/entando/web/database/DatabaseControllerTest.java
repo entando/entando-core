@@ -37,6 +37,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DatabaseControllerTest extends AbstractControllerTest {
@@ -116,6 +117,34 @@ public class DatabaseControllerTest extends AbstractControllerTest {
                 .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         Mockito.verify(databaseService, Mockito.times(1)).startDatabaseBackup();
+    }
+
+    @Test
+    public void startRestore_1() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String xml = null;
+        DataSourceDumpReport report = new DataSourceDumpReport(xml);
+        when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(report);
+        ResultActions result = mockMvc.perform(
+                put("/database/restoreBackup/{reportCode}", "reportCode").content("{}")
+                .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        Mockito.verify(databaseService, Mockito.times(1)).startDatabaseRestore("reportCode");
+        Mockito.verify(databaseManager, Mockito.times(1)).dropAndRestoreBackup("reportCode");
+    }
+
+    @Test
+    public void startRestore_2() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(null);
+        ResultActions result = mockMvc.perform(
+                put("/database/restoreBackup/{reportCode}", "reportCode").content("{}")
+                .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isNotFound());
+        Mockito.verify(databaseService, Mockito.times(1)).startDatabaseRestore("reportCode");
+        Mockito.verify(databaseManager, Mockito.times(0)).dropAndRestoreBackup("reportCode");
     }
 
     @Test

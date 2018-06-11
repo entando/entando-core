@@ -46,6 +46,8 @@ public class UserDto {
     private String status;
     private boolean accountNotExpired;
     private boolean credentialsNotExpired;
+    private boolean hasProfile;
+    private String profileType;
     private Map<String, Object> profileAttributes = new HashMap<>();
     private int maxMonthsSinceLastAccess;
     private int maxMonthsSinceLastPasswordChange;
@@ -154,12 +156,28 @@ public class UserDto {
         this.maxMonthsSinceLastPasswordChange = maxMonthsSinceLastPasswordChange;
     }
 
+    public boolean hasProfile() {
+        return hasProfile;
+    }
+
+    public void setHasProfile(boolean hasProfile) {
+        this.hasProfile = hasProfile;
+    }
+
+    public String getProfileType() {
+        return profileType;
+    }
+
+    public void setProfileType(String profileType) {
+        this.profileType = profileType;
+    }
+
     public static String getEntityFieldName(String dtoFieldName) {
         switch (dtoFieldName) {
             case "username":
                 return "username";
             default:
-                return null;
+                return dtoFieldName;
         }
     }
 

@@ -169,7 +169,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public PagedMetadata<UserDto> getUsers(RestListRequest requestList) {
+    public PagedMetadata<UserDto> getUsers(RestListRequest requestList, String withProfile) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<>(requestList.buildFieldSearchFilters());
@@ -194,7 +194,8 @@ public class UserService implements IUserService {
 
             // Profile and attributes filters
             users.addAll(allUsers.stream().filter(user
-                    -> checkHasProfile(filters, user) && checkAttributesFilter(filters, entityFilters, user)).collect(Collectors.toList()));
+                    -> (withProfile == null || withProfile.equals("1"))
+                    && checkAttributesFilter(filters, entityFilters, user)).collect(Collectors.toList()));
 
             List<UserDto> dtoList = dtoBuilder.convert(users);
             SearcherDaoPaginatedResult<UserDetails> result = new SearcherDaoPaginatedResult<>(users.size(), users);
@@ -206,12 +207,6 @@ public class UserService implements IUserService {
             logger.error("error in search users", t);
             throw new RestServerError("error in search users", t);
         }
-    }
-
-    private boolean checkHasProfile(List<FieldSearchFilter> filters, UserDetails user) {
-        return !filters.stream().anyMatch(filter
-                -> filter.getValue() != null && filter.getKey().equals("hasProfile")
-                && filter.getValue().equals("false"));
     }
 
     private boolean checkAttributesFilter(List<FieldSearchFilter> filters, List<EntitySearchFilter> entityFilters, UserDetails user) {

@@ -79,10 +79,13 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUsers(RestListRequest requestList) {
+    public ResponseEntity<?> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
         logger.debug("getting users details with request {}", requestList);
         this.getUserValidator().validateRestListRequest(requestList, UserDto.class);
-        PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList);
+        PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList, withProfile);
+        if (withProfile != null) {
+            result.addAdditionalParams("withProfile", withProfile);
+        }
         return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
     }
 

@@ -41,7 +41,7 @@ public interface IUserService {
 
     public void deleteUserAuthorities(String username);
 
-    public PagedMetadata<UserDto> getUsers(RestListRequest requestList);
+    public PagedMetadata<UserDto> getUsers(RestListRequest requestList, String withProfile);
 
     public UserDto getUser(String username);
 

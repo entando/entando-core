@@ -46,7 +46,6 @@ public class UserDto {
     private String status;
     private boolean accountNotExpired;
     private boolean credentialsNotExpired;
-    private boolean hasProfile;
     private String profileType;
     private Map<String, Object> profileAttributes = new HashMap<>();
     private int maxMonthsSinceLastAccess;
@@ -154,14 +153,6 @@ public class UserDto {
 
     public void setMaxMonthsSinceLastPasswordChange(int maxMonthsSinceLastPasswordChange) {
         this.maxMonthsSinceLastPasswordChange = maxMonthsSinceLastPasswordChange;
-    }
-
-    public boolean hasProfile() {
-        return hasProfile;
-    }
-
-    public void setHasProfile(boolean hasProfile) {
-        this.hasProfile = hasProfile;
     }
 
     public String getProfileType() {

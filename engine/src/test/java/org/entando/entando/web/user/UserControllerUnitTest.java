@@ -97,16 +97,17 @@ public class UserControllerUnitTest extends AbstractControllerTest {
     public void shouldGetUsersList() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
-        when(this.userService.getUsers(any(RestListRequest.class))).thenReturn(mockUsers());
+        when(this.userService.getUsers(any(RestListRequest.class), any(String.class))).thenReturn(mockUsers());
         ResultActions result = mockMvc.perform(
                 get("/users")
-                .param("sort", "username")
-                .param("filter[0].attribute", "username")
-                .param("filter[0].operator", "like")
-                .param("filter[0].value", "user")
-                .sessionAttr("user", user)
-                .header("Authorization", "Bearer " + accessToken));
-
+                        .param("withProfile", "0")
+                        .param("sort", "username")
+                        .param("filter[0].attribute", "username")
+                        .param("filter[0].operator", "like")
+                        .param("filter[0].value", "user")
+                        .sessionAttr("user", user)
+                        .header("Authorization", "Bearer " + accessToken));
+        System.out.println("result: " + result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
     }
@@ -118,11 +119,11 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userService.getUser(any(String.class))).thenReturn(mockUser());
         ResultActions result = mockMvc.perform(
                 get("/users/{username}", "user")
-                .param("filter[0].attribute", "username")
-                .param("filter[0].operator", "like")
-                .param("filter[0].value", "user")
-                //.sessionAttr("user", user)
-                .header("Authorization", "Bearer " + accessToken));
+                        .param("filter[0].attribute", "username")
+                        .param("filter[0].operator", "like")
+                        .param("filter[0].value", "user")
+                        //.sessionAttr("user", user)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
 
@@ -140,10 +141,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userManager.getUser("username_test")).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
                 put("/users/{username}", "username_test")
-                //.sessionAttr("user", user)
-                .content(mockJson)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        //.sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isOk());
@@ -163,10 +164,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userManager.getUser(any(String.class))).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
                 put("/users/{target}", "mismach")
-                .sessionAttr("user", user)
-                .content(mockJson)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isConflict());
@@ -185,10 +186,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.userManager.getUser(any(String.class))).thenReturn(this.mockUserDetails("username_test"));
         ResultActions result = mockMvc.perform(
                 post("/users/{username}/password", "username_test")
-                .sessionAttr("user", user)
-                .content(mockJson)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -209,10 +210,10 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         when(this.controller.getUserService().addUserAuthorities(any(String.class), any(UserAuthoritiesRequest.class))).thenReturn(authorities);
         ResultActions result = mockMvc.perform(
                 put("/users/{target}/authorities", "mockuser")
-                .sessionAttr("user", user)
-                .content(mockJson)
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                        .sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
     }

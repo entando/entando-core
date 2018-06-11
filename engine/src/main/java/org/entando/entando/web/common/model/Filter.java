@@ -15,6 +15,7 @@ package org.entando.entando.web.common.model;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -23,6 +24,7 @@ public class Filter {
     private static final String DEFAULT_OP = "like";
 
     private String attribute;
+    private String entityAttr;
     private String operator = DEFAULT_OP;
     private String value;
 
@@ -32,6 +34,14 @@ public class Filter {
 
     public void setAttribute(String attribute) {
         this.attribute = attribute;
+    }
+
+    public String getEntityAttr() {
+        return entityAttr;
+    }
+
+    public void setEntityAttr(String entityAttr) {
+        this.entityAttr = entityAttr;
     }
 
     public String getOperator() {
@@ -72,6 +82,13 @@ public class Filter {
     @SuppressWarnings("rawtypes")
     public FieldSearchFilter getFieldSearchFilter() {
         FieldSearchFilter filter = new FieldSearchFilter(StringEscapeUtils.escapeSql(this.getAttributeName()), StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);
+        return filter;
+    }
+
+    @JsonIgnore
+    @SuppressWarnings("rawtypes")
+    public EntitySearchFilter getEntitySearchFilter() {
+        EntitySearchFilter filter = new EntitySearchFilter(StringEscapeUtils.escapeSql(this.getEntityAttr()), true, StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);
         return filter;
     }
 

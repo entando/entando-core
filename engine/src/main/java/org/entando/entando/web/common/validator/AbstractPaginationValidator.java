@@ -28,7 +28,7 @@ import org.springframework.validation.Validator;
  * @author E.Santoboni
  */
 public abstract class AbstractPaginationValidator implements Validator {
-
+    
     public static final String ERRCODE_PAGE_INVALID = "110";
     public static final String ERRCODE_NO_ITEM_ON_PAGE = "111";
     public static final String ERRCODE_PAGE_SIZE_INVALID = "112";
@@ -36,10 +36,10 @@ public abstract class AbstractPaginationValidator implements Validator {
     public static final String ERRCODE_FILTERING_ATTR_INVALID = "101";
     public static final String ERRCODE_DIRECTION_INVALID = "102";
     public static final String ERRCODE_FILTERING_OP_INVALID = "103";
-
+    
     private static final String[] directions = {"ASC", "DESC"};
     private static final String[] operations = {"eq", "gt", "lt", "not", "like"};
-
+    
     public void validateRestListRequest(RestListRequest listRequest, Class<?> type) {
         this.checkDefaultSortField(listRequest);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
@@ -60,7 +60,7 @@ public abstract class AbstractPaginationValidator implements Validator {
             bindingResult.reject(ERRCODE_SORTING_INVALID, new Object[]{listRequest.getSort()}, "sorting.sort.invalid");
         }
         if (listRequest.getFilters() != null) {
-            List<String> attributes = Arrays.asList(listRequest.getFilters()).stream()
+            List<String> attributes = Arrays.asList(listRequest.getFilters()).stream().filter(filter -> filter.getEntityAttr() == null)
                     .map(filter -> filter.getAttributeName()).filter(attr -> !isValidField(attr, type)).collect(Collectors.toList());
             if (attributes.size() > 0) {
                 bindingResult.reject(ERRCODE_FILTERING_ATTR_INVALID, new Object[]{attributes.get(0)}, "filtering.filter.attr.name.invalid");
@@ -68,7 +68,7 @@ public abstract class AbstractPaginationValidator implements Validator {
             List<String> operations = Arrays.asList(listRequest.getFilters()).stream()
                     .map(filter -> filter.getOperator())
                     .filter(attr -> !Arrays.asList(AbstractPaginationValidator.operations)
-                            .contains(attr)).collect(Collectors.toList());
+                    .contains(attr)).collect(Collectors.toList());
             if (operations.size() > 0) {
                 bindingResult.reject(ERRCODE_FILTERING_OP_INVALID, new Object[]{}, "filtering.filter.operation.invalid");
             }
@@ -79,9 +79,9 @@ public abstract class AbstractPaginationValidator implements Validator {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-
+        
     }
-
+    
     public void validateRestListResult(RestListRequest listRequest, PagedMetadata<?> result) {
         if (listRequest.getPage() > 1 && (null == result.getBody() || result.getBody().isEmpty())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
@@ -89,13 +89,13 @@ public abstract class AbstractPaginationValidator implements Validator {
             throw new RestRourceNotFoundException(bindingResult);
         }
     }
-
+    
     public boolean isValidField(String fieldName, Class<?> type) {
         List<String> fields = new ArrayList<>();
         fields = getAllFields(fields, type);
         return fields.contains(fieldName);
     }
-
+    
     List<String> getAllFields(List<String> fields, Class<?> type) {
         fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
                 .map(field -> field.getName()).collect(Collectors.toList()));
@@ -104,15 +104,15 @@ public abstract class AbstractPaginationValidator implements Validator {
         }
         return fields;
     }
-
+    
     private void checkDefaultSortField(RestListRequest listRequest) {
         if (listRequest.getSort().equals(RestListRequest.SORT_VALUE_DEFAULT)) {
             listRequest.setSort(this.getDefaultSortProperty());
         }
     }
-
+    
     protected String getDefaultSortProperty() {
         return RestListRequest.SORT_VALUE_DEFAULT;
     }
-
+    
 }

@@ -93,28 +93,28 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             String mockJson = "[{\"group\":\"group1\", \"role\":\"role1\"}]";
             ResultActions result1 = mockMvc.perform(
                     put("/users/{target}/authorities", "wrongUser")
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isNotFound());
             ResultActions result2 = mockMvc.perform(
                     put("/users/{target}/authorities", "mockuser")
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("group1")));
 
             ResultActions result3 = mockMvc.perform(
                     get("/users/{target}/authorities", "wrongUser")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isNotFound());
 
             ResultActions result4 = mockMvc.perform(
                     get("/users/{target}/authorities", "mockuser")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             result4.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
             result4.andExpect(jsonPath("$.payload[0].group", is("group1")));
@@ -297,9 +297,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             ResultActions resultDelete = mockMvc.perform(
                     delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
@@ -336,9 +336,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             ResultActions resultDelete = mockMvc.perform(
                     delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
-                            .content(mockJson)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                    .content(mockJson)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + accessToken));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {

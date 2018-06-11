@@ -13,11 +13,7 @@
  */
 package org.entando.entando.web.label;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -37,7 +33,7 @@ public class LabelValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_LABELGROUP_LANGS_INVALID_LANG = "4";
 
-    public static final String ERRCODE_LABELGROUP_LANGS_TEXT_REQURED = "4";
+    public static final String ERRCODE_LABELGROUP_LANGS_TEXT_REQUIRED = "4";
 
     @Override
     public boolean supports(Class<?> paramClass) {

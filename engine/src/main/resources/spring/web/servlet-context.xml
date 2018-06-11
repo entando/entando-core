@@ -58,6 +58,9 @@
         <entry key="ValidateString">
             <value>57</value>
         </entry>
+        <entry key="Pattern">
+            <value>58</value>
+        </entry>
     </util:map>
 
     <bean id="messageCodesResolver"

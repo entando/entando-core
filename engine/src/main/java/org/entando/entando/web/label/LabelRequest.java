@@ -14,16 +14,16 @@
 package org.entando.entando.web.label;
 
 import java.util.Map;
-
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class LabelRequest extends LabelDto {
-
+    
     @NotEmpty(message = "labelRequest.key.required")
-    @Size(max = 50)
+    @Size(max = 50, message = "labelRequest.key.invalidSize")
+    @Pattern(regexp = "^[a-zA-Z0-9_]*$", message = "labelRequest.key.invalidCharacters")
     @Override
     public String getKey() {
         return super.getKey();

@@ -84,21 +84,39 @@ public class TestLocaleStringAction extends ApsAdminBaseTestCase {
 	public void testFailureSaveNew_2() throws Throwable {
 		//key length exceed max
 		String longKey = "veryLongCategoryCode_veryLongCategoryCode_veryLongCategoryCode";
-		assertFalse(this._i18nManager.getLabelGroups().containsKey(longKey));
+		assertNull(this._i18nManager.getLabelGroup(longKey));
 		try {
 			String result = this.executeSaveNew("admin", longKey, "itValue", "enValue");
 			assertEquals(Action.INPUT, result);
 			Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
 			assertEquals(1, fieldErrors.size());
 			assertNotNull(fieldErrors.get("key"));
+            assertNull(this._i18nManager.getLabelGroup(longKey));
 		} catch (Throwable t) {
 			this._i18nManager.deleteLabelGroup(longKey);
 			throw t;
 		}
 	}
 	
+	public void testFailureSaveNew_3() throws Throwable {
+		//key with special characters
+		String wrongKey = "test_&HF";
+		assertNull(this._i18nManager.getLabelGroup(wrongKey));
+		try {
+			String result = this.executeSaveNew("admin", wrongKey, "itValue", "enValue");
+			assertEquals(Action.INPUT, result);
+			Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
+			assertEquals(1, fieldErrors.size());
+			assertNotNull(fieldErrors.get("key"));
+            assertNull(this._i18nManager.getLabelGroup(wrongKey));
+		} catch (Throwable t) {
+			this._i18nManager.deleteLabelGroup(wrongKey);
+			throw t;
+		}
+	}
+	
 	public void testSaveNew() throws Throwable {
-		String key = "NEW_KEY";
+		String key = "NEW_KEY_12";
 		assertFalse(this._i18nManager.getLabelGroups().containsKey(key));
 		try {
 			assertFalse(this._i18nManager.getLabelGroups().containsKey(key));
@@ -118,23 +136,33 @@ public class TestLocaleStringAction extends ApsAdminBaseTestCase {
 	}
 	
 	public void testFailureSaveEdit() throws Throwable {
-		String updatedKey = "PAGE";
-		
-		// Label Inglese non valorizzata
-		String result = this.executeSaveEdit("admin", updatedKey, "", "updatedKeyEn");
-		assertEquals(Action.INPUT, result);
-		Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
-		assertEquals(1, fieldErrors.size());
-		assertNotNull(fieldErrors.get("it"));
-		assertNull(fieldErrors.get("en"));
-		
-		// Label Italiano e Inglese non valorizzate
-		result = this.executeSaveEdit("admin", updatedKey, "", "");
-		assertEquals(Action.INPUT, result);
-		fieldErrors = this.getAction().getFieldErrors();
-		assertEquals(1, fieldErrors.size());
-		assertNotNull(fieldErrors.get("it"));
-		assertNull(fieldErrors.get("en"));
+        String key = "NEW_KEY_X";
+		assertFalse(this._i18nManager.getLabelGroups().containsKey(key));
+		try {
+			ApsProperties labels = this.prepareLabelProperties("itLabel", "enLabel");
+			this._i18nManager.addLabelGroup(key, labels);
+			
+            // Label Inglese non valorizzata
+            String result = this.executeSaveEdit("admin", key, "", "updatedKeyEn");
+            assertEquals(Action.INPUT, result);
+            Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertNotNull(fieldErrors.get("it"));
+            assertNull(fieldErrors.get("en"));
+
+            // Label Italiano e Inglese non valorizzate
+            result = this.executeSaveEdit("admin", key, "", "");
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertNotNull(fieldErrors.get("it"));
+            assertNull(fieldErrors.get("en"));
+		} catch(Throwable t) {
+			throw t;
+		} finally {
+			this._i18nManager.deleteLabelGroup(key);
+			assertFalse(this._i18nManager.getLabelGroups().containsKey(key));
+		}
 	}
 	
 	public void testSaveEdit() throws Throwable {
@@ -194,19 +222,17 @@ public class TestLocaleStringAction extends ApsAdminBaseTestCase {
 	}
 	
 	private String executeSaveNew(String username, String key, String it, String en) throws Throwable {
-		this.setUserOnSession(username);
-		this.initAction("/do/LocaleString", "save");
-		this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
-		this.addParameter("key", key);
-		this.addParameter("it", it);
-		this.addParameter("en", en);
-		return this.executeAction();
+        return this.executeSave(username, key, it, en, ApsAdminSystemConstants.ADD);
 	}
 	
 	private String executeSaveEdit(String username, String key, String it, String en) throws Throwable {
+        return this.executeSave(username, key, it, en, ApsAdminSystemConstants.EDIT);
+	}
+	
+	private String executeSave(String username, String key, String it, String en, int strutsAction) throws Throwable {
 		this.setUserOnSession(username);
 		this.initAction("/do/LocaleString", "save");
-		this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
+		this.addParameter("strutsAction", String.valueOf(strutsAction));
 		this.addParameter("key", key);
 		this.addParameter("it", it);
 		this.addParameter("en", en);

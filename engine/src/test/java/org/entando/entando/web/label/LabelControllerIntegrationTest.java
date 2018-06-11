@@ -35,6 +35,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
+import org.springframework.test.web.servlet.ResultMatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -130,8 +131,54 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     }
 
     @Test
+    public void testValidateKey() throws Exception {
+        String code = null;
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            
+            //Assert.assertNull(this.ii18nManager.getLabelGroup(code));
+            String defaultLangCode = langManager.getDefaultLang().getCode();
+
+            LabelRequest request = new LabelRequest();
+            request.setKey(code);
+            Map<String, String> languages = new HashMap<>();
+            languages.put(defaultLangCode, "this label has no name");
+            request.setTitles(languages);
+            
+            ResultActions result = this.executePost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("53")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
+            code = "veryLongCategoryCode_veryLongCategoryCode_veryLongCategoryCode";
+            request.setKey(code);
+            
+            result = this.executePost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("54")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
+            code = "Special_$_12&";
+            request.setKey(code);
+            
+            result = this.executePost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("58")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
+        } catch (Exception e) {
+            this.ii18nManager.deleteLabelGroup(code);
+            throw e;
+        }
+    }
+
+    @Test
     public void testCrudLabelGroup() throws Exception {
-        String code = "THIS_LABEL_HAS_NO_NAME";
+        String code = "Label_KEY_123";
         ObjectMapper mapper = new ObjectMapper();
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -146,14 +193,12 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             Map<String, String> languages = new HashMap<>();
             languages.put(defaultLangCode, "this label has no name");
             request.setTitles(languages);
-            String payLoad = mapper.writeValueAsString(request);
 
-            ResultActions result
-                    = mockMvc.perform(post("/labels")
-                            .content(payLoad)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isOk());
+            ResultActions result = this.executePost(request, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.key", is(code)));
+            result.andExpect(jsonPath("$.payload.titles."+defaultLangCode, is("this label has no name")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             assertThat(this.ii18nManager.getLabelGroup(code), is(not(nullValue())));
             ApsProperties enlabel = this.ii18nManager.getLabelGroup(code);
@@ -164,7 +209,7 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "this label has no name");
             request.setTitles(languages);
-            payLoad = mapper.writeValueAsString(request);
+            String payLoad = mapper.writeValueAsString(request);
 
             result = mockMvc.perform(put("/labels/{labelCode}", "THIS_LABEL_DO_NOT_EXISTS")
                     .content(payLoad)
@@ -224,7 +269,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     @Test
     public void testAddLabelWithMissingTextForDefaultLang() throws Exception {
         String code = "THIS_LABEL_HAS_NO_NAME";
-        ObjectMapper mapper = new ObjectMapper();
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
@@ -236,15 +280,12 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             Map<String, String> languages = new HashMap<>();
             languages.put(langManager.getDefaultLang().getCode(), "");
             request.setTitles(languages);
-            String payLoad = mapper.writeValueAsString(request);
-
-            ResultActions result
-                    = mockMvc.perform(post("/labels")
-                            .content(payLoad)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isConflict());
-
+            
+            ResultActions result = this.executePost(request, accessToken, status().isConflict());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
         }
@@ -253,7 +294,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     @Test
     public void testAddLabelWithMissingDefaultLang() throws Exception {
         String code = "THIS_LABEL_HAS_NO_NAME";
-        ObjectMapper mapper = new ObjectMapper();
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
@@ -265,15 +305,12 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             Map<String, String> languages = new HashMap<>();
             languages.put("en", "hello");
             request.setTitles(languages);
-            String payLoad = mapper.writeValueAsString(request);
-
-            ResultActions result
-                    = mockMvc.perform(post("/labels")
-                            .content(payLoad)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isConflict());
-
+            
+            ResultActions result = this.executePost(request, accessToken, status().isConflict());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
         }
@@ -282,7 +319,6 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
     @Test
     public void testAddLabelWithInvalidLang() throws Exception {
         String code = "THIS_LABEL_HAS_NO_NAME";
-        ObjectMapper mapper = new ObjectMapper();
         try {
             UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
             String accessToken = mockOAuthInterceptor(user);
@@ -295,15 +331,12 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
             languages.put(langManager.getDefaultLang().getCode(), "hello");
             languages.put("de", "hello");
             request.setTitles(languages);
-            String payLoad = mapper.writeValueAsString(request);
-
-            ResultActions result
-                    = mockMvc.perform(post("/labels")
-                            .content(payLoad)
-                            .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
-            result.andExpect(status().isConflict());
-
+            
+            ResultActions result = this.executePost(request, accessToken, status().isConflict());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("3")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
         }
@@ -436,6 +469,17 @@ public class LabelControllerIntegrationTest extends AbstractControllerIntegratio
         } finally {
             this.ii18nManager.deleteLabelGroup(code);
         }
+    }
+    
+    private ResultActions executePost(LabelRequest request, String accessToken, ResultMatcher expected) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String payLoad = mapper.writeValueAsString(request);
+        ResultActions result = mockMvc.perform(post("/labels")
+                            .content(payLoad)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
     }
 
 }

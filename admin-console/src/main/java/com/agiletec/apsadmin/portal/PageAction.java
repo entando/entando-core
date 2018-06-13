@@ -426,7 +426,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (metadata == null) {
                 metadata = new PageMetadata();
                 page.setMetadata(metadata);
-
             }
             PageModel oldModel = metadata.getModel();
             this.valueMetadataFromForm(metadata);
@@ -434,9 +433,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 // The model is changed, so I drop all the previous widgets
                 page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
             }
-//			if (this.isDefaultShowlet()) {
-//				this.setDefaultWidgets(page);
-//			}
         } catch (Throwable t) {
             _logger.error("Error updating page", t);
             throw new ApsSystemException("Error updating page", t);

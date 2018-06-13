@@ -37,6 +37,7 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+import java.util.Date;
 
 /**
  * @author E.Santoboni
@@ -370,7 +371,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
     }
 
     public void testSavePage_Draft_1() throws Throwable {
-        String pageCode = "pagina_test";
+        String pageCode = "pagina_test_1";
         assertNull(this._pageManager.getDraftPage(pageCode));
         try {
             IPage root = this._pageManager.getDraftRoot();
@@ -395,7 +396,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
     }
 
     public void testSavePage_Draft_2() throws Throwable {
-        String pageCode = "pagina_test";
+        String pageCode = "pagina_test_2";
         assertNull(this._pageManager.getDraftPage(pageCode));
         try {
             IPage root = this._pageManager.getDraftRoot();
@@ -430,6 +431,47 @@ public class TestPageAction extends ApsAdminBaseTestCase {
                     assertNull(widget);
                 }
             }
+        } catch (Throwable t) {
+            throw t;
+        } finally {
+            this._pageManager.deletePage(pageCode);
+        }
+    }
+
+    public void testSavePage_3() throws Throwable {
+        String pageCode = "pagina_test_3";
+        assertNull(this._pageManager.getDraftPage(pageCode));
+        try {
+            IPage root = this._pageManager.getDraftRoot();
+            Map<String, String> params = new HashMap<>();
+            params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
+            params.put("parentPageCode", root.getCode());
+            params.put("langit", "Pagina Test 3");
+            params.put("langen", "Test Page 3");
+            params.put("model", "home");
+            params.put("group", Group.FREE_GROUP_NAME);
+            params.put("pageCode", pageCode);
+            String result = this.executeSave(params, "admin");
+            assertEquals(Action.SUCCESS, result);
+            IPage addedPage = this._pageManager.getDraftPage(pageCode);
+            assertNotNull(addedPage);
+            assertEquals("Pagina Test 3", addedPage.getMetadata().getTitles().getProperty("it"));
+            assertEquals("Test Page 3", addedPage.getMetadata().getTitles().getProperty("en"));
+            
+            Date lastModified = addedPage.getMetadata().getUpdatedAt();
+            assertNotNull(lastModified);
+            synchronized (this) {
+                wait(1000);
+            }
+            params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
+            params.put("langen", "Test Page 3 Modified");
+            result = this.executeSave(params, "admin");
+            assertEquals(Action.SUCCESS, result);
+            IPage modifiedPage = this._pageManager.getDraftPage(pageCode);
+            assertNotNull(modifiedPage);
+            
+            assertEquals("Test Page 3 Modified", modifiedPage.getMetadata().getTitles().getProperty("en"));
+            assertTrue(modifiedPage.getMetadata().getUpdatedAt().after(lastModified));
         } catch (Throwable t) {
             throw t;
         } finally {

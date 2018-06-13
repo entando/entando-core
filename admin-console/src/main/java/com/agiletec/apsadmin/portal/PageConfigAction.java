@@ -125,13 +125,11 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			if (null != result) {
 				return result;
 			}
-
 			IPage page = this.getPage(this.getPageCode());
 			if (null != page.getWidgets()[this.getFrame()]) {
 				this.addActionError(this.getText("error.page.join.frameNotEmpty"));
 				return "pageTree";
 			}
-
 			if (null != this.getWidgetTypeCode() && this.getWidgetTypeCode().length() == 0) {
 				this.addActionError(this.getText("error.page.widgetTypeCodeUnknown"));
 				return INPUT;
@@ -167,7 +165,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 		}
 		JoinWidgetResponse response = new JoinWidgetResponse(this, page, onlinePage);
 		if (page != null && StringUtils.isNotBlank(this.getWidgetAction())) {
-			StringBuffer url = new StringBuffer("/do/Page/SpecialWidget/");
+			StringBuilder url = new StringBuilder("/do/Page/SpecialWidget/");
 			url.append(this.getWidgetAction()).append("?");
 			String[] params = new String[]{"pageCode=" + this.getPageCode(), "widgetTypeCode=" + this.getWidgetTypeCode(), "frame=" + this.getFrame()};
 			url.append(StringUtils.join(params, "&"));
@@ -241,8 +239,7 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			page = this.getPage(this.getPageCode());
 			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		DeleteWidgetResponse response = new DeleteWidgetResponse(this, page, onlinePage);
-		return response;
+		return new DeleteWidgetResponse(this, page, onlinePage);
 	}
 
 	public String move() {
@@ -253,7 +250,6 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 				this.response.setStatus(Status.BAD_REQUEST.getStatusCode());
 				return INPUT;
 			}
-
 			this.getPageManager().moveWidget(ajaxRequest.getPageCode(), ajaxRequest.getSrc(), ajaxRequest.getDest());
 		} catch (Throwable t) {
 			this.response.setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -272,15 +268,14 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			page = this.getPage(this.getPageCode());
 			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		SwapWidgetResponse response = new SwapWidgetResponse(this, page, onlinePage);
-		return response;
+		return new SwapWidgetResponse(this, page, onlinePage);
 	}
 
 	public String restoreOnlineConfig() {
 		try {
 			IPage page = this.getPage(this.getPageCode());
 			if (!this.isUserAllowed(page)) {
-				_logger.info("Curent user not allowed");
+				_logger.info("Current user not allowed");
 				this.addActionError(this.getText("error.page.userNotAllowed"));
 				return "pageTree";
 			}
@@ -314,15 +309,14 @@ public class PageConfigAction extends AbstractPortalAction implements ServletRes
 			draftPage = this.getPage(this.getPageCode());
 			onlinePage = this.getOnlinePage(this.getPageCode());
 		}
-		PageResponse response = new PageResponse(this, draftPage, onlinePage);
-		return response;
+		return new PageResponse(this, draftPage, onlinePage);
 	}
 
 	//TODO METODO COMUNE ALLA CONFIG SPECIAL WIDGET
 	protected String checkBaseParams() {
 		IPage page = this.getPage(this.getPageCode());
 		if (!this.isUserAllowed(page)) {
-			_logger.info("Curent user not allowed");
+			_logger.info("Current user not allowed");
 			this.addActionError(this.getText("error.page.userNotAllowed"));
 			return "pageTree";
 		}

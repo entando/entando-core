@@ -84,6 +84,9 @@ public class TestPageManager extends BaseTestCase {
 
     public void testAddUpdateMoveDeletePage() throws Throwable {
         try {
+            assertNull(this._pageManager.getDraftPage("temp"));
+            assertNull(this._pageManager.getDraftPage("temp1"));
+            assertNull(this._pageManager.getDraftPage("temp2"));
             this.checkAddPage();
             this.checkUpdatePage();
             this.movePage();
@@ -98,7 +101,7 @@ public class TestPageManager extends BaseTestCase {
         }
     }
 
-    public void checkAddPage() throws Throwable {
+    private void checkAddPage() throws Throwable {
         IPage parentPage = _pageManager.getDraftPage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
@@ -179,7 +182,6 @@ public class TestPageManager extends BaseTestCase {
         assertNull(_pageManager.getOnlinePage(pageCode));
         Page offlinePage = (Page) _pageManager.getOnlinePage(pageCode);
         assertNull(offlinePage);
-
     }
 
     private void movePage() throws Exception {

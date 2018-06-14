@@ -37,6 +37,10 @@
         </property>
     </bean>
     
+    <bean id="UserProfileManagerAspect" class="org.entando.entando.aps.system.services.userprofile.UserProfileManagerAspect">
+        <property name="userProfileManager" ref="UserProfileManager" />
+    </bean>
+    
     <!-- API -->
     
     <bean id="ApiMyProfileInterface" 

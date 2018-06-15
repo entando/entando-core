@@ -124,7 +124,11 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
             Assert.assertNotNull(profile);
             Date date = (Date) profile.getAttribute("Date").getValue();
             Assert.assertEquals("2017-09-21", DateConverter.getFormattedDate(date, "yyyy-MM-dd"));
-
+            Boolean booleanValue = (Boolean) profile.getAttribute("Boolean").getValue();
+            Assert.assertTrue(booleanValue);
+            Boolean threeState = (Boolean) profile.getAttribute("ThreeState").getValue();
+            Assert.assertNull(threeState);
+            
             ResultActions result3 = this.executeProfilePut("5_PUT_valid.json", "invalid", accessToken, status().isConflict());
             result3.andExpect(jsonPath("$.payload.size()", is(0)));
             result3.andExpect(jsonPath("$.errors.size()", is(1)));
@@ -136,6 +140,13 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
             result4.andExpect(jsonPath("$.errors.size()", is(0)));
             result4.andExpect(jsonPath("$.metaData.size()", is(0)));
             profile = this.userProfileManager.getProfile("new_user");
+            date = (Date) profile.getAttribute("Date").getValue();
+            Assert.assertEquals("2018-03-21", DateConverter.getFormattedDate(date, "yyyy-MM-dd"));
+            booleanValue = (Boolean) profile.getAttribute("Boolean").getValue();
+            Assert.assertFalse(booleanValue);
+            threeState = (Boolean) profile.getAttribute("ThreeState").getValue();
+            Assert.assertNotNull(threeState);
+            Assert.assertTrue(threeState);
 
             ListAttribute list = (ListAttribute) profile.getAttribute("multilist");
             Assert.assertEquals(4, list.getAttributeList("en").size());

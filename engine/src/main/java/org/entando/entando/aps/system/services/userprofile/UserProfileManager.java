@@ -44,7 +44,7 @@ import org.springframework.cache.annotation.Cacheable;
 public class UserProfileManager extends ApsEntityManager implements IUserProfileManager {
 
     private static final Logger logger = LoggerFactory.getLogger(UserProfileManager.class);
-    
+
     @Override
     public IApsEntity getEntity(String entityId) throws ApsSystemException {
         return this.getProfile(entityId);
@@ -70,6 +70,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     }
 
     @Override
+    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
     public void addProfile(String username, IUserProfile profile) throws ApsSystemException {
         try {
             profile.setId(username);

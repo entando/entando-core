@@ -72,7 +72,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
     }
 
     private List<PageRecord> createPageRecordList(Connection conn) {
-        List<PageRecord> pages = new ArrayList<PageRecord>();
+        List<PageRecord> pages = new ArrayList<>();
         Statement stat = null;
         ResultSet res = null;
         try {
@@ -82,7 +82,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
                 String code = res.getString(3);
                 PageRecord page = this.createPageRecord(code, res);
                 pages.add(page);
-
                 int numFramesOnline = this.getWidgetArrayLength(page.getMetadataOnline());
                 if (numFramesOnline >= 0) {
                     page.setWidgetsOnline(new Widget[numFramesOnline]);
@@ -449,6 +448,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             this.deleteDraftWidgets(pageCode, conn);
             this.deleteDraftPageMetadata(pageCode, conn);
             this.updatePageRecord(page, conn);
+            page.getMetadata().setUpdatedAt(new Date());
             this.addDraftPageMetadata(pageCode, page.getMetadata(), conn);
             this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
             conn.commit();

@@ -101,8 +101,16 @@ public class AllTests {
         suite.addTestSuite(ApiCatalogManagerIntegrationTest.class);
         suite.addTest(new JUnit4TestAdapter(ApiCatalogManagerTest.class));
         //
+        suite.addTestSuite(UserProfileManagerIntegrationTest.class);
+        suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
+        suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
+        //
         suite.addTestSuite(TestAuthorizationManager.class);
         suite.addTestSuite(TestAuthorityManager.class);
+        //
+        suite.addTestSuite(TestAuthenticationProviderManager.class);
+        suite.addTestSuite(TestUserDAO.class);
+        suite.addTestSuite(TestUserManager.class);
         //
         suite.addTestSuite(TestBaseConfigService.class);
         suite.addTestSuite(TestConfigItemDAO.class);
@@ -145,10 +153,6 @@ public class AllTests {
         suite.addTestSuite(TestWidgetTypeManager.class);
         //
         suite.addTestSuite(TestURLManager.class);
-        //
-        suite.addTestSuite(TestAuthenticationProviderManager.class);
-        suite.addTestSuite(TestUserDAO.class);
-        suite.addTestSuite(TestUserManager.class);
         //
         suite.addTestSuite(TestApplicationContext.class);
         //

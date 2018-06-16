@@ -80,6 +80,7 @@ import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerInt
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
 import org.entando.entando.aps.system.services.userprofile.TestUserManager;
+import org.entando.entando.aps.system.services.userprofile.UserProfileManagerAspectTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
@@ -91,7 +92,7 @@ public class AllTests {
 
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
-
+        
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
         //
@@ -161,6 +162,7 @@ public class AllTests {
         suite.addTestSuite(UserProfileManagerIntegrationTest.class);
         suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
         suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
+        suite.addTest(new JUnit4TestAdapter(UserProfileManagerAspectTest.class));
         //
         suite.addTestSuite(GuiFragmentManagerIntegrationTest.class);
         //
@@ -193,7 +195,7 @@ public class AllTests {
 
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
-
+        
         return suite;
     }
 

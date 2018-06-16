@@ -130,6 +130,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 			this.profileManager.deleteProfile(username);
 			assertNull(this.profileManager.getProfile(username));
             this.userManager.removeUser(username);
+            assertNull(this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username));
 		}
 	}
 	

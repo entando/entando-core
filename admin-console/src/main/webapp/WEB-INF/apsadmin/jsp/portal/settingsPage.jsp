@@ -218,13 +218,14 @@
 
                 </div>
             </div>
+            
+            <wpsa:hookPoint key="core.pageSettings" objectName="hookPointElements_core_pageSettings">
+                <s:iterator value="#hookPointElements_core_pageSettings" var="hookPointElementVar">
+                    <wpsa:include value="%{#hookPointElementVar.filePath}"></wpsa:include>
+                </s:iterator>
+            </wpsa:hookPoint>
+            
         </fieldset>
-        
-        <wpsa:hookPoint key="core.pageSettings" objectName="hookPointElements_core_pageSettings">
-            <s:iterator value="#hookPointElements_core_pageSettings" var="hookPointElementVar">
-                <wpsa:include value="%{#hookPointElementVar.filePath}"></wpsa:include>
-            </s:iterator>
-        </wpsa:hookPoint>
         
         <div class="form-group">
             <div class="col-xs-12">

@@ -155,8 +155,10 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         try {
             List<IPage> publishedUtilizer = this.getPageManager().getOnlineWidgetUtilizers(widgetCode);
             List<IPage> draftUtilizer = this.getPageManager().getDraftWidgetUtilizers(widgetCode);
+            WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
             WidgetInfoDto info = new WidgetInfoDto();
             info.setCode(widgetCode);
+            info.setTitles(type.getTitles());
             publishedUtilizer.stream().forEach(page -> info.addPublishedUtilizer(getWidgetDetails(page, widgetCode)));
             draftUtilizer.stream().forEach(page -> info.addDraftUtilizer(getWidgetDetails(page, widgetCode)));
             return info;

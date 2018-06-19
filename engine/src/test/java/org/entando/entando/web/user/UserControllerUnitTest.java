@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.user;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.entando.entando.aps.system.services.user.UserService;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.aps.system.services.user.model.UserDtoBuilder;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -218,6 +221,22 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         result.andExpect(status().isOk());
     }
 
+    @Test
+    public void shouldGetUsersWithProfileDetails() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        when(this.userService.getUsers(any(RestListRequest.class), any(String.class))).thenReturn(mockUsersWithProfile());
+        ResultActions result = mockMvc.perform(
+                get("/users")
+                        .param("withProfile", "1")
+                        //                        .param("filter[0].attribute", "username")
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println(response);
+    }
+
     private Group mockedGroup() {
         Group group = new Group();
         group.setDescription("descr1");
@@ -311,5 +330,47 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         encrypter.setMemory(65536);
         encrypter.setParallelism(4);
         return encrypter;
+    }
+
+    private PagedMetadata<UserDto> mockUsersWithProfile() {
+        List<UserDetails> users = new ArrayList<>();
+        User user1 = new User();
+        user1.setUsername("admin");
+        user1.setDisabled(false);
+        user1.setLastAccess(new Date());
+        user1.setLastPasswordChange(new Date());
+        user1.setMaxMonthsSinceLastAccess(2);
+        user1.setMaxMonthsSinceLastPasswordChange(1);
+        UserProfile profile1 = new UserProfile();
+        AttributeInterface attribute = new MonoTextAttribute();
+        attribute.setName("name");
+        attribute.setDescription("Name");
+        profile1.addAttribute(attribute);
+        user1.setProfile(profile1);
+        User user2 = new User();
+        user2.setUsername("user2");
+        user2.setDisabled(false);
+        user2.setLastAccess(new Date());
+        user1.setLastPasswordChange(new Date());
+        user2.setMaxMonthsSinceLastAccess(2);
+        user2.setMaxMonthsSinceLastPasswordChange(1);
+        user2.setProfile(profile1);
+        User user3 = new User();
+        user3.setUsername("user3");
+        user3.setDisabled(false);
+        user3.setLastAccess(new Date());
+        user3.setLastPasswordChange(new Date());
+        user3.setMaxMonthsSinceLastAccess(2);
+        user3.setMaxMonthsSinceLastPasswordChange(1);
+        user3.setProfile(profile1);
+        users.add(user1);
+        users.add(user2);
+        users.add(user3);
+        List<UserDto> dtoList = new UserDtoBuilder().convert(users);
+        SearcherDaoPaginatedResult<UserDetails> result = new SearcherDaoPaginatedResult<>(users.size(), users);
+        PagedMetadata<UserDto> pagedMetadata = new PagedMetadata<>(new RestListRequest(), result);
+        pagedMetadata.setBody(dtoList);
+
+        return pagedMetadata;
     }
 }

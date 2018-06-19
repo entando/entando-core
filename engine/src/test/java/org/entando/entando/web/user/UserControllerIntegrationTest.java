@@ -38,6 +38,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matcher;
 import org.junit.Assert;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -77,6 +78,56 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
         result.andExpect(jsonPath("$.metaData.sort", is("username")));
         result.andExpect(jsonPath("$.metaData.page", is(1)));
+    }
+
+    @Test
+    public void testGetUsersWithProfile() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/users")
+                        .param("withProfile", "1")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(Matchers.greaterThan(0))));
+        result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("1")));
+        System.out.println("with profile: " + result.andReturn().getResponse().getContentAsString());
+    }
+
+    @Test
+    public void testGetUsersWithoutProfile() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/users")
+                        .param("withProfile", "0")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        System.out.println("with no profile: " + result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("0")));
+    }
+
+    @Test
+    public void testGetUsersWithProfileAndProfileAttributesFilters() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/users")
+                        .param("withProfile", "1")
+                        .param("filter[0].entityAttr", "fullname")
+                        .param("filter[0].operator", "like")
+                        .param("filter[0].value", "s")
+                        .param("filter[1].attribute", "profileType")
+                        .param("filter[1].operator", "eq")
+                        .param("filter[1].value", "All")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        System.out.println("with profile attr: " + result.andReturn().getResponse().getContentAsString());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(Matchers.greaterThan(0))));
+        result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("1")));
+        result.andExpect(jsonPath("$.payload[0].profileAttributes.fullname", Matchers.containsString("s")));
+
     }
 
     @Test

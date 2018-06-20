@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.widgettype.model;
 
+import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import java.util.List;
 public class WidgetInfoDto {
 
     private String code;
+    private ApsProperties titles;
     private List<WidgetDetails> publishedUtilizers = new ArrayList<>();
     private List<WidgetDetails> draftUtilizers = new ArrayList<>();
 
@@ -35,6 +37,14 @@ public class WidgetInfoDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public ApsProperties getTitles() {
+        return titles;
+    }
+
+    public void setTitles(ApsProperties titles) {
+        this.titles = titles;
     }
 
     public List<WidgetDetails> getPublishedUtilizers() {

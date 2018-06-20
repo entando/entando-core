@@ -218,10 +218,16 @@
 
                 </div>
             </div>
+            
+            <wpsa:hookPoint key="core.pageSettings" objectName="hookPointElements_core_pageSettings">
+                <s:iterator value="#hookPointElements_core_pageSettings" var="hookPointElementVar">
+                    <wpsa:include value="%{#hookPointElementVar.filePath}"></wpsa:include>
+                </s:iterator>
+            </wpsa:hookPoint>
+            
         </fieldset>
-
+        
         <div class="form-group">
-
             <div class="col-xs-12">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
                     <s:text name="label.save" />

@@ -27,11 +27,20 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.user.IUserManager;
+import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.services.cache.CacheInfoManager;
+import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 
 /**
  * @author E.Santoboni
  */
 public class UserProfileManagerIntegrationTest extends BaseTestCase {
+	
+	private IUserProfileManager profileManager;
+	private IUserManager userManager;
+    private CacheInfoManager cacheInfoManager;
 	
 	@Override
 	protected void setUp() throws Exception {
@@ -40,39 +49,93 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 	}
 	
 	public void testInitialize() {
-		assertNotNull(this._profileManager);
+		assertNotNull(this.profileManager);
 	}
 	
 	public void testAttributeSupportObjects() throws Throwable {
-		assertTrue(this._profileManager.getAttributeRoles().size()>=2);
-		assertEquals(this._profileManager.getAttributeDisablingCodes().size(), 1);
+		assertTrue(this.profileManager.getAttributeRoles().size()>=2);
+		assertEquals(this.profileManager.getAttributeDisablingCodes().size(), 1);
 	}
 	
-	public void testAddProfile() throws Throwable {
+	public void testAddProfile_1() throws Throwable {
 		String username = "admin";
 		Date birthdate = this.getBirthdate(1982, 10, 25);
 		IUserProfile profile = this.createProfile("stefano", "puddu", "spuddu@agiletec.it", birthdate, "it");
 		try {
-			this._profileManager.addProfile("admin", profile);
-			IUserProfile added = this._profileManager.getProfile(username);
+			this.profileManager.addProfile("admin", profile);
+			IUserProfile added = this.profileManager.getProfile(username);
 			assertEquals("spuddu@agiletec.it", added.getValue("email"));
 			assertEquals(username, added.getUsername());
 			MonoTextAttribute emailAttr = (MonoTextAttribute) ((IUserProfile) profile).getAttribute("email");
 			emailAttr.setText("agiletectest@gmail.com");
-			this._profileManager.updateProfile(profile.getUsername(), profile);
-			IUserProfile updated = this._profileManager.getProfile(username);
+			this.profileManager.updateProfile(profile.getUsername(), profile);
+			IUserProfile updated = this.profileManager.getProfile(username);
 			assertEquals("agiletectest@gmail.com", updated.getValue("email"));
 			assertEquals(username, added.getUsername());
 		} catch (Throwable t) {
 			throw t;
 		} finally {
-			this._profileManager.deleteProfile(username);
-			assertNull(this._profileManager.getProfile(username));
+			this.profileManager.deleteProfile(username);
+			assertNull(this.profileManager.getProfile(username));
+		}
+	}
+	
+	public void testAddProfile_2() throws Throwable {
+		String username = "test_user";
+		Date birthdate = this.getBirthdate(1982, 10, 25);
+		IUserProfile profile = this.createProfile("joe", "black", "jblack@entando.com", birthdate, "en");
+        profile.setId(username);
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(username);
+		try {
+            this.userManager.addUser(user);
+			this.profileManager.addProfile(username, profile);
+            
+            Object cachedObject = this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username);
+            assertNull(cachedObject);
+            
+            UserDetails extractedUser = this.userManager.getUser(username);
+            assertNotNull(extractedUser);
+            assertNotNull(extractedUser.getProfile());
+            IUserProfile extractedProfile = (IUserProfile) extractedUser.getProfile();
+            assertEquals("jblack@entando.com", extractedProfile.getValue("email"));
+            
+            cachedObject = this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username);
+            assertNotNull(cachedObject);
+            assertTrue(cachedObject instanceof IUserProfile);
+            assertEquals("jblack@entando.com", ((IUserProfile) cachedObject).getValue("email"));
+            
+			IUserProfile added = this.profileManager.getProfile(username);
+			assertEquals("jblack@entando.com", added.getValue("email"));
+			assertEquals(username, added.getUsername());
+            
+			MonoTextAttribute emailAttr = (MonoTextAttribute) ((IUserProfile) profile).getAttribute("email");
+			emailAttr.setText("jblack@gmail.com");
+			this.profileManager.updateProfile(profile.getUsername(), profile);
+            
+            cachedObject = this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username);
+            assertNull(cachedObject);
+            
+			IUserProfile updated = this.profileManager.getProfile(username);
+			assertEquals("jblack@gmail.com", updated.getValue("email"));
+            
+            cachedObject = this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username);
+            assertNotNull(cachedObject);
+            assertTrue(cachedObject instanceof IUserProfile);
+            assertEquals("jblack@gmail.com", ((IUserProfile) cachedObject).getValue("email"));
+		} catch (Throwable t) {
+			throw t;
+		} finally {
+			this.profileManager.deleteProfile(username);
+			assertNull(this.profileManager.getProfile(username));
+            this.userManager.removeUser(username);
+            assertNull(this.cacheInfoManager.getFromCache(ICacheInfoManager.DEFAULT_CACHE_NAME, "UserProfile_" + username));
 		}
 	}
 	
 	private IUserProfile createProfile(String name,	String surname, String email, Date birthdate, String language) {
-		IUserProfile profile = this._profileManager.getDefaultProfileType();
+		IUserProfile profile = this.profileManager.getDefaultProfileType();
 		MonoTextAttribute nameAttr = (MonoTextAttribute) profile.getAttribute("fullname");
 		nameAttr.setText(name + " " + surname);
 		MonoTextAttribute emailAttr = (MonoTextAttribute) profile.getAttribute("email");
@@ -95,18 +158,18 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 	}
 	
 	public void testRemoveInsesistentUser() throws ApsSystemException {
-		assertNull(this._profileManager.getProfile("missing_user"));
-		this._profileManager.deleteProfile("missing_user");
+		assertNull(this.profileManager.getProfile("missing_user"));
+		this.profileManager.deleteProfile("missing_user");
 	}
 	
 	public void testSearchProfiles_1() throws Throwable {
-		List<String> usernames = this._profileManager.searchId(null);
+		List<String> usernames = this.profileManager.searchId(null);
 		assertNotNull(usernames);
     	assertEquals(4, usernames.size());
 		EntitySearchFilter usernameFilter1 = new EntitySearchFilter(IUserProfileManager.ENTITY_ID_FILTER_KEY, false);
     	usernameFilter1.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters1 = {usernameFilter1};
-		usernames = this._profileManager.searchId(filters1);
+		usernames = this.profileManager.searchId(filters1);
 		assertNotNull(usernames);
     	String[] expected1 = {"editorCoach", "editorCustomers", "mainEditor", "pageManagerCoach"};
     	assertEquals(expected1.length, usernames.size());
@@ -114,7 +177,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 		EntitySearchFilter usernameFilter2 = new EntitySearchFilter(IUserProfileManager.ENTITY_ID_FILTER_KEY, false, "oa", true);
     	usernameFilter2.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters2 = {usernameFilter2};
-		usernames = this._profileManager.searchId(filters2);
+		usernames = this.profileManager.searchId(filters2);
 		assertNotNull(usernames);
     	String[] expected2 = {"editorCoach", "pageManagerCoach"};
     	assertEquals(expected2.length, usernames.size());
@@ -125,7 +188,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 		EntitySearchFilter fullnameRoleFilter = EntitySearchFilter.createRoleFilter(SystemConstants.USER_PROFILE_ATTRIBUTE_ROLE_FULL_NAME);
 		fullnameRoleFilter.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters1 = {fullnameRoleFilter};
-		List<String> usernames = this._profileManager.searchId(filters1);
+		List<String> usernames = this.profileManager.searchId(filters1);
 		assertNotNull(usernames);
     	String[] expected1 = {"mainEditor", "pageManagerCoach", "editorCoach", "editorCustomers"};
 		assertEquals(expected1.length, usernames.size());
@@ -135,7 +198,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 		fullnameRoleFilter2.setOrder(EntitySearchFilter.Order.ASC);
 		
 		EntitySearchFilter[] filters2 = {fullnameRoleFilter2};
-		usernames = this._profileManager.searchId(filters2);
+		usernames = this.profileManager.searchId(filters2);
 		assertNotNull(usernames);
     	String[] expected2 = {"mainEditor", "editorCustomers"};
 		assertEquals(expected2.length, usernames.size());
@@ -145,7 +208,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 		EntitySearchFilter usernameFilter3 = new EntitySearchFilter(IUserProfileManager.ENTITY_ID_FILTER_KEY, false);
     	usernameFilter3.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters3 = {fullnameRoleFilter3, usernameFilter3};
-		usernames = this._profileManager.searchId(filters3);
+		usernames = this.profileManager.searchId(filters3);
 		assertNotNull(usernames);
     	String[] expected3 = {"editorCustomers", "mainEditor"};
 		assertEquals(expected3.length, usernames.size());
@@ -153,14 +216,14 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 	}
 	
 	public void testSearchProfileRecords() throws Throwable {
-		List<ApsEntityRecord> records = this._profileManager.searchRecords(null);
+		List<ApsEntityRecord> records = this.profileManager.searchRecords(null);
 		assertNotNull(records);
     	assertEquals(4, records.size());
 		
 		EntitySearchFilter usernameFilter1 = new EntitySearchFilter(IUserProfileManager.ENTITY_ID_FILTER_KEY, false);
     	usernameFilter1.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters1 = {usernameFilter1};
-		records = this._profileManager.searchRecords(filters1);
+		records = this.profileManager.searchRecords(filters1);
 		assertNotNull(records);
     	String[] expected1 = {"editorCoach", "editorCustomers", "mainEditor", "pageManagerCoach"};
     	assertEquals(expected1.length, records.size());
@@ -169,7 +232,7 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
 		EntitySearchFilter usernameFilter2 = new EntitySearchFilter(IUserProfileManager.ENTITY_ID_FILTER_KEY, false, "oa", true);
     	usernameFilter2.setOrder(EntitySearchFilter.Order.ASC);
 		EntitySearchFilter[] filters2 = {usernameFilter2};
-		records = this._profileManager.searchRecords(filters2);
+		records = this.profileManager.searchRecords(filters2);
 		assertNotNull(records);
     	String[] expected2 = {"editorCoach", "pageManagerCoach"};
     	assertEquals(expected2.length, records.size());
@@ -191,12 +254,12 @@ public class UserProfileManagerIntegrationTest extends BaseTestCase {
     
 	private void init() throws Exception {
     	try {
-    		this._profileManager = (IUserProfileManager) this.getService(SystemConstants.USER_PROFILE_MANAGER);
+    		this.profileManager = (IUserProfileManager) this.getService(SystemConstants.USER_PROFILE_MANAGER);
+    		this.userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+    		this.cacheInfoManager = (CacheInfoManager) this.getService(SystemConstants.CACHE_INFO_MANAGER);
 		} catch (Exception e) {
 			throw e;
 		}
     }
-	
-	private IUserProfileManager _profileManager;
 	
 }

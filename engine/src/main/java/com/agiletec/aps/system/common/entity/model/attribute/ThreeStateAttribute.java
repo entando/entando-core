@@ -20,6 +20,11 @@ package com.agiletec.aps.system.common.entity.model.attribute;
  */
 public class ThreeStateAttribute extends BooleanAttribute {
 	
+    @Override
+    public Boolean getValue() {
+        return super.getBooleanValue();
+    }
+    
 	@Override
 	protected boolean saveBooleanJDOMElement() {
 		return (null != super.getBooleanValue());

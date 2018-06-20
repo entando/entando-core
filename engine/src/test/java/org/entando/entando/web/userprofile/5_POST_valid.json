@@ -22,8 +22,11 @@
             "code": "Number",
             "value": 2
         }, {
-            "code": "ThreeState",
+            "code": "Boolean",
             "value": true
+        }, {
+            "code": "ThreeState",
+            "value": null
         }, {
             "code": "Date",
             "value": "2017-09-21 21:24:18"

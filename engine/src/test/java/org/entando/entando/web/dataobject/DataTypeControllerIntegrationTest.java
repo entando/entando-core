@@ -120,6 +120,59 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             }
         }
     }
+    
+    @Test
+    public void testValidateTypeCode() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        try {
+            String payload = "{\"code\": null,\"name\": \"Data Type Invalid\",\"attributes\": []}";
+            ResultActions result = this.executeDataTypePostByPayload(payload, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("51")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            
+            this.executeTypeCodeValidation("", "54", accessToken);
+            this.executeTypeCodeValidation("TTTT", "54", accessToken);
+            this.executeTypeCodeValidation("TTb", "58", accessToken);
+            this.executeTypeCodeValidation("TT%", "58", accessToken);
+            this.executeTypeCodeValidation("TT_", "58", accessToken);
+            
+            String payload2 = "{\"code\": \"T12\",\"name\": \"Data Type Invalid\",\"attributes\": []}";
+            this.executeDataTypePostByPayload(payload2, accessToken, status().isOk());
+            DataObject addedDataObject = (DataObject) this.dataObjectManager.getEntityPrototype("T12");
+            Assert.assertNotNull(addedDataObject);
+            Assert.assertEquals(0, addedDataObject.getAttributeList().size());
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (null != this.dataObjectManager.getEntityPrototype("TTTT")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TTTT");
+            }
+            if (null != this.dataObjectManager.getEntityPrototype("TTb")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TTb");
+            }
+            if (null != this.dataObjectManager.getEntityPrototype("TT%")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TT%");
+            }
+            if (null != this.dataObjectManager.getEntityPrototype("TT_")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("TT_");
+            }
+            if (null != this.dataObjectManager.getEntityPrototype("T12")) {
+                ((IEntityTypesConfigurer) this.dataObjectManager).removeEntityPrototype("T12");
+            }
+        }
+    }
+    
+    private void executeTypeCodeValidation(String typeCode, String expectedError, String accessToken) throws Exception {
+        String payload = "{\"code\": \""+typeCode+"\",\"name\": \"Data Type Invalid\",\"attributes\": []}";
+        ResultActions result = this.executeDataTypePostByPayload(payload, accessToken, status().isBadRequest());
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+        result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+        result.andExpect(jsonPath("$.errors[0].code", is(expectedError)));
+        result.andExpect(jsonPath("$.metaData.size()", is(0)));
+    }
 
     @Test
     public void testAddUpdateDataType_2() throws Exception {
@@ -161,9 +214,13 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
     private ResultActions executeDataTypePost(String fileName, String accessToken, ResultMatcher expected) throws Exception {
         InputStream isJsonPostValid = this.getClass().getResourceAsStream(fileName);
         String jsonPostValid = FileTextReader.getText(isJsonPostValid);
+        return this.executeDataTypePostByPayload(jsonPostValid, accessToken, expected);
+    }
+    
+    private ResultActions executeDataTypePostByPayload(String payload, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(post("/dataTypes")
-                        .content(jsonPostValid)
+                        .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);

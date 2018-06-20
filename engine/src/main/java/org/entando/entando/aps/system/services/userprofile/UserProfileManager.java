@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
 import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
@@ -36,87 +34,16 @@ import com.agiletec.aps.system.common.entity.IEntitySearcherDAO;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
-import com.agiletec.aps.system.services.user.AbstractUser;
-import com.agiletec.aps.system.services.user.UserDetails;
 import org.springframework.cache.annotation.Cacheable;
 
 /**
- * Implementation of ProfileManager. The service is included in a transparent
- * manner in the workflow of required to insert, update or delete user, using
- * the Aspect-oriented programming. In that way, you can join a user with his
- * Profile whatever implementation of User Management.
+ * Implementation of ProfileManager.
  *
  * @author E.Santoboni
  */
-@Aspect
 public class UserProfileManager extends ApsEntityManager implements IUserProfileManager {
 
     private static final Logger logger = LoggerFactory.getLogger(UserProfileManager.class);
-
-    @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.getUser(..))", returning = "user")
-    public void injectProfile(Object user) {
-        if (user != null) {
-            AbstractUser userDetails = (AbstractUser) user;
-            if (null == userDetails.getProfile()) {
-                try {
-                    IUserProfile profile = this.getProfile(userDetails.getUsername());
-                    userDetails.setProfile(profile);
-                } catch (Throwable t) {
-                    logger.error("Error injecting profile on user {}", userDetails.getUsername(), t);
-                }
-            }
-        }
-    }
-
-    @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.addUser(..)) && args(user,..)")
-    public void addProfile(Object user) {
-        if (user != null) {
-            UserDetails userDetails = (UserDetails) user;
-            Object profile = userDetails.getProfile();
-            if (null != profile) {
-                try {
-                    this.addProfile(userDetails.getUsername(), (IUserProfile) profile);
-                } catch (Throwable t) {
-                    logger.error("Error adding profile on user {}", userDetails.getUsername(), t);
-                }
-            }
-        }
-    }
-
-    @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.updateUser(..)) && args(user,..)")
-    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#user.username)")
-    public void updateProfile(Object user) {
-        if (user != null) {
-            UserDetails userDetails = (UserDetails) user;
-            Object profile = userDetails.getProfile();
-            if (null != profile) {
-                try {
-                    this.updateProfile(userDetails.getUsername(), (IUserProfile) profile);
-                } catch (Throwable t) {
-                    logger.error("Error updating profile to user {}", userDetails.getUsername(), t);
-                }
-            }
-        }
-    }
-
-    @AfterReturning(pointcut = "execution(* com.agiletec.aps.system.services.user.IUserManager.removeUser(..)) && args(key)")
-    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#key)")
-    public void deleteProfile(Object key) {
-        String username = null;
-        if (key instanceof String) {
-            username = key.toString();
-        } else if (key instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) key;
-            username = userDetails.getUsername();
-        }
-        if (username != null) {
-            try {
-                this.deleteProfile(username);
-            } catch (Throwable t) {
-                logger.error("Error deleting profile. user: {}", username, t);
-            }
-        }
-    }
 
     @Override
     public IApsEntity getEntity(String entityId) throws ApsSystemException {
@@ -143,6 +70,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     }
 
     @Override
+    @CacheEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, key = "'UserProfile_'.concat(#username)")
     public void addProfile(String username, IUserProfile profile) throws ApsSystemException {
         try {
             profile.setId(username);

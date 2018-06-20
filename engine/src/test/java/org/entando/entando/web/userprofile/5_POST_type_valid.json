@@ -18,9 +18,13 @@
             "name": "Description of number attribute",
             "mandatory": false
         },{
+            "code": "Boolean",
+            "type": "Boolean",
+            "name": "Description of Boolean attribute"
+        },{
             "code": "ThreeState",
             "type": "ThreeState",
-            "name": "Description of Boolean attribute",
+            "name": "Description of ThreeState attribute",
             "mandatory": false
         },{
             "code": "Date",

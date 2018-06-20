@@ -22,6 +22,9 @@
             "code": "Number",
             "value": 2
         }, {
+            "code": "Boolean",
+            "value": null
+        }, {
             "code": "ThreeState",
             "value": true
         }, {

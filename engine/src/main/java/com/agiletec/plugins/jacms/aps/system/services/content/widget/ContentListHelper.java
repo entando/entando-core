@@ -43,7 +43,7 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentListFilterBean;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.FilterUtils;
-import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Classe helper per la widget di erogazione contenuti in lista.
@@ -101,7 +101,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
     }
 
     @Override
-    @CachePut(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
             key = "T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).buildCacheKey(#bean, #reqCtx)",
             condition = "#bean.cacheable && !T(com.agiletec.plugins.jacms.aps.system.services.content.widget.ContentListHelper).isUserFilterExecuted(#bean)")
     @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentListCacheGroupsCsv(#bean, #reqCtx)", expiresInMinute = 30)

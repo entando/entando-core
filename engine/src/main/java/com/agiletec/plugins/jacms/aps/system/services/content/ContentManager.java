@@ -47,6 +47,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecor
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.resource.ResourceUtilizer;
 import java.util.Set;
+import org.entando.entando.aps.system.services.cache.CacheableInfo;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Contents manager. This implements all the methods needed to create and manage
@@ -179,17 +181,17 @@ public class ContentManager extends ApsEntityManager
      * @throws ApsSystemException In case of error.
      */
     @Override
-    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //        key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
-    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+            key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine")
+    @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
     public Content loadContent(String id, boolean onLine) throws ApsSystemException {
         return this.loadContent(id, onLine, false);
     }
-
+    
     @Override
-    //@Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
-    //        key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
-    //@CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
+    @Cacheable(value = ICacheInfoManager.DEFAULT_CACHE_NAME,
+            key = "T(com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants).CONTENT_CACHE_PREFIX.concat(#id)", condition = "#onLine and #cacheable")
+    @CacheableInfo(groups = "T(com.agiletec.plugins.jacms.aps.system.services.cache.CmsCacheWrapperManager).getContentCacheGroupsCsv(#id)")
     public Content loadContent(String id, boolean onLine, boolean cacheable) throws ApsSystemException {
         Content content = null;
         try {

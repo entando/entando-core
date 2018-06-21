@@ -263,7 +263,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         this.linkResolverManager = linkResolverManager;
     }
 
-    private transient SymbolicLink symbolicLink;
+    private SymbolicLink symbolicLink;
     private transient IContentManager contentManager;
     private transient IPageManager pageManager;
     private transient ILinkResolverManager linkResolverManager;

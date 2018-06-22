@@ -14,14 +14,10 @@
 package org.entando.entando.web.dataobjectmodel.validator;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
-import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +39,7 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
     //PUT
     public static final String ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS = "1";
     public static final String ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST = "2";
-    public static final String ERRCODE_PUT_EXTRACTED_MISMATCH = "2";
+    //public static final String ERRCODE_PUT_EXTRACTED_MISMATCH = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "2";
     public static final String ERRCODE_URINAME_INVALID = "3";
     public static final String ERRCODE_DATAOBJECTMODEL_REFERENCES = "4";
@@ -99,11 +95,14 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
                     errors.rejectValue("modelId", ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST,
                             new String[]{String.valueOf(dataModelId)}, "dataObjectModel.doesNotExist");
                     return 404;
-                } else if (!dataModel.getDataType().equals(typeCode)) {
+                }
+                /*
+                else if (!dataModel.getDataType().equals(typeCode)) {
                     errors.rejectValue("type", ERRCODE_PUT_EXTRACTED_MISMATCH,
                             new String[]{typeCode, dataModel.getDataType()}, "dataObjectModel.type.doesNotMachWithModel");
                     return 400;
                 }
+                */
             }
         } catch (Exception e) {
             throw new RuntimeException("Error extracting model", e);

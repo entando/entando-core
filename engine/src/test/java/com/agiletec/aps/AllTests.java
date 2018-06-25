@@ -64,6 +64,7 @@ import org.entando.entando.aps.system.services.dataobject.TestDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.TestDataObjectSearcherDAO;
 import org.entando.entando.aps.system.services.dataobject.TestUtilizer;
 import org.entando.entando.aps.system.services.dataobject.TestValidateDataObject;
+import org.entando.entando.aps.system.services.dataobject.api.TestApiDataObjectInterface;
 import org.entando.entando.aps.system.services.dataobject.authorization.TestDataObjectAuthorization;
 import org.entando.entando.aps.system.services.dataobject.entity.TestDataObjectEntityManager;
 import org.entando.entando.aps.system.services.dataobject.parse.TestDataObjectDOM;
@@ -92,7 +93,7 @@ public class AllTests {
 
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
-        
+
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
         //
@@ -179,6 +180,7 @@ public class AllTests {
         suite.addTestSuite(TestDataObjectAuthorization.class);
         suite.addTestSuite(TestDataObjectEntityManager.class);
         suite.addTestSuite(TestDataObjectDOM.class);
+        suite.addTestSuite(TestApiDataObjectInterface.class);
 
         suite.addTestSuite(TestDataObjectListHelper.class);
         suite.addTestSuite(TestDataObjectViewerHelper.class);
@@ -195,7 +197,7 @@ public class AllTests {
 
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
-        
+
         return suite;
     }
 

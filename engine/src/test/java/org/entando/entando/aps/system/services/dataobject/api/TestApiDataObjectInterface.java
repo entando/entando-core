@@ -14,21 +14,36 @@
 package org.entando.entando.aps.system.services.dataobject.api;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractComplexAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
+import com.agiletec.aps.util.DateConverter;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import org.entando.entando.aps.system.services.api.ApiBaseTestCase;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
+import org.entando.entando.aps.system.services.api.model.StringApiResponse;
+import org.entando.entando.aps.system.services.api.server.IResponseBuilder;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.api.model.JAXBDataObject;
+import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
  * @author E.Santoboni
  */
 public class TestApiDataObjectInterface extends ApiBaseTestCase {
+
+    private IDataObjectManager dataObjectManager;
 
     @Override
     protected void setUp() throws Exception {
@@ -46,53 +61,52 @@ public class TestApiDataObjectInterface extends ApiBaseTestCase {
         this.testGetDataObject(mediaType, "admin", "ALL4", "en");
     }
 
-    /*
-    public void testCreateNewContentFromXml() throws Throwable {
+    public void testCreateNewDataObjectFromXml() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
-        this.testCreateNewContent(mediaType, "ALL4");
+        this.testCreateNewDataObject(mediaType, "ALL4");
     }
 
-    public void testCreateNewContentFromJson() throws Throwable {
+    public void testCreateNewDataObjectFromJson() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
-        this.testCreateNewContent(mediaType, "ALL4");
+        this.testCreateNewDataObject(mediaType, "ALL4");
     }
 
-    protected void testCreateNewContent(MediaType mediaType, String contentId) throws Throwable {
-        String dateNow = DateConverter.getFormattedDate(new Date(), JacmsSystemConstants.CONTENT_METADATA_DATE_FORMAT);
-        EntitySearchFilter filter = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false, dateNow, null);
+    protected void testCreateNewDataObject(MediaType mediaType, String dataObjectId) throws Throwable {
+        String dateNow = DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT);
+        EntitySearchFilter filter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false, dateNow, null);
         EntitySearchFilter[] filters = {filter};
-        List<String> ids = this._contentManager.searchId(filters);
+        List<String> ids = this.dataObjectManager.searchId(filters);
         assertTrue(ids.isEmpty());
-        JAXBContent jaxbContent = this.testGetContent(mediaType, "admin", contentId, "it");
-        ApiResource contentResource = this.getApiCatalogManager().getResource("jacms", "content");
-        ApiMethod postMethod = contentResource.getPostMethod();
+        JAXBDataObject jaxbDataObject = this.testGetDataObject(mediaType, "admin", dataObjectId, "it");
+        ApiResource dataTypeResource = this.getApiCatalogManager().getResource("core", "dataObject");
+        ApiMethod postMethod = dataTypeResource.getPostMethod();
         Properties properties = super.createApiProperties("admin", "it", mediaType);
         try {
-            jaxbContent.setId(null);
-            Object response = this.getResponseBuilder().createResponse(postMethod, jaxbContent, properties);
+            jaxbDataObject.setId(null);
+            Object response = this.getResponseBuilder().createResponse(postMethod, jaxbDataObject, properties);
             assertNotNull(response);
-            assertTrue(response instanceof CmsApiResponse);
-            assertEquals(IResponseBuilder.SUCCESS, ((CmsApiResponse) response).getResult().getStatus());
-            ids = this._contentManager.searchId(filters);
+            assertTrue(response instanceof StringApiResponse);
+            assertEquals(IResponseBuilder.SUCCESS, ((StringApiResponse) response).getResult());
+            ids = this.dataObjectManager.searchId(filters);
             assertEquals(1, ids.size());
-            String newContentId = ids.get(0);
-            Content newContent = this._contentManager.loadContent(newContentId, false);
-            Content masterContent = this._contentManager.loadContent(contentId, true);
-            List<AttributeInterface> attributes = masterContent.getAttributeList();
+            String newDataObjectId = ids.get(0);
+            DataObject newDataType = this.dataObjectManager.loadDataObject(newDataObjectId, false);
+            DataObject masterDataType = this.dataObjectManager.loadDataObject(dataObjectId, true);
+            List<AttributeInterface> attributes = masterDataType.getAttributeList();
             for (int i = 0; i < attributes.size(); i++) {
                 AttributeInterface attribute = attributes.get(i);
-                AttributeInterface newAttribute = (AttributeInterface) newContent.getAttribute(attribute.getName());
+                AttributeInterface newAttribute = (AttributeInterface) newDataType.getAttribute(attribute.getName());
                 this.checkAttributes(attribute, newAttribute);
             }
         } catch (Exception e) {
             throw e;
         } finally {
-            ids = this._contentManager.searchId(filters);
+            ids = this.dataObjectManager.searchId(filters);
             if (!ids.isEmpty()) {
                 for (int i = 0; i < ids.size(); i++) {
                     String id = ids.get(i);
-                    Content content = this._contentManager.loadContent(id, false);
-                    this._contentManager.deleteContent(content);
+                    DataObject dataObject = this.dataObjectManager.loadDataObject(id, false);
+                    this.dataObjectManager.deleteDataObject(dataObject);
                 }
             }
         }
@@ -127,13 +141,10 @@ public class TestApiDataObjectInterface extends ApiBaseTestCase {
                 }
             }
         } else {
-            if (oldAttribute instanceof AbstractResourceAttribute || oldAttribute instanceof LinkAttribute) {
-                return;
-            }
             assertEquals(oldAttribute.getValue(), newAttribute.getValue());
         }
     }
-     */
+
     protected JAXBDataObject testGetDataObject(MediaType mediaType, String username, String dataId, String langCode) throws Throwable {
         ApiResource dataResource = this.getApiCatalogManager().getResource("core", "dataObject");
         ApiMethod getMethod = dataResource.getGetMethod();
@@ -158,7 +169,5 @@ public class TestApiDataObjectInterface extends ApiBaseTestCase {
             throw new Exception(t);
         }
     }
-
-    private IDataObjectManager dataObjectManager;
 
 }

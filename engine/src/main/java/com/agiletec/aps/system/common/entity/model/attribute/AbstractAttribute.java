@@ -337,14 +337,6 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
         return value;
     }
 
-    @Deprecated(/**
-             * DO NOTHING : to guaranted compatibility with previsous version of
-             * jAPS 2.0.12
-             */
-            )
-    protected void addListElementTypeConfig(Element configElement) {
-    }
-
     @Override
     public String getIndexingType() {
         return _indexingType;
@@ -453,6 +445,10 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
         if (null == this.getValue()) {
             return null;
         }
+        return this.createBaseJAXBAttribute();
+    }
+
+    protected AbstractJAXBAttribute createBaseJAXBAttribute() {
         AbstractJAXBAttribute jaxbAttribute = this.getJAXBAttributeInstance();
         jaxbAttribute.setDescription(this.getDescription());
         jaxbAttribute.setName(this.getName());

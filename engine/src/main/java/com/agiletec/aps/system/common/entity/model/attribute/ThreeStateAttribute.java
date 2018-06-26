@@ -14,25 +14,33 @@
 package com.agiletec.aps.system.common.entity.model.attribute;
 
 /**
- * This attribute represent an information of type Three State. 
- * This attribute does not support multiple languages.
+ * This attribute represent an information of type Three State. This attribute
+ * does not support multiple languages.
+ *
  * @author E.Santoboni
  */
 public class ThreeStateAttribute extends BooleanAttribute {
-	
+
     @Override
     public Boolean getValue() {
         return super.getBooleanValue();
     }
-    
-	@Override
-	protected boolean saveBooleanJDOMElement() {
-		return (null != super.getBooleanValue());
-	}
-	
-	@Override
-	protected boolean addSearchInfo() {
-		return (null != super.getBooleanValue());
-	}
-	
+
+    @Override
+    protected boolean saveBooleanJDOMElement() {
+        return (null != super.getBooleanValue());
+    }
+
+    @Override
+    protected boolean addSearchInfo() {
+        return (null != super.getBooleanValue());
+    }
+
+    @Override
+    public AbstractJAXBAttribute getJAXBAttribute(String langCode) {
+        JAXBBooleanAttribute jaxbAttribute = (JAXBBooleanAttribute) super.createBaseJAXBAttribute();
+        jaxbAttribute.setBoolean(this.getValue());
+        return jaxbAttribute;
+    }
+
 }

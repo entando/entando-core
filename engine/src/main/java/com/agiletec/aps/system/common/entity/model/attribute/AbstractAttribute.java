@@ -337,14 +337,6 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
         return value;
     }
 
-    @Deprecated(/**
-             * DO NOTHING : to guaranted compatibility with previsous version of
-             * jAPS 2.0.12
-             */
-            )
-    protected void addListElementTypeConfig(Element configElement) {
-    }
-
     @Override
     public String getIndexingType() {
         return _indexingType;
@@ -449,10 +441,28 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
         this._validationRules = validationRules;
     }
 
+    /**
+     * Create and return the Jaxb structure of the attribute. This method return
+     * the object only if the value of the attribute is not null, and it can be
+     * overriten by custom attributes class.
+     *
+     * @param langCode The lang code
+     * @return The jaxb structure of the atttribute
+     */
     protected AbstractJAXBAttribute createJAXBAttribute(String langCode) {
         if (null == this.getValue()) {
             return null;
         }
+        return this.createBaseJAXBAttribute();
+    }
+
+    /**
+     * Create and return the base Jaxb structure of the attribute. This method
+     * can't be overriten by other attributes class.
+     *
+     * @return The base jaxb structure of the attribute.
+     */
+    protected final AbstractJAXBAttribute createBaseJAXBAttribute() {
         AbstractJAXBAttribute jaxbAttribute = this.getJAXBAttributeInstance();
         jaxbAttribute.setDescription(this.getDescription());
         jaxbAttribute.setName(this.getName());

@@ -108,11 +108,15 @@ public class RestListRequest {
     public List<FieldSearchFilter> buildFieldSearchFilters() {
         List<FieldSearchFilter> fieldSearchFilters = new ArrayList<>();
         if (null != filters && filters.length > 0) {
-            Arrays.stream(filters).filter(filter -> filter.getAttribute() != null).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
+            Arrays.stream(filters).filter(filter -> (filter.getAttribute() != null
+                    && !filter.getAttribute().contains("."))).forEach(i -> fieldSearchFilters.add(i.getFieldSearchFilter()));
         }
-        FieldSearchFilter pageFilter = this.buildPaginationFilter();
-        if (null != pageFilter) {
-            fieldSearchFilters.add(pageFilter);
+        if (null == filters || filters.length == 0 || !Arrays.stream(filters)
+                .anyMatch(filter -> filter.getAttribute() != null && filter.getAttribute().contains("."))) {
+            FieldSearchFilter pageFilter = this.buildPaginationFilter();
+            if (null != pageFilter) {
+                fieldSearchFilters.add(pageFilter);
+            }
         }
         FieldSearchFilter sortFilter = this.buildSortFilter();
         if (null != sortFilter) {

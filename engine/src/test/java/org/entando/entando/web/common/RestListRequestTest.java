@@ -32,7 +32,7 @@ import org.junit.Test;
  *
  * @author paddeo
  */
-public class RestListRequestTest extends AbstractControllerTest {
+public class RestListRequestTest {
 
     @Test
     public void shuold_create_filters() {

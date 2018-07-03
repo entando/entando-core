@@ -226,6 +226,9 @@ public class PagedMetadata<T> {
 //                String fieldClass = fieldName.substring(0, fieldName.indexOf("."));
 //                fieldName = fieldName.substring(fieldName.indexOf(".") + 1);
                 Field field = fields.get(nested);
+                if (field == null) {
+                    return null;
+                }
                 field.setAccessible(true);
                 value = field.get(value);
                 if (value != null) {

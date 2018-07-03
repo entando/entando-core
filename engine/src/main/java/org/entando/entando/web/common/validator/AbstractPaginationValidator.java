@@ -98,7 +98,6 @@ public abstract class AbstractPaginationValidator implements Validator {
     public boolean isValidField(String fieldName, Class<?> type) {
         Map<String, Field> fields = new HashMap<>();
         fields = getAllFields(fields, type);
-        final Map<String, Field> fields2 = fields;
         if (fieldName.contains(".")) {
             String fieldClass = fieldName.substring(0, fieldName.indexOf("."));
             if (fields.keySet().contains(fieldClass)) {

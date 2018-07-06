@@ -13,11 +13,7 @@
  */
 package org.entando.entando.web.widget.validator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.springframework.stereotype.Component;

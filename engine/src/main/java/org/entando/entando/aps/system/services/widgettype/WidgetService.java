@@ -27,7 +27,6 @@ import com.agiletec.aps.util.ApsProperties;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
@@ -179,6 +178,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         return details;
     }
 
+    @Override
     public WidgetDto addWidget(WidgetRequest widgetRequest) {
         WidgetType widgetType = new WidgetType();
         this.processWidgetType(widgetType, widgetRequest);
@@ -207,7 +207,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     @Override
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
-
         if (type == null) {
             throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
         } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {

@@ -13,7 +13,6 @@
  */
 package com.agiletec.apsadmin.portal;
 
-import java.io.File;
 import java.util.List;
 import java.util.Properties;
 
@@ -24,8 +23,6 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -38,6 +35,7 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import java.util.ArrayList;
+import javax.servlet.ServletContext;
 
 /**
  * @author E.Santoboni
@@ -92,20 +90,10 @@ public class WidgetTypeAction extends AbstractPortalAction {
 			return true;
 		}
 		String pluginCode = type.getPluginCode();
-		String jspPath = WidgetType.getJspPath(this.getWidgetTypeCode(), pluginCode);
-		String folderPath = this.getRequest().getSession().getServletContext().getRealPath("/");
-		boolean existsJsp = (new File(folderPath + jspPath)).exists();
-		if (existsJsp) {
-			return true;
-		}
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		Resource[] resources = resolver.getResources("file:**" + jspPath);
-		for (int i = 0; i < resources.length; i++) {
-			Resource resource = resources[i];
-			if (resource.exists()) {
-				return true;
-			}
-		}
+        ServletContext srvCtx = this.getRequest().getSession().getServletContext();
+        if (WidgetType.existsJsp(srvCtx, this.getWidgetTypeCode(), pluginCode)) {
+            return true;
+        }
 		GuiFragment guiFragment = this.extractUniqueGuiFragment(this.getWidgetTypeCode());
 		if (!isValuedGui && (guiFragment == null || StringUtils.isBlank(guiFragment.getDefaultGui()))) {
 			return false;

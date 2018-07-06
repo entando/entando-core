@@ -183,11 +183,10 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID)));
             
             request.setGroup("helpdesk");
-            /*
             request.setCustomUi("");
             result = this.executeWidgetPut(request, newCode, accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_NOT_BLANK)));
-            */
+            
             titles.put("en", "Title EN modified");
             request.setCustomUi("New Custom Ui");
             result = this.executeWidgetPut(request, newCode, accessToken, status().isOk());
@@ -197,6 +196,10 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             Assert.assertEquals("Title EN modified", widgetType.getTitles().getProperty("en"));
             Assert.assertEquals("helpdesk", widgetType.getMainGroup());
             
+            result = this.executeWidgetDelete(newCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.code", is(newCode)));
+            widgetType = this.widgetTypeManager.getWidgetType(newCode);
+            Assert.assertNull(widgetType);
         } catch (Exception e) {
             throw e;
         } finally {
@@ -223,17 +226,34 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             ResultActions result = this.executeWidgetPost(request, accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_NOT_BLANK)));
             
-            // ... to complete
+            titles.put("en", "");
+            request.setCustomUi("Custom UI");
+            result = this.executeWidgetPost(request, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_MISSING_TITLE)));
             
+            titles.put("en", "Title EN 2 bis");
+            result = this.executeWidgetPut(request, newCode, accessToken, status().isNotFound());
+            result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND)));
+            
+            result = this.executeWidgetPost(request, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.group", is(Group.FREE_GROUP_NAME)));
+            WidgetType widgetType = this.widgetTypeManager.getWidgetType(newCode);
+            Assert.assertNotNull(widgetType);
+            Assert.assertEquals("Title EN 2 bis", widgetType.getTitles().getProperty("en"));
+            
+            titles.put("it", "");
+            result = this.executeWidgetPut(request, newCode, accessToken, status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_MISSING_TITLE)));
         } catch (Exception e) {
             throw e;
         } finally {
             this.widgetTypeManager.deleteWidgetType(newCode);
+            Assert.assertNull(this.widgetTypeManager.getWidgetType(newCode));
         }
     }
     
     @Test
-    public void testUpdateWidgetLocked() throws Exception {
+    public void testUpdateStockLocked() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         String code = "login_form";
@@ -242,8 +262,8 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         request.setCode(code);
         request.setGroup(Group.FREE_GROUP_NAME);
         request.setTitles((Map) widgetType.getTitles());
-        ResultActions result = this.executeWidgetPut(request, code, accessToken, status().isBadRequest());
-        result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED)));
+        ResultActions result = this.executeWidgetPut(request, code, accessToken, status().isOk());
+        result.andExpect(jsonPath("$.payload.code", is("login_form")));
     }
     
     @Test
@@ -251,10 +271,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         String code = "login_form";
-        ResultActions result = mockMvc.perform(
-                delete("/widgets/" + code)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
-        result.andExpect(status().isBadRequest());
+        ResultActions result = this.executeWidgetDelete(code, accessToken, status().isBadRequest());
         result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED)));
     }
     
@@ -273,6 +290,14 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 .perform(put("/widgets/{code}", new Object[]{widgetTypeCode})
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
+    }
+    
+    private ResultActions executeWidgetDelete(String widgetTypeCode, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc.perform(
+                delete("/widgets/{code}", new Object[]{widgetTypeCode})
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
         result.andExpect(expected);
         return result;

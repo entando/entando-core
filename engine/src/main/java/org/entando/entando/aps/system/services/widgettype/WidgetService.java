@@ -29,6 +29,8 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -48,9 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.web.context.ServletContextAware;
 
 @Service
-public class WidgetService implements IWidgetService, GroupServiceUtilizer<WidgetDto> {
+public class WidgetService implements IWidgetService, GroupServiceUtilizer<WidgetDto>, ServletContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -63,6 +66,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IGroupManager groupManager;
 
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
+    
+    private ServletContext srvCtx;
 
     protected IWidgetTypeManager getWidgetManager() {
         return widgetManager;
@@ -209,19 +214,23 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
             throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
-        } else if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
-            bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
-            throw new ValidationGenericException(bindingResult);
         }
-        if (type.isLocked()) {
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
-            bindingResult.reject(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED, new String[]{type.getCode()}, "widgettype.update.locked");
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.processWidgetType(type, widgetRequest);
-        WidgetDto widgetDto = dtoBuilder.convert(type);
+        WidgetDto widgetDto = null;
         try {
+             if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+                BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
+                bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
+                throw new ValidationGenericException(bindingResult);
+            }
+            if (type.isUserType() 
+                    && StringUtils.isBlank(widgetRequest.getCustomUi()) 
+                    && !WidgetType.existsJsp(this.srvCtx, widgetCode, widgetCode)) {
+                BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
+                bindingResult.reject(WidgetValidator.ERRCODE_NOT_BLANK, new String[]{type.getCode()}, "widgettype.customUi.notBlank");
+                throw new ValidationGenericException(bindingResult);
+            }
+            this.processWidgetType(type, widgetRequest);
+            widgetDto = dtoBuilder.convert(type);
             this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
             if (!StringUtils.isEmpty(widgetCode)) {
                 GuiFragment guiFragment = this.getGuiFragmentManager().getUniqueGuiFragmentByWidgetType(widgetCode);
@@ -233,6 +242,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
                 }
             }
             this.addFragments(widgetDto);
+        } catch (ValidationGenericException vge) {
+            throw vge;
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);
             throw new RestServerError("Failed to update widget", e);
@@ -331,6 +342,11 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             bindingResult.reject(WidgetValidator.ERRCODE_CANNOT_DELETE_USED_PAGES, new String[]{widgetType.getCode()}, "widgettype.delete.references.page");
         }
         return bindingResult;
+    }
+
+    @Override
+    public void setServletContext(ServletContext srvCtx) {
+        this.srvCtx = srvCtx;
     }
 
 }

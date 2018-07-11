@@ -348,7 +348,6 @@ a {
 td{
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 1px;
 }
 .word-wrap {
     width:80%;
@@ -974,7 +973,6 @@ a {
 td{
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 1px;
 }
 .word-wrap {
     width:80%;

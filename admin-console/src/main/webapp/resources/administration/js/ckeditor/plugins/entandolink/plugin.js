@@ -22,8 +22,55 @@ CKEDITOR.plugins.add('entandolink', {
 							} else {
 									width = window.innerWidth;
 							}
-							var height = window.innerHeight - (window.innerHeight / 100 * 2);
-							window.open(editor.config.EntandoLinkActionPath, id, 'width=' + width + ',height=' + height + ',location=no,scrollbars=yes,toolbar=no,resizable=1');
+
+                            var attributeHRef = selection.getStartElement().getAttribute( 'href');
+                            var attributeCode;
+                            var hrefTab ='';
+                            if (attributeHRef){
+                               hrefTab= attributeHRef.substring(0,4);
+                               attributeCode=attributeHRef.substring(4,attributeHRef.length-2);
+                            };
+                            var activeTab='';
+                            var linkTypeVar=1;
+                            var link='entandoInternalUrlLink';
+                            switch (hrefTab) {
+
+                                case '#!U;':{
+                                    activeTab='resource-link';
+                                    link = 'entandoInternalUrlLink';
+                                    linkTypeVar=1;
+                                    attributeCode='';
+                                    break;
+                                }
+
+                                case '#!P;':{
+                                    linkTypeVar=2;
+                                    activeTab='page-link';
+                                    link= 'entandoInternalPageLink';
+                                    break;
+                                }
+
+                                case '#!C;':{
+                                    linkTypeVar=3;
+                                    link='entandoInternalContentLink';
+                                    activeTab='resource-link';
+                                    break;
+                                }
+
+                                case '#!R;':{
+                                    link='entandoInternalResourceLink';
+                                    linkTypeVar=4;
+                                    activeTab='content-link';
+                                    break;
+                                }
+
+                            }
+
+                            var url = editor.config.EntandoLinkActionPath.replace('entandoInternalLink',link);
+                            var height = window.innerHeight - (window.innerHeight / 100 * 2);
+
+							window.open(url+"&linkTypeVar="+linkTypeVar+"&prevCode="+attributeCode+"#"+activeTab , id, 'width=' + width + ',height=' + height + ',location=no,scrollbars=yes,toolbar=no,resizable=1');
+
 						}
 					}
 				});

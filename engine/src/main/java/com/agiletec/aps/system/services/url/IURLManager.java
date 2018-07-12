@@ -52,12 +52,31 @@ public interface IURLManager {
 	 * @param requiredPage The required page.
 	 * @param requiredLang The required lang.
 	 * @param params A map of params. Could be null.
-	 * @return The url.
+	 * @return The required url.
 	 */
 	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params);
 	
+    /**
+     * Create and return url by required page, lang and request params.
+	 * @param requiredPage The required page.
+	 * @param requiredLang The required lang.
+	 * @param params A map of params. Could be null.
+     * @param escapeAmp if true, escape "&" with "&amp;" in the query string
+     * @return The required url.
+     */
 	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp);
 	
+    /**
+     * Create and return url by required page, lang and request params.
+	 * @param requiredPage The required page.
+	 * @param requiredLang The required lang.
+	 * @param params A map of params. Could be null.
+     * @param escapeAmp if true, escape "&" with "&amp;" in the query string
+     * @param request The object that allows extracting the information from baseUrl (based on the configuration of the url style); 
+     * if null, the base url will be the one statically inserted by the context configuration
+     * @return The required url.
+     * @throws ApsSystemException In case of error
+     */
 	public String createURL(IPage requiredPage, Lang requiredLang, Map<String, String> params, boolean escapeAmp, HttpServletRequest request) throws ApsSystemException;
 	
 	public String getApplicationBaseURL(HttpServletRequest request) throws ApsSystemException;

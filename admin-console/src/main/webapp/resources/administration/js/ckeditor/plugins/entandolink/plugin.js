@@ -31,7 +31,7 @@ CKEDITOR.plugins.add('entandolink', {
                                attributeCode=attributeHRef.substring(4,attributeHRef.length-2);
                             };
                             var activeTab='';
-                            var linkTypeVar=1;
+                            var linkTypeVar='';
                             var link='entandoInternalUrlLink';
                             switch (hrefTab) {
 
@@ -59,7 +59,7 @@ CKEDITOR.plugins.add('entandolink', {
 
                                 case '#!R;':{
                                     link='entandoInternalResourceLink';
-                                    linkTypeVar=4;
+                                    linkTypeVar=5;
                                     activeTab='content-link';
                                     break;
                                 }
@@ -68,8 +68,9 @@ CKEDITOR.plugins.add('entandolink', {
 
                             var url = editor.config.EntandoLinkActionPath.replace('entandoInternalLink',link);
                             var height = window.innerHeight - (window.innerHeight / 100 * 2);
+                            var url=url+"&linkTypeVar="+linkTypeVar+"&prevLinkTypeVar="+linkTypeVar+"&prevCode="+attributeCode+"#"+activeTab;
 
-							window.open(url+"&linkTypeVar="+linkTypeVar+"&prevCode="+attributeCode+"#"+activeTab , id, 'width=' + width + ',height=' + height + ',location=no,scrollbars=yes,toolbar=no,resizable=1');
+							window.open(url , id, 'width=' + width + ',height=' + height + ',location=no,scrollbars=yes,toolbar=no,resizable=1');
 
 						}
 					}

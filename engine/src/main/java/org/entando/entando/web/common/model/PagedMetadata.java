@@ -17,11 +17,14 @@ import java.util.List;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.commons.lang3.StringUtils;
 
 public class PagedMetadata<T> {
 
@@ -71,6 +74,16 @@ public class PagedMetadata<T> {
         this.pageSize = size;
         this.lastPage = last;
         this.totalItems = totalItems;
+    }
+
+    public PagedMetadata(RestListRequest req, List<T> body, int totalItems) {
+        this(req, totalItems);
+        this.setBody(body);
+        if (null != req.getFilters()) {
+            if (Arrays.stream(filters).anyMatch(filter -> filter.getAttribute() != null && filter.getAttribute().contains("."))) {
+                this.applySubFilter(req, body);
+            }
+        }
     }
 
     public int getPage() {
@@ -173,4 +186,72 @@ public class PagedMetadata<T> {
                     .collect(Collectors.toList()));
         }
     }
+
+    public void applySubFilter(RestListRequest req, List<T> list) {
+        if (null != req.getFilters() && req.getFilters().length > 0) {
+            List<Filter> dottedfilters = Arrays.stream(req.getFilters()).filter(filter -> (filter.getAttribute() != null
+                    && filter.getAttribute().contains("."))).collect(Collectors.toList());
+            this.setBody(list.stream().filter(elem -> isValidObj(dottedfilters, elem)).collect(Collectors.toList()));
+        }
+        if (0 == req.getPageSize()) {
+            // no pagination
+            this.actualSize = this.getBody().size();
+        } else {
+            this.actualSize = req.getPageSize();
+        }
+        this.totalItems = this.getBody().size();
+        Double pages = Math.ceil(new Double(totalItems) / new Double(this.actualSize));
+        this.lastPage = pages.intValue();
+    }
+
+    private boolean isValidObj(List<Filter> filters, Object obj) {
+        return filters.stream().allMatch(filter -> isValidObj(filter, obj));
+    }
+
+    private boolean isValidObj(Filter filter, Object obj) {
+        boolean isValid = false;
+        String fieldToScan = filter.getAttribute();
+        Object value = this.getFieldValue(obj, fieldToScan);
+        return value != null && value instanceof String && ((String) value).contains(filter.getValue());
+    }
+
+    private Object getFieldValue(Object bean, String fieldName) {
+        Class< ?> componentClass = bean.getClass();
+        Object value = bean;
+        Map<String, Field> fields = new HashMap<>();
+        fields = this.getAllFields(fields, componentClass);
+        String[] nestedFields = StringUtils.split(fieldName, ".");
+        try {
+            for (String nested : nestedFields) {
+//                String fieldClass = fieldName.substring(0, fieldName.indexOf("."));
+//                fieldName = fieldName.substring(fieldName.indexOf(".") + 1);
+                Field field = fields.get(nested);
+                if (field == null) {
+                    return null;
+                }
+                field.setAccessible(true);
+                value = field.get(value);
+                if (value != null) {
+                    componentClass = value.getClass();
+                    fields.clear();
+                    fields = this.getAllFields(fields, componentClass);
+                } else {
+                    return null;
+                }
+            }
+        } catch (IllegalAccessException iae) {
+            throw new IllegalStateException(iae);
+        }
+        return value;
+    }
+
+    private Map<String, Field> getAllFields(Map<String, Field> fields, Class<?> type) {
+        fields.putAll(Arrays.asList(type.getDeclaredFields()).stream()
+                .collect(Collectors.toMap(field -> field.getName(), field -> field)));
+        if (type.getSuperclass() != null) {
+            return getAllFields(fields, type.getSuperclass());
+        }
+        return fields;
+    }
+
 }

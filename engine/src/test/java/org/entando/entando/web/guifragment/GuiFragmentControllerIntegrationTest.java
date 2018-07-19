@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GuiFragmentControllerIntegrationTest extends AbstractControllerIntegrationTest {
-    
+
     @Test
     public void testGetFragments_1() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -68,7 +68,7 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(4)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(1)));
-        
+
         result = mockMvc.perform(
                 get("/fragments").param("page", "1")
                         .param("pageSize", "10")
@@ -91,7 +91,7 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         ResultActions result = mockMvc.perform(
                 get("/fragments").param("page", "1")
                         .param("pageSize", "4")
-                        .param("filter[0].attribute", "widgetType")
+                        .param("filter[0].attribute", "widgetType.code")
                         .param("filter[0].value", "gin")
                         .header("Authorization", "Bearer " + accessToken)
         );
@@ -101,11 +101,11 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(4)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(1)));
-        
+
         result = mockMvc.perform(
                 get("/fragments").param("page", "1")
                         .param("pageSize", "10")
-                        .param("filter[0].attribute", "widgetType")
+                        .param("filter[0].attribute", "widgetType.code")
                         .param("filter[0].value", "test")
                         .header("Authorization", "Bearer " + accessToken)
         );
@@ -116,5 +116,5 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.pageSize", is(10)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(0)));
     }
-    
+
 }

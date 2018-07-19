@@ -13,9 +13,14 @@
  */
 package org.entando.entando.web.common.validator;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
@@ -28,7 +33,7 @@ import org.springframework.validation.Validator;
  * @author E.Santoboni
  */
 public abstract class AbstractPaginationValidator implements Validator {
-    
+
     public static final String ERRCODE_PAGE_INVALID = "110";
     public static final String ERRCODE_NO_ITEM_ON_PAGE = "111";
     public static final String ERRCODE_PAGE_SIZE_INVALID = "112";
@@ -36,10 +41,10 @@ public abstract class AbstractPaginationValidator implements Validator {
     public static final String ERRCODE_FILTERING_ATTR_INVALID = "101";
     public static final String ERRCODE_DIRECTION_INVALID = "102";
     public static final String ERRCODE_FILTERING_OP_INVALID = "103";
-    
+
     private static final String[] directions = {"ASC", "DESC"};
     private static final String[] operations = {"eq", "gt", "lt", "not", "like"};
-    
+
     public void validateRestListRequest(RestListRequest listRequest, Class<?> type) {
         this.checkDefaultSortField(listRequest);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
@@ -79,9 +84,9 @@ public abstract class AbstractPaginationValidator implements Validator {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        
+
     }
-    
+
     public void validateRestListResult(RestListRequest listRequest, PagedMetadata<?> result) {
         if (listRequest.getPage() > 1 && (null == result.getBody() || result.getBody().isEmpty())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
@@ -89,30 +94,47 @@ public abstract class AbstractPaginationValidator implements Validator {
             throw new RestRourceNotFoundException(bindingResult);
         }
     }
-    
+
     public boolean isValidField(String fieldName, Class<?> type) {
-        List<String> fields = new ArrayList<>();
+        Map<String, Field> fields = new HashMap<>();
         fields = getAllFields(fields, type);
-        return fields.contains(fieldName);
+        if (fieldName.contains(".")) {
+            String fieldClass = fieldName.substring(0, fieldName.indexOf("."));
+            if (fields.keySet().contains(fieldClass)) {
+                String subFields = fieldName.substring(fieldName.indexOf(".") + 1);
+                Class subType = null;
+                try {
+                    subType = fields.get(fieldClass).getType();
+                    return isValidField(subFields, subType);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else {
+            return fields.keySet().contains(fieldName);
+        }
     }
-    
-    List<String> getAllFields(List<String> fields, Class<?> type) {
-        fields.addAll(Arrays.asList(type.getDeclaredFields()).stream()
-                .map(field -> field.getName()).collect(Collectors.toList()));
+
+    private Map<String, Field> getAllFields(Map<String, Field> fields, Class<?> type) {
+        fields.putAll(Arrays.asList(type.getDeclaredFields()).stream()
+                .collect(Collectors.toMap(field -> field.getName(), field -> field)));
         if (type.getSuperclass() != null) {
             return getAllFields(fields, type.getSuperclass());
         }
         return fields;
     }
-    
+
     private void checkDefaultSortField(RestListRequest listRequest) {
         if (listRequest.getSort().equals(RestListRequest.SORT_VALUE_DEFAULT)) {
             listRequest.setSort(this.getDefaultSortProperty());
         }
     }
-    
+
     protected String getDefaultSortProperty() {
         return RestListRequest.SORT_VALUE_DEFAULT;
     }
-    
+
 }

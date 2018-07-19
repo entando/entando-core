@@ -66,8 +66,7 @@ public class BaseTestCase extends TestCase {
         request.setScheme("http");
         request.setServerName("www.entando.com");
         request.addHeader("Host", "www.entando.com");
-        request.setServerPort(80);
-        request.setContextPath("Entando");
+        request.setContextPath("/Entando");
         request.setAttribute(RequestContext.REQCTX, reqCtx);
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockHttpSession session = new MockHttpSession(srvCtx);

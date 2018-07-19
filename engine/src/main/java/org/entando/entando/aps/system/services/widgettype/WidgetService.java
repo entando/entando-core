@@ -29,7 +29,6 @@ import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -66,7 +65,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IGroupManager groupManager;
 
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
-    
+
     private ServletContext srvCtx;
 
     protected IWidgetTypeManager getWidgetManager() {
@@ -217,13 +216,13 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         }
         WidgetDto widgetDto = null;
         try {
-             if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
+            if (null == this.getGroupManager().getGroup(widgetRequest.getGroup())) {
                 BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
                 bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
                 throw new ValidationGenericException(bindingResult);
             }
-            if (type.isUserType() 
-                    && StringUtils.isBlank(widgetRequest.getCustomUi()) 
+            if (type.isUserType()
+                    && StringUtils.isBlank(widgetRequest.getCustomUi())
                     && !WidgetType.existsJsp(this.srvCtx, widgetCode, widgetCode)) {
                 BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(type, "widget");
                 bindingResult.reject(WidgetValidator.ERRCODE_NOT_BLANK, new String[]{type.getCode()}, "widgettype.customUi.notBlank");
@@ -243,6 +242,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             }
             this.addFragments(widgetDto);
         } catch (ValidationGenericException vge) {
+            logger.error("Found an error on validation, throwing original exception", vge);
             throw vge;
         } catch (Throwable e) {
             logger.error("failed to update widget type", e);

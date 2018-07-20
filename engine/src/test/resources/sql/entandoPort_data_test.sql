@@ -514,7 +514,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'params', '
 	<Param name="treeStyle_category">classic</Param>
 	<Param name="startLangFromBrowser">false</Param>
 	<Param name="firstTimeMessages">true</Param>
-	<Param name="baseUrl">static</Param>
+	<Param name="baseUrl">request</Param>
 	<Param name="baseUrlContext">true</Param>
 	<Param name="useJsessionId">true</Param>
 	<SpecialPages>

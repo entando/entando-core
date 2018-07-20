@@ -1,11 +1,11 @@
 /*
  * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
  * Software Foundation; either version 2.1 of the License, or (at your option)
  * any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
@@ -14,14 +14,11 @@
 package org.entando.entando.aps.system.services.pagesettings;
 
 import com.agiletec.aps.BaseTestCase;
-import java.util.ArrayList;
-import java.util.List;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
 import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
 import org.junit.Test;
 
 /**
- *
  * @author paddeo
  */
 public class PageSettingsServiceIntegrationTest extends BaseTestCase {
@@ -48,7 +45,7 @@ public class PageSettingsServiceIntegrationTest extends BaseTestCase {
         assertNotNull(settings);
         assertTrue(settings.size() > 0);
         assertTrue(settings.keySet().stream().anyMatch(param -> param.equals("baseUrl")));
-        assertEquals("static", settings.get(settings.keySet().stream().filter(param -> param.equals("baseUrl")).findFirst().get()));
+        assertEquals("request", settings.get(settings.keySet().stream().filter(param -> param.equals("baseUrl")).findFirst().get()));
     }
 
     @Test

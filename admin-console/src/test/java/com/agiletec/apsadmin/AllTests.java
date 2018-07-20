@@ -15,9 +15,6 @@ package com.agiletec.apsadmin;
 
 import com.agiletec.apsadmin.admin.TestBaseAdminAction;
 import com.agiletec.apsadmin.admin.TestSystemParamsUtils;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import com.agiletec.apsadmin.admin.lang.TestLangAction;
 import com.agiletec.apsadmin.admin.lang.TestLangFinderAction;
 import com.agiletec.apsadmin.admin.localestring.TestLocaleStringAction;
@@ -40,6 +37,10 @@ import com.agiletec.apsadmin.user.group.TestGroupAction;
 import com.agiletec.apsadmin.user.group.TestGroupFinderAction;
 import com.agiletec.apsadmin.user.role.TestRoleAction;
 import com.agiletec.apsadmin.user.role.TestRoleFinderAction;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.entando.entando.aps.internalservlet.system.dispatcher.FrontServletActionRedirectResultIntegrationTest;
 import org.entando.entando.apsadmin.api.TestApiServiceFinderAction;
 import org.entando.entando.apsadmin.common.TestActivityStream;
 import org.entando.entando.apsadmin.common.TestActivityStreamAction;
@@ -134,6 +135,8 @@ public class AllTests {
         // Data Object
         suite.addTestSuite(TestDataObjectModelFinderAction.class);
         suite.addTestSuite(TestDataObjectModelAction.class);
+
+        suite.addTestSuite(FrontServletActionRedirectResultIntegrationTest.class);
 
         return suite;
     }

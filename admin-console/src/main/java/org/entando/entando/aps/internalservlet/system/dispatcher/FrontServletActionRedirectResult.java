@@ -15,6 +15,7 @@ package org.entando.entando.aps.internalservlet.system.dispatcher;
 
 import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.url.IURLManager;
@@ -36,21 +37,22 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Redirect Action Result with ancot for internal servlet actions.
+ *
  * @author E.Santoboni
  */
 public class FrontServletActionRedirectResult extends ServletRedirectResult implements ReflectionExceptionHandler {
-	
-	private static final Logger _logger = LoggerFactory.getLogger(FrontServletActionRedirectResult.class);
-	
-    protected String _actionName;
-    protected String _namespace;
-    protected String _method;
-    protected String _anchorDest;
+
+    private static final Logger _logger = LoggerFactory.getLogger(FrontServletActionRedirectResult.class);
+
+    protected String actionName;
+    protected String namespace;
+    protected String method;
+    protected String anchorDest;
 
     public FrontServletActionRedirectResult() {
         super();
     }
-    
+
     public FrontServletActionRedirectResult(String actionName) {
         this(null, actionName, null, null);
     }
@@ -65,24 +67,24 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
 
     public FrontServletActionRedirectResult(String namespace, String actionName, String method, String anchor) {
         super(null, anchor);
-        this._namespace = namespace;
-        this._actionName = actionName;
-        this._method = method;
+        this.namespace = namespace;
+        this.actionName = actionName;
+        this.method = method;
     }
-    
-	@Override
+
+    @Override
     public void execute(ActionInvocation invocation) throws Exception {
         try {
-            this._actionName = this.conditionalParse(this._actionName, invocation);
-            if (this._namespace == null) {
-                this._namespace = invocation.getProxy().getNamespace();
+            this.actionName = this.conditionalParse(this.actionName, invocation);
+            if (this.namespace == null) {
+                this.namespace = invocation.getProxy().getNamespace();
             } else {
-                this._namespace = this.conditionalParse(this._namespace, invocation);
+                this.namespace = this.conditionalParse(this.namespace, invocation);
             }
-            if (this._method == null) {
-                this._method = "";
+            if (this.method == null) {
+                this.method = "";
             } else {
-                this._method = this.conditionalParse(this._method, invocation);
+                this.method = this.conditionalParse(this.method, invocation);
             }
             String anchorDest = null;
             Map<String, String> redirectParams = new HashMap<String, String>();
@@ -97,13 +99,16 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
             IURLManager urlManager = (IURLManager) ApsWebApplicationUtils.getBean(SystemConstants.URL_MANAGER, request);
             Page currentPage = (Page) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
             Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-            String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, request);
+            ConfigInterface configManager = (ConfigInterface) ApsWebApplicationUtils.getBean(SystemConstants.BASE_CONFIG_MANAGER, request);
+            String urlType = configManager.getParam(SystemConstants.CONFIG_PARAM_BASE_URL);
+            boolean needRequest = (null != urlType && !urlType.equals(SystemConstants.CONFIG_PARAM_BASE_URL_RELATIVE));
+            String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, (needRequest) ? request : null);
             if (null != anchorDest) {
                 url += "#" + anchorDest;
             }
             this.setLocation(url);
         } catch (Throwable t) {
-        	_logger.error("error in execute", t);
+            _logger.error("error in execute", t);
         }
         super.execute(invocation);
     }
@@ -114,7 +119,7 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
             Map.Entry e = (Map.Entry) i.next();
             if (!this.getProhibitedResultParams().contains(e.getKey())) {
                 String potentialValue = e.getValue() == null ? "" : conditionalParse(e.getValue().toString(), invocation);
-				if (!suppressEmptyParameters || ((potentialValue != null) && (potentialValue.length() > 0))) {
+                if (!suppressEmptyParameters || ((potentialValue != null) && (potentialValue.length() > 0))) {
                     redirectParams.put(e.getKey().toString(), potentialValue);
                 }
             }
@@ -136,53 +141,57 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
     }
 
     protected void extractInternalServletParams(Map<String, String> redirectParams, RequestContext reqCtx) {
-        String actionPath = "/ExtStr2" + this._namespace + "/" + this._actionName;
+        String actionPath = "/ExtStr2" + this.namespace + "/" + this.actionName;
         Integer currentFrame = (Integer) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_FRAME);
         redirectParams.put(InternalServletTag.REQUEST_PARAM_ACTIONPATH, actionPath);
         redirectParams.put(InternalServletTag.REQUEST_PARAM_FRAMEDEST, currentFrame.toString());
     }
-	
+
     /**
      * Sets the action name
+     *
      * @param actionName The name
      */
     public void setActionName(String actionName) {
-        this._actionName = actionName;
+        this.actionName = actionName;
     }
 
     /**
      * Sets the namespace
+     *
      * @param namespace The namespace
      */
     public void setNamespace(String namespace) {
-        this._namespace = namespace;
+        this.namespace = namespace;
     }
 
     /**
      * Sets the method
+     *
      * @param method The method
      */
     public void setMethod(String method) {
-        this._method = method;
+        this.method = method;
     }
 
     protected String getAnchorDest() {
-        return _anchorDest;
+        return anchorDest;
     }
-	
+
     /**
      * Sets the anchor destination
+     *
      * @param anchorDest The anchor destination
      */
     public void setAnchorDest(String anchorDest) {
-        this._anchorDest = anchorDest;
+        this.anchorDest = anchorDest;
     }
-    
-	@Override
+
+    @Override
     protected List<String> getProhibitedResultParams() {
         return Arrays.asList(new String[]{
-                    DEFAULT_PARAM, "namespace", "method", "encode", "parse", "location",
-                    "prependServletContext", "supressEmptyParameters", "anchor", "anchorDest"});
+            DEFAULT_PARAM, "namespace", "method", "encode", "parse", "location",
+            "prependServletContext", "supressEmptyParameters", "anchor", "anchorDest"});
     }
-    
+
 }

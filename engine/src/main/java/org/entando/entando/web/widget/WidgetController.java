@@ -80,7 +80,7 @@ public class WidgetController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.widgetValidator.validateWidgetCode(widgetCode, widgetRequest, bindingResult);
+        this.widgetValidator.validateEditWidget(widgetCode, widgetRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }

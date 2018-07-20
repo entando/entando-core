@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.agiletec.aps.util.ApsProperties;
+import java.io.File;
+import java.io.IOException;
+import javax.servlet.ServletContext;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 /**
  * Rappresenta un tipo di oggetto visuale che può essere inserito in una pagina,
@@ -237,7 +242,25 @@ public class WidgetType implements Serializable {
         jspPath.append(WIDGET_LOCATION).append(code).append(".jsp");
         return jspPath.toString();
     }
-
+    
+    public static boolean existsJsp(ServletContext srvCtx, String code, String pluginCode) throws IOException {
+        String jspPath = getJspPath(code, pluginCode);
+		String folderPath = srvCtx.getRealPath("/");
+		boolean existsJsp = (new File(folderPath + jspPath)).exists();
+		if (existsJsp) {
+			return true;
+		}
+		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+		Resource[] resources = resolver.getResources("file:**" + jspPath);
+		for (int i = 0; i < resources.length; i++) {
+			Resource resource = resources[i];
+			if (resource.exists()) {
+				return true;
+			}
+		}
+        return false;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

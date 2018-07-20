@@ -13,11 +13,8 @@
  */
 package org.entando.entando.web.widget.validator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.springframework.stereotype.Component;
@@ -34,7 +31,8 @@ public class WidgetValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_WIDGET_DOES_NOT_EXISTS = "1";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
-
+    public static final String ERRCODE_MISSING_TITLE = "4";
+    
     public static final String ERRCODE_OPERATION_FORBIDDEN_LOCKED = "1";
     public static final String ERRCODE_CANNOT_DELETE_USED_PAGES = "2";
 
@@ -47,14 +45,31 @@ public class WidgetValidator extends AbstractPaginationValidator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (StringUtils.isEmpty(((WidgetRequest) target).getCustomUi())) {
+        WidgetRequest widgetRequest = (WidgetRequest) target;
+        if (StringUtils.isEmpty(widgetRequest.getCustomUi())) {
             errors.rejectValue("customUi", ERRCODE_NOT_BLANK, new String[]{}, "widgettype.customUi.notBlank");
         }
+        this.validateTitles(widgetRequest, errors);
     }
-
-    public void validateWidgetCode(String widgetCode, WidgetRequest widgetRequest, Errors errors) {
+    
+    public void validateEditWidget(String widgetCode, WidgetRequest widgetRequest, Errors errors) {
         if (!StringUtils.equals(widgetCode, widgetRequest.getCode())) {
             errors.rejectValue("code", ERRCODE_URINAME_MISMATCH, new String[]{widgetCode, widgetRequest.getCode()}, "widgettype.code.mismatch");
+        }
+        this.validateTitles(widgetRequest, errors);
+    }
+    
+    protected void validateTitles(WidgetRequest widgetRequest, Errors errors) {
+        Map<String, String> titles = widgetRequest.getTitles();
+        if (null == titles) {
+            errors.rejectValue("titles", ERRCODE_NOT_BLANK, "widgettype.titles.notBlank");
+        } else {
+            String[] langs = {"en", "it"};
+            for (String lang : langs) {
+                if (StringUtils.isBlank(titles.get(lang))) {
+                    errors.rejectValue("titles", ERRCODE_MISSING_TITLE, new String[]{lang}, "widgettype.title.notBlank");
+                }
+            }
         }
     }
 

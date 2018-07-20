@@ -14,6 +14,8 @@
 package com.agiletec.apsadmin;
 
 import com.agiletec.ConfigTestUtils;
+import com.agiletec.aps.BaseTestCase;
+import com.agiletec.aps.system.RequestContext;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.notify.NotifyManager;
@@ -37,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import junit.framework.TestCase;
@@ -74,7 +75,9 @@ public class ApsAdminBaseTestCase extends TestCase {
         } else {
             refresh = true;
         }
+        RequestContext reqCtx = BaseTestCase.createRequestContext(_applicationContext, _servletContext);
         this._request = new MockHttpServletRequest();
+        this._request.setAttribute(RequestContext.REQCTX, reqCtx);
         this._response = new MockHttpServletResponse();
         this._request.setSession(new MockHttpSession(this._servletContext));
         if (refresh) {
@@ -99,6 +102,10 @@ public class ApsAdminBaseTestCase extends TestCase {
         this._dispatcher = new Dispatcher(_servletContext, params);
         this._dispatcher.init();
         Dispatcher.setInstance(this._dispatcher);
+    }
+
+    protected <T> T getContainerObject(Class<T> requiredType) {
+        return this._dispatcher.getContainer().getInstance(requiredType);
     }
 
     protected Container createContainer() {
@@ -277,11 +284,15 @@ public class ApsAdminBaseTestCase extends TestCase {
     }
 
     protected String executeAction() throws Throwable {
-        ActionContext ac = this._proxy.getInvocation().getInvocationContext();
+        ActionContext ac = this.getActionContext();
         ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
         ac.getParameters().appendAll(this._parameters);
         String result = this._proxy.execute();
         return result;
+    }
+
+    protected ActionContext getActionContext() {
+        return this._proxy.getInvocation().getInvocationContext();
     }
 
     protected IManager getService(String name) {

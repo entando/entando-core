@@ -25,12 +25,11 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.helper.ILinkAttributeActionHelper;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,22 @@ import org.slf4j.LoggerFactory;
 public class PageLinkAction extends PageTreeAction {
 	
 	private static final Logger _logger = LoggerFactory.getLogger(PageLinkAction.class);
-	
+
+
+	@Override
+	public String execute() throws Exception {
+		String result= super.execute();
+		if (result.equals(SUCCESS)) {
+			Map<String, String> properties = (Map<String, String>) this.getRequest().getSession().getAttribute(ILinkAttributeActionHelper.LINK_PROPERTIES_MAP_SESSION_PARAM);
+			if (null != properties) {
+				this.linkAttributeRel = properties.get("rel");
+				this.linkAttributeTarget = properties.get("target");
+				this.linkAttributeHRefLang = properties.get("hreflang");
+			}
+		}
+		return result;
+	}
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -63,16 +77,30 @@ public class PageLinkAction extends PageTreeAction {
 		int destType = this.getLinkType();
 		String[] destinations = {null, this.getContentId(), this.getSelectedNode()};
 		this.buildEntryContentAnchorDest();
-		this.getLinkAttributeHelper().joinLink(destinations, destType, this.getRequest());
+		this.getLinkAttributeHelper().joinLink(destinations, destType, createPropertiesMap(),this.getRequest());
 		return SUCCESS;
 	}
-	
+
+	private Map<String,String> createPropertiesMap(){
+		Map<String,String> properties = new HashMap<>();
+		if (StringUtils.isNotBlank(getLinkAttributeRel())) {
+			properties.put("rel", getLinkAttributeRel());
+		}
+		if (StringUtils.isNotBlank(getLinkAttributeTarget())) {
+			properties.put("target", getLinkAttributeTarget());
+		}
+		if (StringUtils.isNotBlank(getLinkAttributeHRefLang())) {
+			properties.put("hrefLang",getLinkAttributeHRefLang());
+		}
+		return properties;
+	}
+
 	private void buildEntryContentAnchorDest() {
 		HttpSession session = this.getRequest().getSession();
 		String anchorDest = this.getLinkAttributeHelper().buildEntryContentAnchorDest(session);
 		this.setEntryContentAnchorDest(anchorDest);
 	}
-	
+
 	@Override
 	protected Collection<String> getNodeGroupCodes() {
 		Set<String> groupCodes = new HashSet<String>();
@@ -125,7 +153,30 @@ public class PageLinkAction extends PageTreeAction {
 	public void setLinkType(int linkType) {
 		this._linkType = linkType;
 	}
-	
+
+	public String getLinkAttributeRel() {
+		return linkAttributeRel;
+	}
+
+	public void setLinkAttributeRel(String linkAttributeRel) {
+		this.linkAttributeRel = linkAttributeRel;
+	}
+
+	public String getLinkAttributeTarget() {
+		return linkAttributeTarget;
+	}
+
+	public void setLinkAttributeTarget(String linkAttributeTarget) {
+		this.linkAttributeTarget = linkAttributeTarget;
+	}
+
+	public String getLinkAttributeHRefLang() {
+		return linkAttributeHRefLang;
+	}
+
+	public void setLinkAttributeHRrefLang(String linkAttributeHRrefLang) {
+		this.linkAttributeHRefLang = linkAttributeHRrefLang;
+	}
 	public String getEntryContentAnchorDest() {
 		if (null == this._entryContentAnchorDest) {
 			this.buildEntryContentAnchorDest();
@@ -159,5 +210,11 @@ public class PageLinkAction extends PageTreeAction {
 	private String _entryContentAnchorDest;
 	
 	private ILinkAttributeActionHelper _linkAttributeHelper;
-	
+
+	private String linkAttributeRel;
+
+	private String linkAttributeTarget;
+
+	private String linkAttributeHRefLang;
+
 }

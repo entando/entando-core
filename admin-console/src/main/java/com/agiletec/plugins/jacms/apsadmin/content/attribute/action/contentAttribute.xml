@@ -84,6 +84,18 @@
 	<package name="jacms_do/jacms/Content/Link" namespace="/do/jacms/Content/Link" extends="entando-default">
 
 		<action name="chooseLink" class="jacmsLinkAttributeAction" method="chooseLinkType">
+			<result name="configUrlLink" type="redirectAction">
+				<param name="actionName">configUrlLink</param>
+				<param name="contentOnSessionMarker">${contentOnSessionMarker}</param>
+			</result>
+			<result name="configPageLink" type="redirectAction">
+				<param name="actionName">configPageLink</param>
+				<param name="contentOnSessionMarker">${contentOnSessionMarker}</param>
+			</result>
+			<result name="configContentLink" type="redirectAction">
+				<param name="actionName">configContentLink</param>
+				<param name="contentOnSessionMarker">${contentOnSessionMarker}</param>
+			</result>
 			<result type="tiles">admin.jacms.content.chooseLinkType</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>

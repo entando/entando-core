@@ -14,10 +14,13 @@
 package com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,21 @@ import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.helper.
 public class ContentLinkAction extends ContentFinderAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ContentLinkAction.class);
-	
+
+	@Override
+	public String execute()  {
+		String result= super.execute();
+		if (result.equals(SUCCESS)) {
+			Map<String, String> properties = (Map<String, String>) this.getRequest().getSession().getAttribute(ILinkAttributeActionHelper.LINK_PROPERTIES_MAP_SESSION_PARAM);
+			if (null != properties) {
+				this.linkAttributeRel = properties.get("rel");
+				this.linkAttributeTarget = properties.get("target");
+				this.linkAttributeHRefLang = properties.get("hreflang");
+			}
+		}
+		return result;
+	}
+
 	@Override
 	public List<String> getContents() {
 		List<String> result = null;
@@ -64,7 +81,7 @@ public class ContentLinkAction extends ContentFinderAction {
 		} else {
 			String[] destinations = {null, this.getContentId(), null};
 			this.buildEntryContentAnchorDest();
-			this.getLinkAttributeHelper().joinLink(destinations, SymbolicLink.CONTENT_TYPE, this.getRequest());
+			this.getLinkAttributeHelper().joinLink(destinations, SymbolicLink.CONTENT_TYPE, createPropertiesMap() ,this.getRequest());
 			return SUCCESS;
 		}
 	}
@@ -97,7 +114,44 @@ public class ContentLinkAction extends ContentFinderAction {
 		return (Content) this.getRequest().getSession()
 				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
 	}
-	
+
+	private Map<String,String> createPropertiesMap(){
+		Map<String,String> properties = new HashMap<>();
+		if (StringUtils.isNotBlank(getLinkAttributeRel())) {
+			properties.put("rel", getLinkAttributeRel());
+		}
+		if (StringUtils.isNotBlank(getLinkAttributeTarget())) {
+			properties.put("target", getLinkAttributeTarget());
+		}
+		if (StringUtils.isNotBlank(getLinkAttributeHRefLang())) {
+			properties.put("hrefLang",getLinkAttributeHRefLang());
+		}
+		return properties;
+	}
+
+	public String getLinkAttributeRel() {
+		return linkAttributeRel;
+	}
+
+	public void setLinkAttributeRel(String linkAttributeRel) {
+		this.linkAttributeRel = linkAttributeRel;
+	}
+
+	public String getLinkAttributeTarget() {
+		return linkAttributeTarget;
+	}
+
+	public void setLinkAttributeTarget(String linkAttributeTarget) {
+		this.linkAttributeTarget = linkAttributeTarget;
+	}
+
+	public String getLinkAttributeHRefLang() {
+		return linkAttributeHRefLang;
+	}
+
+	public void setLinkAttributeHRefLang(String linkAttributeHRefLang) {
+		this.linkAttributeHRefLang = linkAttributeHRefLang;
+	}
 	public String getContentOnSessionMarker() {
 		return _contentOnSessionMarker;
 	}
@@ -152,5 +206,11 @@ public class ContentLinkAction extends ContentFinderAction {
 	private String _entryContentAnchorDest;
 	
 	private ILinkAttributeActionHelper _linkAttributeHelper;
-	
+
+	private String linkAttributeRel;
+
+	private String linkAttributeTarget;
+
+	private String linkAttributeHRefLang;
+
 }

@@ -18,6 +18,8 @@ import javax.servlet.http.HttpSession;
 
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.ILinkAttributeAction;
 
+import java.util.Map;
+
 /**
  * Interfaccia della classe helper base per le action delegata 
  * alla gestione delle operazione sugli attributi link.
@@ -38,7 +40,7 @@ public interface ILinkAttributeActionHelper {
 	 * @param destType Il tipo di link di destinazione.
 	 * @param request La request.
 	 */
-	public void joinLink(String[] destinations, int destType, HttpServletRequest request);
+	public void joinLink(String[] destinations, int destType, Map<String,String> properties, HttpServletRequest request);
 	
 	/**
 	 * Rimuove il link corrente.
@@ -60,5 +62,7 @@ public interface ILinkAttributeActionHelper {
 	public static final String INCLUDED_ELEMENT_NAME_SESSION_PARAM = "includedElementName";
 	
 	public static final String SYMBOLIC_LINK_SESSION_PARAM = "symbolicLinkParamName";
-	
+
+    public static final String LINK_PROPERTIES_MAP_SESSION_PARAM = "linkPropertiesMap";
+
 }

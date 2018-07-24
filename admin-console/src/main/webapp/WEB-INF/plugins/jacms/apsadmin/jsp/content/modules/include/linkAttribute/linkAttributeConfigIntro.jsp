@@ -1,5 +1,9 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core" %>
+<%@ taglib prefix="wp" uri="/aps-core" %>
+
+<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/jquery-ui.css">
+<script src="<wp:resourceURL />administration/js/jquery-ui.js"></script>
 
 <!-- Admin console Breadcrumbs -->
 <s:url action="list" namespace="/do/jacms/Content" var="contentListURL"/>

@@ -84,7 +84,20 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
 		}
 		return SUCCESS;
 	}
-	
+
+	/**
+	 * Restituisce la risorsa per il resourceId in input.
+	 */
+	public ResourceInterface getResource(String resourceId) {
+		try {
+			ResourceInterface resource = this.getResourceManager().loadResource(resourceId);
+			return resource;
+		} catch (Throwable t) {
+			_logger.error("error loading resource", t);
+			throw new RuntimeException("error loading resource "+ resourceId, t);
+		}
+	}
+
 	private void buildEntryContentAnchorDest() {
 		HttpSession session = this.getRequest().getSession();
 		String anchorDest = ResourceAttributeActionHelper.buildEntryContentAnchorDest(session);

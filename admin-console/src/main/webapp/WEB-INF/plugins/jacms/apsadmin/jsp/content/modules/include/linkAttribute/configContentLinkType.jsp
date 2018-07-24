@@ -248,6 +248,9 @@
                 </div>
             </div>
 
+            <!-- Link attributes -->
+            <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/entando-link-attributes.jsp" />
+
             <div class="col-xs-12">
                 <div class="text-right">
                     <a href="${contentEntryURL}" title="<s:text name="label.cancel" />" class="btn btn-default mr-10">
@@ -261,3 +264,5 @@
         </div>
     </div>
 </s:form>
+
+<jsp:include page="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/link-attributes-autocomplete.jsp" />

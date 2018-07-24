@@ -8,8 +8,7 @@
 <!DOCTYPE html>
 <html lang="<s:property value="currentLang.code" />">
 	<head>
-		<title><s:text name="title.configureLink"/></title>
-	
+		<title><s:text name="title.configureLinkAttribute"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta charset="utf-8" />
 	
@@ -19,7 +18,9 @@
 		<link rel="stylesheet" href="<wp:resourceURL />administration/patternfly/css/patternfly-additions.min.css">
 		<link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css">
 		<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/settingsPage.css">
-	
+		<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/jquery-ui.css">
+
+
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 			<script src="<wp:resourceURL />administration/js/html5shiv.js"></script>
@@ -33,58 +34,69 @@
 		<script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 		<script src="<wp:resourceURL />administration/js/bootstrap-switch.min.js"></script>
 		<script src="<wp:resourceURL />administration/js/bootstrap-offcanvas.js"></script>
-		
+        <script src="<wp:resourceURL />administration/js/jquery-ui.js"></script>
 		<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-common.jsp" />
-	
+
 		<%-- entando-link stuff --%>
 		<script type="text/javascript" src="<wp:resourceURL />administration/js/ckeditor/ckeditor.js"></script>
 		<s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/snippet-pageTree.jsp" />
         <%-- form extras --%>
 		<script type="text/javascript">
 			jQuery(function(){
-				<%--
-				when the dom is ready we try to read the hash
-				and recognize what is the tab to open.
-				--%>
-	
-				if (document.location.hash.length > 0) {
-					var tabContainer = $('#tab-container'); //tab conainer
-					var tabTogglersContainer = $('#tab-togglers'); //toggler container
-					//find the parent with class .tab-pane inside the tab container (and get its id)
-					var tabId = $($(document.location.hash).parent('.tab-pane'), tabContainer).first().attr('id');
-					if (tabId == undefined) {
-						var tabId = $(document.location.hash+'.tab-pane', tabContainer).first().attr('id');
-					}
-					if (tabId!==undefined) {
-						//find the element with [href][data-toggle] matching our hash
-						var toggler = $('[href="#'+ tabId +'"][data-toggle="tab"]', tabTogglersContainer).first();
-						if (toggler.length==1) {
-							$(toggler).tab('show');
-						}
-					}
-				}
+
+	            var editor = window.opener.entandoCKEditor[window.name];
+                var selected = editor.getSelection();
+
+                var attributeHRef = selected.getStartElement().getAttribute( 'href');
+                var linkType="";
+                if (attributeHRef) {
+                   if (attributeHRef.substring(0, 4) == '#!U;') {
+                        attributeHRef=attributeHRef.substring(4,attributeHRef.length-2);
+                        $('#txtName').val(attributeHRef);
+                   }
+                }
+                var attributeRel = selected.getStartElement().getAttribute( 'rel');
+                if (attributeRel) {
+                    $('#linkAttributeRel').val(attributeRel);
+                }
+                var attributeTarget = selected.getStartElement().getAttribute( 'target');
+                if (attributeTarget) {
+                    $('#linkAttributeTarget').val(attributeTarget);
+                }
+				var attributeHRefLang = selected.getStartElement().getAttribute( 'hreflang');
+                if (attributeHRefLang) {
+                    $('#linkAttributeHRefLang').val(attributeHRefLang);
+                }
+
 			});
 			jQuery(function(){
-				var entandoApplyLinkToEditor = function (href) {
-					// var editor = window.opener.entandoCKEditor[window.name];
-					// var selection = editor.getSelection();
-					// var range = selection.getRanges( 1 )[ 0 ];
-					// var style = new CKEDITOR.style({"element": "a", "attributes": { "data-cke-saved-href": href, "href": href } });
-					// style.type = CKEDITOR.STYLE_INLINE; // need to override... dunno why.
-					// style.applyToRange( range );
-					// range.select();
+				var entandoApplyLinkToEditor = function (href, attributes) {
 					var editor = window.opener.entandoCKEditor[window.name];
-					var selection = editor.getSelection();
-					var ranges = selection.getRanges(true);
-					if (ranges.length == 1 && ranges[0].collapsed) {
-						var text = new CKEDITOR.dom.text('creato', editor.document);
-						ranges[0].insertNode(text);
-						ranges[0].selectNodeContents(text);
-						selection.selectRanges(ranges);
-					}
-					var style = new CKEDITOR.style({"element": "a", "attributes": { "data-cke-saved-href": href, "href": href } });
-					style.type = CKEDITOR.STYLE_INLINE;	// need to override... dunno why.
-					style.apply(editor.document);
+				    var selection = editor.getSelection();
+                    var selectedHtml = editor.getSelectedHtml(true);
+                    var startElement = selection.getStartElement();
+                    var link;
+                    if (startElement.getName()==='a')
+                    {
+                        link=startElement;
+                        link.setAttribute( 'href', href );
+                        link.setAttribute( 'data-cke-saved-href', href );
+                        editor.updateElement();
+                    }
+                    else{
+                        link = editor.document.createElement('a');
+                        link.setAttribute( 'href', href );
+                        link.setAttribute( 'data-cke-saved-href', href );
+                        link.appendHtml(selectedHtml);
+                        editor.insertElement(link);
+                    }
+
+                    Object.keys(attributes).forEach((key) => {
+                        if (attributes[key]!==''){
+                            link.setAttribute( key, attributes[key] );
+                        }
+                    });
+
 				};
 	
 				var insertAlert = function(text, target) {
@@ -95,6 +107,8 @@
 							text+
 						'</div>').prependTo(target);
 				};
+
+
 				//link to url
 				$('#form_externalUrl').on('submit', function(ev){
 					ev.preventDefault();
@@ -103,9 +117,14 @@
 					}
 					else {
 						var hrefValue = "#!U;" + $('#txtName').val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
+						entandoApplyLinkToEditor(hrefValue,
+						                        {'rel':  $('#linkAttributeRel').val(),
+						                         'target': $('#linkAttributeTarget').val(),
+						                         'hreflang': $('#linkAttributeHRefLang').val(),
+						                        });
 						window.close();
 					}
+
 				});
 				//link to page
 				$('#form_pageLink').on('submit', function(ev){
@@ -116,7 +135,11 @@
 					}
 					else {
 						var hrefValue = "#!P;" + checkedPage.val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
+						entandoApplyLinkToEditor(hrefValue,
+                                                {'rel':  $('#linkAttributeRel').val(),
+                                                 'target': $('#linkAttributeTarget').val(),
+                                                 'hreflang': $('#linkAttributeHRefLang').val(),
+                        						});
 						window.close();
 					}
 				});
@@ -129,7 +152,12 @@
 					}
 					else {
 						var hrefValue = "#!C;" + checkedContent.val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
+
+						entandoApplyLinkToEditor(hrefValue,
+                                                {'rel':  $('#linkAttributeRel').val(),
+                                                 'target': $('#linkAttributeTarget').val(),
+                                                 'hreflang': $('#linkAttributeHRefLang').val(),
+                        						});
 						window.close();
 					}
 				});
@@ -142,7 +170,12 @@
 					}
 					else {
 						var hrefValue = "#!R;" + checkedResource.val() + "!#";
-						entandoApplyLinkToEditor(hrefValue);
+
+						entandoApplyLinkToEditor(hrefValue,
+                                                 {'rel':  $('#linkAttributeRel').val(),
+                                                  'target': $('#linkAttributeTarget').val(),
+                                                  'hreflang': $('#linkAttributeHRefLang').val(),
+                        						});
 						window.close();
 					}
 				});
@@ -169,35 +202,45 @@
 					<!-- Default separator -->
 					<div class="form-group-separator"></div>
 						<c:set var="linkTypeVar" value="${param.linkTypeVar}" scope="page"/>
+						<c:set var="prevCode" value="${param.prevCode}" scope="page"/>
+						<c:set var="prevLinkTypeVar" value="${param.prevLinkTypeVar}" scope="page"/>
 						<c:set var="contentOnSessionMarker" value="${param.contentOnSessionMarker}" scope="page"/>
 						<!-- Tab Menu -->
                         <ul class="nav nav-tabs tab-togglers mt-20" id="tab-togglers">
                             <s:url action="entandoInternalUrlLink" anchor="url-link" var="externalLinkURL">
                                 <s:param name="linkTypeVar" value="1" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
+                               	<s:param name="prevCode" value="%{#attr.prevCode}" />
+                                <s:param name="prevLinkTypeVar" value="%{#attr.prevLinkTypeVar}" />
                             </s:url>
                             <s:url action="entandoInternalPageLink" anchor="page-link" var="pageLinkURL">
                                 <s:param name="linkTypeVar" value="2" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
+                               	<s:param name="prevCode" value="%{#attr.prevCode}" />
+                                <s:param name="prevLinkTypeVar" value="%{#attr.prevLinkTypeVar}" />
                             </s:url>
                             <s:url action="entandoInternalContentLink" anchor="content-link" var="contentLinkURL">
                                 <s:param name="linkTypeVar" value="3" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
+                               	<s:param name="prevCode" value="%{#attr.prevCode}" />
+                                <s:param name="prevLinkTypeVar" value="%{#attr.prevLinkTypeVar}" />
                             </s:url>
                             <s:url action="entandoInternalResourceLink" anchor="resource-link" var="resourceLinkURL">
-                                <s:param name="linkTypeVar" value="4" />
+                                <s:param name="linkTypeVar" value="5" />
                                 <s:param name="contentOnSessionMarker" value="%{#attr.contentOnSessionMarker}" />
+                                <s:param name="prevCode" value="%{#attr.prevCode}" />
+                                <s:param name="prevLinkTypeVar" value="%{#attr.prevLinkTypeVar}" />
                             </s:url>
 							<li ${((param.linkTypeVar eq 1) || (empty param.linkTypeVar))?'class="active"':''}><a href="${externalLinkURL}"><s:text name="note.URLLinkTo" /></a></li>
-							<li ${(param.linkTypeVar eq 2)?'class="active"':''}><a href="${pageLinkURL}"><s:text name="note.pageLinkTo" /></a></li>
-							<li ${(param.linkTypeVar eq 3)?'class="active"':''}><a href="${contentLinkURL}"><s:text name="note.contentLinkTo" /></a></li>
-							<li ${(param.linkTypeVar eq 5)?'class="active"':''}><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 2)?'class="active"':''} ><a href="${pageLinkURL}"><s:text name="note.pageLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 3)?'class="active"':''} ><a href="${contentLinkURL}"><s:text name="note.contentLinkTo" /></a></li>
+							<li ${(param.linkTypeVar eq 5)?'class="active"':''} ><a href="${resourceLinkURL}"><s:text name="note.resourceLinkTo" /></a></li>
 						</ul>
 						<!-- Link types -->
 						<div class="panel panel-default no-top-border" id="tab-container">
 							<div class="panel-body">
 								<div class="tab-content">
-									<div id="url-link">
+									<div id="url-link" >
 										<s:if test="%{#attr.linkTypeVar == 1}">
 										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-1.jsp" />
 										</s:if>
@@ -207,7 +250,7 @@
 										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-2.jsp" />
 										</s:if>
 									</div>
-									<div id="content-link" >
+									<div id="content-link">
 										<s:if test="%{#attr.linkTypeVar == 3}">
 										<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/type-3.jsp" />
 										</s:if>
@@ -220,6 +263,9 @@
 								</div>
 							</div>
 						</div>
+
+
+
 				</div>
 				<div class="clearfix"></div>
 				<div class="col-sm-12 margin-large-top">
@@ -230,5 +276,10 @@
 				</div>
 			</div>
 		</div>
+
+        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/link-attributes-autocomplete.jsp" />
+
 	</body>
+
+
 </html>

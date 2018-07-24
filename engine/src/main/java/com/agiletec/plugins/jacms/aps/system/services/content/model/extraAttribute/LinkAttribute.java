@@ -32,6 +32,10 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.SymbolicLinkValidator;
 import com.agiletec.plugins.jacms.aps.system.services.linkresolver.ILinkResolverManager;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Rappresenta una informazione di tipo "link". La destinazione del link è la
@@ -93,6 +97,21 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
             }
         }
         super.addTextElements(attributeElement);
+        if (null != this.getLinkProperties()) {
+            Element propertiesElement = new Element("properties");
+            Iterator<String> keyIter = this.getLinkProperties().keySet().iterator();
+            while (keyIter.hasNext()) {
+                String key = keyIter.next();
+                String value = this.getLinkProperties().get(key);
+                if (!StringUtils.isBlank(value)) {
+                    Element propertyElement = new Element("property");
+                    propertyElement.setAttribute("key", key);
+                    propertyElement.setText(value.trim());
+                    propertiesElement.addContent(propertyElement);
+                }
+            }
+            attributeElement.addContent(propertiesElement);
+        }
         return attributeElement;
     }
 
@@ -181,8 +200,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         if (null == textValue) {
             return;
         }
-        String langToSet = (null != langCode) ? langCode : this.getDefaultLangCode();
-        this.getTextMap().put(langToSet, textValue);
+        this.getTextMap().put(this.getDefaultLangCode(), textValue);
     }
 
     @Override
@@ -239,6 +257,14 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
         return symbolicLink;
     }
 
+    public Map<String, String> getLinkProperties() {
+        return linkProperties;
+    }
+
+    public void setLinkProperties(Map<String, String> linkProperties) {
+        this.linkProperties = linkProperties;
+    }
+
     protected IContentManager getContentManager() {
         return contentManager;
     }
@@ -264,6 +290,7 @@ public class LinkAttribute extends TextAttribute implements IReferenceableAttrib
     }
 
     private SymbolicLink symbolicLink;
+    private Map<String, String> linkProperties = new HashMap<>();
     private transient IContentManager contentManager;
     private transient IPageManager pageManager;
     private transient ILinkResolverManager linkResolverManager;

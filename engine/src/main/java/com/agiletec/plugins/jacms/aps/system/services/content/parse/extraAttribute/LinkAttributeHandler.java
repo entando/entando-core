@@ -36,14 +36,26 @@ public class LinkAttributeHandler extends TextAttributeHandler {
 		} else if (qName.equals("pagedest")) {
 			startPageDest(attributes, qName);
 		} else if (qName.equals("contentdest")) {
-			startContentDest(attributes, qName);
-		} else {
+            startContentDest(attributes, qName);
+        } else if (qName.equals("properties")) {
+            startProperties(attributes, qName);
+        } else if (qName.equals("property")) {
+            startProperty(attributes, qName);
+        } else {
 			super.startAttribute(attributes, qName);
 		}
 	}
-	
-	private void startLink(Attributes attributes, String qName) throws SAXException {
-		this._linkType = extractAttribute(attributes, "type", qName, true);
+
+    private void startProperty(Attributes attributes, String qName) throws SAXException {
+        this.propertyKey = extractAttribute(attributes, "key", qName, true);
+    }
+
+    private void startProperties(Attributes attributes, String qName) {
+	    // nothing to do
+    }
+
+    private void startLink(Attributes attributes, String qName) throws SAXException {
+		this.linkType = extractAttribute(attributes, "type", qName, true);
 		((LinkAttribute) this.getCurrentAttr()).setSymbolicLink(new SymbolicLink());
 	}
 	
@@ -68,52 +80,70 @@ public class LinkAttributeHandler extends TextAttributeHandler {
 		} else if (qName.equals("pagedest")){
 			endPageDest(textBuffer);
 		} else if (qName.equals("contentdest")) {
-			endContentDest(textBuffer);
-		} else {
+            endContentDest(textBuffer);
+        } else if (qName.equals("property")) {
+            endProperty(textBuffer);
+        } else if (qName.equals("properties")) {
+            endProperties(textBuffer);
+        } else {
 			super.endAttribute(qName, textBuffer);
 		}
 	}
-	
-	private void endLink() {
+
+    private void endProperties(StringBuffer textBuffer) {
+	    // nothing to do
+    }
+
+    private void endProperty(StringBuffer textBuffer) {
+        if (null != textBuffer) {
+            String propertyValue = textBuffer.toString();
+            ((LinkAttribute) this.getCurrentAttr()).getLinkProperties().put(this.propertyKey, propertyValue);
+        }
+        this.propertyKey = null;
+    }
+
+    private void endLink() {
 		SymbolicLink symLink = 
 			((LinkAttribute) this.getCurrentAttr()).getSymbolicLink();
-		if (null != symLink && null != _linkType) {
-			if (_linkType.equals("content")) {
-				symLink.setDestinationToContent(_contentDest);
-			} else if (_linkType.equals("external")) {
-				symLink.setDestinationToUrl(_urlDest);
-			} else if (_linkType.equals("page")) {
-				symLink.setDestinationToPage(_pageDest);
-			} else if (_linkType.equals("contentonpage")) {
-				symLink.setDestinationToContentOnPage(_contentDest, _pageDest);
+		if (null != symLink && null != linkType) {
+			if (linkType.equals("content")) {
+				symLink.setDestinationToContent(contentDest);
+			} else if (linkType.equals("external")) {
+				symLink.setDestinationToUrl(urlDest);
+			} else if (linkType.equals("page")) {
+				symLink.setDestinationToPage(pageDest);
+			} else if (linkType.equals("contentonpage")) {
+				symLink.setDestinationToContentOnPage(contentDest, pageDest);
 			}
+
 		}
-		_contentDest = null;
-		_urlDest = null;
-		_pageDest = null;
+		contentDest = null;
+		urlDest = null;
+		pageDest = null;
 	}
 	
 	private void endUrlDest(StringBuffer textBuffer){
 		if (null != textBuffer) {
-			_urlDest = textBuffer.toString();
+			urlDest = textBuffer.toString();
 		}
 	}
 	
 	private void endPageDest(StringBuffer textBuffer){
 		if (null != textBuffer) {
-			_pageDest = textBuffer.toString();
+			pageDest = textBuffer.toString();
 		}
 	}
 	
 	private void endContentDest(StringBuffer textBuffer){
 		if (null != textBuffer) {
-			_contentDest = textBuffer.toString();
+			contentDest = textBuffer.toString();
 		}
 	}
 	
-	private String _linkType;
-	private String _urlDest;
-	private String _pageDest;
-	private String _contentDest;
+	private String linkType;
+	private String urlDest;
+	private String pageDest;
+	private String contentDest;
+	private String propertyKey;
 	
 }

@@ -37,7 +37,7 @@ import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
 public class LinkAttributeAction extends BaseAction implements ILinkAttributeAction {
 
 	private static final Logger _logger = LoggerFactory.getLogger(LinkAttributeAction.class);
-	
+
 	@Override
 	public String chooseLink() {
 		try {
@@ -54,9 +54,32 @@ public class LinkAttributeAction extends BaseAction implements ILinkAttributeAct
 	
 	@Override
 	public String chooseLinkType() {
-		return SUCCESS;
+		String result = FAILURE;
+		SymbolicLink symbolicLink = getSymbolicLink();
+		if (null == symbolicLink)
+		{
+			return SUCCESS;
+		}
+		switch (symbolicLink.getDestType()) {
+			case (SymbolicLink.CONTENT_TYPE):
+				result = "configContentLink";
+				break;
+			case (SymbolicLink.CONTENT_ON_PAGE_TYPE):
+				_logger.error("link on contentOnPage unavailable");
+				break;
+			case SymbolicLink.PAGE_TYPE:
+				result = "configPageLink";
+				break;
+			case SymbolicLink.URL_TYPE:
+				result = "configUrlLink";
+				break;
+			default:
+				result = "configUrlLink";
+				break;
+		}
+		return result;
 	}
-	
+
 	public String configLink() {
 		String result = FAILURE;
 		int destType = this.getLinkType();
@@ -150,7 +173,7 @@ public class LinkAttributeAction extends BaseAction implements ILinkAttributeAct
 		}
 		return contentVo;
 	}
-	
+
 	public int getLinkType() {
 		return _linkType;
 	}

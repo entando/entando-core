@@ -24,8 +24,8 @@
 		<div class="panel-body">
 			<div class="form-group<s:property value="#controlGroupErrorClassVar" /> mt-20">
 				<div class="col-xs-12">
-					<label class="col-sm-1 text-right" for="url"><s:text name="label.url" />:</label>
-					<div class="col-sm-11">
+					<label class="col-sm-2 text-right" for="url"><s:text name="label.url" />:</label>
+					<div class="col-sm-10">
 						<wpsf:textfield name="url" id="url" cssClass="form-control" />
 						<span class="help help-block"><s:text name="note.typeValidURL" />
 						<s:if test="#currentFieldHasFieldErrorVar">
@@ -36,6 +36,10 @@
 					</div>
 				</div>
 			</div>
+
+        	<!-- Link attributes -->
+            <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/entando-link-attributes.jsp" />
+
 			<div class="form-group">
                 <div class="col-xs-12">
 					<div class="col-sm-11 col-sm-offset-1 text-right">
@@ -51,3 +55,5 @@
 		</div>
 	</div>
 </s:form>
+
+<jsp:include page="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/link-attributes-autocomplete.jsp" />

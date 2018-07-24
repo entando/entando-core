@@ -25,6 +25,8 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 import com.agiletec.plugins.jacms.apsadmin.content.attribute.action.link.ILinkAttributeAction;
 
+import java.util.Map;
+
 /**
  * Classe helper base per le action delegata 
  * alla gestione delle operazione sugli attributi link.
@@ -50,15 +52,16 @@ public class LinkAttributeActionHelper implements ILinkAttributeActionHelper {
 		session.setAttribute(LINK_LANG_CODE_SESSION_PARAM, action.getLangCode());
 		LinkAttribute linkAttribute = (LinkAttribute) getLinkAttribute(attribute, request);
 		session.setAttribute(SYMBOLIC_LINK_SESSION_PARAM, linkAttribute.getSymbolicLink());
+		session.setAttribute(LINK_PROPERTIES_MAP_SESSION_PARAM, linkAttribute.getLinkProperties());
 	}
 	
 	@Override
-	public void joinLink(String[] destinations, int destType, HttpServletRequest request) {
+	public void joinLink(String[] destinations, int destType, Map<String,String> properties, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		Content currentContent = getContent(request);
 		String attributeName = (String) session.getAttribute(ATTRIBUTE_NAME_SESSION_PARAM);
 		AttributeInterface attribute = (AttributeInterface) currentContent.getAttribute(attributeName);
-		joinLink(attribute, destinations, destType, request);
+		joinLink(attribute, destinations, destType, properties, request);
 		removeSessionParams(session);
 	}
 	
@@ -79,6 +82,7 @@ public class LinkAttributeActionHelper implements ILinkAttributeActionHelper {
 		session.removeAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM);
 		session.removeAttribute(INCLUDED_ELEMENT_NAME_SESSION_PARAM);
 		session.removeAttribute(SYMBOLIC_LINK_SESSION_PARAM);
+
 	}
 	
 	@Override
@@ -106,22 +110,22 @@ public class LinkAttributeActionHelper implements ILinkAttributeActionHelper {
 		}
 	}
 	
-	protected void joinLink(AttributeInterface attribute, String[] destinations, int destType, HttpServletRequest request) {
+	protected void joinLink(AttributeInterface attribute, String[] destinations, int destType, Map<String,String> properties, HttpServletRequest request) {
 		HttpSession session = request.getSession();
 		if (attribute instanceof CompositeAttribute) {
 			String includedAttributeName = (String) session.getAttribute(INCLUDED_ELEMENT_NAME_SESSION_PARAM);
 			AttributeInterface includedAttribute = ((CompositeAttribute) attribute).getAttribute(includedAttributeName);
-			updateLink(includedAttribute, destinations, destType);
+			updateLink(includedAttribute, destinations, destType, properties);
 		} else if (attribute instanceof MonoListAttribute) {
 			Integer elementIndex = (Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM);
 			AttributeInterface attributeElement = ((MonoListAttribute) attribute).getAttribute(elementIndex.intValue());
-			joinLink(attributeElement, destinations, destType, request);
+			joinLink(attributeElement, destinations, destType, properties, request);
 		} else if (attribute instanceof LinkAttribute) {
-			updateLink(attribute, destinations, destType);
+			updateLink(attribute, destinations, destType, properties);
 		}
 	}
 	
-	protected void updateLink(AttributeInterface currentAttribute, String[] destinations, int destType) {
+	protected void updateLink(AttributeInterface currentAttribute, String[] destinations, int destType, Map<String,String> properties) {
 		if (destinations.length!=3) {
 			throw new RuntimeException("Destinazioni non riconosciute");
 		}
@@ -143,7 +147,8 @@ public class LinkAttributeActionHelper implements ILinkAttributeActionHelper {
             symbolicLink.setDestinationToContent("");
             break;
         }
-        ((LinkAttribute) currentAttribute).setSymbolicLink(symbolicLink);
+		((LinkAttribute) currentAttribute).setSymbolicLink(symbolicLink);
+		((LinkAttribute) currentAttribute).setLinkProperties(properties);
     }
 	
 	protected void removeLink(AttributeInterface attribute, HttpServletRequest request) {
@@ -163,8 +168,8 @@ public class LinkAttributeActionHelper implements ILinkAttributeActionHelper {
 	}
 	
 	/**
-	 * Restituisce il contenuto in sesione.
-	 * @return Il contenuto in sesione.
+	 * Restituisce il contenuto in sessione.
+	 * @return Il contenuto in sessione.
 	 */
 	protected Content getContent(HttpServletRequest request) {
 		String contentOnSessionMarker = (String) request.getAttribute("contentOnSessionMarker");

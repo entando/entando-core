@@ -1,13 +1,18 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
+
+
 <s:form cssClass="form-horizontal" id="form_pageLink">
+
+    <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/hypertextAttribute/info-prev-value.jsp" />
 
     <p class="sr-only"><s:text name="note.choosePageToLink" />.</p>
     <p class="sr-only">
         <input type="hidden" name="contentOnSessionMarker" value="<s:property value="contentOnSessionMarker" />" />
         <input type="hidden" name="linkTypeVar" value="2" />
     </p>
+
 
      <div class="form-group mt-20">
          <div class="col-xs-12">
@@ -102,6 +107,10 @@
              </div>
          </div>
      </div>
+
+     <!-- Link attributes -->
+     <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/entando-link-attributes.jsp" />
+
      <div class="form-group">
          <div class="col-xs-12">
              <div class="col-sm-10 col-sm-offset-2 text-right">

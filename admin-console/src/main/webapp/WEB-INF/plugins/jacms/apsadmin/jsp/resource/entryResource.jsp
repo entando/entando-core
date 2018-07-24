@@ -13,15 +13,14 @@
     </li>
     <s:if test="onEditContent">
         <li>
-            <s:text name="breadcrumb.jacms.content.list" />
+            <a href="<s:url action="list" namespace="/do/jacms/Content"/>">
+                <s:text name="breadcrumb.jacms.content.list"/>
+            </a>
         </li>
         <li>
-            <s:if test="getStrutsAction() == 1">
-                <s:text name="breadcrumb.jacms.content.new" />
-            </s:if>
-            <s:else>
-                <s:text name="breadcrumb.jacms.content.edit" />
-            </s:else>
+            <a href="<s:url action="backToEntryContent" ><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>">
+                <s:text name="breadcrumb.jacms.content.edit"/>
+            </a>
         </li>
     </s:if>
     <s:else>
@@ -30,8 +29,16 @@
         </li>
     </s:else>
     <li>
-        <a
-            href="<s:url action="list" ><s:param name="resourceTypeCode" ><s:text name="%{resourceTypeCode}"></s:text></s:param></s:url>">
+        <s:if test="onEditContent">
+            <s:url var="archiveUrlVar" action="findResource">
+                <s:param name="resourceTypeCode" value="resourceTypeCode" />
+                <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
+            </s:url>
+        </s:if>
+        <s:else>
+            <s:url var="archiveUrlVar" action="list"><s:param name="resourceTypeCode" value="resourceTypeCode" /></s:url>
+        </s:else>
+        <a href="<s:property value="#archiveUrlVar" />">
             <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
         </a>
     </li>

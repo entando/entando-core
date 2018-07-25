@@ -25,9 +25,9 @@ import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.portal.AbstractPortalAction;
+import com.agiletec.apsadmin.system.BaseAction;
 import com.agiletec.apsadmin.system.TreeNodeBaseActionHelper;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
-import com.opensymphony.xwork2.ActionSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +41,7 @@ import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInf
 import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Main abstract hepler for pages handling
@@ -51,12 +52,18 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
 
+    private IPageManager _pageManager;
+    private ConfigInterface _configService;
+
+    @Autowired(required = false)
+    private List<IExternalPageValidator> externalValidators;
+
     protected abstract IPage getPage(String pageCode);
 
     protected abstract boolean isDraftPageHepler();
 
     @Override
-    public void checkPageGroup(IPage page, int strutsAction, ActionSupport currentAction) throws ApsSystemException {
+    public void checkPageGroup(IPage page, BaseAction currentAction) throws ApsSystemException {
         if (null == page) {
             return;
         }
@@ -82,6 +89,11 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
             if (!parentGroupCode.equals(Group.FREE_GROUP_NAME) && !parentGroupCode.equals(groupCode)) {
                 String textMessage = currentAction.getText("error.page.parent.invalidGroup", new String[]{parent.getCode(), parentGroupCode});
                 currentAction.addFieldError("group", textMessage);
+            }
+        }
+        if (null != this.getExternalValidators()) {
+            for (IExternalPageValidator externalValidator : this.getExternalValidators()) {
+                externalValidator.checkPageGroup(page, this.isDraftPageHepler(), currentAction);
             }
         }
     }
@@ -289,7 +301,12 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
         this._configService = configService;
     }
 
-    private IPageManager _pageManager;
-    private ConfigInterface _configService;
+    protected List<IExternalPageValidator> getExternalValidators() {
+        return externalValidators;
+    }
+
+    public void setExternalValidators(List<IExternalPageValidator> externalValidators) {
+        this.externalValidators = externalValidators;
+    }
 
 }

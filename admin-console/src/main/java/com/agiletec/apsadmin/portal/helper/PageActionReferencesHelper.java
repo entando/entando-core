@@ -13,19 +13,42 @@
  */
 package com.agiletec.apsadmin.portal.helper;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.page.IPage;
-import com.opensymphony.xwork2.ActionSupport;
+import com.agiletec.apsadmin.system.BaseAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PageActionReferencesHelper implements IPageActionReferencesHelper {
 
     private static final Logger _logger = LoggerFactory.getLogger(PageActionReferencesHelper.class);
 
+    @Autowired(required = false)
+    private List<IExternalPageValidator> externalValidators;
+
     @Override
-    public boolean checkForSetOnline(IPage page, ActionSupport action) {
-        return true;
+    public boolean checkForSetOnline(IPage page, BaseAction action) {
+        boolean isValid = true;
+        if (null != this.getExternalValidators()) {
+            for (IExternalPageValidator externalValidator : this.getExternalValidators()) {
+                boolean result = externalValidator.checkForSetOnline(page, action);
+                if (!result) {
+                    isValid = false;
+                }
+            }
+        }
+        return isValid;
+    }
+
+    protected List<IExternalPageValidator> getExternalValidators() {
+        return externalValidators;
+    }
+
+    public void setExternalValidators(List<IExternalPageValidator> externalValidators) {
+        this.externalValidators = externalValidators;
     }
 
 }

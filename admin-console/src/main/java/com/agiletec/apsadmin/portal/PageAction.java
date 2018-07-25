@@ -68,6 +68,15 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         }
         this.checkCode();
         this.checkTitles();
+        if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME)) {
+            try {
+                IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
+                this.getPageActionHelper().checkPageGroup(currentPage, this.getStrutsAction(), this);
+            } catch (Exception e) {
+                _logger.error("Error validation groups", e);
+                throw new RuntimeException("Error validation groups", e);
+            }
+        }
     }
 
     protected String checkParentNode(String selectedNode) {
@@ -167,7 +176,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             groupName = parentPage.getGroup();
             this.setGroup(groupName);
             boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
-            groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree);
+            boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
+            groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree) && !isAdmin;
         }
         this.setGroupSelectLock(groupSelectLock);
         this.setDefaultShowlet(true);
@@ -249,7 +259,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         this.setGroup(pageToEdit.getGroup());
         PageMetadata draftMetadata = pageToEdit.getMetadata();
         this.copyMetadataToForm(draftMetadata);
-        this.setGroupSelectLock(true);
+        boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
+        this.setGroupSelectLock(!isAdmin);
     }
 
     public String copy() {
@@ -377,7 +388,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
                 IPage copyPage = this.getPage(this.getCopyPageCode());
                 IPage publicPage = this.getOnlinePage(this.getCopyPageCode());
-                boolean online = copyPage.isOnline();
                 page.setWidgets(null != publicPage ? publicPage.getWidgets() : copyPage.getWidgets());
                 PageMetadata metadata = (null != publicPage) ? publicPage.getMetadata() : copyPage.getMetadata();
                 if (metadata != null) {
@@ -391,11 +401,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 PageMetadata metadata = new PageMetadata();
                 this.valueMetadataFromForm(metadata);
                 page.setMetadata(metadata);
-//				if (this.isDefaultShowlet()) {
-//					this.setDefaultWidgets(page);
-//				} else {
                 page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
-//				}
             }
             // ricava il codice
             page.setCode(this.buildNewPageCode(page.getMetadata()));
@@ -426,7 +432,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (metadata == null) {
                 metadata = new PageMetadata();
                 page.setMetadata(metadata);
-
             }
             PageModel oldModel = metadata.getModel();
             this.valueMetadataFromForm(metadata);
@@ -434,9 +439,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 // The model is changed, so I drop all the previous widgets
                 page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
             }
-//			if (this.isDefaultShowlet()) {
-//				this.setDefaultWidgets(page);
-//			}
         } catch (Throwable t) {
             _logger.error("Error updating page", t);
             throw new ApsSystemException("Error updating page", t);
@@ -455,10 +457,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         metadata.setUseExtraTitles(this.isUseExtraTitles());
         metadata.setTitles(this.getTitles());
         metadata.setExtraGroups(this.getExtraGroups());
-
         String charset = this.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
-
         String mimetype = this.getMimeType();
         metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
     }
@@ -574,7 +574,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
             }
-
             boolean success = this.getPageActionReferencesHelper().checkContentsForSetOnline(page, this);
             if (!success) {
                 this.addActionError(this.getText("error.page.setOnline.scanContentRefs"));
@@ -583,7 +582,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.hasErrors()) {
                 return "pageTree";
             }
-
             pageManager.setPageOnline(pageCode);
             this.addActionMessage(this.getText("message.page.set.online", new String[]{this.getTitle(page.getCode(), page
                 .getTitles())}));

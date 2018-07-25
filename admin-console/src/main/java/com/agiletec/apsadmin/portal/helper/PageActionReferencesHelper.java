@@ -13,60 +13,42 @@
  */
 package com.agiletec.apsadmin.portal.helper;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.Widget;
-import com.agiletec.aps.util.ApsProperties;
-import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
-import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
-import com.opensymphony.xwork2.ActionSupport;
+import com.agiletec.apsadmin.system.BaseAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class PageActionReferencesHelper implements IPageActionReferencesHelper {
 
-	private static final Logger _logger = LoggerFactory.getLogger(PageActionReferencesHelper.class);
+    private static final Logger _logger = LoggerFactory.getLogger(PageActionReferencesHelper.class);
 
-	@Override
-	public boolean checkContentsForSetOnline(IPage page, ActionSupport action) {
-		try {
-			for (Widget widget : page.getWidgets()) {
-				if (null != widget) {
-					ApsProperties config = widget.getConfig();
-					String contentId = (null != config) ? config.getProperty("contentId") : null;
-					this.checkContent(action, contentId);
-				}
-			}
-		} catch (ApsSystemException e) {
-			_logger.error("error checking draft page - content references");
-			return false;
-		}
-		return true;
-	}
+    @Autowired(required = false)
+    private List<IExternalPageValidator> externalValidators;
 
-	protected void checkContent(ActionSupport action, String contentId) throws ApsSystemException {
-		if (StringUtils.isNotBlank(contentId)) {
-			Content content = this.getContentManager().loadContent(contentId, true);
-			if (null == content || !content.isOnLine()) {
-				List<String> args = new ArrayList<>();
-				args.add(null == content ? contentId : content.getDescription());
-				action.addActionError(action.getText("error.page.set.online.content.ref.offline", args));
-			}
-		}
-	}
+    @Override
+    public boolean checkForSetOnline(IPage page, BaseAction action) {
+        boolean isValid = true;
+        if (null != this.getExternalValidators()) {
+            for (IExternalPageValidator externalValidator : this.getExternalValidators()) {
+                boolean result = externalValidator.checkForSetOnline(page, action);
+                if (!result) {
+                    isValid = false;
+                }
+            }
+        }
+        return isValid;
+    }
 
-	protected IContentManager getContentManager() {
-		return _contentManager;
-	}
+    protected List<IExternalPageValidator> getExternalValidators() {
+        return externalValidators;
+    }
 
-	public void setContentManager(IContentManager contentManager) {
-		this._contentManager = contentManager;
-	}
+    public void setExternalValidators(List<IExternalPageValidator> externalValidators) {
+        this.externalValidators = externalValidators;
+    }
 
-	private IContentManager _contentManager;
 }

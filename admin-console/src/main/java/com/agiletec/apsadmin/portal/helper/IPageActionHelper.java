@@ -23,8 +23,8 @@ import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInf
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.apsadmin.system.BaseAction;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
-import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Interface for the helper classes handling the portal pages.
@@ -33,7 +33,7 @@ import com.opensymphony.xwork2.ActionSupport;
  */
 public interface IPageActionHelper extends ITreeNodeBaseActionHelper {
 
-    public void checkPageGroup(IPage page, int strutsAction, ActionSupport currentAction) throws ApsSystemException;
+    public void checkPageGroup(IPage page, BaseAction currentAction) throws ApsSystemException;
 
     public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
 

@@ -47,7 +47,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
+import com.agiletec.apsadmin.portal.helper.IPageActionReferencesHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 
@@ -71,7 +71,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME)) {
             try {
                 IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
-                this.getPageActionHelper().checkPageGroup(currentPage, this.getStrutsAction(), this);
+                this.getPageActionHelper().checkPageGroup(currentPage, this);
             } catch (Exception e) {
                 _logger.error("Error validation groups", e);
                 throw new RuntimeException("Error validation groups", e);
@@ -574,7 +574,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
             }
-            boolean success = this.getPageActionReferencesHelper().checkContentsForSetOnline(page, this);
+            boolean success = this.getPageActionReferencesHelper().checkForSetOnline(page, this);
             if (!success) {
                 this.addActionError(this.getText("error.page.setOnline.scanContentRefs"));
                 return "pageTree";
@@ -956,11 +956,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         this._pageModelManager = pageModelManager;
     }
 
-    protected PageActionReferencesHelper getPageActionReferencesHelper() {
+    protected IPageActionReferencesHelper getPageActionReferencesHelper() {
         return _pageActionReferencesHelper;
     }
 
-    public void setPageActionReferencesHelper(PageActionReferencesHelper pageActionReferencesHelper) {
+    public void setPageActionReferencesHelper(IPageActionReferencesHelper pageActionReferencesHelper) {
         this._pageActionReferencesHelper = pageActionReferencesHelper;
     }
 
@@ -1007,6 +1007,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 
     private IPageModelManager _pageModelManager;
     private IPageActionHelper _pageActionHelper;
-    private PageActionReferencesHelper _pageActionReferencesHelper;
+    private IPageActionReferencesHelper _pageActionReferencesHelper;
 
 }

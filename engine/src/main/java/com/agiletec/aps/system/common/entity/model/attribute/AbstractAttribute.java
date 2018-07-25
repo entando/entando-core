@@ -42,6 +42,24 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractAttribute.class);
 
+    private String _name;
+    private String _description;
+    private String _type;
+    private String _defaultLangCode;
+    private String _renderingLangCode;
+    private boolean _searchable;
+    private String _indexingType;
+    private IApsEntity _parentEntity;
+    private AttributeHandlerInterface _handler;
+    private String[] _disablingCodes;
+    private String[] _roles;
+    private boolean _active = true;
+    private IAttributeValidationRules _validationRules;
+
+    private String _attributeManagerClassName;
+
+    private transient ILangManager _langManager;
+
     @Override
     public boolean isMultilingual() {
         return false;
@@ -546,23 +564,5 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
     public void setLangManager(ILangManager langManager) {
         this._langManager = langManager;
     }
-
-    private String _name;
-    private String _description;
-    private String _type;
-    private String _defaultLangCode;
-    private String _renderingLangCode;
-    private boolean _searchable;
-    private String _indexingType;
-    private IApsEntity _parentEntity;
-    private transient AttributeHandlerInterface _handler;
-    private String[] _disablingCodes;
-    private String[] _roles;
-    private boolean _active = true;
-    private IAttributeValidationRules _validationRules;
-
-    private String _attributeManagerClassName;
-
-    private transient ILangManager _langManager;
 
 }

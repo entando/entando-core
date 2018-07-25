@@ -125,7 +125,7 @@ public class TestContentPreviewAction extends AbstractBaseTestContentAction {
 		assertEquals(Action.INPUT, result);
 
 		RequestContext reqCtx = (RequestContext) this.getRequest().getAttribute(RequestContext.REQCTX);
-		assertNull(reqCtx);
+		assertNotNull(reqCtx);
 		Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
 		assertEquals(1, fieldErrors.size());
 		assertEquals(1, fieldErrors.get("previewPageCode").size());

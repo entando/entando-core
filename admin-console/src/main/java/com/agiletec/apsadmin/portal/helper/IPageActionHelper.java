@@ -24,26 +24,31 @@ import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
+import com.opensymphony.xwork2.ActionSupport;
 
 /**
  * Interface for the helper classes handling the portal pages.
+ *
  * @author E.Santoboni
  */
 public interface IPageActionHelper extends ITreeNodeBaseActionHelper {
-	
-	public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
-	
-	/**
-	 * Return the root node of the page tree respecting the given permissions. 
-	 * @param groupCodes The groups list used when building the page tree.
-	 * @param alsoFreeViewPages Indicate if include also only free view pages
-	 * @return The root of the page tree
-	 * @throws ApsSystemException In case of error
-	 */
-	public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException;
-	
-	public ActivityStreamInfo createActivityStreamInfo(IPage page, int strutsAction, boolean addLink, String entryAction);
-	
-	public ActivityStreamInfo createConfigFrameActivityStreamInfo(IPage page, int framePos, int strutsAction, boolean addLink);
-	
+
+    public void checkPageGroup(IPage page, int strutsAction, ActionSupport currentAction) throws ApsSystemException;
+
+    public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
+
+    /**
+     * Return the root node of the page tree respecting the given permissions.
+     *
+     * @param groupCodes The groups list used when building the page tree.
+     * @param alsoFreeViewPages Indicate if include also only free view pages
+     * @return The root of the page tree
+     * @throws ApsSystemException In case of error
+     */
+    public ITreeNode getAllowedTreeRoot(Collection<String> groupCodes, boolean alsoFreeViewPages) throws ApsSystemException;
+
+    public ActivityStreamInfo createActivityStreamInfo(IPage page, int strutsAction, boolean addLink, String entryAction);
+
+    public ActivityStreamInfo createConfigFrameActivityStreamInfo(IPage page, int framePos, int strutsAction, boolean addLink);
+
 }

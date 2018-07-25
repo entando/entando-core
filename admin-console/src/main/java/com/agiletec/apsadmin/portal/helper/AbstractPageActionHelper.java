@@ -60,9 +60,29 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
         if (null == page) {
             return;
         }
-        if (page.isRoot()) {
+        String groupCode = page.getGroup();
+        if (!groupCode.equals(Group.FREE_GROUP_NAME)) {
             String[] childrenCodes = page.getChildrenCodes();
-
+            if (null != childrenCodes) {
+                for (String childrenCode : childrenCodes) {
+                    IPage child = this.getPage(childrenCode);
+                    if (null == child) {
+                        continue;
+                    }
+                    if (!groupCode.equals(child.getGroup())) {
+                        String textMessage = currentAction.getText("error.page.child.invalidGroup", new String[]{child.getCode(), child.getGroup()});
+                        currentAction.addFieldError("group", textMessage);
+                    }
+                }
+            }
+        }
+        if (!page.isRoot()) {
+            IPage parent = page.getParent();
+            String parentGroupCode = parent.getGroup();
+            if (!parentGroupCode.equals(Group.FREE_GROUP_NAME) && !parentGroupCode.equals(groupCode)) {
+                String textMessage = currentAction.getText("error.page.parent.invalidGroup", new String[]{parent.getCode(), parentGroupCode});
+                currentAction.addFieldError("group", textMessage);
+            }
         }
     }
 

@@ -52,7 +52,8 @@ public class BaseTestCase extends TestCase {
             super.setUp();
             ServletContext srvCtx = new MockServletContext("", new FileSystemResourceLoader());
             ApplicationContext applicationContext = this.getConfigUtils().createApplicationContext(srvCtx);
-            new ContextLoader((XmlWebApplicationContext) applicationContext);
+            ContextLoader contextLoader = new ContextLoader((XmlWebApplicationContext) applicationContext);
+            contextLoader.initWebApplicationContext(srvCtx);
             this.setApplicationContext(applicationContext);
             RequestContext reqCtx = createRequestContext(applicationContext, srvCtx);
             this.setRequestContext(reqCtx);

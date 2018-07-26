@@ -54,7 +54,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 
 /**
  * The base Class for all test of admin area. A Spacial thanks to Arsenalist.
@@ -75,6 +77,8 @@ public class ApsAdminBaseTestCase extends TestCase {
         } else {
             refresh = true;
         }
+        ContextLoader contextLoader = new ContextLoader((XmlWebApplicationContext) _applicationContext);
+        contextLoader.initWebApplicationContext(_servletContext);
         RequestContext reqCtx = BaseTestCase.createRequestContext(_applicationContext, _servletContext);
         this._request = new MockHttpServletRequest();
         this._request.setAttribute(RequestContext.REQCTX, reqCtx);

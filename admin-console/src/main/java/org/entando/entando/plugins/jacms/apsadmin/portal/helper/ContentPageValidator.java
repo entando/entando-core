@@ -1,12 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  */
 package org.entando.entando.plugins.jacms.apsadmin.portal.helper;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IExternalPageValidator;
@@ -15,7 +25,10 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +45,86 @@ public class ContentPageValidator implements IExternalPageValidator {
 
     @Override
     public void checkPageGroup(IPage page, boolean draftPageHepler, BaseAction action) {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (null == page) {
+            return;
+        }
+        Set<String> pageGroups = new HashSet<>();
+        pageGroups.add(page.getGroup());
+        if (null != page.getExtraGroups()) {
+            pageGroups.addAll(page.getExtraGroups());
+        }
+        try {
+            this.checkReferencingContents(page, pageGroups, action);
+            this.checkPublishedContents(page, pageGroups, action);
+        } catch (Exception e) {
+            logger.error("Error checking page {}", page.getCode(), e);
+            throw new RuntimeException("Error checking page " + page.getCode(), e);
+        }
+    }
+
+    private void checkReferencingContents(IPage page, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
+        if (pageGroups.contains(Group.FREE_GROUP_NAME)) {
+            return;
+        }
+        List<String> referencingContent = ((PageUtilizer) this.getContentManager()).getPageUtilizers(page.getCode());
+        if (null != referencingContent) {
+            for (String contentId : referencingContent) {
+                Content content = this.getContentManager().loadContent(contentId, true);
+                if (null == content) {
+                    continue;
+                }
+                Set<String> contentGroups = this.getContentGroups(content);
+                /*
+                containsAll(Collection<?> coll1, Collection<?> coll2)
+                Returns true iff all elements of coll2 are also contained in coll1.
+                 */
+                boolean check = CollectionUtils.containsAll(contentGroups, pageGroups);
+                if (!check) {
+                    action.addActionError(action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription()}));
+                }
+            }
+        }
+    }
+
+    private void checkPublishedContents(IPage page, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
+        if (pageGroups.contains(Group.ADMINS_GROUP_NAME)) {
+            return;
+        }
+        for (Widget widget : page.getWidgets()) {
+            if (null != widget) {
+                ApsProperties config = widget.getConfig();
+                String contentId = (null != config) ? config.getProperty("contentId") : null;
+                this.checkPublishedContent(contentId, pageGroups, action);
+            }
+        }
+    }
+
+    private void checkPublishedContent(String contentId, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
+        Content content = this.getContentManager().loadContent(contentId, true);
+        if (null == content) {
+            return;
+        }
+        Set<String> contentGroups = this.getContentGroups(content);
+        if (contentGroups.contains(Group.FREE_GROUP_NAME)) {
+            return;
+        }
+        /*
+        containsAll(Collection<?> coll1, Collection<?> coll2)
+        Returns true iff all elements of coll2 are also contained in coll1.
+         */
+        boolean check = CollectionUtils.containsAll(pageGroups, contentGroups);
+        if (!check) {
+            action.addActionError(action.getText("error.page.publishedContents.incompatibleGroups", new String[]{contentId, content.getDescription()}));
+        }
+    }
+
+    private Set<String> getContentGroups(Content content) {
+        Set<String> contentGroups = new HashSet<>();
+        contentGroups.add(content.getMainGroup());
+        if (null != content.getGroups()) {
+            contentGroups.addAll(content.getGroups());
+        }
+        return contentGroups;
     }
 
     @Override

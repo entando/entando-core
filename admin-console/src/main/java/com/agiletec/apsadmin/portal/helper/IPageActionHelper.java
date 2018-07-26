@@ -33,7 +33,7 @@ import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
  */
 public interface IPageActionHelper extends ITreeNodeBaseActionHelper {
 
-    public void checkPageGroup(IPage page, BaseAction currentAction) throws ApsSystemException;
+    public boolean checkPageGroup(IPage page, BaseAction currentAction);
 
     public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
 

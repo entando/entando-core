@@ -25,26 +25,29 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.ContextLoader;
 
 /**
  * This class describes an "Enumerator" Attribute.
+ *
  * @author E.Santoboni
  */
 public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactoryAware {
 
-	private static final Logger _logger =  LoggerFactory.getLogger(EnumeratorAttribute.class);
-	
-	@Override
+    private static final Logger _logger = LoggerFactory.getLogger(EnumeratorAttribute.class);
+
+    @Override
     public Object getAttributePrototype() {
         EnumeratorAttribute prototype = (EnumeratorAttribute) super.getAttributePrototype();
-		prototype.setBeanFactory(this.getBeanFactory());
+        prototype.setBeanFactory(this.getBeanFactory());
         prototype.setItems(this.getItems());
         prototype.setStaticItems(this.getStaticItems());
         prototype.setExtractorBeanName(this.getExtractorBeanName());
         prototype.setCustomSeparator(this.getCustomSeparator());
         return prototype;
     }
-    
+
     @Override
     public void setAttributeConfig(Element attributeElement) throws ApsSystemException {
         super.setAttributeConfig(attributeElement);
@@ -68,7 +71,7 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
         }
         if (null != this.getExtractorBeanName()) {
             try {
-                EnumeratorAttributeItemsExtractor extractor = (EnumeratorAttributeItemsExtractor) this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorAttributeItemsExtractor.class);
+                EnumeratorAttributeItemsExtractor extractor = this.getExtractorBean();
                 if (null != extractor) {
                     List<String> items = extractor.getItems();
                     if (items != null && items.size() > 0) {
@@ -76,29 +79,27 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
                     }
                 }
             } catch (Throwable t) {
-            	_logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
+                _logger.error("Error while extract items from bean extractor '{}'", this.getExtractorBeanName(), t);
             }
         }
-		/*
-        if (null != this.getItems()) {
-            String[] items = new String[this.getItems().length];
-            for (int i = 0; i < this.getItems().length; i++) {
-                if (null != this.getItems()[i]) {
-                    items[i] = this.getItems()[i].trim();
-                }
-            }
-            this.setItems(items);
-        }
-		*/
     }
-    
+
+    protected EnumeratorAttributeItemsExtractor getExtractorBean() {
+        if (null != this.getBeanFactory()) {
+            return this.getBeanFactory().getBean(this.getExtractorBeanName(), EnumeratorAttributeItemsExtractor.class);
+        } else {
+            ApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
+            return context.getBean(this.getExtractorBeanName(), EnumeratorAttributeItemsExtractor.class);
+        }
+    }
+
     @Override
     public Element getJDOMConfigElement() {
         Element configElement = super.getJDOMConfigElement();
         this.setConfig(configElement);
         return configElement;
     }
-    
+
     private void setConfig(Element configElement) {
         if (null != this.getStaticItems()) {
             CDATA cdata = new CDATA(this.getStaticItems());
@@ -111,7 +112,7 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
             configElement.setAttribute("separator", this.getCustomSeparator());
         }
     }
-    
+
     private void addExtractedItems(List<String> items) {
         String[] values = null;
         if (null == this.getItems() || this.getItems().length == 0) {
@@ -133,7 +134,7 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
         }
         this.setItems(values);
     }
-    
+
     @Override
     public JAXBEnumeratorAttributeType getJAXBAttributeType() {
         JAXBEnumeratorAttributeType jaxbAttribute = (JAXBEnumeratorAttributeType) super.getJAXBAttributeType();
@@ -142,57 +143,62 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
         jaxbAttribute.setStaticItems(this.getStaticItems());
         return jaxbAttribute;
     }
-    
+
     @Override
     protected DefaultJAXBAttributeType getJAXBAttributeTypeInstance() {
         return new JAXBEnumeratorAttributeType();
     }
-    
+
     public String[] getItems() {
         return _items;
     }
+
     public void setItems(String[] items) {
         this._items = items;
     }
-    
+
     public String getStaticItems() {
         return _staticItems;
     }
+
     public void setStaticItems(String staticItems) {
         this._staticItems = staticItems;
     }
-    
+
     public String getExtractorBeanName() {
         return _extractorBeanName;
     }
+
     public void setExtractorBeanName(String extractorBeanName) {
         this._extractorBeanName = extractorBeanName;
     }
-    
+
     public String getCustomSeparator() {
         if (null == this._customSeparator) {
             return DEFAULT_ITEM_SEPARATOR;
         }
         return _customSeparator;
     }
+
     public void setCustomSeparator(String customSeparator) {
         this._customSeparator = customSeparator;
     }
-	
+
     protected BeanFactory getBeanFactory() {
         return this._beanFactory;
     }
+
     @Override
     public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
         this._beanFactory = beanFactory;
     }
-	
+
     private String[] _items;
     private String _staticItems;
     private String _extractorBeanName;
     private String _customSeparator;
     private final String DEFAULT_ITEM_SEPARATOR = ",";
-	
-	private BeanFactory _beanFactory;
-    
+
+    private transient BeanFactory _beanFactory;
+
 }

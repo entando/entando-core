@@ -38,8 +38,6 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 
 import java.util.Set;
-import org.springframework.web.context.ContextLoader;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 
 /**
  * @author W.Ambu - E.Santoboni
@@ -52,8 +50,6 @@ public class BaseTestCase extends TestCase {
             super.setUp();
             ServletContext srvCtx = new MockServletContext("", new FileSystemResourceLoader());
             ApplicationContext applicationContext = this.getConfigUtils().createApplicationContext(srvCtx);
-            ContextLoader contextLoader = new ContextLoader((XmlWebApplicationContext) applicationContext);
-            contextLoader.initWebApplicationContext(srvCtx);
             this.setApplicationContext(applicationContext);
             RequestContext reqCtx = createRequestContext(applicationContext, srvCtx);
             this.setRequestContext(reqCtx);

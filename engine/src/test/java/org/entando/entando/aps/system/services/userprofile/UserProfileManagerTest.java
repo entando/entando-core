@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.userprofile;
 
+import com.agiletec.ConfigTestUtils;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
@@ -37,92 +38,96 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import org.springframework.core.io.FileSystemResourceLoader;
+import org.springframework.mock.web.MockServletContext;
 
 public class UserProfileManagerTest {
 
-	@InjectMocks
-	private UserProfileManager userProfileManager;
+    @InjectMocks
+    private UserProfileManager userProfileManager;
 
-	@Mock
-	private IEntityTypeFactory entityTypeFactory;
+    @Mock
+    private IEntityTypeFactory entityTypeFactory;
 
-	@Mock
-	private UserProfileTypeDOM entityTypeDom;
+    @Mock
+    private UserProfileTypeDOM entityTypeDom;
 
-	@Mock
-	private IApsEntityDOM entityDom;
+    @Mock
+    private IApsEntityDOM entityDom;
 
-	@Mock
-	private IUserProfileDAO userProfileDAO;
+    @Mock
+    private IUserProfileDAO userProfileDAO;
 
-	@Mock
-	private INotifyManager notifyManager;
+    @Mock
+    private INotifyManager notifyManager;
 
-	private String beanName = "UserProfileManager";
+    private String beanName = "UserProfileManager";
 
-	private String className = "org.entando.entando.aps.system.services.userprofile.model.UserProfile";
+    private String className = "org.entando.entando.aps.system.services.userprofile.model.UserProfile";
 
-	private String configItemName = "userProfileTypes";
+    private String configItemName = "userProfileTypes";
 
-	@Before
-	public void setUp() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		this.userProfileManager.setEntityClassName(className);
-		this.userProfileManager.setConfigItemName(configItemName);
-		this.userProfileManager.setBeanName(this.beanName);
-	}
+    @Before
+    public void setUp() throws Exception {
+        MockServletContext servletContext = new MockServletContext("", new FileSystemResourceLoader());
+        new ConfigTestUtils().createApplicationContext(servletContext);
+        MockitoAnnotations.initMocks(this);
+        this.userProfileManager.setEntityClassName(className);
+        this.userProfileManager.setConfigItemName(configItemName);
+        this.userProfileManager.setBeanName(this.beanName);
+    }
 
-	@Test
-	public void testGetDefaultProfileType() throws ApsSystemException {
-		// @formatter:off
-		when(entityTypeFactory.extractEntityType(
-				SystemConstants.DEFAULT_PROFILE_TYPE_CODE, 
-				UserProfile.class, 
-				configItemName, 
-				this.entityTypeDom, 
-				userProfileManager.getName(), 
-				this.entityDom))
-		.thenReturn(this.createFakeProfile(SystemConstants.DEFAULT_PROFILE_TYPE_CODE));
-		// @formatter:on
+    @Test
+    public void testGetDefaultProfileType() throws ApsSystemException {
+        // @formatter:off
+        when(entityTypeFactory.extractEntityType(
+                SystemConstants.DEFAULT_PROFILE_TYPE_CODE,
+                UserProfile.class,
+                configItemName,
+                this.entityTypeDom,
+                userProfileManager.getName(),
+                this.entityDom))
+                .thenReturn(this.createFakeProfile(SystemConstants.DEFAULT_PROFILE_TYPE_CODE));
+        // @formatter:on
 
-		IUserProfile userProfile = userProfileManager.getDefaultProfileType();
-		assertThat(userProfile, is(not(nullValue())));
-		assertThat(userProfile.getAttributeList().size(), is(1));
-	}
+        IUserProfile userProfile = userProfileManager.getDefaultProfileType();
+        assertThat(userProfile, is(not(nullValue())));
+        assertThat(userProfile.getAttributeList().size(), is(1));
+    }
 
-	@Test
-	public void testAddProfile() throws ApsSystemException {
-		// @formatter:off
-		when(entityTypeFactory.extractEntityType(
-				SystemConstants.DEFAULT_PROFILE_TYPE_CODE, 
-				UserProfile.class, 
-				configItemName, 
-				this.entityTypeDom, 
-				userProfileManager.getName(), 
-				this.entityDom))
-		.thenReturn(this.createFakeProfile(SystemConstants.DEFAULT_PROFILE_TYPE_CODE));
-		// @formatter:on
+    @Test
+    public void testAddProfile() throws ApsSystemException {
+        // @formatter:off
+        when(entityTypeFactory.extractEntityType(
+                SystemConstants.DEFAULT_PROFILE_TYPE_CODE,
+                UserProfile.class,
+                configItemName,
+                this.entityTypeDom,
+                userProfileManager.getName(),
+                this.entityDom))
+                .thenReturn(this.createFakeProfile(SystemConstants.DEFAULT_PROFILE_TYPE_CODE));
+        // @formatter:on
 
-		IUserProfile userProfile = userProfileManager.getDefaultProfileType();
+        IUserProfile userProfile = userProfileManager.getDefaultProfileType();
 
-		String name = "Jack_Bower";
-		MonoTextAttribute attribute = (MonoTextAttribute) userProfile.getAttribute("Name");
-		attribute.setText(name);
+        String name = "Jack_Bower";
+        MonoTextAttribute attribute = (MonoTextAttribute) userProfile.getAttribute("Name");
+        attribute.setText(name);
 
-		this.userProfileManager.addProfile(name, userProfile);
-		assertThat(userProfile.getId(), is(name));
+        this.userProfileManager.addProfile(name, userProfile);
+        assertThat(userProfile.getId(), is(name));
 
-		Mockito.verify(userProfileDAO, Mockito.times(1)).addEntity(userProfile);
-		Mockito.verify(notifyManager, Mockito.times(1)).publishEvent(Mockito.any(ProfileChangedEvent.class));
-	}
+        Mockito.verify(userProfileDAO, Mockito.times(1)).addEntity(userProfile);
+        Mockito.verify(notifyManager, Mockito.times(1)).publishEvent(Mockito.any(ProfileChangedEvent.class));
+    }
 
-	private IApsEntity createFakeProfile(String defaultProfileTypeCode) {
-		UserProfile userProfile = new UserProfile();
-		MonoTextAttribute monoTextAttribute = new MonoTextAttribute();
-		monoTextAttribute.setName("Name");
-		monoTextAttribute.setHandler(new MonoTextAttributeHandler());
-		userProfile.addAttribute(monoTextAttribute);
-		userProfile.setTypeCode(defaultProfileTypeCode);
-		return userProfile;
-	}
+    private IApsEntity createFakeProfile(String defaultProfileTypeCode) {
+        UserProfile userProfile = new UserProfile();
+        MonoTextAttribute monoTextAttribute = new MonoTextAttribute();
+        monoTextAttribute.setName("Name");
+        monoTextAttribute.setHandler(new MonoTextAttributeHandler());
+        userProfile.addAttribute(monoTextAttribute);
+        userProfile.setTypeCode(defaultProfileTypeCode);
+        return userProfile;
+    }
 }

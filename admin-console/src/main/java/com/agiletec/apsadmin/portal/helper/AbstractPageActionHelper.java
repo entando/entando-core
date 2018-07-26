@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper implements IPageActionHelper {
 
-    private static final Logger _logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractPageActionHelper.class);
 
     private IPageManager _pageManager;
     private ConfigInterface _configService;
@@ -63,39 +63,45 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
     protected abstract boolean isDraftPageHepler();
 
     @Override
-    public void checkPageGroup(IPage page, BaseAction currentAction) throws ApsSystemException {
+    public boolean checkPageGroup(IPage page, BaseAction currentAction) {
         if (null == page) {
-            return;
+            return true;
         }
-        String groupCode = page.getGroup();
-        if (!groupCode.equals(Group.FREE_GROUP_NAME)) {
-            String[] childrenCodes = page.getChildrenCodes();
-            if (null != childrenCodes) {
-                for (String childrenCode : childrenCodes) {
-                    IPage child = this.getPage(childrenCode);
-                    if (null == child) {
-                        continue;
-                    }
-                    if (!groupCode.equals(child.getGroup())) {
-                        String textMessage = currentAction.getText("error.page.child.invalidGroup", new String[]{child.getCode(), child.getGroup()});
-                        currentAction.addFieldError("group", textMessage);
+        try {
+            String groupCode = page.getGroup();
+            if (!groupCode.equals(Group.FREE_GROUP_NAME)) {
+                String[] childrenCodes = page.getChildrenCodes();
+                if (null != childrenCodes) {
+                    for (String childrenCode : childrenCodes) {
+                        IPage child = this.getPage(childrenCode);
+                        if (null == child) {
+                            continue;
+                        }
+                        if (!groupCode.equals(child.getGroup())) {
+                            String textMessage = currentAction.getText("error.page.child.invalidGroup", new String[]{child.getCode(), child.getGroup()});
+                            currentAction.addFieldError("group", textMessage);
+                        }
                     }
                 }
             }
-        }
-        if (!page.isRoot()) {
-            IPage parent = page.getParent();
-            String parentGroupCode = parent.getGroup();
-            if (!parentGroupCode.equals(Group.FREE_GROUP_NAME) && !parentGroupCode.equals(groupCode)) {
-                String textMessage = currentAction.getText("error.page.parent.invalidGroup", new String[]{parent.getCode(), parentGroupCode});
-                currentAction.addFieldError("group", textMessage);
+            if (!page.isRoot()) {
+                IPage parent = page.getParent();
+                String parentGroupCode = parent.getGroup();
+                if (!parentGroupCode.equals(Group.FREE_GROUP_NAME) && !parentGroupCode.equals(groupCode)) {
+                    String textMessage = currentAction.getText("error.page.parent.invalidGroup", new String[]{parent.getCode(), parentGroupCode});
+                    currentAction.addFieldError("group", textMessage);
+                }
             }
-        }
-        if (null != this.getExternalValidators()) {
-            for (IExternalPageValidator externalValidator : this.getExternalValidators()) {
-                externalValidator.checkPageGroup(page, this.isDraftPageHepler(), currentAction);
+            if (null != this.getExternalValidators()) {
+                for (IExternalPageValidator externalValidator : this.getExternalValidators()) {
+                    externalValidator.checkPageGroup(page, this.isDraftPageHepler(), currentAction);
+                }
             }
+        } catch (Exception e) {
+            logger.error("Error checking page {}", page.getCode(), e);
+            return false;
         }
+        return true;
     }
 
     @Override
@@ -111,7 +117,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
                 try {
                     service = ApsWebApplicationUtils.getWebApplicationContext(request).getBean(defNames[i]);
                 } catch (Throwable t) {
-                    _logger.error("error in hasReferencingObjects", t);
+                    logger.error("error in hasReferencingObjects", t);
                     service = null;
                 }
                 if (service != null) {

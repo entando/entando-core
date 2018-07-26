@@ -71,7 +71,10 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME)) {
             try {
                 IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
-                this.getPageActionHelper().checkPageGroup(currentPage, this);
+                boolean check = this.getPageActionHelper().checkPageGroup(currentPage, this);
+                if (!check) {
+                    this.addActionError(this.getText("error.page.scanContentGroup"));
+                }
             } catch (Exception e) {
                 _logger.error("Error validation groups", e);
                 throw new RuntimeException("Error validation groups", e);

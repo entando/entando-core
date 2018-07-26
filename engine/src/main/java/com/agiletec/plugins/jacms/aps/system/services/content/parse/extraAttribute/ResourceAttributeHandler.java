@@ -25,72 +25,75 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Classe handler per l'interpretazione della porzione di xml 
- * relativo all'attributo di tipo risorsa (Image o Attach).
+ * Classe handler per l'interpretazione della porzione di xml relativo
+ * all'attributo di tipo risorsa (Image o Attach).
+ *
  * @author E.Santoboni
  */
 public class ResourceAttributeHandler extends TextAttributeHandler {
-	
-	private static final Logger _logger = LoggerFactory.getLogger(ResourceAttributeHandler.class);
-	
-	@Override
-	public Object getAttributeHandlerPrototype() {
-		ResourceAttributeHandler handler = (ResourceAttributeHandler) super.getAttributeHandlerPrototype();
-		handler.setResourceManager(this.getResourceManager());
-		return handler;
-	}
-	
-	@Override
-	public void startAttribute(Attributes attributes, String qName) throws SAXException {
-		if (qName.equals("resource")) {
-			this.startResource(attributes, qName);
-		} else {
-			super.startAttribute(attributes, qName);
-		}
-	}
-	
-	private void startResource(Attributes attributes, String qName) throws SAXException {
-		String id = extractAttribute(attributes, "id", qName, true);
-		String langCode = extractAttribute(attributes, "lang", qName, false);
-		try {
-			ResourceInterface resource = this.getResourceManager().loadResource(id);
-			if (null != this.getCurrentAttr() && null != resource) {
-				((ResourceAttributeInterface) this.getCurrentAttr()).setResource(resource, langCode);
-			}
-		} catch (Exception e) {
-			_logger.error("Error loading resource {}", id, e);
-		}
-	}
-	
-	@Override
-	public void endAttribute(String qName, StringBuffer textBuffer) {
-		if (qName.equals("resource")) {
-			this.endResource();
-		} else {
-			super.endAttribute(qName, textBuffer);
-		}
-	}
-	
-	private void endResource() {
-		return; // nulla da fare
-	}
-	
-	/**
-	 * Restituisce il manager delle risorse.
-	 * @return Il Manager delle risorse.
-	 */
-	protected IResourceManager getResourceManager() {
-		return this._resourceManager;
-	}
-	
-	/**
-	 * Setta il Manager delle risorse.
-	 * @param resourceManager Il manager delle risorse.
-	 */
-	public void setResourceManager(IResourceManager resourceManager) {
-		this._resourceManager = resourceManager;
-	}
-	
-	private IResourceManager _resourceManager;
-	
+
+    private static final Logger _logger = LoggerFactory.getLogger(ResourceAttributeHandler.class);
+
+    private transient IResourceManager resourceManager;
+
+    @Override
+    public Object getAttributeHandlerPrototype() {
+        ResourceAttributeHandler handler = (ResourceAttributeHandler) super.getAttributeHandlerPrototype();
+        handler.setResourceManager(this.getResourceManager());
+        return handler;
+    }
+
+    @Override
+    public void startAttribute(Attributes attributes, String qName) throws SAXException {
+        if (qName.equals("resource")) {
+            this.startResource(attributes, qName);
+        } else {
+            super.startAttribute(attributes, qName);
+        }
+    }
+
+    private void startResource(Attributes attributes, String qName) throws SAXException {
+        String id = extractAttribute(attributes, "id", qName, true);
+        String langCode = extractAttribute(attributes, "lang", qName, false);
+        try {
+            ResourceInterface resource = this.getResourceManager().loadResource(id);
+            if (null != this.getCurrentAttr() && null != resource) {
+                ((ResourceAttributeInterface) this.getCurrentAttr()).setResource(resource, langCode);
+            }
+        } catch (Exception e) {
+            _logger.error("Error loading resource {}", id, e);
+        }
+    }
+
+    @Override
+    public void endAttribute(String qName, StringBuffer textBuffer) {
+        if (qName.equals("resource")) {
+            this.endResource();
+        } else {
+            super.endAttribute(qName, textBuffer);
+        }
+    }
+
+    private void endResource() {
+        return; // nulla da fare
+    }
+
+    /**
+     * Restituisce il manager delle risorse.
+     *
+     * @return Il Manager delle risorse.
+     */
+    protected IResourceManager getResourceManager() {
+        return this.resourceManager;
+    }
+
+    /**
+     * Setta il Manager delle risorse.
+     *
+     * @param resourceManager Il manager delle risorse.
+     */
+    public void setResourceManager(IResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
+    }
+
 }

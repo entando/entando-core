@@ -34,13 +34,7 @@ public abstract class AbstractGenericCacheWrapper<O extends Object> extends Abst
     protected void releaseCachedObjects(Cache cache) {
         List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
         this.releaseObjects(cache, codes);
-    }
-
-    private void releaseObjects(Cache cache, List<String> keysToRelease) {
-        if (null != keysToRelease) {
-            for (String code : keysToRelease) {
-                cache.evict(this.getCacheKeyPrefix() + code);
-            }
+        if (null != codes) {
             cache.evict(this.getCodesCacheKey());
         }
     }
@@ -70,6 +64,14 @@ public abstract class AbstractGenericCacheWrapper<O extends Object> extends Abst
         }
         cache.put(this.getCodesCacheKey(), codes);
         this.releaseObjects(cache, oldCodes);
+    }
+
+    private void releaseObjects(Cache cache, List<String> keysToRelease) {
+        if (null != keysToRelease) {
+            for (String code : keysToRelease) {
+                cache.evict(this.getCacheKeyPrefix() + code);
+            }
+        }
     }
 
     protected <O> Map<String, O> getObjectMap() {

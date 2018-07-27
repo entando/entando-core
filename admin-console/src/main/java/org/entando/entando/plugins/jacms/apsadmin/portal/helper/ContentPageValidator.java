@@ -90,6 +90,9 @@ public class ContentPageValidator implements IExternalPageValidator {
         if (pageGroups.contains(Group.ADMINS_GROUP_NAME)) {
             return;
         }
+        if (null == page.getWidgets()) {
+            return;
+        }
         for (Widget widget : page.getWidgets()) {
             if (null != widget) {
                 ApsProperties config = widget.getConfig();
@@ -152,7 +155,7 @@ public class ContentPageValidator implements IExternalPageValidator {
             if (null == content || !content.isOnLine()) {
                 List<String> args = new ArrayList<>();
                 args.add(null == content ? contentId : content.getDescription());
-                action.addActionError(action.getText("error.page.set.online.content.ref.offline", args));
+                action.addActionError(action.getText("error.page.setOnlineContent.ref.offline", args));
             }
         }
     }

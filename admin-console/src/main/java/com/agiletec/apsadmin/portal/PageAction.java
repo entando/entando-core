@@ -73,7 +73,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
                 boolean check = this.getPageActionHelper().checkPageGroup(currentPage, this);
                 if (!check) {
-                    this.addActionError(this.getText("error.page.scanContentGroup"));
+                    this.addActionError(this.getText("error.page.scanGroup"));
                 }
             } catch (Exception e) {
                 _logger.error("Error validation groups", e);
@@ -171,16 +171,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     protected void valueFormForNew(IPage parentPage) {
-        String groupName = null;
         boolean groupSelectLock = false;
         this.setStrutsAction(ApsAdminSystemConstants.ADD);
         if (parentPage != null) {
             this.setParentPageCode(parentPage.getCode());
-            groupName = parentPage.getGroup();
+            String groupName = parentPage.getGroup();
             this.setGroup(groupName);
             boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
-            boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
-            groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree) && !isAdmin;
+            groupSelectLock = !isParentFree && !this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME);
         }
         this.setGroupSelectLock(groupSelectLock);
         this.setDefaultShowlet(true);
@@ -216,7 +214,10 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     public String joinExtraGroup() {
         try {
             this.updateTitles();
-            this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            String groupToAdd = super.getParameter("extraGroupNameToAdd");
+            if (!StringUtils.isEmpty(groupToAdd) && null != this.getGroupManager().getGroup(groupToAdd)) {
+                this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            }
         } catch (Throwable t) {
             _logger.error("error in joinExtraGroup", t);
             return FAILURE;

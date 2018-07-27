@@ -74,13 +74,12 @@
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
 		<s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
-		<s:if test="%{strutsAction == 1 && groupSelectLock}">
+		<s:if test="%{groupSelectLock}">
 			<wpsf:hidden name="group" />
 		</s:if>
         <s:elseif test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
-            <wpsf:hidden name="group" />
         </s:elseif>
         <s:elseif test="strutsAction == 3">
             <wpsf:hidden name="group" />

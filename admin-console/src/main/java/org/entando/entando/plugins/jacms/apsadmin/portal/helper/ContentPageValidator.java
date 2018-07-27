@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  *
- * @author eu
+ * @author E.Santoboni
  */
 public class ContentPageValidator implements IExternalPageValidator {
 
@@ -69,7 +69,7 @@ public class ContentPageValidator implements IExternalPageValidator {
         List<String> referencingContent = ((PageUtilizer) this.getContentManager()).getPageUtilizers(page.getCode());
         if (null != referencingContent) {
             for (String contentId : referencingContent) {
-                Content content = this.getContentManager().loadContent(contentId, true);
+                Content content = this.getContentManager().loadContent(contentId, true, false);
                 if (null == content) {
                     continue;
                 }
@@ -94,13 +94,15 @@ public class ContentPageValidator implements IExternalPageValidator {
             if (null != widget) {
                 ApsProperties config = widget.getConfig();
                 String contentId = (null != config) ? config.getProperty("contentId") : null;
-                this.checkPublishedContent(contentId, pageGroups, action);
+                if (!StringUtils.isEmpty(contentId)) {
+                    this.checkPublishedContent(contentId, pageGroups, action);
+                }
             }
         }
     }
 
     private void checkPublishedContent(String contentId, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
-        Content content = this.getContentManager().loadContent(contentId, true);
+        Content content = this.getContentManager().loadContent(contentId, true, false);
         if (null == content) {
             return;
         }

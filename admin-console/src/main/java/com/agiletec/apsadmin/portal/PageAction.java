@@ -404,7 +404,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 PageMetadata metadata = new PageMetadata();
                 this.valueMetadataFromForm(metadata);
                 page.setMetadata(metadata);
-                page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
+                if (null != metadata.getModel()) {
+                    page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
+                }
             }
             // ricava il codice
             page.setCode(this.buildNewPageCode(page.getMetadata()));

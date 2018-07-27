@@ -13,7 +13,6 @@
  */
 package com.agiletec.aps.system.common.entity.model.attribute;
 
-import com.agiletec.aps.system.SystemConstants;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +32,6 @@ import com.agiletec.aps.system.common.entity.parse.attribute.AttributeHandlerInt
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
-import org.springframework.web.context.ContextLoader;
 
 /**
  * This abstract class must be used when implementing Entity Attributes.
@@ -560,9 +558,6 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
     }
 
     protected ILangManager getLangManager() {
-        if (this._langManager == null) {
-            return ContextLoader.getCurrentWebApplicationContext().getBean(SystemConstants.LANGUAGE_MANAGER, ILangManager.class);
-        }
         return _langManager;
     }
 

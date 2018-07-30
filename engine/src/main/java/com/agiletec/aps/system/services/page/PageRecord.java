@@ -17,121 +17,124 @@ import java.util.Arrays;
 
 public class PageRecord {
 
-	public IPage createDraftPage() {
-		Page page = this.createPage();
-		page.setMetadata(this.getMetadataDraft());
-		page.setWidgets(this.getWidgetsDraft());
-		page.setOnlineInstance(false);
-		return page;
-	}
+    public IPage createDraftPage() {
+        Page page = this.createPage();
+        page.setMetadata(this.getMetadataDraft());
+        page.setWidgets(this.getWidgetsDraft());
+        page.setOnlineInstance(false);
+        return page;
+    }
 
-	public IPage createOnlinePage() {
-		Page page = this.createPage();
-		page.setMetadata(this.getMetadataOnline());
-		page.setWidgets(this.getWidgetsOnline());
-		page.setOnlineInstance(true);
-		return page;
-	}
+    public IPage createOnlinePage() {
+        Page page = this.createPage();
+        page.setMetadata(this.getMetadataOnline());
+        page.setWidgets(this.getWidgetsOnline());
+        page.setOnlineInstance(true);
+        return page;
+    }
 
-	protected Page createPage() {
-		Page page = new Page();
-		page.setCode(this.getCode());
-		page.setParentCode(this.getParentCode());
-		page.setPosition(this.getPosition());
-		page.setGroup(this.getGroup());
-		page.setOnline(null != this.getMetadataOnline());
-		page.setChanged(this.isChanged());
-		return page;
-	}
+    protected Page createPage() {
+        Page page = new Page();
+        page.setCode(this.getCode());
+        page.setParentCode(this.getParentCode());
+        page.setPosition(this.getPosition());
+        page.setGroup(this.getGroup());
+        page.setOnline(null != this.getMetadataOnline());
+        page.setChanged(this.isChanged());
+        return page;
+    }
 
-	protected boolean isChanged() {
-		boolean changed = false;
-		PageMetadata onlineMeta = this.getMetadataOnline();
-		if (onlineMeta != null) {
-			PageMetadata draftMeta = this.getMetadataDraft();
-			if (draftMeta != null) {
-				boolean widgetEquals = Arrays.deepEquals(this.getWidgetsDraft(), this.getWidgetsOnline());
-				boolean metaEquals = this.getMetadataOnline().hasEqualConfiguration(this.getMetadataDraft());
-				return !(widgetEquals && metaEquals);
-			} else {
-				changed = true;
-			}
-		}
-		return changed;
-	}
+    protected boolean isChanged() {
+        boolean changed = false;
+        PageMetadata onlineMeta = this.getMetadataOnline();
+        if (onlineMeta != null) {
+            PageMetadata draftMeta = this.getMetadataDraft();
+            if (draftMeta != null) {
+                boolean widgetEquals = Arrays.deepEquals(this.getWidgetsDraft(), this.getWidgetsOnline());
+                boolean metaEquals = this.getMetadataOnline().hasEqualConfiguration(this.getMetadataDraft());
+                return !(widgetEquals && metaEquals);
+            } else {
+                changed = true;
+            }
+        }
+        return changed;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getParentCode() {
-		return parentCode;
-	}
+    public String getParentCode() {
+        return parentCode;
+    }
 
-	public void setParentCode(String parentCode) {
-		this.parentCode = parentCode;
-	}
+    public void setParentCode(String parentCode) {
+        this.parentCode = parentCode;
+    }
 
-	public int getPosition() {
-		return position;
-	}
+    public int getPosition() {
+        return position;
+    }
 
-	public void setPosition(int position) {
-		this.position = position;
-	}
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
-	public String getGroup() {
-		return group;
-	}
+    @Deprecated
+    public String getGroup() {
+        return group;
+    }
 
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    @Deprecated
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
-	public PageMetadata getMetadataDraft() {
-		return metadataDraft;
-	}
+    public PageMetadata getMetadataDraft() {
+        return metadataDraft;
+    }
 
-	public void setMetadataDraft(PageMetadata metadataDraft) {
-		this.metadataDraft = metadataDraft;
-	}
+    public void setMetadataDraft(PageMetadata metadataDraft) {
+        this.metadataDraft = metadataDraft;
+    }
 
-	public PageMetadata getMetadataOnline() {
-		return metadataOnline;
-	}
+    public PageMetadata getMetadataOnline() {
+        return metadataOnline;
+    }
 
-	public void setMetadataOnline(PageMetadata metadataOnline) {
-		this.metadataOnline = metadataOnline;
-	}
+    public void setMetadataOnline(PageMetadata metadataOnline) {
+        this.metadataOnline = metadataOnline;
+    }
 
-	public Widget[] getWidgetsOnline() {
-		return widgetsOnline;
-	}
+    public Widget[] getWidgetsOnline() {
+        return widgetsOnline;
+    }
 
-	public void setWidgetsOnline(Widget[] widgetsOnline) {
-		this.widgetsOnline = widgetsOnline;
-	}
+    public void setWidgetsOnline(Widget[] widgetsOnline) {
+        this.widgetsOnline = widgetsOnline;
+    }
 
-	public Widget[] getWidgetsDraft() {
-		return widgetsDraft;
-	}
+    public Widget[] getWidgetsDraft() {
+        return widgetsDraft;
+    }
 
-	public void setWidgetsDraft(Widget[] widgetsDraft) {
-		this.widgetsDraft = widgetsDraft;
-	}
+    public void setWidgetsDraft(Widget[] widgetsDraft) {
+        this.widgetsDraft = widgetsDraft;
+    }
 
-	private String code;
-	private String parentCode;
-	private int position;
-	private String group;
+    private String code;
+    private String parentCode;
+    private int position;
+    @Deprecated
+    private String group;
 
-	private PageMetadata metadataDraft;
-	private PageMetadata metadataOnline;
+    private PageMetadata metadataDraft;
+    private PageMetadata metadataOnline;
 
-	private Widget[] widgetsOnline;
-	private Widget[] widgetsDraft;
+    private Widget[] widgetsOnline;
+    private Widget[] widgetsDraft;
 }

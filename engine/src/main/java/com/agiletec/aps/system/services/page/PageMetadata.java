@@ -39,15 +39,14 @@ public class PageMetadata implements Cloneable, Serializable {
         PageMetadata copy = null;
         try {
             copy = this.getClass().newInstance();
+            copy.setGroup(this.getGroup());
             ApsProperties titles = new ApsProperties();
             titles.putAll(this.getTitles());
             copy.setTitles(titles);
-
             Set<String> extraGroups = this.getExtraGroups();
             if (extraGroups != null) {
-                copy.setExtraGroups(new TreeSet<String>(extraGroups));
+                copy.setExtraGroups(new TreeSet<>(extraGroups));
             }
-
             copy.setModel(this.getModel());
             copy.setShowable(this.isShowable());
             copy.setUseExtraTitles(this.isUseExtraTitles());
@@ -59,6 +58,14 @@ public class PageMetadata implements Cloneable, Serializable {
             throw new RuntimeException("Error cloning " + this.getClass(), t);
         }
         return copy;
+    }
+
+    public String getGroup() {
+        return _group;
+    }
+
+    public void setGroup(String group) {
+        this._group = group;
     }
 
     public ApsProperties getTitles() {
@@ -188,6 +195,7 @@ public class PageMetadata implements Cloneable, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((_group == null) ? 0 : _group.hashCode());
         result = prime * result + ((_charset == null) ? 0 : _charset.hashCode());
         result = prime * result + ((_extraGroups == null) ? 0 : _extraGroups.hashCode());
         result = prime * result + ((_mimeType == null) ? 0 : _mimeType.hashCode());
@@ -253,6 +261,13 @@ public class PageMetadata implements Cloneable, Serializable {
         } else if (!_mimeType.equals(other._mimeType)) {
             return false;
         }
+        if (_group == null) {
+            if (other._group != null) {
+                return false;
+            }
+        } else if (!_group.equals(other._group)) {
+            return false;
+        }
         if (_model == null) {
             if (other._model != null) {
                 return false;
@@ -276,6 +291,8 @@ public class PageMetadata implements Cloneable, Serializable {
         return true;
     }
 
+    private String _group;
+
     private ApsProperties _titles = new ApsProperties();
 
     private Set<String> _extraGroups;
@@ -297,4 +314,5 @@ public class PageMetadata implements Cloneable, Serializable {
     private String _charset;
 
     private Date _updatedAt;
+
 }

@@ -22,34 +22,29 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable(tableName = Page.TABLE_NAME)
 public class Page {
-	
-	public Page() {}
-	
-	@DatabaseField(columnName = "code", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false, id = true)
-	private String _code;
-	
-	@DatabaseField(columnName = "parentcode", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false)
-	private String _parentCode;
-	
-	@DatabaseField(columnName = "pos", 
-			dataType = DataType.INTEGER, 
-			canBeNull = false)
-	private int _position;
-	
-	@DatabaseField(columnName = "groupcode", 
-			dataType = DataType.STRING, 
-			width = 30, 
-			canBeNull = false)
-	private String _groupCode;
-	
-	public static final String TABLE_NAME = "pages";
-	
+
+    public Page() {
+    }
+
+    @DatabaseField(columnName = "code",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false, id = true)
+    private String _code;
+
+    @DatabaseField(columnName = "parentcode",
+            dataType = DataType.STRING,
+            width = 30,
+            canBeNull = false)
+    private String _parentCode;
+
+    @DatabaseField(columnName = "pos",
+            dataType = DataType.INTEGER,
+            canBeNull = false)
+    private int _position;
+
+    public static final String TABLE_NAME = "pages";
+
 }
 /*
 CREATE TABLE pages
@@ -57,7 +52,6 @@ CREATE TABLE pages
   code character varying(30) NOT NULL,
   parentcode character varying(30),
   pos integer NOT NULL,
-  groupcode character varying(30) NOT NULL,
   CONSTRAINT pages_pkey PRIMARY KEY (code )
 )
  */

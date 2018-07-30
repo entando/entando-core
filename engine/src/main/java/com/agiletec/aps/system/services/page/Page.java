@@ -13,7 +13,6 @@
  */
 package com.agiletec.aps.system.services.page;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +21,7 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import java.io.Serializable;
 
 /**
  * This is the representation of a portal page
@@ -91,12 +91,30 @@ public class Page extends TreeNode implements IPage, Serializable {
         PageMetadata metadata = this.getMetadata();
         metadata.setModel(pageModel);
     }
+    
+    @Override
+    public void setGroup(String group) {
+        PageMetadata metadata = this.getMetadata();
+        if (null != metadata) {
+            metadata.setGroup(group);
+        }
+        super.setGroup(group);
+    }
+
+    @Override
+    public String getGroup() {
+        PageMetadata metadata = this.getMetadata();
+        if (null != metadata) {
+            return metadata.getGroup();
+        }
+        return super.getGroup();
+    }
 
     @Override
     public void addExtraGroup(String groupName) {
         PageMetadata metadata = this.getMetadata();
-        if (metadata.getExtraGroups() == null) {
-            metadata.setExtraGroups(new HashSet<String>());
+        if (null == metadata.getExtraGroups()) {
+            metadata.setExtraGroups(new HashSet<>());
         }
         metadata.getExtraGroups().add(groupName);
     }

@@ -26,44 +26,43 @@ import com.j256.ormlite.field.DatabaseField;
  */
 public abstract class AbstractPageMetadata implements ExtendedColumnDefinition {
 
-	public AbstractPageMetadata() {
-	}
+    public AbstractPageMetadata() {
+    }
 
-	@DatabaseField(columnName = "code", dataType = DataType.STRING, width = 30, canBeNull = false, id = true)
-	protected String _code;
+    @DatabaseField(columnName = "code", dataType = DataType.STRING, width = 30, canBeNull = false, id = true)
+    protected String _code;
 
-	@DatabaseField(columnName = "titles", dataType = DataType.LONG_STRING, canBeNull = false)
-	protected String _titles;
+    @DatabaseField(columnName = "groupcode", dataType = DataType.STRING, width = 30, canBeNull = false)
+    private String _groupCode;
 
-	@DatabaseField(foreign = true, columnName = "modelcode", width = 40, canBeNull = false)
-	protected PageModel _model;
+    @DatabaseField(columnName = "titles", dataType = DataType.LONG_STRING, canBeNull = false)
+    protected String _titles;
 
-	@DatabaseField(columnName = "showinmenu", dataType = DataType.SHORT, canBeNull = false)
-	protected short _showInMenu;
+    @DatabaseField(foreign = true, columnName = "modelcode", width = 40, canBeNull = false)
+    protected PageModel _model;
 
-	@DatabaseField(columnName = "extraconfig", dataType = DataType.LONG_STRING)
-	protected String _extraConfig;
+    @DatabaseField(columnName = "showinmenu", dataType = DataType.SHORT, canBeNull = false)
+    protected short _showInMenu;
 
-	@DatabaseField(columnName = "updatedat", dataType = DataType.DATE, canBeNull = true)
-	protected Date _updatedAt;
+    @DatabaseField(columnName = "extraconfig", dataType = DataType.LONG_STRING)
+    protected String _extraConfig;
 
-	protected abstract String getTableName();
+    @DatabaseField(columnName = "updatedat", dataType = DataType.DATE, canBeNull = true)
+    protected Date _updatedAt;
 
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = this.getTableName();
-		String pageTableName = Page.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			pageTableName = "`" + pageTableName + "`";
-		}
-		return new String[] {
-			// @formatter:off
-				"ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_code_fk FOREIGN KEY (code) "
-				+ "REFERENCES " + pageTableName + " (code)  " ,
-				"ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_modelcode_fk FOREIGN KEY (modelcode) " + 
-				"REFERENCES " + PageModel.TABLE_NAME + " (code)" };
-			// @formatter:on
-	}
+    protected abstract String getTableName();
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = this.getTableName();
+        String pageTableName = Page.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            pageTableName = "`" + pageTableName + "`";
+        }
+        return new String[]{
+            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_code_fk FOREIGN KEY (code) " + "REFERENCES " + pageTableName + " (code) ",
+            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_modelcode_fk FOREIGN KEY (modelcode) " + "REFERENCES " + PageModel.TABLE_NAME + " (code)"};
+    }
 
 }

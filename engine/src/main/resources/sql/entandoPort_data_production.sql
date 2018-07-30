@@ -251,59 +251,59 @@ INSERT INTO pagemodels (code, descr, frames, plugincode, templategui) VALUES ('h
 
 
 
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('service', 'homepage', 5, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('login', 'service', 6, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('notfound', 'service', 4, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('errorpage', 'service', 5, 'free');
-INSERT INTO pages (code, parentcode, pos, groupcode) VALUES ('homepage', 'homepage', -1, 'free');
+INSERT INTO pages (code, parentcode, pos) VALUES ('service', 'homepage', 5);
+INSERT INTO pages (code, parentcode, pos) VALUES ('login', 'service', 6);
+INSERT INTO pages (code, parentcode, pos) VALUES ('notfound', 'service', 4);
+INSERT INTO pages (code, parentcode, pos) VALUES ('errorpage', 'service', 5);
+INSERT INTO pages (code, parentcode, pos) VALUES ('homepage', 'homepage', -1);
 
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagine di Servizio</property>
 <property key="en">Service</property>
 </properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagina di login</property>
 <property key="en">Login</property>
 </properties>', 'service', 1, NULL, '2017-02-17 15:32:34');
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page not found</property>
 <property key="it">Pagina non trovata</property>
 </properties>', 'service', 1, NULL, '2017-02-17 16:37:10');
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Error page</property>
 <property key="it">Pagina di errore</property>
 </properties>', 'service', 1, NULL, '2017-02-17 21:11:54');
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Home</property>
 <property key="it">Home</property>
 </properties>', 'home', 1, NULL, '2017-02-18 00:12:24');
 
-INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_draft (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagine di Servizio</property>
 <property key="en">Service</property>
 </properties>', 'service', 0, NULL, '2017-02-17 13:06:24');
-INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_draft (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('login', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagina di login</property>
 <property key="en">Login</property>
 </properties>', 'service', 1, NULL, '2017-02-17 15:32:34');
-INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_draft (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('notfound', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Page not found</property>
 <property key="it">Pagina non trovata</property>
 </properties>', 'service', 1, NULL, '2017-02-17 16:37:10');
-INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_draft (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('errorpage', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Error page</property>
 <property key="it">Pagina di errore</property>
 </properties>', 'service', 1, NULL, '2017-02-17 21:11:54');
-INSERT INTO pages_metadata_draft (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_draft (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('homepage', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Home</property>
 <property key="it">Home</property>

@@ -402,9 +402,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 page.setGroup(copyPage.getGroup());
             } else {
                 page.setGroup(this.getGroup());
-                PageMetadata metadata = new PageMetadata();
+                PageMetadata metadata = page.getMetadata();
                 this.valueMetadataFromForm(metadata);
-                page.setMetadata(metadata);
                 if (null != metadata.getModel()) {
                     page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
                 }

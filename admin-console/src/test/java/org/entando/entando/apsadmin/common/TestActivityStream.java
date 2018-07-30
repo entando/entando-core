@@ -60,7 +60,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
     }
 
     public void testLogAddPage() throws Throwable {
-        String pageCode = "activity_stream_test_test";
+        String pageCode = "act_stream_test";
         try {
             this.addPage(pageCode);
             super.waitThreads(IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX);

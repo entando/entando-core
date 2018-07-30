@@ -25,11 +25,13 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +82,7 @@ public class ContentPageValidator implements IExternalPageValidator {
                  */
                 boolean check = CollectionUtils.containsAll(contentGroups, pageGroups);
                 if (!check) {
-                    action.addActionError(action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription()}));
+                    action.addActionError(action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription(), contentGroups.toString()}));
                 }
             }
         }
@@ -90,22 +92,16 @@ public class ContentPageValidator implements IExternalPageValidator {
         if (pageGroups.contains(Group.ADMINS_GROUP_NAME)) {
             return;
         }
-        if (null == page.getWidgets()) {
+        Collection<Content> contents = CmsPageUtil.getPublishedContents(page.getCode(), true);
+        if (null == contents) {
             return;
         }
-        for (Widget widget : page.getWidgets()) {
-            if (null != widget) {
-                ApsProperties config = widget.getConfig();
-                String contentId = (null != config) ? config.getProperty("contentId") : null;
-                if (!StringUtils.isEmpty(contentId)) {
-                    this.checkPublishedContent(contentId, pageGroups, action);
-                }
-            }
+        for (Content content : contents) {
+            this.checkPublishedContent(content, pageGroups, action);
         }
     }
 
-    private void checkPublishedContent(String contentId, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
-        Content content = this.getContentManager().loadContent(contentId, true, false);
+    private void checkPublishedContent(Content content, Set<String> pageGroups, BaseAction action) throws ApsSystemException {
         if (null == content) {
             return;
         }
@@ -119,7 +115,7 @@ public class ContentPageValidator implements IExternalPageValidator {
          */
         boolean check = CollectionUtils.containsAll(pageGroups, contentGroups);
         if (!check) {
-            action.addActionError(action.getText("error.page.publishedContents.incompatibleGroups", new String[]{contentId, content.getDescription()}));
+            action.addActionError(action.getText("error.page.publishedContents.incompatibleGroups", new String[]{content.getId(), content.getDescription(), contentGroups.toString()}));
         }
     }
 

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.PageMetadata;
@@ -24,6 +25,13 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
+import static junit.framework.Assert.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -97,6 +105,58 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         if (StringUtils.isEmpty(extendedGroup)) {
             this.addParameter("extraGroups", extendedGroup);
         }
+    }
+
+    public void testValidateSavePage() throws Throwable {
+        String pageCode = "pagina_test";
+        assertNull(this.pageManager.getDraftPage(pageCode));
+        try {
+            Map<String, String> params = new HashMap<>();
+            params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
+            params.put("parentPageCode", "customers_page");
+            params.put("langit", "Pagina Test");
+            params.put("model", "home");
+            params.put("langen", "Test Page");
+            params.put("group", Group.FREE_GROUP_NAME);
+            params.put("pageCode", pageCode);
+            String result = this.executeSave(params, "admin");
+            assertEquals(Action.INPUT, result);
+            Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("group"));
+
+            params.put("group", Group.ADMINS_GROUP_NAME);
+            result = this.executeSave(params, "admin");
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("group"));
+
+            params.put("group", "coach");
+            result = this.executeSave(params, "admin");
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("group"));
+
+            params.put("group", "customers");
+            result = this.executeSave(params, "admin");
+            assertEquals(Action.SUCCESS, result);
+
+            assertNotNull(this.pageManager.getDraftPage(pageCode));
+        } catch (Throwable t) {
+            throw t;
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    private String executeSave(Map<String, String> params, String username) throws Throwable {
+        this.setUserOnSession(username);
+        this.initAction("/do/Page", "save");
+        this.addParameters(params);
+        String result = this.executeAction();
+        return result;
     }
 
     private void init() throws Exception {

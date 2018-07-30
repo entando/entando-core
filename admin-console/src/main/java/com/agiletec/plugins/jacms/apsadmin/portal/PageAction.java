@@ -38,7 +38,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.ContentRecor
  */
 public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
 
-    private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(PageAction.class);
+
+    private boolean viewerPage;
+    private String viewerWidgetCode;
+
+    private IContentManager contentManager;
 
     /**
      * Check if a page che publish a single content.
@@ -61,7 +66,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
                 viewer.setConfig(new ApsProperties());
                 WidgetType type = widgetTypeManager.getWidgetType(this.getViewerWidgetCode());
                 if (null == type) {
-                    _logger.warn("No widget found for on-the-fly publishing config for page {}", page.getCode());
+                    logger.warn("No widget found for on-the-fly publishing config for page {}", page.getCode());
                     return SUCCESS;
                 }
                 viewer.setType(type);
@@ -70,7 +75,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
             }
             this.getPageManager().updatePage(page);
         } catch (Throwable t) {
-            _logger.error("Error setting on-the-fly publishing config to page {}", page.getCode(), t);
+            logger.error("Error setting on-the-fly publishing config to page {}", page.getCode(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -89,7 +94,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
         try {
             List<String> referencingContentsId = this.getReferencingContentsId(pageCode);
             if (null != referencingContentsId) {
-                referencingContents = new ArrayList<ContentRecordVO>();
+                referencingContents = new ArrayList<>();
                 for (int i = 0; i < referencingContentsId.size(); i++) {
                     ContentRecordVO contentVo = this.getContentManager().loadContentVO(referencingContentsId.get(i));
                     if (null != contentVo) {
@@ -98,7 +103,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
                 }
             }
         } catch (Throwable t) {
-            _logger.error("Error getting referencing contents by page '{}'", pageCode, t);
+            logger.error("Error getting referencing contents by page '{}'", pageCode, t);
             String msg = "Error getting referencing contents by page '" + pageCode + "'";
             throw new RuntimeException(msg, t);
         }
@@ -110,7 +115,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
         try {
             referencingContentsId = ((PageUtilizer) this.getContentManager()).getPageUtilizers(pageCode);
         } catch (Throwable t) {
-            _logger.error("Error getting referencing contents by page '{}'", pageCode, t);
+            logger.error("Error getting referencing contents by page '{}'", pageCode, t);
             String msg = "Error getting referencing contents by page '" + pageCode + "'";
             throw new RuntimeException(msg, t);
         }
@@ -118,11 +123,11 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
     }
 
     public boolean isViewerPage() {
-        return _viewerPage;
+        return viewerPage;
     }
 
     public void setViewerPage(boolean viewerPage) {
-        this._viewerPage = viewerPage;
+        this.viewerPage = viewerPage;
     }
 
     @Deprecated
@@ -136,24 +141,19 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
     }
 
     protected String getViewerWidgetCode() {
-        return _viewerWidgetCode;
+        return viewerWidgetCode;
     }
 
     public void setViewerWidgetCode(String viewerWidgetCode) {
-        this._viewerWidgetCode = viewerWidgetCode;
+        this.viewerWidgetCode = viewerWidgetCode;
     }
 
     protected IContentManager getContentManager() {
-        return _contentManager;
+        return contentManager;
     }
 
     public void setContentManager(IContentManager contentManager) {
-        this._contentManager = contentManager;
+        this.contentManager = contentManager;
     }
-
-    private boolean _viewerPage;
-    private String _viewerWidgetCode;
-
-    private IContentManager _contentManager;
 
 }

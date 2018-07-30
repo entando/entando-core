@@ -82,7 +82,7 @@ public class ContentPageValidator implements IExternalPageValidator {
                  */
                 boolean check = CollectionUtils.containsAll(contentGroups, pageGroups);
                 if (!check) {
-                    action.addActionError(action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription(), contentGroups.toString()}));
+                    action.addFieldError("extraGroups", action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription(), contentGroups.toString()}));
                 }
             }
         }
@@ -115,7 +115,7 @@ public class ContentPageValidator implements IExternalPageValidator {
          */
         boolean check = CollectionUtils.containsAll(pageGroups, contentGroups);
         if (!check) {
-            action.addActionError(action.getText("error.page.publishedContents.incompatibleGroups", new String[]{content.getId(), content.getDescription(), contentGroups.toString()}));
+            action.addFieldError("extraGroups", action.getText("error.page.publishedContents.incompatibleGroups", new String[]{content.getId(), content.getDescription(), contentGroups.toString()}));
         }
     }
 
@@ -151,7 +151,7 @@ public class ContentPageValidator implements IExternalPageValidator {
             if (null == content || !content.isOnLine()) {
                 List<String> args = new ArrayList<>();
                 args.add(null == content ? contentId : content.getDescription());
-                action.addActionError(action.getText("error.page.setOnlineContent.ref.offline", args));
+                action.addFieldError("extraGroups", action.getText("error.page.setOnlineContent.ref.offline", args));
             }
         }
     }

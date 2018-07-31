@@ -13,18 +13,17 @@
  */
 package com.agiletec.apsadmin.portal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response.Status;
-
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.system.services.page.*;
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
+import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import com.agiletec.apsadmin.system.BaseActionHelper;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.interceptor.ServletResponseAware;
@@ -34,22 +33,9 @@ import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.aps.system.services.page.PageUtils;
-import com.agiletec.aps.system.services.page.Widget;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.util.ApsProperties;
-import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
-import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
-import com.agiletec.apsadmin.system.BaseActionHelper;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Response.Status;
+import java.util.*;
 
 /**
  * Main action for pages handling
@@ -203,7 +189,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     public String joinExtraGroup() {
         try {
             this.updateTitles();
-            this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            String[] groupNameList = super.getParameters().get("extraGroupNameToAdd");
+            if(groupNameList!=null){
+
+                for(String group : groupNameList) {
+                    this.getExtraGroups().add(group);
+                }
+            }
         } catch (Throwable t) {
             _logger.error("error in joinExtraGroup", t);
             return FAILURE;

@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamInfo;
 import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
@@ -64,7 +65,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 
     @Override
     public boolean checkPageGroup(IPage page, BaseAction currentAction) {
-        if (null == page) {
+        if (null == page || StringUtils.isBlank(page.getGroup())) {
             return true;
         }
         try {

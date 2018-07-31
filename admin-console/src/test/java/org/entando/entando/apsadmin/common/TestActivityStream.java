@@ -43,22 +43,31 @@ import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSe
  */
 public class TestActivityStream extends ApsAdminBaseTestCase {
 
+    private IActionLogManager actionLoggerManager;
+    private IPageManager pageManager = null;
+    private ILangManager langManager = null;
+    private IContentManager contentManager = null;
+    private ActionLoggerTestHelper helper;
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
-        this._helper.cleanRecords();
+        this.helper.cleanRecords();
     }
 
     public void testLogAddPage() throws Throwable {
         String pageCode = "act_stream_test";
         try {
             this.addPage(pageCode);
+            synchronized (this) {
+                this.wait(1000);
+            }
             super.waitThreads(IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX);
-            ActionLogRecordSearchBean searchBean = this._helper.createSearchBean("admin", null, null, null, null, null);
-            List<Integer> ids = this._actionLoggerManager.getActionRecords(searchBean);
+            ActionLogRecordSearchBean searchBean = this.helper.createSearchBean("admin", null, null, null, null, null);
+            List<Integer> ids = this.actionLoggerManager.getActionRecords(searchBean);
             assertEquals(1, ids.size());
-            ActionLogRecord record = this._actionLoggerManager.getActionRecord(ids.get(0));
+            ActionLogRecord record = this.actionLoggerManager.getActionRecord(ids.get(0));
             assertEquals("/do/Page", record.getNamespace());
             assertEquals("save", record.getActionName());
             ActivityStreamInfo asi = record.getActivityStreamInfo();
@@ -69,22 +78,21 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
             Properties parameters = asi.getLinkParameters();
             assertEquals(1, parameters.size());
             assertEquals(pageCode, parameters.getProperty("selectedNode"));
-
         } catch (Throwable t) {
             throw t;
         } finally {
-            this._pageManager.deletePage(pageCode);
+            this.pageManager.deletePage(pageCode);
         }
     }
 
     private void addPage(String pageCode) throws Throwable {
-        assertNull(this._pageManager.getDraftPage(pageCode));
+        assertNull(this.pageManager.getDraftPage(pageCode));
         try {
-            IPage root = this._pageManager.getOnlineRoot();
+            IPage root = this.pageManager.getOnlineRoot();
             Map<String, String> params = new HashMap<String, String>();
             params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
             params.put("parentPageCode", root.getCode());
-            List<Lang> langs = this._langManager.getLangs();
+            List<Lang> langs = this.langManager.getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 params.put("lang" + lang.getCode(), "Page " + lang.getDescr());
@@ -94,7 +102,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
             params.put("pageCode", pageCode);
             String result = this.executeSave(params, "admin");
             assertEquals(Action.SUCCESS, result);
-            IPage addedPage = this._pageManager.getDraftPage(pageCode);
+            IPage addedPage = this.pageManager.getDraftPage(pageCode);
             assertNotNull(addedPage);
         } catch (Throwable t) {
             throw t;
@@ -105,8 +113,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
         this.setUserOnSession(username);
         this.initAction("/do/Page", "save");
         this.addParameters(params);
-        String result = this.executeAction();
-        return result;
+        return this.executeAction();
     }
 
     // ----------------------------------------------
@@ -312,7 +319,7 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        this._helper.cleanRecords();
+        this.helper.cleanRecords();
         super.tearDown();
     }
 

@@ -35,7 +35,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import java.util.HashSet;
 import java.util.Properties;
 import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
-import org.springframework.web.context.ContextLoader;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author E.Santoboni
@@ -257,15 +257,15 @@ public class CmsPageUtil {
         return false;
     }
 
-    public static Collection<Content> getPublishedContents(String pageCode, boolean draftPage) {
-        IPageManager pageManager = ContextLoader.getCurrentWebApplicationContext().getBean(SystemConstants.PAGE_MANAGER, IPageManager.class);
+    public static Collection<Content> getPublishedContents(String pageCode, boolean draftPage, ApplicationContext applicationContext) {
+        IPageManager pageManager = applicationContext.getBean(SystemConstants.PAGE_MANAGER, IPageManager.class);
         Collection<Content> contents = new HashSet<>();
         try {
             IPage page = (draftPage) ? pageManager.getDraftPage(pageCode) : pageManager.getOnlinePage(pageCode);
             if (null == page) {
                 return contents;
             }
-            addPublishedContents(page.getWidgets(), contents);
+            addPublishedContents(page.getWidgets(), contents, applicationContext);
         } catch (Throwable t) {
             String msg = "Error extracting published contents on page '" + pageCode + "'";
             logger.error("Error extracting published contents on page '{}'", pageCode, t);
@@ -274,10 +274,10 @@ public class CmsPageUtil {
         return contents;
     }
 
-    private static void addPublishedContents(Widget[] widgets, Collection<Content> contents) {
+    private static void addPublishedContents(Widget[] widgets, Collection<Content> contents, ApplicationContext applicationContext) {
         try {
             if (widgets != null) {
-                IContentManager contentManager = ContextLoader.getCurrentWebApplicationContext().getBean(JacmsSystemConstants.CONTENT_MANAGER, IContentManager.class);
+                IContentManager contentManager = applicationContext.getBean(JacmsSystemConstants.CONTENT_MANAGER, IContentManager.class);
                 for (Widget widget : widgets) {
                     ApsProperties config = (null != widget) ? widget.getConfig() : null;
                     if (null == config || config.isEmpty()) {

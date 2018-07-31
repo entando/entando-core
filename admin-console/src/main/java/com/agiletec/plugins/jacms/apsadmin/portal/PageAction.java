@@ -86,7 +86,7 @@ public class PageAction extends com.agiletec.apsadmin.portal.PageAction {
     }
 
     public Collection<Content> getOnlinePublishedContents(String pageCode) {
-        return CmsPageUtil.getPublishedContents(pageCode, false);
+        return CmsPageUtil.getPublishedContents(pageCode, false, ApsWebApplicationUtils.getWebApplicationContext(this.getRequest()));
     }
 
     public List<ContentRecordVO> getReferencingContents(String pageCode) {

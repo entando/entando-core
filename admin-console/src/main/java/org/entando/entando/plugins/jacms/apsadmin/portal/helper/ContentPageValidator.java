@@ -34,16 +34,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  *
  * @author E.Santoboni
  */
-public class ContentPageValidator implements IExternalPageValidator {
+public class ContentPageValidator implements IExternalPageValidator, ApplicationContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(ContentPageValidator.class);
 
     private IContentManager contentManager;
+    private ApplicationContext applicationContext;
 
     @Override
     public void checkPageGroup(IPage page, boolean draftPageHepler, BaseAction action) {
@@ -92,7 +96,7 @@ public class ContentPageValidator implements IExternalPageValidator {
         if (pageGroups.contains(Group.ADMINS_GROUP_NAME)) {
             return;
         }
-        Collection<Content> contents = CmsPageUtil.getPublishedContents(page.getCode(), true);
+        Collection<Content> contents = CmsPageUtil.getPublishedContents(page.getCode(), true, this.getApplicationContext());
         if (null == contents) {
             return;
         }
@@ -162,6 +166,15 @@ public class ContentPageValidator implements IExternalPageValidator {
 
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
+    }
+
+    protected ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 
 }

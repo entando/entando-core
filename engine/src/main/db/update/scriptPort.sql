@@ -1,2 +1,1 @@
-INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataTypeDefinitions', 'Definition of the Type Types', '<datatypes />');
-INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataobjectsubdir', 'Name of the sub-directory containing dataobject indexing files', 'index');
+

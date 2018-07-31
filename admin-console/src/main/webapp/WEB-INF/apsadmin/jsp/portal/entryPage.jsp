@@ -206,7 +206,7 @@
         <legend><s:text name="page.groups" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
 
         <%-- ownerGroup --%>
-        <s:set var="fieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
+        <s:set var="fieldErrorsVar" value="%{fieldErrors['group']}" />
         <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 
@@ -220,7 +220,7 @@
                     <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                        </span>
+                    </span>
                 </s:if>
             </div>
         </div>

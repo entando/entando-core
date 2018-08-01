@@ -22,6 +22,8 @@
                    <s:param name="treeNodeActionMarkerCode" value="'open'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             </a>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
@@ -32,6 +34,8 @@
                    <s:param name="treeNodeActionMarkerCode" value="'close'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close" /></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             </a>
         </s:elseif>
         <input
@@ -42,8 +46,10 @@
             value="<s:property value="#currentRoot.code" />" <s:if test="#currentRoot.children.length > 0">class="subTreeToggler tree_<s:property value="#currentRoot.code" />" </s:if>
             <s:if test="#currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
-            <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-            <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            <s:if test="#currentRoot.empty">
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            </s:if>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
             </label>
 
@@ -71,11 +77,11 @@
                     <span class="fa fa-ellipsis-v"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
                     <li>
-                        <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
-                            <span><s:text name="title.addPage" /></span>
-                        </wpsf:submit>
-                    </li>
-                    <li>
+                    <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn btn-info btn-kebab" data-toggle="tooltip">
+                        <span><s:text name="title.addPage" /></span>
+                    </wpsf:submit>
+                </li>
+                <li>
                     <wpsf:submit action="edit" type="button" title="%{getText('page.options.modify')}" cssClass="btn btn-info" data-toggle="tooltip">
                         <span class="">Edit</span>
                     </wpsf:submit>

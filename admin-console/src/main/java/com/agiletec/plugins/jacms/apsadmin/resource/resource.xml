@@ -41,37 +41,42 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	
-        <action name="edit" class="jacmsResourceAction" method="edit">
+        <action name="edit" class="jacmsMultipleResourceAction" method="edit">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	
-        <action name="openCloseCategoryTreeNodeOnEntryResource*" class="jacmsResourceAction" method="buildTree">
+        <action name="openCloseCategoryTreeNodeOnEntryResource*" class="jacmsMultipleResourceAction" method="buildTree">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
         
-        <action name="joinCategory*" class="jacmsResourceAction" method="joinCategory">
+        <action name="joinCategory*" class="jacmsMultipleResourceAction" method="joinCategory">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	
-        <action name="removeCategory*" class="jacmsResourceAction" method="removeCategory">
+        <action name="removeCategory*" class="jacmsMultipleResourceAction" method="removeCategory">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
         
-        <action name="save" class="jacmsResourceAction" method="save">
+       
+        
+        <action name="save" class="jacmsMultipleResourceAction" method="save">
             <result type="tiles" name="input">admin.jacms.resource.entry</result>
+            <result type="tiles" name="failure">admin.jacms.resource.entry</result>
             <result type="redirectAction">
                 <param name="actionName">list</param>
                 <param name="resourceTypeCode">${resourceTypeCode}</param>
             </result>
             <!-- <interceptor-ref name="fileUpload"><param name="maximumSize">10485760</param></interceptor-ref> --><!-- maximun Size = 10 Mb -->
             <interceptor-ref name="apsFileUpload" />
-            <interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
+            <interceptor-ref name="entandoValidationStack">
+                <param name="requestAuth.requiredPermission">manageResources</param>
+            </interceptor-ref>
         </action>
-    	
+        
         <!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA RISORSE ######### -->
     	
         <!-- ######### INIZIO OPERAZIONI DI CANCELLAZIONE RISORSE ######### -->

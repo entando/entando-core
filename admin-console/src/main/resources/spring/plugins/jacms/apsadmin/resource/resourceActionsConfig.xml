@@ -30,9 +30,16 @@
 		<property name="groupManager" ref="GroupManager" />
 	</bean>
 
+        <bean id="jacmsMultipleResourceAction" scope="prototype"
+              class="com.agiletec.plugins.jacms.apsadmin.resource.MultipleResourceAction"
+              parent="jacmsResourceAction" >
+            <property name="groupManager" ref="GroupManager" />
+        </bean>
+
+        
 	<bean id="jacmsResourceAdminAction" scope="prototype"
-			class="com.agiletec.plugins.jacms.apsadmin.resource.ResourceAdminAction"
-			parent="jacmsAbstractResourceAction" >
+                class="com.agiletec.plugins.jacms.apsadmin.resource.ResourceAdminAction"
+                parent="jacmsAbstractResourceAction" >
 	</bean>
 
 	<bean id="jacmsPortingResource22Action" scope="prototype"

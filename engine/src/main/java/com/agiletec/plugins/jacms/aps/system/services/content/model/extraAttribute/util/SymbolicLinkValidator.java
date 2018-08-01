@@ -86,7 +86,7 @@ public class SymbolicLinkValidator {
                 return null;
             }
             Set<String> linkingContentGroups = this.extractContentGroups(content);
-            boolean check = CollectionUtils.containsAll(linkingContentGroups, pageGroups);
+            boolean check = CollectionUtils.containsAll(pageGroups, linkingContentGroups);
             if (!check) {
                 return ICmsAttributeErrorCodes.INVALID_PAGE_GROUPS;
             }
@@ -109,7 +109,7 @@ public class SymbolicLinkValidator {
             return null;
         }
         Set<String> linkingContentGroups = this.extractContentGroups(content);
-        boolean check = CollectionUtils.containsAll(linkingContentGroups, linkedContentGroups);
+        boolean check = CollectionUtils.containsAll(linkedContentGroups, linkingContentGroups);
         if (!check) {
             return ICmsAttributeErrorCodes.INVALID_CONTENT_GROUPS;
         }

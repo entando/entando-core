@@ -297,25 +297,24 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
             List<Integer> ids = this.actionLoggerManager.getActionRecords(searchBean);
             assertEquals(1, ids.size());
 
-            Thread.sleep(1000);
             this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker, content);
             this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
             this.setUserOnSession("admin");
             result = this.executeAction();
+            synchronized (this) {
+                this.wait(1000);
+            }
             assertEquals(Action.SUCCESS, result);
             contentId = content.getId();
             assertNotNull(this.contentManager.loadContent(contentId, false));
             super.waitThreads(IActionLogManager.LOG_APPENDER_THREAD_NAME_PREFIX);
-
             List<Integer> actionRecords = this.actionLoggerManager.getActionRecords(null);
-
             assertNotNull(actionRecords);
             assertEquals(2, actionRecords.size());
             ActionLogRecord actionRecord = this.actionLoggerManager.getActionRecord(actionRecords.get(1));
             UserDetails adminUser = this.getUser("admin", "admin");
             Date lastUpdateDate = this.actionLoggerManager.lastUpdateDate(adminUser);
             assertEquals(actionRecord.getUpdateDate(), lastUpdateDate);
-
         } catch (Throwable t) {
             throw t;
         } finally {

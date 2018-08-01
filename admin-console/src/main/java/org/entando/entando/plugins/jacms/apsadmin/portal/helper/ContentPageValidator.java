@@ -84,7 +84,7 @@ public class ContentPageValidator implements IExternalPageValidator, Application
                 containsAll(Collection<?> coll1, Collection<?> coll2)
                 Returns true iff all elements of coll2 are also contained in coll1.
                  */
-                boolean check = CollectionUtils.containsAll(contentGroups, pageGroups);
+                boolean check = CollectionUtils.containsAll(pageGroups, contentGroups);
                 if (!check) {
                     action.addFieldError("extraGroups", action.getText("error.page.contentRef.incompatibleGroups", new String[]{contentId, content.getDescription(), contentGroups.toString()}));
                 }
@@ -117,7 +117,7 @@ public class ContentPageValidator implements IExternalPageValidator, Application
         containsAll(Collection<?> coll1, Collection<?> coll2)
         Returns true iff all elements of coll2 are also contained in coll1.
          */
-        boolean check = CollectionUtils.containsAll(pageGroups, contentGroups);
+        boolean check = CollectionUtils.containsAll(contentGroups, pageGroups);
         if (!check) {
             action.addFieldError("extraGroups", action.getText("error.page.publishedContents.incompatibleGroups", new String[]{content.getId(), content.getDescription(), contentGroups.toString()}));
         }

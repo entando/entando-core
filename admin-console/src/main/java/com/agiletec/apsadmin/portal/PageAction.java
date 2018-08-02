@@ -50,6 +50,7 @@ import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.portal.helper.IPageActionReferencesHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
+import java.util.Date;
 
 /**
  * Main action for pages handling
@@ -466,6 +467,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
         String mimetype = this.getMimeType();
         metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
+        metadata.setUpdatedAt(new Date());
     }
 
     public String setDefaultWidgets() {

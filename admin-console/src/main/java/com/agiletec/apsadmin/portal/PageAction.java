@@ -47,7 +47,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
+import com.agiletec.apsadmin.portal.helper.IPageActionReferencesHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 
@@ -68,6 +68,18 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         }
         this.checkCode();
         this.checkTitles();
+        if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME)) {
+            try {
+                IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
+                boolean check = this.getPageActionHelper().checkPageGroup(currentPage, this);
+                if (!check) {
+                    this.addActionError(this.getText("error.page.scanGroup"));
+                }
+            } catch (Exception e) {
+                _logger.error("Error validation groups", e);
+                throw new RuntimeException("Error validation groups", e);
+            }
+        }
     }
 
     protected String checkParentNode(String selectedNode) {
@@ -159,15 +171,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     protected void valueFormForNew(IPage parentPage) {
-        String groupName = null;
         boolean groupSelectLock = false;
         this.setStrutsAction(ApsAdminSystemConstants.ADD);
         if (parentPage != null) {
             this.setParentPageCode(parentPage.getCode());
-            groupName = parentPage.getGroup();
+            String groupName = parentPage.getGroup();
             this.setGroup(groupName);
             boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
-            groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree);
+            groupSelectLock = !isParentFree && !this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME);
         }
         this.setGroupSelectLock(groupSelectLock);
         this.setDefaultShowlet(true);
@@ -203,7 +214,10 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     public String joinExtraGroup() {
         try {
             this.updateTitles();
-            this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            String groupToAdd = super.getParameter("extraGroupNameToAdd");
+            if (!StringUtils.isEmpty(groupToAdd) && null != this.getGroupManager().getGroup(groupToAdd)) {
+                this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            }
         } catch (Throwable t) {
             _logger.error("error in joinExtraGroup", t);
             return FAILURE;
@@ -249,7 +263,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         this.setGroup(pageToEdit.getGroup());
         PageMetadata draftMetadata = pageToEdit.getMetadata();
         this.copyMetadataToForm(draftMetadata);
-        this.setGroupSelectLock(true);
+        boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
+        this.setGroupSelectLock(!isAdmin);
     }
 
     public String copy() {
@@ -377,7 +392,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
                 IPage copyPage = this.getPage(this.getCopyPageCode());
                 IPage publicPage = this.getOnlinePage(this.getCopyPageCode());
-                boolean online = copyPage.isOnline();
                 page.setWidgets(null != publicPage ? publicPage.getWidgets() : copyPage.getWidgets());
                 PageMetadata metadata = (null != publicPage) ? publicPage.getMetadata() : copyPage.getMetadata();
                 if (metadata != null) {
@@ -388,14 +402,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 page.setGroup(copyPage.getGroup());
             } else {
                 page.setGroup(this.getGroup());
-                PageMetadata metadata = new PageMetadata();
+                PageMetadata metadata = page.getMetadata();
                 this.valueMetadataFromForm(metadata);
-                page.setMetadata(metadata);
-//				if (this.isDefaultShowlet()) {
-//					this.setDefaultWidgets(page);
-//				} else {
-                page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
-//				}
+                if (null != metadata.getModel()) {
+                    page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
+                }
             }
             // ricava il codice
             page.setCode(this.buildNewPageCode(page.getMetadata()));
@@ -426,7 +437,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (metadata == null) {
                 metadata = new PageMetadata();
                 page.setMetadata(metadata);
-
             }
             PageModel oldModel = metadata.getModel();
             this.valueMetadataFromForm(metadata);
@@ -434,9 +444,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 // The model is changed, so I drop all the previous widgets
                 page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
             }
-//			if (this.isDefaultShowlet()) {
-//				this.setDefaultWidgets(page);
-//			}
         } catch (Throwable t) {
             _logger.error("Error updating page", t);
             throw new ApsSystemException("Error updating page", t);
@@ -455,10 +462,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         metadata.setUseExtraTitles(this.isUseExtraTitles());
         metadata.setTitles(this.getTitles());
         metadata.setExtraGroups(this.getExtraGroups());
-
         String charset = this.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
-
         String mimetype = this.getMimeType();
         metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
     }
@@ -574,8 +579,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
             }
-
-            boolean success = this.getPageActionReferencesHelper().checkContentsForSetOnline(page, this);
+            boolean success = this.getPageActionReferencesHelper().checkForSetOnline(page, this);
             if (!success) {
                 this.addActionError(this.getText("error.page.setOnline.scanContentRefs"));
                 return "pageTree";
@@ -583,7 +587,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.hasErrors()) {
                 return "pageTree";
             }
-
             pageManager.setPageOnline(pageCode);
             this.addActionMessage(this.getText("message.page.set.online", new String[]{this.getTitle(page.getCode(), page
                 .getTitles())}));
@@ -958,11 +961,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         this._pageModelManager = pageModelManager;
     }
 
-    protected PageActionReferencesHelper getPageActionReferencesHelper() {
+    protected IPageActionReferencesHelper getPageActionReferencesHelper() {
         return _pageActionReferencesHelper;
     }
 
-    public void setPageActionReferencesHelper(PageActionReferencesHelper pageActionReferencesHelper) {
+    public void setPageActionReferencesHelper(IPageActionReferencesHelper pageActionReferencesHelper) {
         this._pageActionReferencesHelper = pageActionReferencesHelper;
     }
 
@@ -1009,6 +1012,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 
     private IPageModelManager _pageModelManager;
     private IPageActionHelper _pageActionHelper;
-    private PageActionReferencesHelper _pageActionReferencesHelper;
+    private IPageActionReferencesHelper _pageActionReferencesHelper;
 
 }

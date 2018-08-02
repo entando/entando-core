@@ -16,18 +16,13 @@ package com.agiletec.apsadmin.portal.helper;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.BaseAction;
 
-public interface IPageActionReferencesHelper {
+/**
+ * @author E.Santoboni
+ */
+public interface IExternalPageValidator {
 
-    /**
-     * Check if the page contains valid element.
-     * <p>
-     * For each invalid element found, adds an actionError to the action
-     *
-     * @param page the page to scan
-     * @param action current action
-     * @return true if the scan is performed without exceptions, even when
-     * invalid element are found
-     */
+    public void checkPageGroup(IPage page, boolean draftPageHepler, BaseAction currentAction);
+
     public boolean checkForSetOnline(IPage page, BaseAction action);
 
 }

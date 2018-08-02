@@ -25,5 +25,10 @@
 		<property name="allowedMimeTypesCSV"><value>${page.mimeType.allowedValues}</value></property>
 		<property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>
 	</bean>
+    
+    <bean id="jacmsExternalPageValidator" 
+              class="org.entando.entando.plugins.jacms.apsadmin.portal.helper.ContentPageValidator">
+        <property name="contentManager" ref="jacmsContentManager" />
+    </bean>
 	
 </beans>

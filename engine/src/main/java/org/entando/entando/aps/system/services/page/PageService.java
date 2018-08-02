@@ -293,7 +293,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             if (status.equals(STATUS_ONLINE)) {
                 IPage publicParent = this.getPageManager().getOnlinePage(currentPage.getParentCode());
                 if (null == publicParent) {
-                    bindingResult.reject(PageController.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT, 
+                    bindingResult.reject(PageController.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT,
                             new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
                     throw new ValidationGenericException(bindingResult);
                 }
@@ -304,7 +304,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 for (String childCode : childCodes) {
                     IPage publicChild = this.getPageManager().getOnlinePage(childCode);
                     if (null != publicChild) {
-                        bindingResult.reject(PageController.ERRCODE_PAGE_WITH_PUBLIC_CHILD, 
+                        bindingResult.reject(PageController.ERRCODE_PAGE_WITH_PUBLIC_CHILD,
                                 new String[]{pageCode}, "page.status.publicChild");
                         throw new ValidationGenericException(bindingResult);
                     }
@@ -596,6 +596,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             PageModel model = this.getPageModelManager().getPageModel(request.getPageModel());
             metadata.setModel(model);
         }
+        metadata.setGroup(request.getOwnerGroup());
         metadata.setShowable(request.isDisplayedInMenu());
         metadata.setUseExtraTitles(request.isSeo());
         Optional<Map<String, String>> titles = Optional.ofNullable(request.getTitles());

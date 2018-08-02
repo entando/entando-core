@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+
 import javax.servlet.ServletContext;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -141,7 +142,7 @@ public class ConfigTestUtils {
      */
     protected String[] getSpringConfigFilePaths() {
         String[] filePaths = new String[6];
-        filePaths[0] = "classpath:spring/propertyPlaceholder.xml";
+        filePaths[0] = "classpath:spring/testpropertyPlaceholder.xml";
         filePaths[1] = "classpath:spring/baseSystemConfig.xml";
         filePaths[2] = "classpath*:spring/aps/**/**.xml";
         filePaths[3] = "classpath*:spring/apsadmin/**/**.xml";

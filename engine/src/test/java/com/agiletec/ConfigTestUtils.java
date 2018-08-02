@@ -13,10 +13,17 @@
  */
 package com.agiletec;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Properties;
 import javax.servlet.ServletContext;
 
 import org.apache.commons.dbcp.BasicDataSource;
-import org.entando.entando.TestEntandoJndiUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;

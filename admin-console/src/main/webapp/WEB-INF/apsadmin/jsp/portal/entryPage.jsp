@@ -77,10 +77,10 @@
 		<s:if test="%{groupSelectLock}">
 			<wpsf:hidden name="group" />
 		</s:if>
-        <s:elseif test="strutsAction == 2">
+        <s:if test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
-        </s:elseif>
+        </s:if>
         <s:elseif test="strutsAction == 3">
             <wpsf:hidden name="group" />
             <wpsf:hidden name="model" />

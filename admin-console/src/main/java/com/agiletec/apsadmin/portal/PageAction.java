@@ -177,8 +177,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.setParentPageCode(parentPage.getCode());
             String groupName = parentPage.getGroup();
             this.setGroup(groupName);
-            boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
-            groupSelectLock = !isParentFree && !this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME);
         }
         this.setGroupSelectLock(groupSelectLock);
         this.setDefaultShowlet(true);
@@ -264,7 +262,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         PageMetadata draftMetadata = pageToEdit.getMetadata();
         this.copyMetadataToForm(draftMetadata);
         boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
-        this.setGroupSelectLock(!isAdmin);
+        boolean isParentFree = (pageToEdit.isRoot() || pageToEdit.getParent().getGroup().equals(Group.FREE_GROUP_NAME));
+        this.setGroupSelectLock(!(isAdmin && isParentFree));
     }
 
     public String copy() {

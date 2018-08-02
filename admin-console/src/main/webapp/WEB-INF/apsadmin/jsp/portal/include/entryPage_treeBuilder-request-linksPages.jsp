@@ -2,7 +2,7 @@
 <%@ taglib uri="/aps-core" prefix="wp" %>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
-    
+
 <s:if test="#currentRoot.isEmpty()">
     <s:set var="treeItemIconNameVar" value="'fa-folder-o'" />
 </s:if>
@@ -21,6 +21,8 @@
             <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             </wpsf:submit>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
@@ -31,6 +33,8 @@
             <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close" /></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             </wpsf:submit>
         </s:elseif>
         <input
@@ -41,15 +45,17 @@
             value="<s:property value="#currentRoot.code" />" <s:if test="#currentRoot.children.length > 0">class="subTreeToggler tree_<s:property value="#currentRoot.code" />" </s:if>
             <s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode.code"> checked="checked"</s:if> />
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
-            <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-            <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            <s:if test="#currentRoot.empty">
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            </s:if>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
             </label>
-                
+
         </td>
     </td>
 </tr>
-    
+
 <s:if test="#currentRoot.children.length > 0">
     <s:iterator value="#currentRoot.children" var="node">
         <s:set var="currentRoot" value="#node" />

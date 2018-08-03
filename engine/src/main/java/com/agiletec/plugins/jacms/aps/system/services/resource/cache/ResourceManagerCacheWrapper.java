@@ -28,12 +28,12 @@ public class ResourceManagerCacheWrapper extends AbstractCacheWrapper implements
 
     @Override
     public Integer getStatus() {
-        return this.getCache().get(CACHE_NAME_PREFIX, Integer.class);
+        return this.get(CACHE_NAME_STATUS, Integer.class);
     }
 
     @Override
     public void updateStatus(Integer status) {
-        this.getCache().put(CACHE_NAME_PREFIX, status);
+        this.getCache().put(CACHE_NAME_STATUS, status);
         logger.trace("status set to {}", status);
     }
 

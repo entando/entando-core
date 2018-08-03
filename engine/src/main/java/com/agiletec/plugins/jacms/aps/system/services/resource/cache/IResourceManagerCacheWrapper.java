@@ -17,7 +17,7 @@ public interface IResourceManagerCacheWrapper {
 
     public static final String CACHE_NAME = "Entando_ResourceManager";
 
-    public static final String CACHE_NAME_PREFIX = "Entando_ResourceManager_status";
+    public static final String CACHE_NAME_STATUS = "Entando_ResourceManager_status";
 
     public void initCache(Integer status);
 

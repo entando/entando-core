@@ -2,7 +2,6 @@
 <%@ taglib prefix="wp" uri="/aps-core"%>
 <%@ taglib uri="/apsadmin-core" prefix="wpsa"%>
 
-
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li>
         <s:text name="title.userSetting" />
@@ -23,12 +22,10 @@
         </a>
     </span>
 </h1>
-
 <div class="text-right">
     <div class="form-group-separator"></div>
 </div>
 <br>
-
 <s:form role="search" cssClass="form-horizontal">
     <s:if test="hasActionErrors()">
         <div class="alert alert-danger alert-dismissable">
@@ -46,7 +43,6 @@
             </ul>
         </div>
     </s:if>
-
     <br>
     <a href="<s:url namespace="/do/Role" action="new" />" class="btn btn-primary pull-right" style="margin-bottom: 5px">
         <s:text name="title.roleManagement.roleNew" />

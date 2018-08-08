@@ -164,7 +164,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
-                    <argLine>-Xms512m -Xmx2048m</argLine>
+                    <argLine>-Xmx2048m</argLine>
                     <testFailureIgnore>false</testFailureIgnore>
                     <excludes>
                         <exclude>**/*BaseTestCase*</exclude>

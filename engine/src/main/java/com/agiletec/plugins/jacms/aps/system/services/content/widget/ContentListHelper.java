@@ -304,9 +304,6 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
                 baseCacheKey.append(paramkey).append("=").append(currentWidget.getConfig().getProperty(paramkey));
             }
         }
-        System.out.println("-----------baseCacheKey------------");
-        System.out.println(baseCacheKey);
-        System.out.println("-----------------------");
         return DigestUtils.md5Hex(baseCacheKey.toString());
     }
 

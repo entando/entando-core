@@ -22,15 +22,15 @@
 </ol>
 
 <h1 class="page-title-container">
-	<s:if test="strutsAction == 1">
-		<s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-	</s:if>
-	<s:elseif test="strutsAction == 2">
-		<s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-	</s:elseif>
-	<s:elseif test="strutsAction == 3">
-		<s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
-	</s:elseif>
+    <s:if test="strutsAction == 1">
+        <s:text name="title.newPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+            </s:if>
+            <s:elseif test="strutsAction == 2">
+                <s:text name="title.editPage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+            </s:elseif>
+            <s:elseif test="strutsAction == 3">
+                <s:text name="title.clonePage" /><span class="pull-right"><a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="page.edit.help" />" data-placement="left"><i class="fa fa-question-circle-o" aria-hidden="true"></i></a></span>
+            </s:elseif>
 </h1>
 
 
@@ -69,14 +69,14 @@
     <s:include value="/WEB-INF/apsadmin/jsp/portal/include/pageInfo_breadcrumbs.jsp" />
 
     <s:form action="save" cssClass="form-horizontal">
-	<p class="sr-only">
+        <p class="sr-only">
         <wpsf:hidden name="strutsAction" />
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
-		<s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
-		<s:if test="%{strutsAction == 1 && groupSelectLock}">
-			<wpsf:hidden name="group" />
-		</s:if>
+        <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
+        <s:if test="%{strutsAction == 1 && groupSelectLock}">
+            <wpsf:hidden name="group" />
+        </s:if>
         <s:elseif test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
@@ -111,7 +111,7 @@
                 <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                    </span>
+                        </span>
                 </s:if>
             </div>
         </div>
@@ -131,7 +131,7 @@
             <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
                     <s:iterator value="%{#fieldErrorsVar}"><s:property />&#32;</s:iterator>
-                </span>
+                    </span>
             </s:if>
         </div>
     </div>
@@ -238,9 +238,13 @@
             </label>
             <div class="col-sm-10">
                 <div class="input-group">
-                    <wpsf:select name="extraGroupNameToAdd" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
-                    <span class="input-group-btn">
-                        <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary">
+                    <wpsf:select
+                        name="extraGroupNameToAdd" id="extraGroups" list="groups"
+                        listKey="name" listValue="descr" headerKey=""
+                        cssClass="combobox form-control" multiple="true" size="4"
+                        />
+                    <span class="input-group-btn" style="vertical-align: top">
+                        <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary" >
                             <span class="icon fa fa-plus"></span>&#32;
                             <s:property value="label.join" />
                         </wpsf:submit>
@@ -249,9 +253,9 @@
                 <br/>
                 <s:if test="extraGroups.size() != 0">
                     <s:iterator value="extraGroups" var="groupNameVar">
-						<wpsa:actionParam action="removeExtraGroup" var="actionName" >
-							<wpsa:actionSubParam name="extraGroupNameToRemove" value="%{#groupNameVar}" />
-						</wpsa:actionParam>
+                        <wpsa:actionParam action="removeExtraGroup" var="actionName" >
+                            <wpsa:actionSubParam name="extraGroupNameToRemove" value="%{#groupNameVar}" />
+                        </wpsa:actionParam>
                         <div class="label label-default label-tag label-sm">
                             <s:property value="%{getSystemGroups()[#groupNameVar].getDescr()}"/>&#32;
                             <wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-tag">
@@ -387,3 +391,10 @@
     </div>
 </s:form>
 </div>
+<script>
+    $('#extraGroups option').mousedown(function (e) {
+        e.preventDefault();
+        $(this).prop('selected', !$(this).prop('selected'));
+        return false;
+    });
+</script>   

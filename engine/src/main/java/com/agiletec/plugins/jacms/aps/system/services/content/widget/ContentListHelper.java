@@ -285,8 +285,8 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         UserDetails currentUser = (UserDetails) reqCtx.getRequest().getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
         StringBuilder baseCacheKey = ContentListHelper.buildStringBuilderCacheKey(bean, currentUser);
         IPage page = (null != reqCtx) ? (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE) : null;
-        if (null != page) {
-            baseCacheKey.append("_PAGENOTFOUND_");
+        if (null == page) {
+            baseCacheKey.append("_PAGENOTFOUND");
         } else {
             baseCacheKey.append("_PAGE_" + page.getCode());
         }
@@ -304,6 +304,9 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
                 baseCacheKey.append(paramkey).append("=").append(currentWidget.getConfig().getProperty(paramkey));
             }
         }
+        System.out.println("-----------baseCacheKey------------");
+        System.out.println(baseCacheKey);
+        System.out.println("-----------------------");
         return DigestUtils.md5Hex(baseCacheKey.toString());
     }
 

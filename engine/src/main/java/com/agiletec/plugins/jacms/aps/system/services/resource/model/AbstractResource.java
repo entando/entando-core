@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
-import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractResource implements ResourceInterface, Serializable {
 
     private static final Logger _logger = LoggerFactory.getLogger(AbstractResource.class);
-    
+
     private String id;
     private String typeCode;
     private String description;
@@ -63,7 +62,6 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 
     private String metadataIgnoreKeys;
 
-
     /**
      * Inizializza gli elementi base costituenti la Risorsa.
      */
@@ -73,10 +71,10 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
         this.setDescription("");
         this.setMainGroup("");
         this.setMasterFileName("");
-        this.categories = new ArrayList<Category>();
+        this.categories = new ArrayList<>();
         this.setFolder("");
         this.setCreationDate(null);
-        this.setMetadata(new HashMap<String,String>());
+        this.setMetadata(new HashMap<>());
         this.setLastModified(null);
     }
 
@@ -303,14 +301,15 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
     public void setAllowedExtensions(String allowedExtensions) {
         this.allowedExtensions = allowedExtensions;
     }
-    
+
+    @Override
     public Map<String, String> getMetadata() {
         return metadata;
     }
-    
+
     @Override
     public void setMetadata(Map<String, String> metadata) {
-        this.metadata=metadata;
+        this.metadata = metadata;
     }
 
     @Override
@@ -328,14 +327,15 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
         prototype.setDescription("");
         prototype.setMainGroup("");
         prototype.setMasterFileName("");
-        prototype.setCategories(new ArrayList<Category>());
+        prototype.setCategories(new ArrayList<>());
         prototype.setFolder(this.getFolder());
         prototype.setProtectedBaseURL(this.getProtectedBaseURL());
         prototype.setAllowedExtensions(this.getAllowedExtensions());
         prototype.setStorageManager(this.getStorageManager());
         prototype.setCreationDate(null);
         prototype.setLastModified(null);
-        prototype.setMetadata(new HashMap<String,String>());
+        prototype.setMetadata(new HashMap<>());
+        prototype.setMetadataIgnoreKeys(this.getMetadataIgnoreKeys());
         return prototype;
     }
 
@@ -505,12 +505,15 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
     public void setStorageManager(IStorageManager storageManager) {
         this.storageManager = storageManager;
     }
-    
+
+    @Override
     public String getMetadataIgnoreKeys() {
         return metadataIgnoreKeys;
     }
 
+    @Override
     public void setMetadataIgnoreKeys(String metadataIgnoreKeys) {
         this.metadataIgnoreKeys = metadataIgnoreKeys;
     }
+
 }

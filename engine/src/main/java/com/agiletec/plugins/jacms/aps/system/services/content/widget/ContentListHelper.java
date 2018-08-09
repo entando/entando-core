@@ -41,8 +41,10 @@ import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.BaseContentListHelper;
 import com.agiletec.plugins.jacms.aps.system.services.content.helper.IContentListFilterBean;
 import com.agiletec.plugins.jacms.aps.system.services.content.widget.util.FilterUtils;
+import java.util.Arrays;
 import java.util.Collections;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.cache.annotation.Cacheable;
 
 /**
@@ -157,12 +159,12 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
             if (null == bean.getCategory() && null != config && null != config.getProperty(SHOWLET_PARAM_CATEGORY)) {
                 bean.setCategory(config.getProperty(SHOWLET_PARAM_CATEGORY));
             }
-            this.addWidgetFilters(bean, config, WIDGET_PARAM_FILTERS, reqCtx);
+            EntitySearchFilter[] filtersToUse = this.createWidgetFilters(bean, config, WIDGET_PARAM_FILTERS, reqCtx);
             if (null != userFilters && userFilters.size() > 0) {
                 for (UserFilterOptionBean userFilter : userFilters) {
                     EntitySearchFilter filter = userFilter.getEntityFilter();
                     if (null != filter) {
-                        bean.addFilter(filter);
+                        filtersToUse = ArrayUtils.add(filtersToUse, filter);
                     }
                 }
             }
@@ -170,7 +172,7 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
             Collection<String> userGroupCodes = this.getAllowedGroups(reqCtx);
             boolean orCategoryFilterClause = this.extractOrCategoryFilterClause(config);
             contentsId = this.getContentManager().loadPublicContentsId(bean.getContentType(),
-                    categories, orCategoryFilterClause, bean.getFilters(), userGroupCodes);
+                    categories, orCategoryFilterClause, filtersToUse, userGroupCodes);
         } catch (Throwable t) {
             _logger.error("Error extracting contents id", t);
             throw new ApsSystemException("Error extracting contents id", t);
@@ -252,23 +254,18 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         return categoryCodes;
     }
 
-    @Deprecated
-    protected void addShowletFilters(IContentListTagBean bean, ApsProperties showletParams, String showletParamName, RequestContext reqCtx) {
-        this.addWidgetFilters(bean, showletParams, showletParamName, reqCtx);
-    }
-
-    protected void addWidgetFilters(IContentListTagBean bean, ApsProperties widgetParams, String widgetParamName, RequestContext reqCtx) {
+    protected EntitySearchFilter[] createWidgetFilters(IContentListTagBean bean, ApsProperties widgetParams, String widgetParamName, RequestContext reqCtx) {
         if (null == widgetParams) {
-            return;
+            return bean.getFilters();
         }
         String widgetFilters = widgetParams.getProperty(widgetParamName);
         EntitySearchFilter[] filters = this.getFilters(bean.getContentType(), widgetFilters, reqCtx);
         if (null == filters) {
-            return;
+            return bean.getFilters();
         }
-        for (EntitySearchFilter filter : filters) {
-            bean.addFilter(filter);
-        }
+        EntitySearchFilter[] filtersToReturn = (null != bean.getFilters()) ? Arrays.copyOf(bean.getFilters(), bean.getFilters().length) : new EntitySearchFilter[0];
+        filtersToReturn = ArrayUtils.addAll(filtersToReturn, filters);
+        return filtersToReturn;
     }
 
     @Deprecated

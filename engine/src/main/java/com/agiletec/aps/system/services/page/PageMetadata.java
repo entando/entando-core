@@ -32,7 +32,25 @@ import java.io.Serializable;
  */
 public class PageMetadata implements Cloneable, Serializable {
 
-    private static final Logger _logger = LoggerFactory.getLogger(PageMetadata.class);
+    private static final Logger logger = LoggerFactory.getLogger(PageMetadata.class);
+
+    private String group;
+
+    private ApsProperties titles = new ApsProperties();
+
+    private Set<String> extraGroups;
+
+    private PageModel model;
+
+    private boolean showable = false;
+
+    private boolean useExtraTitles = false;
+
+    private String mimeType;
+
+    private String charset;
+
+    private Date updatedAt;
 
     @Override
     public PageMetadata clone() throws CloneNotSupportedException {
@@ -54,22 +72,22 @@ public class PageMetadata implements Cloneable, Serializable {
             copy.setCharset(this.getCharset());
             copy.setUpdatedAt(this.getUpdatedAt());
         } catch (Throwable t) {
-            _logger.error("Error cloning {}" + this.getClass(), t);
+            logger.error("Error cloning {}" + this.getClass(), t);
             throw new RuntimeException("Error cloning " + this.getClass(), t);
         }
         return copy;
     }
 
     public String getGroup() {
-        return _group;
+        return group;
     }
 
     public void setGroup(String group) {
-        this._group = group;
+        this.group = group;
     }
 
     public ApsProperties getTitles() {
-        return _titles;
+        return titles;
     }
 
     /**
@@ -79,7 +97,7 @@ public class PageMetadata implements Cloneable, Serializable {
      * codes of language.
      */
     public void setTitles(ApsProperties titles) {
-        this._titles = titles;
+        this.titles = titles;
     }
 
     public void setTitle(String langCode, String title) {
@@ -96,7 +114,7 @@ public class PageMetadata implements Cloneable, Serializable {
      * @return the page model
      */
     public PageModel getModel() {
-        return _model;
+        return model;
     }
 
     /**
@@ -106,12 +124,12 @@ public class PageMetadata implements Cloneable, Serializable {
      * @param pageModel the model of the page to assign
      */
     public void setModel(PageModel pageModel) {
-        this._model = pageModel;
+        this.model = pageModel;
     }
 
     public void addExtraGroup(String groupName) {
         if (null == this.getExtraGroups()) {
-            this.setExtraGroups(new HashSet<String>());
+            this.setExtraGroups(new HashSet<>());
         }
         this.getExtraGroups().add(groupName);
     }
@@ -124,12 +142,12 @@ public class PageMetadata implements Cloneable, Serializable {
     }
 
     public void setExtraGroups(Set<String> extraGroups) {
-        this._extraGroups = extraGroups;
+        this.extraGroups = extraGroups;
 
     }
 
     public Set<String> getExtraGroups() {
-        return _extraGroups;
+        return extraGroups;
     }
 
     /**
@@ -140,7 +158,7 @@ public class PageMetadata implements Cloneable, Serializable {
      * @return true if the page must be shown in the menu, false otherwise.
      */
     public boolean isShowable() {
-        return _showable;
+        return showable;
     }
 
     /**
@@ -151,39 +169,39 @@ public class PageMetadata implements Cloneable, Serializable {
      * otherwise.
      */
     public void setShowable(boolean showable) {
-        this._showable = showable;
+        this.showable = showable;
     }
 
     public boolean isUseExtraTitles() {
-        return _useExtraTitles;
+        return useExtraTitles;
     }
 
     public void setUseExtraTitles(boolean useExtraTitles) {
-        this._useExtraTitles = useExtraTitles;
+        this.useExtraTitles = useExtraTitles;
     }
 
     public String getCharset() {
-        return _charset;
+        return charset;
     }
 
     public void setCharset(String charset) {
-        this._charset = charset;
+        this.charset = charset;
     }
 
     public String getMimeType() {
-        return _mimeType;
+        return mimeType;
     }
 
     public void setMimeType(String mimeType) {
-        this._mimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
     public Date getUpdatedAt() {
-        return _updatedAt;
+        return updatedAt;
     }
 
     public void setUpdatedAt(Date updatedAt) {
-        this._updatedAt = updatedAt;
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -195,15 +213,15 @@ public class PageMetadata implements Cloneable, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((_group == null) ? 0 : _group.hashCode());
-        result = prime * result + ((_charset == null) ? 0 : _charset.hashCode());
-        result = prime * result + ((_extraGroups == null) ? 0 : _extraGroups.hashCode());
-        result = prime * result + ((_mimeType == null) ? 0 : _mimeType.hashCode());
-        result = prime * result + ((_model == null) ? 0 : _model.hashCode());
-        result = prime * result + (_showable ? 1231 : 1237);
-        result = prime * result + ((_titles == null) ? 0 : _titles.hashCode());
-        result = prime * result + ((_updatedAt == null) ? 0 : _updatedAt.hashCode());
-        result = prime * result + (_useExtraTitles ? 1231 : 1237);
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+        result = prime * result + ((extraGroups == null) ? 0 : extraGroups.hashCode());
+        result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
+        result = prime * result + ((model == null) ? 0 : model.hashCode());
+        result = prime * result + (showable ? 1231 : 1237);
+        result = prime * result + ((titles == null) ? 0 : titles.hashCode());
+        result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
+        result = prime * result + (useExtraTitles ? 1231 : 1237);
         return result;
     }
 
@@ -212,11 +230,11 @@ public class PageMetadata implements Cloneable, Serializable {
         boolean equalConf = this.hasEqualConfiguration(obj);
         if (equalConf) {
             PageMetadata other = (PageMetadata) obj;
-            if (_updatedAt == null) {
-                if (other._updatedAt != null) {
+            if (updatedAt == null) {
+                if (other.updatedAt != null) {
                     return false;
                 }
-            } else if (!_updatedAt.equals(other._updatedAt)) {
+            } else if (!updatedAt.equals(other.updatedAt)) {
                 return false;
             }
         }
@@ -240,79 +258,55 @@ public class PageMetadata implements Cloneable, Serializable {
             return false;
         }
         PageMetadata other = (PageMetadata) obj;
-        if (_charset == null) {
-            if (other._charset != null) {
+        if (charset == null) {
+            if (other.charset != null) {
                 return false;
             }
-        } else if (!_charset.equals(other._charset)) {
+        } else if (!charset.equals(other.charset)) {
             return false;
         }
-        if (_extraGroups == null) {
-            if (other._extraGroups != null) {
+        if (extraGroups == null) {
+            if (other.extraGroups != null) {
                 return false;
             }
-        } else if (!_extraGroups.equals(other._extraGroups)) {
+        } else if (!extraGroups.equals(other.extraGroups)) {
             return false;
         }
-        if (_mimeType == null) {
-            if (other._mimeType != null) {
+        if (mimeType == null) {
+            if (other.mimeType != null) {
                 return false;
             }
-        } else if (!_mimeType.equals(other._mimeType)) {
+        } else if (!mimeType.equals(other.mimeType)) {
             return false;
         }
-        if (_group == null) {
-            if (other._group != null) {
+        if (group == null) {
+            if (other.group != null) {
                 return false;
             }
-        } else if (!_group.equals(other._group)) {
+        } else if (!group.equals(other.group)) {
             return false;
         }
-        if (_model == null) {
-            if (other._model != null) {
+        if (model == null) {
+            if (other.model != null) {
                 return false;
             }
-        } else if (!_model.equals(other._model)) {
+        } else if (!model.equals(other.model)) {
             return false;
         }
-        if (_showable != other._showable) {
+        if (showable != other.showable) {
             return false;
         }
-        if (_titles == null) {
-            if (other._titles != null) {
+        if (titles == null) {
+            if (other.titles != null) {
                 return false;
             }
-        } else if (!_titles.equals(other._titles)) {
+        } else if (!titles.equals(other.titles)) {
             return false;
         }
-        if (_useExtraTitles != other._useExtraTitles) {
+        if (useExtraTitles != other.useExtraTitles) {
             return false;
         }
         return true;
     }
-
-    private String _group;
-
-    private ApsProperties _titles = new ApsProperties();
-
-    private Set<String> _extraGroups;
-
-    /**
-     * The page model associate to the current object
-     */
-    private PageModel _model;
-
-    /**
-     * Toggle menu visibility on and off
-     */
-    private boolean _showable = false;
-
-    private boolean _useExtraTitles = false;
-
-    private String _mimeType;
-
-    private String _charset;
-
-    private Date _updatedAt;
 
 }

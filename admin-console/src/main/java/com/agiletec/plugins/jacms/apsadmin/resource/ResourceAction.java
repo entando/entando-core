@@ -41,6 +41,23 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
 
     private static final Logger _logger = LoggerFactory.getLogger(ResourceAction.class);
 
+    private String _resourceId;
+    private String _descr;
+    private String _mainGroup;
+    private List<String> _categoryCodes = new ArrayList<String>();
+
+    private File _file;
+    private String _contentType;
+    private String _filename;
+    private Map<String, String> metadata;
+    private int _strutsAction;
+    private Map<String, List> _references;
+    private String _categoryCode;
+    private IGroupManager _groupManager;
+    private int fieldCount = 0;
+    private boolean onEditContent = false;
+
+ 
     @Override
     public void validate() {
         if (this.isOnEditContent()) {
@@ -123,10 +140,14 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String edit() {
+        _logger.error("edit edit edit edit edit edit edit edit edit edit edit edit v");
+
+        
         try {
             ResourceInterface resource = this.loadResource(this.getResourceId());
             this.setResourceTypeCode(resource.getType());
             this.setDescr(resource.getDescription());
+            this.setMetadata(resource.getMetadata());
             List<Category> resCategories = resource.getCategories();
             for (int i = 0; i < resCategories.size(); i++) {
                 Category resCat = resCategories.get(i);
@@ -414,6 +435,14 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
         return this.getResourceTypeCode();
     }
 
+    public Map<String,String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
+
     public String getCategoryCode() {
         return _categoryCode;
     }
@@ -445,26 +474,5 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     public void setOnEditContent(boolean onEditContent) {
         this.onEditContent = onEditContent;
     }
-
-    private String _resourceId;
-    private String _descr;
-    private String _mainGroup;
-    private List<String> _categoryCodes = new ArrayList<String>();
-
-    private File _file;
-    private String _contentType;
-    private String _filename;
-
-    private int _strutsAction;
-
-    private Map<String, List> _references;
-
-    private String _categoryCode;
-
-    private IGroupManager _groupManager;
-
-    private int fieldCount = 0;
-
-    private boolean onEditContent = false;
 
 }

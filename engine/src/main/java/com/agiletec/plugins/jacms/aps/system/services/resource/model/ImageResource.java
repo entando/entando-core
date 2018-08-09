@@ -32,286 +32,288 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImage
 
 /**
  * Classe rappresentante una risorsa Image.
+ *
  * @author W.Ambu - E.Santoboni
  */
 public class ImageResource extends AbstractMultiInstanceResource {
 
-	private static final Logger _logger = LoggerFactory.getLogger(ImageResource.class);
-	
+    private IImageDimensionReader imageDimensionReader;
+    private Map<String, String> imageResizerClasses;
+    private boolean  imageMagickEnabled;
+    private boolean  imageMagickWindows;
+    private String  imageMagickPath;
+    
+    private static final Logger _logger = LoggerFactory.getLogger(ImageResource.class);
+
     /**
-     * Restituisce il path dell'immagine (relativa al size immesso).
-     * La stringa restituita è comprensiva del folder della risorsa e
-     * del nome del file dell'istanza richiesta.
+     * Restituisce il path dell'immagine (relativa al size immesso). La stringa
+     * restituita è comprensiva del folder della risorsa e del nome del file
+     * dell'istanza richiesta.
+     *
      * @param size Il size dell'istanza.
      * @return Il path dell'immagine.
      */
     public String getImagePath(String size) {
-    	ResourceInstance instance = (ResourceInstance) this.getInstances().get(size);
-    	return this.getUrlPath(instance);
+        ResourceInstance instance = (ResourceInstance) this.getInstances().get(size);
+        return this.getUrlPath(instance);
     }
-	
-	@Override
-	public InputStream getResourceStream() {
-		return this.getResourceStream(0, null);
-	}
-	
-	@Override
-	public InputStream getResourceStream(int size, String langCode) {
-		ResourceInstance instance = (ResourceInstance) this.getInstances().get(String.valueOf(size));
-		String subPath = super.getDiskSubFolder() + instance.getFileName();
-		try {
-			return this.getStorageManager().getStream(subPath, this.isProtectedResource());
-		} catch (Throwable t) {
-			_logger.error("Error on extracting file", t);
-			throw new RuntimeException("Error on extracting file", t);
-		}
-	}
-	
-    @Override
-	public ResourceInterface getResourcePrototype() {
-		ImageResource resource = (ImageResource) super.getResourcePrototype();
-		resource.setImageDimensionReader(this.getImageDimensionReader());
-		resource.setImageResizerClasses(this.getImageResizerClasses());
-		resource.setImageMagickEnabled(this.isImageMagickEnabled());
-		resource.setImageMagickWindows(this.isImageMagickWindows());
-		resource.setImageMagickPath(this.getImageMagickPath());
-		return resource;
-	}
 
-	/**
-     * Aggiunge un'istanza alla risorsa, indicizzandola in base
-	 * al size dell'istanza sulla mappa delle istanze.
+    @Override
+    public InputStream getResourceStream() {
+        return this.getResourceStream(0, null);
+    }
+
+    @Override
+    public InputStream getResourceStream(int size, String langCode) {
+        ResourceInstance instance = (ResourceInstance) this.getInstances().get(String.valueOf(size));
+        String subPath = super.getDiskSubFolder() + instance.getFileName();
+        try {
+            return this.getStorageManager().getStream(subPath, this.isProtectedResource());
+        } catch (Throwable t) {
+            _logger.error("Error on extracting file", t);
+            throw new RuntimeException("Error on extracting file", t);
+        }
+    }
+
+    @Override
+    public ResourceInterface getResourcePrototype() {
+        ImageResource resource = (ImageResource) super.getResourcePrototype();
+        resource.setImageDimensionReader(this.getImageDimensionReader());
+        resource.setImageResizerClasses(this.getImageResizerClasses());
+        resource.setImageMagickEnabled(this.isImageMagickEnabled());
+        resource.setImageMagickWindows(this.isImageMagickWindows());
+        resource.setImageMagickPath(this.getImageMagickPath());
+        return resource;
+    }
+
+    /**
+     * Aggiunge un'istanza alla risorsa, indicizzandola in base al size
+     * dell'istanza sulla mappa delle istanze.
+     *
      * @param instance L'istanza da aggiungere alla risorsa.
      */
     @Override
-	public void addInstance(ResourceInstance instance) {
-    	String key = String.valueOf(instance.getSize());
-    	this.getInstances().put(key, instance);
+    public void addInstance(ResourceInstance instance) {
+        String key = String.valueOf(instance.getSize());
+        this.getInstances().put(key, instance);
     }
-	
-	@Override
-	@Deprecated
-	public String getInstanceFileName(String masterFileName, int size, String langCode) {
-		return this.getNewInstanceFileName(masterFileName, size, langCode);
-	}
-	
+
     @Override
-	public ResourceInstance getInstance(int size, String langCode) {
-    	return (ResourceInstance) this.getInstances().get(String.valueOf(size));
-	}
-	
-	@Override
-	public ResourceInstance getDefaultInstance() {
-		return this.getInstance(0, null);
-	}
-	
-	@Override
-	public void saveResourceInstances(ResourceDataBean bean) throws ApsSystemException {
-		try {
-			String masterImageFileName = this.getNewInstanceFileName(bean.getFileName(), 0, null);
-			String subPath = this.getDiskSubFolder() + masterImageFileName;
-			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
-			File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, bean.getInputStream());
-			ResourceInstance instance = new ResourceInstance();
-			instance.setSize(0);
-			instance.setFileName(masterImageFileName);
-			String mimeType = bean.getMimeType();
-			instance.setMimeType(mimeType);
-			instance.setFileLength(bean.getFileSize() + " Kb");
-			this.addInstance(instance);
-			this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
-			this.getStorageManager().saveFile(subPath, 
-					this.isProtectedResource(), new FileInputStream(tempMasterFile));
-			boolean deleted = tempMasterFile.delete();
-			if(!deleted) {
-				_logger.warn("Failed to delete temp file {}",tempMasterFile);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error saving image resource instances", t);
-			throw new ApsSystemException("Error saving image resource instances", t);
-		}
-	}
-	
+    @Deprecated
+    public String getInstanceFileName(String masterFileName, int size, String langCode) {
+        return this.getNewInstanceFileName(masterFileName, size, langCode);
+    }
+
+    @Override
+    public ResourceInstance getInstance(int size, String langCode) {
+        return (ResourceInstance) this.getInstances().get(String.valueOf(size));
+    }
+
+    @Override
+    public ResourceInstance getDefaultInstance() {
+        return this.getInstance(0, null);
+    }
+
+    @Override
+    public void saveResourceInstances(ResourceDataBean bean) throws ApsSystemException {
+        try {
+            String masterImageFileName = this.getNewInstanceFileName(bean.getFileName(), 0, null);
+            String subPath = this.getDiskSubFolder() + masterImageFileName;
+            this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
+            File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, bean.getInputStream());
+            ResourceInstance instance = new ResourceInstance();
+            instance.setSize(0);
+            instance.setFileName(masterImageFileName);
+            String mimeType = bean.getMimeType();
+            instance.setMimeType(mimeType);
+            instance.setFileLength(bean.getFileSize() + " Kb");
+            this.addInstance(instance);
+            this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
+            this.getStorageManager().saveFile(subPath,
+                    this.isProtectedResource(), new FileInputStream(tempMasterFile));
+            boolean deleted = tempMasterFile.delete();
+            if (!deleted) {
+                _logger.warn("Failed to delete temp file {}", tempMasterFile);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error saving image resource instances", t);
+            throw new ApsSystemException("Error saving image resource instances", t);
+        }
+    }
+
     @Override
     public void reloadResourceInstances() throws ApsSystemException {
-    	try {
-    		ResourceInstance masterInstance = this.getInstance(0, null);
-    		String masterImageFileName = masterInstance.getFileName();
-			String subPath = this.getDiskSubFolder() + masterImageFileName;
-			InputStream masterImageIs = this.getStorageManager().getStream(subPath, this.isProtectedResource());
-			File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, masterImageIs);
-			BaseResourceDataBean bean = new BaseResourceDataBean(tempMasterFile);
-			int index = masterImageFileName.lastIndexOf("_d0.");
-			String masterFileName = masterImageFileName.substring(0, index) + masterImageFileName.substring(index+3);
-			bean.setFileName(masterFileName);
-			bean.setMimeType(masterInstance.getMimeType());
-			this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
-			boolean deleted  = tempMasterFile.delete();
+        try {
+            ResourceInstance masterInstance = this.getInstance(0, null);
+            String masterImageFileName = masterInstance.getFileName();
+            String subPath = this.getDiskSubFolder() + masterImageFileName;
+            InputStream masterImageIs = this.getStorageManager().getStream(subPath, this.isProtectedResource());
+            File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, masterImageIs);
+            BaseResourceDataBean bean = new BaseResourceDataBean(tempMasterFile);
+            int index = masterImageFileName.lastIndexOf("_d0.");
+            String masterFileName = masterImageFileName.substring(0, index) + masterImageFileName.substring(index + 3);
+            bean.setFileName(masterFileName);
+            bean.setMimeType(masterInstance.getMimeType());
+            this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
+            boolean deleted = tempMasterFile.delete();
 
-			if(!deleted) {
-				_logger.warn("Failed to delete temp file {}",tempMasterFile);
-			}
+            if (!deleted) {
+                _logger.warn("Failed to delete temp file {}", tempMasterFile);
+            }
 
-		} catch (Throwable t) {
-			_logger.error("Error reloading image resource instances", t);
-			throw new ApsSystemException("Error reloading image resource instances", t);
-		}
+        } catch (Throwable t) {
+            _logger.error("Error reloading image resource instances", t);
+            throw new ApsSystemException("Error reloading image resource instances", t);
+        }
     }
-	
-	private void saveResizedInstances(ResourceDataBean bean, String masterFilePath) throws ApsSystemException {
-		try {
-			Map<Integer, ImageResourceDimension> dimensions = this.getImageDimensionReader().getImageDimensions();
-			Iterator<ImageResourceDimension> iterDimensions = dimensions.values().iterator();
-			while (iterDimensions.hasNext()) {
-				ImageResourceDimension dimension = iterDimensions.next();
-				//Is the system use ImageMagick?
-				if (!this.isImageMagickEnabled()) {
-					ImageIcon imageIcon = new ImageIcon(masterFilePath);
-					this.saveResizedImage(bean, imageIcon, dimension);
-				} else {
-					this.saveResizedImage(bean, dimension);
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error saving resized image resource instances", t);
-			throw new ApsSystemException("Error saving resized image resource instances", t);
-		}
-	}
-	
-	/**
-	 * Redim images using im4Java
-	 * @param bean
-	 * @param dimension
-	 * @param mimeType
-	 * @param baseDiskFolder
-	 * @throws ApsSystemException
-	 */
-	private void saveResizedImage(ResourceDataBean bean, ImageResourceDimension dimension) throws ApsSystemException {
-		if (dimension.getIdDim() == 0) {
-			//salta l'elemento con id zero che non va ridimensionato
-			return;
-		}
-		String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
-		String subPath = super.getDiskSubFolder() + imageName;
-		try {
-			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
-			ResourceInstance resizedInstance = new ResourceInstance();
-			resizedInstance.setSize(dimension.getIdDim());
-			resizedInstance.setFileName(imageName);
-			resizedInstance.setMimeType(bean.getMimeType());
-			String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + "temp_" + imageName;
-			File tempFile = new File(tempFilePath);
-			long realLength = tempFile.length() / 1000;
-			resizedInstance.setFileLength(String.valueOf(realLength) + " Kb");
-			this.addInstance(resizedInstance);
-			// create command
-			ConvertCmd convertCmd = new ConvertCmd();
-			//Is it a windows system?
-			if (this.isImageMagickWindows()) {
-				//yes so configure the path where ImagicMagick is installed
-				convertCmd.setSearchPath(this.getImageMagickPath());
-			}
-			// create the operation, add images and operators/options
-			IMOperation imOper = new IMOperation();
-			imOper.addImage();
-			imOper.resize(dimension.getDimx(), dimension.getDimy());
-			imOper.addImage();
-			convertCmd.run(imOper, bean.getFile().getAbsolutePath(), tempFile.getAbsolutePath());
-			this.getStorageManager().saveFile(subPath, this.isProtectedResource(), new FileInputStream(tempFile));
-			boolean deleted = tempFile.delete();
 
-			if(!deleted) {
-				_logger.warn("Failed to delete temp file {}",tempFile);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error creating resource file instance '{}'", subPath, t);
-			throw new ApsSystemException("Error creating resource file instance '" + subPath + "'", t);
-		}
-	}
-	
-	private void saveResizedImage(ResourceDataBean bean, 
-			ImageIcon imageIcon, ImageResourceDimension dimension) throws ApsSystemException {
-		if (dimension.getIdDim() == 0) {
-			//salta l'elemento con id zero che non va ridimensionato
-			return;
-		}
-		String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
-		String subPath = super.getDiskSubFolder() + imageName;
-		try {
-			this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
-			IImageResizer resizer = this.getImageResizer(subPath);
-			ResourceInstance resizedInstance = 
-					resizer.saveResizedImage(subPath, this.isProtectedResource(), imageIcon, dimension);
-			this.addInstance(resizedInstance);
-		} catch (Throwable t) {
-			_logger.error("Error creating resource file instance '{}'", subPath, t);
-			throw new ApsSystemException("Error creating resource file instance '" + subPath + "'", t);
-		}
-	}
-	
-	private IImageResizer getImageResizer(String filePath) {
-		String extension = super.getFileExtension(filePath); //filePath.substring(filePath.lastIndexOf('.') + 1).trim();
-		String resizerClassName = this.getImageResizerClasses().get(extension);
-		if (null == resizerClassName) {
-			resizerClassName = this.getImageResizerClasses().get("DEFAULT_RESIZER");
-		}
-		try {
-			Class resizerClass = Class.forName(resizerClassName);
-			IImageResizer resizer = (IImageResizer) resizerClass.newInstance();
-			resizer.setStorageManager(this.getStorageManager());
-			return resizer;
-		} catch (Throwable t) {
-			throw new RuntimeException("Errore in creazione resizer da classe '"
-					+ resizerClassName + "' per immagine tipo '" + extension + "'", t);
-		}
-	}
-	
+    private void saveResizedInstances(ResourceDataBean bean, String masterFilePath) throws ApsSystemException {
+        try {
+            Map<Integer, ImageResourceDimension> dimensions = this.getImageDimensionReader().getImageDimensions();
+            Iterator<ImageResourceDimension> iterDimensions = dimensions.values().iterator();
+            while (iterDimensions.hasNext()) {
+                ImageResourceDimension dimension = iterDimensions.next();
+                //Is the system use ImageMagick?
+                if (!this.isImageMagickEnabled()) {
+                    ImageIcon imageIcon = new ImageIcon(masterFilePath);
+                    this.saveResizedImage(bean, imageIcon, dimension);
+                } else {
+                    this.saveResizedImage(bean, dimension);
+                }
+            }
+        } catch (Throwable t) {
+            _logger.error("Error saving resized image resource instances", t);
+            throw new ApsSystemException("Error saving resized image resource instances", t);
+        }
+    }
+
+    /**
+     * Redim images using im4Java
+     *
+     * @param bean
+     * @param dimension
+     * @param mimeType
+     * @param baseDiskFolder
+     * @throws ApsSystemException
+     */
+    private void saveResizedImage(ResourceDataBean bean, ImageResourceDimension dimension) throws ApsSystemException {
+        if (dimension.getIdDim() == 0) {
+            //salta l'elemento con id zero che non va ridimensionato
+            return;
+        }
+        String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
+        String subPath = super.getDiskSubFolder() + imageName;
+        try {
+            this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
+            ResourceInstance resizedInstance = new ResourceInstance();
+            resizedInstance.setSize(dimension.getIdDim());
+            resizedInstance.setFileName(imageName);
+            resizedInstance.setMimeType(bean.getMimeType());
+            String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + "temp_" + imageName;
+            File tempFile = new File(tempFilePath);
+            long realLength = tempFile.length() / 1000;
+            resizedInstance.setFileLength(String.valueOf(realLength) + " Kb");
+            this.addInstance(resizedInstance);
+            // create command
+            ConvertCmd convertCmd = new ConvertCmd();
+            //Is it a windows system?
+            if (this.isImageMagickWindows()) {
+                //yes so configure the path where ImagicMagick is installed
+                convertCmd.setSearchPath(this.getImageMagickPath());
+            }
+            // create the operation, add images and operators/options
+            IMOperation imOper = new IMOperation();
+            imOper.addImage();
+            imOper.resize(dimension.getDimx(), dimension.getDimy());
+            imOper.addImage();
+            convertCmd.run(imOper, bean.getFile().getAbsolutePath(), tempFile.getAbsolutePath());
+            this.getStorageManager().saveFile(subPath, this.isProtectedResource(), new FileInputStream(tempFile));
+            boolean deleted = tempFile.delete();
+
+            if (!deleted) {
+                _logger.warn("Failed to delete temp file {}", tempFile);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error creating resource file instance '{}'", subPath, t);
+            throw new ApsSystemException("Error creating resource file instance '" + subPath + "'", t);
+        }
+    }
+
+    private void saveResizedImage(ResourceDataBean bean,
+            ImageIcon imageIcon, ImageResourceDimension dimension) throws ApsSystemException {
+        if (dimension.getIdDim() == 0) {
+            //salta l'elemento con id zero che non va ridimensionato
+            return;
+        }
+        String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
+        String subPath = super.getDiskSubFolder() + imageName;
+        try {
+            this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
+            IImageResizer resizer = this.getImageResizer(subPath);
+            ResourceInstance resizedInstance
+                    = resizer.saveResizedImage(subPath, this.isProtectedResource(), imageIcon, dimension);
+            this.addInstance(resizedInstance);
+        } catch (Throwable t) {
+            _logger.error("Error creating resource file instance '{}'", subPath, t);
+            throw new ApsSystemException("Error creating resource file instance '" + subPath + "'", t);
+        }
+    }
+
+    private IImageResizer getImageResizer(String filePath) {
+        String extension = super.getFileExtension(filePath); //filePath.substring(filePath.lastIndexOf('.') + 1).trim();
+        String resizerClassName = this.getImageResizerClasses().get(extension);
+        if (null == resizerClassName) {
+            resizerClassName = this.getImageResizerClasses().get("DEFAULT_RESIZER");
+        }
+        try {
+            Class resizerClass = Class.forName(resizerClassName);
+            IImageResizer resizer = (IImageResizer) resizerClass.newInstance();
+            resizer.setStorageManager(this.getStorageManager());
+            return resizer;
+        } catch (Throwable t) {
+            throw new RuntimeException("Errore in creazione resizer da classe '"
+                    + resizerClassName + "' per immagine tipo '" + extension + "'", t);
+        }
+    }
+
     protected IImageDimensionReader getImageDimensionReader() {
-		return _imageDimensionReader;
-	}
-	public void setImageDimensionReader(IImageDimensionReader imageDimensionReader) {
-		this._imageDimensionReader = imageDimensionReader;
-	}
+        return imageDimensionReader;
+    }
 
-	protected Map<String, String> getImageResizerClasses() {
-		return _imageResizerClasses;
-	}
-	public void setImageResizerClasses(Map<String, String> imageResizerClasses) {
-		this._imageResizerClasses = imageResizerClasses;
-	}
+    public void setImageDimensionReader(IImageDimensionReader imageDimensionReader) {
+        this.imageDimensionReader = imageDimensionReader;
+    }
 
-	public void setImageMagickEnabled(boolean imageMagickEnabled) {
-		this._imageMagickEnabled = imageMagickEnabled;
-	}
+    protected Map<String, String> getImageResizerClasses() {
+        return imageResizerClasses;
+    }
 
-	protected boolean isImageMagickEnabled() {
-		return _imageMagickEnabled;
-	}
+    public void setImageResizerClasses(Map<String, String> imageResizerClasses) {
+        this.imageResizerClasses = imageResizerClasses;
+    }
 
-	public void setImageMagickWindows(boolean imageMagickWindows) {
-		this._imageMagickWindows = imageMagickWindows;
-	}
+    public void setImageMagickEnabled(boolean imageMagickEnabled) {
+        this.imageMagickEnabled = imageMagickEnabled;
+    }
 
-	protected boolean isImageMagickWindows() {
-		return _imageMagickWindows;
-	}
+    protected boolean isImageMagickEnabled() {
+        return imageMagickEnabled;
+    }
 
-	public void setImageMagickPath(String imageMagickPath) {
-		this._imageMagickPath = imageMagickPath;
-	}
+    public void setImageMagickWindows(boolean imageMagickWindows) {
+        this.imageMagickWindows = imageMagickWindows;
+    }
 
-	protected String getImageMagickPath() {
-		return _imageMagickPath;
-	}
+    protected boolean isImageMagickWindows() {
+        return imageMagickWindows;
+    }
 
-	private IImageDimensionReader _imageDimensionReader;
+    public void setImageMagickPath(String imageMagickPath) {
+        this.imageMagickPath = imageMagickPath;
+    }
 
-    private Map<String, String> _imageResizerClasses;
-
-	private boolean _imageMagickEnabled;
-
-	private boolean _imageMagickWindows;
-
-	private String _imageMagickPath;
+    protected String getImageMagickPath() {
+        return imageMagickPath;
+    }
 
 }

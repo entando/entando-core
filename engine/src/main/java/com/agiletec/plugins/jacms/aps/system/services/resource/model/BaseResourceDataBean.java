@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.agiletec.aps.system.services.category.Category;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Base resource data bean
@@ -28,6 +30,16 @@ import com.agiletec.aps.system.services.category.Category;
  */
 public class BaseResourceDataBean implements ResourceDataBean {
 
+    private String resourceId;
+    private String resourceType;
+    private String description;
+    private String mainGroup;
+    private File file;
+    private List<Category> categories = new ArrayList<Category>();
+    private String mimeType;
+    private String fileName;
+    private Map<String, String> metadata = new HashMap<String, String>();
+    
     public BaseResourceDataBean() {
     }
 
@@ -40,70 +52,70 @@ public class BaseResourceDataBean implements ResourceDataBean {
 
     @Override
     public String getResourceId() {
-        return _resourceId;
+        return resourceId;
     }
 
     public void setResourceId(String resourceId) {
-        this._resourceId = resourceId;
+        this.resourceId = resourceId;
     }
 
     @Override
     public String getResourceType() {
-        return _resourceType;
+        return resourceType;
     }
 
     public void setResourceType(String resourceType) {
-        this._resourceType = resourceType;
+        this.resourceType = resourceType;
     }
 
     @Override
     public String getDescr() {
-        return _description;
+        return description;
     }
 
     public void setDescr(String descr) {
-        this._description = descr;
+        this.description = descr;
     }
 
     @Override
     public String getMainGroup() {
-        return _mainGroup;
+        return mainGroup;
     }
 
     public void setMainGroup(String mainGroup) {
-        this._mainGroup = mainGroup;
+        this.mainGroup = mainGroup;
     }
 
     @Override
     public File getFile() {
-        return _file;
+        return file;
     }
 
     public void setFile(File file) {
-        this._file = file;
+        this.file = file;
     }
 
     @Override
     public List<Category> getCategories() {
-        return _categories;
+        return categories;
     }
 
     public void setCategories(List<Category> categories) {
-        this._categories = categories;
+        this.categories = categories;
     }
 
     @Override
     public String getMimeType() {
-        return _mimeType;
+        return mimeType;
     }
 
     public void setMimeType(String mimeType) {
-        this._mimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
     @Override
     public int getFileSize() {
-        if (null == _file) {
+        if (null == file) {
             return 0;
         }
         return (int) this.getFile().length() / 1000;
@@ -111,10 +123,10 @@ public class BaseResourceDataBean implements ResourceDataBean {
 
     @Override
     public String getFileName() {
-        if (null != this._fileName) {
-            return _fileName;
+        if (null != this.fileName) {
+            return fileName;
         }
-        if (null == _file) {
+        if (null == file) {
             return null;
         }
         String fullName = this.getFile().getName();
@@ -122,24 +134,23 @@ public class BaseResourceDataBean implements ResourceDataBean {
     }
 
     public void setFileName(String fileName) {
-        this._fileName = fileName;
+        this.fileName = fileName;
     }
 
     @Override
     public InputStream getInputStream() throws Throwable {
-        if (null == _file) {
+        if (null == file) {
             return null;
         }
-        return new FileInputStream(this._file);
+        return new FileInputStream(this.file);
+    }
+    public Map<String, String> getMetadata() {
+        return metadata;
     }
 
-    private String _resourceId;
-    private String _resourceType;
-    private String _description;
-    private String _mainGroup;
-    private File _file;
-    private List<Category> _categories = new ArrayList<Category>();
-    private String _mimeType;
-    private String _fileName;
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
+ 
 }

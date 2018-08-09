@@ -314,6 +314,6 @@
             <artifactId>argon2-jvm</artifactId>
             <version>2.2</version>
             <type>jar</type>
-        </dependency>
+        </dependency>       
     </dependencies>
 </project>

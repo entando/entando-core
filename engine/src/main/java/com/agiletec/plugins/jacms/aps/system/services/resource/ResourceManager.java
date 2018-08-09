@@ -249,6 +249,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
             if (null == bean.getInputStream()) {
                 oldResource.setDescription(bean.getDescr());
                 oldResource.setCategories(bean.getCategories());
+                oldResource.setMetadata(bean.getMetadata());
                 this.getResourceDAO().updateResource(oldResource);
                 this.notifyResourceChanging(oldResource);
             } else {
@@ -290,6 +291,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
         resource.setCategories(bean.getCategories());
         resource.setMasterFileName(bean.getFileName());
         resource.setId(bean.getResourceId());
+        resource.setMetadata(bean.getMetadata());
         return resource;
     }
 
@@ -402,7 +404,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
         this.fillEmptyResourceFromXml(resource, resourceXML);
         resource.setMainGroup(resourceVo.getMainGroup());
         resource.setCreationDate(resourceVo.getCreationDate());
-        resource.setLastModified(resourceVo.getLastModified());
+        resource.setLastModified(resourceVo.getLastModified());      
         return resource;
     }
 

@@ -24,122 +24,141 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.jdom.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Classe astratta di base per l'implementazione 
- * di oggetti Risorsa Multi-Istanza.
+ * Classe astratta di base per l'implementazione di oggetti Risorsa
+ * Multi-Istanza.
+ *
  * @author E.Santoboni
  */
 public abstract class AbstractMultiInstanceResource extends AbstractResource {
 
-	private static final Logger _logger = LoggerFactory.getLogger(AbstractMultiInstanceResource.class);
-	
-	/**
-	 * Inizializza la mappa delle istanze della risorsa.
-	 */
-	public AbstractMultiInstanceResource() {
+    private static final Logger _logger = LoggerFactory.getLogger(AbstractMultiInstanceResource.class);
+
+    private Map<String, ResourceInstance> instances;
+
+    /**
+     * Inizializza la mappa delle istanze della risorsa.
+     */
+    public AbstractMultiInstanceResource() {
         super();
-        this._instances = new HashMap<String, ResourceInstance>();
+        this.instances = new HashMap<String, ResourceInstance>();
     }
-    
-	@Override
-	public void deleteResourceInstances() throws ApsSystemException {
-		try {
-			Collection<ResourceInstance> instances = this.getInstances().values();
-			Iterator<ResourceInstance> instancesIter = instances.iterator();
-			while (instancesIter.hasNext()) {
-				ResourceInstance currentInstance = instancesIter.next();
-				String fileName = currentInstance.getFileName();
-				String subPath = this.getDiskSubFolder() + fileName;
-				this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
-			}
-		} catch (Throwable t) {
-			_logger.error("Error on deleting resource instances", t);
-			throw new ApsSystemException("Error on deleting resource instances", t);
-		}
-	}
-    
+
+    @Override
+    public void deleteResourceInstances() throws ApsSystemException {
+        try {
+            Collection<ResourceInstance> instances = this.getInstances().values();
+            Iterator<ResourceInstance> instancesIter = instances.iterator();
+            while (instancesIter.hasNext()) {
+                ResourceInstance currentInstance = instancesIter.next();
+                String fileName = currentInstance.getFileName();
+                String subPath = this.getDiskSubFolder() + fileName;
+                this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
+            }
+        } catch (Throwable t) {
+            _logger.error("Error on deleting resource instances", t);
+            throw new ApsSystemException("Error on deleting resource instances", t);
+        }
+    }
+
     /**
      * Implementazione del metodo isMultiInstance() di AbstractResource.
-     * Restituisce sempre true in quanto questa classe astratta è 
-     * alla base di tutte le risorse MultiInstance.
-     * @return true in quanto la risorsa è MultiInstance. 
+     * Restituisce sempre true in quanto questa classe astratta è alla base di
+     * tutte le risorse MultiInstance.
+     *
+     * @return true in quanto la risorsa è MultiInstance.
      */
-	@Override
-	public boolean isMultiInstance() {
-    	return true;
+    @Override
+    public boolean isMultiInstance() {
+        return true;
     }
-    
+
     /**
      * Restituisce l'xml completo della risorsa.
+     *
      * @return L'xml completo della risorsa.
      */
-	@Override
-	public String getXML() {
-    	ResourceDOM resourceDom = this.getResourceDOM();
-    	List<ResourceInstance> instances = new ArrayList<ResourceInstance>(this.getInstances().values());
-    	for (int i=0; i<instances.size(); i++) {
-    		ResourceInstance currentInstance = instances.get(i);
-    		resourceDom.addInstance(currentInstance.getJDOMElement());
-    	}
-    	return resourceDom.getXMLDocument();
+    @Override
+    public String getXML() {
+        ResourceDOM resourceDom = this.getResourceDOM();
+        List<ResourceInstance> instances = new ArrayList<ResourceInstance>(this.getInstances().values());
+        for (int i = 0; i < instances.size(); i++) {
+            ResourceInstance currentInstance = instances.get(i);
+            resourceDom.addInstance(currentInstance.getJDOMElement());
+        }
+        Map metadata = getMetadata();
+        if (null != metadata) {
+            resourceDom.addMetadata(metadata);
+        }
+        return resourceDom.getXMLDocument();
     }
-    
+
     /**
-	 * Restituisce il nome corretto del file con cui un'istanza di una risorsa viene salvata nel fileSystem. 
-	 * @param masterFileName Il nome del file principale da cui ricavare l'istanza.
-	 * @param size Il size dell'istanza della risorsa multiInstanza.
-	 * @param langCode Il codice lingua dell'istanza della risorsa multiInstanza.
-	 * @return Il nome corretto del file.
-	 * @deprecated Use getNewInstanceFileName
-	 */
-	public abstract String getInstanceFileName(String masterFileName, int size, String langCode);
-	
+     * Restituisce il nome corretto del file con cui un'istanza di una risorsa
+     * viene salvata nel fileSystem.
+     *
+     * @param masterFileName Il nome del file principale da cui ricavare
+     * l'istanza.
+     * @param size Il size dell'istanza della risorsa multiInstanza.
+     * @param langCode Il codice lingua dell'istanza della risorsa
+     * multiInstanza.
+     * @return Il nome corretto del file.
+     * @deprecated Use getNewInstanceFileName
+     */
+    public abstract String getInstanceFileName(String masterFileName, int size, String langCode);
+
     /**
-	 * Restituisce il nome corretto del file con cui un'istanza di una risorsa viene salvata nel sistema. 
-	 * @param masterFileName Il nome del file principale da cui ricavare l'istanza.
-	 * @param size Il size dell'istanza della risorsa multiInstanza.
-	 * @param langCode Il codice lingua dell'istanza della risorsa multiInstanza.
-	 * @return Il nome corretto del file.
-	 */
-	protected String getNewInstanceFileName(String masterFileName, int size, String langCode) {
-		StringBuilder fileName = null;
-		do {
-			String baseName = super.getNewUniqueFileName(masterFileName);
-			fileName = new StringBuilder(baseName);
-			String extension = super.getFileExtension(masterFileName);
-			if (size >= 0) {
-				fileName.append("_d").append(size);
-			}
-			if (langCode != null) {
-				fileName.append("_").append(langCode);
-			}
-			if (StringUtils.isNotEmpty(extension)) {
-				fileName.append(".").append(extension);
-			}
-		} while (this.exists(fileName.toString()));
-		return fileName.toString();
-	}
-	
-	/**
-	 * Restituisce un'istanza della risorsa.
-	 * @param size Il size dell'istanza della risorsa multiInstanza.
-	 * @param langCode Il codice lingua dell'istanza della risorsa multiInstanza.
-	 * @return L'istanza cercata.
-	 */
-	public abstract ResourceInstance getInstance(int size, String langCode);
-	
+     * Restituisce il nome corretto del file con cui un'istanza di una risorsa
+     * viene salvata nel sistema.
+     *
+     * @param masterFileName Il nome del file principale da cui ricavare
+     * l'istanza.
+     * @param size Il size dell'istanza della risorsa multiInstanza.
+     * @param langCode Il codice lingua dell'istanza della risorsa
+     * multiInstanza.
+     * @return Il nome corretto del file.
+     */
+    protected String getNewInstanceFileName(String masterFileName, int size, String langCode) {
+        StringBuilder fileName = null;
+        do {
+            String baseName = super.getNewUniqueFileName(masterFileName);
+            fileName = new StringBuilder(baseName);
+            String extension = super.getFileExtension(masterFileName);
+            if (size >= 0) {
+                fileName.append("_d").append(size);
+            }
+            if (langCode != null) {
+                fileName.append("_").append(langCode);
+            }
+            if (StringUtils.isNotEmpty(extension)) {
+                fileName.append(".").append(extension);
+            }
+        } while (this.exists(fileName.toString()));
+        return fileName.toString();
+    }
+
     /**
-     * Restituisce la mappa delle istanze della risorsa, 
-     * indicizzate in base al size o alla lingua dell'istanza.
+     * Restituisce un'istanza della risorsa.
+     *
+     * @param size Il size dell'istanza della risorsa multiInstanza.
+     * @param langCode Il codice lingua dell'istanza della risorsa
+     * multiInstanza.
+     * @return L'istanza cercata.
+     */
+    public abstract ResourceInstance getInstance(int size, String langCode);
+
+    /**
+     * Restituisce la mappa delle istanze della risorsa, indicizzate in base al
+     * size o alla lingua dell'istanza.
+     *
      * @return La mappa delle istanze della risorsa.
      */
     public Map<String, ResourceInstance> getInstances() {
-    	return this._instances;
+        return this.instances;
     }
-    
-    private Map<String, ResourceInstance> _instances;
-	
+
 }

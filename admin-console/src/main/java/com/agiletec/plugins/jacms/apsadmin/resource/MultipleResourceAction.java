@@ -188,8 +188,9 @@ public class MultipleResourceAction extends ResourceAction {
                     List<BaseResourceDataBean> baseResourceDataBeanList;
                     BaseResourceDataBean resourceFile = null;
                     File file = getFile(index);
-                    Map imgMetadata = getImgMetadata(file);
+                    Map imgMetadata = new HashMap();
                     if (null != file) {
+                        imgMetadata = getImgMetadata(file);
                         resourceFile = new BaseResourceDataBean(file);
                         resourceFile.setFileName(getFileUploadFileName().get(index));
                         resourceFile.setMimeType(getFileUploadContentType().get(index));

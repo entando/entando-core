@@ -263,7 +263,12 @@ public class ContentListHelper extends BaseContentListHelper implements IContent
         if (null == filters) {
             return bean.getFilters();
         }
-        EntitySearchFilter[] filtersToReturn = (null != bean.getFilters()) ? Arrays.copyOf(bean.getFilters(), bean.getFilters().length) : new EntitySearchFilter[0];
+        EntitySearchFilter[] filtersToReturn = null;
+        if (null != bean.getFilters()) {
+            filtersToReturn = Arrays.copyOf(bean.getFilters(), bean.getFilters().length);
+        } else {
+            filtersToReturn = new EntitySearchFilter[0];
+        }
         filtersToReturn = ArrayUtils.addAll(filtersToReturn, filters);
         return filtersToReturn;
     }

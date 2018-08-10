@@ -18,28 +18,56 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
 
 /**
  * Interfaccia per gli attributi di entità di tipo risorsa.
+ *
  * @author W.Ambu
  */
 public interface ResourceAttributeInterface extends AttributeInterface {
-	
-	/**
-	 * Restituisce la risorsa associata all'attributo.
-	 * @return la risorsa associata all'attributo.
-	 */
-    public ResourceInterface getResource();
-    
+
+    public String getResourceAlt();
+
+    public String getResourceAltForLang(String langCode);
+
+    public void setResourceAlt(String text, String langCode);
+
+    public String getResourceDescription();
+
+    public String getResourceDescriptionForLang(String langCode);
+
+    public void setResourceDescription(String text, String langCode);
+
+    public String getResourceLegend();
+
+    public String getResourceLegendForLang(String langCode);
+
+    public void setResourceLegend(String text, String langCode);
+
+    public String getResourceTitle();
+
+    public String getResourceTitleForLang(String langCode);
+
+    public void setResourceTitle(String text, String langCode);
+
     /**
-	 * Restituisce la risorsa associata all'attributo.
-	 * @param langCode il codice della lingua.
-	 * @return la risorsa associata all'attributo.
-	 */
+     * Restituisce la risorsa associata all'attributo.
+     *
+     * @return la risorsa associata all'attributo.
+     */
+    public ResourceInterface getResource();
+
+    /**
+     * Restituisce la risorsa associata all'attributo.
+     *
+     * @param langCode il codice della lingua.
+     * @return la risorsa associata all'attributo.
+     */
     public ResourceInterface getResource(String langCode);
-    
-	/**
-	 * Setta una risorsa sull'attributo.
-	 * @param resource La risorsa da associare all'attributo.
-	 * @param langCode il codice della lingua.
-	 */
+
+    /**
+     * Setta una risorsa sull'attributo.
+     *
+     * @param resource La risorsa da associare all'attributo.
+     * @param langCode il codice della lingua.
+     */
     public void setResource(ResourceInterface resource, String langCode);
 
 }

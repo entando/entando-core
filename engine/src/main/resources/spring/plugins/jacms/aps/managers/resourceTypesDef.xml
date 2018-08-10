@@ -16,7 +16,8 @@
 			class="com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractResource" >
 		<property name="storageManager" ref="StorageManager" />
 		<property name="protectedBaseURL" ><jee:jndi-lookup jndi-name="java:comp/env/protectedResourceRootURL" /></property>
-	</bean>
+                <property name="metadataIgnoreKeys"><value>${jacms.imgMetadata.ignoreKeys}</value></property>
+        </bean>
 	
 	<bean id="jacmsAttachResource" class="com.agiletec.plugins.jacms.aps.system.services.resource.model.AttachResource" parent="jacmsAbstractResource" >
 		<property name="type" value="Attach" />

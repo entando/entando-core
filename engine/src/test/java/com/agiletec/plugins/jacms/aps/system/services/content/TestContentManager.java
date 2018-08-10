@@ -1522,6 +1522,110 @@ public class TestContentManager extends BaseTestCase {
         }
     }
 
+    public void testGetLinkProperties() throws Throwable {
+        EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+        creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
+        EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ALL", false);
+        EntitySearchFilter[] filters = {creationOrder, typeFilter};
+        List<String> userGroups = new ArrayList<>();
+        userGroups.add(Group.ADMINS_GROUP_NAME);
+        List<String> contents = null;
+        try {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            assertEquals(1, contents.size());
+            Content content = this._contentManager.loadContent("ALL4", false);
+            assertEquals(Content.STATUS_PUBLIC, content.getStatus());
+            assertEquals(Group.FREE_GROUP_NAME, content.getMainGroup());
+            Map<String, AttributeInterface> attributes = content.getAttributeMap();
+            MonoListAttribute monoListAttribute10 = (MonoListAttribute) attributes.get("MonoLLink");
+            assertNotNull(monoListAttribute10);
+            assertEquals(2, monoListAttribute10.getAttributes().size());
+
+            LinkAttribute attributeToModify = (LinkAttribute) monoListAttribute10.getAttributes().get(0);
+            attributeToModify.getLinkProperties().put("key1", "value1");
+            attributeToModify.getLinkProperties().put("key2", "value2");
+
+            content.setId(null);
+            this._contentManager.saveContent(content);
+            String id = content.getId();
+
+            Content extractedContent = this._contentManager.loadContent(id, false);
+            attributes = extractedContent.getAttributeMap();
+            monoListAttribute10 = (MonoListAttribute) attributes.get("MonoLLink");
+            assertNotNull(monoListAttribute10);
+            assertEquals(2, monoListAttribute10.getAttributes().size());
+            LinkAttribute attributeModified = (LinkAttribute) monoListAttribute10.getAttributes().get(0);
+            assertEquals(2, attributeModified.getLinkProperties().size());
+            assertEquals("value1", attributeModified.getLinkProperties().get("key1"));
+            assertEquals("value2", attributeModified.getLinkProperties().get("key2"));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            if (contents.size() > 1) {
+                Content contentToDelete = this._contentManager.loadContent(contents.get(0), false);
+                this._contentManager.deleteContent(contentToDelete);
+            }
+        }
+    }
+
+    public void testGetResourceProperties() throws Throwable {
+        EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+        creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
+        EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ALL", false);
+        EntitySearchFilter[] filters = {creationOrder, typeFilter};
+        List<String> userGroups = new ArrayList<>();
+        userGroups.add(Group.ADMINS_GROUP_NAME);
+        List<String> contents = null;
+        try {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            assertEquals(1, contents.size());
+            Content content = this._contentManager.loadContent("ALL4", false);
+            assertEquals(Content.STATUS_PUBLIC, content.getStatus());
+            assertEquals(Group.FREE_GROUP_NAME, content.getMainGroup());
+            Map<String, AttributeInterface> attributes = content.getAttributeMap();
+            MonoListAttribute monoListAttribute = (MonoListAttribute) attributes.get("MonoLImage");
+            assertNotNull(monoListAttribute);
+            assertEquals(1, monoListAttribute.getAttributes().size());
+
+            ImageAttribute attributeToModify = (ImageAttribute) monoListAttribute.getAttributes().get(0);
+            attributeToModify.setResourceAlt("ALT en", "en");
+            attributeToModify.setResourceAlt("ALT it", "it");
+            attributeToModify.setResourceDescription("Description en", "en");
+            attributeToModify.setResourceLegend("Legend it", "it");
+            attributeToModify.setResourceTitle("Title en", "en");
+            attributeToModify.setResourceTitle("Title it", "it");
+
+            content.setId(null);
+            this._contentManager.saveContent(content);
+            String id = content.getId();
+
+            Content extractedContent = this._contentManager.loadContent(id, false);
+            attributes = extractedContent.getAttributeMap();
+            monoListAttribute = (MonoListAttribute) attributes.get("MonoLImage");
+            assertNotNull(monoListAttribute);
+            assertEquals(1, monoListAttribute.getAttributes().size());
+            ImageAttribute attributeModified = (ImageAttribute) monoListAttribute.getAttributes().get(0);
+            assertEquals(2, attributeModified.getResourceAltMap().size());
+            assertEquals(1, attributeModified.getResourceDescriptionMap().size());
+            assertEquals(1, attributeModified.getResourceLegendMap().size());
+            assertEquals(2, attributeModified.getResourceTitleMap().size());
+            assertEquals("ALT it", attributeModified.getResourceAltForLang("it"));
+            assertEquals("Description en", attributeModified.getResourceDescriptionForLang("en"));
+            assertNull(attributeModified.getResourceDescriptionForLang("it"));
+            assertEquals("Legend it", attributeModified.getResourceLegendForLang("it"));
+            assertEquals("Title en", attributeModified.getResourceTitleForLang("en"));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            if (contents.size() > 1) {
+                Content contentToDelete = this._contentManager.loadContent(contents.get(0), false);
+                this._contentManager.deleteContent(contentToDelete);
+            }
+        }
+    }
+
     protected String[] addDraftContentsForTest(String[] masterContentIds, boolean publish) throws Throwable {
         String[] newContentIds = new String[masterContentIds.length];
         for (int i = 0; i < masterContentIds.length; i++) {

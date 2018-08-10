@@ -47,6 +47,14 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
     public void startAttribute(Attributes attributes, String qName) throws SAXException {
         if (qName.equals("resource")) {
             this.startResource(attributes, qName);
+        } else if (qName.equals("alt")) {
+            this.startResourceAlt(attributes, qName);
+        } else if (qName.equals("description")) {
+            this.startResourceDescription(attributes, qName);
+        } else if (qName.equals("legend")) {
+            this.startResourceLegend(attributes, qName);
+        } else if (qName.equals("title")) {
+            this.startResourceTitle(attributes, qName);
         } else {
             super.startAttribute(attributes, qName);
         }
@@ -69,6 +77,14 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
     public void endAttribute(String qName, StringBuffer textBuffer) {
         if (qName.equals("resource")) {
             this.endResource();
+        } else if (qName.equals("alt")) {
+            this.endResourceAlt(textBuffer);
+        } else if (qName.equals("description")) {
+            this.endResourceDescription(textBuffer);
+        } else if (qName.equals("legend")) {
+            this.endResourceLegend(textBuffer);
+        } else if (qName.equals("title")) {
+            this.endResourceTitle(textBuffer);
         } else {
             super.endAttribute(qName, textBuffer);
         }
@@ -94,6 +110,55 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
      */
     public void setResourceManager(IResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+    }
+
+    private void startResourceAlt(Attributes attributes, String qName) throws SAXException {
+        this.startResourceMetadata(attributes, qName);
+    }
+
+    private void startResourceDescription(Attributes attributes, String qName) throws SAXException {
+        this.startResourceMetadata(attributes, qName);
+    }
+
+    private void startResourceLegend(Attributes attributes, String qName) throws SAXException {
+        this.startResourceMetadata(attributes, qName);
+    }
+
+    private void startResourceTitle(Attributes attributes, String qName) throws SAXException {
+        this.startResourceMetadata(attributes, qName);
+    }
+
+    protected void startResourceMetadata(Attributes attributes, String qName) throws SAXException {
+        String idLang = this.extractAttribute(attributes, "lang", qName, true);
+        this.setCurrentLangId(idLang);
+    }
+
+    private void endResourceAlt(StringBuffer textBuffer) {
+        if (null != textBuffer && null != this.getCurrentAttr()) {
+            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceAlt(textBuffer.toString(), this.getCurrentLangId());
+        }
+        this.setCurrentLangId(null);
+    }
+
+    private void endResourceDescription(StringBuffer textBuffer) {
+        if (null != textBuffer && null != this.getCurrentAttr()) {
+            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceDescription(textBuffer.toString(), this.getCurrentLangId());
+        }
+        this.setCurrentLangId(null);
+    }
+
+    private void endResourceLegend(StringBuffer textBuffer) {
+        if (null != textBuffer && null != this.getCurrentAttr()) {
+            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceLegend(textBuffer.toString(), this.getCurrentLangId());
+        }
+        this.setCurrentLangId(null);
+    }
+
+    private void endResourceTitle(StringBuffer textBuffer) {
+        if (null != textBuffer && null != this.getCurrentAttr()) {
+            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceTitle(textBuffer.toString(), this.getCurrentLangId());
+        }
+        this.setCurrentLangId(null);
     }
 
 }

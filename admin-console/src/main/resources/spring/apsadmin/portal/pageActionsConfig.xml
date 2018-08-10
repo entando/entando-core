@@ -54,12 +54,8 @@
         <property name="allowedCharsetsCSV"><value>${page.charset.allowedValues}</value></property>
     </bean>
 	
-    <bean id="pageActionReferencesHelper" scope="prototype" 
-              class="com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper">
-        <!-- <property name="contentManager" ref="jacmsContentManager" /> -->
-    </bean>
+    <bean id="pageActionReferencesHelper" class="com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper" />
 	
-    
     <bean id="pageSettingsAction" scope="prototype" 
               class="com.agiletec.apsadmin.portal.PageSettingsAction" parent="baseAdminAction">
     </bean>

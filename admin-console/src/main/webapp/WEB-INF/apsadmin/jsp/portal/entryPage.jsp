@@ -74,14 +74,13 @@
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
         <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
-        <s:if test="%{strutsAction == 1 && groupSelectLock}">
-            <wpsf:hidden name="group" />
-        </s:if>
-        <s:elseif test="strutsAction == 2">
+		<s:if test="%{groupSelectLock}">
+			<wpsf:hidden name="group" />
+		</s:if>
+        <s:if test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
-            <wpsf:hidden name="group" />
-        </s:elseif>
+        </s:if>
         <s:elseif test="strutsAction == 3">
             <wpsf:hidden name="group" />
             <wpsf:hidden name="model" />
@@ -207,7 +206,7 @@
         <legend><s:text name="page.groups" /><span class="required-fields-edit"><s:text name="label.requiredFields" /></span></legend>
 
         <%-- ownerGroup --%>
-        <s:set var="fieldErrorsVar" value="%{fieldErrors['ownerGroup']}" />
+        <s:set var="fieldErrorsVar" value="%{fieldErrors['group']}" />
         <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
 

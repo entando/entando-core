@@ -94,6 +94,13 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
                 }
             } else {
                 String[] cacheNames = cacheable.value();
+                if (!StringUtils.isBlank(cacheable.condition())) {
+                    Object isCacheable = this.evaluateExpression(cacheable.condition(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
+                    Boolean check = Boolean.valueOf(isCacheable.toString());
+                    if (null != check && !check) {
+                        return result;
+                    }
+                }
                 Object key = this.evaluateExpression(cacheable.key().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
                 for (String cacheName : cacheNames) {
                     if (cacheableInfo.groups() != null && cacheableInfo.groups().trim().length() > 0) {

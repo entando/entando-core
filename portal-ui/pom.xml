@@ -74,20 +74,6 @@
                     <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
-             <!-- sources jars -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <!-- end sources jars --> 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -116,7 +102,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12</version>
                 <configuration>
-                    <argLine>-Xms512m -Xmx2048m</argLine>
+                    <argLine>-Xmx2048m</argLine>
                     <testFailureIgnore>false</testFailureIgnore>
                     <excludes>
                         <exclude>**/*BaseTestCase*</exclude>

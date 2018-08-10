@@ -27,81 +27,103 @@ import org.springframework.cache.Cache;
  */
 public abstract class AbstractGenericCacheWrapper<O extends Object> extends AbstractCacheWrapper {
 
-	protected static enum Action {
-		ADD, UPDATE, DELETE
-	}
+    protected static enum Action {
+        ADD, UPDATE, DELETE
+    }
 
-	protected void releaseCachedObjects(Cache cache) {
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				cache.evict(this.getCacheKeyPrefix() + code);
-			}
-			cache.evict(this.getCodesCacheKey());
-		}
-	}
+    protected void releaseCachedObjects(Cache cache) {
+        List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+        this.releaseObjects(cache, codes);
+        if (null != codes) {
+            cache.evict(this.getCodesCacheKey());
+        }
+    }
 
-	protected void insertObjectsOnCache(Cache cache, Map<String, O> objects) {
-		List<String> codes = new ArrayList<>();
-		Iterator<String> iter = objects.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			cache.put(this.getCacheKeyPrefix() + key, objects.get(key));
-			codes.add(key);
-		}
-		cache.put(this.getCodesCacheKey(), codes);
-	}
+    protected void insertObjectsOnCache(Cache cache, Map<String, O> objects) {
+        List<String> codes = new ArrayList<>();
+        Iterator<String> iter = objects.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            cache.put(this.getCacheKeyPrefix() + key, objects.get(key));
+            codes.add(key);
+        }
+        cache.put(this.getCodesCacheKey(), codes);
+    }
 
-	protected <O> Map<String, O> getObjectMap() {
-		Map<String, O> map = new HashMap<>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				map.put(code, (O) this.get(cache, this.getCacheKeyPrefix() + code, Object.class));
-			}
-		}
-		return map;
-	}
+    protected void insertAndCleanCache(Cache cache, Map<String, O> objects) {
+        List<String> oldCodes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+        List<String> codes = new ArrayList<>();
+        Iterator<String> iter = objects.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            cache.put(this.getCacheKeyPrefix() + key, objects.get(key));
+            if (null != oldCodes) {
+                oldCodes.remove(key);
+            }
+            codes.add(key);
+        }
+        cache.put(this.getCodesCacheKey(), codes);
+        this.releaseObjects(cache, oldCodes);
+    }
 
-	protected void add(String key, O object) {
-		this.manage(key, object, Action.ADD);
-	}
+    private void releaseObjects(Cache cache, List<String> keysToRelease) {
+        if (null != keysToRelease) {
+            for (String code : keysToRelease) {
+                cache.evict(this.getCacheKeyPrefix() + code);
+            }
+        }
+    }
 
-	protected void update(String key, O object) {
-		this.manage(key, object, Action.UPDATE);
-	}
+    protected <O> Map<String, O> getObjectMap() {
+        Map<String, O> map = new HashMap<>();
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+        if (null != codes) {
+            for (String code : codes) {
+                map.put(code, (O) this.get(cache, this.getCacheKeyPrefix() + code, Object.class));
+            }
+        }
+        return map;
+    }
 
-	protected void remove(String key, O object) {
-		this.manage(key, object, Action.DELETE);
-	}
+    protected void add(String key, O object) {
+        this.manage(key, object, Action.ADD);
+    }
 
-	protected <O> void manage(String key, O object, Action operation) {
-		if (null == object) {
-			return;
-		}
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-		if (Action.ADD.equals(operation)) {
-			if (!codes.contains(key)) {
-				codes.add(key);
-				cache.put(this.getCodesCacheKey(), codes);
-			}
-			cache.put(this.getCacheKeyPrefix() + key, object);
-		} else if (Action.UPDATE.equals(operation)) {
-			if (!codes.contains(key)) {
-				throw new CacheItemNotFoundException(key, cache.getName());
-			}
-			cache.put(this.getCacheKeyPrefix() + key, object);
-		} else if (Action.DELETE.equals(operation)) {
-			codes.remove(key);
-			cache.evict(this.getCacheKeyPrefix() + key);
-			cache.put(this.getCodesCacheKey(), codes);
-		}
-	}
+    protected void update(String key, O object) {
+        this.manage(key, object, Action.UPDATE);
+    }
 
-	protected abstract String getCodesCacheKey();
+    protected void remove(String key, O object) {
+        this.manage(key, object, Action.DELETE);
+    }
 
-	protected abstract String getCacheKeyPrefix();
+    protected <O> void manage(String key, O object, Action operation) {
+        if (null == object) {
+            return;
+        }
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+        if (Action.ADD.equals(operation)) {
+            if (!codes.contains(key)) {
+                codes.add(key);
+                cache.put(this.getCodesCacheKey(), codes);
+            }
+            cache.put(this.getCacheKeyPrefix() + key, object);
+        } else if (Action.UPDATE.equals(operation)) {
+            if (!codes.contains(key)) {
+                throw new CacheItemNotFoundException(key, cache.getName());
+            }
+            cache.put(this.getCacheKeyPrefix() + key, object);
+        } else if (Action.DELETE.equals(operation)) {
+            codes.remove(key);
+            cache.evict(this.getCacheKeyPrefix() + key);
+            cache.put(this.getCodesCacheKey(), codes);
+        }
+    }
+
+    protected abstract String getCodesCacheKey();
+
+    protected abstract String getCacheKeyPrefix();
 
 }

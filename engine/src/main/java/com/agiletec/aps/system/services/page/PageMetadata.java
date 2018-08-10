@@ -18,11 +18,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import java.io.Serializable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is the representation of a portal page metadata
@@ -31,20 +32,16 @@ import org.slf4j.LoggerFactory;
  */
 public class PageMetadata implements Cloneable, Serializable {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(PageMetadata.class);
+
+    private String group;
 
     private ApsProperties titles = new ApsProperties();
 
     private Set<String> extraGroups;
 
-    /**
-     * The page model associate to the current object
-     */
     private PageModel model;
 
-    /**
-     * Toggle menu visibility on and off
-     */
     private boolean showable = false;
 
     private boolean useExtraTitles = false;
@@ -54,6 +51,40 @@ public class PageMetadata implements Cloneable, Serializable {
     private String charset;
 
     private Date updatedAt;
+
+    @Override
+    public PageMetadata clone() throws CloneNotSupportedException {
+        PageMetadata copy = null;
+        try {
+            copy = this.getClass().newInstance();
+            copy.setGroup(this.getGroup());
+            ApsProperties titles = new ApsProperties();
+            titles.putAll(this.getTitles());
+            copy.setTitles(titles);
+            Set<String> extraGroups = this.getExtraGroups();
+            if (extraGroups != null) {
+                copy.setExtraGroups(new TreeSet<>(extraGroups));
+            }
+            copy.setModel(this.getModel());
+            copy.setShowable(this.isShowable());
+            copy.setUseExtraTitles(this.isUseExtraTitles());
+            copy.setMimeType(this.getMimeType());
+            copy.setCharset(this.getCharset());
+            copy.setUpdatedAt(this.getUpdatedAt());
+        } catch (Throwable t) {
+            logger.error("Error cloning {}" + this.getClass(), t);
+            throw new RuntimeException("Error cloning " + this.getClass(), t);
+        }
+        return copy;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
     public ApsProperties getTitles() {
         return titles;
@@ -73,6 +104,10 @@ public class PageMetadata implements Cloneable, Serializable {
         this.getTitles().setProperty(langCode, title);
     }
 
+    public String getTitle(String langCode) {
+        return this.getTitles().getProperty(langCode);
+    }
+
     /**
      * Return the related model of page
      *
@@ -90,6 +125,20 @@ public class PageMetadata implements Cloneable, Serializable {
      */
     public void setModel(PageModel pageModel) {
         this.model = pageModel;
+    }
+
+    public void addExtraGroup(String groupName) {
+        if (null == this.getExtraGroups()) {
+            this.setExtraGroups(new HashSet<>());
+        }
+        this.getExtraGroups().add(groupName);
+    }
+
+    public void removeExtraGroup(String groupName) {
+        if (null == this.getExtraGroups()) {
+            return;
+        }
+        this.getExtraGroups().remove(groupName);
     }
 
     public void setExtraGroups(Set<String> extraGroups) {
@@ -155,51 +204,6 @@ public class PageMetadata implements Cloneable, Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public void addExtraGroup(String groupName) {
-        if (null == this.getExtraGroups()) {
-            this.setExtraGroups(new HashSet<String>());
-        }
-        this.getExtraGroups().add(groupName);
-    }
-
-    public void removeExtraGroup(String groupName) {
-        if (null == this.getExtraGroups()) {
-            return;
-        }
-        this.getExtraGroups().remove(groupName);
-    }
-
-    public String getTitle(String langCode) {
-        return this.getTitles().getProperty(langCode);
-    }
-
-    @Override
-    public PageMetadata clone() throws CloneNotSupportedException {
-        PageMetadata copy = null;
-        try {
-            copy = this.getClass().newInstance();
-            ApsProperties titles = new ApsProperties();
-            titles.putAll(this.getTitles());
-            copy.setTitles(titles);
-
-            Set<String> extraGroups = this.getExtraGroups();
-            if (extraGroups != null) {
-                copy.setExtraGroups(new TreeSet<String>(extraGroups));
-            }
-
-            copy.setModel(this.getModel());
-            copy.setShowable(this.isShowable());
-            copy.setUseExtraTitles(this.isUseExtraTitles());
-            copy.setMimeType(this.getMimeType());
-            copy.setCharset(this.getCharset());
-            copy.setUpdatedAt(this.getUpdatedAt());
-        } catch (Throwable t) {
-            logger.error("Error cloning {}" + this.getClass(), t);
-            throw new RuntimeException("Error cloning " + this.getClass(), t);
-        }
-        return copy;
-    }
-
     @Override
     public String toString() {
         return "PageMetadata";
@@ -209,6 +213,7 @@ public class PageMetadata implements Cloneable, Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((group == null) ? 0 : group.hashCode());
         result = prime * result + ((charset == null) ? 0 : charset.hashCode());
         result = prime * result + ((extraGroups == null) ? 0 : extraGroups.hashCode());
         result = prime * result + ((mimeType == null) ? 0 : mimeType.hashCode());
@@ -272,6 +277,13 @@ public class PageMetadata implements Cloneable, Serializable {
                 return false;
             }
         } else if (!mimeType.equals(other.mimeType)) {
+            return false;
+        }
+        if (group == null) {
+            if (other.group != null) {
+                return false;
+            }
+        } else if (!group.equals(other.group)) {
             return false;
         }
         if (model == null) {

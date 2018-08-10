@@ -21,7 +21,7 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import com.agiletec.apsadmin.portal.helper.PageActionReferencesHelper;
+import com.agiletec.apsadmin.portal.helper.IPageActionReferencesHelper;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseActionHelper;
 import org.apache.commons.beanutils.BeanComparator;
@@ -44,7 +44,44 @@ import java.util.*;
  */
 public class PageAction extends AbstractPortalAction implements ServletResponseAware {
 
-    private static final Logger _logger = LoggerFactory.getLogger(PageAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(PageAction.class);
+
+    private String pageCode;
+    private String parentPageCode;
+    private String copyPageCode;
+    private String group;
+    private boolean groupSelectLock;
+    private Set<String> extraGroups = new TreeSet<>();
+    private String model;
+    private boolean defaultShowlet = false;
+    private ApsProperties titles = new ApsProperties();
+    private boolean showable = false;
+    private boolean useExtraTitles;
+    private int strutsAction;
+
+    private String mimeType;
+    private String charset;
+
+    private String nodeToBeDelete;
+
+    private String extraGroupNameToRemove;
+
+    private IPage pageToShow;
+
+    private Map references;
+
+    private String _allowedMimeTypesCSV;
+    private String _allowedCharsetsCSV;
+
+    private String targetNode;
+    private Set<String> treeNodesToOpen = new HashSet<>();
+    private String treeNodeActionMarkerCode;
+
+    private HttpServletResponse response;
+
+    private IPageModelManager pageModelManager;
+    private IPageActionHelper pageActionHelper;
+    private IPageActionReferencesHelper pageActionReferencesHelper;
 
     @Override
     public void validate() {
@@ -54,6 +91,19 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         }
         this.checkCode();
         this.checkTitles();
+        if (this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME)) {
+            try {
+                IPage currentPage = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) ? this.getUpdatedPage() : this.buildNewPage();
+                boolean check = this.getPageActionHelper().checkPageGroup(currentPage, this);
+                if (!check) {
+                    logger.error("Error checking page group");
+                    this.addActionError(this.getText("error.page.scanGroup"));
+                }
+            } catch (Exception e) {
+                logger.error("Error validation groups", e);
+                throw new RuntimeException("Error validation groups", e);
+            }
+        }
     }
 
     protected String checkParentNode(String selectedNode) {
@@ -134,7 +184,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.setCharset("utf-8");
             this.setMimeType("text/html");
         } catch (Throwable t) {
-            _logger.error("error in newPage", t);
+            logger.error("error in newPage", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -145,32 +195,28 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     protected void valueFormForNew(IPage parentPage) {
-        String groupName = null;
-        boolean groupSelectLock = false;
         this.setStrutsAction(ApsAdminSystemConstants.ADD);
         if (parentPage != null) {
             this.setParentPageCode(parentPage.getCode());
-            groupName = parentPage.getGroup();
+            String groupName = parentPage.getGroup();
             this.setGroup(groupName);
-            boolean isParentFree = Group.FREE_GROUP_NAME.equals(groupName);
-            groupSelectLock = !(this.isCurrentUserMemberOf(Group.ADMINS_GROUP_NAME) && isParentFree);
         }
-        this.setGroupSelectLock(groupSelectLock);
+        this.setGroupSelectLock(false);
         this.setDefaultShowlet(true);
         this.setShowable(true);
     }
 
     public String edit() {
-        String pageCode = this.getSelectedNode();
+        String selectedPageCode = this.getSelectedNode();
         try {
-            String check = this.checkSelectedNode(pageCode);
+            String check = this.checkSelectedNode(selectedPageCode);
             if (null != check) {
                 return check;
             }
-            IPage page = this.getPage(pageCode);
+            IPage page = this.getPage(selectedPageCode);
             this.valueFormForEdit(page);
         } catch (Throwable t) {
-            _logger.error("error in edit", t);
+            logger.error("error in edit", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -180,7 +226,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         try {
             this.updateTitles();
         } catch (Throwable t) {
-            _logger.error("error in entry edit", t);
+            logger.error("error in entry edit", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -190,14 +236,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         try {
             this.updateTitles();
             String[] groupNameList = super.getParameters().get("extraGroupNameToAdd");
-            if(groupNameList!=null){
-
-                for(String group : groupNameList) {
-                    this.getExtraGroups().add(group);
+            if (groupNameList != null) {
+                for (String groupName : groupNameList) {
+                    this.getExtraGroups().add(groupName);
                 }
             }
         } catch (Throwable t) {
-            _logger.error("error in joinExtraGroup", t);
+            logger.error("error in joinExtraGroup", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -208,27 +253,27 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.updateTitles();
             this.getExtraGroups().remove(this.getExtraGroupNameToRemove());
         } catch (Throwable t) {
-            _logger.error("error in removeExtraGroup", t);
+            logger.error("error in removeExtraGroup", t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String showDetail() {
-        String pageCode = this.getSelectedNode();
+        String selectedPageCode = this.getSelectedNode();
         try {
-            String check = this.checkSelectedNode(pageCode);
+            String check = this.checkSelectedNode(selectedPageCode);
             if (null != check) {
                 return check;
             }
-            IPage page = this.getPage(pageCode);
-            Map references = this.getPageActionHelper().getReferencingObjects(page, this.getRequest());
-            if (null != references) {
-                this.setReferences(references);
+            IPage page = this.getPage(selectedPageCode);
+            Map extractedReferences = this.getPageActionHelper().getReferencingObjects(page, this.getRequest());
+            if (null != extractedReferences) {
+                this.setReferences(extractedReferences);
             }
             this.setPageToShow(page);
         } catch (Throwable t) {
-            _logger.error("error in showDetail", t);
+            logger.error("error in showDetail", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -241,7 +286,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         this.setGroup(pageToEdit.getGroup());
         PageMetadata draftMetadata = pageToEdit.getMetadata();
         this.copyMetadataToForm(draftMetadata);
-        this.setGroupSelectLock(true);
+        boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
+        boolean isParentFree = (pageToEdit.isRoot() || pageToEdit.getParent().getGroup().equals(Group.FREE_GROUP_NAME));
+        this.setGroupSelectLock(!(isAdmin && isParentFree));
     }
 
     public String copy() {
@@ -261,7 +308,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.getTitles().clear();
             this.setParentPageCode(selectedNode);
         } catch (Throwable t) {
-            _logger.error("error in paste", t);
+            logger.error("error in paste", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -296,17 +343,17 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.getPageManager().updatePage(page);
                 this.addActionMessage(this.getText("message.page.info.updated", new String[]{this.getTitle(page.getCode(), page
                     .getTitles())}));
-                _logger.debug("Updating page " + page.getCode());
+                logger.debug("Updating page " + page.getCode());
             } else {
                 page = this.buildNewPage();
                 this.getPageManager().addPage(page);
                 this.addActionMessage(this.getText("message.page.info.added", new String[]{this.getTitle(page.getCode(), page
                     .getTitles())}));
-                _logger.debug("Adding new page");
+                logger.debug("Adding new page");
             }
             this.addActivityStreamInfo(page, this.getStrutsAction(), true);
         } catch (Throwable t) {
-            _logger.error("error in save", t);
+            logger.error("error in save", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -320,19 +367,19 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 this.getPageManager().updatePage(page);
                 this.addActionMessage(this.getText("message.page.info.updated", new String[]{this.getTitle(page.getCode(), page
                     .getTitles())}));
-                _logger.debug("Updating page " + page.getCode());
+                logger.debug("Updating page " + page.getCode());
             } else {
                 page = this.buildNewPage();
                 this.getPageManager().addPage(page);
                 this.addActionMessage(this.getText("message.page.info.added", new String[]{this.getTitle(page.getCode(), page
                     .getTitles())}));
-                _logger.debug("Adding new page");
+                logger.debug("Adding new page");
             }
             this.addActivityStreamInfo(page, this.getStrutsAction(), true);
             this.setPageCode(page.getCode());
             this.setSelectedNode(page.getCode());
         } catch (Throwable t) {
-            _logger.error("error in save and configure", t);
+            logger.error("error in save and configure", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -343,23 +390,22 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     public PageResponse getPageDetailResponse() {
-        PageResponse response = null;
+        PageResponse pageResponse = null;
         try {
             IPage draftPage = null;
             IPage onlinePage = null;
-            String pageCode = this.getPageCode();
-            String check = this.checkSelectedNode(pageCode);
+            String check = this.checkSelectedNode(this.getPageCode());
             if (null == check) {
-                draftPage = this.getPage(pageCode);
+                draftPage = this.getPage(this.getPageCode());
                 onlinePage = this.getOnlinePage(this.getPageCode());
             }
-            response = new PageResponse(this, draftPage, onlinePage);
+            pageResponse = new PageResponse(this, draftPage, onlinePage);
         } catch (Throwable t) {
-            _logger.error("error in getPageJsonResponse", t);
+            logger.error("error in getPageJsonResponse", t);
             this.getServletResponse().setStatus(Status.INTERNAL_SERVER_ERROR.getStatusCode());
             return null;
         }
-        return response;
+        return pageResponse;
     }
 
     protected IPage buildNewPage() throws ApsSystemException {
@@ -369,7 +415,6 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
                 IPage copyPage = this.getPage(this.getCopyPageCode());
                 IPage publicPage = this.getOnlinePage(this.getCopyPageCode());
-                boolean online = copyPage.isOnline();
                 page.setWidgets(null != publicPage ? publicPage.getWidgets() : copyPage.getWidgets());
                 PageMetadata metadata = (null != publicPage) ? publicPage.getMetadata() : copyPage.getMetadata();
                 if (metadata != null) {
@@ -380,19 +425,16 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 page.setGroup(copyPage.getGroup());
             } else {
                 page.setGroup(this.getGroup());
-                PageMetadata metadata = new PageMetadata();
+                PageMetadata metadata = page.getMetadata();
                 this.valueMetadataFromForm(metadata);
-                page.setMetadata(metadata);
-//				if (this.isDefaultShowlet()) {
-//					this.setDefaultWidgets(page);
-//				} else {
-                page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
-//				}
+                if (null != metadata.getModel()) {
+                    page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
+                }
             }
             // ricava il codice
             page.setCode(this.buildNewPageCode(page.getMetadata()));
         } catch (Throwable t) {
-            _logger.error("Error building new page", t);
+            logger.error("Error building new page", t);
             throw new ApsSystemException("Error building new page", t);
         }
         return page;
@@ -426,7 +468,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 page.setWidgets(new Widget[metadata.getModel().getFrames().length]);
             }
         } catch (Throwable t) {
-            _logger.error("Error updating page", t);
+            logger.error("Error updating page", t);
             throw new ApsSystemException("Error updating page", t);
         }
         return page;
@@ -443,12 +485,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         metadata.setUseExtraTitles(this.isUseExtraTitles());
         metadata.setTitles(this.getTitles());
         metadata.setExtraGroups(this.getExtraGroups());
-
         String charset = this.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
-
         String mimetype = this.getMimeType();
         metadata.setMimeType(StringUtils.isNotBlank(mimetype) ? mimetype : null);
+        metadata.setUpdatedAt(new Date());
     }
 
     public String setDefaultWidgets() {
@@ -458,7 +499,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             PageModel model = page.getMetadata().getModel();
             Widget[] defaultWidgets = model.getDefaultWidget();
             if (null == defaultWidgets) {
-                _logger.info("No default Widget found for pagemodel '{}' of page '{}'", model.getCode(), page.getCode());
+                logger.info("No default Widget found for pagemodel '{}' of page '{}'", model.getCode(), page.getCode());
                 return SUCCESS;
             }
             Widget[] widgets = new Widget[defaultWidgets.length];
@@ -466,7 +507,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 Widget defaultWidget = defaultWidgets[i];
                 if (null != defaultWidget) {
                     if (null == defaultWidget.getType()) {
-                        _logger.info("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", model
+                        logger.info("Widget Type null when adding defaulWidget (of pagemodel '{}') on frame '{}' of page '{}'", model
                                 .getCode(), i, page.getCode());
                         continue;
                     }
@@ -476,88 +517,88 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             page.setWidgets(widgets);
             this.getPageManager().updatePage(page);
         } catch (Throwable t) {
-            _logger.error("Error setting default widget to page {}", page.getCode(), t);
+            logger.error("Error setting default widget to page {}", page.getCode(), t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String checkSetOffline() {
-        String pageCode = this.getPageCode();
+        String selectedPageCode = this.getPageCode();
         try {
-            if (StringUtils.isEmpty(pageCode)) {
-                pageCode = this.getSelectedNode();
-                this.setPageCode(pageCode);
+            if (StringUtils.isEmpty(selectedPageCode)) {
+                selectedPageCode = this.getSelectedNode();
+                this.setPageCode(selectedPageCode);
             }
-            String check = this.checkSetOffline(pageCode);
+            String check = this.checkSetOffline(selectedPageCode);
             if (null != check) {
                 return check;
             }
-            IPage currentPage = this.getPage(pageCode);
+            IPage currentPage = this.getPage(selectedPageCode);
             this.setSelectedNode(currentPage.getCode());
         } catch (Throwable t) {
-            _logger.error("error checking before putting page {} offline", pageCode, t);
+            logger.error("error checking before putting page {} offline", selectedPageCode, t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String doSetOffline() {
-        String pageCode = this.getPageCode();
+        String selectedPageCode = this.getPageCode();
         try {
-            if (StringUtils.isEmpty(pageCode)) {
-                pageCode = this.getSelectedNode();
-                this.setPageCode(pageCode);
+            if (StringUtils.isEmpty(selectedPageCode)) {
+                selectedPageCode = this.getSelectedNode();
+                this.setPageCode(selectedPageCode);
             }
             IPageManager pageManager = this.getPageManager();
-            String check = this.checkSetOffline(pageCode);
+            String check = this.checkSetOffline(selectedPageCode);
             if (null != check) {
                 return check;
             }
-            pageManager.setPageOffline(pageCode);
-            IPage page = this.getPage(pageCode);
+            pageManager.setPageOffline(selectedPageCode);
+            IPage page = this.getPage(selectedPageCode);
             this.addActionMessage(this.getText("message.page.set.offline", new String[]{this.getTitle(page.getCode(), page
                 .getTitles())}));
             // TODO Define a new strutsAction to map "offline" operation
             this.addActivityStreamInfo(page, PageActionConstants.UNPUBLISH, true);
         } catch (Throwable t) {
-            _logger.error("error setting page {} offline", pageCode, t);
+            logger.error("error setting page {} offline", selectedPageCode, t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String checkSetOnline() {
-        String pageCode = this.getPageCode();
+        String selectedPageCode = this.getPageCode();
         try {
-            if (StringUtils.isEmpty(pageCode)) {
-                pageCode = this.getSelectedNode();
-                this.setPageCode(pageCode);
+            if (StringUtils.isEmpty(selectedPageCode)) {
+                selectedPageCode = this.getSelectedNode();
+                this.setPageCode(selectedPageCode);
             }
-            String check = this.checkSelectedNode(pageCode);
+            String check = this.checkSelectedNode(selectedPageCode);
             if (null != check) {
                 return check;
             }
         } catch (Throwable t) {
-            _logger.error("error checking before putting page {} online", pageCode, t);
+            logger.error("error checking before putting page {} online", selectedPageCode, t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String doSetOnline() {
-        String pageCode = this.getPageCode();
+        String selectedPageCode = this.getPageCode();
         try {
-            if (StringUtils.isEmpty(pageCode)) {
-                pageCode = this.getSelectedNode();
-                this.setPageCode(pageCode);
+            if (StringUtils.isEmpty(selectedPageCode)) {
+                selectedPageCode = this.getSelectedNode();
+                this.setPageCode(selectedPageCode);
             }
             IPageManager pageManager = this.getPageManager();
-            String check = this.checkSelectedNode(pageCode);
+            String check = this.checkSelectedNode(selectedPageCode);
             if (null != check) {
                 return check;
             }
-            IPage page = this.getPage(pageCode);
+            IPage page = this.getPage(selectedPageCode);
             if (!page.getParent().isOnline()) {
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
@@ -570,14 +611,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (this.hasErrors()) {
                 return "pageTree";
             }
-
-            pageManager.setPageOnline(pageCode);
+            pageManager.setPageOnline(selectedPageCode);
             this.addActionMessage(this.getText("message.page.set.online", new String[]{this.getTitle(page.getCode(), page
                 .getTitles())}));
             // TODO Define a new strutsAction to map "offline" operation
             this.addActivityStreamInfo(page, PageActionConstants.PUBLISH, true);
         } catch (Throwable t) {
-            _logger.error("error setting page {} online", pageCode, t);
+            logger.error("error setting page {} online", selectedPageCode, t);
             return FAILURE;
         }
         return SUCCESS;
@@ -594,7 +634,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.setNodeToBeDelete(selectedNode);
             this.setSelectedNode(currentPage.getParent().getCode());
         } catch (Throwable t) {
-            _logger.error("error in trash", t);
+            logger.error("error in trash", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -613,7 +653,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.setSelectedNode(pageToDelete.getParentCode());
             this.addActivityStreamInfo(pageToDelete, ApsAdminSystemConstants.DELETE, false);
         } catch (Throwable t) {
-            _logger.error("error in delete", t);
+            logger.error("error in delete", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -645,11 +685,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 return "pageTree";
             }
         }
-        Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
-        if (references.size() > 0) {
+        Map extractedReferences = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+        if (extractedReferences.size() > 0) {
             this.addActionError(this.getText("error.page.offline.references", new String[]{this.getTitle(currentPage.getCode(),
                 currentPage.getTitles())}));
-            this.setReferences(references);
+            this.setReferences(extractedReferences);
             return "references";
         }
         return null;
@@ -675,9 +715,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             this.addActionError(this.getText("error.page.remove.notAllowed3"));
             return "pageTree";
         } else {
-            Map references = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
-            if (references.size() > 0) {
-                this.setReferences(references);
+            Map extractedReferences = this.getPageActionHelper().getReferencingObjects(currentPage, this.getRequest());
+            if (extractedReferences.size() > 0) {
+                this.setReferences(extractedReferences);
                 return "references";
             }
         }
@@ -696,9 +736,9 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             draftPage = this.getPage(this.getPageCode());
             onlinePage = this.getOnlinePage(this.getPageCode());
         }
-        PageResponse response = new PageResponse(this, draftPage, onlinePage);
-        response.setReferences(this.getReferences());
-        return response;
+        PageResponse pageResponse = new PageResponse(this, draftPage, onlinePage);
+        pageResponse.setReferences(this.getReferences());
+        return pageResponse;
     }
 
     /**
@@ -731,139 +771,139 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     public String getCopyPageCode() {
-        return _copyPageCode;
+        return copyPageCode;
     }
 
     public void setCopyPageCode(String copyPageCode) {
-        this._copyPageCode = copyPageCode;
+        this.copyPageCode = copyPageCode;
     }
 
     public boolean isDefaultShowlet() {
-        return _defaultShowlet;
+        return defaultShowlet;
     }
 
     public void setDefaultShowlet(boolean defaultShowlet) {
-        this._defaultShowlet = defaultShowlet;
+        this.defaultShowlet = defaultShowlet;
     }
 
     public String getGroup() {
-        return _group;
+        return group;
     }
 
     public void setGroup(String group) {
-        this._group = group;
+        this.group = group;
     }
 
     public boolean isGroupSelectLock() {
-        return _groupSelectLock;
+        return groupSelectLock;
     }
 
     public void setGroupSelectLock(boolean groupSelectLock) {
-        this._groupSelectLock = groupSelectLock;
+        this.groupSelectLock = groupSelectLock;
     }
 
     public void setExtraGroups(Set<String> extraGroups) {
-        this._extraGroups = extraGroups;
+        this.extraGroups = extraGroups;
     }
 
     public Set<String> getExtraGroups() {
-        return _extraGroups;
+        return extraGroups;
     }
 
     public String getModel() {
-        return _model;
+        return model;
     }
 
     public void setModel(String model) {
-        this._model = model;
+        this.model = model;
     }
 
     public String getPageCode() {
-        return _pageCode;
+        return pageCode;
     }
 
     public void setPageCode(String pageCode) {
-        this._pageCode = pageCode;
+        this.pageCode = pageCode;
     }
 
     public String getParentPageCode() {
-        return _parentPageCode;
+        return parentPageCode;
     }
 
     public void setParentPageCode(String parentPageCode) {
-        this._parentPageCode = parentPageCode;
+        this.parentPageCode = parentPageCode;
     }
 
     public boolean isShowable() {
-        return _showable;
+        return showable;
     }
 
     public void setShowable(boolean showable) {
-        this._showable = showable;
+        this.showable = showable;
     }
 
     public boolean isUseExtraTitles() {
-        return _useExtraTitles;
+        return useExtraTitles;
     }
 
     public void setUseExtraTitles(boolean useExtraTitles) {
-        this._useExtraTitles = useExtraTitles;
+        this.useExtraTitles = useExtraTitles;
     }
 
     public int getStrutsAction() {
-        return _strutsAction;
+        return strutsAction;
     }
 
     public void setStrutsAction(int strutsAction) {
-        this._strutsAction = strutsAction;
+        this.strutsAction = strutsAction;
     }
 
     public String getCharset() {
-        return _charset;
+        return charset;
     }
 
     public void setCharset(String charset) {
-        this._charset = charset;
+        this.charset = charset;
     }
 
     public String getMimeType() {
-        return _mimeType;
+        return mimeType;
     }
 
     public void setMimeType(String mimeType) {
-        this._mimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
     public ApsProperties getTitles() {
-        return _titles;
+        return titles;
     }
 
     public void setTitles(ApsProperties titles) {
-        this._titles = titles;
+        this.titles = titles;
     }
 
     public String getNodeToBeDelete() {
-        return _nodeToBeDelete;
+        return nodeToBeDelete;
     }
 
     public void setNodeToBeDelete(String nodeToBeDelete) {
-        this._nodeToBeDelete = nodeToBeDelete;
+        this.nodeToBeDelete = nodeToBeDelete;
     }
 
     public IPage getPageToShow() {
-        return _pageToShow;
+        return pageToShow;
     }
 
     protected void setPageToShow(IPage pageToShow) {
-        this._pageToShow = pageToShow;
+        this.pageToShow = pageToShow;
     }
 
     public Map getReferences() {
-        return _references;
+        return references;
     }
 
     protected void setReferences(Map references) {
-        this._references = references;
+        this.references = references;
     }
 
     public String[] getAllowedCharsets() {
@@ -897,27 +937,27 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     public String getTargetNode() {
-        return _targetNode;
+        return targetNode;
     }
 
     public void setTargetNode(String targetNode) {
-        this._targetNode = targetNode;
+        this.targetNode = targetNode;
     }
 
     public Set<String> getTreeNodesToOpen() {
-        return _treeNodesToOpen;
+        return treeNodesToOpen;
     }
 
     public void setTreeNodesToOpen(Set<String> treeNodesToOpen) {
-        this._treeNodesToOpen = treeNodesToOpen;
+        this.treeNodesToOpen = treeNodesToOpen;
     }
 
     public String getTreeNodeActionMarkerCode() {
-        return _treeNodeActionMarkerCode;
+        return treeNodeActionMarkerCode;
     }
 
     public void setTreeNodeActionMarkerCode(String treeNodeActionMarkerCode) {
-        this._treeNodeActionMarkerCode = treeNodeActionMarkerCode;
+        this.treeNodeActionMarkerCode = treeNodeActionMarkerCode;
     }
 
     @Override
@@ -930,27 +970,27 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     }
 
     protected IPageActionHelper getPageActionHelper() {
-        return _pageActionHelper;
+        return pageActionHelper;
     }
 
     public void setPageActionHelper(IPageActionHelper pageActionHelper) {
-        this._pageActionHelper = pageActionHelper;
+        this.pageActionHelper = pageActionHelper;
     }
 
     protected IPageModelManager getPageModelManager() {
-        return _pageModelManager;
+        return pageModelManager;
     }
 
     public void setPageModelManager(IPageModelManager pageModelManager) {
-        this._pageModelManager = pageModelManager;
+        this.pageModelManager = pageModelManager;
     }
 
-    protected PageActionReferencesHelper getPageActionReferencesHelper() {
-        return _pageActionReferencesHelper;
+    protected IPageActionReferencesHelper getPageActionReferencesHelper() {
+        return pageActionReferencesHelper;
     }
 
-    public void setPageActionReferencesHelper(PageActionReferencesHelper pageActionReferencesHelper) {
-        this._pageActionReferencesHelper = pageActionReferencesHelper;
+    public void setPageActionReferencesHelper(IPageActionReferencesHelper pageActionReferencesHelper) {
+        this.pageActionReferencesHelper = pageActionReferencesHelper;
     }
 
     public String getExtraGroupNameToRemove() {
@@ -960,42 +1000,5 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     public void setExtraGroupNameToRemove(String extraGroupNameToRemove) {
         this.extraGroupNameToRemove = extraGroupNameToRemove;
     }
-
-    private String _pageCode;
-    private String _parentPageCode;
-    private String _copyPageCode;
-    private String _group;
-    private boolean _groupSelectLock;
-    private Set<String> _extraGroups = new TreeSet<String>();
-    private String _model;
-    private boolean _defaultShowlet = false;
-    private ApsProperties _titles = new ApsProperties();
-    private boolean _showable = false;
-    private boolean _useExtraTitles;
-    private int _strutsAction;
-
-    private String _mimeType;
-    private String _charset;
-
-    private String _nodeToBeDelete;
-
-    private String extraGroupNameToRemove;
-
-    private IPage _pageToShow;
-
-    private Map _references;
-
-    private String _allowedMimeTypesCSV;
-    private String _allowedCharsetsCSV;
-
-    private String _targetNode;
-    private Set<String> _treeNodesToOpen = new HashSet<String>();
-    private String _treeNodeActionMarkerCode;
-
-    private HttpServletResponse response;
-
-    private IPageModelManager _pageModelManager;
-    private IPageActionHelper _pageActionHelper;
-    private PageActionReferencesHelper _pageActionReferencesHelper;
 
 }

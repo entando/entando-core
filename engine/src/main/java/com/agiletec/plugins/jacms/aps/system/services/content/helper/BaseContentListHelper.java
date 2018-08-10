@@ -144,6 +144,15 @@ public class BaseContentListHelper implements IContentListHelper {
     }
 
     protected static String buildCacheKey(IContentListBean bean, Collection<String> userGroupCodes) {
+        return buildStringBuilderCacheKey(bean, userGroupCodes).toString();
+    }
+
+    protected static StringBuilder buildStringBuilderCacheKey(IContentListBean bean, UserDetails user) {
+        Collection<String> userGroupCodes = getAllowedGroupCodes(user);
+        return buildStringBuilderCacheKey(bean, userGroupCodes);
+    }
+
+    protected static StringBuilder buildStringBuilderCacheKey(IContentListBean bean, Collection<String> userGroupCodes) {
         StringBuilder cacheKey = new StringBuilder();
         if (null != bean.getListName()) {
             cacheKey.append("LISTNAME_").append(bean.getListName());
@@ -183,7 +192,7 @@ public class BaseContentListHelper implements IContentListHelper {
                 cacheKey.append("_").append(filter.toString());
             }
         }
-        return cacheKey.toString();
+        return cacheKey;
     }
 
     public static String concatStrings(Collection<String> values, String separator) {

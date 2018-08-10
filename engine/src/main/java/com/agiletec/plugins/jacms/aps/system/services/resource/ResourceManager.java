@@ -29,6 +29,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
@@ -53,7 +54,6 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceIns
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -70,6 +70,8 @@ public class ResourceManager extends AbstractService implements IResourceManager
     private IResourceDAO resourceDao;
 
     private ICategoryManager categoryManager;
+
+    private ConfigInterface configManager;
 
     private IResourceManagerCacheWrapper cacheWrapper;
 
@@ -102,6 +104,14 @@ public class ResourceManager extends AbstractService implements IResourceManager
 
     public void setCategoryManager(ICategoryManager categoryManager) {
         this.categoryManager = categoryManager;
+    }
+
+    protected ConfigInterface getConfigManager() {
+        return configManager;
+    }
+
+    public void setConfigManager(ConfigInterface configManager) {
+        this.configManager = configManager;
     }
 
     protected IResourceManagerCacheWrapper getCacheWrapper() {
@@ -153,7 +163,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      */
     @Override
     public List<String> getResourceTypeCodes() {
-        return new ArrayList<String>(this.resourceTypes.keySet());
+        return new ArrayList<>(this.resourceTypes.keySet());
     }
 
     /**
@@ -161,6 +171,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * dal tipo.
      *
      * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @return la risorsa aggiunta.
      * @throws ApsSystemException in caso di errore.
      */
     @Override
@@ -182,15 +193,15 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * Salva una lista dirisorse nel db con incluse nel filesystem,
      * indipendentemente dal tipo.
      *
-     * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @param beans L'oggetto detentore dei dati della risorsa da inserire.
      * @throws ApsSystemException in caso di errore.
      */
     @Override
     public List<ResourceInterface> addResources(List<BaseResourceDataBean> beans) throws ApsSystemException {
-        List<ResourceInterface> newResource = new ArrayList<ResourceInterface>();
+        List<ResourceInterface> newResource = new ArrayList<>();
         beans.forEach(b -> {
             try {
-                newResource.add(addResource(b));
+                newResource.add(this.addResource(b));
             } catch (ApsSystemException ex) {
                 logger.error("Error adding resources", ex);
             }
@@ -202,7 +213,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * Cancella una lista di risorse dal db ed i file di ogni istanza dal
      * filesystem.
      *
-     * @param resource La lista di risorse da cancellare.
+     * @param resources La lista di risorse da cancellare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
     @Override
@@ -404,7 +415,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
         this.fillEmptyResourceFromXml(resource, resourceXML);
         resource.setMainGroup(resourceVo.getMainGroup());
         resource.setCreationDate(resourceVo.getCreationDate());
-        resource.setLastModified(resourceVo.getLastModified());      
+        resource.setLastModified(resourceVo.getLastModified());
         return resource;
     }
 

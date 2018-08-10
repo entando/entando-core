@@ -67,10 +67,11 @@ public interface IResourceManager {
     public void addResource(ResourceInterface resource) throws ApsSystemException;
 
     /**
-     * Salva una lista dirisorse nel db con incluse nel filesystem,
+     * Salva una lista di risorse nel db con incluse nel filesystem,
      * indipendentemente dal tipo.
      *
-     * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @param beans L'oggetto detentore dei dati della risorsa da inserire.
+     * @return La lista delle risorse aggiunte
      * @throws ApsSystemException in caso di errore.
      */
     public List<ResourceInterface> addResources(List<BaseResourceDataBean> beans) throws ApsSystemException;
@@ -79,7 +80,7 @@ public interface IResourceManager {
      * Cancella una lista di risorse dal db ed i file di ogni istanza dal
      * filesystem.
      *
-     * @param resource La lista di risorse da cancellare.
+     * @param resources La lista di risorse da cancellare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
     public void deleteResources(List<ResourceInterface> resources) throws ApsSystemException;

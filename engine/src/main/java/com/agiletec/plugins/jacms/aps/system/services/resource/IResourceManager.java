@@ -21,6 +21,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+import java.util.Map;
 
 /**
  * Interfaccia base per i servizi gestori tipi di risorse (immagini, audio,
@@ -177,6 +178,8 @@ public interface IResourceManager {
      * @throws ApsSystemException In case of error.
      */
     public void refreshResourcesInstances(String resourceTypeCode) throws ApsSystemException;
+
+    public Map<String, List<String>> getMetadataMapping() throws ApsSystemException;
 
     /**
      * Return the service status id.

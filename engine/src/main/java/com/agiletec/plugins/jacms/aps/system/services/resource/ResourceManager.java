@@ -36,6 +36,7 @@ import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThre
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.util.DateConverter;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_CREATION_DATE_FILTER_KEY;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_DESCR_FILTER_KEY;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_FILENAME_FILTER_KEY;
@@ -49,11 +50,19 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceCha
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMonoInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.JaxbMetadataMapping;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -579,6 +588,30 @@ public class ResourceManager extends AbstractService implements IResourceManager
             throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
         }
         return resourcesId;
+    }
+
+    @Override
+    public Map<String, List<String>> getMetadataMapping() throws ApsSystemException {
+        Map<String, List<String>> mapping = new HashMap<>();
+        try {
+            String xmlConfig = this.getConfigManager().getConfigItem(JacmsSystemConstants.CONFIG_ITEM_RESOURCE_METADATA_MAPPING);
+            InputStream stream = new ByteArrayInputStream(xmlConfig.getBytes(StandardCharsets.UTF_8));
+            JAXBContext context = JAXBContext.newInstance(JaxbMetadataMapping.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            JaxbMetadataMapping jaxbMapping = (JaxbMetadataMapping) unmarshaller.unmarshal(stream);
+            jaxbMapping.getFields().stream().forEach(m -> {
+                String key = m.getKey();
+                String csv = m.getValue();
+                if (!StringUtils.isBlank(csv)) {
+                    List<String> metadatas = Arrays.asList(csv.split(","));
+                    mapping.put(key, metadatas);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error Extracting resource metadata mapping", e);
+            throw new ApsSystemException("Error Extracting resource metadata mapping", e);
+        }
+        return mapping;
     }
 
 }

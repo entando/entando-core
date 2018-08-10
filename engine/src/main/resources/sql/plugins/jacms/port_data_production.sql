@@ -468,10 +468,10 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'imag
 	</Dimension>
 </Dimensions>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'jacms_resourceMetadataMapping', 'Mapping between resource Metadata and resource attribute fields', '<mapping>
-    <field key="alt"></fields>
-    <field key="description"></fields>
-    <field key="legend"></fields>
-    <field key="title">m</fields>
+    <field key="alt"></field>
+    <field key="description"></field>
+    <field key="legend"></field>
+    <field key="title">m</field>
 </mapping>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'subIndexDir', 'Name of the sub-directory containing content indexing files', 'index');
 

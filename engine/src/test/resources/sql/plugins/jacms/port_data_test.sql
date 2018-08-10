@@ -695,10 +695,10 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'imageDimen
 	</Dimension>
 </Dimensions>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'jacms_resourceMetadataMapping', 'Mapping between resource Metadata and resource attribute fields', '<mapping>
-    <field key="alt">metadataKey1,metadataKey2,metadatakey3,xxx,yyy</fields>
-    <field key="description">metadataKeyA,metadataKeyB</fields>
-    <field key="legend">metadataKeyX,metadataKeyY,metadatakeyX,YYYY,WWWWW</fields>
-    <field key="title">metadataKeyG,metadataKeyK,metadatakeyF</fields>
+    <field key="alt">metadataKey1,metadataKey2,metadatakey3,xxx,yyy</field>
+    <field key="description">metadataKeyA,metadataKeyB</field>
+    <field key="legend">metadataKeyX,metadataKeyY,metadatakeyX,YYYY,WWWWW</field>
+    <field key="title">metadataKeyG,metadataKeyK,metadatakeyF</field>
 </mapping>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'subIndexDir', 'Name of the sub-directory containing content indexing files', 'index');
 

@@ -115,17 +115,18 @@ public class ResourceAttributeActionHelper {
                 if (null != mapping) {
                     String rightKey = mapping.stream()
                             .filter(key -> !StringUtils.isBlank(resource.getMetadata().get(key))).
-                            findFirst().get();
-                    System.out.println(mappingKey + " -> " + rightKey);
-                    String value = resource.getMetadata().get(rightKey);
-                    if (mappingKey.equals(IResourceManager.ALT_METADATA_MAPPING_KEY)) {
-                        resourceAttribute.setResourceAlt(value, finalLangCode);
-                    } else if (mappingKey.equals(IResourceManager.DESCRIPTION_METADATA_MAPPING_KEY)) {
-                        resourceAttribute.setResourceDescription(value, finalLangCode);
-                    } else if (mappingKey.equals(IResourceManager.LEGEND_METADATA_MAPPING_KEY)) {
-                        resourceAttribute.setResourceLegend(value, finalLangCode);
-                    } else if (mappingKey.equals(IResourceManager.TITLE_METADATA_MAPPING_KEY)) {
-                        resourceAttribute.setResourceTitle(value, finalLangCode);
+                            findFirst().orElse(null);
+                    if (null != rightKey) {
+                        String value = resource.getMetadata().get(rightKey);
+                        if (mappingKey.equals(IResourceManager.ALT_METADATA_MAPPING_KEY)) {
+                            resourceAttribute.setResourceAlt(value, finalLangCode);
+                        } else if (mappingKey.equals(IResourceManager.DESCRIPTION_METADATA_MAPPING_KEY)) {
+                            resourceAttribute.setResourceDescription(value, finalLangCode);
+                        } else if (mappingKey.equals(IResourceManager.LEGEND_METADATA_MAPPING_KEY)) {
+                            resourceAttribute.setResourceLegend(value, finalLangCode);
+                        } else if (mappingKey.equals(IResourceManager.TITLE_METADATA_MAPPING_KEY)) {
+                            resourceAttribute.setResourceTitle(value, finalLangCode);
+                        }
                     }
                 }
             });

@@ -56,11 +56,16 @@ public class ResourceManagerIntegrationTest extends BaseTestCase {
             assertTrue(resource.isMultiInstance());
             assertEquals(resource.getDescription(), "logo");
             assertEquals(resource.getCategories().size(), 1);
+            assertNotNull(resource.getMetadata());
+            assertEquals(23, resource.getMetadata().size());
+
             resource = this.resourceManager.loadResource("7");
             assertTrue(resource instanceof AttachResource);
             assertFalse(resource.isMultiInstance());
             assertEquals(resource.getDescription(), "configurazione");
             assertEquals(resource.getCategories().size(), 0);
+            assertNotNull(resource.getMetadata());
+            assertEquals(0, resource.getMetadata().size());
         } catch (Throwable t) {
             throw t;
         }
@@ -405,8 +410,8 @@ public class ResourceManagerIntegrationTest extends BaseTestCase {
         assertNotNull(mapping);
         assertEquals(4, mapping.size());
         assertEquals(5, mapping.get("alt").size());
-        assertEquals(2, mapping.get("description").size());
-        assertEquals(5, mapping.get("legend").size());
+        assertEquals(3, mapping.get("description").size());
+        assertEquals(6, mapping.get("legend").size());
         assertEquals("metadatakey3", mapping.get("alt").get(2));
         assertEquals("metadataKeyA", mapping.get("description").get(0));
         assertEquals("YYYY", mapping.get("legend").get(3));

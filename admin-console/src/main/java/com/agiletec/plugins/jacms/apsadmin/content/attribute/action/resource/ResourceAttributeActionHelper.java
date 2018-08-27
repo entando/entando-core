@@ -104,7 +104,6 @@ public class ResourceAttributeActionHelper {
             String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
             final String finalLangCode = (langCode != null && !"".equals(langCode)) ? langCode : null;
             ((ResourceAttributeInterface) attribute).setResource(resource, langCode);
-
             AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
             resourceAttribute.setText(resource.getDescription(), langCode);
             if (null == resource.getMetadata()) {

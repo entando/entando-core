@@ -207,6 +207,8 @@ public interface IResourceManager {
 
     public Map<String, List<String>> getMetadataMapping() throws ApsSystemException;
 
+    public void updateMetadataMapping(Map<String, List<String>> mapping) throws ApsSystemException;
+
     /**
      * Return the service status id.
      *

@@ -58,9 +58,11 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRec
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -612,6 +614,22 @@ public class ResourceManager extends AbstractService implements IResourceManager
             throw new ApsSystemException("Error Extracting resource metadata mapping", e);
         }
         return mapping;
+    }
+
+    @Override
+    public void updateMetadataMapping(Map<String, List<String>> mapping) throws ApsSystemException {
+        try {
+            JAXBContext context = JAXBContext.newInstance(JaxbMetadataMapping.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(new JaxbMetadataMapping(mapping), writer);
+            String config = writer.toString();
+            this.getConfigManager().updateConfigItem(JacmsSystemConstants.CONFIG_ITEM_RESOURCE_METADATA_MAPPING, config);
+        } catch (Exception e) {
+            logger.error("Error Updating resource metadata mapping", e);
+            throw new ApsSystemException("Error Updating resource metadata mapping", e);
+        }
     }
 
 }

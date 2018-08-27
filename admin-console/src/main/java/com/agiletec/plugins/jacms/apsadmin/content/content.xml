@@ -379,25 +379,22 @@
     <package name="jacms_do/jacms/Content/Admin" namespace="/do/jacms/Content/Admin" extends="entando-default">
 
 		<action name="updateSystemParams" class="jacmsContentAdminAction" method="updateSystemParams" >
-			<result type="tiles">admin.jacms.content.contentIndexFunctions</result>
-			<result type="redirectAction">openIndexProspect</result>
+			<result type="tiles">admin.jacms.content.settings</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
 		</action>
 
     	<action name="openIndexProspect" class="jacmsContentAdminAction" method="configSystemParams" >
-            <result type="tiles">admin.jacms.content.contentIndexFunctions</result>
+            <result type="tiles">admin.jacms.content.settings</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         
     	<action name="reloadContentsIndex" class="jacmsContentAdminAction" method="reloadContentsIndex" >
-            <result type="tiles">admin.jacms.content.contentIndexFunctions</result>
-			<result type="redirectAction">openIndexProspect</result>
+            <result type="tiles">admin.jacms.content.settings</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
         
     	<action name="reloadContentsReference" class="jacmsContentAdminAction" method="reloadContentsReference" >
-            <result type="tiles">admin.jacms.content.contentIndexFunctions</result>
-			<result type="redirectAction">openIndexProspect</result>
+            <result type="tiles">admin.jacms.content.settings</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
     	

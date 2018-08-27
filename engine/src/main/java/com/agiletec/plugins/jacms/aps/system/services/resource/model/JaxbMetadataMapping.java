@@ -15,6 +15,7 @@ package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -27,6 +28,27 @@ import javax.xml.bind.annotation.XmlValue;
 public class JaxbMetadataMapping {
 
     private List<MetadataFieldMapping> fields = new ArrayList<>();
+
+    public JaxbMetadataMapping() {
+    }
+
+    public JaxbMetadataMapping(Map<String, List<String>> mapping) {
+        if (null == mapping) {
+            return;
+        }
+        List<MetadataFieldMapping> newFields = new ArrayList<>();
+        mapping.keySet().stream().forEach(key -> {
+            List<String> list = mapping.get(key);
+            if (null != list) {
+                String values = String.join(",", list);
+                MetadataFieldMapping field = new MetadataFieldMapping();
+                field.setKey(key);
+                field.setValue(values);
+                newFields.add(field);
+            }
+        });
+        this.setFields(newFields);
+    }
 
     @XmlElement(name = "field", required = false)
     public List<MetadataFieldMapping> getFields() {

@@ -31,6 +31,32 @@ import java.util.Map;
  */
 public interface IResourceManager {
 
+    public static final String RESOURCE_ID_FILTER_KEY = "resid";
+
+    public static final String RESOURCE_TYPE_FILTER_KEY = "restype";
+
+    public static final String RESOURCE_DESCR_FILTER_KEY = "descr";
+
+    public static final String RESOURCE_MAIN_GROUP_FILTER_KEY = "maingroup";
+
+    public static final String RESOURCE_FILENAME_FILTER_KEY = "masterfilename";
+
+    public static final String RESOURCE_CREATION_DATE_FILTER_KEY = "creationdate";
+
+    public static final String RESOURCE_MODIFY_DATE_FILTER_KEY = "lastmodified";
+
+    public static final int STATUS_READY = 0;
+    public static final int STATUS_RELOADING_RESOURCE_MAIN_FILENAME_IN_PROGRESS = 1;
+    public static final int STATUS_RELOADING_RESOURCE_INSTANCES_IN_PROGRESS = 2;
+
+    public static final String ALT_METADATA_MAPPING_KEY = "alt";
+    public static final String DESCRIPTION_METADATA_MAPPING_KEY = "description";
+    public static final String LEGEND_METADATA_MAPPING_KEY = "legend";
+    public static final String TITLE_METADATA_MAPPING_KEY = "title";
+
+    public static final String[] METADATA_MAPPING_KEYS = {ALT_METADATA_MAPPING_KEY,
+        DESCRIPTION_METADATA_MAPPING_KEY, LEGEND_METADATA_MAPPING_KEY, TITLE_METADATA_MAPPING_KEY};
+
     /**
      * Crea una nuova istanza di un tipo di risorsa del tipo richiesto. Il nuovo
      * tipo di risorsa è istanziato mediante clonazione del prototipo
@@ -187,23 +213,5 @@ public interface IResourceManager {
      * @return The service status id.
      */
     public int getStatus();
-
-    public static final String RESOURCE_ID_FILTER_KEY = "resid";
-
-    public static final String RESOURCE_TYPE_FILTER_KEY = "restype";
-
-    public static final String RESOURCE_DESCR_FILTER_KEY = "descr";
-
-    public static final String RESOURCE_MAIN_GROUP_FILTER_KEY = "maingroup";
-
-    public static final String RESOURCE_FILENAME_FILTER_KEY = "masterfilename";
-
-    public static final String RESOURCE_CREATION_DATE_FILTER_KEY = "creationdate";
-
-    public static final String RESOURCE_MODIFY_DATE_FILTER_KEY = "lastmodified";
-
-    public static final int STATUS_READY = 0;
-    public static final int STATUS_RELOADING_RESOURCE_MAIN_FILENAME_IN_PROGRESS = 1;
-    public static final int STATUS_RELOADING_RESOURCE_INSTANCES_IN_PROGRESS = 2;
 
 }

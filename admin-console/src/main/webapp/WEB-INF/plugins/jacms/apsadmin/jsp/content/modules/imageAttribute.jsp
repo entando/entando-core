@@ -34,10 +34,10 @@
                                 <s:property value="#defaultResource.masterFileName" />
                             </p>
 
-                            <label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
                                 <span title="<s:text name="label.img.text.long" />"><s:text name="label.img.text.short" /></span>
                             </label>
-                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
+                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
                             </div>
                         </div>
@@ -46,10 +46,10 @@
                     <!-- alt, description, legend, and title -->
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
                                 <span title="<s:text name="label.img.alt.long" />"><s:text name="label.alt.short" /></span>
                             </label>
-                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
+                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_alt"
                                 name="%{#attributeTracer.getFormFieldName(#attribute)}_alt" value="%{#attribute.getResourceAltForLang(#lang.code)}"
                                 maxlength="254" cssClass="form-control" />
@@ -58,10 +58,10 @@
                     </div>
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
                                 <span title="<s:text name="label.img.description.long" />"><s:text name="label.description.short" /></span>
                             </label>
-                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
+                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_description"
                                 name="%{#attributeTracer.getFormFieldName(#attribute)}_description" value="%{#attribute.getResourceDescriptionForLang(#lang.code)}"
                                 maxlength="254" cssClass="form-control" />
@@ -70,10 +70,10 @@
                     </div>
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
                                 <span title="<s:text name="label.img.legend.long" />"><s:text name="label.legend.short" /></span>
                             </label>
-                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
+                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
                                 name="%{#attributeTracer.getFormFieldName(#attribute)}_legend" value="%{#attribute.getResourceLegendForLang(#lang.code)}"
                                 maxlength="254" cssClass="form-control" />
@@ -82,10 +82,10 @@
                     </div>
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="col-lg-1 col-md-2 col-sm-3 no-padding text-right pr-10" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
                                 <span title="<s:text name="label.img.title.long" />"><s:text name="label.title.short" /></span>
                             </label>
-                            <div class="col-lg-11 col-md-10 col-sm-9 no-padding">
+                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
                                 name="%{#attributeTracer.getFormFieldName(#attribute)}_title" value="%{#attribute.getResourceTitleForLang(#lang.code)}"
                                 maxlength="254" cssClass="form-control" />
@@ -153,6 +153,48 @@
                             <s:include value="/WEB-INF/apsadmin/jsp/entity/modules/textAttribute.jsp" />
                         </div>
                     </div>
+                    
+                    <!-- alt, description, legend, and title -->
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
+                            <span title="<s:text name="label.img.alt.long" />"><s:text name="label.alt.short" /></span>
+                        </label>
+                        <div class="col-xs-10">
+                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_alt"
+                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_alt" value="%{#attribute.getResourceAltForLang(#lang.code)}"
+                                            maxlength="254" cssClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
+                            <span title="<s:text name="label.img.description.long" />"><s:text name="label.description.short" /></span>
+                        </label>
+                        <div class="col-xs-10">
+                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_description"
+                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_description" value="%{#attribute.getResourceDescriptionForLang(#lang.code)}"
+                                            maxlength="254" cssClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
+                            <span title="<s:text name="label.img.legend.long" />"><s:text name="label.legend.short" /></span>
+                        </label>
+                        <div class="col-xs-10">
+                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
+                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_legend" value="%{#attribute.getResourceLegendForLang(#lang.code)}"
+                                            maxlength="254" cssClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
+                            <span title="<s:text name="label.img.title.long" />"><s:text name="label.title.short" /></span>
+                        </label>
+                        <div class="col-xs-10">
+                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
+                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_title" value="%{#attribute.getResourceTitleForLang(#lang.code)}"
+                                            maxlength="254" cssClass="form-control" />
+                        </div>
+                    </div>
                         
                     <%-- choose resource button --%>
                     <div class="text-right">
@@ -168,48 +210,6 @@
                                 <s:param name="resourceTypeCode">Image</s:param>
                             </s:include>
                         </s:else>
-                    </div>
-                    
-                    <!-- alt, description, legend, and title -->
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
-                            <span title="<s:text name="label.img.alt.long" />"><s:text name="label.img.alt.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_alt"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_alt" value="%{#attribute.getResourceAltForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
-                            <span title="<s:text name="label.img.description.long" />"><s:text name="label.img.description.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_description"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_description" value="%{#attribute.getResourceDescriptionForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
-                            <span title="<s:text name="label.img.legend.long" />"><s:text name="label.img.legend.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_legend" value="%{#attribute.getResourceLegendForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
-                            <span title="<s:text name="label.img.title.long" />"><s:text name="label.img.title.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_title" value="%{#attribute.getResourceTitleForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
                     </div>
                     
                 </div>

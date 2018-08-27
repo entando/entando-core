@@ -471,7 +471,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'jacm
     <field key="alt"></field>
     <field key="description"></field>
     <field key="legend"></field>
-    <field key="title">m</field>
+    <field key="title"></field>
 </mapping>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'subIndexDir', 'Name of the sub-directory containing content indexing files', 'index');
 

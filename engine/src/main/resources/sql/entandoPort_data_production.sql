@@ -257,7 +257,7 @@ INSERT INTO pages (code, parentcode, pos) VALUES ('notfound', 'service', 1);
 INSERT INTO pages (code, parentcode, pos) VALUES ('errorpage', 'service', 2);
 INSERT INTO pages (code, parentcode, pos) VALUES ('homepage', 'homepage', -1);
 
-INSERT INTO pages_metadata_online (code, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO pages_metadata_online (code, groupcode, titles, modelcode, showinmenu, extraconfig, updatedat) VALUES ('service', 'free', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="it">Pagine di Servizio</property>
 <property key="en">Service</property>

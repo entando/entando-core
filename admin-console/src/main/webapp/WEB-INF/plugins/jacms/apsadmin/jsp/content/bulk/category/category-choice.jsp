@@ -92,7 +92,6 @@
                 </s:iterator>
             </p>
         </s:if>
-
         <fieldset class="col-xs-12 no-padding" id="category-content-block">
             <legend><s:text name="title.categoriesManagement"/></legend>
 
@@ -124,17 +123,16 @@
                     <s:set var="liClassName" value="'category'" />
                     <s:set var="treeItemIconName" value="'fa-folder'" />
                     <s:if test="#categoryTreeStyleVar == 'classic'">
-                        <s:set var="currentRoot" value="categoryRoot" />
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp" />
+                        <s:set var="currentRoot" value="allowedTreeRootNode" />
+                        <s:property value="#currentRoot.childrenCodes" />
+                        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp" />
                     </s:if>
-
                     <s:elseif test="#categoryTreeStyleVar == 'request'">
                         <s:set var="currentRoot" value="showableTree" />
                         <s:set var="openTreeActionName" value="'backToContentList'" />
                         <s:set var="closeTreeActionName" value="'backToContentList'" />
-                        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
+                        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
                     </s:elseif>
-
                 </tbody>
             </table>
 

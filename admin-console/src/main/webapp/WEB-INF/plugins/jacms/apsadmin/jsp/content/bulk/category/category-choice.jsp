@@ -129,8 +129,8 @@
                     </s:if>
                     <s:elseif test="#categoryTreeStyleVar == 'request'">
                         <s:set var="currentRoot" value="showableTree" />
-                        <s:set var="openTreeActionName" value="'backToContentList'" />
-                        <s:set var="closeTreeActionName" value="'backToContentList'" />
+                        <s:set var="openTreeActionName" value="'entry'" />
+                        <s:set var="closeTreeActionName" value="'entry'" />
                         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
                     </s:elseif>
                 </tbody>

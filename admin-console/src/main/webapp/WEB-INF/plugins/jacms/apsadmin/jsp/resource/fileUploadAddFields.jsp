@@ -14,6 +14,11 @@
 
             $('#newDescr').attr("name", "descr_" + newId);
             $('#newDescr').attr("id", "descr_" + newId);
+
+            $('#newFileUpload_label').attr("for", "fileUpload_" + newId);
+            $('#newFileUpload_label').attr("id", "fileUpload_label_" + newId);
+
+            $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
             $('#newFileUpload').attr("id", "fileUpload_" + newId);
 
         });

@@ -95,9 +95,10 @@ public class TestExtendedResourceFinderAction extends AbstractBaseTestContentAct
         imageAttribute = (ImageAttribute) attributeAction.getContent().getAttribute("Foto");
         assertNotNull(imageAttribute.getResource("it"));
         assertEquals("44", imageAttribute.getResource("it").getId());
-        assertNull(imageAttribute.getResource("en"));
-        assertNull(imageAttribute.getResourceAltForLang("it"));
-        assertNull(imageAttribute.getResourceTitleForLang("it"));
+        assertEquals("", imageAttribute.getResourceAltForLang("it"));
+        assertNull(imageAttribute.getResourceAltMap().get("it"));
+        assertEquals("", imageAttribute.getResourceTitleForLang("it"));
+        assertNull(imageAttribute.getResourceTitleMap().get("it"));
         assertEquals("Joint Photographic Experts Group", imageAttribute.getResourceLegendForLang("it"));
         assertEquals("CREATOR: gd-jpeg v1.0 (using IJG JPEG v62), default quality", imageAttribute.getResourceDescriptionForLang("it"));
     }

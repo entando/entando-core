@@ -31,6 +31,12 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
 
     private IResourceManager resourceManager;
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
+
     public void testOpenIndexProspect() throws Throwable {
         String result = this.executeOpenIndexProspect("admin");
         assertEquals(BaseAction.SUCCESS, result);
@@ -121,7 +127,6 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
     }
 
     protected void init() throws Exception {
-        super.init();
         try {
             this.resourceManager = (IResourceManager) this.getService(JacmsSystemConstants.RESOURCE_MANAGER);
         } catch (Throwable t) {

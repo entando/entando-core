@@ -29,6 +29,12 @@ import com.opensymphony.xwork2.Action;
  */
 public class TestValidateResourceAttribute extends AbstractTestContentAttribute {
 
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
+
     public void testValidate_SingleAttach() throws Throwable {
         this.testValidate_Single("Attach", "7");
     }
@@ -238,8 +244,7 @@ public class TestValidateResourceAttribute extends AbstractTestContentAttribute 
         }
     }
 
-    protected void init() throws Exception {
-        super.init();
+    private void init() throws Exception {
         try {
             this._resourceManager = (IResourceManager) this.getService(JacmsSystemConstants.RESOURCE_MANAGER);
         } catch (Throwable t) {

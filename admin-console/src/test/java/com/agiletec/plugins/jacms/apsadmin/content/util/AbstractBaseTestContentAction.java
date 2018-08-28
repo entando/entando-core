@@ -104,7 +104,7 @@ public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase
         return newContentIds;
     }
 
-    protected void init() throws Exception {
+    private void init() throws Exception {
         try {
             _contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
         } catch (Throwable t) {

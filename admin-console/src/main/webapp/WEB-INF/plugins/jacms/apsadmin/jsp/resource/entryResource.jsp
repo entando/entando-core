@@ -242,11 +242,7 @@
 </fieldset>
 <br>
 
-
-
-
 <%-- ADD FILE BUTTON --%>     
-
 
 <s:if test="not isOnEditContent()">
     <s:if test="getStrutsAction() == 1 ">
@@ -305,9 +301,14 @@
                 </s:elseif>
             </label>
 
-            <div class="col-sm-4">
+            <div class="col-sm-4">                                        
+                <s:set var="fieldIdVar" value="%{#ctr.count -1}" />
+                <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}" class="btn btn-default" key="label.button-choose-file" />
+                <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button" label="label.file" />
+                <span id="fileUpload_<s:property value="#fieldIdVar" />_selected" >
+                    <s:text name="label.no-file-selected" />
+                </span>
 
-                <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" />
                 <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="%{#uploadFieldErrorsVar}">
@@ -388,7 +389,13 @@
             </s:elseif>
         </label>
         <div class="col-sm-10">
-            <s:file name="upload" id="upload" label="label.file" />
+
+            <label id="upload_label" for="upload" class="btn btn-default" >
+                <s:text name="label.button-choose-file" /></label>
+                <s:file name="upload" id="upload" cssClass="input-file-button" label="label.file" />
+            <span id="upload_selected"><s:text name="label.no-file-selected" />
+            </span>
+
             <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
                     <s:iterator value="%{#uploadFieldErrorsVar}">
@@ -502,7 +509,11 @@
         </label>
 
         <div class="col-sm-4">
-            <s:file name="fileUpload" id="newFileUpload" label="label.file" />
+            <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default" >
+                <s:text name="label.button-choose-file" /></label>
+                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
+            <span id="newFileUpload_selected"><s:text name="label.no-file-selected" />
+            </span>
         </div> 
 
 
@@ -517,3 +528,4 @@
 </template>
 
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadAddFields.jsp" />
+<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabeli18n.jsp" />

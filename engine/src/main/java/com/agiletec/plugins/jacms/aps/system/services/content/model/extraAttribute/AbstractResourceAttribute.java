@@ -74,7 +74,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
 
     @Override
     public String getResourceAltForLang(String langCode) {
-        return this.getResourceAltMap().get(langCode);
+        return this.getMetadataForLang(this.getResourceAltMap(), langCode);
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
 
     @Override
     public String getResourceDescriptionForLang(String langCode) {
-        return this.getResourceDescriptionMap().get(langCode);
+        return this.getMetadataForLang(this.getResourceDescriptionMap(), langCode);
     }
 
     @Override
@@ -104,7 +104,7 @@ public abstract class AbstractResourceAttribute extends TextAttribute
 
     @Override
     public String getResourceLegendForLang(String langCode) {
-        return this.getResourceLegendMap().get(langCode);
+        return this.getMetadataForLang(this.getResourceLegendMap(), langCode);
     }
 
     @Override
@@ -119,12 +119,20 @@ public abstract class AbstractResourceAttribute extends TextAttribute
 
     @Override
     public String getResourceTitleForLang(String langCode) {
-        return this.getResourceTitleMap().get(langCode);
+        return this.getMetadataForLang(this.getResourceTitleMap(), langCode);
     }
 
     @Override
     public void setResourceTitle(String text, String langCode) {
         this.getResourceTitleMap().put(langCode, text);
+    }
+
+    private String getMetadataForLang(Map<String, String> map, String langCode) {
+        String text = (String) map.get(langCode);
+        if (text == null) {
+            text = "";
+        }
+        return text;
     }
 
     private String getMetadata(Map<String, String> map) {

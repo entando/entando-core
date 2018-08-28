@@ -67,12 +67,14 @@
             </s:if>
         </label>
     </td>
-    <td class="text-center">
-        <wpsf:submit action="%{#actionName}" type="button"
-                     title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
-            <span class="icon fa fa-plus"></span>
-        </wpsf:submit>
-    </td>
+    <s:if test="%{#skipAction == null || #joinAction.equals('true')}">
+        <td class="text-center">
+            <wpsf:submit action="%{#actionName}" type="button"
+                         title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
+                <span class="icon fa fa-plus"></span>
+            </wpsf:submit>
+        </td>
+    </s:if>
 </tr>
 
 <s:if test="#currentRoot.children.length > 0">

@@ -21,6 +21,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+import java.util.Map;
 
 /**
  * Interfaccia base per i servizi gestori tipi di risorse (immagini, audio,
@@ -29,6 +30,32 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
  * @author W.Ambu - E.Santoboni
  */
 public interface IResourceManager {
+
+    public static final String RESOURCE_ID_FILTER_KEY = "resid";
+
+    public static final String RESOURCE_TYPE_FILTER_KEY = "restype";
+
+    public static final String RESOURCE_DESCR_FILTER_KEY = "descr";
+
+    public static final String RESOURCE_MAIN_GROUP_FILTER_KEY = "maingroup";
+
+    public static final String RESOURCE_FILENAME_FILTER_KEY = "masterfilename";
+
+    public static final String RESOURCE_CREATION_DATE_FILTER_KEY = "creationdate";
+
+    public static final String RESOURCE_MODIFY_DATE_FILTER_KEY = "lastmodified";
+
+    public static final int STATUS_READY = 0;
+    public static final int STATUS_RELOADING_RESOURCE_MAIN_FILENAME_IN_PROGRESS = 1;
+    public static final int STATUS_RELOADING_RESOURCE_INSTANCES_IN_PROGRESS = 2;
+
+    public static final String ALT_METADATA_MAPPING_KEY = "alt";
+    public static final String DESCRIPTION_METADATA_MAPPING_KEY = "description";
+    public static final String LEGEND_METADATA_MAPPING_KEY = "legend";
+    public static final String TITLE_METADATA_MAPPING_KEY = "title";
+
+    public static final String[] METADATA_MAPPING_KEYS = {ALT_METADATA_MAPPING_KEY,
+        DESCRIPTION_METADATA_MAPPING_KEY, LEGEND_METADATA_MAPPING_KEY, TITLE_METADATA_MAPPING_KEY};
 
     /**
      * Crea una nuova istanza di un tipo di risorsa del tipo richiesto. Il nuovo
@@ -67,10 +94,11 @@ public interface IResourceManager {
     public void addResource(ResourceInterface resource) throws ApsSystemException;
 
     /**
-     * Salva una lista dirisorse nel db con incluse nel filesystem,
+     * Salva una lista di risorse nel db con incluse nel filesystem,
      * indipendentemente dal tipo.
      *
-     * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @param beans L'oggetto detentore dei dati della risorsa da inserire.
+     * @return La lista delle risorse aggiunte
      * @throws ApsSystemException in caso di errore.
      */
     public List<ResourceInterface> addResources(List<BaseResourceDataBean> beans) throws ApsSystemException;
@@ -79,7 +107,7 @@ public interface IResourceManager {
      * Cancella una lista di risorse dal db ed i file di ogni istanza dal
      * filesystem.
      *
-     * @param resource La lista di risorse da cancellare.
+     * @param resources La lista di risorse da cancellare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
     public void deleteResources(List<ResourceInterface> resources) throws ApsSystemException;
@@ -177,29 +205,15 @@ public interface IResourceManager {
      */
     public void refreshResourcesInstances(String resourceTypeCode) throws ApsSystemException;
 
+    public Map<String, List<String>> getMetadataMapping() throws ApsSystemException;
+
+    public void updateMetadataMapping(Map<String, List<String>> mapping) throws ApsSystemException;
+
     /**
      * Return the service status id.
      *
      * @return The service status id.
      */
     public int getStatus();
-
-    public static final String RESOURCE_ID_FILTER_KEY = "resid";
-
-    public static final String RESOURCE_TYPE_FILTER_KEY = "restype";
-
-    public static final String RESOURCE_DESCR_FILTER_KEY = "descr";
-
-    public static final String RESOURCE_MAIN_GROUP_FILTER_KEY = "maingroup";
-
-    public static final String RESOURCE_FILENAME_FILTER_KEY = "masterfilename";
-
-    public static final String RESOURCE_CREATION_DATE_FILTER_KEY = "creationdate";
-
-    public static final String RESOURCE_MODIFY_DATE_FILTER_KEY = "lastmodified";
-
-    public static final int STATUS_READY = 0;
-    public static final int STATUS_RELOADING_RESOURCE_MAIN_FILENAME_IN_PROGRESS = 1;
-    public static final int STATUS_RELOADING_RESOURCE_INSTANCES_IN_PROGRESS = 2;
 
 }

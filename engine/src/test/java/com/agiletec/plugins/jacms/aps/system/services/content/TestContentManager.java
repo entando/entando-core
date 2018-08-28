@@ -13,13 +13,6 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.content;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.FieldSearchFilter;
@@ -48,6 +41,12 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.ImageAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.LinkAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.ResourceAttributeInterface;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.common.entity.model.attribute.EnumeratorMapAttribute;
 
 /**
@@ -124,9 +123,7 @@ public class TestContentManager extends BaseTestCase {
         assertEquals(22, contentIds.size());
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+    // ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
     public void testSearchContents_1_3() throws Throwable {
         EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
         creationOrder.setOrder(EntitySearchFilter.ASC_ORDER);
@@ -310,9 +307,7 @@ public class TestContentManager extends BaseTestCase {
         assertEquals(25, contents.size());
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+    // ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
     public void testSearchWorkContents_2_a() throws Throwable {
         List<String> groupCodes = new ArrayList<String>();
         groupCodes.add("customers");
@@ -865,9 +860,7 @@ public class TestContentManager extends BaseTestCase {
         this.testLoadPublicEvents_9_a(false);
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+    // ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
     protected void testLoadPublicEvents_9_a(boolean useRoleFilter) throws ApsSystemException {
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
@@ -935,9 +928,7 @@ public class TestContentManager extends BaseTestCase {
         }
     }
 
-    /*
-	 * ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
-     */
+    // ATTENTION: invalid test on mysql db because the standard search with 'LIKE' clause is case insensitive
     public void testLoadWorkEvents_1_a() throws ApsSystemException {
         List<String> groups = new ArrayList<String>();
         groups.add(Group.ADMINS_GROUP_NAME);
@@ -1356,7 +1347,7 @@ public class TestContentManager extends BaseTestCase {
             assertTrue(contents.contains(expectedFreeContentsId[i]));
         }
 
-        Collection<String> allowedGroup = new HashSet<String>();
+        Collection<String> allowedGroup = new HashSet<>();
         allowedGroup.add(Group.FREE_GROUP_NAME);
         allowedGroup.add("customers");
 
@@ -1441,7 +1432,7 @@ public class TestContentManager extends BaseTestCase {
     }
 
     public void testLoadWorkContentsByAttribute_3() throws Throwable {
-        List<String> groups = new ArrayList<String>();
+        List<String> groups = new ArrayList<>();
         String[] masterContentIds = {"EVN193", "EVN191", "EVN192", "EVN194", "EVN23", "EVN24"};
         String[] newContentIds = null;
         try {
@@ -1519,6 +1510,111 @@ public class TestContentManager extends BaseTestCase {
             throw t;
         } finally {
             this.deleteContents(newContentIds);
+        }
+    }
+
+    public void testGetLinkProperties() throws Throwable {
+        EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+        creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
+        EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ALL", false);
+        EntitySearchFilter[] filters = {creationOrder, typeFilter};
+        List<String> userGroups = new ArrayList<>();
+        userGroups.add(Group.ADMINS_GROUP_NAME);
+        List<String> contents = null;
+        try {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            assertEquals(1, contents.size());
+            Content content = this._contentManager.loadContent("ALL4", false);
+            assertEquals(Content.STATUS_PUBLIC, content.getStatus());
+            assertEquals(Group.FREE_GROUP_NAME, content.getMainGroup());
+            Map<String, AttributeInterface> attributes = content.getAttributeMap();
+            MonoListAttribute monoListAttribute10 = (MonoListAttribute) attributes.get("MonoLLink");
+            assertNotNull(monoListAttribute10);
+            assertEquals(2, monoListAttribute10.getAttributes().size());
+
+            LinkAttribute attributeToModify = (LinkAttribute) monoListAttribute10.getAttributes().get(0);
+            attributeToModify.getLinkProperties().put("key1", "value1");
+            attributeToModify.getLinkProperties().put("key2", "value2");
+
+            content.setId(null);
+            this._contentManager.saveContent(content);
+            String id = content.getId();
+
+            Content extractedContent = this._contentManager.loadContent(id, false);
+            attributes = extractedContent.getAttributeMap();
+            monoListAttribute10 = (MonoListAttribute) attributes.get("MonoLLink");
+            assertNotNull(monoListAttribute10);
+            assertEquals(2, monoListAttribute10.getAttributes().size());
+            LinkAttribute attributeModified = (LinkAttribute) monoListAttribute10.getAttributes().get(0);
+            assertEquals(2, attributeModified.getLinkProperties().size());
+            assertEquals("value1", attributeModified.getLinkProperties().get("key1"));
+            assertEquals("value2", attributeModified.getLinkProperties().get("key2"));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            if (contents.size() > 1) {
+                Content contentToDelete = this._contentManager.loadContent(contents.get(0), false);
+                this._contentManager.deleteContent(contentToDelete);
+            }
+        }
+    }
+
+    public void testGetResourceProperties() throws Throwable {
+        EntitySearchFilter creationOrder = new EntitySearchFilter(IContentManager.CONTENT_CREATION_DATE_FILTER_KEY, false);
+        creationOrder.setOrder(EntitySearchFilter.DESC_ORDER);
+        EntitySearchFilter typeFilter = new EntitySearchFilter(IContentManager.ENTITY_TYPE_CODE_FILTER_KEY, false, "ALL", false);
+        EntitySearchFilter[] filters = {creationOrder, typeFilter};
+        List<String> userGroups = new ArrayList<>();
+        userGroups.add(Group.ADMINS_GROUP_NAME);
+        List<String> contents = null;
+        try {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            assertEquals(1, contents.size());
+            Content content = this._contentManager.loadContent("ALL4", false);
+            assertEquals(Content.STATUS_PUBLIC, content.getStatus());
+            assertEquals(Group.FREE_GROUP_NAME, content.getMainGroup());
+            Map<String, AttributeInterface> attributes = content.getAttributeMap();
+            MonoListAttribute monoListAttribute = (MonoListAttribute) attributes.get("MonoLImage");
+            assertNotNull(monoListAttribute);
+            assertEquals(1, monoListAttribute.getAttributes().size());
+
+            ImageAttribute attributeToModify = (ImageAttribute) monoListAttribute.getAttributes().get(0);
+            attributeToModify.setResourceAlt("ALT en", "en");
+            attributeToModify.setResourceAlt("ALT it", "it");
+            attributeToModify.setResourceDescription("Description en", "en");
+            attributeToModify.setResourceLegend("Legend it", "it");
+            attributeToModify.setResourceTitle("Title en", "en");
+            attributeToModify.setResourceTitle("Title it", "it");
+
+            content.setId(null);
+            this._contentManager.saveContent(content);
+            String id = content.getId();
+
+            Content extractedContent = this._contentManager.loadContent(id, false);
+            attributes = extractedContent.getAttributeMap();
+            monoListAttribute = (MonoListAttribute) attributes.get("MonoLImage");
+            assertNotNull(monoListAttribute);
+            assertEquals(1, monoListAttribute.getAttributes().size());
+            ImageAttribute attributeModified = (ImageAttribute) monoListAttribute.getAttributes().get(0);
+            assertEquals(2, attributeModified.getResourceAltMap().size());
+            assertEquals(1, attributeModified.getResourceDescriptionMap().size());
+            assertEquals(1, attributeModified.getResourceLegendMap().size());
+            assertEquals(2, attributeModified.getResourceTitleMap().size());
+            assertEquals("ALT it", attributeModified.getResourceAltForLang("it"));
+            assertEquals("Description en", attributeModified.getResourceDescriptionForLang("en"));
+            assertEquals("", attributeModified.getResourceDescriptionForLang("it"));
+            assertNull(attributeModified.getResourceDescriptionMap().get("it"));
+            assertEquals("Legend it", attributeModified.getResourceLegendForLang("it"));
+            assertEquals("Title en", attributeModified.getResourceTitleForLang("en"));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            contents = this._contentManager.loadWorkContentsId(filters, userGroups);
+            if (contents.size() > 1) {
+                Content contentToDelete = this._contentManager.loadContent(contents.get(0), false);
+                this._contentManager.deleteContent(contentToDelete);
+            }
         }
     }
 

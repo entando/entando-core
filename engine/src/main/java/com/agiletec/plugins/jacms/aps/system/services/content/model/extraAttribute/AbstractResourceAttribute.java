@@ -36,6 +36,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.ICmsAttributeErrorCodes;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Classe astratta di appoggio agli attributi di tipo Risorsa.
@@ -46,6 +47,136 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         implements IReferenceableAttribute, ResourceAttributeInterface {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractResourceAttribute.class);
+
+    private Map<String, ResourceInterface> resources = new HashMap<>();
+
+    public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
+
+    private transient ConfigInterface configManager;
+    private transient IResourceManager resourceManager;
+
+    private Map<String, String> altMap;
+    private Map<String, String> descriptionMap;
+    private Map<String, String> legendMap;
+    private Map<String, String> titleMap;
+
+    public AbstractResourceAttribute() {
+        this.altMap = new HashMap<>();
+        this.descriptionMap = new HashMap<>();
+        this.legendMap = new HashMap<>();
+        this.titleMap = new HashMap<>();
+    }
+
+    @Override
+    public String getResourceAlt() {
+        return this.getMetadata(this.getResourceAltMap());
+    }
+
+    @Override
+    public String getResourceAltForLang(String langCode) {
+        return this.getMetadataForLang(this.getResourceAltMap(), langCode);
+    }
+
+    @Override
+    public void setResourceAlt(String text, String langCode) {
+        this.getResourceAltMap().put(langCode, text);
+    }
+
+    @Override
+    public String getResourceDescription() {
+        return this.getMetadata(this.getResourceDescriptionMap());
+    }
+
+    @Override
+    public String getResourceDescriptionForLang(String langCode) {
+        return this.getMetadataForLang(this.getResourceDescriptionMap(), langCode);
+    }
+
+    @Override
+    public void setResourceDescription(String text, String langCode) {
+        this.getResourceDescriptionMap().put(langCode, text);
+    }
+
+    @Override
+    public String getResourceLegend() {
+        return this.getMetadata(this.getResourceLegendMap());
+    }
+
+    @Override
+    public String getResourceLegendForLang(String langCode) {
+        return this.getMetadataForLang(this.getResourceLegendMap(), langCode);
+    }
+
+    @Override
+    public void setResourceLegend(String text, String langCode) {
+        this.getResourceLegendMap().put(langCode, text);
+    }
+
+    @Override
+    public String getResourceTitle() {
+        return this.getMetadata(this.getResourceTitleMap());
+    }
+
+    @Override
+    public String getResourceTitleForLang(String langCode) {
+        return this.getMetadataForLang(this.getResourceTitleMap(), langCode);
+    }
+
+    @Override
+    public void setResourceTitle(String text, String langCode) {
+        this.getResourceTitleMap().put(langCode, text);
+    }
+
+    private String getMetadataForLang(Map<String, String> map, String langCode) {
+        String text = (String) map.get(langCode);
+        if (text == null) {
+            text = "";
+        }
+        return text;
+    }
+
+    private String getMetadata(Map<String, String> map) {
+        String text = (String) map.get(this.getRenderingLang());
+        if (text == null) {
+            text = (String) map.get(this.getDefaultLangCode());
+            if (text == null) {
+                text = "";
+            }
+        }
+        return text;
+    }
+
+    public Map<String, String> getResourceAltMap() {
+        return altMap;
+    }
+
+    public void setResourceAltMap(Map<String, String> altMap) {
+        this.altMap = altMap;
+    }
+
+    public Map<String, String> getResourceDescriptionMap() {
+        return descriptionMap;
+    }
+
+    public void setResourceDescriptionMap(Map<String, String> descriptionMap) {
+        this.descriptionMap = descriptionMap;
+    }
+
+    public Map<String, String> getResourceLegendMap() {
+        return legendMap;
+    }
+
+    public void setResourceLegendMap(Map<String, String> legendMap) {
+        this.legendMap = legendMap;
+    }
+
+    public Map<String, String> getResourceTitleMap() {
+        return titleMap;
+    }
+
+    public void setResourceTitleMap(Map<String, String> titleMap) {
+        this.titleMap = titleMap;
+    }
 
     @Override
     public Object getAttributePrototype() {
@@ -134,7 +265,28 @@ public abstract class AbstractResourceAttribute extends TextAttribute
             }
         }
         super.addTextElements(attributeElement);
+        this.addResourceTextElements(attributeElement, "alt", this.getResourceAltMap());
+        this.addResourceTextElements(attributeElement, "description", this.getResourceDescriptionMap());
+        this.addResourceTextElements(attributeElement, "legend", this.getResourceLegendMap());
+        this.addResourceTextElements(attributeElement, "title", this.getResourceTitleMap());
         return attributeElement;
+    }
+
+    protected void addResourceTextElements(Element attributeElement, String elementName, Map<String, String> map) {
+        if (null == map) {
+            return;
+        }
+        Iterator<String> langIter = map.keySet().iterator();
+        while (langIter.hasNext()) {
+            String currentLangCode = langIter.next();
+            String text = map.get(currentLangCode);
+            if (!StringUtils.isEmpty(text)) {
+                Element textElement = new Element(elementName);
+                textElement.setAttribute("lang", currentLangCode);
+                textElement.setText(text.trim());
+                attributeElement.addContent(textElement);
+            }
+        }
     }
 
     /**
@@ -323,12 +475,5 @@ public abstract class AbstractResourceAttribute extends TextAttribute
     public void setResourceManager(IResourceManager resourceManager) {
         this.resourceManager = resourceManager;
     }
-
-    private Map<String, ResourceInterface> resources = new HashMap<>();
-
-    public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
-
-    private transient ConfigInterface configManager;
-    private transient IResourceManager resourceManager;
 
 }

@@ -27,91 +27,94 @@ import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
  */
 public abstract class AbstractBaseTestContentAction extends ApsAdminBaseTestCase {
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		this.init();
-	}
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        this.init();
+    }
 
-	protected String executeEdit(String contentId, String currentUserName) throws Throwable {
-		this.initAction("/do/jacms/Content", "edit");
-		this.setUserOnSession(currentUserName);
-		this.addParameter("contentId", contentId);
-		String result = this.executeAction();
-		return result;
-	}
+    protected String executeEdit(String contentId, String currentUserName) throws Throwable {
+        this.initAction("/do/jacms/Content", "edit");
+        this.setUserOnSession(currentUserName);
+        this.addParameter("contentId", contentId);
+        String result = this.executeAction();
+        return result;
+    }
 
-	protected String executeCreateNewVoid(String contentTypeCode, String contentDescription,
-			String contentStatus, String contentMainGroup, String currentUserName) throws Throwable {
-		this.initAction("/do/jacms/Content", "createNewVoid");
-		this.setUserOnSession(currentUserName);
-		this.addParameter("contentTypeCode", contentTypeCode);
-		this.addParameter("contentDescription", contentDescription);
-		this.addParameter("contentStatus", contentStatus);
-		this.addParameter("contentMainGroup", contentMainGroup);
-		String result = this.executeAction();
+    protected String executeCreateNewVoid(String contentTypeCode, String contentDescription,
+            String contentStatus, String contentMainGroup, String currentUserName) throws Throwable {
+        this.initAction("/do/jacms/Content", "createNewVoid");
+        this.setUserOnSession(currentUserName);
+        this.addParameter("contentTypeCode", contentTypeCode);
+        this.addParameter("contentDescription", contentDescription);
+        this.addParameter("contentStatus", contentStatus);
+        this.addParameter("contentMainGroup", contentMainGroup);
+        String result = this.executeAction();
 
-		String contentSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
-		assertNotNull(this.getContentOnEdit(contentSessionMarker));
-		return result;
-	}
+        String contentSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
+        assertNotNull(this.getContentOnEdit(contentSessionMarker));
+        return result;
+    }
 
-	protected String extractSessionMarker(String param, int operation) throws ApsSystemException {
-		Content content = null;
-		if (operation == ApsAdminSystemConstants.ADD) {
-			content = this._contentManager.createContentType(param);
-		} else {
-			content = this._contentManager.loadContent(param, false);
-		}
-		return AbstractContentAction.buildContentOnSessionMarker(content, operation);
-	}
+    protected String extractSessionMarker(String param, int operation) throws ApsSystemException {
+        Content content = null;
+        if (operation == ApsAdminSystemConstants.ADD) {
+            content = this._contentManager.createContentType(param);
+        } else {
+            content = this._contentManager.loadContent(param, false);
+        }
+        return AbstractContentAction.buildContentOnSessionMarker(content, operation);
+    }
 
-	protected void initContentAction(String namespace, String name, String contentOnSessionMarker) throws Exception {
-		this.initAction(namespace, name);
-		this.addParameter("contentOnSessionMarker", contentOnSessionMarker);
-	}
+    protected void initContentAction(String namespace, String name, String contentOnSessionMarker) throws Exception {
+        this.initAction(namespace, name);
+        this.addParameter("contentOnSessionMarker", contentOnSessionMarker);
+    }
 
-	protected Content getContentOnEdit(String contentMarker) {
-		return (Content) this.getRequest().getSession()
-				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentMarker);
-	}
+    protected Content getContentOnEdit(String contentMarker) {
+        return (Content) this.getRequest().getSession()
+                .getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentMarker);
+    }
 
-	/**
-	 * Aggiunge una serie di contenuti ad uso dei test clonandoli da quelli specificati.
-	 * @param masterContentIds Gli identificativi dei contenuti da cui ricavare i nuovi.
-	 * @param publish indica se publicare i contenuti.
-	 * @return Gli identificativi dei nuovi contenuti.
-	 * @throws Throwable In caso di errore.
-	 */
-	protected String[] addDraftContentsForTest(String[] masterContentIds, boolean publish) throws Throwable {
-		String[] newContentIds = new String[masterContentIds.length];
-		for (int i=0; i<masterContentIds.length; i++) {
-			Content content = this.getContentManager().loadContent(masterContentIds[i], false);
-			content.setId(null);
-			this.getContentManager().saveContent(content);
-			newContentIds[i] = content.getId();
-			if (publish) {
-				this.getContentManager().insertOnLineContent(content);
-			}
-		}
-		for (int i=0; i<newContentIds.length; i++) {
-			Content content = this.getContentManager().loadContent(newContentIds[i], false);
-			assertNotNull(content);
-		}
-		return newContentIds;
-	}
+    /**
+     * Aggiunge una serie di contenuti ad uso dei test clonandoli da quelli
+     * specificati.
+     *
+     * @param masterContentIds Gli identificativi dei contenuti da cui ricavare
+     * i nuovi.
+     * @param publish indica se publicare i contenuti.
+     * @return Gli identificativi dei nuovi contenuti.
+     * @throws Throwable In caso di errore.
+     */
+    protected String[] addDraftContentsForTest(String[] masterContentIds, boolean publish) throws Throwable {
+        String[] newContentIds = new String[masterContentIds.length];
+        for (int i = 0; i < masterContentIds.length; i++) {
+            Content content = this.getContentManager().loadContent(masterContentIds[i], false);
+            content.setId(null);
+            this.getContentManager().saveContent(content);
+            newContentIds[i] = content.getId();
+            if (publish) {
+                this.getContentManager().insertOnLineContent(content);
+            }
+        }
+        for (int i = 0; i < newContentIds.length; i++) {
+            Content content = this.getContentManager().loadContent(newContentIds[i], false);
+            assertNotNull(content);
+        }
+        return newContentIds;
+    }
 
-	private void init() throws Exception {
-    	try {
-    		_contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
-    	} catch (Throwable t) {
+    private void init() throws Exception {
+        try {
+            _contentManager = (IContentManager) this.getService(JacmsSystemConstants.CONTENT_MANAGER);
+        } catch (Throwable t) {
             throw new Exception(t);
         }
     }
 
-	protected IContentManager getContentManager() {
-		return this._contentManager;
-	}
+    protected IContentManager getContentManager() {
+        return this._contentManager;
+    }
 
     private IContentManager _contentManager = null;
 

@@ -119,8 +119,7 @@
                 </div>
             </div>
         </div>
-
-
+            
         <fieldset class="form-group">
             <div class="col-xs-2 control-label">
                 <span class="display-block"><s:text name="label.chooseYourEditor"/></span>
@@ -141,6 +140,64 @@
                             <s:if test="systemParams['hypertextEditor'] == 'fckeditor'">checked="checked"</s:if> />
                         <s:text name="name.editor.ckeditor"/>
                     </label>
+                </div>
+            </div>
+        </fieldset>
+        <!-- alt, description, legend, and title -->
+        <fieldset class="col-xs-12 settings-form">
+            <h2>
+                <s:text name="jacms.menu.resourceMetadataMapping" />
+            </h2>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2 control-label">
+                        <span for="resourceAltMapping"><s:text name="jacms.label.resourceAltMapping" /></span>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceAltMapping" />" data-placement="right">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </div>
+                    <div class="col-xs-10">
+                        <wpsf:textfield name="resourceAltMapping" id="resourceAltMapping"  cssClass="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2 control-label">
+                        <span for="resourceDescriptionMapping"><s:text name="jacms.label.resourceDescriptionMapping" /></span>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceDescriptionMapping" />" data-placement="right">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </div>
+                    <div class="col-xs-10">
+                        <wpsf:textfield name="resourceDescriptionMapping" id="resourceDescriptionMapping"  cssClass="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2 control-label">
+                        <span for="resourceLegendMapping"><s:text name="jacms.label.resourceLegendMapping" /></span>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceLegendMapping" />" data-placement="right">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </div>
+                    <div class="col-xs-10">
+                        <wpsf:textfield name="resourceLegendMapping" id="resourceLegendMapping"  cssClass="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-xs-2 control-label">
+                        <span for="resourceTitleMapping"><s:text name="jacms.label.resourceTitleMapping" /></span>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceTitleMapping" />" data-placement="right">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </div>
+                    <div class="col-xs-10">
+                        <wpsf:textfield name="resourceTitleMapping" id="resourceTitleMapping"  cssClass="form-control" />
+                    </div>
                 </div>
             </div>
         </fieldset>

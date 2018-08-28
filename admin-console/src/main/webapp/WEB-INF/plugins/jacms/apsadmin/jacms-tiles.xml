@@ -173,9 +173,9 @@
 
     <!-- ********* INIZIO Area Amministrazione Contenuti ********* -->
 
-    <definition extends="layout.settings" name="admin.jacms.content.contentIndexFunctions">
-		<put-attribute name="title" value="menu.reload.contents" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/contentIndexFunctions.jsp" />
+    <definition extends="layout.settings" name="admin.jacms.content.settings">
+		<put-attribute name="title" value="jacms.menu.content.settings" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/contentSettings.jsp" />
 	</definition>
 
 	<!-- ********* FINE Area Amministrazione Contenuti ********* -->

@@ -4,8 +4,6 @@
 <%@ taglib prefix="jacms" uri="/jacms-apsadmin-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
-
-
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li>
         <s:text name="breadcrumb.app" />
@@ -528,4 +526,5 @@
 </template>
 
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadAddFields.jsp" />
-<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabeli18n.jsp" />
+<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabelI18n.jsp" />
+

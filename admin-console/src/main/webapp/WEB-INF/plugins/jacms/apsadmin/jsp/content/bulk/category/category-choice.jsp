@@ -124,7 +124,6 @@
                     <s:set var="treeItemIconName" value="'fa-folder'" />
                     <s:if test="#categoryTreeStyleVar == 'classic'">
                         <s:set var="currentRoot" value="allowedTreeRootNode" />
-                        <s:property value="#currentRoot.childrenCodes" />
                         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp" />
                     </s:if>
                     <s:elseif test="#categoryTreeStyleVar == 'request'">

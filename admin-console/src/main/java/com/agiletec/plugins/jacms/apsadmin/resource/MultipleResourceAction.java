@@ -137,13 +137,26 @@ public class MultipleResourceAction extends ResourceAction {
     @Override
     public String joinCategory() {
         fetchFileDescriptions();
+        fetchMetadataEdit();
         return super.joinCategory();
     }
 
     @Override
     public String removeCategory() {
         fetchFileDescriptions();
+        fetchMetadataEdit();
         return super.removeCategory();
+    }
+
+    protected void fetchMetadataEdit() {
+        if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+            try {
+                this.setMetadata(this.loadResource(this.getResourceId()).getMetadata());
+            } catch (Throwable ex) {
+                logger.debug("error reading resource on fetchMetadataEdit {}", ex);
+            }
+            logger.debug("metadata size: {}", getMetadata().size());
+        }
     }
 
     protected void checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
@@ -201,7 +214,22 @@ public class MultipleResourceAction extends ResourceAction {
                     resourceFile.setMainGroup(getMainGroup());
                     resourceFile.setResourceType(this.getResourceType());
                     resourceFile.setCategories(getCategories());
-                    resourceFile.setMetadata(imgMetadata);
+                    logger.debug("this.getStrutsAction() {}", this.getStrutsAction());
+
+                    if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+                        logger.debug("Edit resource > metadata size: {}", imgMetadata.size());
+
+                        if (imgMetadata.size() > 0) {
+                            logger.debug("Edit resource > metadata size: {}  -> update the metadata list", imgMetadata.size());
+                            resourceFile.setMetadata(imgMetadata);
+                        } else {
+                            logger.debug("Edit resource > metadata size: 0  -> use previous metadata list", getMetadata());
+                            resourceFile.setMetadata(getMetadata());
+                        }
+                    } else {
+                        resourceFile.setMetadata(imgMetadata);
+                    }
+
                     baseResourceDataBeanList = new ArrayList<BaseResourceDataBean>();
                     baseResourceDataBeanList.add(resourceFile);
                     try {

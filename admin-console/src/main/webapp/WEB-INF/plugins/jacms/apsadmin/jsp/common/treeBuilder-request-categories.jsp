@@ -67,9 +67,12 @@
             </s:if>
         </label>
     </td>
-    <s:if test="%{#skipAction == null || #joinAction.equals('true')}">
+    <s:if test="%{#skipJoinAction == null || #skipJoinAction.equals('true')}">
         <td class="text-center">
-            <wpsf:submit action="%{#actionName}" type="button"
+            <wpsa:actionParam action="joinCategory" var="joinCategoryActionName" >
+                <wpsa:actionSubParam name="categoryCode" value="%{#currentRoot.code}" />
+            </wpsa:actionParam>
+            <wpsf:submit action="%{#joinCategoryActionName}" type="button"
                          title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
                 <span class="icon fa fa-plus"></span>
             </wpsf:submit>

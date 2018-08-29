@@ -10,6 +10,7 @@
     <bean id="jacmsResourceManager" class="com.agiletec.plugins.jacms.aps.system.services.resource.ResourceManager" 
               parent="abstractService" >
         <property name="categoryManager" ref="CategoryManager" />
+		<property name="configManager" ref="BaseConfigManager"/>
 		<property name="cacheWrapper">
 			<bean class="com.agiletec.plugins.jacms.aps.system.services.resource.cache.ResourceManagerCacheWrapper">
 				<property name="springCacheManager" ref="springCacheManager" />

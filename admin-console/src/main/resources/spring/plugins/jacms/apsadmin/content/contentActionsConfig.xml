@@ -63,6 +63,7 @@
 	<bean id="jacmsContentAdminAction" scope="prototype" 
 			class="com.agiletec.plugins.jacms.apsadmin.content.ContentAdminAction" parent="baseAdminAction">
 		<property name="contentManager" ref="jacmsContentManager"/>
+		<property name="resourceManager" ref="jacmsResourceManager"/>
 		<property name="searchEngineManager" ref="jacmsSearchEngineManager"/>
   	</bean>
 	
@@ -94,6 +95,7 @@
 		<property name="contentManager" ref="jacmsContentManager"/>
 		<property name="bulkCommandManager" ref="BulkCommandManager"/>
 		<property name="bulkActionHelper" ref="jacmsContentBulkActionHelper"/>
+		<property name="treeHelper" ref="categoryActionHelper"/>
   	</bean>
 	<!-- BEANS PER GESTONE BULK ACTIONS - FINE -->
 	

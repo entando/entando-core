@@ -168,7 +168,7 @@
                             <s:set var="openTreeActionName" value="'openCloseCategoryTreeInEntry'" />
                             <s:set var="closeTreeActionName" value="'openCloseCategoryTreeInEntry'" />
                             <s:set var="currentRoot" value="showableTree" />
-                            <s:set var="skipAction" value="'true'" />
+                            <s:set var="skipJoinAction" value="'true'" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
                         </s:elseif>
                         </tbody>

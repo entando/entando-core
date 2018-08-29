@@ -232,7 +232,7 @@ INSERT INTO resources (resid, restype, descr, maingroup, resourcexml, masterfile
 <resource typecode="Image" id="22"><descr>jAPS Team</descr><groups mainGroup="free" /><categories /><masterfile>jAPSTeam.jpg</masterfile><instance><size>3</size><filename>jAPSTeam_d3.jpg</filename><mimetype>image/jpeg</mimetype><weight>2 Kb</weight></instance><instance><size>2</size><filename>jAPSTeam_d2.jpg</filename><mimetype>image/jpeg</mimetype><weight>2 Kb</weight></instance><instance><size>1</size><filename>jAPSTeam_d1.jpg</filename><mimetype>image/jpeg</mimetype><weight>1 Kb</weight></instance><instance><size>0</size><filename>jAPSTeam_d0.jpg</filename><mimetype>image/jpeg</mimetype><weight>9 Kb</weight></instance></resource>
 ', 'jAPSTeam.jpg');
 INSERT INTO resources (resid, restype, descr, maingroup, resourcexml, masterfilename) VALUES ('44', 'Image', 'logo', 'free', '<?xml version="1.0" encoding="UTF-8"?>
-<resource typecode="Image" id="44"><descr>logo</descr><groups mainGroup="free" /><categories><category id="resCat1" /></categories><masterfile>lvback.jpg</masterfile><instance><size>3</size><filename>lvback_d3.jpg</filename><mimetype>image/jpeg</mimetype><weight>4 Kb</weight></instance><instance><size>2</size><filename>lvback_d2.jpg</filename><mimetype>image/jpeg</mimetype><weight>4 Kb</weight></instance><instance><size>1</size><filename>lvback_d1.jpg</filename><mimetype>image/jpeg</mimetype><weight>2 Kb</weight></instance><instance><size>0</size><filename>lvback_d0.jpg</filename><mimetype>image/jpeg</mimetype><weight>7 Kb</weight></instance></resource>
+<resource typecode="Image" id="44"><descr>logo</descr><groups mainGroup="free" /><categories><category id="resCat1" /></categories><masterfile>lvback.jpg</masterfile><metadata-list><metadata id="Resolution Units">none</metadata><metadata id="Number of Tables">4 Huffman tables</metadata><metadata id="Detected File Type Long Name">Joint Photographic Experts Group</metadata><metadata id="File Modified Date">lun ago 27 13:07:38 +02:00 2018</metadata><metadata id="Compression Type">Baseline</metadata><metadata id="Data Precision">8 bits</metadata><metadata id="Detected MIME Type">image/jpeg</metadata><metadata id="Expected File Name Extension">jpg</metadata><metadata id="Number of Components">3</metadata><metadata id="Component 2">Cb component: Quantization table 1, Sampling factors 1 horiz/1 vert</metadata><metadata id="Thumbnail Height Pixels">0</metadata><metadata id="Component 1">Y component: Quantization table 0, Sampling factors 2 horiz/2 vert</metadata><metadata id="Image Height">238 pixels</metadata><metadata id="Thumbnail Width Pixels">0</metadata><metadata id="X Resolution">1 dot</metadata><metadata id="Image Width">320 pixels</metadata><metadata id="File Size">10657 bytes</metadata><metadata id="Component 3">Cr component: Quantization table 1, Sampling factors 1 horiz/1 vert</metadata><metadata id="Version">1.1</metadata><metadata id="Detected File Type Name">JPEG</metadata><metadata id="JPEG Comment">CREATOR: gd-jpeg v1.0 (using IJG JPEG v62), default quality</metadata><metadata id="File Name">upload_3a5c973a_7d54_41f8_a8b5_b9d2dfc374fc_00000006.tmp</metadata><metadata id="Y Resolution">1 dot</metadata></metadata-list><instance><size>3</size><filename>lvback_d3.jpg</filename><mimetype>image/jpeg</mimetype><weight>4 Kb</weight></instance><instance><size>2</size><filename>lvback_d2.jpg</filename><mimetype>image/jpeg</mimetype><weight>4 Kb</weight></instance><instance><size>1</size><filename>lvback_d1.jpg</filename><mimetype>image/jpeg</mimetype><weight>2 Kb</weight></instance><instance><size>0</size><filename>lvback_d0.jpg</filename><mimetype>image/jpeg</mimetype><weight>7 Kb</weight></instance></resource>
 ', 'lvback.jpg');
 
 
@@ -693,8 +693,13 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'imageDimen
 		<dimx>150</dimx>
 		<dimy>150</dimy>
 	</Dimension>
-</Dimensions>
-');
+</Dimensions>');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'jacms_resourceMetadataMapping', 'Mapping between resource Metadata and resource attribute fields', '<mapping>
+    <field key="alt">metadataKey1,metadataKey2,metadatakey3,xxx,yyy</field>
+    <field key="description">metadataKeyA,metadataKeyB,JPEG Comment</field>
+    <field key="legend">metadataKeyX,metadataKeyY,metadatakeyX,YYYY,Detected File Type Long Name,WWWWW</field>
+    <field key="title">metadataKeyG,metadataKeyK,metadatakeyF</field>
+</mapping>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'subIndexDir', 'Name of the sub-directory containing content indexing files', 'index');
 
 

@@ -29,12 +29,14 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.category.ReloadingCategoryReferencesThread;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.util.DateConverter;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_CREATION_DATE_FILTER_KEY;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_DESCR_FILTER_KEY;
 import static com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager.RESOURCE_FILENAME_FILTER_KEY;
@@ -48,12 +50,21 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.event.ResourceCha
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMonoInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.AbstractMultiInstanceResource;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.JaxbMetadataMapping;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInstance;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceHandler;
-import java.util.logging.Level;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -70,6 +81,8 @@ public class ResourceManager extends AbstractService implements IResourceManager
     private IResourceDAO resourceDao;
 
     private ICategoryManager categoryManager;
+
+    private ConfigInterface configManager;
 
     private IResourceManagerCacheWrapper cacheWrapper;
 
@@ -102,6 +115,14 @@ public class ResourceManager extends AbstractService implements IResourceManager
 
     public void setCategoryManager(ICategoryManager categoryManager) {
         this.categoryManager = categoryManager;
+    }
+
+    protected ConfigInterface getConfigManager() {
+        return configManager;
+    }
+
+    public void setConfigManager(ConfigInterface configManager) {
+        this.configManager = configManager;
     }
 
     protected IResourceManagerCacheWrapper getCacheWrapper() {
@@ -153,7 +174,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      */
     @Override
     public List<String> getResourceTypeCodes() {
-        return new ArrayList<String>(this.resourceTypes.keySet());
+        return new ArrayList<>(this.resourceTypes.keySet());
     }
 
     /**
@@ -161,6 +182,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * dal tipo.
      *
      * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @return la risorsa aggiunta.
      * @throws ApsSystemException in caso di errore.
      */
     @Override
@@ -182,15 +204,15 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * Salva una lista dirisorse nel db con incluse nel filesystem,
      * indipendentemente dal tipo.
      *
-     * @param bean L'oggetto detentore dei dati della risorsa da inserire.
+     * @param beans L'oggetto detentore dei dati della risorsa da inserire.
      * @throws ApsSystemException in caso di errore.
      */
     @Override
     public List<ResourceInterface> addResources(List<BaseResourceDataBean> beans) throws ApsSystemException {
-        List<ResourceInterface> newResource = new ArrayList<ResourceInterface>();
+        List<ResourceInterface> newResource = new ArrayList<>();
         beans.forEach(b -> {
             try {
-                newResource.add(addResource(b));
+                newResource.add(this.addResource(b));
             } catch (ApsSystemException ex) {
                 logger.error("Error adding resources", ex);
             }
@@ -202,7 +224,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
      * Cancella una lista di risorse dal db ed i file di ogni istanza dal
      * filesystem.
      *
-     * @param resource La lista di risorse da cancellare.
+     * @param resources La lista di risorse da cancellare.
      * @throws ApsSystemException in caso di errore nell'accesso al db.
      */
     @Override
@@ -404,7 +426,7 @@ public class ResourceManager extends AbstractService implements IResourceManager
         this.fillEmptyResourceFromXml(resource, resourceXML);
         resource.setMainGroup(resourceVo.getMainGroup());
         resource.setCreationDate(resourceVo.getCreationDate());
-        resource.setLastModified(resourceVo.getLastModified());      
+        resource.setLastModified(resourceVo.getLastModified());
         return resource;
     }
 
@@ -568,6 +590,46 @@ public class ResourceManager extends AbstractService implements IResourceManager
             throw new ApsSystemException("Error searching category utilizers : category code '" + categoryCode + "'", t);
         }
         return resourcesId;
+    }
+
+    @Override
+    public Map<String, List<String>> getMetadataMapping() throws ApsSystemException {
+        Map<String, List<String>> mapping = new HashMap<>();
+        try {
+            String xmlConfig = this.getConfigManager().getConfigItem(JacmsSystemConstants.CONFIG_ITEM_RESOURCE_METADATA_MAPPING);
+            InputStream stream = new ByteArrayInputStream(xmlConfig.getBytes(StandardCharsets.UTF_8));
+            JAXBContext context = JAXBContext.newInstance(JaxbMetadataMapping.class);
+            Unmarshaller unmarshaller = context.createUnmarshaller();
+            JaxbMetadataMapping jaxbMapping = (JaxbMetadataMapping) unmarshaller.unmarshal(stream);
+            jaxbMapping.getFields().stream().forEach(m -> {
+                String key = m.getKey();
+                String csv = m.getValue();
+                if (!StringUtils.isBlank(csv)) {
+                    List<String> metadatas = Arrays.asList(csv.split(","));
+                    mapping.put(key, metadatas);
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error Extracting resource metadata mapping", e);
+            throw new ApsSystemException("Error Extracting resource metadata mapping", e);
+        }
+        return mapping;
+    }
+
+    @Override
+    public void updateMetadataMapping(Map<String, List<String>> mapping) throws ApsSystemException {
+        try {
+            JAXBContext context = JAXBContext.newInstance(JaxbMetadataMapping.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter writer = new StringWriter();
+            marshaller.marshal(new JaxbMetadataMapping(mapping), writer);
+            String config = writer.toString();
+            this.getConfigManager().updateConfigItem(JacmsSystemConstants.CONFIG_ITEM_RESOURCE_METADATA_MAPPING, config);
+        } catch (Exception e) {
+            logger.error("Error Updating resource metadata mapping", e);
+            throw new ApsSystemException("Error Updating resource metadata mapping", e);
+        }
     }
 
 }

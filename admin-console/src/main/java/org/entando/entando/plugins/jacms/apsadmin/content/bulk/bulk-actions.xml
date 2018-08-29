@@ -166,7 +166,7 @@
 	
     <package name="jacms_do/jacms/Content/Category" namespace="/do/jacms/Content/Category" extends="jacms_do/jacms/Content/BulkBase">
 
-		<action name="entry" class="jacmsContentCategoryBulkAction" method="entry" >
+		<action name="entry*" class="jacmsContentCategoryBulkAction" method="entry" >
             <result name="list" type="chain">
             	<param name="namespace">/do/jacms/Content</param>
     			<param name="actionName">results</param>

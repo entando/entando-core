@@ -17,6 +17,8 @@ import java.util.Map;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.XMLOutputter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Classe JDOM per la scrittura di un oggetto tipo Resource in xml.
@@ -24,7 +26,9 @@ import org.jdom.output.XMLOutputter;
  * @author E.Santoboni
  */
 public class ResourceDOM {
-
+    
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    
     private Document _doc;
     protected Element _root;
 
@@ -137,16 +141,20 @@ public class ResourceDOM {
     /**
      * Aggiunge i metadati alla risorsa.
      *
-     * @param metadata La categoria da aggiungere.
+     * @param metadata il metadata da aggiungere.
      */
-   
     public void addMetadata(Map<String, String> metadata) {
         if (null != metadata) {
             metadata.forEach((k, v) -> {
                 Element metadataElement = new Element("metadata");
                 metadataElement.setAttribute("id", k.trim());
                 if (null != v) {
-                    metadataElement.setText(v.trim());
+                    try {
+                        metadataElement.setText(v.trim());
+                    } catch (Exception ex) {
+                        logger.error("error setting metadata value for id {}, set value to empty string {}", k.trim() , ex);
+                        metadataElement.setText("");
+                    }
                 } else {
                     metadataElement.setText("");
                 }

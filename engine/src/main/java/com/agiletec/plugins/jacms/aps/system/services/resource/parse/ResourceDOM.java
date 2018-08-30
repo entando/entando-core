@@ -141,14 +141,15 @@ public class ResourceDOM {
      */
    
     public void addMetadata(Map<String, String> metadata) {
-        
         if (null != metadata) {
-            
             metadata.forEach((k, v) -> {
-            
                 Element metadataElement = new Element("metadata");
                 metadataElement.setAttribute("id", k.trim());
-                metadataElement.setText(v.trim());
+                if (null != v) {
+                    metadataElement.setText(v.trim());
+                } else {
+                    metadataElement.setText("");
+                }
                 this._root.getChild(TAG_METADATA).addContent(metadataElement);
             });
         }

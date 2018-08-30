@@ -95,6 +95,7 @@
 		<property name="contentManager" ref="jacmsContentManager"/>
 		<property name="bulkCommandManager" ref="BulkCommandManager"/>
 		<property name="bulkActionHelper" ref="jacmsContentBulkActionHelper"/>
+		<property name="treeHelper" ref="categoryActionHelper"/>
   	</bean>
 	<!-- BEANS PER GESTONE BULK ACTIONS - FINE -->
 	

@@ -20,7 +20,7 @@
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
                    <s:param name="treeNodeActionMarkerCode" value="'open'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
-                <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />bbb"></span>
+                <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
                 <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />

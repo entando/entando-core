@@ -93,6 +93,7 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String edit() {
+        logger.debug("Edit");
         try {
             savedId.clear();
             ResourceInterface resource = this.loadResource(this.getResourceId());
@@ -136,14 +137,29 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String joinCategory() {
+        logger.debug("joinCategory");
         fetchFileDescriptions();
+        fetchMetadataEdit();
         return super.joinCategory();
     }
 
     @Override
     public String removeCategory() {
+        logger.debug("removeCategory");
         fetchFileDescriptions();
+        fetchMetadataEdit();
         return super.removeCategory();
+    }
+
+    protected void fetchMetadataEdit() {
+        if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+            try {
+                this.setMetadata(this.loadResource(this.getResourceId()).getMetadata());
+            } catch (Throwable ex) {
+                logger.error("error reading resource {} on fetchMetadataEdit {}", this.getResourceId(), ex);
+            }
+            logger.debug("resource {} metadata size: {}", this.getResourceId(), getMetadata().size());
+        }
     }
 
     protected void checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
@@ -178,6 +194,7 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String save() {
+        logger.debug("Save");
         int index = 0;
         savedId.clear();
         boolean hasError = false;
@@ -190,18 +207,34 @@ public class MultipleResourceAction extends ResourceAction {
                     File file = getFile(index);
                     Map imgMetadata = new HashMap();
                     if (null != file) {
+                        logger.debug("file is not null");
                         imgMetadata = getImgMetadata(file);
                         resourceFile = new BaseResourceDataBean(file);
                         resourceFile.setFileName(getFileUploadFileName().get(index));
                         resourceFile.setMimeType(getFileUploadContentType().get(index));
                     } else {
+                        logger.debug("file is null");
                         resourceFile = new BaseResourceDataBean();
                     }
                     resourceFile.setDescr(fileDescription);
                     resourceFile.setMainGroup(getMainGroup());
                     resourceFile.setResourceType(this.getResourceType());
                     resourceFile.setCategories(getCategories());
-                    resourceFile.setMetadata(imgMetadata);
+                    logger.debug("Save method, action {}", this.getStrutsAction());
+                    if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+                        logger.debug("Edit resource > metadata size: {}", imgMetadata.size());
+                        if (imgMetadata.size() > 0) {
+                            logger.debug("Edit resource > metadata size: {}  -> update the metadata list", imgMetadata.size());
+                            resourceFile.setMetadata(imgMetadata);
+                        } else {
+                            fetchMetadataEdit();
+                            logger.debug("Edit resource > metadata size: 0  -> use previous metadata list", getMetadata());
+                            resourceFile.setMetadata(getMetadata());
+                        }
+                    } else {
+                        resourceFile.setMetadata(imgMetadata);
+                    }
+
                     baseResourceDataBeanList = new ArrayList<BaseResourceDataBean>();
                     baseResourceDataBeanList.add(resourceFile);
                     try {

@@ -67,15 +67,17 @@
             </s:if>
         </label>
     </td>
-    <td class="text-center">
-        <wpsa:actionParam action="joinCategory" var="joinCategoryActionName" >
-            <wpsa:actionSubParam name="categoryCode" value="%{#currentRoot.code}" />
-        </wpsa:actionParam>
-        <wpsf:submit action="%{#joinCategoryActionName}" type="button"
-                     title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
-            <span class="icon fa fa-plus"></span>
-        </wpsf:submit>
-    </td>
+    <s:if test="%{#skipJoinAction == null || #skipJoinAction.equals('true')}">
+        <td class="text-center">
+            <wpsa:actionParam action="joinCategory" var="joinCategoryActionName" >
+                <wpsa:actionSubParam name="categoryCode" value="%{#currentRoot.code}" />
+            </wpsa:actionParam>
+            <wpsf:submit action="%{#joinCategoryActionName}" type="button"
+                         title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
+                <span class="icon fa fa-plus"></span>
+            </wpsf:submit>
+        </td>
+    </s:if>
 </tr>
 
 <s:if test="#currentRoot.children.length > 0">

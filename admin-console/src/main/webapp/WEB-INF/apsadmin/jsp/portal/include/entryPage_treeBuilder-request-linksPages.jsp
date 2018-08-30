@@ -19,7 +19,7 @@
                 <wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.code}" />
             </wpsa:actionParam>
             <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
-                <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />ddd"></span>
+                <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
                 <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />

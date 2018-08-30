@@ -113,6 +113,7 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         String resourceId = "44";
         this.setUserOnSession("admin");
         ResourceInterface resource = this._resourceManager.loadResource(resourceId);
+        Map<String, String> metadata = resource.getMetadata();
         try {
             this.initAction("/do/jacms/Resource", "save");
             this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.EDIT));
@@ -125,6 +126,7 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
             assertEquals(Action.SUCCESS, result);
             ResourceInterface modifiedResource = this._resourceManager.loadResource(resourceId);
             assertEquals("Descrizione di test", modifiedResource.getDescription());
+            assertEquals(metadata, modifiedResource.getMetadata());
         } catch (Throwable t) {
             throw t;
         } finally {

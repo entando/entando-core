@@ -13,9 +13,6 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content;
 
-import java.util.List;
-import java.util.Map;
-
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
@@ -30,6 +27,9 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.apsadmin.content.util.AbstractBaseTestContentAction;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -78,7 +78,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
     }
 
     public void testValidate_1() throws Throwable {
-        String insertedDescr = "XXX Validation test 1 XXX";
+        String insertedDescr = "XXX Prova Validazione XXX";
         String contentTypeCode = "ART";
         Content prototype = this.getContentManager().createContentType(contentTypeCode);
         String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(prototype, ApsAdminSystemConstants.ADD);
@@ -130,7 +130,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
     }
 
     public void testValidate_2() throws Throwable {
-        String insertedDescr = "XXX Validation test 2 XXX";
+        String insertedDescr = "XXX Prova Validazione XXX";
         try {
             Content contentForTest = this.getContentManager().loadContent("EVN191", true);
             String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(contentForTest, ApsAdminSystemConstants.EDIT);
@@ -140,7 +140,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 
             contentForTest.getGroups().add("customers");
 
-            //ADDING LINK ON COACH CONTENT
+            //AGGIUNGO LINK SU PAGINA COACH
             MonoListAttribute linksCorrelati = (MonoListAttribute) contentForTest.getAttribute("LinkCorrelati");
             LinkAttribute linkAttribute = (LinkAttribute) linksCorrelati.addAttribute();
             linkAttribute.setText("Descrizione link", "it");
@@ -159,12 +159,6 @@ public class TestContentAction extends AbstractBaseTestContentAction {
             assertEquals(1, action.getFieldErrors().size());
             assertEquals(1, action.getFieldErrors().get("Monolist:Link:LinkCorrelati_0").size());
 
-            contentForTest.getGroups().remove("customers");
-            this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
-            this.setUserOnSession("admin");
-            result = this.executeAction();
-            assertEquals(Action.SUCCESS, result);
-
         } catch (Throwable t) {
             throw t;
         } finally {
@@ -172,50 +166,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         }
     }
 
-    public void testValidate_3() throws Throwable {
-        String insertedDescr = "XXX Validation test 3 XXX";
-        try {
-            Content contentForTest = this.getContentManager().loadContent("EVN191", true);
-            String contentOnSessionMarker = AbstractContentAction.buildContentOnSessionMarker(contentForTest, ApsAdminSystemConstants.EDIT);
-            contentForTest.setId(null);
-            contentForTest.setDescription(insertedDescr);
-            contentForTest.setMainGroup("coach");//Valorizzo il gruppo proprietario
-
-            contentForTest.getGroups().add("customers");
-
-            //ADDING LINK ON COACH PAGE
-            MonoListAttribute linksCorrelati = (MonoListAttribute) contentForTest.getAttribute("LinkCorrelati");
-            LinkAttribute linkAttribute = (LinkAttribute) linksCorrelati.addAttribute();
-            linkAttribute.setText("Page link description", "it");
-            SymbolicLink symbolicLink = new SymbolicLink();
-            symbolicLink.setDestinationToPage("coach_page");// coach page
-            linkAttribute.setSymbolicLink(symbolicLink);
-
-            this.getRequest().getSession().setAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + contentOnSessionMarker, contentForTest);
-
-            this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
-            this.setUserOnSession("admin");
-            String result = this.executeAction();
-            assertEquals(Action.INPUT, result);
-
-            ActionSupport action = this.getAction();
-            assertEquals(1, action.getFieldErrors().size());
-            assertEquals(1, action.getFieldErrors().get("Monolist:Link:LinkCorrelati_0").size());
-
-            contentForTest.getGroups().remove("customers");
-            this.initContentAction("/do/jacms/Content", "save", contentOnSessionMarker);
-            this.setUserOnSession("admin");
-            result = this.executeAction();
-            assertEquals(Action.SUCCESS, result);
-
-        } catch (Throwable t) {
-            throw t;
-        } finally {
-            this.removeTestContent(insertedDescr);
-        }
-    }
-
-    public void testValidate_4() throws Throwable { // Description maxlength
+    public void testValidate_3() throws Throwable { // Description maxlength
         String contentTypeCode = "ART";
         String contentOnSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
         String marker = "__DESCR_TEST__";
@@ -254,7 +205,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
     /*
 	 * We test, among other things the CheckBox attribute
      */
-    public void testValidate_5() throws Throwable {
+    public void testValidate_4() throws Throwable {
         String contentTypeCode = "RAH";
         String contentOnSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
         String insertedDescr = "XXX Prova Validazione XXX";
@@ -315,7 +266,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         }
     }
 
-    public void testValidate_6() throws Throwable {
+    public void testValidate_5() throws Throwable {
         String contentTypeCode = "RAH";
         String contentOnSessionMarker = this.extractSessionMarker(contentTypeCode, ApsAdminSystemConstants.ADD);
         String insertedDescr = "XXX Prova Validazione XXX";
@@ -383,7 +334,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         }
     }
 
-    public void testValidate_7() throws Throwable {
+    public void testValidate_6() throws Throwable {
         String contentId = "ART112";
         String contentOnSessionMarker = this.extractSessionMarker(contentId, ApsAdminSystemConstants.EDIT);
         try {
@@ -401,7 +352,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
             assertTrue(contentOnEdit.getGroups().contains("helpdesk"));
 
             this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
-            this.addParameter("extraGroupName", "customers");
+            this.addParameter("extraGroupNames", "customers");
             this.addParameter("descr", contentOnEdit.getDescription());
             result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
@@ -481,7 +432,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
 
         this.executeEdit(contentId, "admin");
         String groupToAdd = "coach";
-        String extraGroupFieldName = "extraGroupName";
+        String extraGroupFieldName = "extraGroupNames";
         Content contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
         assertNotNull(contentOnSession);
         assertEquals(0, contentOnSession.getGroups().size());
@@ -565,7 +516,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
             assertTrue(contentOnSession.getGroups().contains(groupToRemove));
 
             this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
-            this.addParameter("extraGroupName", groupToRemove);
+            this.addParameter("extraGroupNames", groupToRemove);
             String result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
 

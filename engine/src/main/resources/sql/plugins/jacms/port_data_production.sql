@@ -508,3 +508,7 @@ INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_AT_LEAST_ONE_WORD', 'en', 'At least one word');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'it', 'Frase esatta');
 INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_SEARCH_TEXT_EXACT', 'en', 'Exact');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_BACK_TO_EDIT_CONTENT', 'en', 'Back to edit content');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_BACK_TO_EDIT_CONTENT', 'it', 'Torna alla modifica dei contenuti');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_CONTENT_PREVIEW', 'en', 'Content preview');
+INSERT INTO localstrings (keycode, langcode, stringvalue) VALUES ('jacms_CONTENT_PREVIEW', 'it', 'Anteprima contenuto');

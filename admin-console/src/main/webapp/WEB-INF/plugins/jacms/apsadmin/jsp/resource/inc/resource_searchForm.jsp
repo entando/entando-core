@@ -35,8 +35,8 @@
                             </a>
                         </p>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse">
-                        <div class="panel-body">
+                    <div id="collapseOne" class="panel-collapse collapse <s:if test="(#categoryTreeStyleVar == 'request' && openCollapsed)">in</s:if>">
+                            <div class="panel-body">
                             <%-- groups --%>
                             <s:set var="allowedGroupsVar" value="allowedGroups"></s:set>
                             <s:if test="null != #allowedGroupsVar && #allowedGroupsVar.size()>1">
@@ -92,6 +92,7 @@
                                                     <s:set var="currentRoot" value="showableTree" />
                                                     <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
                                                     <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
+                                                    <s:set var="skipJoinAction" value="'true'" />
                                                     <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
 
                                                 </s:elseif>

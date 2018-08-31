@@ -28,7 +28,7 @@
             <a class="treeOpenCloseJS"
                href="<s:url action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
-                   <s:param name="contentOnSessionMarker" value="%{#contentOnSessionMarker}" />
+                   <s:param name="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
                    <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />
@@ -42,7 +42,7 @@
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
             <a class="treeOpenCloseJS noborder" href="<s:url action="%{#closeTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
-                   <s:param name="contentOnSessionMarker" value="%{#contentOnSessionMarker}" />
+                   <s:param name="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
                    <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />

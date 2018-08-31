@@ -35,7 +35,7 @@
                             </a>
                         </p>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse">
+                    <div id="collapseOne" class="panel-collapse collapse <s:if test="(#categoryTreeStyleVar == 'request' && null != treeNodeActionMarkerCode)">in</s:if>">
                         <div class="panel-body">
                             <%-- groups --%>
                             <s:set var="allowedGroupsVar" value="allowedGroups"></s:set>
@@ -61,7 +61,7 @@
                                 <label for="fileName" class="control-label col-sm-2"><s:text name="label.categoriesTree" /></label>
                                 <div class="col-sm-9">
                                     <div class="table-responsive ">
-                                        <table id="categoryTree" class="table table-bordered table-hover table-treegrid ${categoryTreeStyleVar}">
+                                        <table id="categoryTree" class="table table-bordered table-hover table-treegrid <s:property value="#categoryTreeStyleVar" />">
                                             <thead>
                                                 <tr>
                                                     <th>
@@ -82,18 +82,15 @@
                                                 <s:set var="selectedTreeNode" value="categoryCode" />
                                                 <s:set var="liClassName" value="'category'" />
                                                 <s:set var="treeItemIconName" value="'fa-folder'" />
-
-
-                                                <s:if test="#categoryTreeStyleVar == 'classic'">
-                                                    <s:set var="currentRoot" value="categoryRoot" />
+                                                <s:if test="%{#categoryTreeStyleVar == 'classic'}">
+                                                    <s:set var="currentRoot" value="allowedTreeRootNode" />
                                                     <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderCategories.jsp" />
                                                 </s:if>
-                                                <s:elseif test="#categoryTreeStyleVar == 'request'">
+                                                <s:elseif test="%{#categoryTreeStyleVar == 'request'}">
                                                     <s:set var="currentRoot" value="showableTree" />
                                                     <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
                                                     <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnResourceFinding'" />
                                                     <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-categories.jsp" />
-
                                                 </s:elseif>
                                             </tbody>
                                         </table>

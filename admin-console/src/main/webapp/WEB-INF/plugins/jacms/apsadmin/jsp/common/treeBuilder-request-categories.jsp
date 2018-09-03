@@ -29,7 +29,7 @@
                 <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                 <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
                 <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
-                <s:hidden name="openCollapsed" value="true" />
+                <wpsa:actionSubParam name="openCollapsed" value="'true'" />
             </wpsa:actionParam>
             <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#openTreeAction}"
                          type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
@@ -44,7 +44,7 @@
                 <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                 <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
                 <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="close" />
-                <s:hidden name="openCollapsed" value="true" />
+                <wpsa:actionSubParam name="openCollapsed" value="'true'" />
             </wpsa:actionParam>
             <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#closeTreeAction}"
                          type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">

@@ -94,7 +94,17 @@ public class ContentFinderAction extends AbstractApsEntityFinderAction {
     private ICategoryManager categoryManager;
 
     public boolean isOpenCollapsed() {
-        return openCollapsed;
+        boolean hasFilterByCat = false;
+        if (null != this.getCategoryCode()) {
+            Category category = this.getCategoryManager().getCategory(this.getCategoryCode());
+            hasFilterByCat = (null != category && !category.isRoot());
+        }
+        return (this.openCollapsed
+                || (super.isAddedAttributeFilter())
+                || !StringUtils.isBlank(this.getContentType())
+                || hasFilterByCat
+                || !StringUtils.isBlank(this.getState())
+                || !StringUtils.isBlank(this.getOwnerGroupName()));
     }
 
     public void setOpenCollapsed(boolean openCollapsed) {

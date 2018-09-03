@@ -40,7 +40,7 @@
                         <div class="panel-heading">
                             <p class="panel-title">
                                 <a data-toggle="collapse" data-parent="#accordion-markup"
-                                   href="#collapseOne"><s:text name="label.advancedSearch"/>
+                                   href="#collapseOne"><s:text name="label.search.advanced"/>
                                 </a>
                             </p>
                         </div>
@@ -59,9 +59,9 @@
                                     <!--type-->
                                     <div class="form-group">
                                         <label class="control-label col-sm-2 text-right" for="contentType"><s:text name="label.type"/></label>
-                                        <div class="col-sm-9 input-group input-20px-leftRight">
+                                        <div class="col-sm-9 input-group">
                                             <wpsf:select name="contentType" id="contentType"
-                                                         list="contentTypes" listKey="code" listValue="descr"
+                                                         list="contentTypes" listKey="code" listValue="description"
                                                          headerKey="" headerValue="%{getText('label.all')}"
                                                          cssClass="form-control" />
                                         </div>
@@ -94,9 +94,9 @@
             <div class="col-xs-12">
                 <wpsa:subset source="contents" count="10" objectName="groupContent" advanced="true" offset="5">
                     <p class="sr-only">
-                        <wpsf:hidden name="lastGroupBy" />
-                        <wpsf:hidden name="lastOrder" />
-                        <wpsf:hidden name="contentOnSessionMarker" />
+                    <wpsf:hidden name="lastGroupBy" />
+                    <wpsf:hidden name="lastOrder" />
+                    <wpsf:hidden name="contentOnSessionMarker" />
                     </p>
                     <s:set var="group" value="#groupContent" />
                     <s:if test="%{getContents().size() > 0}">

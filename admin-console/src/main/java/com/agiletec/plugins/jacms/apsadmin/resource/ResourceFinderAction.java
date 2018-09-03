@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.resource;
 
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
@@ -30,58 +31,54 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Classe Action delegata alla gestione delle operazioni di ricerca risorse.
+ *
  * @author E.Santoboni
  */
 public class ResourceFinderAction extends AbstractResourceAction {
- 
-	private static final Logger _logger = LoggerFactory.getLogger(ResourceFinderAction.class);
-	
-	/**
-	 * Restituisce la lista di identificativi delle risorse che 
-	 * soddisfano i parametri di ricerca immessi.
-	 * @return La lista di identificativi di risorse.
-	 * @throws Throwable In caso di errore.
-	 */
+
+    private static final Logger logger = LoggerFactory.getLogger(ResourceFinderAction.class);
+
+    private String text;
+    private String fileName;
+    private String ownerGroupName;
+    private String categoryCode;
+    private ResourceIconUtil resourceIconUtil;
+    private IImageDimensionReader imageDimensionManager;
+    private boolean openCollapsed = false;
+
+    /**
+     * Restituisce la lista di identificativi delle risorse che soddisfano i
+     * parametri di ricerca immessi.
+     *
+     * @return La lista di identificativi di risorse.
+     * @throws Throwable In caso di errore.
+     */
     public List<String> getResources() throws Throwable {
         List<String> resourceIds = null;
         try {
-			List<String> codesForSearch = this.getGroupCodesForSearch();
-			resourceIds = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(), 
-					this.getText(), this.getFileName(), this.getCategoryCode(), codesForSearch);
-		} catch (Throwable t) {
-        	_logger.error("error in getResources", t);
+            List<String> codesForSearch = this.getGroupCodesForSearch();
+            resourceIds = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(),
+                    this.getText(), this.getFileName(), this.getCategoryCode(), codesForSearch);
+        } catch (Throwable t) {
+            logger.error("error in getResources", t);
             throw t;
         }
         return resourceIds;
     }
-	
-	protected List<String> getGroupCodesForSearch() {
-		List<String> groupCodes = super.getActualAllowedGroupCodes();
-		String ownerGroup = this.getOwnerGroupName();
-		List<String> codesForSearch = new ArrayList<String>();
-		if (StringUtils.isEmpty(ownerGroup)) {
-			codesForSearch.addAll(groupCodes);
-		} else {
-			if (groupCodes.contains(ownerGroup)) {
-				codesForSearch.add(ownerGroup);
-			}
-		}
-		return codesForSearch;
-	}
-    
+
     public String getIconFile(String filename) {
-		String extension = this.getFileExtension(filename);
+        String extension = this.getFileExtension(filename);
         return this.getResourceIconUtil().getIconByExtension(extension);
     }
-	
-	public String getFileExtension(String filename) {
-		return filename.substring(filename.lastIndexOf('.')+1).trim();
-	}
-	
-	public String getMimetype(String filename) {
-		return URLConnection.guessContentTypeFromName(filename);
-	}
-    
+
+    public String getFileExtension(String filename) {
+        return filename.substring(filename.lastIndexOf('.') + 1).trim();
+    }
+
+    public String getMimetype(String filename) {
+        return URLConnection.guessContentTypeFromName(filename);
+    }
+
     public List<ImageResourceDimension> getImageDimensions() {
         Map<Integer, ImageResourceDimension> master = this.getImageDimensionManager().getImageDimensions();
         List<ImageResourceDimension> dimensions = new ArrayList<ImageResourceDimension>(master.values());
@@ -89,57 +86,82 @@ public class ResourceFinderAction extends AbstractResourceAction {
         Collections.sort(dimensions, comparator);
         return dimensions;
     }
-    
+
     public String getText() {
-        return _text;
+        return text;
     }
+
     public void setText(String text) {
-        this._text = text;
+        this.text = text;
     }
-    
+
     public String getFileName() {
-        return _fileName;
+        return fileName;
     }
+
     public void setFileName(String fileName) {
-        this._fileName = fileName;
+        this.fileName = fileName;
     }
-    
+
     public String getOwnerGroupName() {
-        return _ownerGroupName;
+        return ownerGroupName;
     }
+
     public void setOwnerGroupName(String ownerGroupName) {
-        this._ownerGroupName = ownerGroupName;
+        this.ownerGroupName = ownerGroupName;
     }
-    
+
     public String getCategoryCode() {
-        if (this._categoryCode != null && this.getCategoryManager().getRoot().getCode().equals(this._categoryCode)) {
-            this._categoryCode = null;
+        if (this.categoryCode != null && this.getCategoryManager().getRoot().getCode().equals(this.categoryCode)) {
+            this.categoryCode = null;
         }
-        return _categoryCode;
+        return categoryCode;
     }
+
     public void setCategoryCode(String categoryCode) {
-        this._categoryCode = categoryCode;
+        this.categoryCode = categoryCode;
     }
-    
+
     protected ResourceIconUtil getResourceIconUtil() {
-        return _resourceIconUtil;
+        return resourceIconUtil;
     }
+
     public void setResourceIconUtil(ResourceIconUtil resourceIconUtil) {
-        this._resourceIconUtil = resourceIconUtil;
+        this.resourceIconUtil = resourceIconUtil;
     }
-    
+
     protected IImageDimensionReader getImageDimensionManager() {
-        return _imageDimensionManager;
+        return imageDimensionManager;
     }
+
     public void setImageDimensionManager(IImageDimensionReader imageDimensionManager) {
-        this._imageDimensionManager = imageDimensionManager;
+        this.imageDimensionManager = imageDimensionManager;
     }
-    
-    private String _text;
-    private String _fileName;
-    private String _ownerGroupName;
-    private String _categoryCode;
-    private ResourceIconUtil _resourceIconUtil;
-    private IImageDimensionReader _imageDimensionManager;
-    
+
+    public boolean isOpenCollapsed() {
+        boolean hasFilterByCat = false;
+        if (null != this.getCategoryCode()) {
+            Category category = this.getCategoryManager().getCategory(this.getCategoryCode());
+            hasFilterByCat = (null != category && !category.isRoot());
+        }
+        return (this.openCollapsed || hasFilterByCat
+                || !StringUtils.isBlank(this.getFileName())
+                || !StringUtils.isBlank(this.getOwnerGroupName()));
+    }
+
+    public void setOpenCollapsed(boolean openCollapsed) {
+        this.openCollapsed = openCollapsed;
+    }
+
+    protected List<String> getGroupCodesForSearch() {
+        List<String> groupCodes = super.getActualAllowedGroupCodes();
+        String ownerGroup = this.getOwnerGroupName();
+        List<String> codesForSearch = new ArrayList<String>();
+        if (StringUtils.isEmpty(ownerGroup)) {
+            codesForSearch.addAll(groupCodes);
+        } else if (groupCodes.contains(ownerGroup)) {
+            codesForSearch.add(ownerGroup);
+        }
+        return codesForSearch;
+    }
 }

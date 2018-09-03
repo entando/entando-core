@@ -19,15 +19,19 @@ import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
  * @author E.Santoboni
  */
 public class ApsDerbyEmbeddedDatabaseType extends DerbyEmbeddedDatabaseType {
-	
-	@Override
-	public void appendEscapedEntityName(StringBuilder sb, String name) {
-		sb.append(" ").append(name.toUpperCase()).append(" ");
-	}
-	
-	@Override
-	protected void appendCharType(StringBuilder sb, int fieldWidth) {
-		sb.append("VARCHAR(1)");
-	}
-	
+
+    @Override
+    public void appendEscapedEntityName(StringBuilder sb, String name) {
+        sb.append(" ").append(name.toUpperCase()).append(" ");
+    }
+
+    @Override
+    protected void appendCharType(StringBuilder sb, int fieldWidth) {
+        sb.append("VARCHAR(1)");
+    }
+
+    @Override
+    protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+        sb.append("CLOB");
+    }
 }

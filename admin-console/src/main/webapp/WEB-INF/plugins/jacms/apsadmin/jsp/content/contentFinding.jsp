@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="s" uri="/struts-tags"%>
 <%@ taglib prefix="wp" uri="/aps-core"%>
 <%@ taglib prefix="wpsa" uri="/apsadmin-core"%>
@@ -78,9 +79,8 @@
                                     <a data-toggle="collapse" data-parent="#accordion-markup" href="#collapseOne"><s:text name="label.search.advanced"/></a>
                                 </p>
                             </div>
-                            <div id="collapseOne" class="panel-collapse collapse <s:if test="%{openCollapsed}">in</s:if>">
+                            <div id="collapseOne" class="panel-collapse collapse <s:if test="%{#attr['openCollapsed'] || #attr['openCollapsed'].equals('\\'true\\'') || openCollapsed}">in</s:if>">
                                     <div class="panel-body">
-
                                         <div id="search-advanced"
                                              class="collapse-input-group <s:if test="(#categoryTreeStyleVar == 'request' && null != treeNodeActionMarkerCode)">in</s:if>">
                                             <div class="form-group">

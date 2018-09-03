@@ -35,7 +35,7 @@
                             </a>
                         </p>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse <s:if test="(#categoryTreeStyleVar == 'request' && openCollapsed)">in</s:if>">
+                    <div id="collapseOne" class="panel-collapse collapse <s:if test="%{#attr['openCollapsed'] || #attr['openCollapsed'].equals('\\'true\\'') || openCollapsed}">in</s:if>">
                             <div class="panel-body">
                             <%-- groups --%>
                             <s:set var="allowedGroupsVar" value="allowedGroups"></s:set>

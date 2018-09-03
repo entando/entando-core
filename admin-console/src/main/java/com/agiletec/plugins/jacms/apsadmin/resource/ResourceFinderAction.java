@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.resource;
 
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
@@ -138,7 +139,14 @@ public class ResourceFinderAction extends AbstractResourceAction {
     }
 
     public boolean isOpenCollapsed() {
-        return openCollapsed;
+        boolean hasFilterByCat = false;
+        if (null != this.getCategoryCode()) {
+            Category category = this.getCategoryManager().getCategory(this.getCategoryCode());
+            hasFilterByCat = (null != category && !category.isRoot());
+        }
+        return (this.openCollapsed || hasFilterByCat
+                || !StringUtils.isBlank(this.getFileName())
+                || !StringUtils.isBlank(this.getOwnerGroupName()));
     }
 
     public void setOpenCollapsed(boolean openCollapsed) {
@@ -151,10 +159,8 @@ public class ResourceFinderAction extends AbstractResourceAction {
         List<String> codesForSearch = new ArrayList<String>();
         if (StringUtils.isEmpty(ownerGroup)) {
             codesForSearch.addAll(groupCodes);
-        } else {
-            if (groupCodes.contains(ownerGroup)) {
-                codesForSearch.add(ownerGroup);
-            }
+        } else if (groupCodes.contains(ownerGroup)) {
+            codesForSearch.add(ownerGroup);
         }
         return codesForSearch;
     }

@@ -59,9 +59,9 @@
                                     <!--type-->
                                     <div class="form-group">
                                         <label class="control-label col-sm-2 text-right" for="contentType"><s:text name="label.type"/></label>
-                                        <div class="col-sm-9 input-group input-20px-leftRight">
+                                        <div class="col-sm-9 input-group">
                                             <wpsf:select name="contentType" id="contentType"
-                                                         list="contentTypes" listKey="code" listValue="descr"
+                                                         list="contentTypes" listKey="code" listValue="description"
                                                          headerKey="" headerValue="%{getText('label.all')}"
                                                          cssClass="form-control" />
                                         </div>

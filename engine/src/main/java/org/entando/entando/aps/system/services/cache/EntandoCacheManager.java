@@ -27,7 +27,7 @@ public class EntandoCacheManager extends AbstractCacheManager {
 
     private Collection<Cache> caches = Collections.emptySet();
 
-    @Autowired
+    @Autowired(required = false)
     private List<ExternalCachesContainer> externalCachesContainers;
 
     @Override

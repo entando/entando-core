@@ -2210,3 +2210,12 @@ label .fa-folder, .fa-folder {
     font-family: LatoWebBold;
     transition: all 0.4s ease;
 }
+
+.input-file-button {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}

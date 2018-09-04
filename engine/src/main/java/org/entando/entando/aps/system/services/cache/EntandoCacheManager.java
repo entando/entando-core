@@ -15,39 +15,31 @@ package org.entando.entando.aps.system.services.cache;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.ListableBeanFactory;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.support.AbstractCacheManager;
 
 /**
  * @author E.Santoboni
  */
-public class EntandoCacheManager extends AbstractCacheManager implements BeanFactoryAware {
+public class EntandoCacheManager extends AbstractCacheManager {
 
     private Collection<Cache> caches = Collections.emptySet();
 
-    private BeanFactory beanFactory;
+    @Autowired
+    private List<ExternalCachesContainer> externalCachesContainers;
 
     @Override
     public void afterPropertiesSet() {
-        String[] beanNames = ((ListableBeanFactory) this.beanFactory).getBeanNamesForType(ExternalCachesContainer.class);
-        if (null != beanNames) {
-            for (String beanName : beanNames) {
-                ExternalCachesContainer container = this.beanFactory.getBean(beanName, ExternalCachesContainer.class);
+        if (null != this.getExternalCachesContainers()) {
+            for (ExternalCachesContainer container : this.getExternalCachesContainers()) {
                 if (null != container.getCaches()) {
                     this.caches.addAll(container.getCaches());
                 }
             }
         }
         super.afterPropertiesSet();
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-        this.beanFactory = beanFactory;
     }
 
     /**
@@ -62,6 +54,14 @@ public class EntandoCacheManager extends AbstractCacheManager implements BeanFac
     @Override
     protected Collection<? extends Cache> loadCaches() {
         return this.caches;
+    }
+
+    protected List<ExternalCachesContainer> getExternalCachesContainers() {
+        return externalCachesContainers;
+    }
+
+    protected void setExternalCachesContainers(List<ExternalCachesContainer> externalCachesContainers) {
+        this.externalCachesContainers = externalCachesContainers;
     }
 
 }

@@ -47,6 +47,7 @@
 </div>
 <s:set var="userGroup_list" value="groups" />
 <s:if test="#userGroup_list.size > 0">
+<s:form action="list" role="list" namespace="/do/Group">
     <wpsa:subset source="#userGroup_list" count="10"
                  objectName="userGroups" advanced="true" offset="5">
         <s:set var="group" value="#userGroups" />
@@ -106,6 +107,7 @@
             </div>
         </div>
     </wpsa:subset>
+</s:form>
 </s:if>
 <s:else>
     <p>

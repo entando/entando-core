@@ -103,7 +103,6 @@
                 <version>2.15</version>
                 <configuration>
                     <argLine>${surefireArgLine}</argLine>
-                    <!--<argLine>-Xmx2048m</argLine>-->
                     <testFailureIgnore>false</testFailureIgnore>
                     <excludes>
                         <exclude>**/*BaseTestCase*</exclude>

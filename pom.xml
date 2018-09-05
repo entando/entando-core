@@ -95,7 +95,7 @@
         <sonar.jacoco.reportPaths>${jacoco.ut.execution.data.file}</sonar.jacoco.reportPaths>
         <sonar.surefire.reportsPath>${project.basedir}/target/surefire-reports/</sonar.surefire.reportsPath>
         <sonar.binaries>${project.basedir}/target/classes</sonar.binaries>
-        <sonar.language>java</sonar.language>
+        <!--<sonar.language>java</sonar.language>-->
         <!-- end sonar -->
     </properties>
     <build>

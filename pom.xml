@@ -78,6 +78,25 @@
 		
         <hibernate-validator-version>5.3.0.Final</hibernate-validator-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- sonar -->
+        <sonar.sources>${project.basedir}/src/main</sonar.sources>
+        <sonar.tests>${project.basedir}/src/test</sonar.tests>
+        <!-- Below property indicates the pattern of the test suite -->
+        <runSuite>**/AllTests.java</runSuite>
+        <jacoco.it.execution.data.file>${project.basedir}/target/coverage-reports/jacoco-it.exec</jacoco.it.execution.data.file>
+        <jacoco.ut.execution.data.file>${project.basedir}/target/coverage-reports/jacoco-ut.exec</jacoco.ut.execution.data.file>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.junit.reportPaths>
+            ${project.basedir}/admin-console/target/surefire-reports/,
+            ${project.basedir}/engine/target/surefire-reports/,
+            ${project.basedir}/portal-ui/target/surefire-reports/
+        </sonar.junit.reportPaths>
+        <sonar.jacoco.reportPaths>${jacoco.ut.execution.data.file}</sonar.jacoco.reportPaths>
+        <sonar.surefire.reportsPath>${project.basedir}/target/surefire-reports/</sonar.surefire.reportsPath>
+        <sonar.binaries>${project.basedir}/target/classes</sonar.binaries>
+        <sonar.language>java</sonar.language>
+        <!-- end sonar -->
     </properties>
     <build>
         <plugins>
@@ -105,6 +124,66 @@
                 </executions>
             </plugin>
             <!-- end sources jars -->
+            <!-- sonar plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.4.1.1168</version>
+            </plugin>
+            <!-- end of sonar plugin -->
+            <!-- jacoco plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.7.6.201602180812</version>
+                <!--<configuration>-->
+                    <!--<sessionId>${project.artifactId}</sessionId>-->
+                    <!--<dataFile>${jacoco.ut.execution.data.file}</dataFile>-->
+                    <!--<outputDirectory>${project.basedir}/target/jacoco-ut</outputDirectory>-->
+                    <!--<destFile>${jacoco.it.execution.data.file}</destFile>-->
+                    <!--<append>true</append>-->
+                <!--</configuration>-->
+                <executions>
+                    <!--
+                        Prepares the property pointing to the JaCoCo runtime agent which
+                        is passed as VM argument when Maven the Surefire plugin is executed.
+                    -->
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Sets the path to the file which contains the execution data. -->
+                            <destFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</destFile>
+                            <append>true</append>
+                            <!--
+                                Sets the name of the property containing the settings
+                                for JaCoCo runtime agent.
+                            -->
+                            <propertyName>surefireArgLine</propertyName>
+                        </configuration>
+                    </execution>
+                    <!--
+                        Ensures that the code coverage report for unit tests is created after
+                        unit tests have been run.
+                    -->
+                    <execution>
+                        <id>post-unit-test</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Sets the path to the file which contains the execution data. -->
+                            <dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+                            <!-- Sets the output directory for the code coverage report. -->
+                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- end jacoco plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>

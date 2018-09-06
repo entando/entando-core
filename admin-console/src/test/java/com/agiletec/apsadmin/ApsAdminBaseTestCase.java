@@ -63,33 +63,43 @@ import org.springframework.web.context.WebApplicationContext;
  */
 public class ApsAdminBaseTestCase extends TestCase {
 
+    private static ApplicationContext applicationContext;
+    private Dispatcher dispatcher;
+    private ActionProxy proxy;
+    private static MockServletContext servletContext;
+    private MockHttpServletRequest request;
+    private MockHttpServletResponse response;
+    private ActionSupport action;
+
+    private Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+
     @Override
     protected void setUp() throws Exception {
         boolean refresh = false;
-        if (null == _applicationContext) {
+        if (null == applicationContext) {
             // Link the servlet context and the Spring context
-            _servletContext = new MockServletContext("", new FileSystemResourceLoader());
-            _applicationContext = this.getConfigUtils().createApplicationContext(_servletContext);
-            _servletContext.setAttribute(
-                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, _applicationContext);
+            servletContext = new MockServletContext("", new FileSystemResourceLoader());
+            applicationContext = this.getConfigUtils().createApplicationContext(servletContext);
+            servletContext.setAttribute(
+                    WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, applicationContext);
         } else {
             refresh = true;
         }
-        RequestContext reqCtx = BaseTestCase.createRequestContext(_applicationContext, _servletContext);
-        this._request = new MockHttpServletRequest();
-        this._request.setAttribute(RequestContext.REQCTX, reqCtx);
-        this._response = new MockHttpServletResponse();
-        this._request.setSession(new MockHttpSession(this._servletContext));
+        RequestContext reqCtx = BaseTestCase.createRequestContext(applicationContext, servletContext);
+        this.request = new MockHttpServletRequest();
+        this.request.setAttribute(RequestContext.REQCTX, reqCtx);
+        this.response = new MockHttpServletResponse();
+        this.request.setSession(new MockHttpSession(servletContext));
         if (refresh) {
             try {
-                ApsWebApplicationUtils.executeSystemRefresh(this._request);
+                ApsWebApplicationUtils.executeSystemRefresh(this.request);
                 this.waitNotifyingThread();
             } catch (Throwable e) {
             }
         }
         // Use spring as the object factory for Struts
-        StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, _servletContext, null, this.createContainer());
-        ssf.setApplicationContext(_applicationContext);
+        StrutsSpringObjectFactory ssf = new StrutsSpringObjectFactory(null, null, null, null, servletContext, null, this.createContainer());
+        ssf.setApplicationContext(applicationContext);
         // Dispatcher is the guy that actually handles all requests.  Pass in
         // an empty Map as the parameters but if you want to change stuff like
         // what config files to read, you need to specify them here
@@ -99,13 +109,13 @@ public class ApsAdminBaseTestCase extends TestCase {
         props.load(url.openStream());
         this.setInitParameters(props);
         Map params = new HashMap(props);
-        this._dispatcher = new Dispatcher(_servletContext, params);
-        this._dispatcher.init();
-        Dispatcher.setInstance(this._dispatcher);
+        this.dispatcher = new Dispatcher(servletContext, params);
+        this.dispatcher.init();
+        Dispatcher.setInstance(this.dispatcher);
     }
 
     protected <T> T getContainerObject(Class<T> requiredType) {
-        return this._dispatcher.getContainer().getInstance(requiredType);
+        return this.dispatcher.getContainer().getInstance(requiredType);
     }
 
     protected Container createContainer() {
@@ -148,22 +158,23 @@ public class ApsAdminBaseTestCase extends TestCase {
         // create a proxy class which is just a wrapper around the action call.
         // The proxy is created by checking the namespace and name against the
         // struts.xml configuration
-        ActionProxyFactory proxyFactory = (ActionProxyFactory) this._dispatcher.getContainer().getInstance(ActionProxyFactory.class);
-        this._proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
+        ActionProxyFactory proxyFactory = (ActionProxyFactory) this.dispatcher.getContainer().getInstance(ActionProxyFactory.class);
+        this.proxy = proxyFactory.createActionProxy(namespace, name, null, null, true, false);
 
         // set to true if you want to process Freemarker or JSP results
-        this._proxy.setExecuteResult(false);
+        this.proxy.setExecuteResult(false);
         // by default, don't pass in any request parameters
 
         // set the actions context to the one which the proxy is using
-        ServletActionContext.setContext(_proxy.getInvocation().getInvocationContext());
-        ServletActionContext.setRequest(_request);
-        ServletActionContext.setResponse(_response);
-        ServletActionContext.setServletContext(_servletContext);
-        this._action = (ActionSupport) this._proxy.getAction();
+        this.proxy.getInvocation().getInvocationContext().setSession(new HashMap<>());
+        ServletActionContext.setContext(this.proxy.getInvocation().getInvocationContext());
+        ServletActionContext.setRequest(this.request);
+        ServletActionContext.setResponse(response);
+        ServletActionContext.setServletContext(servletContext);
+        this.action = (ActionSupport) this.proxy.getAction();
 
         //reset previsious params
-        List<String> paramNames = new ArrayList<String>(this._request.getParameterMap().keySet());
+        List<String> paramNames = new ArrayList<String>(this.request.getParameterMap().keySet());
         for (int i = 0; i < paramNames.size(); i++) {
             String paramName = (String) paramNames.get(i);
             this.removeParameter(paramName);
@@ -219,12 +230,12 @@ public class ApsAdminBaseTestCase extends TestCase {
             return;
         }
         UserDetails currentUser = this.getUser(username, username);//nel database di test, username e password sono uguali
-        HttpSession session = this._request.getSession();
+        HttpSession session = this.request.getSession();
         session.setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, currentUser);
     }
 
     protected void removeUserOnSession() throws Exception {
-        HttpSession session = this._request.getSession();
+        HttpSession session = this.request.getSession();
         session.removeAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
     }
 
@@ -243,7 +254,7 @@ public class ApsAdminBaseTestCase extends TestCase {
     }
 
     protected void addParameter(String name, Collection<String> value) {
-        this._request.removeParameter(name);
+        this.request.removeParameter(name);
         if (null == value) {
             return;
         }
@@ -252,47 +263,47 @@ public class ApsAdminBaseTestCase extends TestCase {
         int i = 0;
         while (iter.hasNext()) {
             String stringValue = iter.next();
-            this._request.addParameter(name, stringValue);
+            this.request.addParameter(name, stringValue);
             array[i++] = stringValue;
         }
         Parameter.Request parameter = new Parameter.Request(name, array);
-        this._parameters.put(name, parameter);
+        this.parameters.put(name, parameter);
     }
 
     protected void addParameter(String name, Object value) {
-        this._request.removeParameter(name);
+        this.request.removeParameter(name);
         if (null == value) {
             return;
         }
-        this._request.addParameter(name, value.toString());
+        this.request.addParameter(name, value.toString());
         Parameter.Request parameter = new Parameter.Request(name, value.toString());
-        this._parameters.put(name, parameter);
+        this.parameters.put(name, parameter);
     }
 
     protected void addAttribute(String name, Object value) {
-        this._request.removeAttribute(name);
+        this.request.removeAttribute(name);
         if (null == value) {
             return;
         }
-        this._request.setAttribute(name, value);
+        this.request.setAttribute(name, value);
     }
 
     private void removeParameter(String name) {
-        this._request.removeParameter(name);
-        this._request.removeAttribute(name);
-        this._parameters.remove(name);
+        this.request.removeParameter(name);
+        this.request.removeAttribute(name);
+        this.parameters.remove(name);
     }
 
     protected String executeAction() throws Throwable {
         ActionContext ac = this.getActionContext();
-        ac.setParameters(HttpParameters.create(this._request.getParameterMap()).build());
-        ac.getParameters().appendAll(this._parameters);
-        String result = this._proxy.execute();
+        ac.setParameters(HttpParameters.create(this.request.getParameterMap()).build());
+        ac.getParameters().appendAll(this.parameters);
+        String result = this.proxy.execute();
         return result;
     }
 
     protected ActionContext getActionContext() {
-        return this._proxy.getInvocation().getInvocationContext();
+        return this.proxy.getInvocation().getInvocationContext();
     }
 
     protected IManager getService(String name) {
@@ -300,7 +311,7 @@ public class ApsAdminBaseTestCase extends TestCase {
     }
 
     protected ApplicationContext getApplicationContext() {
-        return _applicationContext;
+        return applicationContext;
     }
 
     protected ConfigTestUtils getConfigUtils() {
@@ -308,20 +319,11 @@ public class ApsAdminBaseTestCase extends TestCase {
     }
 
     protected ActionSupport getAction() {
-        return this._action;
+        return this.action;
     }
 
     protected HttpServletRequest getRequest() {
-        return this._request;
+        return this.request;
     }
-    private static ApplicationContext _applicationContext;
-    private Dispatcher _dispatcher;
-    private ActionProxy _proxy;
-    private static MockServletContext _servletContext;
-    private MockHttpServletRequest _request;
-    private MockHttpServletResponse _response;
-    private ActionSupport _action;
-
-    private Map<String, Parameter> _parameters = new HashMap<String, Parameter>();
 
 }

@@ -14,10 +14,7 @@
 	<constant name="struts.localizedTextProvider" value="entandoLocalizedTextProvider" />
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="false" />
-
-	<constant name="struts.xworkTextProvider" value="DefaultTextProvider" />
-	<bean type="com.opensymphony.xwork2.TextProvider" name="DefaultTextProvider" class="org.entando.entando.apsadmin.system.resource.CustomTextProviderFactory" scope="default" />
-
+    
 	<package name="entando-default" extends="tiles-default">
     	
 		<result-types>

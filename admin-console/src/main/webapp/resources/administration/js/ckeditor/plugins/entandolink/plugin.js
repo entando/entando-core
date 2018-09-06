@@ -111,7 +111,7 @@ CKEDITOR.plugins.add('entandolink', {
 					icon: CKEDITOR.plugins.getPath(pluginName) + "entandolink-icon.png",
 				});
 				editor.ui.addButton('entandounlink', {
-					label: editor.lang.unlink,
+					label: editor.lang.link.unlink,
 					command: 'entandounlink',
 					icon: CKEDITOR.plugins.getPath(pluginName) + "entandounlink-icon.png"
 				});
@@ -137,7 +137,7 @@ CKEDITOR.plugins.add('entandolink', {
 								command: 'entandolink',
 						},
 						entandounlink: {
-								label: editor.lang.unlink,
+								label: editor.lang.link.unlink,
 								command: 'entandounlink'
 						}
 					});

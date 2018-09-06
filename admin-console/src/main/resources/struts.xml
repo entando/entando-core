@@ -7,8 +7,11 @@
     
 	<bean type="org.apache.struts2.dispatcher.StaticContentLoader" 
 		  class="com.agiletec.apsadmin.system.dispatcher.EntandoStaticContentLoader" name="entandoStaticContentLoader" />
-	
+	<bean type="com.opensymphony.xwork2.LocalizedTextProvider" 
+		  name="entandoLocalizedTextProvider" class="org.entando.entando.apsadmin.system.resource.CustomLocalizedTextProvider" scope="singleton" />
+    
 	<constant name="struts.staticContentLoader" value="entandoStaticContentLoader" />
+	<constant name="struts.localizedTextProvider" value="entandoLocalizedTextProvider" />
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="false" />
 

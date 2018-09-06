@@ -13,22 +13,16 @@
  */
 package org.entando.entando.apsadmin.system.resource;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
+import com.opensymphony.xwork2.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.opensymphony.xwork2.util.LocalizedTextUtil;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import java.io.InputStream;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 /**
  * This listener is used to add the properties of the plugins menu to the default resource bundles.
@@ -44,7 +38,9 @@ import com.opensymphony.xwork2.util.LocalizedTextUtil;
 public class EntandoPluginLabelListener implements ServletContextListener {
 
 	private static final Logger _logger = LoggerFactory.getLogger(EntandoPluginLabelListener.class);
-	
+
+	private CustomTextProviderFactory textProvider;
+
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		Set<String> classPlugins = this.discoverClasses(TOMCAT_CLASSES, event);
@@ -53,13 +49,13 @@ public class EntandoPluginLabelListener implements ServletContextListener {
 		while (itr.hasNext()) {
 			String cur = itr.next();
 			_logger.debug("Trying to load resources under development @ {}", cur);
-			LocalizedTextUtil.addDefaultResourceBundle(cur+this.PLUGIN_RESOURCE_NAME);
+			textProvider.getLocalizedTextProvider().addDefaultResourceBundle(cur+this.PLUGIN_RESOURCE_NAME);
 		}
 		itr = jaredPlugins.iterator();
 		while (itr.hasNext()) {
 			String cur = itr.next();
 			_logger.debug("Trying to load resources @{}", cur);
-			LocalizedTextUtil.addDefaultResourceBundle(cur+this.PLUGIN_RESOURCE_NAME);
+			textProvider.getLocalizedTextProvider().addDefaultResourceBundle(cur+this.PLUGIN_RESOURCE_NAME);
 		}
 		_logger.info("EntandoPluginLabelListener summary: {} plugin detected ({} under development)", (classPlugins.size()+jaredPlugins.size()), classPlugins.size());
 	}
@@ -147,6 +143,11 @@ public class EntandoPluginLabelListener implements ServletContextListener {
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
 		// nothing to do
+	}
+
+	@Inject
+	public void setLocalizedTextProvider(CustomTextProviderFactory textProvider) {
+		this.textProvider = textProvider;
 	}
 
 	/**

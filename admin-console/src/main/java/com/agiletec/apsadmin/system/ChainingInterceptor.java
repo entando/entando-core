@@ -16,6 +16,7 @@ package com.agiletec.apsadmin.system;
 import com.opensymphony.xwork2.Unchainable;
 import com.opensymphony.xwork2.util.TextParseUtil;
 import com.opensymphony.xwork2.util.reflection.ReflectionProvider;
+
 import java.util.Set;
 
 /**
@@ -111,7 +112,7 @@ public class ChainingInterceptor extends com.opensymphony.xwork2.interceptor.Cha
 		if (parameters.contains("actionMessages")) {
 			super.setCopyMessages(Boolean.FALSE.toString());
 		}
-		super.setExcludes(parameters);
+		super.setExcludesCollection(parameters);
 	}
 	
 	public void setIncludeParameters(String parametersToInclude) {
@@ -125,7 +126,7 @@ public class ChainingInterceptor extends com.opensymphony.xwork2.interceptor.Cha
 		if (parameters.contains("actionMessages")) {
 			super.setCopyMessages(Boolean.TRUE.toString());
 		}
-		super.setIncludes(parameters);
+		super.setIncludesCollection(parameters);
 	}
 	
 }

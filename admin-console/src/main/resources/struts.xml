@@ -7,8 +7,11 @@
     
 	<bean type="org.apache.struts2.dispatcher.StaticContentLoader" 
 		  class="com.agiletec.apsadmin.system.dispatcher.EntandoStaticContentLoader" name="entandoStaticContentLoader" />
-	
+	<bean type="com.opensymphony.xwork2.LocalizedTextProvider" 
+		  name="entandoLocalizedTextProvider" class="org.entando.entando.apsadmin.system.resource.CustomLocalizedTextProvider" scope="singleton" />
+    
 	<constant name="struts.staticContentLoader" value="entandoStaticContentLoader" />
+	<constant name="struts.localizedTextProvider" value="entandoLocalizedTextProvider" />
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="false" />
     
@@ -16,8 +19,6 @@
     	
 		<result-types>
 			<result-type name="redirectActionWithAnchor" class="com.agiletec.apsadmin.system.dispatcher.ServletActionRedirectResultWithAnchor" />
-			<!-- "redirect-action" result **Deprecated** : inserted to ensure compatibility with previous of Entando 2.0 version 2.0.6 -->
-			<result-type name="redirect-action" class="org.apache.struts2.dispatcher.ServletActionRedirectResult"/>	
 			<result-type name="json" class="org.apache.struts2.json.JSONResult"/>
 		</result-types>
     	
@@ -29,6 +30,7 @@
 			<interceptor name="chain" class="com.agiletec.apsadmin.system.ChainingInterceptor" />
 			<interceptor name="apsFileUpload" class="com.agiletec.apsadmin.system.ApsFileUploadInterceptor" />
 			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />	
+			<interceptor name="entandoToken" class="org.entando.entando.apsadmin.system.CustomTokenInterceptor" />	
 			<interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
 			
 			<interceptor-stack name="entandoFreeStack">
@@ -79,24 +81,6 @@
 			</result>
 		</global-results>
     	
-	</package>
-    
-	<!-- "japs-default" package **Deprecated** : inserted to ensure compatibility with previous of Entando 2.0 version 2.4.1 -->
-	<package name="japs-default" extends="entando-default">
-		<interceptors>
-			<interceptor-stack name="japsFreeStack">
-				<interceptor-ref name="entandoFreeStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFreeValidationStack">
-				<interceptor-ref name="entandoFreeValidationStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsDefaultStack">
-				<interceptor-ref name="entandoDefaultStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsValidationStack">
-				<interceptor-ref name="entandoValidationStack" />
-			</interceptor-stack>
-		</interceptors>
 	</package>
     
 	<package name="entando-front-default" extends="entando-default">
@@ -157,36 +141,6 @@
 			</result>
 		</global-results>
 		
-	</package>
-	
-	<!-- "japs-front-default" package **Deprecated** : inserted to ensure compatibility with previous of Entando 2.0 version 2.4.1 -->
-	<package name="japs-front-default" extends="entando-front-default">
-		<interceptors>
-			<interceptor-stack name="japsFreeStack">
-				<interceptor-ref name="entandoFreeStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFreeValidationStack">
-				<interceptor-ref name="entandoFreeValidationStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsDefaultStack">
-				<interceptor-ref name="entandoDefaultStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsValidationStack">
-				<interceptor-ref name="entandoValidationStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFrontEndFreeStack">
-				<interceptor-ref name="entandoFrontEndFreeStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFrontEndStack">
-				<interceptor-ref name="entandoFrontEndStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFrontEndFreeValidationStack">
-				<interceptor-ref name="entandoFrontEndFreeValidationStack" />
-			</interceptor-stack>
-			<interceptor-stack name="japsFrontEndValidationStack">
-				<interceptor-ref name="entandoFrontEndValidationStack" />
-			</interceptor-stack>
-		</interceptors>
 	</package>
 	
 	<include file="com/agiletec/apsadmin/admin/baseAdmin.xml" />

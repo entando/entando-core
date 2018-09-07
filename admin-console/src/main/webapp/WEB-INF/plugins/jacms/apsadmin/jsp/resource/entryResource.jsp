@@ -408,7 +408,6 @@
             </s:if>
         </div>
     </div>
-</div>
 
 </s:if>
 
@@ -527,4 +526,5 @@
 
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadAddFields.jsp" />
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabelI18n.jsp" />
+
 

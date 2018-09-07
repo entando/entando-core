@@ -30,7 +30,14 @@ import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-import java.util.logging.Level;
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Class used to handle resource objects.
@@ -39,7 +46,7 @@ import java.util.logging.Level;
  */
 public class ResourceAction extends AbstractResourceAction implements ResourceDataBean {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ResourceAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResourceAction.class);
 
     private String _resourceId;
     private String _descr;
@@ -128,7 +135,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
                 this.setMainGroup(Group.FREE_GROUP_NAME);
             }
         } catch (Throwable t) {
-            _logger.error("error in newResource", t);
+            logger.error("error in newResource", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -140,6 +147,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String edit() {
+        logger.debug("Edit in resource action for id {}", this.getResourceId());
         try {
             ResourceInterface resource = this.loadResource(this.getResourceId());
             this.setResourceTypeCode(resource.getType());
@@ -153,7 +161,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
             this.setMainGroup(resource.getMainGroup());
             this.setStrutsAction(ApsAdminSystemConstants.EDIT);
         } catch (Throwable t) {
-            _logger.error("error in edit", t);
+            logger.error("error in edit", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -174,7 +182,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
             }
             this.setMainGroup(resource.getMainGroup());
         } catch (Throwable t) {
-            _logger.error("error in detail", t);
+            logger.error("error in detail", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -186,14 +194,38 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String save() {
+        logger.debug("Save in resource action for id {}", this.getResourceId());
         try {
+            
+            Map imgMetadata = new HashMap();
+            if (null != getFile()) {
+                logger.debug("Read Metadata file is not null");
+                imgMetadata = getImgMetadata(this.getFile());
+            } else {
+                logger.debug("Read Metadata file is null");
+            }
+            logger.debug("Save method, action {}", this.getStrutsAction());
+            if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+                logger.debug("Edit resource > metadata size: {}", imgMetadata.size());
+                if (imgMetadata.size() > 0) {
+                    logger.debug("Edit resource > metadata size: {}  -> update the metadata list", imgMetadata.size());
+                    this.setMetadata(imgMetadata);
+                } else {
+                    fetchMetadataEdit();
+                    logger.debug("Edit resource > metadata size: 0  -> use previous metadata list", getMetadata());
+                    this.setMetadata(getMetadata());
+                }
+            } else {
+                this.setMetadata(imgMetadata);
+            }
+                    
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                 this.getResourceManager().addResource(this);
             } else if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
                 this.getResourceManager().updateResource(this);
             }
         } catch (Throwable t) {
-            _logger.error("error in save", t);
+            logger.error("error in save", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -213,7 +245,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
                 return result;
             }
         } catch (Throwable t) {
-            _logger.error("error in trash", t);
+            logger.error("error in trash", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -226,6 +258,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String delete() {
+        logger.debug("Delete in resource action for id {}", this.getResourceId());
         try {
             String result = this.checkDeleteResource();
             if (null != result) {
@@ -234,7 +267,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
             ResourceInterface resource = this.loadResource(this.getResourceId());
             this.getResourceManager().deleteResource(resource);
         } catch (Throwable t) {
-            _logger.error("error in delete", t);
+            logger.error("error in delete", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -262,6 +295,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String joinCategory() {
+        logger.debug("JoinCategory in resource action for id {}", this.getResourceId());
         return this.joinRemoveCategory(true, this.getCategoryCode());
     }
 
@@ -272,6 +306,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      * @return The result code.
      */
     public String removeCategory() {
+        logger.debug("RemoveCategory in resource action for id {}", this.getResourceId());
         return this.joinRemoveCategory(false, this.getCategoryCode());
     }
 
@@ -288,6 +323,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
      */
     private String joinRemoveCategory(boolean isJoin, String categoryCode) {
         try {
+            fetchMetadataEdit();
             Category category = this.getCategory(categoryCode);
             if (category == null) {
                 return SUCCESS;
@@ -301,7 +337,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
                 categories.remove(categoryCode);
             }
         } catch (Throwable t) {
-            _logger.error("error in joinRemoveCategory", t);
+            logger.error("error in joinRemoveCategory", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -334,7 +370,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
                 this._references = this.getResourceActionHelper().getReferencingObjects(this.getResourceId(), this.getRequest());
             }
         } catch (Throwable t) {
-            _logger.error("Error extracting references", t);
+            logger.error("Error extracting references", t);
         }
         return _references;
     }
@@ -471,5 +507,51 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     public void setOnEditContent(boolean onEditContent) {
         this.onEditContent = onEditContent;
     }
+    
+    protected Map getImgMetadata(File file) {
+        logger.debug("Get image Metadata in Resource Action");
+        Map<String, String> meta = new HashMap<>();
+        ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file);
+            String ignoreKeysConf = resourcePrototype.getMetadataIgnoreKeys();
+            String[] ignoreKeys = null;
+            if (null != ignoreKeysConf) {
+                ignoreKeys = ignoreKeysConf.split(",");
+                logger.debug("Metadata ignoreKeys: {}", ignoreKeys);
+            } else {
+                logger.debug("Metadata ignoreKeys not configured");
+            }
+            List<String> ignoreKeysList = new ArrayList<String>();
+            if (null != ignoreKeys) {
+                ignoreKeysList = Arrays.asList(ignoreKeys);
+            }
+            for (Directory directory : metadata.getDirectories()) {
+                for (Tag tag : directory.getTags()) {
+                    if (!ignoreKeysList.contains(tag.getTagName())) {
+                        logger.debug("Add Metadata with key: {}", tag.getTagName());
+                        meta.put(tag.getTagName(), tag.getDescription());
+                    } else {
+                        logger.debug("Skip Metadata key {}", tag.getTagName());
+                    }
+                }
+            }
+        } catch (ImageProcessingException ex) {
+            logger.error("Error reading metadata");
+        } catch (IOException ioex) {
+            logger.error("Error reading file");
+        }
+        return meta;
+    }
 
+    protected void fetchMetadataEdit() {
+        if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
+            try {
+                this.setMetadata(this.loadResource(this.getResourceId()).getMetadata());
+            } catch (Throwable ex) {
+                logger.error("error reading resource {} on fetchMetadataEdit {}", this.getResourceId(), ex);
+            }
+            logger.debug("resource {} metadata size: {}", this.getResourceId(), getMetadata().size());
+        }
+    }
 }

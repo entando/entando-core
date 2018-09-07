@@ -375,11 +375,11 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
             if (null == filters || filters.length == 0) {
                 return true;
             }
-            Map<String, Object> properties = BeanUtils.describe(bean);
+            Map<String, String> properties = BeanUtils.describe(bean);
             for (Filter filter : filters) {
                 String fieldName = this.getFieldName(filter.getAttribute(), mapping);
                 String value = (null != properties.get(fieldName))
-                        ? properties.get(fieldName).toString() : null;
+                        ? properties.get(fieldName) : null;
                 if (null == value) {
                     continue;
                 }

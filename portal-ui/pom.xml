@@ -285,6 +285,10 @@
             <version>2.1.0.1</version>
             <exclusions>
                 <exclusion>
+                    <groupId>org.beanshell</groupId>
+                    <artifactId>bsh-core</artifactId>
+                </exclusion>
+                <exclusion>
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
@@ -300,14 +304,17 @@
                     <groupId>commons-beanutils</groupId>
                     <artifactId>commons-beanutils-core</artifactId>
                 </exclusion>
+                <!-- excluded for high vulnerability -->
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
                     <artifactId>batik-ext</artifactId>
                 </exclusion>
+                <!-- excluded for high vulnerability -->
                 <exclusion>
                     <groupId>org.apache.xmlgraphics</groupId>
                     <artifactId>batik-css</artifactId>
                 </exclusion>
+                <!-- excluded for high vulnerability -->
                 <exclusion>
                     <groupId>xalan</groupId>
                     <artifactId>xalan</artifactId>
@@ -320,25 +327,16 @@
         </dependency>
         
         <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-css</artifactId>
-            <version>1.8</version>
-            <scope>compile</scope>
-            <exclusions>
-                <!-- excluded for high vulnerability -->
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-ext</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        
-        <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
             <version>1.2.5</version>
             <scope>compile</scope>
             <exclusions>
+                <!-- excluded for high vulnerability -->
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
                 <!-- excluded for high vulnerability -->
                 <exclusion>
                     <groupId>xalan</groupId>

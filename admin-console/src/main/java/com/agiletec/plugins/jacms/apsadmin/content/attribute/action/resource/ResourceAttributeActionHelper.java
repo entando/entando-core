@@ -189,9 +189,17 @@ public class ResourceAttributeActionHelper {
                     || langManager.getDefaultLang().getCode().equals(langCode)) {
                 resourceAttribute.getResources().clear();
                 resourceAttribute.getTextMap().clear();
+                resourceAttribute.getResourceAltMap().clear();
+                resourceAttribute.getResourceDescriptionMap().clear();
+                resourceAttribute.getResourceLegendMap().clear();
+                resourceAttribute.getResourceTitleMap().clear();
             } else {
                 resourceAttribute.setResource(null, langCode);
                 resourceAttribute.setText(null, langCode);
+                resourceAttribute.setResourceAlt(null, langCode);
+                resourceAttribute.setResourceDescription(null, langCode);
+                resourceAttribute.setResourceLegend(null, langCode);
+                resourceAttribute.setResourceTitle(null, langCode);
             }
         } else if (attribute instanceof MonoListAttribute) {
             int elementIndex = ((Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM)).intValue();

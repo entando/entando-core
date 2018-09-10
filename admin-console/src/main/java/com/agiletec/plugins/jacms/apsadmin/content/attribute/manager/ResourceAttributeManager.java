@@ -24,7 +24,6 @@ import com.opensymphony.xwork2.ActionSupport;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Classe manager degli attributi tipo risorsa (Image o Attach).
@@ -42,20 +41,27 @@ public class ResourceAttributeManager extends TextAttributeManager {
             tracer.setLang(currentLang);
             // alt, description, legend, and title
             String alt = this.getResourceValueFromForm(attribute, tracer, request, "alt");
-            resourceAttribute.setResourceAlt(alt, currentLang.getCode());
+            if (null != alt) {
+                resourceAttribute.setResourceAlt(alt, currentLang.getCode());
+            }
             String description = this.getResourceValueFromForm(attribute, tracer, request, "description");
-            resourceAttribute.setResourceDescription(description, currentLang.getCode());
+            if (null != description) {
+                resourceAttribute.setResourceDescription(description, currentLang.getCode());
+            }
             String legend = this.getResourceValueFromForm(attribute, tracer, request, "legend");
-            resourceAttribute.setResourceLegend(legend, currentLang.getCode());
+            if (null != legend) {
+                resourceAttribute.setResourceLegend(legend, currentLang.getCode());
+            }
             String title = this.getResourceValueFromForm(attribute, tracer, request, "title");
-            resourceAttribute.setResourceTitle(title, currentLang.getCode());
+            if (null != legend) {
+                resourceAttribute.setResourceTitle(title, currentLang.getCode());
+            }
         }
     }
 
     protected String getResourceValueFromForm(AttributeInterface attribute, AttributeTracer tracer, HttpServletRequest request, String suffix) {
         String formFieldName = tracer.getFormFieldName(attribute) + "_" + suffix;
-        String value = request.getParameter(formFieldName);
-        return StringUtils.isBlank(value) ? null : value.trim();
+        return request.getParameter(formFieldName);
     }
 
     @Override

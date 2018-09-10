@@ -39,9 +39,6 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
 
     public void testOpenIndexProspect() throws Throwable {
         String result = this.executeOpenIndexProspect("admin");
-        synchronized (this) {
-            wait(1000);
-        }
         assertEquals(BaseAction.SUCCESS, result);
         ContentAdminAction contentAdminAction = (ContentAdminAction) this.getAction();
         assertEquals(IContentManager.STATUS_READY, contentAdminAction.getContentManagerStatus());
@@ -55,9 +52,6 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
 
     public void testReloadContentsIndex() throws Throwable {
         String result = this.executeReloadContentsIndex("admin");
-        synchronized (this) {
-            wait(1000);
-        }
         assertEquals(BaseAction.SUCCESS, result);
         this.waitReloadThreads();
         ContentAdminAction contentAdminAction = (ContentAdminAction) this.getAction();
@@ -73,7 +67,6 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
         ContentAdminAction contentAdminAction = (ContentAdminAction) this.getAction();
         assertEquals(IContentManager.STATUS_READY, contentAdminAction.getContentManagerStatus());
         assertEquals(ICmsSearchEngineManager.STATUS_READY, contentAdminAction.getSearcherManagerStatus());
-        assertNull(contentAdminAction.getLastReloadInfo());
     }
 
     public void testUpdateResourceMapping() throws Throwable {

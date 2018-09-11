@@ -18,9 +18,6 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
 import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
 import org.apache.oltu.oauth2.as.response.OAuthASResponse;
 import org.apache.oltu.oauth2.common.OAuth;
@@ -43,6 +40,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import javax.ws.rs.core.MediaType;
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class TokenEndpointServlet extends HttpServlet {
 
@@ -82,9 +80,9 @@ public class TokenEndpointServlet extends HttpServlet {
     private OAuthResponse registerToken(HttpServletRequest request, final String clientId, final String oauthType, final String localUser) throws OAuthSystemException, ApsSystemException {
         int expires = 3600;
         IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
-        final String accessToken = oauthIssuerImpl.accessToken();
-        final String refreshToken = oauthIssuerImpl.refreshToken();
+        String tokenPrefix = clientId + "_" + localUser + "_" + System.nanoTime();
+        final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
+        final String refreshToken = DigestUtils.md5Hex(tokenPrefix + "_refreshToken");
         OAuth2Token oAuth2Token = new OAuth2Token();
         oAuth2Token.setAccessToken(accessToken);
         oAuth2Token.setRefreshToken(refreshToken);

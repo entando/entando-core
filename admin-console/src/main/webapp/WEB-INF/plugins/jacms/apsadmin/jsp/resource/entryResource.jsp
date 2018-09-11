@@ -31,17 +31,15 @@
     </s:else>
     <li>
         <s:if test="onEditContent">
-            <s:url var="archiveUrlVar" action="findResource">
-                <s:param name="resourceTypeCode" value="resourceTypeCode" />
-                <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
-            </s:url>
+            <a href="<s:url action="findResource"><s:param name="resourceTypeCode" value="resourceTypeCode" /><s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>">
+                <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+            </a>
         </s:if>
         <s:else>
-            <s:url var="archiveUrlVar" action="list"><s:param name="resourceTypeCode" value="resourceTypeCode" /></s:url>
+            <a href="<s:url action="list"><s:param name="resourceTypeCode" value="resourceTypeCode" /></s:url>">
+                <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
+            </a>
         </s:else>
-        <a href="<s:property value="#archiveUrlVar" />">
-            <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}" />
-        </a>
     </li>
     <li class="page-title-container">
         <s:if test="getStrutsAction() == 1">
@@ -80,7 +78,6 @@
 </s:set>
 <s:set var="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
 
-
 <s:form action="save" method="post" enctype="multipart/form-data" cssClass="form-horizontal">
     <wpsf:hidden name="fieldCount" />
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/inc_fullErrors.jsp" />
@@ -104,7 +101,6 @@
         <wpsf:hidden name="mainGroup" />
     </s:if>
 </p>
-
 
 <%-- mainGroup --%>
 <s:set var="fieldErrorsVar" value="%{fieldErrors['mainGroup']}" />
@@ -137,7 +133,6 @@
 <s:set var="hasFieldErrorVar"
        value="(#uploadFieldErrorsVar != null && !#uploadFieldErrorsVar.isEmpty()) || (#fileNameFieldErrorsVar != null && !#fileNameFieldErrorsVar.isEmpty())" />
 <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
-
 
 <fieldset class="margin-base-vertical" id="category-content-block">
     <div class="form-group<s:property value="controlGroupErrorClassVar" />">
@@ -408,10 +403,8 @@
             </s:if>
         </div>
     </div>
-</div>
 
 </s:if>
-
 
 <div class="form-horizontal">
     <div class="form-group">
@@ -423,31 +416,6 @@
     </div>
 </div>
 </s:form>
-
-<%-- TODO: refactor resource detail
-<s:form action="edit" method="post" cssClass="form-horizontal">
-    <p class="sr-only">
-        <wpsf:hidden name="strutsAction" />
-        <wpsf:hidden name="resourceTypeCode" />
-        <wpsf:hidden name="contentOnSessionMarker" />
-        <s:if test="strutsAction != 1">
-            <wpsf:hidden name="resourceId" />
-        </s:if>
-        <s:if test="#categoryTreeStyleVar == 'request'">
-            <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}" />
-            </s:iterator>
-        </s:if>
-        <s:if test="%{lockGroupSelect}">
-            <wpsf:hidden name="mainGroup" />
-        </s:if>
-    </p>
-    <s:if test="strutsAction == 2">
-        <s:set var="referencingContentsId" value="references['jacmsContentManagerUtilizers']" />
-        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/portal/include/referencingContents.jsp" />
-    </s:if>
-</s:form>
---%>
 
 <s:if test="getStrutsAction() == 2 ">
 

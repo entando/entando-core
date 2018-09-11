@@ -44,13 +44,9 @@
     <bean name="dataObjectCache" class="java.util.concurrent.ConcurrentHashMap"/>
     <bean name="dataObjectModelCache" class="java.util.concurrent.ConcurrentHashMap"/>
     <bean name="dataObjectMapperCache" class="java.util.concurrent.ConcurrentHashMap"/>
-    <bean name="jacmsContentManagerCache" class="java.util.concurrent.ConcurrentHashMap"/>
-    <bean name="contentModelCache" class="java.util.concurrent.ConcurrentHashMap"/>
-    <bean name="contentPageMapperCache" class="java.util.concurrent.ConcurrentHashMap"/>
-    <bean name="resourceManagerCache" class="java.util.concurrent.ConcurrentHashMap"/>
-
+    
     <!-- SPRING OBJECT -->
-    <bean id="springCacheManager" class="org.springframework.cache.support.SimpleCacheManager">
+    <bean id="springCacheManager" class="org.entando.entando.aps.system.services.cache.EntandoCacheManager">
         <property name="caches">
             <set>
                 <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean" 
@@ -89,14 +85,6 @@
                       p:name="Entando_DataObjectModelManager" p:store-ref="dataObjectModelCache" />
                 <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean"
                       p:name="Entando_DataObjectPageMapperManager" p:store-ref="dataObjectMapperCache" />
-                <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean"
-                      p:name="Entando_jacmsContentManager" p:store-ref="jacmsContentManagerCache" />
-                <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean"
-                      p:name="Entando_ContentModelManager" p:store-ref="contentModelCache" />
-                <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean"
-                      p:name="Entando_ContentPageMapperManager" p:store-ref="contentPageMapperCache" />
-                <bean class="org.entando.entando.aps.system.services.cache.CustomConcurrentMapCacheFactoryBean"
-                      p:name="Entando_ResourceManager" p:store-ref="resourceManagerCache" />
             </set>
         </property>
     </bean>

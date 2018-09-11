@@ -27,7 +27,7 @@
             </activation>
             <properties>
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
-                <surefireArgLine>-Xms256m -Xmx2048m</surefireArgLine>
+                <surefireArgLine>-Xms128m -Xmx2048m</surefireArgLine>
             </properties>
             <build>
                 <pluginManagement>

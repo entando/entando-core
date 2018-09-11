@@ -27,7 +27,6 @@
             </activation>
             <properties>
                 <javadoc.opts>-Xdoclint:none</javadoc.opts>
-                <surefireArgLine>-Xmx2048m</surefireArgLine>
             </properties>
             <build>
                 <pluginManagement>
@@ -54,7 +53,13 @@
             </build>
         </profile>
         <profile>
-            <id>sonar</id>
+            <id>sonarCheck</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>sonarCheck</value>
+                </property>
+            </activation>
             <properties>
                 <sonar.sources>${project.basedir}/src/main</sonar.sources>
                 <sonar.tests>${project.basedir}/src/test</sonar.tests>
@@ -74,7 +79,6 @@
                 <sonar.binaries>${project.basedir}/target/classes</sonar.binaries>
             </properties>
             <build>
-                <pluginManagement>
                     <plugins>
                         <!-- sonar plugin -->
                         <plugin>
@@ -147,25 +151,7 @@
                             </configuration>
                         </plugin>
                         <!-- end maven dependency-check plugin -->
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-surefire-plugin</artifactId>
-                            <version>2.22.0</version>
-                            <configuration>
-                                <argLine>${surefireArgLine}</argLine>
-                                <testFailureIgnore>false</testFailureIgnore>
-                                <excludes>
-                                    <exclude>**/*BaseTestCase*</exclude>
-                                </excludes>
-                                <includes>
-                                    <include>**/AllTests.java</include>
-                                </includes>
-                                <parallel>methods</parallel>
-                                <threadCount>10</threadCount>
-                            </configuration>
-                        </plugin>
                     </plugins>
-                </pluginManagement>
             </build>
         </profile>
     </profiles>

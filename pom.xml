@@ -76,7 +76,7 @@
 		
         <spring.version>5.0.8.RELEASE</spring.version>
         <struts2.version>2.5.17</struts2.version>
-        <cxf.version>3.1.12</cxf.version>
+        <cxf.version>3.1.15</cxf.version>
         <oltu.version>1.0.2</oltu.version>
         <jackson.version>2.9.5</jackson.version>
 		

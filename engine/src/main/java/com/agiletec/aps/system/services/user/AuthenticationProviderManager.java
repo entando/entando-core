@@ -13,13 +13,10 @@
  */
 package com.agiletec.aps.system.services.user;
 
-import java.util.Calendar;
 import java.util.List;
 
 import com.agiletec.aps.system.services.role.Permission;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +25,6 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import org.apache.commons.codec.digest.DigestUtils;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
@@ -96,6 +92,7 @@ public class AuthenticationProviderManager extends AbstractService
     }
 
     private void registerToken(final UserDetails user) {
+        /*
         try {
             String tokenPrefix = user.getUsername() + System.nanoTime();
             final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
@@ -116,6 +113,7 @@ public class AuthenticationProviderManager extends AbstractService
             logger.error("ApsSystemException {} ", e.getMessage());
             logger.debug("ApsSystemException {} ", e);
         }
+         */
     }
 
     protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {

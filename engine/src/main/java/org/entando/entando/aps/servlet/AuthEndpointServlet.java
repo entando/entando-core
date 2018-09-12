@@ -13,20 +13,6 @@
  */
 package org.entando.entando.aps.servlet;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import org.apache.oltu.oauth2.as.request.OAuthAuthzRequest;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.ResponseType;
-import org.apache.oltu.oauth2.common.utils.OAuthUtils;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
-import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
-import org.entando.entando.aps.system.services.oauth2.model.AuthorizationCode;
-import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +21,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Calendar;
-import org.apache.commons.codec.digest.DigestUtils;
 
 public class AuthEndpointServlet extends HttpServlet {
 
@@ -53,6 +37,7 @@ public class AuthEndpointServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /*
         OAuthAuthzRequest oauthRequest = null;
         IApiOAuthorizationCodeManager codeManager = (IApiOAuthorizationCodeManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH2_AUTHORIZATION_CODE_MANAGER, request);
         try {
@@ -92,8 +77,10 @@ public class AuthEndpointServlet extends HttpServlet {
             logger.error("System exception {} ", ex.getMessage());
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+         */
     }
 
+    /*
     private boolean validateClient(final OAuthAuthzRequest oauthRequest, HttpServletRequest request, HttpServletResponse response) throws OAuthProblemException {
         final IOAuthConsumerManager consumerManager
                 = (IOAuthConsumerManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_CONSUMER_MANAGER, request);
@@ -121,5 +108,5 @@ public class AuthEndpointServlet extends HttpServlet {
         }
         return false;
     }
-
+     */
 }

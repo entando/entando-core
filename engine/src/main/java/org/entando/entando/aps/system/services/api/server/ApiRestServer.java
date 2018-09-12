@@ -14,24 +14,13 @@
 package org.entando.entando.aps.system.services.api.server;
 
 import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
-import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.url.IURLManager;
-import com.agiletec.aps.system.services.user.IUserManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.*;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -270,27 +259,21 @@ public class ApiRestServer {
     }
 
     protected void extractOAuthParameters(HttpServletRequest request, String permission) throws ApiException {
-
+        /*
         try {
             _logger.info("Permission required: {}", permission);
             OAuthAccessResourceRequest requestMessage = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-
             // Get the access token
             String accessToken = requestMessage.getAccessToken();
-
             IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
-
             final OAuth2Token token = tokenManager.getApiOAuth2Token(accessToken);
-
             if (token != null) {
-
                 // Validate the access token
                 if (!token.getAccessToken().equals(accessToken)) {
                     throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token does not match", Response.Status.UNAUTHORIZED);
                 } // check if access token is expired
                 else if (token.getExpiresIn().getTime() < System.currentTimeMillis()) {
                     throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token expired", Response.Status.UNAUTHORIZED);
-
                 }
                 String username = token.getClientId();
                 IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
@@ -317,11 +300,11 @@ public class ApiRestServer {
                 }
                 throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Authentication Required", Response.Status.UNAUTHORIZED);
             }
-        } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
+        } catch (ApsSystemException ex) {
             _logger.error("System exception {}", ex);
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, ex.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
-
+         */
     }
 
     protected Response createResponse(Object responseObject) {

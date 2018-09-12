@@ -13,22 +13,6 @@
  */
 package org.entando.entando.aps.servlet;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.user.IUserManager;
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import org.apache.oltu.oauth2.as.request.OAuthTokenRequest;
-import org.apache.oltu.oauth2.as.response.OAuthASResponse;
-import org.apache.oltu.oauth2.common.OAuth;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.OAuthResponse;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuthorizationCodeManager;
-import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
@@ -36,11 +20,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import javax.ws.rs.core.MediaType;
-import org.apache.commons.codec.digest.DigestUtils;
 
 public class TokenEndpointServlet extends HttpServlet {
 
@@ -49,6 +28,7 @@ public class TokenEndpointServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        /*
         PrintWriter pw = null;
         try {
             final OAuthResponse oAuthResponse = this.validateClientWithAuthorizationCode(request);
@@ -75,8 +55,9 @@ public class TokenEndpointServlet extends HttpServlet {
                 pw.close();
             }
         }
+         */
     }
-
+    /*
     private OAuthResponse registerToken(HttpServletRequest request, final String clientId, final String oauthType, final String localUser) throws OAuthSystemException, ApsSystemException {
         int expires = 3600;
         IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
@@ -149,5 +130,5 @@ public class TokenEndpointServlet extends HttpServlet {
             return null;
         }
     }
-
+     */
 }

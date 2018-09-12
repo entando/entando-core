@@ -21,10 +21,6 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -79,10 +75,10 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     }
 
     protected void extractOAuthParameters(HttpServletRequest request, String permission) {
-        try {
-            logger.debug("Permission required: {}", permission);
+        //try {
+        logger.debug("Permission required: {}", permission);
+        /*
             OAuthAccessResourceRequest requestMessage = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-
             String accessToken = requestMessage.getAccessToken();
             if (StringUtils.isBlank(accessToken)) {
                 logger.warn("no access token found");
@@ -91,14 +87,13 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
             final OAuth2Token token = oAuth2TokenManager.getApiOAuth2Token(accessToken);
             this.validateToken(request, accessToken, token);
-
             String username = token.getClientId();
             this.checkAuthorization(username, permission, request);
-
-        } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
-            logger.error("System exception {}", ex.getMessage());
-            throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
-        }
+         */
+        //} catch (ApsSystemException ex) {
+        //    logger.error("System exception {}", ex.getMessage());
+        //    throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
+        //}
     }
 
     protected void checkAuthorization(String username, String permission, HttpServletRequest request) throws ApsSystemException {

@@ -73,7 +73,6 @@
         <spring.version>5.0.8.RELEASE</spring.version>
         <struts2.version>2.5.17</struts2.version>
         <cxf.version>3.1.15</cxf.version>
-        <oltu.version>1.0.2</oltu.version>
         <jackson.version>2.9.5</jackson.version>
 		
         <hibernate-validator-version>5.3.0.Final</hibernate-validator-version>
@@ -262,29 +261,6 @@
         </plugins>
     </build>
     <dependencies>
-        
-        <dependency>
-            <groupId>org.apache.oltu.oauth2</groupId>
-            <artifactId>org.apache.oltu.oauth2.common</artifactId>
-            <version>${oltu.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.oltu.oauth2</groupId>
-            <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
-            <version>${oltu.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.json</groupId>
-                    <artifactId>json</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         
         <dependency>
             <groupId>commons-beanutils</groupId>
@@ -638,7 +614,6 @@
             <scope>provided</scope>
         </dependency>
         
-        
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -741,7 +716,6 @@
             <version>1.7.16</version>
         </dependency>
 		
-		
         <!-- json -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -762,15 +736,14 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>${jackson.version}</version>
-        </dependency>	
- 
+        </dependency>
+        
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${hibernate-validator-version}</version>
         </dependency>
- 
- 
+        
     </dependencies>
     <reporting>
         <plugins>

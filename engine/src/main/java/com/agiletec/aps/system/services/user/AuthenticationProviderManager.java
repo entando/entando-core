@@ -25,6 +25,10 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
@@ -36,7 +40,7 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService
-        implements IAuthenticationProviderManager {
+        implements IAuthenticationProviderManager, AuthenticationManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 
@@ -128,6 +132,11 @@ public class AuthenticationProviderManager extends AbstractService
             Authorization authorization = auths.get(i);
             user.addAuthorization(authorization);
         }
+    }
+
+    @Override
+    public Authentication authenticate(Authentication a) throws AuthenticationException {
+        return new UsernamePasswordAuthenticationToken(a.getPrincipal(), a.getCredentials());
     }
 
     protected IUserManager getUserManager() {

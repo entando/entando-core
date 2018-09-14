@@ -138,6 +138,9 @@ public class AllTests {
 
         suite.addTestSuite(FrontServletActionRedirectResultIntegrationTest.class);
 
+        //Labels translations
+        suite.addTestSuite(TestAdminConsoleLabelsProperties.class);
+
         return suite;
     }
 

@@ -10,9 +10,16 @@
     
     <!-- spring security --> 
     
-    <sec:http auto-config='true' authentication-manager-ref="AuthenticationProviderManager">
-        <sec:intercept-url pattern="/api/**" access="ROLE_USER" />
-    </sec:http>
+    <context:annotation-config/>
+    <bean class="org.entando.entando.aps.servlet.security.AuthorizationServerConfiguration"/>
+    <bean class="org.entando.entando.aps.servlet.security.MethodSecurityConfig"/>
+    <bean class="org.entando.entando.aps.servlet.security.OAuth2SecurityConfiguration"/>
+    <bean class="org.entando.entando.aps.servlet.security.ResourceServerConfiguration"/>
+    <bean class="org.entando.entando.aps.servlet.security.SecurityWebApplicationInitializer"/>
+    
+	<security:http auto-config='true' authentication-manager-ref="AuthenticationProviderManager">
+        <security:intercept-url pattern="/api/**" access="ROLE_USER" />
+    </security:http>
     
     <!-- ************************ -->
     

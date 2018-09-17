@@ -32,85 +32,84 @@ import java.util.Map;
  */
 public class LangManagerCacheWrapper extends AbstractGenericCacheWrapper<Lang> implements ILangManagerCacheWrapper {
 
-	private static final Logger logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(LangManagerCacheWrapper.class);
 
-	@Override
-	public void initCache(String xmlConfig) throws ApsSystemException {
-		try {
-			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
-			LangDOM langDom = new LangDOM(xmlConfig);
-			Map<String, Lang> langMap = new HashMap<>();
-			List<Lang> systemLangs = langDom.getLangs();
-			for (Lang lang : systemLangs) {
-				if (lang.isDefault()) {
-					cache.put(LANG_DEFAULT_CACHE_NAME, lang);
-				}
-				langMap.put(lang.getCode(), lang);
-			}
-			super.insertObjectsOnCache(cache, langMap);
-		} catch (Throwable t) {
-			logger.error("Error loading the system langs", t);
-			throw new ApsSystemException("Error loading the system langs", t);
-		}
-	}
+    @Override
+    public void initCache(String xmlConfig) throws ApsSystemException {
+        try {
+            Cache cache = this.getCache();
+            LangDOM langDom = new LangDOM(xmlConfig);
+            Map<String, Lang> langMap = new HashMap<>();
+            List<Lang> systemLangs = langDom.getLangs();
+            for (Lang lang : systemLangs) {
+                if (lang.isDefault()) {
+                    cache.put(LANG_DEFAULT_CACHE_NAME, lang);
+                }
+                langMap.put(lang.getCode(), lang);
+            }
+            this.insertAndCleanCache(cache, langMap);
+        } catch (Throwable t) {
+            logger.error("Error loading the system langs", t);
+            throw new ApsSystemException("Error loading the system langs", t);
+        }
+    }
 
-	@Override
-	public List<Lang> getLangs() {
-		List<Lang> langs = new ArrayList<>();
-		Cache cache = this.getCache();
-		List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
-		if (null != codes) {
-			for (String code : codes) {
-				Lang lang = this.get(cache, LANG_CACHE_NAME_PREFIX + code, Lang.class);
-				if (lang.isDefault()) {
-					langs.add(0, lang);
-				} else {
-					langs.add(lang);
-				}
-			}
-		}
-		return langs;
-	}
+    @Override
+    public List<Lang> getLangs() {
+        List<Lang> langs = new ArrayList<>();
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, LANG_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            for (String code : codes) {
+                Lang lang = this.get(cache, LANG_CACHE_NAME_PREFIX + code, Lang.class);
+                if (lang.isDefault()) {
+                    langs.add(0, lang);
+                } else {
+                    langs.add(lang);
+                }
+            }
+        }
+        return langs;
+    }
 
-	@Override
-	public Lang getDefaultLang() {
-		return this.get(this.getCache(), LANG_DEFAULT_CACHE_NAME, Lang.class);
-	}
+    @Override
+    public Lang getDefaultLang() {
+        return this.get(this.getCache(), LANG_DEFAULT_CACHE_NAME, Lang.class);
+    }
 
-	@Override
-	public Lang getLang(String code) {
-		return this.get(this.getCache(), LANG_CACHE_NAME_PREFIX + code, Lang.class);
-	}
+    @Override
+    public Lang getLang(String code) {
+        return this.get(this.getCache(), LANG_CACHE_NAME_PREFIX + code, Lang.class);
+    }
 
-	@Override
-	public void addLang(Lang lang) {
-		this.manage(lang.getCode(), lang, Action.ADD);
-	}
+    @Override
+    public void addLang(Lang lang) {
+        this.manage(lang.getCode(), lang, AbstractGenericCacheWrapper.Action.ADD);
+    }
 
-	@Override
-	public void updateLang(Lang lang) {
-		this.manage(lang.getCode(), lang, Action.UPDATE);
-	}
+    @Override
+    public void updateLang(Lang lang) {
+        this.manage(lang.getCode(), lang, AbstractGenericCacheWrapper.Action.UPDATE);
+    }
 
-	@Override
-	public void removeLang(Lang lang) {
-		this.manage(lang.getCode(), lang, Action.DELETE);
-	}
+    @Override
+    public void removeLang(Lang lang) {
+        this.manage(lang.getCode(), lang, AbstractGenericCacheWrapper.Action.DELETE);
+    }
 
-	@Override
-	protected String getCodesCacheKey() {
-		return LANG_CODES_CACHE_NAME;
-	}
+    @Override
+    protected String getCodesCacheKey() {
+        return LANG_CODES_CACHE_NAME;
+    }
 
-	@Override
-	protected String getCacheKeyPrefix() {
-		return LANG_CACHE_NAME_PREFIX;
-	}
+    @Override
+    protected String getCacheKeyPrefix() {
+        return LANG_CACHE_NAME_PREFIX;
+    }
 
-	@Override
-	protected String getCacheName() {
-		return LANG_MANAGER_CACHE_NAME;
-	}
+    @Override
+    protected String getCacheName() {
+        return LANG_MANAGER_CACHE_NAME;
+    }
 
 }

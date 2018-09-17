@@ -37,46 +37,44 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
     public void initCache(IConfigItemDAO configItemDAO, String version) throws ApsSystemException {
         try {
             Cache cache = this.getCache();
-            this.releaseCachedObjects(cache);
             Map<String, String> configItems = configItemDAO.loadVersionItems(version);
             String xmlParams = configItems.get(SystemConstants.CONFIG_ITEM_PARAMS);
             Map<String, String> params = SystemParamsUtils.getParams(xmlParams);
-            this.insertObjectsOnCache(cache, configItems, params);
+            this.insertAndCleanObjectsOnCache(cache, configItems, params);
         } catch (Exception t) {
             logger.error("Error loading configuration params", t);
             throw new ApsSystemException("Error loading configuration params", t);
         }
     }
 
-    protected void releaseCachedObjects(Cache cache) {
-        this.releaseCachedObjects(cache, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
-        this.releaseCachedObjects(cache, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
+    protected void insertAndCleanObjectsOnCache(Cache cache, Map<String, String> configItems, Map<String, String> params) {
+        this.insertAndCleanCache(cache, configItems, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
+        this.insertAndCleanCache(cache, params, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
     }
 
-    private void releaseCachedObjects(Cache cache, String codesName, String codePrefix) {
-        List<String> codes = (List<String>) this.get(cache, codesName, List.class);
-        if (null != codes) {
-            for (String code : codes) {
-                cache.evict(codePrefix + code);
-            }
-            cache.evict(codesName);
-        }
-    }
-
-    protected void insertObjectsOnCache(Cache cache, Map<String, String> configItems, Map<String, String> params) {
-        this.insertObjectsOnCache(cache, configItems, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
-        this.insertObjectsOnCache(cache, params, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
-    }
-
-    private void insertObjectsOnCache(Cache cache, Map<String, String> map, String codesCacheName, String codeCachePrefix) {
+    protected void insertAndCleanCache(Cache cache,
+            Map<String, String> objects, String codesCacheName, String codeCachePrefix) {
+        List<String> oldCodes = (List<String>) this.get(cache, codesCacheName, List.class);
         List<String> codes = new ArrayList<>();
-        Iterator<String> iterator = map.keySet().iterator();
-        while (iterator.hasNext()) {
-            String key = iterator.next();
-            cache.put(codeCachePrefix + key, map.get(key));
+        Iterator<String> iter = objects.keySet().iterator();
+        while (iter.hasNext()) {
+            String key = iter.next();
+            cache.put(codeCachePrefix + key, objects.get(key));
+            if (null != oldCodes) {
+                oldCodes.remove(key);
+            }
             codes.add(key);
         }
         cache.put(codesCacheName, codes);
+        this.releaseObjects(cache, oldCodes, codeCachePrefix);
+    }
+
+    private void releaseObjects(Cache cache, List<String> keysToRelease, String prefix) {
+        if (null != keysToRelease) {
+            for (String code : keysToRelease) {
+                cache.evict(prefix + code);
+            }
+        }
     }
 
     @Override

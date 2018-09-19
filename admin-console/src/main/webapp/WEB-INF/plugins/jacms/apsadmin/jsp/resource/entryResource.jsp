@@ -126,7 +126,7 @@
     </div>
 </div>
 
-<%-- upload --%>
+    <%-- upload --%>
 
 <s:set var="uploadFieldErrorsVar" value="%{fieldErrors['upload']}" />
 <s:set var="fileNameFieldErrorsVar" value="%{fieldErrors['fileName']}" />
@@ -235,7 +235,7 @@
 </fieldset>
 <br>
 
-<%-- ADD FILE BUTTON --%>     
+<%-- ADD FILE BUTTON --%>
 
 <s:if test="not isOnEditContent()">
     <s:if test="getStrutsAction() == 1 ">
@@ -243,7 +243,7 @@
         <div class="form-group">
             <div class="col-sm-5 col-sm-offset-2">
                 <div id="add-resource-button">
-                    <button type="button" id="add-fields" >    <span class="fa fa-plus-square-o"></span> 
+                    <button type="button" id="add-fields" >    <span class="fa fa-plus-square-o"></span>
                         <s:text name="label.add-fileinput" />
                     </button>
                 </div>
@@ -254,7 +254,7 @@
 
     <s:iterator begin="0" end="%{fieldCount}" status="ctr">
 
-        <%-- FILE UPLOAD --%> 
+        <%-- FILE UPLOAD --%>
 
         <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}" />
         <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
@@ -294,7 +294,7 @@
                 </s:elseif>
             </label>
 
-            <div class="col-sm-4">                                        
+            <div class="col-sm-4">
                 <s:set var="fieldIdVar" value="%{#ctr.count -1}" />
                 <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}" class="btn btn-default" key="label.button-choose-file" />
                 <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button" label="label.file" />
@@ -313,13 +313,13 @@
                             &#32;
                         </s:iterator>
                     </span>
-                </s:if>             
-            </div> 
+                </s:if>
+            </div>
 
             <s:if test="#ctr.count -1 > 0 ">
-                <button type="button" class="btn-danger delete-fields " 
+                <button type="button" class="btn-danger delete-fields "
                         title="<s:text name="label.remove-fileinput" />"
-                        >    <span class="fa fa-times white"></span> 
+                        >    <span class="fa fa-times white"></span>
                 </button>
             </s:if>
         </div>
@@ -406,15 +406,400 @@
 
 </s:if>
 
-<div class="form-horizontal">
-    <div class="form-group">
-        <div class="col-sm-12 margin-small-vertical">
-            <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-                <s:text name="label.save" />
-            </wpsf:submit>
+
+    <!-- Large modal -->
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-cropping-modal">Large modal
+    </button>
+
+    <div class="modal fade bs-cropping-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+        <div class="modal-dialog modal-xlg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">Close <span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Image</h4>
+                </div>
+                <div class="container-fluid no-padding">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <!-- tab pane blue print -->
+                                <div class="tab-pane hidden" id="tab-pane-blueprint">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="image-container">
+                                                    <img src="" alt="" class="store_item_">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="docs-preview clearfix">
+                                                    <div class="img-preview preview-lg"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-md"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-sm"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-xs"><img
+                                                            src="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="toolbar-container">
+                                                    <!-- move and crop -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="setDragMode" data-option="move"
+                                                                title="Move">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.setDragMode(&quot;move&quot;)">
+                                                            <span class="fa fa-arrows"></span>
+                                                        </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="setDragMode" data-option="crop"
+                                                                title="Crop">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.setDragMode(&quot;crop&quot;)">
+                                                          <span class="fa fa-crop"></span>
+                                                        </span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- scale -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="scaleX" data-option="-1"
+                                                                title="Flip Horizontal">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.scaleX(-1)">
+                                                          <span class="fa fa-arrows-h"></span>
+                                                        </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="scaleY" data-option="-1"
+                                                                title="Flip Vertical">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.scaleY(-1)">
+                                                          <span class="fa fa-arrows-v"></span>
+                                                        </span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- move -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="-10" data-second-option="0"
+                                                                title="Move Left">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                          data-original-title="cropper.move(-10, 0)">
+                                                      <span class="fa fa-arrow-left"></span>
+                                                    </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="10" data-second-option="0"
+                                                                title="Move Right">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                          data-original-title="cropper.move(10, 0)">
+                                                      <span class="fa fa-arrow-right"></span>
+                                                    </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="0" data-second-option="-10"
+                                                                title="Move Up">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                          data-original-title="cropper.move(0, -10)">
+                                                      <span class="fa fa-arrow-up"></span>
+                                                    </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="0" data-second-option="10"
+                                                                title="Move Down">
+                                                    <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                          data-original-title="cropper.move(0, 10)">
+                                                      <span class="fa fa-arrow-down"></span>
+                                                    </span>
+                                                        </button>
+                                                    </div>
+
+
+                                                    <!-- rotate -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="rotate"
+                                                                data-option="-45" title="Rotate Left">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.rotate(-45)">
+                                                          <span class="fa fa-rotate-left"></span>
+                                                        </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="rotate"
+                                                                data-option="45" title="Rotate Right">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.rotate(45)">
+                                                          <span class="fa fa-rotate-right"></span>
+                                                        </span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- zoom -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary" data-method="zoom"
+                                                                data-option="0.1" title="Zoom In">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.zoom(0.1)">
+                                                          <span class="fa fa-search-plus"></span>
+                                                        </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="zoom"
+                                                                data-option="-0.1" title="Zoom Out">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.zoom(-0.1)">
+                                                          <span class="fa fa-search-minus"></span>
+                                                        </span>
+                                                        </button>
+                                                    </div>
+
+                                                    <!-- save and cancel -->
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-primary" data-method="crop"
+                                                                title="Crop">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.crop()">
+                                                          <span class="fa fa-check"></span>
+                                                        </span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="clear"
+                                                                title="Clear">
+                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                              data-original-title="cropper.clear()">
+                                                          <span class="fa fa-remove"></span>
+                                                        </span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="aspect-ratio-buttons">
+                                                    <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
+                                                        <label class="btn btn-primary">
+                                                            <input type="radio" class="sr-only" id="aspectRatio1"
+                                                                   name="aspectRatio" value="1.7777777777777777">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: 16 / 9">
+              16:9
+            </span>
+                                                        </label>
+                                                        <label class="btn btn-primary">
+                                                            <input type="radio" class="sr-only" id="aspectRatio2"
+                                                                   name="aspectRatio" value="1.3333333333333333">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: 4 / 3">
+              4:3
+            </span>
+                                                        </label>
+                                                        <label class="btn btn-primary">
+                                                            <input type="radio" class="sr-only" id="aspectRatio3"
+                                                                   name="aspectRatio" value="1">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: 1 / 1">
+              1:1
+            </span>
+                                                        </label>
+                                                        <label class="btn btn-primary">
+                                                            <input type="radio" class="sr-only" id="aspectRatio4"
+                                                                   name="aspectRatio" value="0.6666666666666666">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: 2 / 3">
+              2:3
+            </span>
+                                                        </label>
+                                                        <label class="btn btn-primary active">
+                                                            <input type="radio" class="sr-only" id="aspectRatio5"
+                                                                   name="aspectRatio" value="NaN">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: NaN">
+              Free
+            </span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /tab pane blue print -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs tabs-left image-navigation">
+                                <li>List of images</li>
+                                <!-- image navigation item blueprint -->
+                                <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
+                                    <a href="#first" data-toggle="tab">Blueprint</a></li>
+                                <!-- /image navigation item blueprint -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+
+
+    <script>
+
+        $(document).ready(function () {
+            var cropper;
+
+            $("#fileUpload_0").change(function () {
+                $('.bs-cropping-modal').modal('show');
+                var input = this;
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+
+
+                        var storeItem = createNewFromCurrentStoreItem();
+                        storeItem.imageData = e.target.result;
+
+                        // $('.fileUpload_' + $storeItem.id ).attr('src', e.target.result);
+                        save(storeItem);
+
+
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            });
+
+            $('.bs-cropping-modal').on('shown.bs.modal', function (e) {
+                store[getCurrentStoreItemId()].cropper = initCropper(getCurrentStoreItemId());
+            });
+
+            $('.bs-cropping-modal').on('click', '.btn', function (e) {
+                if ($(this).data('method') === 'crop') {
+                    var storeItem = createNewFromCurrentStoreItem();
+
+                    save(storeItem);
+                }
+
+            });
+
+
+            var store = [];
+
+            var getCurrentStoreItemId = function () {
+                var currentStoreItemId = 0;
+                if (store.length > 0 ) {
+                    currentStoreItemId = $('.bs-cropping-modal').find('.tab-pane.active').data('itemId');
+                }
+
+
+                return currentStoreItemId;
+
+            };
+
+            var initCropper = function (storeItemId) {
+                return new Cropper(
+                    $('.store_item_' + storeItemId)[0],
+                    {
+                        viewMode: 3,
+                        minContainerWidth: '300',
+                        minContainerHeight: 100,
+                        aspectRatio: 16 / 9,
+                        preview: $('#store_item_' + storeItemId).find('.img-preview')
+                    });
+            };
+
+
+            var createNewFromCurrentStoreItem = function () {
+                var currentItemId = getCurrentStoreItemId();
+                if (store.length === 0) {
+                    return {
+                        id: 0,
+                        name: "name" + "_" + 0,
+                    };
+
+                } else {
+                    var newId = store.length;
+
+                    var currentStoreItem = store[currentItemId];
+                    return {
+                        id: newId,
+                        name: currentStoreItem.name + "_" + newId,
+                        imageData: currentStoreItem.cropper.getCroppedCanvas().toDataURL('image/jpeg')
+                    };
+                }
+            };
+
+            var save = function (storeItem) {
+                store.push(storeItem);
+                addTab(storeItem);
+            };
+
+            var addTab = function (storeItem) {
+                var $imageNav = $('.image-navigation');
+                var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+
+                // Remove active states
+                $imageNav.find('.active').removeClass('active');
+                $tabContent.find('.active').removeClass('active');
+
+
+                // Copy image navigation item - tab navigation item
+                var $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
+                $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
+                $newTabNavigationItem.find('a').text(storeItem.name);
+                $newTabNavigationItem.removeClass('hidden');
+                $newTabNavigationItem.removeAttr('id');
+                $newTabNavigationItem.appendTo($imageNav);
+
+                // Copy tab pane
+                var $newTabPane = $('#tab-pane-blueprint').clone();
+                $newTabPane.removeClass('hidden');
+                $newTabPane.attr('id', 'store_item_' + storeItem.id);
+                $newTabPane.attr('data-item-id', storeItem.id)
+                var $newImage = $newTabPane.find('.store_item_');
+                $newImage.attr('src', storeItem.imageData);
+                $newImage.addClass('store_item_' + storeItem.id);
+                $newTabPane.appendTo($tabContent);
+
+                // Add active statest to newly created tab and nav item
+                $newTabNavigationItem.addClass('active');
+                $newTabPane.addClass('active');
+
+                if(store.length > 1) {
+                    store[storeItem.id].cropper = initCropper(storeItem.id);
+                }
+
+
+            };
+        });
+
+
+    </script>
+
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-sm-12 margin-small-vertical">
+                <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
+                    <s:text name="label.save"/>
+                </wpsf:submit>
+            </div>
+        </div>
+    </div>
 </s:form>
 
 <s:if test="getStrutsAction() == 2 ">
@@ -437,10 +822,10 @@
             <tbody>
                 <s:iterator value="metadata" var="metadataVar" status="rowstatus">
                     <tr>
-                        <td><s:property value="#metadataVar.key" /></td> 
+                        <td><s:property value="#metadataVar.key" /></td>
                         <td><s:property value="#metadataVar.value" /></td>
                     </tr>
-                </s:iterator>      
+                </s:iterator>
             <tbody>
         </table>
     </div>
@@ -454,7 +839,7 @@
             <i class="fa fa-asterisk required-icon"></i>
         </label>
         <div class="col-sm-4">
-            <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description" />            
+            <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description" />
         </div>
         <label class="col-sm-1 control-label" for="upload">
             <s:text name="label.file" />
@@ -480,12 +865,12 @@
                 <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
             <span id="newFileUpload_selected"><s:text name="label.no-file-selected" />
             </span>
-        </div> 
+        </div>
 
 
-        <button type="button" class="btn-danger delete-fields " 
+        <button type="button" class="btn-danger delete-fields "
                 title="<s:text name="label.remove-fileinput" />"
-                >    <span class="fa fa-times white"></span> 
+                >    <span class="fa fa-times white"></span>
         </button>
 
 

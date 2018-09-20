@@ -64,12 +64,14 @@ public class CustomTokenInterceptor extends org.apache.struts2.interceptor.Token
         String message = this.getCustomMessage(invocation, "struts.messages.invalid.token.message",
                 "Stop double-submission of forms.");
         if (action instanceof ValidationAware) {
-            if (this.getTypeMessages().equalsIgnoreCase(TYPE_RETURN_ACTION_ERROR_MESSAGE)) {
+            if (null == this.getTypeMessages() || this.getTypeMessages().equalsIgnoreCase(TYPE_RETURN_NONE_MESSAGE)) {
+                //nothing to do
+            } else if (this.getTypeMessages().equalsIgnoreCase(TYPE_RETURN_ACTION_ERROR_MESSAGE)) {
                 ((ValidationAware) action).addActionError(errorMessage);
             } else if (this.getTypeMessages().equalsIgnoreCase(TYPE_RETURN_ACTION_MESSAGE)) {
                 ((ValidationAware) action).addActionMessage(message);
-            } else if (this.getTypeMessages().equalsIgnoreCase(TYPE_RETURN_NONE_MESSAGE)) {
-                //nothing to do
+            } else {
+                LOG.warn("Invalid message type : {}", this.getTypeMessages());
             }
         } else {
             LOG.warn(errorMessage);

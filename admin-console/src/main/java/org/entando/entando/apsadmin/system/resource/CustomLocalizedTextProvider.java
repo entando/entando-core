@@ -33,9 +33,7 @@ public class CustomLocalizedTextProvider extends StrutsLocalizedTextProvider {
     private static final String RESOURCE_FILE_NAME = "global-messages";
 
     public static final String DEFAULT_LOCATION_PATTERN
-            = "classpath:com/agiletec/apsadmin/global-messages*.*,"
-            + "classpath:org/entando/entando/apsadmin/global-messages*.*,"
-            + "classpath*:/**/plugins/**/apsadmin/**/global-messages*.*";
+            = "classpath*:/**/plugins/**/apsadmin/**/global-messages*.*";
 
     private static final Logger logger = LoggerFactory.getLogger(CustomLocalizedTextProvider.class);
 
@@ -53,7 +51,7 @@ public class CustomLocalizedTextProvider extends StrutsLocalizedTextProvider {
                     super.addDefaultResourceBundle(directory + RESOURCE_FILE_NAME);
                 }
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             logger.error("Error loading default resources", t);
         }
     }

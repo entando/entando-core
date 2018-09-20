@@ -24,6 +24,7 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.opensymphony.xwork2.ActionContext;
+import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.ActionProxy;
 import com.opensymphony.xwork2.ActionProxyFactory;
 import com.opensymphony.xwork2.ActionSupport;
@@ -302,8 +303,12 @@ public class ApsAdminBaseTestCase extends TestCase {
         return result;
     }
 
+    protected ActionInvocation getActionInvocation() {
+        return this.proxy.getInvocation();
+    }
+
     protected ActionContext getActionContext() {
-        return this.proxy.getInvocation().getInvocationContext();
+        return this.getActionInvocation().getInvocationContext();
     }
 
     protected IManager getService(String name) {

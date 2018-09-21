@@ -7,8 +7,11 @@
     
 	<bean type="org.apache.struts2.dispatcher.StaticContentLoader" 
 		  class="com.agiletec.apsadmin.system.dispatcher.EntandoStaticContentLoader" name="entandoStaticContentLoader" />
+	<bean type="com.opensymphony.xwork2.LocalizedTextProvider" 
+		  name="entandoLocalizedTextProvider" class="org.entando.entando.apsadmin.system.resource.CustomLocalizedTextProvider" scope="singleton" />
 	
 	<constant name="struts.staticContentLoader" value="entandoStaticContentLoader" />
+    <constant name="struts.localizedTextProvider" value="entandoLocalizedTextProvider" />
 	<constant name="struts.enable.DynamicMethodInvocation" value="false" />
 	<constant name="struts.devMode" value="false" />
     
@@ -29,7 +32,8 @@
 			<interceptor name="chain" class="com.agiletec.apsadmin.system.ChainingInterceptor" />
 			<interceptor name="apsFileUpload" class="com.agiletec.apsadmin.system.ApsFileUploadInterceptor" />
 			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />	
-			<interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
+			<interceptor name="entandoToken" class="org.entando.entando.apsadmin.system.CustomTokenInterceptor" />	
+            <interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
 			
 			<interceptor-stack name="entandoFreeStack">
 				<interceptor-ref name="exception"/>

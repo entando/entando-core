@@ -21,18 +21,6 @@
         <url>https://github.com/entando/entando-core</url>
         <tag>v5.0.1-SNAPSHOT</tag>
     </scm>
-    <developers>
-        <developer>
-            <id>e.santoboni</id>
-            <name>Eugenio Santoboni</name>
-            <email>eugenio.santoboni@gmail.com</email>
-        </developer>
-        <developer>
-            <id>w.ghelfi</id>
-            <name>William Ghelfi</name>
-            <email>william@williamghelfi.com</email>
-        </developer>
-    </developers>
     <organization>
         <name>Entando Inc.</name>
         <url>http://www.entando.com/</url>
@@ -87,7 +75,7 @@
         <test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 		
         <spring.version>5.0.5.RELEASE</spring.version>
-        <struts2.version>2.5.10.1</struts2.version>
+        <struts2.version>2.5.17</struts2.version>
         <cxf.version>3.0.4</cxf.version>
         <oltu.version>1.0.2</oltu.version>
         <jackson.version>2.9.5</jackson.version>
@@ -316,7 +304,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -358,7 +346,7 @@
         <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
-            <version>2.3.23</version>
+            <version>2.3.26-incubating</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>

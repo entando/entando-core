@@ -49,34 +49,79 @@
                 </ul>
             </div>
         </s:if>
-
-        <div class="form-group">
-            <div class="col-xs-12">
-                <s:hidden name="currentPath" />
-                <s:hidden name="strutsAction" />
-                <s:hidden name="protectedFolder" />
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="file-upload"><s:text
-                            name="label.upload" /></label>
-                    <div class="col-sm-10">
-                        <s:file name="upload" id="file-upload" cssClass="form-control" />
+        <div class="col-xs-12">            
+            <div class="form-group">
+                <div class="col-sm-5 col-sm-offset-2">
+                    <div id="add-resource-button">
+                        <button type="button" id="add-fields" >    <span class="fa fa-plus-square-o"></span> 
+                            <s:text name="filebrowser.label.add-fileinput" />
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-xs-12">
+            <s:hidden name="currentPath" />
+            <s:hidden name="strutsAction" />
+            <s:hidden name="protectedFolder" />
 
-        <div class="row form-group pull-right">
-            <div class="col-sm-12">
-                <wpsf:submit type="button" action="list" cssClass="btn btn-default">
-                    <s:text name="label.cancel" />
-                </wpsf:submit>
-                <wpsf:submit type="button" cssClass="btn btn-primary">
-                    <span class="icon fa fa-save"></span>
-                    &#32;
-                    <s:text name="label.save" />
-                </wpsf:submit>
+            <div class="form-group">
+
+                <div class="col-sm-5 col-sm-offset-2">                                        
+
+                    <s:label id="fileUpload_0_label" for="fileUpload_0" class="btn btn-default" key="filebrowser.label.button-choose-file" />
+                    <s:file name="upload" id="fileUpload_0" cssClass="input-file-button file" label="filebrowser.label.file" />
+                    <span id="fileUpload_0_selected" >
+                        <s:text name="filebrowser.label.no-file-selected" />
+                    </span>
+
+                </div> 
+            </div>
+
+            <div id="fields-container" >
             </div>
         </div>
 
-    </s:form>
+    </div>
+
+    <div class="row form-group pull-right">
+        <div class="col-sm-12">
+            <wpsf:submit type="button" action="list" cssClass="btn btn-default">
+                <s:text name="label.cancel" />
+            </wpsf:submit>
+            <wpsf:submit type="button" cssClass="btn btn-primary">
+                <span class="icon fa fa-save"></span>
+                &#32;
+                <s:text name="label.save" />
+            </wpsf:submit>
+        </div>
+    </div>
+
+</s:form>
 </div>
+
+<template id="hidden-fields-template">
+
+    <div class="form-group">
+        <div class="col-sm-5 col-sm-offset-2">
+            <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default" >
+                <s:text name="filebrowser.label.button-choose-file" />
+            </label>
+                <s:file name="upload" id="newFileUpload" cssClass="input-file-button file" label="filebrowser.label.file" />
+            <span id="newFileUpload_selected"><s:text name="filebrowser.label.no-file-selected" />
+            </span>
+        </div> 
+
+
+        <button type="button" class="btn-danger delete-fields " 
+                title="<s:text name="filebrowser.label.remove-fileinput" />"
+                >    <span class="fa fa-times white"></span> 
+        </button>
+
+
+    </div>
+
+</template>
+
+<s:include value="/WEB-INF/apsadmin/jsp/filebrowser/include/fileUploadAddFields.jsp" />
+<s:include value="/WEB-INF/apsadmin/jsp/filebrowser/include/fileUploadFieldLabelI18n.jsp" />

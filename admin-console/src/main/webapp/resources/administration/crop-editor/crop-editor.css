@@ -4,11 +4,21 @@
 @media (min-width: 992px){
     .modal-xlg {
         width: 1200px;
+        height: 100%;
     }
 }
 
+.modal-content {
+    height: auto;
+    min-height: 100%;
+    border-radius: 0;
+}
 
-.fileUpload_0 {
+.bs-cropping-modal .image-container {
+    min-height: 80%;
+}
+
+.bs-cropping-modal .image-container img {
     max-width: 100%; /* This rule is very important, please do not ignore this! */
     max-height: 100%;
 }
@@ -73,8 +83,23 @@
     box-shadow: none;
 }
 
+.aspect-ratio-buttons .btn-primary {
+    background-color: #606161;
+    background-image: none;
+}
+
+.aspect-ratio-buttons .btn-primary:focus {
+    background: white;
+    color: black;
+}
+
 .bs-cropping-modal .toolbar-container .btn-primary {
 
+}
+
+
+.image-upload-form .thumbnail {
+    max-width: 100%;
 }
 
 

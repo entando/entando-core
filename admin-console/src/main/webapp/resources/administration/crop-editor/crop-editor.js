@@ -35,11 +35,41 @@ $(document).ready(function () {
 
 
     $cropEditorModal.on('click', '.btn', function () {
-        if ($(this).data('method') === 'crop') {
-            var storeItem = setupNewStoreItem(false);
-            save(storeItem);
-        }
+        switch ($(this).data('method')) {
+            case 'crop':
+                save(setupNewStoreItem(false));
+                break;
+            case 'remove':
+                remove(getCurrentStoreItemId());
+                break;
+            case 'setDragMode':
+                getCurrentStoreItem().cropper.setDragMode($(this).data('option'));
+                break;
+            case 'zoom':
+                getCurrentStoreItem().cropper.zoom($(this).data('option'));
+                break;
+            case 'scaleX':
+                getCurrentStoreItem().cropper.scaleX($(this).data('option'));
+                break;
+            case 'scaleY':
+                var option = $(this).data('option');
+                getCurrentStoreItem().cropper.scaleY();
+                $(this).data('option', - option)
+                break;
+            case 'move':
+                getCurrentStoreItem().cropper.move($(this).data('option'), $(this).data('second-option'));
+                break;
+            case 'rotate':
+                getCurrentStoreItem().cropper.rotate($(this).data('option'));
+                break;
+            case 'setAspectRatio':
+                console.log($(this).data('option'));
+                getCurrentStoreItem().cropper.setAspectRatio($(this).data('option'));
+                break;
 
+            default:
+                return true;
+        }
     });
 
 
@@ -54,12 +84,17 @@ $(document).ready(function () {
         return currentStoreItemId;
     };
 
+    var getCurrentStoreItem = function(){
+        return store[getCurrentStoreItemId()];
+    };
+
     var setupCropper = function (storeItemId) {
         // Return cropper created for specific storeItem.
         return new Cropper(
             $('.store_item_' + storeItemId)[0],
             {
-                viewMode: 3,
+                maxWidth: 300,
+                maxHeight: 300,
                 aspectRatio: 16 / 9,
                 preview: $('#store_item_' + storeItemId).find('.img-preview')
             });
@@ -72,15 +107,17 @@ $(document).ready(function () {
         if (isInitial) {
             return {
                 id: newId,
-                name: "name" + "_" + newId
+                name: "Image" + "_" + newId
             };
 
         } else {
             var currentStoreItem = store[currentItemId];
+            console.log('currentStoreItem');
+            console.log(currentStoreItem);
             return {
                 id: newId,
                 name: currentStoreItem.name + "_" + newId,
-                imageData: currentStoreItem.cropper.getCroppedCanvas().toDataURL('image/jpeg')
+                imageData: currentStoreItem.cropper.getCroppedCanvas().toDataURL('image/png')
             };
         }
     };
@@ -88,6 +125,18 @@ $(document).ready(function () {
     var save = function (storeItem) {
         store.push(storeItem);
         addTab(storeItem);
+        if(store.length > 1) {
+            addFields();
+        }
+        $('#descr_' + storeItem.id).val(storeItem.name);
+        $('#img_' + storeItem.id).attr("src", storeItem.imageData);
+    };
+
+    var remove = function(storeItemId) {
+        store[storeItemId].cropper.destroy();
+        store.splice(storeItemId, 1);
+        removeTab(storeItemId);
+
     };
 
     var addTab = function (storeItem) {
@@ -104,7 +153,7 @@ $(document).ready(function () {
         $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
         $newTabNavigationItem.find('a').text(storeItem.name);
         $newTabNavigationItem.removeClass('hidden');
-        $newTabNavigationItem.removeAttr('id');
+        $newTabNavigationItem.attr('id', 'image-navigation-item_' + storeItem.id);
         $newTabNavigationItem.appendTo($imageNav);
 
         // Copy tab pane
@@ -128,5 +177,58 @@ $(document).ready(function () {
                 pendingStoreItems.push(storeItem.id);
             }
         }
+
+        console.log("Store!!");
+        console.log(store);
+
+
     };
+
+    var removeTab = function (storeItemId) {
+      $('#store_item_' + storeItemId).remove();
+      $('#image-navigation-item_' + storeItemId).remove();
+      $('.image-navigation-item').last().addClass('.active');
+    };
+
+
+    var addFields = function () {
+        var numItems = $('.file-description').length;
+
+        var numItems = $('.file-description').length;
+        var template = $('#hidden-fields-template').html();
+
+        $('#fields-container').append(template);
+
+        var newId = parseInt(numItems);
+
+        $('#newDescr').attr("name", "descr_" + newId);
+        $('#newDescr').attr("id", "descr_" + newId);
+
+        $('#newImg').attr("id", "img_" + newId);
+
+        $('#newFileUpload_label').attr("for", "fileUpload_" + newId);
+        $('#newFileUpload_label').attr("id", "fileUpload_label_" + newId);
+
+        $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
+        $('#newFileUpload').attr("id", "fileUpload_" + newId);
+
+    };
+
+    $('#add-fields').click(function(e){
+        e.preventDefault();
+        addFields();
+    });
+
+    $('.delete-fields').click(function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+    });
+
+    $('#fields-container').on("click", ".delete-fields", function (e) {
+        e.preventDefault();
+        $(this).parent('div').remove();
+    })
+
+
+
 });

@@ -264,7 +264,7 @@
                 <s:text name="label.description" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
-            <div class="col-sm-4">
+            <div class="col-sm-3">
                 <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}" cssClass="form-control file-description" value="%{getFileDescription(#ctr.count - 1)}" />
                 <s:if test="#fieldHasFieldErrorVar">
                     <span class="help-block text-danger">
@@ -274,6 +274,9 @@
                         </s:iterator>
                     </span>
                 </s:if>
+            </div>
+            <div class="col-sm-1">
+                <img src="" alt="" id="img_0" class="thumbnail">
             </div>
 
             <label class="col-sm-1 control-label" for="upload">
@@ -408,7 +411,8 @@
 
 
     <!-- Large modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-cropping-modal">Large modal
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-cropping-modal">
+        Crop editor
     </button>
 
     <div class="modal fade bs-cropping-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -578,8 +582,8 @@
                                                         </span>
                                                         </button>
                                                         <button type="button" class="btn btn-primary"
-                                                                data-method="clear"
-                                                                title="Clear">
+                                                                data-method="remove"
+                                                                title="Remove">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                               data-original-title="cropper.clear()">
                                                           <span class="fa fa-remove"></span>
@@ -591,7 +595,7 @@
                                             <div class="col-md-4">
                                                 <div class="aspect-ratio-buttons">
                                                     <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
-                                                        <label class="btn btn-primary">
+                                                        <label class="btn btn-primary" data-method="setAspectRatio" data-option="1.7777777777777777">
                                                             <input type="radio" class="sr-only" id="aspectRatio1"
                                                                    name="aspectRatio" value="1.7777777777777777">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -599,7 +603,7 @@
               16:9
             </span>
                                                         </label>
-                                                        <label class="btn btn-primary">
+                                                        <label class="btn btn-primary" data-method="setAspectRatio" data-option="1.3333333333333333">
                                                             <input type="radio" class="sr-only" id="aspectRatio2"
                                                                    name="aspectRatio" value="1.3333333333333333">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -607,7 +611,7 @@
               4:3
             </span>
                                                         </label>
-                                                        <label class="btn btn-primary">
+                                                        <label class="btn btn-primary" data-method="setAspectRatio" data-option="1">
                                                             <input type="radio" class="sr-only" id="aspectRatio3"
                                                                    name="aspectRatio" value="1">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -615,7 +619,7 @@
               1:1
             </span>
                                                         </label>
-                                                        <label class="btn btn-primary">
+                                                        <label class="btn btn-primary" data-method="setAspectRatio" data-option="0.6666666666666666">
                                                             <input type="radio" class="sr-only" id="aspectRatio4"
                                                                    name="aspectRatio" value="0.6666666666666666">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -623,7 +627,7 @@
               2:3
             </span>
                                                         </label>
-                                                        <label class="btn btn-primary active">
+                                                        <label class="btn btn-primary active"  data-method="setAspectRatio" data-option="NaN" >
                                                             <input type="radio" class="sr-only" id="aspectRatio5"
                                                                    name="aspectRatio" value="NaN">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -706,8 +710,11 @@
             <s:text name="label.description" />
             <i class="fa fa-asterisk required-icon"></i>
         </label>
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description" />
+        </div>
+        <div class="col-sm-1">
+            <img src="" alt="" id="newImg" class="thumbnail">
         </div>
         <label class="col-sm-1 control-label" for="upload">
             <s:text name="label.file" />

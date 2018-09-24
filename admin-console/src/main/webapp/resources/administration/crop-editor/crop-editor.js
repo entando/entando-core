@@ -1,10 +1,17 @@
 $(document).ready(function () {
+    var allowedFileTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+    ];
     var isCropEditorModalShown = false;
     var pendingStoreItems = [];
     $('.image-upload-form').on('change', 'input:file', function(){
         var input = this;
-        $('.bs-cropping-modal').modal('show');
-        if (input.files && input.files[0]) {
+
+        if (input.files && input.files[0] && allowedFileTypes.includes(input.files[0].type)) {
+            $('.bs-cropping-modal').modal('show');
+
             var reader = new FileReader();
 
             reader.onload = function (e) {
@@ -63,7 +70,6 @@ $(document).ready(function () {
                 getCurrentStoreItem().cropper.rotate($(this).data('option'));
                 break;
             case 'setAspectRatio':
-                console.log($(this).data('option'));
                 getCurrentStoreItem().cropper.setAspectRatio($(this).data('option'));
                 break;
 
@@ -111,13 +117,10 @@ $(document).ready(function () {
             };
 
         } else {
-            var currentStoreItem = store[currentItemId];
-            console.log('currentStoreItem');
-            console.log(currentStoreItem);
             return {
                 id: newId,
-                name: currentStoreItem.name + "_" + newId,
-                imageData: currentStoreItem.cropper.getCroppedCanvas().toDataURL('image/png')
+                name:  store[currentItemId].name + "_" + newId,
+                imageData:  store[currentItemId].cropper.getCroppedCanvas().toDataURL('image/png')
             };
         }
     };
@@ -130,6 +133,7 @@ $(document).ready(function () {
         }
         $('#descr_' + storeItem.id).val(storeItem.name);
         $('#img_' + storeItem.id).attr("src", storeItem.imageData);
+        $('.image-upload-form').append('<input type="hidden" name="bas64_image_'+ storeItem.id +'" value="'+ storeItem.imageData +'">')
     };
 
     var remove = function(storeItemId) {
@@ -177,9 +181,6 @@ $(document).ready(function () {
                 pendingStoreItems.push(storeItem.id);
             }
         }
-
-        console.log("Store!!");
-        console.log(store);
 
 
     };

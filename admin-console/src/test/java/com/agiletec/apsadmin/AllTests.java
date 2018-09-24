@@ -51,6 +51,8 @@ import org.entando.entando.apsadmin.filebrowser.TestFileBrowserAction;
 import org.entando.entando.apsadmin.portal.guifragment.TestGuiFragmentAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelFinderAction;
+import org.entando.entando.apsadmin.system.TestCustomTokenInterceptor;
+import org.entando.entando.apsadmin.system.resource.TestCustomLocalizedTextProvider;
 import org.entando.entando.apsadmin.system.services.activitystream.TestSocialActivityStreamDAO;
 import org.entando.entando.apsadmin.user.TestUserAction;
 import org.entando.entando.apsadmin.user.TestUserAuthorizationAction;
@@ -137,6 +139,9 @@ public class AllTests {
         suite.addTestSuite(TestDataObjectModelAction.class);
 
         suite.addTestSuite(FrontServletActionRedirectResultIntegrationTest.class);
+
+        suite.addTestSuite(TestCustomLocalizedTextProvider.class);
+        suite.addTestSuite(TestCustomTokenInterceptor.class);
 
         return suite;
     }

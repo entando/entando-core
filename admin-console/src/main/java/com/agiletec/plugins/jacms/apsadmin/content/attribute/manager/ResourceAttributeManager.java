@@ -17,11 +17,15 @@ import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.agiletec.apsadmin.system.entity.attribute.manager.TextAttributeManager;
+import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.AbstractResourceAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.util.ICmsAttributeErrorCodes;
+import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,27 +39,22 @@ public class ResourceAttributeManager extends TextAttributeManager {
     @Override
     protected void updateAttribute(AttributeInterface attribute, AttributeTracer tracer, HttpServletRequest request) {
         super.updateAttribute(attribute, tracer, request);
+        IResourceManager resourceManager = (IResourceManager) ApsWebApplicationUtils.getBean(JacmsSystemConstants.RESOURCE_MANAGER, request);
+        Map<String, List<String>> mapping = resourceManager.getMetadataMapping();
+        if (null == mapping || mapping.isEmpty()) {
+            return;
+        }
         AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
         List<Lang> langs = this.getLangManager().getLangs();
         for (Lang currentLang : langs) {
             tracer.setLang(currentLang);
-            // alt, description, legend, and title
-            String alt = this.getResourceValueFromForm(attribute, tracer, request, "alt");
-            if (null != alt) {
-                resourceAttribute.setResourceAlt(alt, currentLang.getCode());
-            }
-            String description = this.getResourceValueFromForm(attribute, tracer, request, "description");
-            if (null != description) {
-                resourceAttribute.setResourceDescription(description, currentLang.getCode());
-            }
-            String legend = this.getResourceValueFromForm(attribute, tracer, request, "legend");
-            if (null != legend) {
-                resourceAttribute.setResourceLegend(legend, currentLang.getCode());
-            }
-            String title = this.getResourceValueFromForm(attribute, tracer, request, "title");
-            if (null != legend) {
-                resourceAttribute.setResourceTitle(title, currentLang.getCode());
-            }
+            String formFieldPrefix = tracer.getFormFieldName(attribute) + "_metadata_";
+            mapping.keySet().stream().forEach(key -> {
+                String value = request.getParameter(formFieldPrefix + key);
+                if (null != value) {
+                    resourceAttribute.setMetadata(key, currentLang.getCode(), value);
+                }
+            });
         }
     }
 

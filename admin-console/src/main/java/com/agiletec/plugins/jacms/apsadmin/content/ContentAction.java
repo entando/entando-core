@@ -25,6 +25,7 @@ import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.content.ContentUtilizer;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SymbolicLink;
+import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.plugins.jacms.aps.util.CmsPageUtil;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -43,6 +45,20 @@ import java.util.Map;
 public class ContentAction extends AbstractContentAction {
 
     private static final Logger _logger = LoggerFactory.getLogger(ContentAction.class);
+
+    private IPageManager pageManager;
+    private ConfigInterface configManager;
+    private IResourceManager resourceManager;
+
+    private Map references;
+
+    private String contentId;
+
+    private List<String> extraGroupNames = new ArrayList<>();
+
+    private boolean copyPublicVersion;
+
+    private ResourceIconUtil resourceIconUtil;
 
     @Override
     public void validate() {
@@ -261,9 +277,9 @@ public class ContentAction extends AbstractContentAction {
                     _logger.info("User not allowed to unpublish content {}", currentContent.getId());
                     return USER_NOT_ALLOWED;
                 }
-                Map references = this.getContentActionHelper().getReferencingObjects(currentContent, this.getRequest());
-                if (references.size() > 0) {
-                    this.setReferences(references);
+                Map extractedReferences = this.getContentActionHelper().getReferencingObjects(currentContent, this.getRequest());
+                if (extractedReferences.size() > 0) {
+                    this.setReferences(extractedReferences);
                     return "references";
                 }
                 this.getContentManager().removeOnLineContent(currentContent);
@@ -298,7 +314,7 @@ public class ContentAction extends AbstractContentAction {
      * @return The list of the showing pages.
      */
     public List<SelectItem> getShowingPageSelectItems() {
-        List<SelectItem> pageItems = new ArrayList<SelectItem>();
+        List<SelectItem> pageItems = new ArrayList<>();
         try {
             Content content = this.getContent();
             if (null != content) {
@@ -329,36 +345,54 @@ public class ContentAction extends AbstractContentAction {
         return this.getResourceIconUtil().getIconByFilename(fileName);
     }
 
+    public List<String> getResourceMetadataKeys() {
+        List<String> keys = new ArrayList<>();
+        Map<String, List<String>> mapping = this.getResourceManager().getMetadataMapping();
+        if (null != mapping) {
+            keys.addAll(mapping.keySet());
+            Collections.sort(keys);
+        }
+        return keys;
+    }
+
     public Map getReferences() {
-        return _references;
+        return references;
     }
 
     protected void setReferences(Map references) {
-        this._references = references;
+        this.references = references;
     }
 
     protected IPageManager getPageManager() {
-        return _pageManager;
+        return pageManager;
     }
 
     public void setPageManager(IPageManager pageManager) {
-        this._pageManager = pageManager;
+        this.pageManager = pageManager;
     }
 
     protected ConfigInterface getConfigManager() {
-        return _configManager;
+        return configManager;
     }
 
     public void setConfigManager(ConfigInterface configManager) {
-        this._configManager = configManager;
+        this.configManager = configManager;
+    }
+
+    protected IResourceManager getResourceManager() {
+        return resourceManager;
+    }
+
+    public void setResourceManager(IResourceManager resourceManager) {
+        this.resourceManager = resourceManager;
     }
 
     public String getContentId() {
-        return _contentId;
+        return contentId;
     }
 
     public void setContentId(String contentId) {
-        this._contentId = contentId;
+        this.contentId = contentId;
     }
 
     public List<String> getExtraGroupNames() {
@@ -370,32 +404,19 @@ public class ContentAction extends AbstractContentAction {
     }
 
     public boolean isCopyPublicVersion() {
-        return _copyPublicVersion;
+        return copyPublicVersion;
     }
 
     public void setCopyPublicVersion(boolean copyPublicVersion) {
-        this._copyPublicVersion = copyPublicVersion;
+        this.copyPublicVersion = copyPublicVersion;
     }
 
     protected ResourceIconUtil getResourceIconUtil() {
-        return _resourceIconUtil;
+        return resourceIconUtil;
     }
 
     public void setResourceIconUtil(ResourceIconUtil resourceIconUtil) {
-        this._resourceIconUtil = resourceIconUtil;
+        this.resourceIconUtil = resourceIconUtil;
     }
-
-    private IPageManager _pageManager;
-    private ConfigInterface _configManager;
-
-    private Map _references;
-
-    private String _contentId;
-
-    private List<String> extraGroupNames = new ArrayList<>();
-
-    private boolean _copyPublicVersion;
-
-    private ResourceIconUtil _resourceIconUtil;
 
 }

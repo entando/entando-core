@@ -16,7 +16,7 @@ $(document).ready(function () {
 
             reader.onload = function (e) {
                 // Creating first storeItem from original photo.
-                var storeItem = setupNewStoreItem(true);
+                var storeItem = setupNewStoreItem(true, input.files[0].name);
                 storeItem.imageData = e.target.result;
                 save(storeItem);
             };
@@ -107,19 +107,20 @@ $(document).ready(function () {
     };
 
 
-    var setupNewStoreItem = function (isInitial) {
+    var setupNewStoreItem = function (isInitial, name) {
         var currentItemId = getCurrentStoreItemId();
         var newId = store.length;
         if (isInitial) {
             return {
                 id: newId,
-                name: "Image" + "_" + newId
+                name: name
             };
 
         } else {
+            var nameParts = store[currentItemId].name.split(/\.(?=[^\.]+$)/);
             return {
                 id: newId,
-                name:  store[currentItemId].name + "_" + newId,
+                name:  nameParts[0] + "_" + newId + "." + nameParts[1],
                 imageData:  store[currentItemId].cropper.getCroppedCanvas().toDataURL('image/png')
             };
         }
@@ -128,6 +129,7 @@ $(document).ready(function () {
     var save = function (storeItem) {
         store.push(storeItem);
         addTab(storeItem);
+        // setModalTitle(storeItem.name);
         if(store.length > 1) {
             addFields();
         }
@@ -228,8 +230,6 @@ $(document).ready(function () {
     $('#fields-container').on("click", ".delete-fields", function (e) {
         e.preventDefault();
         $(this).parent('div').remove();
-    })
-
-
+    });
 
 });

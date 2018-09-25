@@ -75,6 +75,10 @@
 
 }
 
+.bs-cropping-modal .toolbar-container {
+    margin-top: 30px;
+}
+
 .bs-cropping-modal .toolbar-container .btn-primary {
     background: transparent;
     color: #363636;
@@ -83,17 +87,58 @@
     box-shadow: none;
 }
 
-.aspect-ratio-buttons .btn-primary {
-    background-color: #606161;
-    background-image: none;
+.aspect-ratio-buttons-container {
+    margin-top: auto;
 }
 
-.aspect-ratio-buttons .btn-primary:focus {
+.aspect-ratio-buttons .btn-primary {
+    background: linear-gradient(180deg, #FAFAFA 0%, #EDEDED 100%);
+    border: 1px solid #BBBBBB;
+    box-sizing: border-box;
+    border-radius: 1px;
+    color: #4D5258;
+}
+
+.aspect-ratio-buttons .btn-primary {
+    outline: none !important;
+    border: 1px solid #BBBBBB;
+    color: black;
+
+}
+
+.aspect-ratio-buttons .btn-primary:focus, .aspect-ratio-buttons .btn-primary:hover {
     background: white;
     color: black;
+    border: 1px solid #BBBBBB;
+    outline: none;
+}
+
+.aspect-ratio-buttons .btn-primary.active.focus {
+    color: #4D5258;
+    border: 1px solid #BBBBBB;
 }
 
 .bs-cropping-modal .toolbar-container .btn-primary {
+
+}
+
+.bs-cropping-modal .toolbar-container .btn-group .btn-group__title {
+    display: block;
+    font-family: Open Sans;
+    line-height: normal;
+    font-size: 12px;
+    color: #4D5258;
+    text-align: center;
+}
+
+.bs-cropping-modal .toolbar-container .divider {
+    width: 1px;
+    height: 20px;
+    background: black;
+    display: block;
+    content: " ";
+    margin-top: auto;
+    margin-bottom: 7px;
 
 }
 
@@ -165,4 +210,46 @@
     height: 20px;
     margin-right: 0;
     max-width: 100%;
+}
+
+
+
+
+
+/* Flex */
+
+.flex-container {
+    display: flex;
+}
+
+.flex-start {
+    justify-content: flex-start;
+}
+
+.flex-end {
+    justify-content: flex-end;
+}
+
+
+.center {
+    justify-content: center;
+}
+
+
+.space-between {
+    justify-content: space-between;
+}
+
+
+.space-around {
+    justify-content: space-around;
+}
+
+.space-evenly {
+    justify-content: space-evenly;
+}
+
+
+.flex-item {
+
 }

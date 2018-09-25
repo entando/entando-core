@@ -212,7 +212,7 @@ public class TestContentAdminAction extends AbstractBaseTestContentAction {
     }
 
     private void waitReloadThreads() throws InterruptedException {
-        Thread[] threads = new Thread[20];
+        Thread[] threads = new Thread[40];
         Thread.enumerate(threads);
         for (int i = 0; i < threads.length; i++) {
             Thread currentThread = threads[i];

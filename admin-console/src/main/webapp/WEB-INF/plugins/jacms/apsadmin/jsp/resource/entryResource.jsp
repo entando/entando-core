@@ -419,8 +419,10 @@
         <div class="modal-dialog modal-xlg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">Close <span
-                            aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        Close
+                        <span class="fa fa-times"></span>
+                    </button>
                     <h4 class="modal-title">Edit Image <span class="image-name"></span></h4>
                 </div>
                 <div class="container-fluid no-padding">
@@ -594,7 +596,7 @@
 
                                                     <!-- save and cancel -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">Save</span>
+                                                        <span class="btn-group__title">save</span>
                                                         <button type="button" class="btn btn-primary" data-method="crop"
                                                                 title="Crop">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -606,7 +608,7 @@
                                                     <div class="divider flex-item"></div>
 
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">Cancel</span>
+                                                        <span class="btn-group__title">cancel</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="remove"
                                                                 title="Remove">
@@ -674,11 +676,12 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs tabs-left image-navigation">
                                 <li>List of images</li>
-                                <!-- image navigation item blueprint -->
-                                <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
-                                    <a href="#first" data-toggle="tab">Blueprint</a></li>
-                                <!-- /image navigation item blueprint -->
+
                             </ul>
+                            <!-- image navigation item blueprint -->
+                            <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
+                                <a href="#first" data-toggle="tab">Blueprint</a></li>
+                            <!-- /image navigation item blueprint -->
                         </div>
                     </div>
                 </div>

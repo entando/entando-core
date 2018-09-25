@@ -49,13 +49,10 @@ public interface IResourceManager {
     public static final int STATUS_RELOADING_RESOURCE_MAIN_FILENAME_IN_PROGRESS = 1;
     public static final int STATUS_RELOADING_RESOURCE_INSTANCES_IN_PROGRESS = 2;
 
-    public static final String ALT_METADATA_MAPPING_KEY = "alt";
-    public static final String DESCRIPTION_METADATA_MAPPING_KEY = "description";
-    public static final String LEGEND_METADATA_MAPPING_KEY = "legend";
-    public static final String TITLE_METADATA_MAPPING_KEY = "title";
-
-    public static final String[] METADATA_MAPPING_KEYS = {ALT_METADATA_MAPPING_KEY,
-        DESCRIPTION_METADATA_MAPPING_KEY, LEGEND_METADATA_MAPPING_KEY, TITLE_METADATA_MAPPING_KEY};
+    public static final String ALT_METADATA_KEY = "alt";
+    public static final String DESCRIPTION_METADATA_KEY = "description";
+    public static final String LEGEND_METADATA_KEY = "legend";
+    public static final String TITLE_METADATA_KEY = "title";
 
     /**
      * Crea una nuova istanza di un tipo di risorsa del tipo richiesto. Il nuovo
@@ -205,7 +202,7 @@ public interface IResourceManager {
      */
     public void refreshResourcesInstances(String resourceTypeCode) throws ApsSystemException;
 
-    public Map<String, List<String>> getMetadataMapping() throws ApsSystemException;
+    public Map<String, List<String>> getMetadataMapping();
 
     public void updateMetadataMapping(Map<String, List<String>> mapping) throws ApsSystemException;
 

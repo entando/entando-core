@@ -35,6 +35,8 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
     private static final Logger _logger = LoggerFactory.getLogger(ResourceAttributeHandler.class);
 
     private transient IResourceManager resourceManager;
+    private boolean intoMetadatas;
+    private String metadataKey;
 
     @Override
     public Object getAttributeHandlerPrototype() {
@@ -45,19 +47,27 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
 
     @Override
     public void startAttribute(Attributes attributes, String qName) throws SAXException {
-        if (qName.equals("resource")) {
+        if (this.isIntoMetadatas()) {
+            this.startMetadata(attributes, qName);
+        } else if (qName.equals("resource")) {
             this.startResource(attributes, qName);
-        } else if (qName.equals("alt")) {
-            this.startResourceAlt(attributes, qName);
-        } else if (qName.equals("description")) {
-            this.startResourceDescription(attributes, qName);
-        } else if (qName.equals("legend")) {
-            this.startResourceLegend(attributes, qName);
-        } else if (qName.equals("title")) {
-            this.startResourceTitle(attributes, qName);
+        } else if (qName.equals("metadatas")) {
+            this.setIntoMetadatas(true);
+        } else if (qName.equals(IResourceManager.ALT_METADATA_KEY)
+                || qName.equals(IResourceManager.DESCRIPTION_METADATA_KEY)
+                || qName.equals(IResourceManager.LEGEND_METADATA_KEY)
+                || qName.equals(IResourceManager.TITLE_METADATA_KEY)) {
+            this.startResourceMetadata(qName, attributes, qName);
         } else {
             super.startAttribute(attributes, qName);
         }
+    }
+
+    private void startMetadata(Attributes attributes, String qName) throws SAXException {
+        String idLang = this.extractAttribute(attributes, "lang", qName, true);
+        String key = this.extractAttribute(attributes, "key", qName, true);
+        this.setCurrentLangId(idLang);
+        this.setMetadataKey(key);
     }
 
     private void startResource(Attributes attributes, String qName) throws SAXException {
@@ -75,19 +85,33 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
 
     @Override
     public void endAttribute(String qName, StringBuffer textBuffer) {
-        if (qName.equals("resource")) {
+        if (this.isIntoMetadatas()) {
+            this.endMetadata(textBuffer);
+        } else if (qName.equals("resource")) {
             this.endResource();
-        } else if (qName.equals("alt")) {
-            this.endResourceAlt(textBuffer);
-        } else if (qName.equals("description")) {
-            this.endResourceDescription(textBuffer);
-        } else if (qName.equals("legend")) {
-            this.endResourceLegend(textBuffer);
-        } else if (qName.equals("title")) {
-            this.endResourceTitle(textBuffer);
+        } else if (qName.equals("metadatas")) {
+            this.setIntoMetadatas(false);
+        } else if (qName.equals(IResourceManager.ALT_METADATA_KEY)
+                || qName.equals(IResourceManager.DESCRIPTION_METADATA_KEY)
+                || qName.equals(IResourceManager.LEGEND_METADATA_KEY)
+                || qName.equals(IResourceManager.TITLE_METADATA_KEY)) {
+            this.endMetadata(qName, textBuffer);
         } else {
             super.endAttribute(qName, textBuffer);
         }
+    }
+
+    private void endMetadata(StringBuffer textBuffer) {
+        this.endMetadata(this.getMetadataKey(), textBuffer);
+    }
+
+    private void endMetadata(String metadataKey, StringBuffer textBuffer) {
+        if (null != textBuffer && null != this.getCurrentAttr()) {
+            ResourceAttributeInterface resourceAttribute = (ResourceAttributeInterface) this.getCurrentAttr();
+            resourceAttribute.setMetadata(metadataKey, this.getCurrentLangId(), textBuffer.toString());
+        }
+        this.setCurrentLangId(null);
+        this.setMetadataKey(null);
     }
 
     private void endResource() {
@@ -112,53 +136,26 @@ public class ResourceAttributeHandler extends TextAttributeHandler {
         this.resourceManager = resourceManager;
     }
 
-    private void startResourceAlt(Attributes attributes, String qName) throws SAXException {
-        this.startResourceMetadata(attributes, qName);
-    }
-
-    private void startResourceDescription(Attributes attributes, String qName) throws SAXException {
-        this.startResourceMetadata(attributes, qName);
-    }
-
-    private void startResourceLegend(Attributes attributes, String qName) throws SAXException {
-        this.startResourceMetadata(attributes, qName);
-    }
-
-    private void startResourceTitle(Attributes attributes, String qName) throws SAXException {
-        this.startResourceMetadata(attributes, qName);
-    }
-
-    protected void startResourceMetadata(Attributes attributes, String qName) throws SAXException {
+    protected void startResourceMetadata(String key, Attributes attributes, String qName) throws SAXException {
+        this.setMetadataKey(key);
         String idLang = this.extractAttribute(attributes, "lang", qName, true);
         this.setCurrentLangId(idLang);
     }
 
-    private void endResourceAlt(StringBuffer textBuffer) {
-        if (null != textBuffer && null != this.getCurrentAttr()) {
-            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceAlt(textBuffer.toString(), this.getCurrentLangId());
-        }
-        this.setCurrentLangId(null);
+    protected boolean isIntoMetadatas() {
+        return intoMetadatas;
     }
 
-    private void endResourceDescription(StringBuffer textBuffer) {
-        if (null != textBuffer && null != this.getCurrentAttr()) {
-            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceDescription(textBuffer.toString(), this.getCurrentLangId());
-        }
-        this.setCurrentLangId(null);
+    protected void setIntoMetadatas(boolean intoMetadatas) {
+        this.intoMetadatas = intoMetadatas;
     }
 
-    private void endResourceLegend(StringBuffer textBuffer) {
-        if (null != textBuffer && null != this.getCurrentAttr()) {
-            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceLegend(textBuffer.toString(), this.getCurrentLangId());
-        }
-        this.setCurrentLangId(null);
+    protected String getMetadataKey() {
+        return metadataKey;
     }
 
-    private void endResourceTitle(StringBuffer textBuffer) {
-        if (null != textBuffer && null != this.getCurrentAttr()) {
-            ((ResourceAttributeInterface) this.getCurrentAttr()).setResourceTitle(textBuffer.toString(), this.getCurrentLangId());
-        }
-        this.setCurrentLangId(null);
+    protected void setMetadataKey(String metadataKey) {
+        this.metadataKey = metadataKey;
     }
 
 }

@@ -53,7 +53,7 @@
                             </label>
                             <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
                                 <wpsf:textfield id="%{#metadataFormFieldNameVar}" name="%{#metadataFormFieldNameVar}" 
-                                                value="%{#attribute.getMetadata(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
+                                                value="%{#attribute.getMetadataForLang(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
                             </div>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                         </label>
                         <div class="col-xs-10">
                             <wpsf:textfield id="%{#metadataFormFieldNameVar}" name="%{#metadataFormFieldNameVar}" 
-                                            value="%{#attribute.getMetadata(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
+                                            value="%{#attribute.getMetadataForLang(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
                         </div>
                     </div>
                     </s:iterator>

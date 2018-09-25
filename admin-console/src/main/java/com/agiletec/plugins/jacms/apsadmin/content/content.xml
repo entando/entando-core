@@ -397,6 +397,16 @@
             <result type="tiles">admin.jacms.content.settings</result>
         	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
         </action>
+        
+    	<action name="removeMetadata*" class="jacmsContentAdminAction" method="removeMetadata" >
+			<result type="tiles">admin.jacms.content.settings</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
+
+    	<action name="addMetadata" class="jacmsContentAdminAction" method="addMetadata" >
+			<result type="tiles">admin.jacms.content.settings</result>
+			<interceptor-ref name="entandoValidationStack"><param name="requestAuth.requiredPermission">superuser</param></interceptor-ref>
+		</action>
     	
     </package>
 

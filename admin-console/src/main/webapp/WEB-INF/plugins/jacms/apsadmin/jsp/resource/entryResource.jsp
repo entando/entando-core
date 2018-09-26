@@ -419,9 +419,11 @@
         <div class="modal-dialog modal-xlg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">Close <span
-                            aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Edit Image</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        Close
+                        <span class="fa fa-times"></span>
+                    </button>
+                    <h4 class="modal-title">Edit Image <span class="image-name"></span></h4>
                 </div>
                 <div class="container-fluid no-padding">
                     <div class="row">
@@ -454,11 +456,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row">
+                                        <div class="row flex-container">
                                             <div class="col-md-8">
-                                                <div class="toolbar-container">
+                                                <div class="toolbar-container flex-container space-between">
                                                     <!-- move and crop -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">move</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="setDragMode" data-option="move"
                                                                 title="Move">
@@ -467,6 +470,11 @@
                                                             <span class="fa fa-arrows"></span>
                                                         </span>
                                                         </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
+
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">crop</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="setDragMode" data-option="crop"
                                                                 title="Crop">
@@ -476,9 +484,12 @@
                                                         </span>
                                                         </button>
                                                     </div>
+                                                    <div class="divider flex-item"></div>
+
 
                                                     <!-- scale -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">scale</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="scaleX" data-option="-1"
                                                                 title="Flip Horizontal">
@@ -496,9 +507,12 @@
                                                         </span>
                                                         </button>
                                                     </div>
+                                                    <div class="divider flex-item"></div>
+
 
                                                     <!-- move -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">move</span>
                                                         <button type="button" class="btn btn-primary" data-method="move"
                                                                 data-option="-10" data-second-option="0"
                                                                 title="Move Left">
@@ -532,10 +546,13 @@
                                                     </span>
                                                         </button>
                                                     </div>
+                                                    <div class="divider flex-item"></div>
+
 
 
                                                     <!-- rotate -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">rotate</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="rotate"
                                                                 data-option="-45" title="Rotate Left">
@@ -553,9 +570,12 @@
                                                         </span>
                                                         </button>
                                                     </div>
+                                                    <div class="divider flex-item"></div>
+
 
                                                     <!-- zoom -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">zoom</span>
                                                         <button type="button" class="btn btn-primary" data-method="zoom"
                                                                 data-option="0.1" title="Zoom In">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -571,9 +591,12 @@
                                                         </span>
                                                         </button>
                                                     </div>
+                                                    <div class="divider flex-item"></div>
+
 
                                                     <!-- save and cancel -->
-                                                    <div class="btn-group">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">save</span>
                                                         <button type="button" class="btn btn-primary" data-method="crop"
                                                                 title="Crop">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -581,6 +604,11 @@
                                                           <span class="fa fa-check"></span>
                                                         </span>
                                                         </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
+
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title">cancel</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="remove"
                                                                 title="Remove">
@@ -592,7 +620,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 aspect-ratio-buttons-container ">
                                                 <div class="aspect-ratio-buttons">
                                                     <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
                                                         <label class="btn btn-primary" data-method="setAspectRatio" data-option="1.7777777777777777">
@@ -648,11 +676,12 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs tabs-left image-navigation">
                                 <li>List of images</li>
-                                <!-- image navigation item blueprint -->
-                                <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
-                                    <a href="#first" data-toggle="tab">Blueprint</a></li>
-                                <!-- /image navigation item blueprint -->
+
                             </ul>
+                            <!-- image navigation item blueprint -->
+                            <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
+                                <a href="#first" data-toggle="tab">Blueprint</a></li>
+                            <!-- /image navigation item blueprint -->
                         </div>
                     </div>
                 </div>

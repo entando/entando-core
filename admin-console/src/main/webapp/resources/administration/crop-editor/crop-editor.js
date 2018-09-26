@@ -133,7 +133,7 @@ $(document).ready(function () {
         }
         $('#descr_' + storeItem.id).val(storeItem.name);
         $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-        $('.image-upload-form').append('<input type="hidden" name="bas64_image_'+ storeItem.id +'" value="'+ storeItem.imageData +'">')
+        $('.image-upload-form').append('<input type="hidden" name="base64Image" id="base64_image_'+ storeItem.id +'" value="'+ storeItem.imageData +'">')      
     };
 
     var remove = function(storeItemId) {
@@ -213,6 +213,7 @@ $(document).ready(function () {
         $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
         $('#newFileUpload').attr("id", "fileUpload_" + newId);
 
+        $('#newFileUpload_box').attr("id", "fileUpload_box_" + newId);   
     };
 
     $('#add-fields').click(function(e){

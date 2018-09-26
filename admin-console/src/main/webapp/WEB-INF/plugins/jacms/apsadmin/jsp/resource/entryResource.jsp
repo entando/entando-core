@@ -76,7 +76,7 @@
 <s:set var="categoryTreeStyleVar">
     <wp:info key="systemParam" paramName="treeStyle_category" />
 </s:set>
-<s:set var="lockGroupSelect" value="%{resourceId != null && resourceId != 0}"></s:set>
+<s:set var="lockGroupSelect" value="%{resourceId != null}"></s:set>
 
 <s:form action="save" method="post" enctype="multipart/form-data" cssClass="form-horizontal">
     <wpsf:hidden name="fieldCount" />
@@ -265,7 +265,12 @@
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-4">
-                <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}" cssClass="form-control file-description" value="%{getFileDescription(#ctr.count - 1)}" />
+                <s:if test="%{'' != getFileDescription(#ctr.count - 1)}" ><s:set var="descriptionFieldVar" value="%{getFileDescription(#ctr.count - 1)}" /></s:if>
+                <s:else>
+                    <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}" />
+                    <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}" />
+                </s:else>
+                <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}" cssClass="form-control file-description" value="%{#descriptionFieldVar}" />
                 <s:if test="#fieldHasFieldErrorVar">
                     <span class="help-block text-danger">
                         <s:iterator value="#fieldErrorsVar">
@@ -495,5 +500,4 @@
 
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadAddFields.jsp" />
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabelI18n.jsp" />
-
 

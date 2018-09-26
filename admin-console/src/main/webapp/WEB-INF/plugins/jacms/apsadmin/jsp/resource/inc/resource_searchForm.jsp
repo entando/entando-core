@@ -96,7 +96,12 @@
                                             </tbody>
                                         </table>
                                         <script>
-                                            $('.table-treegrid').treegrid();
+                                            <s:if test="%{#categoryTreeStyleVar == 'classic'}">
+                                            $('.table-treegrid').treegrid(null, false);
+                                            </s:if>
+                                            <s:else>
+                                            $('.table-treegrid').treegrid(null, true);
+                                            </s:else>
                                         </script>
                                     </div>
                                 </div>

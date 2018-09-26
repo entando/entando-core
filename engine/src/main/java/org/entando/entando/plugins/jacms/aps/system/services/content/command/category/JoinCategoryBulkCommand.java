@@ -23,30 +23,31 @@ import java.util.Collection;
 
 public class JoinCategoryBulkCommand extends BaseContentPropertyBulkCommand<Category> {
 
-	public static final String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
-	public static final String COMMAND_NAME = "content.category.join";
+    public static final String BEAN_NAME = "jacmsJoinCategoryBulkCommand";
+    public static final String COMMAND_NAME = "content.category.join";
 
-	@Override
-	public String getName() {
-		return COMMAND_NAME;
-	}
+    @Override
+    public String getName() {
+        return COMMAND_NAME;
+    }
 
-	@Override
-	protected boolean apply(Content content) throws ApsSystemException {
-		Collection<Category> categories = this.getItemProperties();
-		if (null == categories || categories.isEmpty()) {
-			this.getTracer().traceError(content.getId(), ApsCommandErrorCode.PARAMS_NOT_VALID);
-			return false;
-		} else {
-			for (Category category : categories) {
-				if (null != category && !category.getCode().equals(category.getParentCode())) {
-					content.addCategory(category);
-				}
-			}
-			this.getApplier().saveContent(content);
-			this.getTracer().traceSuccess(content.getId());
-		}
-		return true;
-	}
+    @Override
+    protected boolean apply(Content content) throws ApsSystemException {
+        Collection<Category> categories = this.getItemProperties();
+        if (null == categories || categories.isEmpty()) {
+            this.getTracer().traceError(content.getId(), ApsCommandErrorCode.PARAMS_NOT_VALID);
+            return false;
+        } else {
+            for (Category category : categories) {
+                if (null != category && !category.getCode().equals(category.getParentCode())
+                        && !content.getCategories().stream().anyMatch(cat -> cat.getCode().equals(category.getCode()))) {
+                    content.addCategory(category);
+                }
+            }
+            this.getApplier().saveContent(content);
+            this.getTracer().traceSuccess(content.getId());
+        }
+        return true;
+    }
 
 }

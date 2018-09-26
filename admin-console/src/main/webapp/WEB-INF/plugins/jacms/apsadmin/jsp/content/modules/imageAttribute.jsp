@@ -5,6 +5,8 @@
 <s:set var="currentResource" value="#attribute.resources[#lang.code]" />
 <s:set var="defaultResource" value="#attribute.resource" />
 
+<s:set var="resourceMetadataKeysVar" value="resourceMetadataKeys" />
+
 <%-- default language --%>
 <s:if test="#lang.default">
     <%-- resource filled --%>
@@ -17,7 +19,7 @@
             <div class="panel-body ${divClass}">
                 <%-- download --%>
                 <div class="col-xs-12 col-sm-5 col-md-4 col-lg-3 text-center">
-                    <a href="<s:property value="#defaultResource.getImagePath('0')" />"
+                    <a href="<s:property value="#defaultResource.getImagePath('0')" />" 
                        title="<s:text name="label.img.original" />" class="mt-5 mb-20 display-block">
                         <img class="img-thumbnail" src="<s:property value="#defaultResource.getImagePath('1')"/>" alt="<s:property value="#defaultResource.descr"/>" style="height:90px; max-width:130px" />
                     </a>
@@ -33,7 +35,6 @@
                                 <strong><s:text name="label.filename" />:</strong>&nbsp;
                                 <s:property value="#defaultResource.masterFileName" />
                             </p>
-
                             <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}" />">
                                 <span title="<s:text name="label.img.text.long" />"><s:text name="label.img.text.short" /></span>
                             </label>
@@ -43,55 +44,21 @@
                         </div>
                     </div>
                     
-                    <!-- alt, description, legend, and title -->
+                    <s:iterator var="metadataKeyVar" value="#resourceMetadataKeysVar">
                     <div class="form-group">
                         <div class="col-xs-12">
-                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
-                                <span title="<s:text name="label.img.alt.long" />"><s:text name="label.alt.short" /></span>
+                            <s:set var="metadataFormFieldNameVar" value="%{#attributeTracer.getFormFieldName(#attribute) + '_metadata_' + #metadataKeyVar}" />
+                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="#metadataFormFieldNameVar" />">
+                                <span title="<s:text name="label.img.metadata.long" ><s:param value="#metadataKeyVar" /></s:text>"><s:text name="label.metadata.short" ><s:param value="#metadataKeyVar" /></s:text></span>
                             </label>
                             <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
-                                <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_alt"
-                                name="%{#attributeTracer.getFormFieldName(#attribute)}_alt" value="%{#attribute.getResourceAltForLang(#lang.code)}"
-                                maxlength="254" cssClass="form-control" />
+                                <wpsf:textfield id="%{#metadataFormFieldNameVar}" name="%{#metadataFormFieldNameVar}" 
+                                                value="%{#attribute.getMetadataForLang(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
-                                <span title="<s:text name="label.img.description.long" />"><s:text name="label.description.short" /></span>
-                            </label>
-                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
-                                <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_description"
-                                name="%{#attributeTracer.getFormFieldName(#attribute)}_description" value="%{#attribute.getResourceDescriptionForLang(#lang.code)}"
-                                maxlength="254" cssClass="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
-                                <span title="<s:text name="label.img.legend.long" />"><s:text name="label.legend.short" /></span>
-                            </label>
-                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
-                                <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                name="%{#attributeTracer.getFormFieldName(#attribute)}_legend" value="%{#attribute.getResourceLegendForLang(#lang.code)}"
-                                maxlength="254" cssClass="form-control" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-xs-12">
-                            <label class="col-lg-2 col-md-3 col-sm-4 no-padding pr-10 text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
-                                <span title="<s:text name="label.img.title.long" />"><s:text name="label.title.short" /></span>
-                            </label>
-                            <div class="col-lg-10 col-md-9 col-sm-8 no-padding">
-                                <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                name="%{#attributeTracer.getFormFieldName(#attribute)}_title" value="%{#attribute.getResourceTitleForLang(#lang.code)}"
-                                maxlength="254" cssClass="form-control" />
-                            </div>
-                        </div>
-                    </div>
+                    </s:iterator>
+                    
                     <s:if test="!(#attributeTracer.monoListElement) || ((#attributeTracer.monoListElement) && (#attributeTracer.compositeElement))">
                         <div class="text-right">
                             <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/modules/include/removeResourceSubmit.jsp">
@@ -154,48 +121,19 @@
                         </div>
                     </div>
                     
-                    <!-- alt, description, legend, and title -->
+                    <s:iterator var="metadataKeyVar" value="#resourceMetadataKeysVar">
                     <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_alt" />">
-                            <span title="<s:text name="label.img.alt.long" />"><s:text name="label.alt.short" /></span>
+                        <s:set var="metadataFormFieldNameVar" value="%{#attributeTracer.getFormFieldName(#attribute) + '_metadata_' + #metadataKeyVar}" />
+                        <label class="col-xs-2 control-label text-right" for="<s:property value="#metadataFormFieldNameVar" />">
+                            <span title="<s:text name="label.img.metadata.long" ><s:param value="#metadataKeyVar" /></s:text>"><s:text name="label.metadata.short" ><s:param value="#metadataKeyVar" /></s:text></span>
                         </label>
                         <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_alt"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_alt" value="%{#attribute.getResourceAltForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
+                            <wpsf:textfield id="%{#metadataFormFieldNameVar}" name="%{#metadataFormFieldNameVar}" 
+                                            value="%{#attribute.getMetadataForLang(#metadataKeyVar, #lang.code)}" maxlength="254" cssClass="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_description" />">
-                            <span title="<s:text name="label.img.description.long" />"><s:text name="label.description.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_description"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_description" value="%{#attribute.getResourceDescriptionForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_legend" />">
-                            <span title="<s:text name="label.img.legend.long" />"><s:text name="label.legend.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_legend" value="%{#attribute.getResourceLegendForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-2 control-label text-right" for="<s:property value="%{#attributeTracer.getFormFieldName(#attribute)}_title" />">
-                            <span title="<s:text name="label.img.title.long" />"><s:text name="label.title.short" /></span>
-                        </label>
-                        <div class="col-xs-10">
-                            <wpsf:textfield id="%{#attributeTracer.getFormFieldName(#attribute)}_legend"
-                                            name="%{#attributeTracer.getFormFieldName(#attribute)}_title" value="%{#attribute.getResourceTitleForLang(#lang.code)}"
-                                            maxlength="254" cssClass="form-control" />
-                        </div>
-                    </div>
-                        
+                    </s:iterator>
+                    
                     <%-- choose resource button --%>
                     <div class="text-right">
                         <s:if test="#currentResourceIsEmptyVar">
@@ -211,7 +149,6 @@
                             </s:include>
                         </s:else>
                     </div>
-                    
                 </div>
             </div>
             <s:if test="!#attributeIsNestedVar">

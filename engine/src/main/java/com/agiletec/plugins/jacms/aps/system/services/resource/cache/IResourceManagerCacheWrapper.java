@@ -13,15 +13,27 @@
  */
 package com.agiletec.plugins.jacms.aps.system.services.resource.cache;
 
+import java.util.List;
+import java.util.Map;
+
 public interface IResourceManagerCacheWrapper {
 
     public static final String CACHE_NAME = "Entando_ResourceManager";
 
     public static final String CACHE_NAME_STATUS = "Entando_ResourceManager_status";
 
+    public static final String CACHE_NAME_METADATA_MAPPING = "Entando_ResourceManager_metadataMapping";
+
+    public void initCache();
+
     public void initCache(Integer status);
 
     public Integer getStatus();
 
     public void updateStatus(Integer status);
+
+    public Map<String, List<String>> getMetadataMapping();
+
+    public void updateMetadataMapping(Map<String, List<String>> mapping);
+
 }

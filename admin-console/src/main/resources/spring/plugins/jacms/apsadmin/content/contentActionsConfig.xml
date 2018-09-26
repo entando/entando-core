@@ -53,6 +53,7 @@
 		<property name="pageManager" ref="PageManager" />
 		<property name="configManager" ref="BaseConfigManager" />
 		<property name="resourceIconUtil" ref="jacmsResourceIconUtil" />
+        <property name="resourceManager" ref="jacmsResourceManager" />
   	</bean>
   	
 	<bean id="jacmsEntryContentActionActionsHookPoint" class="com.agiletec.apsadmin.system.plugin.HookPointElementContainer" >

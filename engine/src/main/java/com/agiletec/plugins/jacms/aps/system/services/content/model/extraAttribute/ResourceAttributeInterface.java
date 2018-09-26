@@ -23,29 +23,29 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInt
  */
 public interface ResourceAttributeInterface extends AttributeInterface {
 
+    public static final String REFERENCED_RESOURCE_INDICATOR = "ref";
+
+    public String getMetadata(String key);
+
+    public String getMetadataForLang(String key, String langCode);
+
+    public void setMetadata(String key, String langCode, String value);
+
     public String getResourceAlt();
 
     public String getResourceAltForLang(String langCode);
-
-    public void setResourceAlt(String text, String langCode);
 
     public String getResourceDescription();
 
     public String getResourceDescriptionForLang(String langCode);
 
-    public void setResourceDescription(String text, String langCode);
-
     public String getResourceLegend();
 
     public String getResourceLegendForLang(String langCode);
 
-    public void setResourceLegend(String text, String langCode);
-
     public String getResourceTitle();
 
     public String getResourceTitleForLang(String langCode);
-
-    public void setResourceTitle(String text, String langCode);
 
     /**
      * Restituisce la risorsa associata all'attributo.

@@ -1,4 +1,8 @@
+console.log("init");
 $(document).ready(function () {
+
+    // Global configuration for crop editor.
+    var store = [];
     var allowedFileTypes = [
         "image/jpeg",
         "image/png",
@@ -6,6 +10,44 @@ $(document).ready(function () {
     ];
     var isCropEditorModalShown = false;
     var pendingStoreItems = [];
+
+    // Listen to new store item created events.
+    document.addEventListener("storeItemCreated", function (e) {
+        DOMStoreItemCreated(e.detail.storeItem);
+    });
+
+    // Listen to new crop created events.
+    document.addEventListener("cropCreated", function (e) {
+        DOMCropCreated();
+
+        save(e.detail.storeItem);
+    });
+
+    // Listen to update store item events.
+    document.addEventListener("storeItemUpdated", function (e) {
+        //TODO Implement update event actions.
+    });
+
+
+    var save = function (storeItem) {
+        if (store.indexOf(storeItem.id) > -1) {
+            // Replace storeItem with updated one.
+            store[storeItem.id] = storeItem;
+
+        } else {
+            // Add new storeItem.
+            store.push(storeItem);
+
+            var storeItemCreatedEvent = new CustomEvent("storeItemCreated", {
+                detail: {storeItem: storeItem}
+            });
+            document.dispatchEvent(storeItemCreatedEvent);
+
+        }
+    };
+
+
+
     $('.image-upload-form').on('change', 'input:file', function () {
         var input = this;
 
@@ -45,7 +87,9 @@ $(document).ready(function () {
     $cropEditorModal.on('click', '.btn', function () {
         switch ($(this).data('method')) {
             case 'crop':
-                save(setupNewStoreItem(false));
+                document.dispatchEvent(
+                    new CustomEvent("cropCreated", { detail: {storeItem: setupNewStoreItem(false) }})
+                );
                 break;
             case 'remove':
                 remove(getCurrentStoreItemId());
@@ -79,8 +123,6 @@ $(document).ready(function () {
         }
     });
 
-
-    var store = [];
 
     var getCurrentStoreItemId = function () {
         var currentStoreItemId = 0;
@@ -127,19 +169,6 @@ $(document).ready(function () {
         }
     };
 
-    var save = function (storeItem) {
-        store.push(storeItem);
-        addTab(storeItem);
-
-        if (store.length > 1) {
-            addFields();
-        }
-        $('#descr_' + storeItem.id).val(storeItem.name);
-        $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-        $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">')
-        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">')
-        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">')
-    };
 
     var remove = function (storeItemId) {
         store[storeItemId].cropper.destroy();
@@ -245,24 +274,26 @@ $(document).ready(function () {
 
     });
 
-    $('form#save').on("keyup", ".file-description", function (e) {
-        if(isDescriptionsFilled()) {
-            $('#submit').removeAttr('disabled');
-        } else {
-            $('#submit').attr('disabled', 'disabled');
-        }
-    });
 
-    var isDescriptionsFilled = function () {
-        var isFilled = true;
-        $('.file-description').each(function (index) {
-            if ($(this).val().length === 0) {
-                isFilled = false;
-                return false;
-            }
-        });
 
-        return isFilled;
-    }
+    /*
+     * DOM Manipulation functions.
+     */
+    var DOMStoreItemCreated = function (storeItem) {
+
+        // Perform DOM manipulations.
+        addTab(storeItem);
+
+        $('#descr_' + storeItem.id).val(storeItem.name);
+        $('#img_' + storeItem.id).attr("src", storeItem.imageData);
+        $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">');
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
+
+    };
+
+    var DOMCropCreated = function () {
+        addFields();
+    };
 
 });

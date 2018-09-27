@@ -6,7 +6,7 @@ $(document).ready(function () {
     ];
     var isCropEditorModalShown = false;
     var pendingStoreItems = [];
-    $('.image-upload-form').on('change', 'input:file', function(){
+    $('.image-upload-form').on('change', 'input:file', function () {
         var input = this;
 
         if (input.files && input.files[0] && allowedFileTypes.includes(input.files[0].type)) {
@@ -18,6 +18,7 @@ $(document).ready(function () {
                 // Creating first storeItem from original photo.
                 var storeItem = setupNewStoreItem(true, input.files[0].name);
                 storeItem.imageData = e.target.result;
+                storeItem.type = input.files[0].type;
                 save(storeItem);
             };
 
@@ -29,7 +30,7 @@ $(document).ready(function () {
 
     $cropEditorModal.on('shown.bs.modal', function () {
         isCropEditorModalShown = true;
-        pendingStoreItems.map(function(storeItemId){
+        pendingStoreItems.map(function (storeItemId) {
             store[storeItemId].cropper = setupCropper(storeItemId);
         });
         pendingStoreItems = [];
@@ -61,7 +62,7 @@ $(document).ready(function () {
             case 'scaleY':
                 var option = $(this).data('option');
                 getCurrentStoreItem().cropper.scaleY();
-                $(this).data('option', - option)
+                $(this).data('option', -option)
                 break;
             case 'move':
                 getCurrentStoreItem().cropper.move($(this).data('option'), $(this).data('second-option'));
@@ -83,14 +84,14 @@ $(document).ready(function () {
 
     var getCurrentStoreItemId = function () {
         var currentStoreItemId = 0;
-        if (store.length > 0 ) {
+        if (store.length > 0) {
             currentStoreItemId = $('.bs-cropping-modal').find('.tab-pane.active').data('itemId');
         }
 
         return currentStoreItemId;
     };
 
-    var getCurrentStoreItem = function(){
+    var getCurrentStoreItem = function () {
         return store[getCurrentStoreItemId()];
     };
 
@@ -120,8 +121,8 @@ $(document).ready(function () {
             var nameParts = store[currentItemId].name.split(/\.(?=[^\.]+$)/);
             return {
                 id: newId,
-                name:  nameParts[0] + "_" + newId + "." + nameParts[1],
-                imageData:  store[currentItemId].cropper.getCroppedCanvas().toDataURL('image/png')
+                name: nameParts[0] + "_" + newId + "." + nameParts[1],
+                imageData: store[currentItemId].cropper.getCroppedCanvas().toDataURL('image/png')
             };
         }
     };
@@ -130,18 +131,22 @@ $(document).ready(function () {
         store.push(storeItem);
         addTab(storeItem);
         // setModalTitle(storeItem.name);
-        if(store.length > 1) {
+        if (store.length > 1) {
             addFields();
         }
         $('#descr_' + storeItem.id).val(storeItem.name);
         $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-        $('.image-upload-form').append('<input type="hidden" name="bas64_image_'+ storeItem.id +'" value="'+ storeItem.imageData +'">')
+        $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">')
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">')
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">')
     };
 
-    var remove = function(storeItemId) {
+    var remove = function (storeItemId) {
         store[storeItemId].cropper.destroy();
         store.splice(storeItemId, 1);
         removeTab(storeItemId);
+        removeField(storeItemId);
+        removeHiddenFields(storeItemId);
 
     };
 
@@ -176,8 +181,8 @@ $(document).ready(function () {
         $newTabNavigationItem.addClass('active');
         $newTabPane.addClass('active');
 
-        if(store.length > 0) {
-            if(isCropEditorModalShown){
+        if (store.length > 0) {
+            if (isCropEditorModalShown) {
                 store[storeItem.id].cropper = setupCropper(storeItem.id);
             } else {
                 pendingStoreItems.push(storeItem.id);
@@ -188,15 +193,23 @@ $(document).ready(function () {
     };
 
     var removeTab = function (storeItemId) {
-      $('#store_item_' + storeItemId).remove();
-      $('#image-navigation-item_' + storeItemId).remove();
-      $('.image-navigation-item').last().addClass('.active');
+        $('#store_item_' + storeItemId).remove();
+        $('#image-navigation-item_' + storeItemId).remove();
+        $('.image-navigation-item').last().addClass('.active');
+    };
+
+    var removeField = function (storeItemId) {
+        $('#descr_' + storeItemId).closest('.form-group').remove();
+    };
+
+    var removeHiddenFields = function (storeItemId) {
+        $('#bas64_image_' + storeItemId).remove();
+        $('#file_upload_content_type_' + storeItemId).remove();
+        $('#file_upload_name_' + storeItemId).remove();
     };
 
 
     var addFields = function () {
-        var numItems = $('.file-description').length;
-
         var numItems = $('.file-description').length;
         var template = $('#hidden-fields-template').html();
 
@@ -215,21 +228,41 @@ $(document).ready(function () {
         $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
         $('#newFileUpload').attr("id", "fileUpload_" + newId);
 
+
     };
 
-    $('#add-fields').click(function(e){
+    $('#add-fields').click(function (e) {
         e.preventDefault();
         addFields();
     });
 
-    $('.delete-fields').click(function (e) {
-        e.preventDefault();
-        $(this).parent('div').remove();
-    });
 
     $('#fields-container').on("click", ".delete-fields", function (e) {
         e.preventDefault();
-        $(this).parent('div').remove();
+        $fieldContainer = $(this).parent('div');
+        var storeItemId = $fieldContainer.find('.file-description').attr('id').split('_')[1];
+        remove(storeItemId);
+
     });
+
+    $('form#save').on("keyup", ".file-description", function (e) {
+        if(isDescriptionsFilled()) {
+            $('#submit').removeAttr('disabled');
+        } else {
+            $('#submit').attr('disabled', 'disabled');
+        }
+    });
+
+    var isDescriptionsFilled = function () {
+        var isFilled = true;
+        $('.file-description').each(function (index) {
+            if ($(this).val().length === 0) {
+                isFilled = false;
+                return false;
+            }
+        });
+
+        return isFilled;
+    }
 
 });

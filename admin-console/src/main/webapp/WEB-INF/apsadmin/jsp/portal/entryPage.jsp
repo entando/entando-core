@@ -246,6 +246,7 @@
                         <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary">
                             <span class="icon fa fa-plus"></span>&#32;
                             <s:property value="label.join" />
+			    <s:hidden name="parentPageCode" />
                         </wpsf:submit>
                     </span>
                 </div>

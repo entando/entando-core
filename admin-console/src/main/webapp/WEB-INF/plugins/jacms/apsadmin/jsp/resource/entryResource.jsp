@@ -264,7 +264,7 @@
                 <s:text name="label.description" />
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}" cssClass="form-control file-description" value="%{getFileDescription(#ctr.count - 1)}" />
                 <s:if test="#fieldHasFieldErrorVar">
                     <span class="help-block text-danger">
@@ -274,9 +274,6 @@
                         </s:iterator>
                     </span>
                 </s:if>
-            </div>
-            <div class="col-sm-1">
-                <img src="" alt="" id="img_0" class="thumbnail">
             </div>
 
             <label class="col-sm-1 control-label" for="upload">
@@ -408,12 +405,6 @@
     </div>
 
 </s:if>
-
-
-    <!-- Large modal -->
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-cropping-modal">
-        Crop editor
-    </button>
 
     <div class="modal fade bs-cropping-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-xlg" role="document">
@@ -695,9 +686,9 @@
     <div class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
-                <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
-                    <s:text name="label.save"/>
-                </wpsf:submit>
+                <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right" disabled>
+                    Save
+                </button>
             </div>
         </div>
     </div>
@@ -739,11 +730,8 @@
             <s:text name="label.description" />
             <i class="fa fa-asterisk required-icon"></i>
         </label>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
             <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description" />
-        </div>
-        <div class="col-sm-1">
-            <img src="" alt="" id="newImg" class="thumbnail">
         </div>
         <div  id="newFileUpload_box">
             <label class="col-sm-1 control-label" for="upload">
@@ -772,7 +760,7 @@
                 </span>
             </div>
         </div>
-    
+
         <button type="button" class="btn-danger delete-fields "
                 title="<s:text name="label.remove-fileinput" />"
                 >    <span class="fa fa-times white"></span>

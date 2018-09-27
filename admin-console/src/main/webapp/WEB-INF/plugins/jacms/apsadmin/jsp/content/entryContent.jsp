@@ -97,12 +97,10 @@
                 </a>
             </label>
             <div class="col-sm-10">
-
-                <s:if test="%{null != content.mainGroup}">
+                <s:if test="%{null != content.mainGroup && content.mainGroup != ''}">
                     <input type="text" readonly="readonly" value="<s:property value="%{getGroup(content.mainGroup).descr}" />" class="form-control">
                 </s:if>
-
-                <s:if test="%{null == content.mainGroup}">
+                <s:else>
                     <div class="input-group">
                         <wpsf:select name="mainGroup" id="contentMainGroup" list="allowedGroups"
                                      headerKey="" headerValue="%{getText('note.choose')}" value="#session.contentGroupOnSession"
@@ -114,7 +112,7 @@
                             </wpsf:submit>
                         </span>
                     </div>
-                </s:if>
+                </s:else>
             </div>
         </div>
 

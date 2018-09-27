@@ -228,7 +228,7 @@ $(document).ready(function () {
         $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
         $('#newFileUpload').attr("id", "fileUpload_" + newId);
 
-
+        $('#newFileUpload_box').attr("id", "fileUpload_box_" + newId);
     };
 
     $('#add-fields').click(function (e) {

@@ -733,32 +733,33 @@
         <div class="col-sm-4">
             <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description" />
         </div>
-        <label class="col-sm-1 control-label" for="upload">
-            <s:text name="label.file" />
-            <s:if test="%{resourceTypeCode == 'Image'}">
-                <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                   data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
-                   data-original-title="" style="position: absolute; right: 8px;">
-                    <span class="fa fa-info-circle"></span>
-                </a>
-            </s:if>
-            <s:elseif test="%{resourceTypeCode == 'Attach'}">
-                <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
-                   data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
-                   data-original-title="" style="position: absolute; right: 8px;">
-                    <span class="fa fa-info-circle"></span>
-                </a>
-            </s:elseif>
-        </label>
+        <div  id="newFileUpload_box">
+            <label class="col-sm-1 control-label" for="upload">
+                <s:text name="label.file" />
+                <s:if test="%{resourceTypeCode == 'Image'}">
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                       data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
+                       data-original-title="" style="position: absolute; right: 8px;">
+                        <span class="fa fa-info-circle"></span>
+                    </a>
+                </s:if>
+                <s:elseif test="%{resourceTypeCode == 'Attach'}">
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                       data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
+                       data-original-title="" style="position: absolute; right: 8px;">
+                        <span class="fa fa-info-circle"></span>
+                    </a>
+                </s:elseif>
+            </label>
 
-        <div class="col-sm-4">
-            <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default" >
-                <s:text name="label.button-choose-file" /></label>
-                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
-            <span id="newFileUpload_selected"><s:text name="label.no-file-selected" />
-            </span>
+            <div class="col-sm-4">
+                <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default" >
+                    <s:text name="label.button-choose-file" /></label>
+                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
+                <span id="newFileUpload_selected"><s:text name="label.no-file-selected" />
+                </span>
+            </div>
         </div>
-
 
         <button type="button" class="btn-danger delete-fields "
                 title="<s:text name="label.remove-fileinput" />"

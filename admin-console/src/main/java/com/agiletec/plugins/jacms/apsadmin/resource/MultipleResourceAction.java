@@ -57,7 +57,10 @@ public class MultipleResourceAction extends ResourceAction {
     private List<String> fileUploadContentType;
     private List<String> fileUploadFileName;
     private List<String> base64Image;
-
+    
+    private List<String> fileUploadBase64ImageContentType;
+    private List<String> fileUploadBase64ImageFileName;
+    
     public final static String DESCR_FIELD = "descr_";
     public final static String FILE_UPLOAD_FIELD = "fileUpload_";
 
@@ -76,10 +79,17 @@ public class MultipleResourceAction extends ResourceAction {
                 this.addFieldError(DESCR_FIELD + 0, getText("error.resource.file.descrEmpty"));
                 logger.error("Add error -> descriptions are empty, null == getFileDescriptions()");
             }
-
-            if (null != this.getFileUploadFileName()) {
-                ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                this.checkRightFileType(resourcePrototype, this.getFileUploadFileName().get(0));
+            if (this.isImageUpload()) {
+                if (null != this.getFileUploadBase64ImageFileName()) {
+                    ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
+                    this.checkRightFileType(resourcePrototype, this.getFileUploadBase64ImageFileName().get(0));
+                }    
+            }
+            else{
+                if (null != this.getFileUploadFileName()) {
+                    ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
+                    this.checkRightFileType(resourcePrototype, this.getFileUploadFileName().get(0));
+                }
             }
         } else {
 
@@ -359,8 +369,18 @@ public class MultipleResourceAction extends ResourceAction {
                         logger.debug("file is not null");
                         imgMetadata = getImgMetadata(file);
                         resourceFile = new BaseResourceDataBean(file);
-                        resourceFile.setFileName(getFileUploadFileName().get(index));
-                        resourceFile.setMimeType(getFileUploadContentType().get(index));
+                        if (this.isImageUpload()) {
+                            logger.debug("getFileUploadBase64ImageFileName().get({}): {}",index,getFileUploadBase64ImageFileName().get(index));
+                            logger.debug("getFileUploadBase64ImageContentType().get({}): {}",index, getFileUploadBase64ImageContentType().get(index));
+                            resourceFile.setFileName(getFileUploadBase64ImageFileName().get(index));
+                            resourceFile.setMimeType(getFileUploadBase64ImageContentType().get(index));
+                        }
+                        else{
+                            logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
+                            logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
+                            resourceFile.setFileName(getFileUploadFileName().get(index));
+                            resourceFile.setMimeType(getFileUploadContentType().get(index));
+                        }
                     } else {
                         logger.debug("file is null");
                         resourceFile = new BaseResourceDataBean();
@@ -557,6 +577,27 @@ public class MultipleResourceAction extends ResourceAction {
             return fileUploadFileName.get(i);
         }
         return "";
+    }
+
+    public List<String> getFileUploadBase64ImageContentType() {
+        return fileUploadBase64ImageContentType;
+    }
+
+    public void setFileUploadBase64ImageContentType(List<String> fileUploadBase64ImageContentType) {
+        this.fileUploadBase64ImageContentType = fileUploadBase64ImageContentType;
+    }
+
+    public List<String> getFileUploadBase64ImageFileName() {
+        return fileUploadBase64ImageFileName;
+    }
+    public String getFileUploadBase64ImageFileName(int i) {
+        if (null != fileUploadBase64ImageFileName) {
+            return fileUploadBase64ImageFileName.get(i);
+        }
+        return "";
+    }
+    public void setFileUploadBase64ImageFileName(List<String> fileUploadBase64ImageFileName) {
+        this.fileUploadBase64ImageFileName = fileUploadBase64ImageFileName;
     }
 
     public void setFileUploadFileName(List<String> fileUploadFileName) {

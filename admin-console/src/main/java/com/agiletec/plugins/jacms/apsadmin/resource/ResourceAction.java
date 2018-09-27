@@ -428,7 +428,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     }
 
     @Override
-    public String getResourceType() {
+    public String getResourceType() {        
         return this.getResourceTypeCode();
     }
 

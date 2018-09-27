@@ -104,7 +104,6 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         String result = this.executeAction();
         ActionSupport action = this.getAction();
         Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
-        System.out.println("***** actionFieldErrors : " + actionFieldErrors);
         assertEquals(Action.INPUT, result);
         assertEquals(1, actionFieldErrors.size());
         assertEquals(1, actionFieldErrors.get("fileUpload_0").size());

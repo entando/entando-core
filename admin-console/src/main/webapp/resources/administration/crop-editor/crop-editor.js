@@ -130,15 +130,15 @@ $(document).ready(function () {
     var save = function (storeItem) {
         store.push(storeItem);
         addTab(storeItem);
-        // setModalTitle(storeItem.name);
+
         if (store.length > 1) {
             addFields();
         }
         $('#descr_' + storeItem.id).val(storeItem.name);
         $('#img_' + storeItem.id).attr("src", storeItem.imageData);
         $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">')
-        $('.image-upload-form').append('<input type="hidden" name="fileUploadContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">')
-        $('.image-upload-form').append('<input type="hidden" name="fileUploadFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">')
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">')
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">')
     };
 
     var remove = function (storeItemId) {

@@ -176,7 +176,7 @@
                                 <span for="<s:property value="#metadataMetadataFieldNameVar" />">
                                 <s:text name="jacms.label.resourceMetadataMapping" />
                             </span>
-                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 
+                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                                data-content="<s:text name="jacms.help.resourceMetadataMapping" ><s:param value="#metadataKeyVar" /></s:text>" data-placement="right">
                                    <span class="fa fa-info-circle"></span>
                                </a>
@@ -231,7 +231,7 @@
                         <wpsf:textfield name="metadataMapping" id="new_metadata_mapping" cssClass="form-control custom-input" />
                     </div>
                 </div>
-                <div class="col-sm-2"> 
+                <div class="col-sm-2">
                     <wpsf:submit action="addMetadata" type="button" cssClass="btn btn-primary pull-right btn-position">
                         <s:text name="label.add" />
                     </wpsf:submit>
@@ -241,7 +241,7 @@
         <fieldset class="col-xs-12">
 
             <h2>
-                <s:text name="jacms.title.contentSetting.cropImage"/>                
+                <s:text name="jacms.title.contentSetting.cropImage"/>
             </h2>
             <div class="form-group">
                 <div class="col-sm-5 col-sm-offset-2">
@@ -253,26 +253,17 @@
                 </div>
             </div>
 
-            <s:set var="aspectRatioListVar" value="aspectRatioList" />
-            <s:set var="fieldRatioErrorsVar" value="%{fieldErrors['ratio']}" />
-            <s:set var="hasFieldRatioErrorVar" value="#fieldRatioErrorsVar != null && !#fieldRatioErrorsVar.isEmpty()" />
-            <s:set var="controlGroupRatioErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
-            <div class="form-group<s:property value="#controlGroupRatioErrorClass" />">
-
-            <s:iterator var="cropDimVar" value="#ratio" >
-                <div class="col-sm-2 col-sm-offset-2">
-                    <wpsf:textfield name="ratio" maxlength="40" id="ratio_%{#cropDimVar.count - 1}" cssClass="form-control ratio-conf" />
+            <s:set var="aspectRatioListVar" value="ratio" />
+            <s:iterator var="cropDimVar" value="#aspectRatioListVar" status="status">
+                <div class="form-group">
+                    <div class="col-sm-2 col-sm-offset-2">
+                        <wpsf:textfield name="ratio" maxlength="40" id="ratio_%{#status.count - 1}" cssClass="form-control ratio-conf" value="%{#cropDimVar}" />
+                    </div>
+                    <button type="button" class="btn-danger delete-fields" title="<s:text name="label.delete" />">
+                        <span class="pficon pficon-delete"></span>
+                    </button>
                 </div>
-                <s:if test="#fieldRatioHasFieldErrorVar">
-                    <span class="help-block text-danger">
-                        <s:iterator value="#fieldRatioErrorsVar">
-                            <s:property />
-                            &#32;
-                        </s:iterator>
-                    </span>
-                </s:if>
             </s:iterator>
-            </div>
             <div id="fields-container" >
             </div>
 
@@ -297,7 +288,7 @@
         </div>
 
         <button type="button" class="btn-danger delete-fields" title="<s:text name="label.delete" />">
-            <span class="pficon pficon-delete"></span>            
+            <span class="pficon pficon-delete"></span>
         </button>
     </div>
 </template>
@@ -314,7 +305,7 @@
             $('#fields-container').append(template);
 
             var newId = parseInt(numItems);
-
+            $('#newRatio').val("");
             $('#newRatio').attr("id", "ratio_" + newId);
 
 
@@ -327,6 +318,6 @@
         $('#fields-container').on("click", ".delete-fields", function (e) {
             e.preventDefault();
             $(this).parent('div').remove();
-        })
+        });
     });
 </script>

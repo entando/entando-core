@@ -18,15 +18,9 @@ import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-import com.drew.imaging.ImageMetadataReader;
-import com.drew.metadata.Directory;
-import com.drew.metadata.Tag;
-import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.Metadata;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +30,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -57,10 +50,10 @@ public class MultipleResourceAction extends ResourceAction {
     private List<String> fileUploadContentType;
     private List<String> fileUploadFileName;
     private List<String> base64Image;
-    
+
     private List<String> fileUploadBase64ImageContentType;
     private List<String> fileUploadBase64ImageFileName;
-    
+
     public final static String DESCR_FIELD = "descr_";
     public final static String FILE_UPLOAD_FIELD = "fileUpload_";
 
@@ -83,7 +76,7 @@ public class MultipleResourceAction extends ResourceAction {
                 if (null != this.getFileUploadBase64ImageFileName()) {
                     ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                     this.checkRightFileType(resourcePrototype, this.getFileUploadBase64ImageFileName().get(0));
-                }    
+                }
             }
             else{
                 if (null != this.getFileUploadFileName()) {
@@ -161,7 +154,7 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String edit() {
-        logger.debug("Edit");
+        logger.debug("Edit in multiple resource action for id {}", this.getResourceId());
         try {
             savedId.clear();
             ResourceInterface resource = this.loadResource(this.getResourceId());
@@ -205,29 +198,16 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String joinCategory() {
-        logger.debug("joinCategory");
+        logger.debug("JoinCategory in multiple resource action for id {}", this.getResourceId());
         fetchFileDescriptions();
-        fetchMetadataEdit();
         return super.joinCategory();
     }
 
     @Override
     public String removeCategory() {
-        logger.debug("removeCategory");
+        logger.debug("RemoveCategory in multiple resource action for id {}", this.getResourceId());
         fetchFileDescriptions();
-        fetchMetadataEdit();
         return super.removeCategory();
-    }
-
-    protected void fetchMetadataEdit() {
-        if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
-            try {
-                this.setMetadata(this.loadResource(this.getResourceId()).getMetadata());
-            } catch (Throwable ex) {
-                logger.error("error reading resource {} on fetchMetadataEdit {}", this.getResourceId(), ex);
-            }
-            logger.debug("resource {} metadata size: {}", this.getResourceId(), getMetadata().size());
-        }
     }
 
     protected void checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
@@ -338,13 +318,7 @@ public class MultipleResourceAction extends ResourceAction {
 
     @Override
     public String save() {
-        logger.debug("    getResourceTypeCode {} ", getResourceTypeCode());
-        if (this.isImageUpload()) {
-            logger.debug("Save Image File");
-        } else {
-            logger.debug("Save Resource File");
-        }
-
+        logger.debug("Save in multiple resource action for id {}", this.getResourceId());
         int index = 0;
         savedId.clear();
         boolean hasError = false;
@@ -367,7 +341,7 @@ public class MultipleResourceAction extends ResourceAction {
                     Map imgMetadata = new HashMap();
                     if (null != file) {
                         logger.debug("file is not null");
-                        imgMetadata = getImgMetadata(file);
+                        imgMetadata = super.getImgMetadata(file);
                         resourceFile = new BaseResourceDataBean(file);
                         if (this.isImageUpload()) {
                             logger.debug("getFileUploadBase64ImageFileName().get({}): {}",index,getFileUploadBase64ImageFileName().get(index));
@@ -442,42 +416,6 @@ public class MultipleResourceAction extends ResourceAction {
             return FAILURE;
         }
         return SUCCESS;
-    }
-
-    public Map getImgMetadata(File file) {
-        logger.debug("Get image Metadata");
-        Map<String, String> meta = new HashMap<>();
-        ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-        try {
-            Metadata metadata = ImageMetadataReader.readMetadata(file);
-            String ignoreKeysConf = resourcePrototype.getMetadataIgnoreKeys();
-            String[] ignoreKeys = null;
-            if (null != ignoreKeysConf) {
-                ignoreKeys = ignoreKeysConf.split(",");
-                logger.debug("Metadata ignoreKeys: {}", ignoreKeys);
-            } else {
-                logger.debug("Metadata ignoreKeys not configured");
-            }
-            List<String> ignoreKeysList = new ArrayList<String>();
-            if (null != ignoreKeys) {
-                ignoreKeysList = Arrays.asList(ignoreKeys);
-            }
-            for (Directory directory : metadata.getDirectories()) {
-                for (Tag tag : directory.getTags()) {
-                    if (!ignoreKeysList.contains(tag.getTagName())) {
-                        logger.debug("Add Metadata with key: {}", tag.getTagName());
-                        meta.put(tag.getTagName(), tag.getDescription());
-                    } else {
-                        logger.debug("Skip Metadata key {}", tag.getTagName());
-                    }
-                }
-            }
-        } catch (ImageProcessingException ex) {
-            logger.error("Error reading metadata");
-        } catch (IOException ioex) {
-            logger.error("Error reading file");
-        }
-        return meta;
     }
 
     public String getFileDescription(int i) {
@@ -628,3 +566,4 @@ public class MultipleResourceAction extends ResourceAction {
     }
 
 }
+

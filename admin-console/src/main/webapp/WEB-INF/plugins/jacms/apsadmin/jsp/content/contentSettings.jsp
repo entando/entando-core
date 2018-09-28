@@ -43,7 +43,23 @@
                 </s:iterator>
             </div>
         </s:if>
-
+        <s:if test="hasFieldErrors()">
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+                    <span class="pficon pficon-close"></span>
+                </button>
+                <span class="pficon pficon-error-circle-o"></span>
+                <strong><s:text name="message.title.ActionErrors" /></strong>
+                <ul>
+                    <s:iterator value="fieldErrors">
+                        <s:iterator value="value">
+                        <li><s:property escapeHtml="false" /></li>
+                        </s:iterator>
+                    </s:iterator>
+                </ul>
+            </div>
+        </s:if>
+        
         <div class="form-group">
             <div class="col-xs-2 control-label">
                 <span class="display-block"><s:text name="note.reload.contentReferences.start"/></span>
@@ -126,82 +142,101 @@
             </div>
             <div class="col-xs-10 ">
                 <div class="btn-group" data-toggle="buttons">
-                    <label class="btn btn-default <s:if test="systemParams['hypertextEditor'] == 'none'"> active</s:if>">
+                    <s:set var="isNone" value="%{(null != systemParams && systemParams['hypertextEditor'] == 'none') || #parameters['hypertextEditor'][0] == 'none'}" />
+                    <label class="btn btn-default <s:if test="#isNone"> active</s:if>">
                             <input type="radio" class="radiocheck" id="admin-settings-area-hypertextEditor_none"
-                                   name="hypertextEditor"
-                                   value="none"
-                            <s:if test="systemParams['hypertextEditor'] == 'none'">checked="checked"</s:if> />
+                                   name="hypertextEditor" value="none" <s:if test="#isNone">checked="checked"</s:if> />
                         <s:text name="label.none"/>
                     </label>
-                    <label class="btn btn-default <s:if test="systemParams['hypertextEditor'] == 'fckeditor'"> active</s:if>">
-                            <input type="radio" class="radiocheck"
-                                   id="admin-settings-area-hypertextEditor_fckeditor" name="hypertextEditor"
-                                   value="fckeditor"
-                            <s:if test="systemParams['hypertextEditor'] == 'fckeditor'">checked="checked"</s:if> />
+                    <s:set var="isFckeditor" value="%{(null != systemParams && systemParams['hypertextEditor'] == 'fckeditor') || #parameters['hypertextEditor'][0] == 'fckeditor'}" />
+                    <label class="btn btn-default <s:if test="#isFckeditor"> active</s:if>">
+                            <input type="radio" class="radiocheck" name="hypertextEditor" value="fckeditor" <s:if test="#isFckeditor">checked="checked"</s:if> />
                         <s:text name="name.editor.ckeditor"/>
                     </label>
                 </div>
             </div>
         </fieldset>
-        <!-- alt, description, legend, and title -->
         <fieldset class="col-xs-12 settings-form">
             <h2>
                 <s:text name="jacms.menu.resourceMetadataMapping" />
             </h2>
+            <s:set var="resourceMetadataKeysVar" value="resourceMetadataKeys" />
+            <s:iterator var="metadataKeyVar" value="#resourceMetadataKeysVar" >
             <div class="form-group">
                 <div class="row">
+                    <s:set var="metadataMetadataFieldNameVar" value="%{'resourceMetadata_mapping_' + #metadataKeyVar}" />
                     <div class="col-xs-2 control-label">
-                        <span for="resourceAltMapping"><s:text name="jacms.label.resourceAltMapping" /></span>
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceAltMapping" />" data-placement="right">
+                        <span for="<s:property value="#metadataMetadataFieldNameVar" />">
+                            <wpsf:hidden name="metadataKeys" value="%{#metadataKeyVar}" />
+                            <s:text name="jacms.label.resourceMetadata" ><s:param value="#metadataKeyVar" /></s:text>
+                        </span>
+                    </div>
+                    <div class="col-xs-2 control-label">
+                        <span for="<s:property value="#metadataMetadataFieldNameVar" />">
+                            <s:text name="jacms.label.resourceMetadataMapping" />
+                        </span>
+                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 
+                           data-content="<s:text name="jacms.help.resourceMetadataMapping" ><s:param value="#metadataKeyVar" /></s:text>" data-placement="right">
                             <span class="fa fa-info-circle"></span>
                         </a>
                     </div>
-                    <div class="col-xs-10">
-                        <wpsf:textfield name="resourceAltMapping" id="resourceAltMapping"  cssClass="form-control" />
+                    <div class="col-xs-6">
+                        <wpsf:textfield name="%{#metadataMetadataFieldNameVar}" id="%{#metadataMetadataFieldNameVar}" value="%{buildCsv(#metadataKeyVar)}" cssClass="form-control" />
+                    </div>
+                    <div class="col-xs-2">
+                        <wpsa:actionParam action="removeMetadata" var="actionNameVar" >
+                            <wpsa:actionSubParam name="metadataKey" value="%{#metadataKeyVar}" />
+                        </wpsa:actionParam>
+                        <wpsf:submit type="button" action="%{#actionNameVar}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-danger pull-right">
+                            <span class="pficon pficon-delete"></span>
+                        </wpsf:submit>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-xs-2 control-label">
-                        <span for="resourceDescriptionMapping"><s:text name="jacms.label.resourceDescriptionMapping" /></span>
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceDescriptionMapping" />" data-placement="right">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </div>
-                    <div class="col-xs-10">
-                        <wpsf:textfield name="resourceDescriptionMapping" id="resourceDescriptionMapping"  cssClass="form-control" />
+            </s:iterator>
+            <div class="metadata-well">
+                <div class="separator"></div>
+                <label class="col-sm-2 section-label" for="new_metatag">
+                    <s:text name="jacms.label.addResourceMetadata" />
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                       data-placement="top" data-content="<s:text name="jacms.help.addResourceMetadata" />"
+                       data-original-title="">
+                        <span class="fa fa-info-circle"></span>
+                    </a>
+                </label>
+                <s:set var="fieldErrorsVar" value="%{fieldErrors['metadataKey']}" />
+                <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
+                <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+                <div class="col-md-4 form-group<s:property value="#controlGroupErrorClass" />">
+                    <label class="col-sm-4 control-label" for="new_metadata">
+                        <s:text name="label.key" />
+                    </label>
+                    <div class="col-sm-8">
+                        <wpsf:textfield name="metadataKey" id="new_metadata" cssClass="form-control custom-input" />
+                        <s:if test="#hasFieldErrorVar">
+                            <span class="help-block text-danger">
+                                <s:iterator value="%{#fieldErrorsVar}">
+                                    <s:property />&#32;
+                                </s:iterator>
+                            </span>
+                        </s:if>
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-xs-2 control-label">
-                        <span for="resourceLegendMapping"><s:text name="jacms.label.resourceLegendMapping" /></span>
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceLegendMapping" />" data-placement="right">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </div>
-                    <div class="col-xs-10">
-                        <wpsf:textfield name="resourceLegendMapping" id="resourceLegendMapping"  cssClass="form-control" />
+                <div class="col-md-4 form-group">
+                    <label class="col-sm-4 control-label" for="new_metadata_mapping">
+                        <s:text name="jacms.label.metadataMapping" />
+                    </label>
+                    <div class="col-sm-8">
+                        <wpsf:textfield name="metadataMapping" id="new_metadata_mapping" cssClass="form-control custom-input" />
                     </div>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-xs-2 control-label">
-                        <span for="resourceTitleMapping"><s:text name="jacms.label.resourceTitleMapping" /></span>
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-content="<s:text name="jacms.help.resourceTitleMapping" />" data-placement="right">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </div>
-                    <div class="col-xs-10">
-                        <wpsf:textfield name="resourceTitleMapping" id="resourceTitleMapping"  cssClass="form-control" />
-                    </div>
+                <div class="col-sm-2"> 
+                    <wpsf:submit action="addMetadata" type="button" cssClass="btn btn-primary pull-right btn-position">
+                        <s:text name="label.add" />
+                    </wpsf:submit>
                 </div>
             </div>
         </fieldset>
-
         <div class="form-group">
             <div class="col-xs-12">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right">

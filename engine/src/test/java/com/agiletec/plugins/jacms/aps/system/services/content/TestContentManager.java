@@ -41,6 +41,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.ImageAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.LinkAttribute;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribute.ResourceAttributeInterface;
+import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -1580,12 +1581,12 @@ public class TestContentManager extends BaseTestCase {
             assertEquals(1, monoListAttribute.getAttributes().size());
 
             ImageAttribute attributeToModify = (ImageAttribute) monoListAttribute.getAttributes().get(0);
-            attributeToModify.setResourceAlt("ALT en", "en");
-            attributeToModify.setResourceAlt("ALT it", "it");
-            attributeToModify.setResourceDescription("Description en", "en");
-            attributeToModify.setResourceLegend("Legend it", "it");
-            attributeToModify.setResourceTitle("Title en", "en");
-            attributeToModify.setResourceTitle("Title it", "it");
+            attributeToModify.setMetadata(IResourceManager.ALT_METADATA_KEY, "en", "ALT en");
+            attributeToModify.setMetadata(IResourceManager.ALT_METADATA_KEY, "it", "ALT it");
+            attributeToModify.setMetadata(IResourceManager.DESCRIPTION_METADATA_KEY, "en", "Description en");
+            attributeToModify.setMetadata(IResourceManager.LEGEND_METADATA_KEY, "it", "Legend it");
+            attributeToModify.setMetadata(IResourceManager.TITLE_METADATA_KEY, "it", "Title it");
+            attributeToModify.setMetadata(IResourceManager.TITLE_METADATA_KEY, "en", "Title en");
 
             content.setId(null);
             this._contentManager.saveContent(content);

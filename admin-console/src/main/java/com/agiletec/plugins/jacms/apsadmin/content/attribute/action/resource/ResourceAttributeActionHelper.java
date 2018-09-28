@@ -29,7 +29,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -102,15 +101,13 @@ public class ResourceAttributeActionHelper {
             joinResource(includedAttribute, resource, metadataMapping, session);
         } else if (attribute instanceof ResourceAttributeInterface) {
             String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
-            final String finalLangCode = (langCode != null && !"".equals(langCode)) ? langCode : null;
             ((ResourceAttributeInterface) attribute).setResource(resource, langCode);
             AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
             resourceAttribute.setText(resource.getDescription(), langCode);
             if (null == resource.getMetadata()) {
                 return;
             }
-            List<String> keys = Arrays.asList(IResourceManager.METADATA_MAPPING_KEYS);
-            keys.stream().forEach(mappingKey -> {
+            metadataMapping.keySet().stream().forEach(mappingKey -> {
                 List<String> mapping = metadataMapping.get(mappingKey);
                 if (null != mapping) {
                     String rightKey = mapping.stream()
@@ -118,15 +115,7 @@ public class ResourceAttributeActionHelper {
                             findFirst().orElse(null);
                     if (null != rightKey) {
                         String value = resource.getMetadata().get(rightKey);
-                        if (mappingKey.equals(IResourceManager.ALT_METADATA_MAPPING_KEY)) {
-                            resourceAttribute.setResourceAlt(value, finalLangCode);
-                        } else if (mappingKey.equals(IResourceManager.DESCRIPTION_METADATA_MAPPING_KEY)) {
-                            resourceAttribute.setResourceDescription(value, finalLangCode);
-                        } else if (mappingKey.equals(IResourceManager.LEGEND_METADATA_MAPPING_KEY)) {
-                            resourceAttribute.setResourceLegend(value, finalLangCode);
-                        } else if (mappingKey.equals(IResourceManager.TITLE_METADATA_MAPPING_KEY)) {
-                            resourceAttribute.setResourceTitle(value, finalLangCode);
-                        }
+                        resourceAttribute.setMetadata(mappingKey, langCode, value);
                     }
                 }
             });
@@ -152,11 +141,6 @@ public class ResourceAttributeActionHelper {
         return buffer.toString();
     }
 
-    /**
-     * Restituisce il contenuto in sesione.
-     *
-     * @return Il contenuto in sesione.
-     */
     public static Content getContent(HttpServletRequest request) {
         String contentOnSessionMarker = (String) request.getAttribute("contentOnSessionMarker");
         if (null == contentOnSessionMarker || contentOnSessionMarker.trim().length() == 0) {
@@ -184,22 +168,24 @@ public class ResourceAttributeActionHelper {
             ILangManager langManager = (ILangManager) ApsWebApplicationUtils.getBean(SystemConstants.LANGUAGE_MANAGER, request);
             String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
             AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
+            Map<String, Map<String, String>> metadatas = resourceAttribute.getMetadatas();
             if (langCode == null
                     || langCode.length() == 0
                     || langManager.getDefaultLang().getCode().equals(langCode)) {
                 resourceAttribute.getResources().clear();
                 resourceAttribute.getTextMap().clear();
-                resourceAttribute.getResourceAltMap().clear();
-                resourceAttribute.getResourceDescriptionMap().clear();
-                resourceAttribute.getResourceLegendMap().clear();
-                resourceAttribute.getResourceTitleMap().clear();
+                if (null != metadatas) {
+                    metadatas.clear();
+                }
             } else {
                 resourceAttribute.setResource(null, langCode);
                 resourceAttribute.setText(null, langCode);
-                resourceAttribute.setResourceAlt(null, langCode);
-                resourceAttribute.setResourceDescription(null, langCode);
-                resourceAttribute.setResourceLegend(null, langCode);
-                resourceAttribute.setResourceTitle(null, langCode);
+                if (null != metadatas) {
+                    metadatas.keySet().stream().forEach(key -> {
+                        Map<String, String> singleMap = metadatas.get(key);
+                        singleMap.remove(langCode);
+                    });
+                }
             }
         } else if (attribute instanceof MonoListAttribute) {
             int elementIndex = ((Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM)).intValue();

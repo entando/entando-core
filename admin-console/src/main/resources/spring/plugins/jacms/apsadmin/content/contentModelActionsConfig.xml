@@ -97,7 +97,7 @@
 		</entry>
 		<entry>
 			<key><value>Image</value></key>
-			<value><![CDATA[text;getImagePath(<SIZE_ID>);getResource(\"<LANG_CODE>\");resource;getTextForLang(\"<LANG_CODE>\");textMap[\"<LANG_CODE>\"];resourceAlt;getResourceAltForLang(\"<LANG_CODE>\");resourceAltMap[\"<LANG_CODE>\"];resourceDescription;getResourceDescriptionForLang(\"<LANG_CODE>\");resourceDescriptionMap[\"<LANG_CODE>\"];resourceLegend;getResourceLegendForLang(\"<LANG_CODE>\");resourceLegendMap[\"<LANG_CODE>\"];resourceTitle;getResourceTitleForLang(\"<LANG_CODE>\");resourceTitleMap[\"<LANG_CODE>\"]]]></value>
+			<value><![CDATA[text;getImagePath(<SIZE_ID>);getResource(\"<LANG_CODE>\");resource;getMetadata(\"<METADATA_CODE>\");getMetadataForLang(\"<METADATA_CODE>\", \"<LANG_CODE>\");getTextForLang(\"<LANG_CODE>\");textMap[\"<LANG_CODE>\"];resourceAlt;getResourceAltForLang(\"<LANG_CODE>\");resourceAltMap[\"<LANG_CODE>\"];resourceDescription;getResourceDescriptionForLang(\"<LANG_CODE>\");resourceDescriptionMap[\"<LANG_CODE>\"];resourceLegend;getResourceLegendForLang(\"<LANG_CODE>\");resourceLegendMap[\"<LANG_CODE>\"];resourceTitle;getResourceTitleForLang(\"<LANG_CODE>\");resourceTitleMap[\"<LANG_CODE>\"]]]></value>
 		</entry>
 		<entry>
 			<key><value>Attach</value></key>

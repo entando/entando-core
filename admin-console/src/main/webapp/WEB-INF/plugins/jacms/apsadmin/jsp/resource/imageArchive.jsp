@@ -181,9 +181,11 @@
                                                             </a>
                                                         </s:else>
                                                     </li>
-                                                    <li>
-                                                        <a href="<s:property value="URLtrash" escapeHtml="false" />"><s:text name="label.delete"/></a>
-                                                    </li>
+                                                    <s:if test="!onEditContent">
+                                                        <li>
+                                                            <a href="<s:property value="URLtrash" escapeHtml="false" />"><s:text name="label.delete"/></a>
+                                                        </li>
+                                                    </s:if>
                                                 </ul>
                                             </div>
 

@@ -53,90 +53,90 @@
                 <ul>
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
-                        <li><s:property escapeHtml="false" /></li>
+                            <li><s:property escapeHtml="false" /></li>
+                            </s:iterator>
                         </s:iterator>
-                    </s:iterator>
                 </ul>
             </div>
         </s:if>
-        
-        <div class="form-group">
-            <div class="col-xs-2 control-label">
-                <span class="display-block"><s:text name="note.reload.contentReferences.start"/></span>
-            </div>
-            <div class="col-xs-10 ">
-                <div class="btn-group">
-                    <s:if test="contentManagerStatus == 1">
-                        <p class="text-info">
-                            <a class="btn btn-primary" href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />" title="<s:text name="note.reload.contentReferences.refresh" />">
-                                <s:text name="label.refresh" />
-                            </a>
-                            &#32;(<s:text name="note.reload.contentReferences.status.working" />)
-                        </p>
-                    </s:if>
-                    <s:else>
-                        <p>
-                            <a class="btn btn-primary" href="<s:url action="reloadContentsReference" namespace="/do/jacms/Content/Admin" />">
-                                <s:text name="note.reload.contentReferences.start" />
-                            </a>
-                            &#32;(
-                            <s:if test="contentManagerStatus == 2">
-                                <span class="text-info"><s:text name="note.reload.contentReferences.status.needToReload" /></span>
-                            </s:if>
-                            <s:elseif test="contentManagerStatus == 0">
-                                <s:text name="note.reload.contentReferences.status.ready" />
-                            </s:elseif>
-                            )
-                        </p>
-                    </s:else>
+        <fieldset class="col-xs-12">
+
+            <div class="form-group">
+                <div class="col-xs-2 control-label">
+                    <span class="display-block"><s:text name="note.reload.contentReferences.start"/></span>
+                </div>
+                <div class="col-xs-10 ">
+                    <div class="btn-group">
+                        <s:if test="contentManagerStatus == 1">
+                            <p class="text-info">
+                                <a class="btn btn-primary" href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />" title="<s:text name="note.reload.contentReferences.refresh" />">
+                                    <s:text name="label.refresh" />
+                                </a>
+                                &#32;(<s:text name="note.reload.contentReferences.status.working" />)
+                            </p>
+                        </s:if>
+                        <s:else>
+                            <p>
+                                <a class="btn btn-primary" href="<s:url action="reloadContentsReference" namespace="/do/jacms/Content/Admin" />">
+                                    <s:text name="note.reload.contentReferences.start" />
+                                </a>
+                                &#32;(
+                                <s:if test="contentManagerStatus == 2">
+                                    <span class="text-info"><s:text name="note.reload.contentReferences.status.needToReload" /></span>
+                                </s:if>
+                                <s:elseif test="contentManagerStatus == 0">
+                                    <s:text name="note.reload.contentReferences.status.ready" />
+                                </s:elseif>
+                                )
+                            </p>
+                        </s:else>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-xs-2 control-label">
-                <span class="display-block"><s:text name="title.reload.contentIndexes"/></span>
-            </div>
-            <div class="col-xs-10 ">
-                <div class="btn-group">
-                    <s:if test="searcherManagerStatus == 1">
-                        <p class="text-info">
-                            <a class="btn btn-primary" href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />" title="<s:text name="note.reload.contentIndexes.refresh" />">
-                                <s:text name="label.refresh" />
-                            </a>
-                            &#32;(<s:text name="note.reload.contentIndexes.status.working" />)
-                        </p>
-                    </s:if>
-                    <s:else>
-                        <p>
-                            <a class="btn btn-primary" href="<s:url action="reloadContentsIndex" namespace="/do/jacms/Content/Admin" />">
-                                <s:text name="note.reload.contentIndexes.start" />
-                            </a>
-                            &#32;(
-                            <s:if test="searcherManagerStatus == 2">
-                                <span class="text-warning"><s:text name="note.reload.contentIndexes.status.needToReload" /></span>
-                            </s:if>
-                            <s:elseif test="searcherManagerStatus == 0">
-                                <span><s:text name="note.reload.contentIndexes.status.ready" /></span>
-                            </s:elseif>
-                            )
-                        </p>
-                    </s:else>
-                    <s:if test="lastReloadInfo != null">
-                        <p class="text-info">
-                            <s:text name="note.reload.contentIndexes.lastOn.intro" />&#32;<span class="important"><s:date name="lastReloadInfo.date" format="dd/MM/yyyy HH:mm" /></span>,
-                            <s:if test="lastReloadInfo.result == 0">
-                                <span class="text-error"><s:text name="note.reload.contentIndexes.lastOn.ko" /></span>.
-                            </s:if>
-                            <s:else>
-                                <s:text name="note.reload.contentIndexes.lastOn.ok" />.
-                            </s:else>
-                        </p>
-                    </s:if>
+            <div class="form-group">
+                <div class="col-xs-2 control-label">
+                    <span class="display-block"><s:text name="title.reload.contentIndexes"/></span>
+                </div>
+                <div class="col-xs-10 ">
+                    <div class="btn-group">
+                        <s:if test="searcherManagerStatus == 1">
+                            <p class="text-info">
+                                <a class="btn btn-primary" href="<s:url action="openIndexProspect" namespace="/do/jacms/Content/Admin" />" title="<s:text name="note.reload.contentIndexes.refresh" />">
+                                    <s:text name="label.refresh" />
+                                </a>
+                                &#32;(<s:text name="note.reload.contentIndexes.status.working" />)
+                            </p>
+                        </s:if>
+                        <s:else>
+                            <p>
+                                <a class="btn btn-primary" href="<s:url action="reloadContentsIndex" namespace="/do/jacms/Content/Admin" />">
+                                    <s:text name="note.reload.contentIndexes.start" />
+                                </a>
+                                &#32;(
+                                <s:if test="searcherManagerStatus == 2">
+                                    <span class="text-warning"><s:text name="note.reload.contentIndexes.status.needToReload" /></span>
+                                </s:if>
+                                <s:elseif test="searcherManagerStatus == 0">
+                                    <span><s:text name="note.reload.contentIndexes.status.ready" /></span>
+                                </s:elseif>
+                                )
+                            </p>
+                        </s:else>
+                        <s:if test="lastReloadInfo != null">
+                            <p class="text-info">
+                                <s:text name="note.reload.contentIndexes.lastOn.intro" />&#32;<span class="important"><s:date name="lastReloadInfo.date" format="dd/MM/yyyy HH:mm" /></span>,
+                                <s:if test="lastReloadInfo.result == 0">
+                                    <span class="text-error"><s:text name="note.reload.contentIndexes.lastOn.ko" /></span>.
+                                </s:if>
+                                <s:else>
+                                    <s:text name="note.reload.contentIndexes.lastOn.ok" />.
+                                </s:else>
+                            </p>
+                        </s:if>
+                    </div>
                 </div>
             </div>
-        </div>
-            
-        <fieldset class="form-group">
+
             <div class="col-xs-2 control-label">
                 <span class="display-block"><s:text name="label.chooseYourEditor"/></span>
             </div>
@@ -150,49 +150,50 @@
                     </label>
                     <s:set var="isFckeditor" value="%{(null != systemParams && systemParams['hypertextEditor'] == 'fckeditor') || #parameters['hypertextEditor'][0] == 'fckeditor'}" />
                     <label class="btn btn-default <s:if test="#isFckeditor"> active</s:if>">
-                            <input type="radio" class="radiocheck" name="hypertextEditor" value="fckeditor" <s:if test="#isFckeditor">checked="checked"</s:if> />
+                        <input type="radio" class="radiocheck" name="hypertextEditor" value="fckeditor" <s:if test="#isFckeditor">checked="checked"</s:if> />
                         <s:text name="name.editor.ckeditor"/>
                     </label>
                 </div>
             </div>
         </fieldset>
+
         <fieldset class="col-xs-12 settings-form">
             <h2>
                 <s:text name="jacms.menu.resourceMetadataMapping" />
             </h2>
             <s:set var="resourceMetadataKeysVar" value="resourceMetadataKeys" />
             <s:iterator var="metadataKeyVar" value="#resourceMetadataKeysVar" >
-            <div class="form-group">
-                <div class="row">
-                    <s:set var="metadataMetadataFieldNameVar" value="%{'resourceMetadata_mapping_' + #metadataKeyVar}" />
-                    <div class="col-xs-2 control-label">
-                        <span for="<s:property value="#metadataMetadataFieldNameVar" />">
-                            <wpsf:hidden name="metadataKeys" value="%{#metadataKeyVar}" />
-                            <s:text name="jacms.label.resourceMetadata" ><s:param value="#metadataKeyVar" /></s:text>
-                        </span>
+                <div class="form-group">
+                    <div class="row">
+                        <s:set var="metadataMetadataFieldNameVar" value="%{'resourceMetadata_mapping_' + #metadataKeyVar}" />
+                        <div class="col-xs-2 control-label">
+                            <span for="<s:property value="#metadataMetadataFieldNameVar" />">
+                                <wpsf:hidden name="metadataKeys" value="%{#metadataKeyVar}" />
+                                <s:text name="jacms.label.resourceMetadata" ><s:param value="#metadataKeyVar" /></s:text>
+                                </span>
+                            </div>
+                            <div class="col-xs-2 control-label">
+                                <span for="<s:property value="#metadataMetadataFieldNameVar" />">
+                                <s:text name="jacms.label.resourceMetadataMapping" />
+                            </span>
+                            <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 
+                               data-content="<s:text name="jacms.help.resourceMetadataMapping" ><s:param value="#metadataKeyVar" /></s:text>" data-placement="right">
+                                   <span class="fa fa-info-circle"></span>
+                               </a>
+                            </div>
+                            <div class="col-xs-6">
+                                <wpsf:textfield name="%{#metadataMetadataFieldNameVar}" id="%{#metadataMetadataFieldNameVar}" value="%{buildCsv(#metadataKeyVar)}" cssClass="form-control" />
+                            </div>
+                            <div class="col-xs-2">
+                                <wpsa:actionParam action="removeMetadata" var="actionNameVar" >
+                                    <wpsa:actionSubParam name="metadataKey" value="%{#metadataKeyVar}" />
+                                </wpsa:actionParam>
+                                <wpsf:submit type="button" action="%{#actionNameVar}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-danger pull-right">
+                                    <span class="pficon pficon-delete"></span>
+                                </wpsf:submit>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-xs-2 control-label">
-                        <span for="<s:property value="#metadataMetadataFieldNameVar" />">
-                            <s:text name="jacms.label.resourceMetadataMapping" />
-                        </span>
-                        <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title="" 
-                           data-content="<s:text name="jacms.help.resourceMetadataMapping" ><s:param value="#metadataKeyVar" /></s:text>" data-placement="right">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </div>
-                    <div class="col-xs-6">
-                        <wpsf:textfield name="%{#metadataMetadataFieldNameVar}" id="%{#metadataMetadataFieldNameVar}" value="%{buildCsv(#metadataKeyVar)}" cssClass="form-control" />
-                    </div>
-                    <div class="col-xs-2">
-                        <wpsa:actionParam action="removeMetadata" var="actionNameVar" >
-                            <wpsa:actionSubParam name="metadataKey" value="%{#metadataKeyVar}" />
-                        </wpsa:actionParam>
-                        <wpsf:submit type="button" action="%{#actionNameVar}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-danger pull-right">
-                            <span class="pficon pficon-delete"></span>
-                        </wpsf:submit>
-                    </div>
-                </div>
-            </div>
             </s:iterator>
             <div class="metadata-well">
                 <div class="separator"></div>
@@ -237,11 +238,11 @@
                 </div>
             </div>
         </fieldset>
-        <fieldset class="col-xs-4 settings-form">
+        <fieldset class="col-xs-12">
+
             <h2>
-                Setting Crop Dimensions
+                <s:text name="jacms.title.contentSetting.cropImage"/>                
             </h2>
-            <h3>Defined:</h3>
             <div class="form-group">
                 <div class="col-sm-5 col-sm-offset-2">
                     <div id="add-crop-dim-button">
@@ -251,9 +252,32 @@
                     </div>
                 </div>
             </div>
+
+            <s:set var="aspectRatioListVar" value="aspectRatioList" />
+            <s:set var="fieldRatioErrorsVar" value="%{fieldErrors['ratio']}" />
+            <s:set var="hasFieldRatioErrorVar" value="#fieldRatioErrorsVar != null && !#fieldRatioErrorsVar.isEmpty()" />
+            <s:set var="controlGroupRatioErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
+            <div class="form-group<s:property value="#controlGroupRatioErrorClass" />">
+
+            <s:iterator var="cropDimVar" value="#ratio" >
+                <div class="col-sm-2 col-sm-offset-2">
+                    <wpsf:textfield name="ratio" maxlength="40" id="ratio_%{#cropDimVar.count - 1}" cssClass="form-control ratio-conf" />
+                </div>
+                <s:if test="#fieldRatioHasFieldErrorVar">
+                    <span class="help-block text-danger">
+                        <s:iterator value="#fieldRatioErrorsVar">
+                            <s:property />
+                            &#32;
+                        </s:iterator>
+                    </span>
+                </s:if>
+            </s:iterator>
+            </div>
+            <div id="fields-container" >
+            </div>
+
         </fieldset>
-        <div id="fields-container" >
-        </div>
+
         <div class="form-group">
             <div class="col-xs-12">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
@@ -261,18 +285,19 @@
                 </wpsf:submit>
             </div>
         </div>
+
+
     </s:form>
 </div>
 
 <template id="hidden-fields-template">
     <div class="form-group">
-        <div class="col-sm-4">
-            <wpsf:textfield name="ratio" maxlength="250" id="newRatio" cssClass="form-control file-description" />
+        <div class="col-sm-2 col-sm-offset-2">
+            <wpsf:textfield name="ratio" maxlength="250" id="newRatio" cssClass="form-control ratio-conf" />
         </div>
 
-        <button type="button" class="btn-danger delete-fields "
-                title="<s:text name="label.delete" />"
-                >    <span class="fa fa-times white"></span>
+        <button type="button" class="btn-danger delete-fields" title="<s:text name="label.delete" />">
+            <span class="pficon pficon-delete"></span>            
         </button>
     </div>
 </template>
@@ -282,7 +307,7 @@
 
         $('#add-crop-dim').click(function (e) {
             e.preventDefault();
-            var numItems = $('.file-description').length;
+            var numItems = $('.ratio-conf').length;
 
             var template = $('#hidden-fields-template').html();
 
@@ -290,14 +315,8 @@
 
             var newId = parseInt(numItems);
 
-            $('#newDescr').attr("name", "descr_" + newId);
-            $('#newDescr').attr("id", "descr_" + newId);
+            $('#newRatio').attr("id", "ratio_" + newId);
 
-            $('#newFileUpload_label').attr("for", "fileUpload_" + newId);
-            $('#newFileUpload_label').attr("id", "fileUpload_label_" + newId);
-
-            $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
-            $('#newFileUpload').attr("id", "fileUpload_" + newId);
 
         });
         $('.delete-fields').click(function (e) {

@@ -8,6 +8,11 @@
         <field-validator type="requiredstring">
             <message key="requiredstring" />
         </field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+			<param name="maxLength">40</param>
+			<param name="trim">true</param>
+           <message key="stringlength" />
+		</field-validator>
         <field-validator type="regex" short-circuit="true">
            <param name="regex"><![CDATA[([a-zA-Z0-9_\-])*]]></param>
            <message key="error.widgetType.typeCode.wrongCharacters" />

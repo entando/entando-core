@@ -11,7 +11,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
+        var treeStyle = '<wp:info key="systemParam" paramName="treeStyle_category" />';
+        var isTreeOnRequest = (treeStyle === 'request') ? true : false;
         $('.table-treegrid').treegrid(null, isTreeOnRequest);
         $(".treeRow ").on("click", function (event) {
             $(".treeRow").removeClass("active");

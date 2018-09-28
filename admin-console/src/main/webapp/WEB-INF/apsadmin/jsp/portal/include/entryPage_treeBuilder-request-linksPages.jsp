@@ -28,7 +28,8 @@
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
             <wpsa:actionParam action="%{#openTreeActionName}" var="actionName" >
                 <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="'close'" />
-                <wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.code}" />
+                <s:if test="%{#currentRoot.code != 'homepage'}"><wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.parent.code}" /></s:if>
+                <s:else><wpsa:actionSubParam name="%{#inputFieldName}" value="home" /></s:else>
             </wpsa:actionParam>
             <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>

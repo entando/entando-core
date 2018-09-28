@@ -165,6 +165,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
                 PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
                 currentWrapper.addChildCode(newNode.getCode());
                 currentWrapper.addChild(newNode);
+                newNode.setParent(currentWrapper);
                 this.addTreeWrapper(newNode, newCurrentNode, userGroupCodes, alsoFreeViewPages);
             } else {
                 this.addTreeWrapper(currentWrapper, newCurrentNode, userGroupCodes, alsoFreeViewPages);
@@ -188,6 +189,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
             Lang lang = langs.get(i);
             virtualRoot.setTitle(lang.getCode(), "ROOT");
         }
+        virtualRoot.setParent(virtualRoot);
         return virtualRoot;
     }
 

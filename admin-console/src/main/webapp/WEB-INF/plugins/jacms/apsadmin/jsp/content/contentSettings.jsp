@@ -204,15 +204,15 @@
                         <span class="fa fa-info-circle"></span>
                     </a>
                 </label>
-                <s:set var="fieldErrorsVar" value="%{fieldErrors['new_metatag_key']}" />
+                <s:set var="fieldErrorsVar" value="%{fieldErrors['metadataKey']}" />
                 <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()" />
                 <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}" />
-                <div class="col-md-6 form-group<s:property value="#controlGroupErrorClass" />">
-                    <label class="col-sm-4 control-label" for="new_metatag">
+                <div class="col-md-4 form-group<s:property value="#controlGroupErrorClass" />">
+                    <label class="col-sm-4 control-label" for="new_metadata">
                         <s:text name="label.key" />
                     </label>
                     <div class="col-sm-8">
-                        <wpsf:textfield name="metadataKey" id="new_metatag" cssClass="form-control custom-input" />
+                        <wpsf:textfield name="metadataKey" id="new_metadata" cssClass="form-control custom-input" />
                         <s:if test="#hasFieldErrorVar">
                             <span class="help-block text-danger">
                                 <s:iterator value="%{#fieldErrorsVar}">
@@ -222,7 +222,15 @@
                         </s:if>
                     </div>
                 </div>
-                <div class="col-sm-4"> 
+                <div class="col-md-4 form-group">
+                    <label class="col-sm-4 control-label" for="new_metadata_mapping">
+                        <s:text name="jacms.label.metadataMapping" />
+                    </label>
+                    <div class="col-sm-8">
+                        <wpsf:textfield name="metadataMapping" id="new_metadata_mapping" cssClass="form-control custom-input" />
+                    </div>
+                </div>
+                <div class="col-sm-2"> 
                     <wpsf:submit action="addMetadata" type="button" cssClass="btn btn-primary pull-right btn-position">
                         <s:text name="label.add" />
                     </wpsf:submit>

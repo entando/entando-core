@@ -14,7 +14,6 @@
 package com.agiletec.plugins.jacms.apsadmin.content;
 
 import com.agiletec.apsadmin.admin.BaseAdminAction;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +41,7 @@ public class ContentAdminAction extends BaseAdminAction {
 
     private Map<String, List<String>> mapping;
     private String metadataKey;
+    private String metadataMapping;
     private List<String> metadataKeys;
 
     private IContentManager contentManager;
@@ -54,7 +54,7 @@ public class ContentAdminAction extends BaseAdminAction {
         Map<String, List<String>> mapping = this.buildMapping();
         if (!StringUtils.isBlank(this.getMetadataKey())) {
             if (mapping.containsKey(this.getMetadataKey().trim())) {
-                this.addFieldError("metadataKey", "error.contentSettings.metadataAlreadyPresent");
+                this.addFieldError("metadataKey", this.getText("error.contentSettings.metadataAlreadyPresent", new String[]{this.getMetadataKey().trim()}));
             }
         }
     }
@@ -99,9 +99,13 @@ public class ContentAdminAction extends BaseAdminAction {
     }
 
     public String addMetadata() {
-        Map<String, List<String>> newMapping = this.buildMapping();
-        if (!StringUtils.isBlank(this.getMetadataKey()) && !newMapping.containsKey(this.getMetadataKey().trim())) {
-            newMapping.put(this.getMetadataKey().trim(), new ArrayList<>());
+        Map<String, List<String>> newMappings = this.buildMapping();
+        if (!StringUtils.isBlank(this.getMetadataKey()) && !newMappings.containsKey(this.getMetadataKey().trim())) {
+            List<String> newMapping = new ArrayList<>();
+            if (!StringUtils.isBlank(this.getMetadataMapping())) {
+                newMapping.addAll(Arrays.asList(this.getMetadataMapping().trim().split(",")));
+            }
+            newMappings.put(this.getMetadataKey().trim(), newMapping);
         }
         return SUCCESS;
     }
@@ -237,6 +241,14 @@ public class ContentAdminAction extends BaseAdminAction {
 
     public List<String> getMetadataKeys() {
         return metadataKeys;
+    }
+
+    public String getMetadataMapping() {
+        return metadataMapping;
+    }
+
+    public void setMetadataMapping(String metadataMapping) {
+        this.metadataMapping = metadataMapping;
     }
 
     public void setMetadataKeys(List<String> metadataKeys) {

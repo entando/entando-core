@@ -5,10 +5,11 @@ $(document).ready(function () {
     var allowedFileTypes = [
         "image/jpeg",
         "image/png",
-        "image/gif",
+        "image/gif"
     ];
     var isCropEditorModalShown = false;
-    var pendingStoreItems = [];
+    var pendingNewStoreItems = [];
+    var pendingToUpdateStoreItems = [];
 
     // Listen to new store item created events.
     document.addEventListener("storeItemCreated", function (e) {
@@ -37,25 +38,30 @@ $(document).ready(function () {
 
 
     var save = function (storeItem) {
-        if (store[storeItem.id]) {
-            // Replace storeItem with updated one.
-            store[storeItem.id] = storeItem;
 
-            var storeItemUpdatedEvent = new CustomEvent("storeItemUpdated", {
-                detail: {storeItem: storeItem}
-            });
-            document.dispatchEvent(storeItemUpdatedEvent);
+        for (var i in store) {
+            if (store[i].id === storeItem.id) {
 
-        } else {
-            // Add new storeItem.
-            store.push(storeItem);
+                // Replace storeItem with updated one.
+                store[i] = storeItem;
+                var storeItemUpdatedEvent = new CustomEvent("storeItemUpdated", {
+                    detail: {storeItem: storeItem}
+                });
+                document.dispatchEvent(storeItemUpdatedEvent);
 
-            var storeItemCreatedEvent = new CustomEvent("storeItemCreated", {
-                detail: {storeItem: storeItem}
-            });
-            document.dispatchEvent(storeItemCreatedEvent);
+                return;
 
+            }
         }
+
+        // Add new storeItem.
+        store.push(storeItem);
+
+        var storeItemCreatedEvent = new CustomEvent("storeItemCreated", {
+            detail: {storeItem: storeItem}
+        });
+        document.dispatchEvent(storeItemCreatedEvent);
+
     };
 
 
@@ -70,15 +76,12 @@ $(document).ready(function () {
             reader.onload = function (e) {
                 // Check if currently modified storeItem already exists.
                 var storeItemId = $(input).attr('id').split('_')[1];
-                var storeItem = {};
-                if (store[storeItemId]) {
-                    storeItem = store[storeItemId];
-                } else {
-                    storeItem = setupNewStoreItem(true, input.files[0].name);
-                }
-                storeItem.imageData = e.target.result;
-                storeItem.type = input.files[0].type;
-                save(storeItem);
+                save({
+                    id: storeItemId,
+                    name: input.files[0].name,
+                    imageData: e.target.result,
+                    type: input.files[0].type
+                });
             };
 
             reader.readAsDataURL(input.files[0]);
@@ -89,11 +92,28 @@ $(document).ready(function () {
 
     $cropEditorModal.on('shown.bs.modal', function () {
         isCropEditorModalShown = true;
-        pendingStoreItems.map(function (storeItemId) {
-            store[storeItemId].cropper = setupCropper(storeItemId);
+        pendingNewStoreItems.map(function (pendingStoreItem) {
+            store = store.map(function (storeItem) {
+                if (pendingStoreItem.id === storeItem.id) {
+                    storeItem.cropper = setupCropper(storeItem.id);
+                }
+
+                return storeItem;
+            });
         });
-        pendingStoreItems = [];
-        // store[getCurrentStoreItemId()].cropper = setupCropper(getCurrentStoreItemId());
+
+        pendingToUpdateStoreItems.map(function (pendingToUpdateStoreItem) {
+            store = store.map(function (storeItem) {
+                if (pendingToUpdateStoreItem.id === storeItem.id) {
+                    storeItem.cropper = setupCropper(storeItem.id);
+                }
+
+                return storeItem;
+            });
+        });
+
+        pendingNewStoreItems = [];
+        pendingToUpdateStoreItems = [];
     });
 
     $cropEditorModal.on('hidden.bs.modal', function () {
@@ -105,7 +125,7 @@ $(document).ready(function () {
         switch ($(this).data('method')) {
             case 'crop':
                 document.dispatchEvent(
-                    new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem(false)}})
+                    new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem()}})
                 );
                 break;
             case 'remove':
@@ -151,7 +171,12 @@ $(document).ready(function () {
     };
 
     var getCurrentStoreItem = function () {
-        return store[getCurrentStoreItemId()];
+        var currentStoreItemId = getCurrentStoreItemId();
+        return store.reduce(function (acc, storeItem) {
+            if (parseInt(storeItem.id) === currentStoreItemId) {
+                return storeItem;
+            }
+        }, {});
     };
 
     var setupCropper = function (storeItemId) {
@@ -167,40 +192,48 @@ $(document).ready(function () {
     };
 
 
-    var setupNewStoreItem = function (isInitial, name) {
-        var currentStoreItem = getCurrentStoreItem();
+    var setupNewStoreItem = function (name) {
         var newId = store.length;
-        if (isInitial) {
-            return {
-                id: newId,
-                name: name
-            };
+        var currentStoreItem = getCurrentStoreItem();
 
-        } else {
-            var nameParts = currentStoreItem.name.split(/\.(?=[^\.]+$)/);
-            return {
-                id: newId,
-                name: nameParts[0] + "_" + newId + "." + nameParts[1],
-                imageData: currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type),
-                type: currentStoreItem.type
-            };
+        var imageData = "";
+        if (currentStoreItem) {
+            imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
         }
+
+        if (!name) {
+            var nameParts = currentStoreItem.name.split(/\.(?=[^\.]+$)/);
+            name = nameParts[0] + "_" + newId + "." + nameParts[1]
+
+        }
+
+        // Split image file name on last dot.
+        return {
+            id: newId,
+            name: name,
+            imageData: imageData,
+            type: currentStoreItem.type
+        };
+
+
     };
 
 
     var remove = function (storeItemId) {
-        // Destroy cropper instance.
-        if (store.indexOf(storeItemId) > -1) {
-            store[storeItemId].cropper.destroy();
-        }
-        // Remove storeItem from store.
-        store.splice(storeItemId, 1);
 
-        // Dispatch store item delete event.
-        var storeItemDeletedEvent = new CustomEvent("storeItemDeleted", {
-            detail: {storeItemId: storeItemId}
-        });
-        document.dispatchEvent(storeItemDeletedEvent);
+        for (var i in store) {
+            if(store[i].id == storeItemId) {
+                store[i].cropper.destroy();
+                // Remove storeItem from store.
+                store.splice(i, 1);
+
+                // Dispatch store item delete event.
+                var storeItemDeletedEvent = new CustomEvent("storeItemDeleted", {
+                    detail: {storeItemId: storeItemId}
+                });
+                document.dispatchEvent(storeItemDeletedEvent);
+            }
+        }
     };
 
     var addTab = function (storeItem) {
@@ -236,9 +269,18 @@ $(document).ready(function () {
 
         if (store.length > 0) {
             if (isCropEditorModalShown) {
-                store[storeItem.id].cropper = setupCropper(storeItem.id);
+
+                store = store.map(function (storeItemI) {
+                    if (storeItemI.id === storeItem.id) {
+                        storeItemI.cropper = setupCropper(storeItem.id);
+                    }
+
+                    return storeItemI;
+                });
+
             } else {
-                pendingStoreItems.push(storeItem.id);
+
+                pendingNewStoreItems.push({id: storeItem.id});
             }
         }
 
@@ -277,14 +319,16 @@ $(document).ready(function () {
         $newTabNavigationItem.addClass('active');
         $newTabPane.addClass('active');
 
-        if (store.length > 0) {
-            if (isCropEditorModalShown) {
-                store[storeItem.id].cropper = setupCropper(storeItem.id);
-            } else {
-                pendingStoreItems.push(storeItem.id);
-            }
-        }
 
+        store = store.map(function (storeItemI) {
+            if (storeItemI.id === storeItem.id) {
+                storeItemI.cropper.destroy();
+            }
+
+            return storeItemI;
+        });
+
+        pendingToUpdateStoreItems.push({id: storeItem.id});
 
     };
 
@@ -330,10 +374,10 @@ $(document).ready(function () {
     $('#add-fields').click(function (e) {
         e.preventDefault();
         addFields();
-        var storeItem = setupNewStoreItem(true, "");
-        pendingStoreItems.push(storeItem.id);
-
-        save(storeItem);
+        // var storeItem = setupNewStoreItem(true, "image.jpg");
+        // pendingNewStoreItems.push(storeItem.id);
+        //
+        // save(storeItem);
     });
 
     $('#save').on('click', '.edit-fields', function (e) {

@@ -341,6 +341,8 @@ public interface SystemConstants {
 
     public static final String CONFIG_PARAM_RESOURCE_ARCHIVES_ON_DEMAND = "resourceArchivesOnDemand";
 
+    public static final String CONFIG_PARAM_ASPECT_RATIO = "aspect_ratio";
+
     /**
      * Lo username dell'utente amministratore, utente di default con diritti
      * massimi nel sistema.

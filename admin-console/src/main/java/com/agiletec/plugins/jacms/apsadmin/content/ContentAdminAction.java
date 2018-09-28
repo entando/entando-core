@@ -13,7 +13,10 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.apsadmin.admin.BaseAdminAction;
+import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +24,16 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.ICmsSearchEngineManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.LastReloadInfo;
+import static com.opensymphony.xwork2.Action.SUCCESS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -39,6 +46,8 @@ public class ContentAdminAction extends BaseAdminAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ContentAdminAction.class);
 
+    private static final String ASPECT_RATIO_PATTERN = "[0-9]{1,}:[0-9]{1,}";
+
     private Map<String, List<String>> mapping;
     private String metadataKey;
     private String metadataMapping;
@@ -47,6 +56,9 @@ public class ContentAdminAction extends BaseAdminAction {
     private IContentManager contentManager;
     private IResourceManager resourceManager;
     private ICmsSearchEngineManager searchEngineManager;
+
+    private String aspectRatio;
+    private List<String> ratio = new ArrayList<>();
 
     @Override
     public void validate() {
@@ -57,11 +69,14 @@ public class ContentAdminAction extends BaseAdminAction {
                 this.addFieldError("metadataKey", this.getText("error.contentSettings.metadataAlreadyPresent", new String[]{this.getMetadataKey().trim()}));
             }
         }
+        this.validateAspectRatioList();
     }
 
     @Override
     public String configSystemParams() {
         String result = super.configSystemParams();
+        this.setAspectRatio(this.getSystemParams().get(SystemConstants.CONFIG_PARAM_ASPECT_RATIO));
+        this.setRatio(this.getAspectRatio() != null ? Arrays.asList(this.getAspectRatio().split(";")) : new ArrayList<>());
         if (!result.equals(SUCCESS)) {
             return result;
         }
@@ -74,6 +89,14 @@ public class ContentAdminAction extends BaseAdminAction {
         return SUCCESS;
     }
 
+    @Override
+    public Map<String, String> getSystemParams() {
+        if (super.getSystemParams() == null) {
+            super.configSystemParams();
+        }
+        return super.getSystemParams();
+    }
+
     public String buildCsv(String key) {
         List<String> list = (null != this.getMapping()) ? this.getMapping().get(key) : null;
         if (null == list) {
@@ -84,6 +107,10 @@ public class ContentAdminAction extends BaseAdminAction {
 
     @Override
     public String updateSystemParams() {
+        this.validate();
+        if (this.hasFieldErrors()) {
+            return SUCCESS;
+        }
         String result = this.updateSystemParams(true);
         if (!result.equals(SUCCESS)) {
             return result;
@@ -96,6 +123,17 @@ public class ContentAdminAction extends BaseAdminAction {
             return FAILURE;
         }
         return SUCCESS;
+    }
+
+    @Override
+    protected void initLocalMap() throws Throwable {
+        String xmlParams = this.getConfigParameter();
+        Map<String, String> systemParams = SystemParamsUtils.getParams(xmlParams);
+        this.setSystemParams(systemParams);
+        if (this.getRatio() != null && !this.getRatio().isEmpty()) {
+            this.setAspectRatio(String.join(";", this.getRatio()));
+        }
+        this.getSystemParams().put(SystemConstants.CONFIG_PARAM_ASPECT_RATIO, this.getAspectRatio());
     }
 
     public String addMetadata() {
@@ -263,6 +301,28 @@ public class ContentAdminAction extends BaseAdminAction {
         this.contentManager = contentManager;
     }
 
+    public String getAspectRatio() {
+        if (aspectRatio == null) {
+            this.aspectRatio = this.getSystemParams().get(SystemConstants.CONFIG_PARAM_ASPECT_RATIO);
+        }
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(String aspectRatio) {
+        this.aspectRatio = aspectRatio;
+    }
+
+    public List<String> getRatio() {
+        if (this.ratio == null) {
+            this.ratio = this.getAspectRatio() != null ? Arrays.asList(this.getAspectRatio().split(";")) : new ArrayList<>();
+        }
+        return ratio;
+    }
+
+    public void setRatio(List<String> ratio) {
+        this.ratio = ratio;
+    }
+
     protected ICmsSearchEngineManager getSearchEngineManager() {
         return searchEngineManager;
     }
@@ -277,6 +337,16 @@ public class ContentAdminAction extends BaseAdminAction {
 
     public void setResourceManager(IResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+    }
+
+    private void validateAspectRatioList() {
+        Optional.ofNullable(this.getRatio()).ifPresent(list -> list.forEach(elem -> {
+            Pattern p = Pattern.compile(ASPECT_RATIO_PATTERN);
+            Matcher m = p.matcher(elem);
+            if (!m.matches()) {
+                this.addFieldError("ratio", this.getText("error.contentSettings.aspectRatio.invalidFormat", new String[]{elem}));
+            }
+        }));
     }
 
 }

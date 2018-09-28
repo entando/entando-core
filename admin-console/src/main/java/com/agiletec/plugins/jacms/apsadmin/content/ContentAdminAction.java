@@ -48,6 +48,8 @@ public class ContentAdminAction extends BaseAdminAction {
     private IResourceManager resourceManager;
     private ICmsSearchEngineManager searchEngineManager;
 
+    private String aspectRatio;
+
     @Override
     public void validate() {
         super.validate();
@@ -84,6 +86,7 @@ public class ContentAdminAction extends BaseAdminAction {
 
     @Override
     public String updateSystemParams() {
+        this.getSystemParams().put("aspect_ratio", this.getAspectRatio());
         String result = this.updateSystemParams(true);
         if (!result.equals(SUCCESS)) {
             return result;
@@ -261,6 +264,14 @@ public class ContentAdminAction extends BaseAdminAction {
 
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
+    }
+
+    public String getAspectRatio() {
+        return aspectRatio;
+    }
+
+    public void setAspectRatio(String aspectRatio) {
+        this.aspectRatio = aspectRatio;
     }
 
     protected ICmsSearchEngineManager getSearchEngineManager() {

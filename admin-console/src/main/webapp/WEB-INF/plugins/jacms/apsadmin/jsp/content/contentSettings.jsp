@@ -237,6 +237,23 @@
                 </div>
             </div>
         </fieldset>
+        <fieldset class="col-xs-4 settings-form">
+            <h2>
+                Setting Crop Dimensions
+            </h2>
+            <h3>Defined:</h3>
+            <div class="form-group">
+                <div class="col-sm-5 col-sm-offset-2">
+                    <div id="add-crop-dim-button">
+                        <button type="button" id="add-crop-dim" class="btn btn-primary">
+                            <s:text name="label.add" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div id="fields-container" >
+        </div>
         <div class="form-group">
             <div class="col-xs-12">
                 <wpsf:submit type="button" cssClass="btn btn-primary pull-right">
@@ -246,3 +263,51 @@
         </div>
     </s:form>
 </div>
+
+<template id="hidden-fields-template">
+    <div class="form-group">
+        <div class="col-sm-4">
+            <wpsf:textfield name="ratio" maxlength="250" id="newRatio" cssClass="form-control file-description" />
+        </div>
+
+        <button type="button" class="btn-danger delete-fields "
+                title="<s:text name="label.delete" />"
+                >    <span class="fa fa-times white"></span>
+        </button>
+    </div>
+</template>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $('#add-crop-dim').click(function (e) {
+            e.preventDefault();
+            var numItems = $('.file-description').length;
+
+            var template = $('#hidden-fields-template').html();
+
+            $('#fields-container').append(template);
+
+            var newId = parseInt(numItems);
+
+            $('#newDescr').attr("name", "descr_" + newId);
+            $('#newDescr').attr("id", "descr_" + newId);
+
+            $('#newFileUpload_label').attr("for", "fileUpload_" + newId);
+            $('#newFileUpload_label').attr("id", "fileUpload_label_" + newId);
+
+            $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
+            $('#newFileUpload').attr("id", "fileUpload_" + newId);
+
+        });
+        $('.delete-fields').click(function (e) {
+            e.preventDefault();
+            $(this).parent('div').remove();
+        });
+
+        $('#fields-container').on("click", ".delete-fields", function (e) {
+            e.preventDefault();
+            $(this).parent('div').remove();
+        })
+    });
+</script>

@@ -322,6 +322,24 @@
                         >    <span class="fa fa-times white"></span>
                 </button>
             </s:if>
+
+            <div class="col-sm-1">
+                <div class="list-view-pf-actions">
+                    <div class="dropdown pull-right dropdown-kebab-pf">
+                        <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            <span class="fa fa-ellipsis-v"></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
+                            <li>
+                                <a href="#" class="edit-fields">Edit</a>
+                            </li>
+                            <li>
+                                <a href="#" class="delete-fields">Delete</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
 
 
@@ -686,8 +704,8 @@
     <div class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
-                <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right" disabled>
-                    Save
+                <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
+                    Done
                 </button>
             </div>
         </div>
@@ -760,13 +778,23 @@
                 </span>
             </div>
         </div>
-
-        <button type="button" class="btn-danger delete-fields "
-                title="<s:text name="label.remove-fileinput" />"
-                >    <span class="fa fa-times white"></span>
-        </button>
-
-
+        <div class="col-sm-1">
+            <div class="list-view-pf-actions">
+                <div class="dropdown pull-right dropdown-kebab-pf">
+                    <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <span class="fa fa-ellipsis-v"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
+                        <li>
+                            <a href="#" class="edit-fields">Edit</a>
+                        </li>
+                        <li>
+                            <a href="#" class="delete-fields">Delete</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
 </template>

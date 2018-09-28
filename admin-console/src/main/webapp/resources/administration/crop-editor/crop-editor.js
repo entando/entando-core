@@ -1,4 +1,3 @@
-console.log("init");
 $(document).ready(function () {
 
     // Global configuration for crop editor.
@@ -25,14 +24,27 @@ $(document).ready(function () {
 
     // Listen to update store item events.
     document.addEventListener("storeItemUpdated", function (e) {
-        //TODO Implement update event actions.
+        DOMStoreItemUpdated(e.detail.storeItem);
+    });
+
+    // Listen to delete store item events.
+    document.addEventListener("storeItemDeleted", function (e) {
+        var storeItemId = e.detail.storeItemId;
+        removeTab(storeItemId);
+        removeField(storeItemId);
+        removeHiddenFields(storeItemId);
     });
 
 
     var save = function (storeItem) {
-        if (store.indexOf(storeItem.id) > -1) {
+        if (store[storeItem.id]) {
             // Replace storeItem with updated one.
             store[storeItem.id] = storeItem;
+
+            var storeItemUpdatedEvent = new CustomEvent("storeItemUpdated", {
+                detail: {storeItem: storeItem}
+            });
+            document.dispatchEvent(storeItemUpdatedEvent);
 
         } else {
             // Add new storeItem.
@@ -56,8 +68,14 @@ $(document).ready(function () {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                // Creating first storeItem from original photo.
-                var storeItem = setupNewStoreItem(true, input.files[0].name);
+                // Check if currently modified storeItem already exists.
+                var storeItemId = $(input).attr('id').split('_')[1];
+                var storeItem = {};
+                if (store[storeItemId]) {
+                    storeItem = store[storeItemId];
+                } else {
+                    storeItem = setupNewStoreItem(true, input.files[0].name);
+                }
                 storeItem.imageData = e.target.result;
                 storeItem.type = input.files[0].type;
                 save(storeItem);
@@ -87,7 +105,7 @@ $(document).ready(function () {
         switch ($(this).data('method')) {
             case 'crop':
                 document.dispatchEvent(
-                    new CustomEvent("cropCreated", { detail: {storeItem: setupNewStoreItem(false) }})
+                    new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem(false)}})
                 );
                 break;
             case 'remove':
@@ -171,12 +189,18 @@ $(document).ready(function () {
 
 
     var remove = function (storeItemId) {
-        store[storeItemId].cropper.destroy();
+        // Destroy cropper instance.
+        if (store.indexOf(storeItemId) > -1) {
+            store[storeItemId].cropper.destroy();
+        }
+        // Remove storeItem from store.
         store.splice(storeItemId, 1);
-        removeTab(storeItemId);
-        removeField(storeItemId);
-        removeHiddenFields(storeItemId);
 
+        // Dispatch store item delete event.
+        var storeItemDeletedEvent = new CustomEvent("storeItemDeleted", {
+            detail: {storeItemId: storeItemId}
+        });
+        document.dispatchEvent(storeItemDeletedEvent);
     };
 
     var addTab = function (storeItem) {
@@ -198,6 +222,49 @@ $(document).ready(function () {
 
         // Copy tab pane
         var $newTabPane = $('#tab-pane-blueprint').clone();
+        $newTabPane.removeClass('hidden');
+        $newTabPane.attr('id', 'store_item_' + storeItem.id);
+        $newTabPane.attr('data-item-id', storeItem.id);
+        var $newImage = $newTabPane.find('.store_item_');
+        $newImage.attr('src', storeItem.imageData);
+        $newImage.addClass('store_item_' + storeItem.id);
+        $newTabPane.appendTo($tabContent);
+
+        // Add active statest to newly created tab and nav item
+        $newTabNavigationItem.addClass('active');
+        $newTabPane.addClass('active');
+
+        if (store.length > 0) {
+            if (isCropEditorModalShown) {
+                store[storeItem.id].cropper = setupCropper(storeItem.id);
+            } else {
+                pendingStoreItems.push(storeItem.id);
+            }
+        }
+
+
+    };
+
+
+    var updateTab = function (storeItem) {
+        var $imageNav = $('.image-navigation');
+        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+
+        // Remove active states
+        $imageNav.find('.active').removeClass('active');
+        $tabContent.find('.active').removeClass('active');
+
+
+        // Copy image navigation item - tab navigation item
+        var $newTabNavigationItem = $('#image-navigation-item_' + storeItem.id);
+        $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
+        $newTabNavigationItem.find('a').text(storeItem.name);
+        $newTabNavigationItem.removeClass('hidden');
+        $newTabNavigationItem.attr('id', 'image-navigation-item_' + storeItem.id);
+        $newTabNavigationItem.appendTo($imageNav);
+
+        // Copy tab pane
+        var $newTabPane = $('#store_item_' + storeItem.id);
         $newTabPane.removeClass('hidden');
         $newTabPane.attr('id', 'store_item_' + storeItem.id);
         $newTabPane.attr('data-item-id', storeItem.id);
@@ -263,12 +330,35 @@ $(document).ready(function () {
     $('#add-fields').click(function (e) {
         e.preventDefault();
         addFields();
+        var storeItem = setupNewStoreItem(true, "");
+        pendingStoreItems.push(storeItem.id);
+
+        save(storeItem);
+    });
+
+    $('#save').on('click', '.edit-fields', function (e) {
+        e.preventDefault();
+        $('.bs-cropping-modal').modal('show');
+
+        var storeItemId = $(this).closest('.form-group').find('.file-description').attr('id').split('_')[1];
+
+        var $imageNav = $('.image-navigation');
+        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+
+        // Remove active states
+        $imageNav.find('.active').removeClass('active');
+        $tabContent.find('.active').removeClass('active');
+
+        $('#store_item_' + storeItemId).addClass('active');
+        $('#image-navigation-item_' + storeItemId).addClass('active');
+
+
     });
 
 
     $('#fields-container').on("click", ".delete-fields", function (e) {
         e.preventDefault();
-        $fieldContainer = $(this).parent('div');
+        var $fieldContainer = $(this).closest('.form-group');
         var storeItemId = $fieldContainer.find('.file-description').attr('id').split('_')[1];
         remove(storeItemId);
 
@@ -293,6 +383,20 @@ $(document).ready(function () {
 
     var DOMCropCreated = function () {
         addFields();
+    };
+
+
+    var DOMStoreItemUpdated = function (storeItem) {
+
+        // Perform DOM manipulations.
+        updateTab(storeItem);
+
+        $('#descr_' + storeItem.id).val(storeItem.name);
+        $('#img_' + storeItem.id).attr("src", storeItem.imageData);
+        $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">');
+        $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
+
     };
 
 });

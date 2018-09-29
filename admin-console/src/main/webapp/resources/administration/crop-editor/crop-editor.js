@@ -222,7 +222,7 @@ $(document).ready(function () {
     var remove = function (storeItemId) {
 
         for (var i in store) {
-            if(store[i].id == storeItemId) {
+            if (store[i].id == storeItemId) {
                 store[i].cropper.destroy();
                 // Remove storeItem from store.
                 store.splice(i, 1);
@@ -442,5 +442,30 @@ $(document).ready(function () {
         $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
 
     };
+
+    var DOMsetupAspectRatioToolbar = function () {
+        var defaultAspectRatios = $('#aspect-ratio-values').text().trim().split(";");
+        var $aspectRatioToolbar = $('.aspect-ratio-buttons');
+
+        var render = function (val) {
+            var aspectRatioValues = val.split(':');
+            var aspectRatio = aspectRatioValues[0] / aspectRatioValues[1];
+            var template =
+                '<label class="btn btn-primary" data-method="setAspectRatio" data-option="' + aspectRatio + '">\n' +
+                '<input type="radio" class="sr-only" name="aspectRatio" value="' + aspectRatio + '">\n' +
+                '<span class="docs-tooltip">' + val + '</span>\n' +
+                '</label>';
+
+            return template;
+        };
+
+
+        for (var i in defaultAspectRatios) {
+            $aspectRatioToolbar.find('.btn-group').append(render(defaultAspectRatios[i]));
+        }
+    };
+
+    DOMsetupAspectRatioToolbar();
+
 
 });

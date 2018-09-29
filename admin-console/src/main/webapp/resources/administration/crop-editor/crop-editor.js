@@ -459,9 +459,10 @@ $(document).ready(function () {
             return template;
         };
 
-
         for (var i in defaultAspectRatios) {
-            $aspectRatioToolbar.find('.btn-group').append(render(defaultAspectRatios[i]));
+            if (defaultAspectRatios[i].length > 0) {
+                $aspectRatioToolbar.find('.btn-group').append(render(defaultAspectRatios[i]));
+            }
         }
     };
 

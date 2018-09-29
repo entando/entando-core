@@ -646,50 +646,12 @@
                                             <div class="col-md-4 aspect-ratio-buttons-container ">
                                                 <div class="aspect-ratio-buttons">
                                                     <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
-                                                        <label class="btn btn-primary" data-method="setAspectRatio"
-                                                               data-option="1.7777777777777777">
-                                                            <input type="radio" class="sr-only" id="aspectRatio1"
-                                                                   name="aspectRatio" value="1.7777777777777777">
-                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: 16 / 9">
-              16:9
-            </span>
-                                                        </label>
-                                                        <label class="btn btn-primary" data-method="setAspectRatio"
-                                                               data-option="1.3333333333333333">
-                                                            <input type="radio" class="sr-only" id="aspectRatio2"
-                                                                   name="aspectRatio" value="1.3333333333333333">
-                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: 4 / 3">
-              4:3
-            </span>
-                                                        </label>
-                                                        <label class="btn btn-primary" data-method="setAspectRatio"
-                                                               data-option="1">
-                                                            <input type="radio" class="sr-only" id="aspectRatio3"
-                                                                   name="aspectRatio" value="1">
-                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: 1 / 1">
-              1:1
-            </span>
-                                                        </label>
-                                                        <label class="btn btn-primary" data-method="setAspectRatio"
-                                                               data-option="0.6666666666666666">
-                                                            <input type="radio" class="sr-only" id="aspectRatio4"
-                                                                   name="aspectRatio" value="0.6666666666666666">
-                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: 2 / 3">
-              2:3
-            </span>
-                                                        </label>
                                                         <label class="btn btn-primary active"
                                                                data-method="setAspectRatio" data-option="NaN">
                                                             <input type="radio" class="sr-only" id="aspectRatio5"
                                                                    name="aspectRatio" value="NaN">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: NaN">
-              Free
-            </span>
+                                                                  data-original-title="aspectRatio: NaN">Free</span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -714,6 +676,13 @@
                     </div>
                 </div>
             </div>
+
+
+            <div id="aspect-ratio-values">
+                <wp:info key="systemParam" paramName="aspect_ratio"/>
+            </div>
+
+
         </div>
     </div>
 

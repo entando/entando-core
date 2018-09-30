@@ -28,11 +28,14 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+import java.util.HashMap;
 
 /**
  * @author E.Santoboni
  */
 public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
+
+    private IResourceManager resourceManager = null;
 
     @Override
     protected void setUp() throws Exception {
@@ -76,7 +79,8 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         }
     }
 
-    public void testSaveNewResource_1() throws Throwable {
+    //Test the validation defined in the ResourceAction-validation.xml
+    public void testSaveNewResourceStrutsValidation() throws Throwable {
         this.setUserOnSession("admin");
         this.initAction("/do/jacms/Resource", "save");
         this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
@@ -84,10 +88,25 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         assertEquals(Action.INPUT, result);
         ActionSupport action = this.getAction();
         Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
-        assertEquals(3, actionFieldErrors.size());
+        assertEquals(2, actionFieldErrors.size());
         assertEquals(1, actionFieldErrors.get("resourceTypeCode").size());
         assertEquals(1, actionFieldErrors.get("mainGroup").size());
-        assertEquals(1, actionFieldErrors.get("fileUpload_").size());
+    }
+
+    //Test the validation defined in the MultipleResourceAction.java
+    public void testSaveNewResourceMultipleResourceValidation() throws Throwable {
+        this.setUserOnSession("admin");
+        this.initAction("/do/jacms/Resource", "save");
+        this.addParameter("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
+        this.addParameter("resourceTypeCode", "Image");
+        this.addParameter("mainGroup", "test");
+        this.addParameter("descr_0", "test");
+        String result = this.executeAction();
+        ActionSupport action = this.getAction();
+        Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
+        assertEquals(Action.INPUT, result);
+        assertEquals(1, actionFieldErrors.size());
+        assertEquals(1, actionFieldErrors.get("fileUpload_0").size());
     }
 
     public void testSaveNewResource_2() throws Throwable {
@@ -112,7 +131,7 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
     public void testSaveEditedResource() throws Throwable {
         String resourceId = "44";
         this.setUserOnSession("admin");
-        ResourceInterface resource = this._resourceManager.loadResource(resourceId);
+        ResourceInterface resource = this.resourceManager.loadResource(resourceId);
         Map<String, String> metadata = resource.getMetadata();
         try {
             this.initAction("/do/jacms/Resource", "save");
@@ -124,13 +143,13 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
             this.addParameter("mainGroup", resource.getMainGroup());
             String result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
-            ResourceInterface modifiedResource = this._resourceManager.loadResource(resourceId);
+            ResourceInterface modifiedResource = this.resourceManager.loadResource(resourceId);
             assertEquals("Descrizione di test", modifiedResource.getDescription());
             assertEquals(metadata, modifiedResource.getMetadata());
         } catch (Throwable t) {
             throw t;
         } finally {
-            this._resourceManager.updateResource(resource);
+            this.resourceManager.updateResource(resource);
         }
     }
 
@@ -211,12 +230,9 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         }
     }
 
-    /*
-	 * NOTE: we create a fake resource using the manager rather than the most obvious 'save' action.
-	 *
-     */
+    // * NOTE: we create a fake resource using the manager rather than the most obvious 'save' action.
     public void testDelete() throws Throwable {
-        ResourceInterface resource = this._resourceManager.createResourceType("Image");
+        ResourceInterface resource = this.resourceManager.createResourceType("Image");
         String resourceId = null;
         String result = null;
         ResourceAction action = null;
@@ -227,10 +243,10 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
             resource.setMainGroup(Group.FREE_GROUP_NAME);
             resource.setDescr("Levò la bocca dal fero pasto quel peccator");
             resource.setCategories(new ArrayList<Category>());
-            this._resourceManager.addResource(resource);
+            this.resourceManager.addResource(resource);
             resourceId = resource.getId();
 
-            ResourceInterface verify = this._resourceManager.loadResource(resourceId);
+            ResourceInterface verify = this.resourceManager.loadResource(resourceId);
             assertNotNull(verify);
 
             // test with invalid ID 
@@ -246,13 +262,13 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
             result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
 
-            verify = this._resourceManager.loadResource(resourceId);
+            verify = this.resourceManager.loadResource(resourceId);
             assertNull(verify);
 
         } catch (Throwable t) {
             throw t;
         } finally {
-            this._resourceManager.deleteResource(resource);
+            this.resourceManager.deleteResource(resource);
         }
     }
 
@@ -266,12 +282,10 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
 
     private void init() throws Exception {
         try {
-            _resourceManager = (IResourceManager) this.getService(JacmsSystemConstants.RESOURCE_MANAGER);
+            resourceManager = (IResourceManager) this.getService(JacmsSystemConstants.RESOURCE_MANAGER);
         } catch (Throwable t) {
             throw new Exception(t);
         }
     }
-
-    private IResourceManager _resourceManager = null;
 
 }

@@ -149,18 +149,11 @@ public class FileBrowserAction extends BaseAction {
                 if (null != result) {
                     return result;
                 }
-              
-                String checkResult = this.checkExistingFileExtension(this.getCurrentPath(), this.getUploadFileName(index), false);
-                
-                if (null != checkResult) {
-                    return checkResult;
-                }
-                
+
                 this.getStorageManager().saveFile(currentPath + fileNames.get(index), protectedFolder, inputStreams.get(index));
 
                 index++;
             }
-            //this.getStorageManager().saveFile(this.getCurrentPath() + this.getUploadFileName(), this.getProtectedFolderBoolean(), this.getInputStream());
         } catch (Throwable t) {
             logger.error("error in upload", t);
             return FAILURE;
@@ -254,20 +247,6 @@ public class FileBrowserAction extends BaseAction {
             }
         }
         return false;
-    }
-
-    protected String checkExistingFileExtension(String path, String filename, boolean expected) throws Throwable {
-        boolean exist = this.getStorageManager().exists(path + filename, this.getProtectedFolderBoolean());
-        if (exist != expected) {
-            String[] args = new String[]{filename};
-            if (expected) {
-                this.addFieldError("filename", this.getText("error.filebrowser.file.doesNotExist", args));
-            } else {
-                this.addFieldError("filename", this.getText("error.filebrowser.file.exist", args));
-            }
-            return INPUT;
-        }
-        return null;
     }
 
     public String createDir() {
@@ -564,7 +543,21 @@ public class FileBrowserAction extends BaseAction {
         }
         return null;
     }
-
+/*
+    protected String checkExistingFileExtension(String path, String filename, boolean expected) throws Throwable {
+        boolean exist = this.getStorageManager().exists(path + filename, this.getProtectedFolderBoolean());
+        if (exist != expected) {
+            String[] args = new String[]{filename};
+            if (expected) {
+                this.addFieldError("filename", this.getText("error.filebrowser.file.doesNotExist", args));
+            } else {
+                this.addFieldError("filename", this.getText("error.filebrowser.file.exist", args));
+            }
+            return INPUT;
+        }
+        return null;
+    }
+    */
     /**
      * Check the provided filename and currentPath parameters and raises an
      * error if one of these parameters are invalid

@@ -28,8 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import static junit.framework.Assert.assertEquals;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
 
 /**
  * @author E.Santoboni

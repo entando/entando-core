@@ -5,12 +5,12 @@
     <parent>
         <artifactId>entando-core</artifactId>
         <groupId>org.entando.entando</groupId>
-        <version>4.3.5</version>
+        <version>4.3.6</version>
     </parent>
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-engine</artifactId>
     <packaging>jar</packaging>
-    <version>4.3.5</version>
+    <version>4.3.6</version>
     <name>Entando Core: Engine</name>
     <description>Entando Engine: an agile, modern and user-centric open source Portal platform.</description>
     <url>http://www.entando.com/</url>

@@ -27,7 +27,7 @@ public class Uniquekeys {
 	
 	@DatabaseField(columnName = "id", 
 			dataType = DataType.INTEGER, 
-			canBeNull = false, id = true)
+			canBeNull = false, generatedId = true)
 	private int _id;
 	
 	@DatabaseField(columnName = "keyvalue", 

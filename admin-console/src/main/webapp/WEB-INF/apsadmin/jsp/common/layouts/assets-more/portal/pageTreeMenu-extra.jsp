@@ -111,7 +111,8 @@
                 $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
 
             });
-            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
+            var treeStyle = '<wp:info key="systemParam" paramName="treeStyle_category" />';
+            var isTreeOnRequest = (treeStyle === 'request') ? true : false;
             $('.table-treegrid').treegrid(null, isTreeOnRequest);
             $(".treeRow ").on("click", function (event) {
                 $(".treeRow").removeClass("active");
@@ -122,7 +123,7 @@
                 $(this).find(".moveButtons-right").removeClass("hidden");
                 $(this).find(".table-view-pf-actions").removeClass("hidden");
             });
-            
+
             // Page title tooltip
             $('[data-toggle="tooltip"]').tooltip();
         });

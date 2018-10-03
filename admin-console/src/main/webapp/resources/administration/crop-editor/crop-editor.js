@@ -17,30 +17,7 @@ $(document).ready(function () {
     var $newTabPane;
     var $newImage;
 
-    // Listen to new store item created events.
-    document.addEventListener("storeItemCreated", function (e) {
-        DOMStoreItemCreated(e.detail.storeItem);
-    });
 
-    // Listen to new crop created events.
-    document.addEventListener("cropCreated", function (e) {
-        DOMCropCreated();
-
-        save(e.detail.storeItem);
-    });
-
-    // Listen to update store item events.
-    document.addEventListener("storeItemUpdated", function (e) {
-        DOMStoreItemUpdated(e.detail.storeItem);
-    });
-
-    // Listen to delete store item events.
-    document.addEventListener("storeItemDeleted", function (e) {
-        var storeItemId = e.detail.storeItemId;
-        removeTab(storeItemId);
-        removeField(storeItemId);
-        removeHiddenFields(storeItemId);
-    });
 
 
     var save = function (storeItem) {
@@ -50,11 +27,7 @@ $(document).ready(function () {
 
                 // Replace storeItem with updated one.
                 store[i] = storeItem;
-                var storeItemUpdatedEvent = new CustomEvent("storeItemUpdated", {
-                    detail: {storeItem: storeItem}
-                });
-                document.dispatchEvent(storeItemUpdatedEvent);
-
+                DOMStoreItemUpdated(storeItem);
                 return;
 
             }
@@ -63,10 +36,7 @@ $(document).ready(function () {
         // Add new storeItem.
         store.push(storeItem);
 
-        var storeItemCreatedEvent = new CustomEvent("storeItemCreated", {
-            detail: {storeItem: storeItem}
-        });
-        document.dispatchEvent(storeItemCreatedEvent);
+        DOMStoreItemCreated(storeItem);
 
     };
 
@@ -74,7 +44,7 @@ $(document).ready(function () {
     $('.image-upload-form').on('change', 'input:file', function () {
         var input = this;
 
-        if (input.files && input.files[0] && allowedFileTypes.includes(input.files[0].type)) {
+        if (input.files && input.files[0] && allowedFileTypes.indexOf(input.files[0].type) !== -1) {
             $('.bs-cropping-modal').modal('show');
 
             var reader = new FileReader();
@@ -123,9 +93,8 @@ $(document).ready(function () {
 
         switch ($btn.data('method')) {
             case 'crop':
-                document.dispatchEvent(
-                    new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem()}})
-                );
+                DOMCropCreated();
+                save(setupNewStoreItem());
                 break;
             case 'remove':
                 remove(getCurrentStoreItemId());
@@ -234,11 +203,9 @@ $(document).ready(function () {
                 // Remove storeItem from store.
                 store.splice(i, 1);
 
-                // Dispatch store item delete event.
-                var storeItemDeletedEvent = new CustomEvent("storeItemDeleted", {
-                    detail: {storeItemId: storeItemId}
-                });
-                document.dispatchEvent(storeItemDeletedEvent);
+                removeTab(storeItemId);
+                removeField(storeItemId);
+                removeHiddenFields(storeItemId);
             }
         }
     };

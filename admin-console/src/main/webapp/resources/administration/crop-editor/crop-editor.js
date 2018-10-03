@@ -9,7 +9,13 @@ $(document).ready(function () {
     ];
     var isCropEditorModalShown = false;
     var pendingNewStoreItems = [];
-    var pendingToUpdateStoreItems = [];
+
+
+    var $imageNav;
+    var $tabContent;
+    var $newTabNavigationItem;
+    var $newTabPane;
+    var $newImage;
 
     // Listen to new store item created events.
     document.addEventListener("storeItemCreated", function (e) {
@@ -92,28 +98,19 @@ $(document).ready(function () {
 
     $cropEditorModal.on('shown.bs.modal', function () {
         isCropEditorModalShown = true;
-        pendingNewStoreItems.map(function (pendingStoreItem) {
-            store = store.map(function (storeItem) {
-                if (pendingStoreItem.id === storeItem.id) {
-                    storeItem.cropper = setupCropper(storeItem.id);
-                }
 
-                return storeItem;
-            });
-        });
+        if ($imageNav !== undefined) {
+            $imageNav.find('.active').removeClass('active');
+        }
 
-        pendingToUpdateStoreItems.map(function (pendingToUpdateStoreItem) {
-            store = store.map(function (storeItem) {
-                if (pendingToUpdateStoreItem.id === storeItem.id) {
-                    storeItem.cropper = setupCropper(storeItem.id);
-                }
+        if ($tabContent !== undefined) {
+            $tabContent.find('.active').removeClass('active');
+        }
 
-                return storeItem;
-            });
-        });
-
-        pendingNewStoreItems = [];
-        pendingToUpdateStoreItems = [];
+        // Add active statest to newly created tab and nav item
+        $newTabNavigationItem.addClass('active');
+        $newTabPane.addClass('active');
+        processPending();
     });
 
     $cropEditorModal.on('hidden.bs.modal', function () {
@@ -122,7 +119,9 @@ $(document).ready(function () {
 
 
     $cropEditorModal.on('click', '.btn', function () {
-        switch ($(this).data('method')) {
+        var $btn = $(this);
+
+        switch ($btn.data('method')) {
             case 'crop':
                 document.dispatchEvent(
                     new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem()}})
@@ -132,27 +131,29 @@ $(document).ready(function () {
                 remove(getCurrentStoreItemId());
                 break;
             case 'setDragMode':
-                getCurrentStoreItem().cropper.setDragMode($(this).data('option'));
+                getCurrentStoreItem().cropper.setDragMode($btn.data('option'));
                 break;
             case 'zoom':
-                getCurrentStoreItem().cropper.zoom($(this).data('option'));
+                getCurrentStoreItem().cropper.zoom($btn.data('option'));
                 break;
             case 'scaleX':
-                getCurrentStoreItem().cropper.scaleX($(this).data('option'));
+                var option = $btn.data('option');
+                getCurrentStoreItem().cropper.scaleX(option);
+                $btn.data('option', -1 * option);
                 break;
             case 'scaleY':
-                var option = $(this).data('option');
-                getCurrentStoreItem().cropper.scaleY();
-                $(this).data('option', -option)
+                var option = $btn.data('option');
+                getCurrentStoreItem().cropper.scaleY(option);
+                $btn.data('option', -1 * option);
                 break;
             case 'move':
-                getCurrentStoreItem().cropper.move($(this).data('option'), $(this).data('second-option'));
+                getCurrentStoreItem().cropper.move($btn.data('option'), $btn.data('second-option'));
                 break;
             case 'rotate':
-                getCurrentStoreItem().cropper.rotate($(this).data('option'));
+                getCurrentStoreItem().cropper.rotate($btn.data('option'));
                 break;
             case 'setAspectRatio':
-                getCurrentStoreItem().cropper.setAspectRatio($(this).data('option'));
+                getCurrentStoreItem().cropper.setAspectRatio($btn.data('option'));
                 break;
 
             default:
@@ -172,11 +173,17 @@ $(document).ready(function () {
 
     var getCurrentStoreItem = function () {
         var currentStoreItemId = getCurrentStoreItemId();
-        return store.reduce(function (acc, storeItem) {
-            if (parseInt(storeItem.id) === currentStoreItemId) {
-                return storeItem;
+
+        var result  = {};
+        for (var i in store) {
+            var storeItemI = store[i];
+            if (parseInt(storeItemI.id) === currentStoreItemId) {
+                result  = storeItemI;
             }
-        }, {});
+
+        }
+
+        return result;
     };
 
     var setupCropper = function (storeItemId) {
@@ -196,6 +203,7 @@ $(document).ready(function () {
         var newId = store.length;
         var currentStoreItem = getCurrentStoreItem();
 
+
         var imageData = "";
         if (currentStoreItem) {
             imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
@@ -207,7 +215,6 @@ $(document).ready(function () {
 
         }
 
-        // Split image file name on last dot.
         return {
             id: newId,
             name: name,
@@ -237,16 +244,16 @@ $(document).ready(function () {
     };
 
     var addTab = function (storeItem) {
-        var $imageNav = $('.image-navigation');
-        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+        $imageNav = $('.image-navigation');
+        $tabContent = $('.bs-cropping-modal').find('.tab-content');
 
         // Remove active states
-        $imageNav.find('.active').removeClass('active');
-        $tabContent.find('.active').removeClass('active');
+        // $imageNav.find('.active').removeClass('active');
+        // $tabContent.find('.active').removeClass('active');
 
 
         // Copy image navigation item - tab navigation item
-        var $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
+        $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
         $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
         $newTabNavigationItem.find('a').text(storeItem.name);
         $newTabNavigationItem.removeClass('hidden');
@@ -254,34 +261,24 @@ $(document).ready(function () {
         $newTabNavigationItem.appendTo($imageNav);
 
         // Copy tab pane
-        var $newTabPane = $('#tab-pane-blueprint').clone();
+        $newTabPane = $('#tab-pane-blueprint').clone();
         $newTabPane.removeClass('hidden');
         $newTabPane.attr('id', 'store_item_' + storeItem.id);
         $newTabPane.attr('data-item-id', storeItem.id);
-        var $newImage = $newTabPane.find('.store_item_');
+        $newImage = $newTabPane.find('.store_item_');
         $newImage.attr('src', storeItem.imageData);
         $newImage.addClass('store_item_' + storeItem.id);
         $newTabPane.appendTo($tabContent);
 
         // Add active statest to newly created tab and nav item
-        $newTabNavigationItem.addClass('active');
-        $newTabPane.addClass('active');
+        if (store.length === 1) {
+            $newTabNavigationItem.addClass('active');
+            $newTabPane.addClass('active');
+        }
+
 
         if (store.length > 0) {
-            if (isCropEditorModalShown) {
-
-                store = store.map(function (storeItemI) {
-                    if (storeItemI.id === storeItem.id) {
-                        storeItemI.cropper = setupCropper(storeItem.id);
-                    }
-
-                    return storeItemI;
-                });
-
-            } else {
-
-                pendingNewStoreItems.push({id: storeItem.id});
-            }
+            pendingNewStoreItems.push({id: storeItem.id});
         }
 
 
@@ -289,8 +286,8 @@ $(document).ready(function () {
 
 
     var updateTab = function (storeItem) {
-        var $imageNav = $('.image-navigation');
-        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+        $imageNav = $('.image-navigation');
+        $tabContent = $('.bs-cropping-modal').find('.tab-content');
 
         // Remove active states
         $imageNav.find('.active').removeClass('active');
@@ -298,7 +295,7 @@ $(document).ready(function () {
 
 
         // Copy image navigation item - tab navigation item
-        var $newTabNavigationItem = $('#image-navigation-item_' + storeItem.id);
+        $newTabNavigationItem = $('#image-navigation-item_' + storeItem.id);
         $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
         $newTabNavigationItem.find('a').text(storeItem.name);
         $newTabNavigationItem.removeClass('hidden');
@@ -306,11 +303,11 @@ $(document).ready(function () {
         $newTabNavigationItem.appendTo($imageNav);
 
         // Copy tab pane
-        var $newTabPane = $('#store_item_' + storeItem.id);
+        $newTabPane = $('#store_item_' + storeItem.id);
         $newTabPane.removeClass('hidden');
         $newTabPane.attr('id', 'store_item_' + storeItem.id);
         $newTabPane.attr('data-item-id', storeItem.id);
-        var $newImage = $newTabPane.find('.store_item_');
+        $newImage = $newTabPane.find('.store_item_');
         $newImage.attr('src', storeItem.imageData);
         $newImage.addClass('store_item_' + storeItem.id);
         $newTabPane.appendTo($tabContent);
@@ -328,7 +325,7 @@ $(document).ready(function () {
             return storeItemI;
         });
 
-        pendingToUpdateStoreItems.push({id: storeItem.id});
+        pendingNewStoreItems.push({id: storeItem.id});
 
     };
 
@@ -407,6 +404,40 @@ $(document).ready(function () {
         remove(storeItemId);
 
     });
+
+    $('.bs-cropping-modal').on('click', '.image-navigation-item', function () {
+        $clickedNavigationItem = $(this);
+
+
+    });
+
+    $('.nav-tabs').on('shown.bs.tab', '[data-toggle="tab"]', function () {
+        processPending();
+    });
+
+
+    var processPending = function () {
+
+        var currentStoreItem = getCurrentStoreItem();
+
+
+        for (var i in pendingNewStoreItems) {
+            var storeItemI = pendingNewStoreItems[i];
+
+            if(currentStoreItem.id === storeItemI.id) {
+                for (var j in store) {
+                    var storeItemJ = store[j];
+
+                    if (storeItemI.id === storeItemJ.id) {
+                        currentStoreItem.cropper = setupCropper(storeItemJ.id);
+                        store[j] = currentStoreItem;
+                        pendingNewStoreItems.splice(i, 1);
+                    }
+                }
+
+            }
+        }
+    };
 
 
     /*

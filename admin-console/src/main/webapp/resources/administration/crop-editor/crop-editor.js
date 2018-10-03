@@ -120,7 +120,9 @@ $(document).ready(function () {
 
 
     $cropEditorModal.on('click', '.btn', function () {
-        switch ($(this).data('method')) {
+        var $btn = $(this);
+
+        switch ($btn.data('method')) {
             case 'crop':
                 document.dispatchEvent(
                     new CustomEvent("cropCreated", {detail: {storeItem: setupNewStoreItem()}})
@@ -130,27 +132,29 @@ $(document).ready(function () {
                 remove(getCurrentStoreItemId());
                 break;
             case 'setDragMode':
-                getCurrentStoreItem().cropper.setDragMode($(this).data('option'));
+                getCurrentStoreItem().cropper.setDragMode($btn.data('option'));
                 break;
             case 'zoom':
-                getCurrentStoreItem().cropper.zoom($(this).data('option'));
+                getCurrentStoreItem().cropper.zoom($btn.data('option'));
                 break;
             case 'scaleX':
-                getCurrentStoreItem().cropper.scaleX($(this).data('option'));
+                var option = $btn.data('option');
+                getCurrentStoreItem().cropper.scaleX(option);
+                $btn.data('option', -1 * option);
                 break;
             case 'scaleY':
-                var option = $(this).data('option');
-                getCurrentStoreItem().cropper.scaleY();
-                $(this).data('option', -option)
+                var option = $btn.data('option');
+                getCurrentStoreItem().cropper.scaleY(option);
+                $btn.data('option', -1 * option);
                 break;
             case 'move':
-                getCurrentStoreItem().cropper.move($(this).data('option'), $(this).data('second-option'));
+                getCurrentStoreItem().cropper.move($btn.data('option'), $btn.data('second-option'));
                 break;
             case 'rotate':
-                getCurrentStoreItem().cropper.rotate($(this).data('option'));
+                getCurrentStoreItem().cropper.rotate($btn.data('option'));
                 break;
             case 'setAspectRatio':
-                getCurrentStoreItem().cropper.setAspectRatio($(this).data('option'));
+                getCurrentStoreItem().cropper.setAspectRatio($btn.data('option'));
                 break;
 
             default:

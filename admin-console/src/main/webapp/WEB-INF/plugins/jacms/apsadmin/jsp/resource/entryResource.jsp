@@ -669,7 +669,7 @@
 
                             </ul>
                             <!-- image navigation item blueprint -->
-                            <li class="active image-navigation-item hidden" id="image-navigation-item-blueprint">
+                            <li class="image-navigation-item hidden" id="image-navigation-item-blueprint">
                                 <a href="#first" data-toggle="tab">Blueprint</a></li>
                             <!-- /image navigation item blueprint -->
                         </div>
@@ -791,6 +791,5 @@
 
 </template>
 
-<s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadAddFields.jsp"/>
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabelI18n.jsp"/>
 

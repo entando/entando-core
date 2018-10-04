@@ -483,34 +483,6 @@
                                         <div class="row flex-container">
                                             <div class="col-md-8">
                                                 <div class="toolbar-container flex-container space-between">
-                                                    <!-- move and crop -->
-                                                    <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">move</span>
-                                                        <button type="button" class="btn btn-primary"
-                                                                data-method="setDragMode" data-option="move"
-                                                                title="Move">
-                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                              data-original-title="cropper.setDragMode(&quot;move&quot;)">
-                                                            <span class="fa fa-arrows"></span>
-                                                        </span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="divider flex-item"></div>
-
-                                                    <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">crop</span>
-                                                        <button type="button" class="btn btn-primary"
-                                                                data-method="setDragMode" data-option="crop"
-                                                                title="Crop">
-                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                              data-original-title="cropper.setDragMode(&quot;crop&quot;)">
-                                                          <span class="fa fa-crop"></span>
-                                                        </span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="divider flex-item"></div>
-
-
                                                     <!-- scale -->
                                                     <div class="btn-group flex-item">
                                                         <span class="btn-group__title">flip</span>

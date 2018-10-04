@@ -425,6 +425,21 @@ $(document).ready(function () {
 
     var DOMCropCreated = function () {
         addFields();
+        DOMToastSuccess();
+    };
+
+    var DOMToastSuccess = function(){
+        var $toast = $('.toast-success-blueprint').clone();
+        $('body').append($toast);
+        $toast.fadeIn();
+        $toast.removeClass('hidden');
+
+        setTimeout(function(){
+            $toast.fadeOut(function(){
+                $toast.remove();
+            });
+        }, 2000)
+
     };
 
 

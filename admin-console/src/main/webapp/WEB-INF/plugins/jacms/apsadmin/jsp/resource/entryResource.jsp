@@ -513,7 +513,7 @@
 
                                                     <!-- scale -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">scale</span>
+                                                        <span class="btn-group__title">flip</span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="scaleX" data-option="-1"
                                                                 title="Flip Horizontal">
@@ -619,7 +619,7 @@
 
                                                     <!-- save and cancel -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title">save</span>
+                                                        <span class="btn-group__title">crop</span>
                                                         <button type="button" class="btn btn-primary" data-method="crop"
                                                                 title="Crop">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -728,6 +728,14 @@
         </table>
     </div>
 </s:if>
+
+<div class="toast-pf alert alert-success alert-dismissable toast-crop-editor-success toast-success-blueprint hidden">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+        <span class="pficon pficon-close"></span>
+    </button>
+    <span class="pficon pficon-ok"></span>
+    New crop created.
+</div>
 
 <template id="hidden-fields-template">
 

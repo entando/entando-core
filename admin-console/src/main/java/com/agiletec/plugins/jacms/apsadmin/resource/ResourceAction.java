@@ -64,7 +64,6 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     private int fieldCount = 0;
     private boolean onEditContent = false;
 
-    
     @Override
     public void validate() {
         if (this.isOnEditContent()) {
@@ -196,7 +195,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     public String save() {
         logger.debug("Save in resource action for id {}", this.getResourceId());
         try {
-            
+
             Map imgMetadata = new HashMap();
             if (null != getFile()) {
                 logger.debug("Read Metadata file is not null");
@@ -218,7 +217,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
             } else {
                 this.setMetadata(imgMetadata);
             }
-                    
+
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                 this.getResourceManager().addResource(this);
             } else if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
@@ -464,7 +463,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     }
 
     @Override
-    public String getResourceType() {        
+    public String getResourceType() {
         return this.getResourceTypeCode();
     }
 
@@ -507,7 +506,11 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     public void setOnEditContent(boolean onEditContent) {
         this.onEditContent = onEditContent;
     }
-    
+
+    public boolean isContentListAttribute() {
+        return false;
+    }
+
     protected Map getImgMetadata(File file) {
         logger.debug("Get image Metadata in Resource Action");
         Map<String, String> meta = new HashMap<>();

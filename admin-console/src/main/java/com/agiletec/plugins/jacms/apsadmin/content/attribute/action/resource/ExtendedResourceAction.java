@@ -58,14 +58,15 @@ public class ExtendedResourceAction extends MultipleResourceAction {
     @Override
     public String save() {
         logger.debug("Save in Extended resource action for id {}", this.getResourceId());
-
+        /*
         Map imgMetadata = new HashMap();
         if (null != getFile()) {
             logger.debug("Read Metadata file is not null");
-            imgMetadata = getImgMetadata(this.getFile());
+            imgMetadata = this.getImgMetadata(this.getFile());
         } else {
             logger.debug("Read Metadata file is null");
         }
+         */
         try {
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                 List<ResourceInterface> saved = this.saveFiles();
@@ -203,8 +204,13 @@ public class ExtendedResourceAction extends MultipleResourceAction {
                 .getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
     }
 
+    @Override
     public boolean isOnEditContent() {
         return true;
+    }
+
+    public boolean isContentListAttribute() {
+        return (null != this.getRequest().getSession().getAttribute(ResourceAttributeActionHelper.LIST_ELEMENT_INDEX_SESSION_PARAM));
     }
 
     public String getContentOnSessionMarker() {

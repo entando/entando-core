@@ -238,9 +238,10 @@
 
     <%-- ADD FILE BUTTON --%>
 
-    <s:if test="not isOnEditContent()">
+    <s:if test="%{!isOnEditContent() || (isOnEditContent() && isContentListAttribute())}">
+        <!-- MULTIPLE UPLOAD -->
+        
         <s:if test="getStrutsAction() == 1 ">
-
             <div class="form-group">
                 <div class="col-sm-5 col-sm-offset-2">
                     <div id="add-resource-button">
@@ -250,7 +251,6 @@
                     </div>
                 </div>
             </div>
-
         </s:if>
 
         <s:iterator begin="0" end="%{fieldCount}" status="ctr">
@@ -362,12 +362,11 @@
 
         <div id="fields-container">
         </div>
-
+        
     </s:if>
-
-
-    <s:if test="isOnEditContent()">
-
+        
+    <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
+        <!-- SINGLE UPLOAD -->
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
                 <%-- descr --%>
             <s:set var="fieldErrorsVar" value="%{fieldErrors['descr']}"/>

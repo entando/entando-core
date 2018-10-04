@@ -441,11 +441,11 @@ public class MultipleResourceAction extends ResourceAction {
         return new FileInputStream(getFile(i));
     }
 
+    @Override
     public int getFieldCount() {
         if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
             return 0;
         }
-
         fieldCount = 0;
         Map<String, String[]> parameterMap = this.getRequest().getParameterMap();
         for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
@@ -453,12 +453,11 @@ public class MultipleResourceAction extends ResourceAction {
                 fieldCount++;
             }
         }
-
         fieldCount = fieldCount - savedId.size();
-
         return fieldCount - 1;
     }
 
+    @Override
     public void setFieldCount(int fieldCount) {
         this.fieldCount = fieldCount;
     }

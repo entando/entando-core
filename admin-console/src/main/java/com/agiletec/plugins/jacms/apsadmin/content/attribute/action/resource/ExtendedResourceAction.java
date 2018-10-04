@@ -13,6 +13,7 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.attribute.action.resource;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +24,15 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
+import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
+import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
-import com.agiletec.plugins.jacms.apsadmin.resource.ResourceAction;
+import com.agiletec.plugins.jacms.apsadmin.resource.MultipleResourceAction;
+import static com.opensymphony.xwork2.Action.INPUT;
+import static com.opensymphony.xwork2.Action.SUCCESS;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,11 +40,11 @@ import java.util.Map;
  * Classe action a servizio della gestione attributi risorsa, estensione della
  * action gestrice delle operazioni sulle risorse. La classe ha il compito di
  * permettere l'aggiunta diretta di una nuova risorsa sia nell'archivio
- * (corrispondente al tipo) che nel contenuto che si stà editando.
+ * (corrispondente al tipo) che nel contenuto che si stÃƒÂ  editando.
  *
  * @author E.Santoboni
  */
-public class ExtendedResourceAction extends ResourceAction {
+public class ExtendedResourceAction extends MultipleResourceAction {
 
     private static final Logger logger = LoggerFactory.getLogger(ExtendedResourceAction.class);
     private String contentOnSessionMarker;
@@ -52,26 +58,105 @@ public class ExtendedResourceAction extends ResourceAction {
     @Override
     public String save() {
         logger.debug("Save in Extended resource action for id {}", this.getResourceId());
-
-        Map imgMetadata = new HashMap();
-        if (null != getFile()) {
-            logger.debug("Read Metadata file is not null");
-            imgMetadata = getImgMetadata(this.getFile());
-        } else {
-            logger.debug("Read Metadata file is null");
-        }
         try {
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
-                this.setMetadata(imgMetadata);
-                ResourceInterface resource = this.getResourceManager().addResource(this);
+                List<ResourceInterface> saved = this.saveFiles();
                 this.buildEntryContentAnchorDest();
-                ResourceAttributeActionHelper.joinResource(resource, this.getRequest());
+                if (saved != null && !saved.isEmpty()) {
+                    if (this.isContentListAttribute()) {
+                        ResourceAttributeActionHelper.joinResources(saved, this.getRequest());
+                    } else {
+                        List<ResourceInterface> single = new ArrayList<>();
+                        single.add(saved.get(saved.size() - 1));
+                        ResourceAttributeActionHelper.joinResources(single, this.getRequest());
+                    }
+                }
             }
+        } catch (ApsSystemException ex) {
+            // TO IMPROVE
+            return INPUT;
         } catch (Throwable t) {
             logger.error("error in save", t);
             return FAILURE;
         }
         return SUCCESS;
+    }
+
+    protected List<ResourceInterface> saveFiles() throws ApsSystemException {
+        List<ResourceInterface> addedResources = new ArrayList<>();
+        logger.debug("Save in multiple resource action for id {}", this.getResourceId());
+        int index = 0;
+        boolean hasError = false;
+        boolean deleteTempFile = false;
+        File file = null;
+        try {
+            this.fetchFileDescriptions();
+            for (String fileDescription : getFileDescriptions()) {
+                BaseResourceDataBean resourceFile = null;
+                if (this.isImageUpload()) {
+                    file = this.createImageTempFile(getBase64Image().get(index), getFileUploadBase64ImageFileName().get(index));
+                    deleteTempFile = true;
+                } else {
+                    file = getFile(index);
+                    deleteTempFile = false;
+                }
+                Map imgMetadata = new HashMap();
+                if (null != file) {
+                    logger.debug("file is not null");
+                    imgMetadata = super.getImgMetadata(file);
+                    resourceFile = new BaseResourceDataBean(file);
+                    if (this.isImageUpload()) {
+                        logger.debug("getFileUploadBase64ImageFileName().get({}): {}", index, getFileUploadBase64ImageFileName().get(index));
+                        logger.debug("getFileUploadBase64ImageContentType().get({}): {}", index, getFileUploadBase64ImageContentType().get(index));
+                        resourceFile.setFileName(getFileUploadBase64ImageFileName().get(index));
+                        resourceFile.setMimeType(getFileUploadBase64ImageContentType().get(index));
+                    } else {
+                        logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
+                        logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
+                        resourceFile.setFileName(getFileUploadFileName().get(index));
+                        resourceFile.setMimeType(getFileUploadContentType().get(index));
+                    }
+                } else {
+                    logger.debug("file is null");
+                    resourceFile = new BaseResourceDataBean();
+                }
+                resourceFile.setDescr(fileDescription);
+                resourceFile.setMainGroup(getMainGroup());
+                resourceFile.setResourceType(this.getResourceType());
+                resourceFile.setCategories(getCategories());
+                logger.debug("Save method, action {}", this.getStrutsAction());
+                resourceFile.setMetadata(imgMetadata);
+                try {
+                    if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
+                        ResourceInterface addedResource = this.getResourceManager().addResource(resourceFile);
+                        String filename = (null != this.getFileUploadFileName() && !this.getFileUploadFileName().isEmpty())
+                                ? this.getFileUploadFileName().get(index) : this.getFileName();
+                        this.addActionMessage(this.getText("message.resource.filename.uploaded",
+                                new String[]{filename}));
+                        addedResources.add(addedResource);
+                    }
+                } catch (ApsSystemException ex) {
+                    hasError = true;
+                    logger.error("error loading file {} ", this.getFileUploadFileName().get(index), ex);
+                    this.addFieldError(String.valueOf(index), this.getText("error.resource.filename.uploadError",
+                            new String[]{this.getFileUploadFileName().get(index)}));
+                }
+                if (deleteTempFile) {
+                    logger.debug("Delete temp file {}", file.getAbsolutePath());
+                    file.delete();
+                    deleteTempFile = false;
+                }
+                index++;
+            }
+        } catch (Throwable t) {
+            logger.error("error in save", t);
+            throw new ApsSystemException("Error validating");
+        }
+        if (hasError) {
+            logger.error("error uploading one or more resources");
+            throw new ApsSystemException("Error validating");
+        }
+        return addedResources;
     }
 
     private void buildEntryContentAnchorDest() {
@@ -82,7 +167,7 @@ public class ExtendedResourceAction extends ResourceAction {
 
     protected List<String> getGroupCodesForSearch() {
         List<Group> groups = this.getAllowedGroups();
-        List<String> codesForSearch = new ArrayList<String>();
+        List<String> codesForSearch = new ArrayList<>();
         for (int i = 0; i < groups.size(); i++) {
             Group group = groups.get(i);
             codesForSearch.add(group.getName());
@@ -113,8 +198,13 @@ public class ExtendedResourceAction extends ResourceAction {
                 .getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
     }
 
+    @Override
     public boolean isOnEditContent() {
         return true;
+    }
+
+    public boolean isContentListAttribute() {
+        return (null != this.getRequest().getSession().getAttribute(ResourceAttributeActionHelper.LIST_ELEMENT_INDEX_SESSION_PARAM));
     }
 
     public String getContentOnSessionMarker() {

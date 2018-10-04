@@ -28,113 +28,121 @@ import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 import com.agiletec.plugins.jacms.apsadmin.resource.ResourceFinderAction;
 
 /**
- * Classe action a servizio della gestione attributi risorsa, 
- * estensione della action gestrice delle operazioni di ricerca risorse.
+ * Classe action a servizio della gestione attributi risorsa, estensione della
+ * action gestrice delle operazioni di ricerca risorse.
+ *
  * @author E.Santoboni
  */
 public class ExtendedResourceFinderAction extends ResourceFinderAction {
-	
-	private static final Logger _logger = LoggerFactory.getLogger(ExtendedResourceFinderAction.class);
-	
-	public String entryFindResource() {
-		this.setCategoryCode(null);
-		return SUCCESS;
-	}
-	
-	@Override
-	public List<String> getResources() throws Throwable {
-		List<String> resourcesId = null;
-		try {
-			List<String> groupCodes = new ArrayList<String>();
-			groupCodes.add(Group.FREE_GROUP_NAME);
-			if (null != this.getContent().getMainGroup()) {
-				groupCodes.add(this.getContent().getMainGroup());
-			}
-			resourcesId = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(), 
-					this.getText(), this.getFileName(), this.getCategoryCode(), groupCodes);
-		} catch (Throwable t) {
-			_logger.error("error in getResources", t);
-			throw t;
-		}
-		return resourcesId;
-	}
-	
-	/**
-	 * Restituisce il contenuto in sessione.
-	 * @return Il contenuto in sessione.
-	 */
-	public Content getContent() {
-		return (Content) this.getRequest().getSession()
-				.getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
-	}
-	
-	/**
-	 * Aggiunge una risorsa ad un Attributo.
-	 * @return SUCCESS se è andato a buon fine, FAILURE in caso contrario
-	 */
-	public String joinResource() {
-		try {
-			String resourceId = this.getResourceId();
-			ResourceInterface resource = this.getResourceManager().loadResource(resourceId);
-			this.buildEntryContentAnchorDest();
-			ResourceAttributeActionHelper.joinResource(resource, this.getRequest());
-		} catch (Throwable t) {
-			_logger.error("error in joinResource", t);
-			return FAILURE;
-		}
-		return SUCCESS;
-	}
 
-	/**
-	 * Restituisce la risorsa per il resourceId in input.
-	 */
-	public ResourceInterface getResource(String resourceId) {
-		try {
-			ResourceInterface resource = this.getResourceManager().loadResource(resourceId);
-			return resource;
-		} catch (Throwable t) {
-			_logger.error("error loading resource", t);
-			throw new RuntimeException("error loading resource "+ resourceId, t);
-		}
-	}
+    private static final Logger _logger = LoggerFactory.getLogger(ExtendedResourceFinderAction.class);
 
-	private void buildEntryContentAnchorDest() {
-		HttpSession session = this.getRequest().getSession();
-		String anchorDest = ResourceAttributeActionHelper.buildEntryContentAnchorDest(session);
-		this.setEntryContentAnchorDest(anchorDest);
-	}
-	
-	public boolean isOnEditContent() {
-		return true;
-	}
-	
-	public String getContentOnSessionMarker() {
-		return _contentOnSessionMarker;
-	}
-	public void setContentOnSessionMarker(String contentOnSessionMarker) {
-		this._contentOnSessionMarker = contentOnSessionMarker;
-	}
-	
-	public String getResourceId() {
-		return _resourceId;
-	}
-	public void setResourceId(String resourceId) {
-		this._resourceId = resourceId;
-	}
-	
-	public String getEntryContentAnchorDest() {
-		if (null == this._entryContentAnchorDest) {
-			this.buildEntryContentAnchorDest();
-		}
-		return _entryContentAnchorDest;
-	}
-	protected void setEntryContentAnchorDest(String entryContentAnchorDest) {
-		this._entryContentAnchorDest = entryContentAnchorDest;
-	}
-	
-	private String _contentOnSessionMarker;
-	
-	private String _resourceId;
-	private String _entryContentAnchorDest;
-	
+    public String entryFindResource() {
+        this.setCategoryCode(null);
+        return SUCCESS;
+    }
+
+    @Override
+    public List<String> getResources() throws Throwable {
+        List<String> resourcesId = null;
+        try {
+            List<String> groupCodes = new ArrayList<String>();
+            groupCodes.add(Group.FREE_GROUP_NAME);
+            if (null != this.getContent().getMainGroup()) {
+                groupCodes.add(this.getContent().getMainGroup());
+            }
+            resourcesId = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(),
+                    this.getText(), this.getFileName(), this.getCategoryCode(), groupCodes);
+        } catch (Throwable t) {
+            _logger.error("error in getResources", t);
+            throw t;
+        }
+        return resourcesId;
+    }
+
+    /**
+     * Restituisce il contenuto in sessione.
+     *
+     * @return Il contenuto in sessione.
+     */
+    public Content getContent() {
+        return (Content) this.getRequest().getSession()
+                .getAttribute(ContentActionConstants.SESSION_PARAM_NAME_CURRENT_CONTENT_PREXIX + this.getContentOnSessionMarker());
+    }
+
+    /**
+     * Aggiunge una risorsa ad un Attributo.
+     *
+     * @return SUCCESS se è andato a buon fine, FAILURE in caso contrario
+     */
+    public String joinResource() {
+        try {
+            String resourceId = this.getResourceId();
+            ResourceInterface resource = this.getResourceManager().loadResource(resourceId);
+            this.buildEntryContentAnchorDest();
+            List<ResourceInterface> resources = new ArrayList<>();
+            resources.add(resource);
+            ResourceAttributeActionHelper.joinResources(resources, this.getRequest());
+        } catch (Throwable t) {
+            _logger.error("error in joinResource", t);
+            return FAILURE;
+        }
+        return SUCCESS;
+    }
+
+    /**
+     * Restituisce la risorsa per il resourceId in input.
+     */
+    public ResourceInterface getResource(String resourceId) {
+        try {
+            ResourceInterface resource = this.getResourceManager().loadResource(resourceId);
+            return resource;
+        } catch (Throwable t) {
+            _logger.error("error loading resource", t);
+            throw new RuntimeException("error loading resource " + resourceId, t);
+        }
+    }
+
+    private void buildEntryContentAnchorDest() {
+        HttpSession session = this.getRequest().getSession();
+        String anchorDest = ResourceAttributeActionHelper.buildEntryContentAnchorDest(session);
+        this.setEntryContentAnchorDest(anchorDest);
+    }
+
+    public boolean isOnEditContent() {
+        return true;
+    }
+
+    public String getContentOnSessionMarker() {
+        return _contentOnSessionMarker;
+    }
+
+    public void setContentOnSessionMarker(String contentOnSessionMarker) {
+        this._contentOnSessionMarker = contentOnSessionMarker;
+    }
+
+    public String getResourceId() {
+        return _resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this._resourceId = resourceId;
+    }
+
+    public String getEntryContentAnchorDest() {
+        if (null == this._entryContentAnchorDest) {
+            this.buildEntryContentAnchorDest();
+        }
+        return _entryContentAnchorDest;
+    }
+
+    protected void setEntryContentAnchorDest(String entryContentAnchorDest) {
+        this._entryContentAnchorDest = entryContentAnchorDest;
+    }
+
+    private String _contentOnSessionMarker;
+
+    private String _resourceId;
+    private String _entryContentAnchorDest;
+
 }

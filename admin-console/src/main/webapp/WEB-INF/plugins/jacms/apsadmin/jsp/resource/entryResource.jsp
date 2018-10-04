@@ -235,191 +235,85 @@
         </div>
     </fieldset>
     <br>
-
-    <%-- ADD FILE BUTTON --%>
-
-    <s:if test="not isOnEditContent()">
-        <s:if test="getStrutsAction() == 1 ">
-
-            <div class="form-group">
-                <div class="col-sm-5 col-sm-offset-2">
-                    <div id="add-resource-button">
-                        <button type="button" id="add-fields"><span class="fa fa-plus-square-o"></span>
-                            <s:text name="label.add-fileinput"/>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-        </s:if>
-
-        <s:iterator begin="0" end="%{fieldCount}" status="ctr">
-
-            <%-- FILE UPLOAD --%>
-
-            <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
-            <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
-            <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
-            <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
-                <label class="col-sm-2 control-label" for="descr">
-                    <s:text name="label.description"/>
-                    <i class="fa fa-asterisk required-icon"></i>
-                </label>
-                <div class="col-sm-4">
-                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}" ><s:set var="descriptionFieldVar" value="%{getFileDescription(#ctr.count - 1)}" /></s:if>
-                <s:else>
-                    <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}" />
-                    <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}" />
-                </s:else>
-                <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}"
-                                    cssClass="form-control file-description"
-                                    value="%{#descriptionFieldVar}"/>
-                    <s:if test="#fieldHasFieldErrorVar">
-                    <span class="help-block text-danger">
-                        <s:iterator value="#fieldErrorsVar">
-                            <s:property/>
-                            &#32;
-                        </s:iterator>
-                    </span>
-                    </s:if>
-                </div>
-
-                <label class="col-sm-1 control-label" for="upload">
-                    <s:text name="label.file"/>
-                    <s:if test="%{resourceTypeCode == 'Image'}">
-                        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
-                           title=""
-                           data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
-                           data-original-title="" style="position: absolute; right: 8px;">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </s:if>
-                    <s:elseif test="%{resourceTypeCode == 'Attach'}">
-                        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
-                           title=""
-                           data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
-                           data-original-title="" style="position: absolute; right: 8px;">
-                            <span class="fa fa-info-circle"></span>
-                        </a>
-                    </s:elseif>
-                </label>
-
-                <div class="col-sm-4">
-                    <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                    <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                             class="btn btn-default" key="label.button-choose-file"/>
-                    <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                            label="label.file"/>
-                    <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
-                    <s:text name="label.no-file-selected"/>
-                </span>
-
-                    <s:if test="#hasFieldErrorVar">
-                    <span class="help-block text-danger">
-                        <s:iterator value="%{#uploadFieldErrorsVar}">
-                            <s:property escapeHtml="false"/>
-                            &#32;
-                        </s:iterator>
-                        <s:iterator value="%{#fileNameFieldErrorsVar}">
-                            <s:property escapeHtml="false"/>
-                            &#32;
-                        </s:iterator>
-                    </span>
-                    </s:if>
-                </div>
-
-                <s:if test="#ctr.count -1 > 0 ">
-                    <button type="button" class="btn-danger delete-fields "
-                            title="<s:text name="label.remove-fileinput" />"
-                    ><span class="fa fa-times white"></span>
+    
+    <s:if test="getStrutsAction() == 1 ">
+        <div class="form-group">
+            <div class="col-sm-5 col-sm-offset-2">
+                <div id="add-resource-button">
+                    <button type="button" id="add-fields"><span class="fa fa-plus-square-o"></span>
+                        <s:text name="label.add-fileinput"/>
                     </button>
-                </s:if>
-
-                <s:if test="%{resourceTypeCode == 'Image'}">
-                    <div class="col-sm-1">
-                        <div class="list-view-pf-actions">
-                            <div class="dropdown pull-right dropdown-kebab-pf">
-                                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown"
-                                        aria-haspopup="true" aria-expanded="true">
-                                    <span class="fa fa-ellipsis-v"></span>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
-                                    <li>
-                                        <a href="#" class="edit-fields">Edit</a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="delete-fields">Delete</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </s:if>
+                </div>
             </div>
-
-
-        </s:iterator>
-
-        <div id="fields-container">
         </div>
-
     </s:if>
 
+    <s:if test="%{!isOnEditContent() || (isOnEditContent() && isContentListAttribute())}">
+        <s:set var="startIterationVar" value="0" />
+    </s:if>
+    <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
+        <s:set var="startIterationVar" value="%{fieldCount}" />
+    </s:if>
 
-    <s:if test="isOnEditContent()">
+    <s:iterator begin="#startIterationVar" end="%{fieldCount}" status="ctr">
 
-        <div class="form-group<s:property value="#controlGroupErrorClass" />">
-                <%-- descr --%>
-            <s:set var="fieldErrorsVar" value="%{fieldErrors['descr']}"/>
-            <s:set var="hasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
-            <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}"/>
+        <%-- FILE UPLOAD --%>
+
+        <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
+        <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
+        <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
+        <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
             <label class="col-sm-2 control-label" for="descr">
                 <s:text name="label.description"/>
                 <i class="fa fa-asterisk required-icon"></i>
             </label>
-            <div class="col-sm-10">
-                <wpsf:textfield name="descr" maxlength="250" id="descr" cssClass="form-control"/>
-                <s:if test="#hasFieldErrorVar">
+            <div class="col-sm-4">
+                <s:if test="%{'' != getFileDescription(#ctr.count - 1)}" ><s:set var="descriptionFieldVar" value="%{getFileDescription(#ctr.count - 1)}" /></s:if>
+            <s:else>
+                <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}" />
+                <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}" />
+            </s:else>
+            <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}"
+                                cssClass="form-control file-description"
+                                value="%{#descriptionFieldVar}"/>
+                <s:if test="#fieldHasFieldErrorVar">
                 <span class="help-block text-danger">
-                    <s:iterator value="%{#fieldErrorsVar}">
-                        <s:property escapeHtml="false"/>
+                    <s:iterator value="#fieldErrorsVar">
+                        <s:property/>
                         &#32;
                     </s:iterator>
                 </span>
                 </s:if>
             </div>
-        </div>
 
-        <%-- upload --%>
-        <s:set var="uploadFieldErrorsVar" value="%{fieldErrors['upload']}"/>
-        <s:set var="fileNameFieldErrorsVar" value="%{fieldErrors['fileName']}"/>
-        <s:set var="hasFieldErrorVar"
-               value="(#uploadFieldErrorsVar != null && !#uploadFieldErrorsVar.isEmpty()) || (#fileNameFieldErrorsVar != null && !#fileNameFieldErrorsVar.isEmpty())"/>
-        <s:set var="controlGroupErrorClass" value="%{#hasFieldErrorVar ? ' has-error' : ''}"/>
-        <div class="form-group<s:property value="#controlGroupErrorClass" />">
-            <label class="col-sm-2 control-label" for="upload">
+            <label class="col-sm-1 control-label" for="upload">
                 <s:text name="label.file"/>
                 <s:if test="%{resourceTypeCode == 'Image'}">
-                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
+                       title=""
                        data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
                        data-original-title="" style="position: absolute; right: 8px;">
                         <span class="fa fa-info-circle"></span>
                     </a>
                 </s:if>
                 <s:elseif test="%{resourceTypeCode == 'Attach'}">
-                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
+                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
+                       title=""
                        data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
                        data-original-title="" style="position: absolute; right: 8px;">
                         <span class="fa fa-info-circle"></span>
                     </a>
                 </s:elseif>
             </label>
-            <div class="col-sm-10">
 
-                <label id="upload_label" for="upload" class="btn btn-default">
-                    <s:text name="label.button-choose-file"/></label>
-                <s:file name="upload" id="upload" cssClass="input-file-button" label="label.file"/>
-                <span id="upload_selected"><s:text name="label.no-file-selected"/>
+            <div class="col-sm-4">
+                <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
+                <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                         class="btn btn-default" key="label.button-choose-file"/>
+                <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
+                        label="label.file"/>
+                <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
+                <s:text name="label.no-file-selected"/>
             </span>
 
                 <s:if test="#hasFieldErrorVar">
@@ -435,10 +329,43 @@
                 </span>
                 </s:if>
             </div>
+
+            <s:if test="#ctr.count -1 > 0 ">
+                <button type="button" class="btn-danger delete-fields "
+                        title="<s:text name="label.remove-fileinput" />"
+                ><span class="fa fa-times white"></span>
+                </button>
+            </s:if>
+
+            <s:if test="%{resourceTypeCode == 'Image'}">
+                <div class="col-sm-1">
+                    <div class="list-view-pf-actions">
+                        <div class="dropdown pull-right dropdown-kebab-pf">
+                            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="true">
+                                <span class="fa fa-ellipsis-v"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
+                                <li>
+                                    <a href="#" class="edit-fields">Edit</a>
+                                </li>
+                                <li>
+                                    <a href="#" class="delete-fields">Delete</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </s:if>
         </div>
 
-    </s:if>
 
+    </s:iterator>
+
+    <div id="fields-container">
+    </div>
+    
+    
     <div class="modal fade bs-cropping-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
         <div class="modal-dialog modal-xlg" role="document">
             <div class="modal-content">
@@ -648,16 +575,11 @@
                     </div>
                 </div>
             </div>
-
-
             <div id="aspect-ratio-values">
                 <wp:info key="systemParam" paramName="aspect_ratio"/>
             </div>
-
-
         </div>
     </div>
-
 
     <script></script>
 
@@ -772,4 +694,3 @@
 </template>
 
 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/fileUploadFieldLabelI18n.jsp"/>
-

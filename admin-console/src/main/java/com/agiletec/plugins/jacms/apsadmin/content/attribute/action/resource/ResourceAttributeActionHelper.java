@@ -71,17 +71,17 @@ public class ResourceAttributeActionHelper {
      * dell'attributo lista o all'elemento dell'attributo Composito (sia
      * semplice che in lista).
      *
-     * @param resource The resource to join
+     * @param resources The resources to join
      * @param request The http request
      */
-    public static void joinResource(ResourceInterface resource, HttpServletRequest request) {
+    public static void joinResources(List<ResourceInterface> resources, HttpServletRequest request) {
         HttpSession session = request.getSession();
         try {
             Content currentContent = ResourceAttributeActionHelper.getContent(request);
             String attributeName = (String) session.getAttribute(ATTRIBUTE_NAME_SESSION_PARAM);
             AttributeInterface attribute = (AttributeInterface) currentContent.getAttribute(attributeName);
             IResourceManager resourceManager = (IResourceManager) ApsWebApplicationUtils.getBean(JacmsSystemConstants.RESOURCE_MANAGER, request);
-            joinResource(attribute, resource, resourceManager.getMetadataMapping(), session);
+            joinResources(attribute, resources, resourceManager.getMetadataMapping(), session);
         } catch (Exception e) {
             logger.error("error in joinResource", e);
             throw new RuntimeException("error in joinResource", e);
@@ -90,40 +90,61 @@ public class ResourceAttributeActionHelper {
     }
 
     /**
-     * Associa la risorsa all'attributo del contenuto o all'elemento
+     * Associa le risorse all'attributo del contenuto o all'elemento
      * dell'attributo lista o all'elemento dell'attributo Composito (sia
      * semplice che in lista).
      */
+    private static void joinResources(AttributeInterface attribute, List<ResourceInterface> resources, Map<String, List<String>> metadataMapping, HttpSession session) {
+        if (attribute instanceof CompositeAttribute) {
+            String includedAttributeName = (String) session.getAttribute(INCLUDED_ELEMENT_NAME_SESSION_PARAM);
+            AttributeInterface includedAttribute = ((CompositeAttribute) attribute).getAttribute(includedAttributeName);
+            joinResource(includedAttribute, resources.get(0), metadataMapping, session);
+        } else if (attribute instanceof ResourceAttributeInterface) {
+            ResourceInterface singleresource = resources.get(0);
+            joinSingleResource(attribute, singleresource, metadataMapping, session);
+        } else if (attribute instanceof MonoListAttribute) {
+            int elementIndex = ((Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM)).intValue();
+            MonoListAttribute monoListAttribute = (MonoListAttribute) attribute;
+            if (null != resources) {
+                for (int i = 0; i < resources.size(); i++) {
+                    ResourceInterface resource = resources.get(i);
+                    AttributeInterface attributeElement = (i == 0) ? monoListAttribute.getAttribute(elementIndex) : monoListAttribute.addAttribute();
+                    joinResource(attributeElement, resource, metadataMapping, session);
+                }
+            }
+        }
+    }
+
     private static void joinResource(AttributeInterface attribute, ResourceInterface resource, Map<String, List<String>> metadataMapping, HttpSession session) {
         if (attribute instanceof CompositeAttribute) {
             String includedAttributeName = (String) session.getAttribute(INCLUDED_ELEMENT_NAME_SESSION_PARAM);
             AttributeInterface includedAttribute = ((CompositeAttribute) attribute).getAttribute(includedAttributeName);
             joinResource(includedAttribute, resource, metadataMapping, session);
         } else if (attribute instanceof ResourceAttributeInterface) {
-            String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
-            ((ResourceAttributeInterface) attribute).setResource(resource, langCode);
-            AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
-            resourceAttribute.setText(resource.getDescription(), langCode);
-            if (null == resource.getMetadata()) {
-                return;
-            }
-            metadataMapping.keySet().stream().forEach(mappingKey -> {
-                List<String> mapping = metadataMapping.get(mappingKey);
-                if (null != mapping) {
-                    String rightKey = mapping.stream()
-                            .filter(key -> !StringUtils.isBlank(resource.getMetadata().get(key))).
-                            findFirst().orElse(null);
-                    if (null != rightKey) {
-                        String value = resource.getMetadata().get(rightKey);
-                        resourceAttribute.setMetadata(mappingKey, langCode, value);
-                    }
-                }
-            });
-        } else if (attribute instanceof MonoListAttribute) {
-            int elementIndex = ((Integer) session.getAttribute(LIST_ELEMENT_INDEX_SESSION_PARAM)).intValue();
-            AttributeInterface attributeElement = ((MonoListAttribute) attribute).getAttribute(elementIndex);
-            joinResource(attributeElement, resource, metadataMapping, session);
+            joinSingleResource(attribute, resource, metadataMapping, session);
         }
+    }
+
+    private static void joinSingleResource(AttributeInterface attribute, ResourceInterface resource, Map<String, List<String>> metadataMapping, HttpSession session) {
+        String langCode = (String) session.getAttribute(RESOURCE_LANG_CODE_SESSION_PARAM);
+        ((ResourceAttributeInterface) attribute).setResource(resource, langCode);
+        AbstractResourceAttribute resourceAttribute = (AbstractResourceAttribute) attribute;
+        resourceAttribute.setText(resource.getDescription(), langCode);
+        if (null == resource.getMetadata()) {
+            return;
+        }
+        metadataMapping.keySet().stream().forEach(mappingKey -> {
+            List<String> mapping = metadataMapping.get(mappingKey);
+            if (null != mapping) {
+                String rightKey = mapping.stream()
+                        .filter(key -> !StringUtils.isBlank(resource.getMetadata().get(key))).
+                        findFirst().orElse(null);
+                if (null != rightKey) {
+                    String value = resource.getMetadata().get(rightKey);
+                    resourceAttribute.setMetadata(mappingKey, langCode, value);
+                }
+            }
+        });
     }
 
     protected static void removeSessionParams(HttpSession session) {

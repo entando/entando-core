@@ -262,7 +262,7 @@ public class MultipleResourceAction extends ResourceAction {
         return false;
     }
 
-    private File createImageTempFile(String imageBase64, String filename) throws IOException {
+    protected File createImageTempFile(String imageBase64, String filename) throws IOException {
         String tempDir = System.getProperty("java.io.tmpdir");
         File file = new File(tempDir + File.separator + filename);
         InputStream inputStream = null;

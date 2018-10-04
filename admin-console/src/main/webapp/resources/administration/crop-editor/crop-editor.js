@@ -18,8 +18,6 @@ $(document).ready(function () {
     var $newImage;
 
 
-
-
     var save = function (storeItem) {
 
         for (var i in store) {
@@ -143,11 +141,11 @@ $(document).ready(function () {
     var getCurrentStoreItem = function () {
         var currentStoreItemId = getCurrentStoreItemId();
 
-        var result  = {};
+        var result = {};
         for (var i in store) {
             var storeItemI = store[i];
             if (parseInt(storeItemI.id) === currentStoreItemId) {
-                result  = storeItemI;
+                result = storeItemI;
             }
 
         }
@@ -350,15 +348,12 @@ $(document).ready(function () {
 
         var storeItemId = $(this).closest('.form-group').find('.file-description').attr('id').split('_')[1];
 
-        var $imageNav = $('.image-navigation');
-        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
+        $imageNav = $('.image-navigation');
+        $tabContent = $('.bs-cropping-modal').find('.tab-content');
 
-        // Remove active states
-        $imageNav.find('.active').removeClass('active');
-        $tabContent.find('.active').removeClass('active');
 
-        $('#store_item_' + storeItemId).addClass('active');
-        $('#image-navigation-item_' + storeItemId).addClass('active');
+        $newTabPane = $('#store_item_' + storeItemId);
+        $newTabNavigationItem = $('#image-navigation-item_' + storeItemId);
 
 
     });
@@ -391,7 +386,7 @@ $(document).ready(function () {
         for (var i in pendingNewStoreItems) {
             var storeItemI = pendingNewStoreItems[i];
 
-            if(currentStoreItem.id === storeItemI.id) {
+            if (currentStoreItem.id === storeItemI.id) {
                 for (var j in store) {
                     var storeItemJ = store[j];
 
@@ -428,14 +423,14 @@ $(document).ready(function () {
         DOMToastSuccess();
     };
 
-    var DOMToastSuccess = function(){
+    var DOMToastSuccess = function () {
         var $toast = $('.toast-success-blueprint').clone();
         $('body').append($toast);
         $toast.fadeIn();
         $toast.removeClass('hidden');
 
-        setTimeout(function(){
-            $toast.fadeOut(function(){
+        setTimeout(function () {
+            $toast.fadeOut(function () {
                 $toast.remove();
             });
         }, 2000)

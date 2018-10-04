@@ -62,7 +62,15 @@ public class ExtendedResourceAction extends MultipleResourceAction {
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                 List<ResourceInterface> saved = this.saveFiles();
                 this.buildEntryContentAnchorDest();
-                ResourceAttributeActionHelper.joinResources(saved, this.getRequest());
+                if (saved != null && !saved.isEmpty()) {
+                    if (this.isContentListAttribute()) {
+                        ResourceAttributeActionHelper.joinResources(saved, this.getRequest());
+                    } else {
+                        List<ResourceInterface> single = new ArrayList<>();
+                        single.add(saved.get(saved.size() - 1));
+                        ResourceAttributeActionHelper.joinResources(single, this.getRequest());
+                    }
+                }
             }
         } catch (ApsSystemException ex) {
             // TO IMPROVE
@@ -121,8 +129,10 @@ public class ExtendedResourceAction extends MultipleResourceAction {
                 try {
                     if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                         ResourceInterface addedResource = this.getResourceManager().addResource(resourceFile);
+                        String filename = (null != this.getFileUploadFileName() && !this.getFileUploadFileName().isEmpty())
+                                ? this.getFileUploadFileName().get(index) : this.getFileName();
                         this.addActionMessage(this.getText("message.resource.filename.uploaded",
-                                new String[]{this.getFileUploadFileName().get(index)}));
+                                new String[]{filename}));
                         addedResources.add(addedResource);
                     }
                 } catch (ApsSystemException ex) {

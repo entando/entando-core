@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.apsadmin.system.BaseAction;
-import com.agiletec.apsadmin.util.ApsRequestParamsUtil;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.apsadmin.content.ContentActionConstants;
 import com.agiletec.plugins.jacms.apsadmin.content.helper.IContentActionHelper;
@@ -52,14 +51,6 @@ public class ResourceAttributeAction extends BaseAction implements IResourceAttr
         return SUCCESS;
     }
 
-    /**
-     * Rimuove da un Attributo la risorsa della lingua data. Necessita del
-     * parametro "joinResource<DEFAULT_SEPARATOR>IDRISORSA" dove
-     * <DEFAULT_SEPARATOR> è il separatore di default definito nella classe
-     * {@link ApsRequestParamsUtil} .
-     *
-     * @return SUCCESS se è andato a buon fine, FAILURE in caso contrario
-     */
     @Override
     public String removeResource() {
         try {

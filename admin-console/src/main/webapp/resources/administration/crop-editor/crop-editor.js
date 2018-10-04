@@ -219,6 +219,7 @@ $(document).ready(function () {
 
         // Copy image navigation item - tab navigation item
         $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
+        $newTabNavigationItem.addClass('image-navigation-item');
         $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
         $newTabNavigationItem.find('a').text(storeItem.name);
         $newTabNavigationItem.removeClass('hidden');
@@ -227,6 +228,7 @@ $(document).ready(function () {
 
         // Copy tab pane
         $newTabPane = $('#tab-pane-blueprint').clone();
+        $newTabPane.addClass('tab-pane');
         $newTabPane.removeClass('hidden');
         $newTabPane.attr('id', 'store_item_' + storeItem.id);
         $newTabPane.attr('data-item-id', storeItem.id);
@@ -295,9 +297,26 @@ $(document).ready(function () {
     };
 
     var removeTab = function (storeItemId) {
-        $('#store_item_' + storeItemId).remove();
-        $('#image-navigation-item_' + storeItemId).remove();
-        $('.image-navigation-item').last().addClass('.active');
+        var $tabPaneToRemove = $('#store_item_' + storeItemId);
+        var $imageNavItemToRemove = $('#image-navigation-item_' + storeItemId);
+
+        var $nextTabPane = $tabPaneToRemove.next();
+        var $nextImageNavItem = $imageNavItemToRemove.next('.image-navigation-item');
+
+        $tabPaneToRemove.remove();
+        $imageNavItemToRemove.remove();
+
+
+        if($nextTabPane.length > 0 && $nextImageNavItem.length > 0) {
+
+            $nextTabPane.addClass('active');
+            $nextImageNavItem.addClass('active');
+        } else {
+            $('.image-navigation-item').last().addClass('active');
+            $('.tab-pane').last().addClass('active');
+        }
+        processPending();
+
     };
 
     var removeField = function (storeItemId) {

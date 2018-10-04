@@ -40,7 +40,7 @@ import java.util.Map;
  * Classe action a servizio della gestione attributi risorsa, estensione della
  * action gestrice delle operazioni sulle risorse. La classe ha il compito di
  * permettere l'aggiunta diretta di una nuova risorsa sia nell'archivio
- * (corrispondente al tipo) che nel contenuto che si stÃ  editando.
+ * (corrispondente al tipo) che nel contenuto che si stÃƒÂ  editando.
  *
  * @author E.Santoboni
  */
@@ -58,27 +58,11 @@ public class ExtendedResourceAction extends MultipleResourceAction {
     @Override
     public String save() {
         logger.debug("Save in Extended resource action for id {}", this.getResourceId());
-        /*
-        Map imgMetadata = new HashMap();
-        if (null != getFile()) {
-            logger.debug("Read Metadata file is not null");
-            imgMetadata = this.getImgMetadata(this.getFile());
-        } else {
-            logger.debug("Read Metadata file is null");
-        }
-         */
         try {
             if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                 List<ResourceInterface> saved = this.saveFiles();
-                System.out.println("------------------------------");
-                System.out.println(saved);
-                System.out.println("------------------------------");
-                /*
-                this.setMetadata(imgMetadata);
-                ResourceInterface resource = this.getResourceManager().addResource(this);
-                 */
                 this.buildEntryContentAnchorDest();
-                ResourceAttributeActionHelper.joinResource(saved.get(0), this.getRequest());
+                ResourceAttributeActionHelper.joinResources(saved, this.getRequest());
             }
         } catch (ApsSystemException ex) {
             // TO IMPROVE

@@ -6,7 +6,7 @@
 	
     <field name="metadataKey">
 		<field-validator type="stringlength" short-circuit="true">
-			<param name="minLength">4</param>
+			<param name="minLength">3</param>
 			<param name="maxLength">20</param>
 			<param name="trim">true</param>
            <message key="contentSettings.stringlength" />

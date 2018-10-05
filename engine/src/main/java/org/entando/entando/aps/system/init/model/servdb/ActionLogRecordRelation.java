@@ -32,7 +32,8 @@ public class ActionLogRecordRelation implements ExtendedColumnDefinition {
     @DatabaseField(columnName = "id",
             dataType = DataType.INTEGER,
             canBeNull = false,
-            generatedId = true)
+            generatedId = true,
+            allowGeneratedIdInsert = true)
     private int _id;
 
     @DatabaseField(foreign = true, columnName = "recordid",

@@ -16,8 +16,6 @@ package org.entando.entando.aps.system.init.util;
 import java.util.List;
 
 import com.j256.ormlite.db.OracleDatabaseType;
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.DatabaseFieldConfig;
 import com.j256.ormlite.field.FieldType;
 
 /**
@@ -39,13 +37,14 @@ public class ApsOracleDatabaseType extends OracleDatabaseType {
 	}
 	
 	@Override
-	protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+	protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
 		sb.append("CLOB");
 	}
 	
-	@Override
-	protected void appendDateType(StringBuilder sb, int fieldWidth) {
-		sb.append("TIMESTAMP(2)");
-	}
+//	@Override
+//	protected void appendDateType(StringBuilder sb, int fieldWidth) {
+//		sb.append("TIMESTAMP(2)");
+//	}
+
 
 }

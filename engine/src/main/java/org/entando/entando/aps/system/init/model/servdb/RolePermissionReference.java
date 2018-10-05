@@ -32,7 +32,8 @@ public class RolePermissionReference implements ExtendedColumnDefinition {
     @DatabaseField(columnName = "id",
             dataType = DataType.INTEGER,
             canBeNull = false,
-            generatedId = true)
+            generatedId = true,
+            allowGeneratedIdInsert = true)
     private int _id;
 
     @DatabaseField(columnName = "rolename",

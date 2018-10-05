@@ -578,7 +578,7 @@
 
                                 </ul>
                                 <!-- image navigation item blueprint -->
-                                <li class="image-navigation-item hidden" id="image-navigation-item-blueprint">
+                                <li class="image-navigation-item__ hidden" id="image-navigation-item-blueprint">
                                     <a href="#first" data-toggle="tab">Blueprint</a></li>
                                 <!-- /image navigation item blueprint -->
                             </div>

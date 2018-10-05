@@ -21,10 +21,8 @@ $(document).ready(function () {
 
 
         var save = function (storeItem) {
-
             for (var i in store) {
                 if (store[i].id === storeItem.id) {
-
                     // Replace storeItem with updated one.
                     store[i] = storeItem;
                     DOMStoreItemUpdated(storeItem);
@@ -181,7 +179,7 @@ $(document).ready(function () {
 
 
         var setupNewStoreItem = function (name) {
-            var newId = store.length;
+            var newId = generateNewStoreItemId();
             var currentStoreItem = getCurrentStoreItem();
 
 
@@ -204,6 +202,20 @@ $(document).ready(function () {
             };
 
 
+        };
+
+        var generateNewStoreItemId = function () {
+            var highestIdInStore = 0;
+            for (var i in store) {
+                var currentStoreItemId = parseInt(store[i].id);
+                if (currentStoreItemId > highestIdInStore) {
+                    highestIdInStore = currentStoreItemId;
+                }
+            }
+
+            highestIdInStore++;
+
+            return highestIdInStore;
         };
 
 
@@ -359,7 +371,7 @@ $(document).ready(function () {
 
             $('#fields-container').append(template);
 
-            var newId = parseInt(numItems);
+            var newId = generateNewStoreItemId();
 
             $('#newDescr').attr("name", "descr_" + newId);
             $('#newDescr').attr("id", "descr_" + newId);

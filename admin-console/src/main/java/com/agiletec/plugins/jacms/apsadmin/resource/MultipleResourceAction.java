@@ -103,8 +103,8 @@ public class MultipleResourceAction extends ResourceAction {
             validateFileDescriptions();
             if (null != this.getResourceType()) {
                 ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                this.getBase64Image().forEach(image
-                        -> checkImageFileType(resourcePrototype, image));
+                this.getFileUploadBase64ImageFileName().forEach(imageFileName
+                        -> checkRightFileType(resourcePrototype, imageFileName));
             } else {
                 this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.genericError"));
                 logger.error("Add error -> genericError");
@@ -195,64 +195,6 @@ public class MultipleResourceAction extends ResourceAction {
         logger.debug("RemoveCategory in multiple resource action for id {}", this.getResourceId());
         fetchFileDescriptions();
         return super.removeCategory();
-    }
-
-    protected void checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
-        boolean isRight = false;
-        if (fileName.length() > 0) {
-            String docType = fileName.substring(fileName.lastIndexOf('.') + 1).trim();
-            String[] types = resourcePrototype.getAllowedFileTypes();
-            isRight = isValidType(docType, types);
-        } else {
-            isRight = true;
-            logger.debug("checkRightFileType -> file format allowed");
-        }
-        if (!isRight) {
-            this.addFieldError("upload", this.getText("error.resource.file.wrongFormat"));
-            logger.debug("Add error -> image wrongFormat");
-        }
-    }
-
-    protected void checkImageFileType(ResourceInterface resourcePrototype, String imageBase64) {
-        logger.debug("checkImageFileType");
-        boolean isRight = false;
-        if (imageBase64.length() > 0) {
-            String partSeparator = ",";
-            if (imageBase64.contains(partSeparator)) {
-                String imgBase64FileType = imageBase64.split(partSeparator)[0];
-                logger.debug("Split string image: File Format {}", imageBase64.split(partSeparator)[0]);
-                String imgType = imgBase64FileType.substring(imgBase64FileType.lastIndexOf("/") + 1, imgBase64FileType.indexOf("base64") - 1).trim();
-                logger.debug("imgType {}", imgType);
-                String[] types = resourcePrototype.getAllowedFileTypes();
-                isRight = isValidType(imgType, types);
-            } else {
-                isRight = false;
-                logger.debug("Add error -> file wrongFormat");
-            }
-        } else {
-            isRight = true;
-            logger.debug("checkImageFileType -> file format allowed");
-        }
-        if (!isRight) {
-            this.addFieldError("upload", this.getText("error.resource.file.wrongFormat"));
-            logger.debug("Add error -> file wrongFormat");
-        }
-    }
-
-    @Override
-    protected boolean isValidType(String docType, String[] rightTypes) {
-        boolean isValid = false;
-        if (rightTypes.length > 0) {
-            for (int i = 0; i < rightTypes.length; i++) {
-                if (docType.toLowerCase().equals(rightTypes[i])) {
-                    isValid = true;
-                    break;
-                }
-            }
-        } else {
-            isValid = true;
-        }
-        return isValid;
     }
 
     public boolean isImageUpload() {

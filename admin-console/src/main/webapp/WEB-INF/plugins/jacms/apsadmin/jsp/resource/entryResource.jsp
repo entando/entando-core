@@ -600,7 +600,7 @@
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
                 <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
-                    Done
+                    <s:text name="cropEditor.label.done"/>
                 </button>
             </div>
         </div>
@@ -641,7 +641,7 @@
         <span class="pficon pficon-close"></span>
     </button>
     <span class="pficon pficon-ok"></span>
-    <span class="toast-message">New crop created. </span>
+    <span class="toast-message"><s:text name="cropEditor.label.cropCreated"/> </span>
 </div>
 
 <s:if test="%{isOnEditContent() && !isContentListAttribute()}">

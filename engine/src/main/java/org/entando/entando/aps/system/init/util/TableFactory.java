@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init.util;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class TableFactory {
 			if (connectionSource != null) {
 				try {
 					connectionSource.close();
-				} catch (SQLException ex) {}
+				} catch (IOException ex) {}
 			}
 		}
 	}
@@ -80,7 +81,7 @@ public class TableFactory {
 			if (connectionSource != null) {
 				try {
 					connectionSource.close();
-				} catch (SQLException ex) {}
+				} catch (IOException ex) {}
 			}
 		}
 	}

@@ -354,7 +354,7 @@ $(document).ready(function () {
 
 
         var addFields = function () {
-            var numItems = $('.file-description').length;
+            var numItems = $('#save').find('.file-description').length;
             var template = $('#hidden-fields-template').html();
 
             $('#fields-container').append(template);

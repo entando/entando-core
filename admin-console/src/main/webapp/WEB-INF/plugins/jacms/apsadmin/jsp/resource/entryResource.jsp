@@ -371,11 +371,11 @@
     <div class="modal-dialog modal-xlg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    Close
+                <button type="button" class="close" data-dismiss="modal" aria-label="<s:text name="cropEditor.button.close"/>">
+                    <s:text name="cropEditor.button.close"/>
                     <span class="fa fa-times"></span>
                 </button>
-                <h4 class="modal-title">Edit Image <span class="image-name"></span></h4>
+                <h4 class="modal-title"><s:text name="cropEditor.label.editImage"/> <span class="image-name"></span></h4>
             </div>
             <div class="container-fluid no-padding">
                 <div class="row">
@@ -418,7 +418,7 @@
                                             <div class="toolbar-container flex-container space-between">
                                                 <!-- scale -->
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">flip</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.flip"/></span>
                                                     <button type="button" class="btn btn-primary"
                                                             data-method="scaleX" data-option="-1"
                                                             title="Flip Horizontal">
@@ -441,7 +441,7 @@
 
                                                 <!-- move -->
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">move</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.move"/> </span>
                                                     <button type="button" class="btn btn-primary" data-method="move"
                                                             data-option="-10" data-second-option="0"
                                                             title="Move Left">
@@ -480,7 +480,7 @@
 
                                                 <!-- rotate -->
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">rotate</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.rotate"/></span>
                                                     <button type="button" class="btn btn-primary"
                                                             data-method="rotate"
                                                             data-option="-45" title="Rotate Left">
@@ -503,7 +503,7 @@
 
                                                 <!-- zoom -->
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">zoom</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.zoom"/></span>
                                                     <button type="button" class="btn btn-primary" data-method="zoom"
                                                             data-option="0.1" title="Zoom In">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -524,9 +524,9 @@
 
                                                 <!-- save and cancel -->
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">crop</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.crop"/></span>
                                                     <button type="button" class="btn btn-primary" data-method="crop"
-                                                            title="Crop">
+                                                            title="<s:text name="cropEditor.label.crop"/>">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.crop()">
                                                       <span class="fa fa-check"></span>
@@ -536,7 +536,7 @@
                                                 <div class="divider flex-item"></div>
 
                                                 <div class="btn-group flex-item">
-                                                    <span class="btn-group__title">cancel</span>
+                                                    <span class="btn-group__title"><s:text name="cropEditor.label.cancel"/></span>
                                                     <button type="button" class="btn btn-primary"
                                                             data-method="remove"
                                                             title="Remove">
@@ -556,7 +556,7 @@
                                                         <input type="radio" class="sr-only" id="aspectRatio5"
                                                                name="aspectRatio" value="NaN">
                                                         <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                              data-original-title="aspectRatio: NaN">Free</span>
+                                                              data-original-title="aspectRatio: NaN"><s:text name="cropEditor.label.free"/></span>
                                                     </label>
                                                 </div>
                                             </div>
@@ -574,11 +574,11 @@
                             <div class="col-md-4">
                                 <!-- Nav tabs -->
                                 <ul class="nav nav-tabs tabs-left image-navigation">
-                                    <li>List of images</li>
+                                    <li><s:text name="cropEditor.label.listOfImages"/></li>
 
                                 </ul>
                                 <!-- image navigation item blueprint -->
-                                <li class="image-navigation-item hidden" id="image-navigation-item-blueprint">
+                                <li class="image-navigation-item__ hidden" id="image-navigation-item-blueprint">
                                     <a href="#first" data-toggle="tab">Blueprint</a></li>
                                 <!-- /image navigation item blueprint -->
                             </div>
@@ -600,7 +600,7 @@
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
                 <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
-                    Done
+                    <s:text name="cropEditor.label.done"/>
                 </button>
             </div>
         </div>
@@ -641,7 +641,7 @@
         <span class="pficon pficon-close"></span>
     </button>
     <span class="pficon pficon-ok"></span>
-    <span class="toast-message">New crop created. </span>
+    <span class="toast-message"><s:text name="cropEditor.label.cropCreated"/> </span>
 </div>
 
 <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
@@ -700,10 +700,10 @@
                         </button>
                         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
                             <li>
-                                <a href="#" class="edit-fields">Edit</a>
+                                <a href="#" class="edit-fields"><s:text name="cropEditor.label.edit"/></a>
                             </li>
                             <li>
-                                <a href="#" class="delete-fields">Delete</a>
+                                <a href="#" class="delete-fields"><s:text name="cropEditor.label.delete"/></a>
                             </li>
                         </ul>
                     </div>

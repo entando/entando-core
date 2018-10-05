@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    if($('.image_cropper_enabled').length === 1) {
+    if ($('.image_cropper_enabled').length === 1) {
 
         // Global configuration for crop editor.
         var store = [];
@@ -21,10 +21,8 @@ $(document).ready(function () {
 
 
         var save = function (storeItem) {
-
             for (var i in store) {
                 if (store[i].id === storeItem.id) {
-
                     // Replace storeItem with updated one.
                     store[i] = storeItem;
                     DOMStoreItemUpdated(storeItem);
@@ -181,7 +179,7 @@ $(document).ready(function () {
 
 
         var setupNewStoreItem = function (name) {
-            var newId = store.length;
+            var newId = generateNewStoreItemId();
             var currentStoreItem = getCurrentStoreItem();
 
 
@@ -206,18 +204,41 @@ $(document).ready(function () {
 
         };
 
+        var generateNewStoreItemId = function () {
+            var highestIdInStore = 0;
+            for (var i in store) {
+                var currentStoreItemId = parseInt(store[i].id);
+                if (currentStoreItemId > highestIdInStore) {
+                    highestIdInStore = currentStoreItemId;
+                }
+            }
+
+            highestIdInStore++;
+
+            return highestIdInStore;
+        };
+
 
         var remove = function (storeItemId) {
 
             for (var i in store) {
                 if (store[i].id == storeItemId) {
-                    store[i].cropper.destroy();
+                    if (store[i].hasOwnProperty('cropper')) {
+                        store[i].cropper.destroy();
+                    }
+
                     // Remove storeItem from store.
                     store.splice(i, 1);
 
                     removeTab(storeItemId);
                     removeField(storeItemId);
                     removeHiddenFields(storeItemId);
+                }
+            }
+
+            for (var j in pendingNewStoreItems) {
+                if (store[j].id == storeItemId) {
+                    pendingNewStoreItems.splice(j, 1);
                 }
             }
         };
@@ -345,12 +366,12 @@ $(document).ready(function () {
 
 
         var addFields = function () {
-            var numItems = $('.file-description').length;
+            var numItems = $('#save').find('.file-description').length;
             var template = $('#hidden-fields-template').html();
 
             $('#fields-container').append(template);
 
-            var newId = parseInt(numItems);
+            var newId = generateNewStoreItemId();
 
             $('#newDescr').attr("name", "descr_" + newId);
             $('#newDescr').attr("id", "descr_" + newId);

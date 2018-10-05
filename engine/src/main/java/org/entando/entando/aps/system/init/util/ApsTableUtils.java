@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init.util;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +75,7 @@ public class ApsTableUtils {
 	 * @param dataClass The class for which a table will be created.
 	 * @return The number of statements executed to do so.
 	 */
-	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException {
+	public static <T> int createTable(ConnectionSource connectionSource, Class<T> dataClass) throws SQLException, IOException {
 		return createTable(connectionSource, dataClass, false);
 	}
 	
@@ -86,12 +87,12 @@ public class ApsTableUtils {
 	 * @throws SQLException in case of error
 	 */
 	public static <T> int createTableIfNotExists(ConnectionSource connectionSource, Class<T> dataClass)
-			throws SQLException {
+			throws SQLException, IOException {
 		return createTable(connectionSource, dataClass, true);
 	}
 	
 	private static <T, ID> int createTable(ConnectionSource connectionSource, Class<T> dataClass, boolean ifNotExists)
-			throws SQLException {
+			throws SQLException, IOException {
 		Dao<T, ID> dao = DaoManager.createDao(connectionSource, dataClass);
 		if (dao instanceof BaseDaoImpl<?, ?>) {
 			return doCreateTable(connectionSource, ((BaseDaoImpl<?, ?>) dao).getTableInfo(), ifNotExists);
@@ -237,16 +238,15 @@ public class ApsTableUtils {
 	}
 	
 	private static <T, ID> int doCreateTable(ConnectionSource connectionSource, TableInfo<T, ID> tableInfo,
-			boolean ifNotExists) throws SQLException {
+			boolean ifNotExists) throws SQLException, IOException {
 		DatabaseType databaseType = connectionSource.getDatabaseType();
 		logger.debug("creating table '{}'", tableInfo.getTableName());
 		List<String> statements = new ArrayList<String>();
 		List<String> queriesAfter = new ArrayList<String>();
 		addCreateTableStatements(databaseType, tableInfo, statements, queriesAfter, ifNotExists);
-		DatabaseConnection connection = connectionSource.getReadWriteConnection();
+		DatabaseConnection connection = connectionSource.getReadWriteConnection(tableInfo.getTableName());
 		try {
-			int stmtC =
-					doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsNegative(),
+			int stmtC =	doStatements(connection, "create", statements, false, databaseType.isCreateTableReturnsNegative(),
 							databaseType.isCreateTableReturnsZero());
 			stmtC += doCreateTestQueries(connection, databaseType, queriesAfter);
 			return stmtC;
@@ -256,13 +256,14 @@ public class ApsTableUtils {
 	}
 
 	private static int doStatements(DatabaseConnection connection, String label, Collection<String> statements,
-			boolean ignoreErrors, boolean returnsNegative, boolean expectingZero) throws SQLException {
+			boolean ignoreErrors, boolean returnsNegative, boolean expectingZero) throws SQLException, IOException {
 		int stmtC = 0;
 		for (String statement : statements) {
 			int rowC = 0;
 			CompiledStatement compiledStmt = null;
 			try {
-				compiledStmt = connection.compileStatement(statement, StatementBuilder.StatementType.EXECUTE, noFieldTypes);
+				compiledStmt = connection.compileStatement(statement, StatementBuilder.StatementType.EXECUTE, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 				rowC = compiledStmt.runExecute();
 				logger.debug("executed {} table statement changed {} rows: {}", label, rowC, statement);
 			} catch (SQLException e) {
@@ -291,13 +292,14 @@ public class ApsTableUtils {
 	}
 
 	private static int doCreateTestQueries(DatabaseConnection connection, DatabaseType databaseType,
-			List<String> queriesAfter) throws SQLException {
+			List<String> queriesAfter) throws SQLException, IOException {
 		int stmtC = 0;
 		// now execute any test queries which test the newly created table
 		for (String query : queriesAfter) {
 			CompiledStatement compiledStmt = null;
 			try {
-				compiledStmt = connection.compileStatement(query, StatementBuilder.StatementType.SELECT, noFieldTypes);
+				compiledStmt = connection.compileStatement(query, StatementBuilder.StatementType.SELECT, noFieldTypes,
+						DatabaseConnection.DEFAULT_RESULT_FLAGS, false);
 				// we don't care about an object cache here
 				DatabaseResults results = compiledStmt.runQuery(null);
 				int rowC = 0;

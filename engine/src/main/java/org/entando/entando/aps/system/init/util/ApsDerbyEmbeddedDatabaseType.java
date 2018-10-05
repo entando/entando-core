@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.init.util;
 
 import com.j256.ormlite.db.DerbyEmbeddedDatabaseType;
+import com.j256.ormlite.field.FieldType;
 
 /**
  * @author E.Santoboni
@@ -26,12 +27,12 @@ public class ApsDerbyEmbeddedDatabaseType extends DerbyEmbeddedDatabaseType {
     }
 
     @Override
-    protected void appendCharType(StringBuilder sb, int fieldWidth) {
+    protected void appendCharType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
         sb.append("VARCHAR(1)");
     }
 
     @Override
-    protected void appendLongStringType(StringBuilder sb, int fieldWidth) {
+    protected void appendLongStringType(StringBuilder sb, FieldType fieldType, int fieldWidth) {
         sb.append("CLOB");
     }
 }

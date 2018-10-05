@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    if($('.image_cropper_enabled').length === 1) {
+    if ($('.image_cropper_enabled').length === 1) {
 
         // Global configuration for crop editor.
         var store = [];
@@ -211,13 +211,22 @@ $(document).ready(function () {
 
             for (var i in store) {
                 if (store[i].id == storeItemId) {
-                    store[i].cropper.destroy();
+                    if (store[i].hasOwnProperty('cropper')) {
+                        store[i].cropper.destroy();
+                    }
+
                     // Remove storeItem from store.
                     store.splice(i, 1);
 
                     removeTab(storeItemId);
                     removeField(storeItemId);
                     removeHiddenFields(storeItemId);
+                }
+            }
+
+            for (var j in pendingNewStoreItems) {
+                if (store[j].id == storeItemId) {
+                    pendingNewStoreItems.splice(j, 1);
                 }
             }
         };

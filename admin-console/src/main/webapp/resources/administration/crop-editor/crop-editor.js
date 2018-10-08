@@ -238,7 +238,7 @@ $(document).ready(function () {
             }
 
             for (var j in pendingNewStoreItems) {
-                if (store[j].id == storeItemId) {
+                if (pendingNewStoreItems[j].id == storeItemId) {
                     pendingNewStoreItems.splice(j, 1);
                 }
             }

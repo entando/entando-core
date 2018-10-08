@@ -98,6 +98,8 @@ $(document).ready(function () {
                         if (currentStoreItem) {
                             imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
                             currentStoreItem.cropper.replace(imageData);
+                            currentStoreItem.imageData = imageData;
+                            save(currentStoreItem);
                         }
 
                         DOMToastSuccess("Image cropped!");
@@ -500,15 +502,17 @@ $(document).ready(function () {
 
         var DOMStoreItemUpdated = function (storeItem) {
 
-            // Perform DOM manipulations.
-            updateTab(storeItem);
+            if ($('.singleImageUpload').length !== 1) {
+                // Perform DOM manipulations.
+                updateTab(storeItem);
+            }
+
 
             $('#descr_' + storeItem.id).val(storeItem.name);
             $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-            $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
-            $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">');
-            $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
-
+            $('#bas64_image_' + storeItem.id ).val(storeItem.imageData);
+            $('#file_upload_content_type_' + storeItem.id ).val(storeItem.type);
+            $('#file_upload_name_' + storeItem.id ).val(storeItem.name);
         };
 
         var DOMsetupAspectRatioToolbar = function () {

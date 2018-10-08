@@ -93,9 +93,12 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
     }
 
     protected void checkRightFileType(ResourceInterface resourcePrototype) {
+        this.checkRightFileType(resourcePrototype, this.getFileName());
+    }
+
+    protected void checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
         boolean isRight = false;
-        if (this.getFileName().length() > 0) {
-            String fileName = this.getFileName();
+        if (fileName.length() > 0) {
             String docType = fileName.substring(fileName.lastIndexOf('.') + 1).trim();
             String[] types = resourcePrototype.getAllowedFileTypes();
             isRight = this.isValidType(docType, types);
@@ -103,7 +106,7 @@ public class ResourceAction extends AbstractResourceAction implements ResourceDa
             isRight = true;
         }
         if (!isRight) {
-            this.addFieldError("upload", this.getText("error.resource.file.wrongFormat"));
+            this.addFieldError("upload", this.getText("error.resource.file.wrongFormat", new String[]{fileName}));
         }
     }
 

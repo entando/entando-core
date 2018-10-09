@@ -9,10 +9,10 @@
 <s:else>
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
+<s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
+<s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />
 <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer">
-        <s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
-        <s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />
         <s:if test="#pageCodeTokenCheckVar">
             <s:set var="openTreeActionName" value="'openCloseTreeResultNode'" /><s:set var="closeTreeActionName" value="'openCloseTreeResultNode'" />
         </s:if>
@@ -148,7 +148,9 @@
 
 <s:if test="#currentRoot.children.length > 0">
     <s:iterator value="#currentRoot.children" var="node">
-        <s:set var="currentRoot" value="#node" />
-        <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
+        <s:if test="%{!#pageCodeTokenCheckVar || isToIncludeInTreeResult(#node.code, false)}">
+            <s:set var="currentRoot" value="#node" />
+            <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
+        </s:if>
     </s:iterator>
 </s:if>

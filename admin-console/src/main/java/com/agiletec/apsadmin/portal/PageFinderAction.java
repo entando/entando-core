@@ -130,7 +130,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
     }
 
     private List<String> getAllowedGroupCodes() {
-        List<String> allowedGroups = new ArrayList<String>();
+        List<String> allowedGroups = new ArrayList<>();
         UserDetails currentUser = this.getCurrentUser();
         List<Group> userGroups = this.getAuthorizationManager().getUserGroups(currentUser);
         Iterator<Group> iter = userGroups.iterator();
@@ -217,25 +217,45 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
     }
 
     private void addTreeWrapper(PageTreeNodeWrapper parent, IPage currentNode) {
-        boolean isOnline = currentNode.isOnline();
+        boolean isOnline = currentNode.isOnlineInstance();
         String[] children = currentNode.getChildrenCodes();
         if (null == children) {
             return;
         }
-        for (int i = 0; i < children.length; i++) {
-            IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), isOnline, children[i]);
+        for (String child : children) {
+            IPage newCurrentNode = PageUtils.getPage(this.getPageManager(), isOnline, child);
             if (null == newCurrentNode) {
                 continue;
             }
             PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
-            if (this.getResultCodes().contains(newCurrentNode.getCode())) {
+            if (this.getResultCodes().contains(newCurrentNode.getCode()) || this.isToIncludeInTreeResult(newCurrentNode)) {
                 parent.addChildCode(newNode.getCode());
                 parent.addChild(newNode);
+                newNode.setParent(parent);
                 this.addTreeWrapper(newNode, newCurrentNode);
-            } else {
-                this.addTreeWrapper(parent, newCurrentNode);
             }
         }
+    }
+
+    public boolean isToIncludeInTreeResult(String pageCodeToAnalize, boolean isOnline) {
+        IPage pageToAnalize = (isOnline) ? this.getPageManager().getOnlinePage(pageCodeToAnalize) : this.getPageManager().getDraftPage(pageCodeToAnalize);
+        return this.isToIncludeInTreeResult(pageToAnalize);
+    }
+
+    private boolean isToIncludeInTreeResult(IPage pageToAnalize) {
+        if (null == this.getResultCodes()) {
+            return false;
+        }
+        for (String code : this.getResultCodes()) {
+            IPage resultPage = (pageToAnalize.isOnlineInstance()) ? this.getPageManager().getOnlinePage(code) : this.getPageManager().getDraftPage(code);
+            if (null == resultPage) {
+                continue;
+            }
+            if (resultPage.isChildOf(pageToAnalize.getCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected Collection<String> getResultCodes() {

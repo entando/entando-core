@@ -255,69 +255,70 @@
         <s:set var="startIterationVar" value="%{fieldCount}"/>
     </s:if>
 
-    <s:iterator begin="#startIterationVar" end="%{fieldCount}" status="ctr">
+    <div id="fields-container">
+        <s:iterator begin="#startIterationVar" end="%{fieldCount}" status="ctr">
 
-        <%-- FILE UPLOAD --%>
+            <%-- FILE UPLOAD --%>
 
-        <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
-        <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
-        <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
-        <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
-            <label class="col-sm-2 control-label" for="descr">
-                <s:text name="label.description"/>
-                <i class="fa fa-asterisk required-icon"></i>
-            </label>
-            <div class="col-sm-4">
-                <s:if test="%{'' != getFileDescription(#ctr.count - 1)}"><s:set var="descriptionFieldVar"
-                                                                                value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
-                <s:else>
-                    <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}"/>
-                    <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}"/>
-                </s:else>
-                <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}"
-                                cssClass="form-control file-description"
-                                value="%{#descriptionFieldVar}"/>
-                <s:if test="#fieldHasFieldErrorVar">
+            <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
+            <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
+            <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
+            <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
+                <label class="col-sm-2 control-label" for="descr">
+                    <s:text name="label.description"/>
+                    <i class="fa fa-asterisk required-icon"></i>
+                </label>
+                <div class="col-sm-4">
+                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}"><s:set var="descriptionFieldVar"
+                                                                                    value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}"/>
+                        <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}"/>
+                    </s:else>
+                    <wpsf:textfield name="descr_%{#ctr.count - 1}" maxlength="250" id="descr_%{#ctr.count - 1}"
+                                    cssClass="form-control file-description"
+                                    value="%{#descriptionFieldVar}"/>
+                    <s:if test="#fieldHasFieldErrorVar">
                 <span class="help-block text-danger">
                     <s:iterator value="#fieldErrorsVar">
                         <s:property/>
                         &#32;
                     </s:iterator>
                 </span>
-                </s:if>
-            </div>
+                    </s:if>
+                </div>
 
-            <label class="col-sm-1 control-label" for="upload">
-                <s:text name="label.file"/>
-                <s:if test="%{resourceTypeCode == 'Image'}">
-                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
-                       title=""
-                       data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
-                       data-original-title="" style="position: absolute; right: 8px;">
-                        <span class="fa fa-info-circle"></span>
-                    </a>
-                </s:if>
-                <s:elseif test="%{resourceTypeCode == 'Attach'}">
-                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
-                       title=""
-                       data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
-                       data-original-title="" style="position: absolute; right: 8px;">
-                        <span class="fa fa-info-circle"></span>
-                    </a>
-                </s:elseif>
-            </label>
+                <label class="col-sm-1 control-label" for="upload">
+                    <s:text name="label.file"/>
+                    <s:if test="%{resourceTypeCode == 'Image'}">
+                        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
+                           title=""
+                           data-placement="top" data-content="<s:text name="title.resourceManagement.help" />"
+                           data-original-title="" style="position: absolute; right: 8px;">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </s:if>
+                    <s:elseif test="%{resourceTypeCode == 'Attach'}">
+                        <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true"
+                           title=""
+                           data-placement="bottom" data-content="<s:text name="title.resourceAttach.help" />"
+                           data-original-title="" style="position: absolute; right: 8px;">
+                            <span class="fa fa-info-circle"></span>
+                        </a>
+                    </s:elseif>
+                </label>
 
-            <div class="col-sm-4">
-                <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                         class="btn btn-default" key="label.button-choose-file"/>
-                <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                        label="label.file"/>
-                <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
+                <div class="col-sm-4">
+                    <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
+                    <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                             class="btn btn-default" key="label.button-choose-file"/>
+                    <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
+                            label="label.file"/>
+                    <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
                 <s:text name="label.no-file-selected"/>
             </span>
 
-                <s:if test="#hasFieldErrorVar">
+                    <s:if test="#hasFieldErrorVar">
                 <span class="help-block text-danger">
                     <s:iterator value="%{#uploadFieldErrorsVar}">
                         <s:property escapeHtml="false"/>
@@ -328,42 +329,40 @@
                         &#32;
                     </s:iterator>
                 </span>
+                    </s:if>
+                </div>
+
+                <s:if test="#ctr.count -1 > 0 ">
+                    <button type="button" class="btn-danger delete-fields "
+                            title="<s:text name="label.remove-fileinput" />"
+                    ><span class="fa fa-times white"></span>
+                    </button>
+                </s:if>
+
+                <s:if test="%{resourceTypeCode == 'Image'}">
+                    <div class="col-sm-1">
+                        <div class="list-view-pf-actions">
+                            <div class="dropdown pull-right dropdown-kebab-pf">
+                                <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="true">
+                                    <span class="fa fa-ellipsis-v"></span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
+                                    <li>
+                                        <a href="#" class="edit-fields">Edit</a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="delete-fields">Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </s:if>
             </div>
 
-            <s:if test="#ctr.count -1 > 0 ">
-                <button type="button" class="btn-danger delete-fields "
-                        title="<s:text name="label.remove-fileinput" />"
-                ><span class="fa fa-times white"></span>
-                </button>
-            </s:if>
 
-            <s:if test="%{resourceTypeCode == 'Image'}">
-                <div class="col-sm-1">
-                    <div class="list-view-pf-actions">
-                        <div class="dropdown pull-right dropdown-kebab-pf">
-                            <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="true">
-                                <span class="fa fa-ellipsis-v"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">
-                                <li>
-                                    <a href="#" class="edit-fields">Edit</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="delete-fields">Delete</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </s:if>
-        </div>
-
-
-    </s:iterator>
-
-    <div id="fields-container">
+        </s:iterator>
     </div>
 
 
@@ -381,191 +380,191 @@
                 <div class="row">
                     <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
                     <div class="col-md-8 col-md-offset-2">
-                    </s:if>
-                    <s:else>
-                    <div class="col-md-8">
-                    </s:else>
-                        <!-- Tab panes -->
-                        <div class="tab-content">
-                            <!-- tab pane blue print -->
-                            <div class="tab-pane hidden" id="tab-pane-blueprint">
-                                <div class="container-fluid">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="image-container">
-                                                <img src="" alt="" class="store_item_">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="docs-preview clearfix">
-                                                <div class="img-preview preview-lg"><img
-                                                        src="">
-                                                </div>
-                                                <div class="img-preview preview-md"><img
-                                                        src="">
-                                                </div>
-                                                <div class="img-preview preview-sm"><img
-                                                        src="">
-                                                </div>
-                                                <div class="img-preview preview-xs"><img
-                                                        src="">
+                        </s:if>
+                        <s:else>
+                        <div class="col-md-8">
+                            </s:else>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <!-- tab pane blue print -->
+                                <div class="tab-pane hidden" id="tab-pane-blueprint">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="image-container">
+                                                    <img src="" alt="" class="store_item_">
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="docs-preview clearfix">
+                                                    <div class="img-preview preview-lg"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-md"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-sm"><img
+                                                            src="">
+                                                    </div>
+                                                    <div class="img-preview preview-xs"><img
+                                                            src="">
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row flex-container">
-                                        <div class="col-md-8">
-                                            <div class="toolbar-container flex-container space-between">
-                                                <!-- scale -->
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.flip"/></span>
-                                                    <button type="button" class="btn btn-primary"
-                                                            data-method="scaleX" data-option="-1"
-                                                            title="Flip Horizontal">
+                                        <div class="row flex-container">
+                                            <div class="col-md-8">
+                                                <div class="toolbar-container flex-container space-between">
+                                                    <!-- scale -->
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.flip"/></span>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="scaleX" data-option="-1"
+                                                                title="Flip Horizontal">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.scaleX(-1)">
                                                       <span class="fa fa-arrows-h"></span>
                                                     </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary"
-                                                            data-method="scaleY" data-option="-1"
-                                                            title="Flip Vertical">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="scaleY" data-option="-1"
+                                                                title="Flip Vertical">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.scaleY(-1)">
                                                       <span class="fa fa-arrows-v"></span>
                                                     </span>
-                                                    </button>
-                                                </div>
-                                                <div class="divider flex-item"></div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
 
 
-                                                <!-- move -->
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.move"/> </span>
-                                                    <button type="button" class="btn btn-primary" data-method="move"
-                                                            data-option="-10" data-second-option="0"
-                                                            title="Move Left">
+                                                    <!-- move -->
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.move"/> </span>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="-10" data-second-option="0"
+                                                                title="Move Left">
                                                 <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                       data-original-title="cropper.move(-10, 0)">
                                                   <span class="fa fa-arrow-left"></span>
                                                 </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-method="move"
-                                                            data-option="10" data-second-option="0"
-                                                            title="Move Right">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="10" data-second-option="0"
+                                                                title="Move Right">
                                                 <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                       data-original-title="cropper.move(10, 0)">
                                                   <span class="fa fa-arrow-right"></span>
                                                 </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-method="move"
-                                                            data-option="0" data-second-option="-10"
-                                                            title="Move Up">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="0" data-second-option="-10"
+                                                                title="Move Up">
                                                 <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                       data-original-title="cropper.move(0, -10)">
                                                   <span class="fa fa-arrow-up"></span>
                                                 </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-method="move"
-                                                            data-option="0" data-second-option="10"
-                                                            title="Move Down">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="move"
+                                                                data-option="0" data-second-option="10"
+                                                                title="Move Down">
                                                 <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                       data-original-title="cropper.move(0, 10)">
                                                   <span class="fa fa-arrow-down"></span>
                                                 </span>
-                                                    </button>
-                                                </div>
-                                                <div class="divider flex-item"></div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
 
 
-                                                <!-- rotate -->
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.rotate"/></span>
-                                                    <button type="button" class="btn btn-primary"
-                                                            data-method="rotate"
-                                                            data-option="-45" title="Rotate Left">
+                                                    <!-- rotate -->
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.rotate"/></span>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="rotate"
+                                                                data-option="-45" title="Rotate Left">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.rotate(-45)">
                                                       <span class="fa fa-rotate-left"></span>
                                                     </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary"
-                                                            data-method="rotate"
-                                                            data-option="45" title="Rotate Right">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="rotate"
+                                                                data-option="45" title="Rotate Right">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.rotate(45)">
                                                       <span class="fa fa-rotate-right"></span>
                                                     </span>
-                                                    </button>
-                                                </div>
-                                                <div class="divider flex-item"></div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
 
 
-                                                <!-- zoom -->
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.zoom"/></span>
-                                                    <button type="button" class="btn btn-primary" data-method="zoom"
-                                                            data-option="0.1" title="Zoom In">
+                                                    <!-- zoom -->
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.zoom"/></span>
+                                                        <button type="button" class="btn btn-primary" data-method="zoom"
+                                                                data-option="0.1" title="Zoom In">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.zoom(0.1)">
                                                       <span class="fa fa-search-plus"></span>
                                                     </span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary" data-method="zoom"
-                                                            data-option="-0.1" title="Zoom Out">
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary" data-method="zoom"
+                                                                data-option="-0.1" title="Zoom Out">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.zoom(-0.1)">
                                                       <span class="fa fa-search-minus"></span>
                                                     </span>
-                                                    </button>
-                                                </div>
-                                                <div class="divider flex-item"></div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
 
 
-                                                <!-- save and cancel -->
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.crop"/></span>
-                                                    <button type="button" class="btn btn-primary" data-method="crop"
-                                                            title="<s:text name="cropEditor.label.crop"/>">
+                                                    <!-- save and cancel -->
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.crop"/></span>
+                                                        <button type="button" class="btn btn-primary" data-method="crop"
+                                                                title="<s:text name="cropEditor.label.crop"/>">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.crop()">
                                                       <span class="fa fa-check"></span>
                                                     </span>
-                                                    </button>
-                                                </div>
-                                                <div class="divider flex-item"></div>
+                                                        </button>
+                                                    </div>
+                                                    <div class="divider flex-item"></div>
 
-                                                <div class="btn-group flex-item">
-                                                    <span class="btn-group__title"><s:text name="cropEditor.label.cancel"/></span>
-                                                    <button type="button" class="btn btn-primary"
-                                                            data-method="remove"
-                                                            title="Remove">
+                                                    <div class="btn-group flex-item">
+                                                        <span class="btn-group__title"><s:text name="cropEditor.label.cancel"/></span>
+                                                        <button type="button" class="btn btn-primary"
+                                                                data-method="remove"
+                                                                title="Remove">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
                                                           data-original-title="cropper.clear()">
                                                       <span class="fa fa-remove"></span>
                                                     </span>
-                                                    </button>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-4 aspect-ratio-buttons-container ">
-                                            <div class="aspect-ratio-buttons">
-                                                <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
-                                                    <label class="btn btn-primary active"
-                                                           data-method="setAspectRatio" data-option="NaN">
-                                                        <input type="radio" class="sr-only" id="aspectRatio5"
-                                                               name="aspectRatio" value="NaN">
-                                                        <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                              data-original-title="aspectRatio: NaN"><s:text name="cropEditor.label.free"/></span>
-                                                    </label>
+                                            <div class="col-md-4 aspect-ratio-buttons-container ">
+                                                <div class="aspect-ratio-buttons">
+                                                    <div class="btn-group d-flex flex-nowrap" data-toggle="buttons">
+                                                        <label class="btn btn-primary active"
+                                                               data-method="setAspectRatio" data-option="NaN">
+                                                            <input type="radio" class="sr-only" id="aspectRatio5"
+                                                                   name="aspectRatio" value="NaN">
+                                                            <span class="docs-tooltip" data-toggle="tooltip" title=""
+                                                                  data-original-title="aspectRatio: NaN"><s:text name="cropEditor.label.free"/></span>
+                                                        </label>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- /tab pane blue print -->
                             </div>
-                            <!-- /tab pane blue print -->
-                        </div>
                         </div>
 
                         <s:if test="%{isOnEditContent() && !isContentListAttribute()}">

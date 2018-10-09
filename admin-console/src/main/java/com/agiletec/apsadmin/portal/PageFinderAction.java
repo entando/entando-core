@@ -228,7 +228,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
                 continue;
             }
             PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
-            if (this.getResultCodes().contains(newCurrentNode.getCode()) || this.isToIncludeInTreeResult(newCurrentNode)) {
+            if (this.getResultCodes().contains(newCurrentNode.getCode()) || this.isToIncludeInTreeResult(newCurrentNode, true)) {
                 parent.addChildCode(newNode.getCode());
                 parent.addChild(newNode);
                 newNode.setParent(parent);
@@ -237,12 +237,17 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
         }
     }
 
-    public boolean isToIncludeInTreeResult(String pageCodeToAnalize, boolean isOnline) {
+    public boolean isTreeNodeCanBeOpenedForSearch(String pageCodeToAnalize, boolean isOnline) {
         IPage pageToAnalize = (isOnline) ? this.getPageManager().getOnlinePage(pageCodeToAnalize) : this.getPageManager().getDraftPage(pageCodeToAnalize);
-        return this.isToIncludeInTreeResult(pageToAnalize);
+        return this.isToIncludeInTreeResult(pageToAnalize, false);
     }
 
-    private boolean isToIncludeInTreeResult(IPage pageToAnalize) {
+    public boolean isToIncludeInTreeResult(String pageCodeToAnalize, boolean isOnline) {
+        IPage pageToAnalize = (isOnline) ? this.getPageManager().getOnlinePage(pageCodeToAnalize) : this.getPageManager().getDraftPage(pageCodeToAnalize);
+        return this.isToIncludeInTreeResult(pageToAnalize, true);
+    }
+
+    private boolean isToIncludeInTreeResult(IPage pageToAnalize, boolean includeEquals) {
         if (null == this.getResultCodes()) {
             return false;
         }
@@ -251,7 +256,7 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
             if (null == resultPage) {
                 continue;
             }
-            if (resultPage.isChildOf(pageToAnalize.getCode())) {
+            if (resultPage.isChildOf(pageToAnalize.getCode()) && (includeEquals || !code.equals(pageToAnalize.getCode()))) {
                 return true;
             }
         }

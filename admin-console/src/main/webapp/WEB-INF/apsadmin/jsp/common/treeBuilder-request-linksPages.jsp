@@ -20,6 +20,7 @@
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
+            <s:if test="%{!#pageCodeTokenCheckVar || isTreeNodeCanBeOpenedForSearch(#currentRoot.code, false)}" >
             <a class="treeOpenCloseJS"
                href="<s:url action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
@@ -32,6 +33,11 @@
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
                 <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
             </a>
+            </s:if>
+            <s:else>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+            </s:else>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
             <a class="treeOpenCloseJS noborder" href="<s:url action="%{#closeTreeActionName}">

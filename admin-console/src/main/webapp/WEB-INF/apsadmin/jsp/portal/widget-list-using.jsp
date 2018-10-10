@@ -129,8 +129,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-sm-10 col-lg-10 padding-small-top padding-small-bottom">
-                                                <s:text name="label.placedOn" /> <strong><s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/></strong>&nbsp;&nbsp;
-                                                <s:text name="label.consumedTimes" /> <span class="label label-default"><s:property value="#rowstatus.index"/></span>&nbsp;<s:text name="label.usedTimes" />
+                                                <s:text name="label.placedOn" /> <strong><s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/></strong>&nbsp;&nbsp;n.&nbsp;<span class="label label-default"><s:property value="#rowstatus.index"/></span>
                                                 <a href="<s:url action="trashWidgetFromPage" namespace="/do/Portal/WidgetType">
                                                        <s:param name="pageCode"><s:property value="#singlePage.code"/></s:param>
                                                        <s:param name="frame"><s:property value="#rowstatus.index"/></s:param>

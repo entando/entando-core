@@ -199,7 +199,7 @@
         <springsecurity.version>5.0.7.RELEASE</springsecurity.version>
         <springsecurityoauth2.version>2.3.3.RELEASE</springsecurityoauth2.version>
         <struts2.version>2.5.17</struts2.version>
-        <cxf.version>3.1.15</cxf.version>
+        <cxf.version>3.1.16</cxf.version>
         <jackson.version>2.9.5</jackson.version>
 		
         <hibernate-validator-version>5.3.0.Final</hibernate-validator-version>
@@ -391,11 +391,11 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+            <version>1.2.3</version>
             <scope>compile</scope>
-        </dependency>        
+        </dependency>  
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -607,7 +607,7 @@
         <dependency>
             <groupId>com.jgeppert.struts2.jquery</groupId>
             <artifactId>struts2-jquery-plugin</artifactId>
-            <version>4.0.2</version>
+            <version>4.0.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.struts</groupId>

@@ -33,9 +33,7 @@ public class CustomLocalizedTextProvider extends StrutsLocalizedTextProvider {
     private static final String RESOURCE_FILE_NAME = "global-messages";
 
     public static final String DEFAULT_LOCATION_PATTERN
-            = "classpath:com/agiletec/apsadmin/global-messages*.*,"
-            + "classpath:org/entando/entando/apsadmin/global-messages*.*,"
-            + "classpath*:/**/plugins/**/apsadmin/**/global-messages*.*";
+            = "classpath*:/**/plugins/**/apsadmin/**/global-messages*.*";
 
     private static final Logger logger = LoggerFactory.getLogger(CustomLocalizedTextProvider.class);
 
@@ -53,8 +51,8 @@ public class CustomLocalizedTextProvider extends StrutsLocalizedTextProvider {
                     super.addDefaultResourceBundle(directory + RESOURCE_FILE_NAME);
                 }
             }
-        } catch (Throwable t) {
-            logger.error("Error loading default resources", t);
+        } catch (Exception e) {
+            logger.error("Error loading default resources", e);
         }
     }
 
@@ -66,6 +64,13 @@ public class CustomLocalizedTextProvider extends StrutsLocalizedTextProvider {
             String urlPath = resource.getURL().getPath();
             if (urlPath.contains(LIB_FOLDER) && urlPath.contains("!") && urlPath.indexOf(LIB_FOLDER) < urlPath.indexOf("!")) {
                 int start = urlPath.indexOf("!") + 2;
+                int end = urlPath.lastIndexOf("/") + 1;
+                String directory = urlPath.substring(start, end);
+                resourceDirectories.add(directory);
+            } else if (urlPath.contains(".war" + LIB_FOLDER)
+                    && urlPath.contains(".jar") && urlPath.endsWith(".properties")
+                    && urlPath.indexOf(".war" + LIB_FOLDER) < urlPath.indexOf(".jar")) {
+                int start = urlPath.indexOf(".jar") + 5;
                 int end = urlPath.lastIndexOf("/") + 1;
                 String directory = urlPath.substring(start, end);
                 resourceDirectories.add(directory);

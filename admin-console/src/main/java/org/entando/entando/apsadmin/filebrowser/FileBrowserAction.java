@@ -39,7 +39,33 @@ import org.slf4j.LoggerFactory;
  */
 public class FileBrowserAction extends BaseAction {
 
-    private static final Logger _logger = LoggerFactory.getLogger(FileBrowserAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileBrowserAction.class);
+
+    public static final int ADD_NEW_FILE = 11;
+    public static final int ADD_NEW_DIRECTORY = 12;
+    public static final int UPLOAD_NEW_FILE = 13;
+
+    private String currentPath;
+    private String protectedFolder = null;
+
+    private String fileText;
+    private String textFileExtension;
+    private String filename;
+    private String dirname;
+    private Boolean deleteFile;
+    private int strutsAction;
+
+    //variables for file upload
+    private List<File> file;
+    private List<String> uploadFileName;
+    private List<InputStream> uploadInputStream;
+
+    private String textFileTypesCSV;
+
+    private InputStream downloadInputStream;
+    private String downloadContentType;
+
+    private IStorageManager storageManager;
 
     public String list() {
         return SUCCESS;
@@ -67,7 +93,7 @@ public class FileBrowserAction extends BaseAction {
             this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 
         } catch (Throwable t) {
-            _logger.error("error editing file, fullPath: {}", this.getCurrentPath(), t);
+            logger.error("error editing file, fullPath: {}", this.getCurrentPath(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -88,19 +114,48 @@ public class FileBrowserAction extends BaseAction {
         return SUCCESS;
     }
 
-    public String upload() {
+    public String upload() throws Throwable {
+        logger.debug("upload :" + this.getUploadFileName());
+
+        if (null != this.getFile()) {
+            logger.debug("Upload {} files ", this.getFile().size());
+        } else {
+            logger.debug("Upload null files list, nothing to save");
+        }
+
+        return uploadFiles(this.getFile(),
+                this.getUploadFileName(),
+                this.getInputStream(),
+                this.getCurrentPath(),
+                this.getProtectedFolderBoolean());
+
+    }
+
+    public String uploadFiles(List<File> files, List<String> fileNames, List<InputStream> inputStreams, String currentPath, boolean protectedFolder) {
+        if (null != files) {
+            logger.debug("Upload Files :" + files.size());
+        }
         try {
-            if (!StorageManagerUtil.isValidDirName(this.getCurrentPath())) {
-                this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
-                return INPUT;
+            int index = 0;
+            for (File file : files) {
+                logger.debug("Upload file {} with filename ", index, fileNames.get(index));
+
+                if (!StorageManagerUtil.isValidDirName(currentPath)) {
+                    this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
+                    return INPUT;
+                }
+                String result = this.checkExistingFileExtension(currentPath, fileNames.get(index), false, protectedFolder);
+
+                if (null != result) {
+                    return result;
+                }
+
+                this.getStorageManager().saveFile(currentPath + fileNames.get(index), protectedFolder, inputStreams.get(index));
+
+                index++;
             }
-            String result = this.checkExistingFileExtension(this.getCurrentPath(), this.getUploadFileName(), false);
-            if (null != result) {
-                return result;
-            }
-            this.getStorageManager().saveFile(this.getCurrentPath() + this.getUploadFileName(), this.getProtectedFolderBoolean(), this.getInputStream());
         } catch (Throwable t) {
-            _logger.error("error in upload", t);
+            logger.error("error in upload", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -120,7 +175,7 @@ public class FileBrowserAction extends BaseAction {
             }
             this.setStrutsAction(ApsAdminSystemConstants.DELETE);
         } catch (Throwable t) {
-            _logger.error("error in trash", t);
+            logger.error("error in trash", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -143,13 +198,14 @@ public class FileBrowserAction extends BaseAction {
                 this.getStorageManager().deleteDirectory(subPath, this.getProtectedFolderBoolean());
             }
         } catch (Throwable t) {
-            _logger.error("error in delete", t);
+            logger.error("error in delete", t);
             return FAILURE;
         }
         return SUCCESS;
     }
 
     public String save() {
+        logger.debug("Save file {}", filename);
         try {
             String validatePath = this.validateFullPath();
             if (null != validatePath) {
@@ -165,13 +221,13 @@ public class FileBrowserAction extends BaseAction {
                 return result;
             }
             boolean expectedExist = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT);
-            result = this.checkExistingFileExtension(this.getCurrentPath(), filename, expectedExist);
+            result = this.checkExistingFileExtension(this.getCurrentPath(), filename, expectedExist, this.getProtectedFolderBoolean());
             if (null != result) {
                 return result;
             }
             this.getStorageManager().editFile(this.getCurrentPath() + filename, this.getProtectedFolderBoolean(), stream);
         } catch (Throwable t) {
-            _logger.error("error saving file, fullPath: {} text: {}", this.getCurrentPath(), this.getFileText(), t);
+            logger.error("error saving file, fullPath: {} text: {}", this.getCurrentPath(), this.getFileText(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -193,28 +249,6 @@ public class FileBrowserAction extends BaseAction {
         return false;
     }
 
-    protected String validateTextFileExtension(String filename) {
-        if (!this.isTextFile(filename)) {
-            this.addFieldError("textFileExtension", this.getText("error.filebrowser.addTextFile.wrongExtension"));
-            return INPUT;
-        }
-        return null;
-    }
-
-    protected String checkExistingFileExtension(String path, String filename, boolean expected) throws Throwable {
-        boolean exist = this.getStorageManager().exists(path + filename, this.getProtectedFolderBoolean());
-        if (exist != expected) {
-            String[] args = new String[]{filename};
-            if (expected) {
-                this.addFieldError("filename", this.getText("error.filebrowser.file.doesNotExist", args));
-            } else {
-                this.addFieldError("filename", this.getText("error.filebrowser.file.exist", args));
-            }
-            return INPUT;
-        }
-        return null;
-    }
-
     public String createDir() {
         try {
             if (!StorageManagerUtil.isValidDirName(this.getCurrentPath())) {
@@ -227,7 +261,7 @@ public class FileBrowserAction extends BaseAction {
             }
             this.getStorageManager().createDirectory(this.getCurrentPath() + this.getDirname(), this.getProtectedFolderBoolean());
         } catch (Throwable t) {
-            _logger.error("error creating dir, fullPath: {} text: {}", this.getCurrentPath(), this.getDirname(), t);
+            logger.error("error creating dir, fullPath: {} text: {}", this.getCurrentPath(), this.getDirname(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -249,7 +283,7 @@ public class FileBrowserAction extends BaseAction {
             String contentType = URLConnection.guessContentTypeFromName(this.getFilename());
             this.setDownloadContentType(contentType);
         } catch (Throwable t) {
-            _logger.error("error downloading file, fullPath: '{}' file: '{}'", this.getCurrentPath(), this.getFilename(), t);
+            logger.error("error downloading file, fullPath: '{}' file: '{}'", this.getCurrentPath(), this.getFilename(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -291,7 +325,7 @@ public class FileBrowserAction extends BaseAction {
     public BasicFileAttributeView[] getFilesAttributes() {
         try {
             if (!StorageManagerUtil.isValidDirName(this.getCurrentPath())) {
-                _logger.info("invalid path specified: {}", this.getCurrentPath());
+                logger.info("invalid path specified: {}", this.getCurrentPath());
                 this.setCurrentPath("");
             }
             if (null == this.getProtectedFolder()) {
@@ -303,20 +337,214 @@ public class FileBrowserAction extends BaseAction {
                 return this.getStorageManager().listAttributes(this.getCurrentPath(), this.getProtectedFolderBoolean());
             }
         } catch (Throwable t) {
-            _logger.error("error extraction file attributes, fullPath: {} ", this.getCurrentPath(), t);
+            logger.error("error extraction file attributes, fullPath: {} ", this.getCurrentPath(), t);
             return null;
         }
     }
 
     public String getCurrentPath() {
-        if (StringUtils.isBlank(_currentPath) || null == this.getProtectedFolder()) {
-            _currentPath = "";
-        } else if (!_currentPath.endsWith("/")) {
-            _currentPath = _currentPath + "/";
+        if (StringUtils.isBlank(currentPath) || null == this.getProtectedFolder()) {
+            currentPath = "";
+        } else if (!currentPath.endsWith("/")) {
+            currentPath = currentPath + "/";
         }
-        return _currentPath;
+        return currentPath;
     }
 
+    public void setCurrentPath(String currentPath) {
+        this.currentPath = currentPath;
+    }
+
+    public String getProtectedFolder() {
+        return protectedFolder;
+    }
+
+    public void setProtectedFolder(String protectedFolder) {
+        this.protectedFolder = protectedFolder;
+    }
+
+    public String getFileText() {
+        return fileText;
+    }
+
+    public void setFileText(String fileText) {
+        fileText = (null != fileText) ? fileText : "";
+        this.fileText = fileText;
+    }
+
+    public String getTextFileExtension() {
+        return textFileExtension;
+    }
+
+    public void setTextFileExtension(String textFileExtension) {
+        this.textFileExtension = textFileExtension;
+    }
+
+    public int getStrutsAction() {
+        return strutsAction;
+    }
+
+    public void setStrutsAction(int strutsAction) {
+        this.strutsAction = strutsAction;
+    }
+
+    public void setUpload(List<File> file) {
+        this.file = file;
+    }
+
+    public List<File> getUpload() {
+        return this.file;
+    }
+
+    public int getFileSize(int index) {
+        return (int) this.file.get(index).length() / 1000;
+    }
+
+    public File getFile(int index) {
+        return file.get(index);
+    }
+
+    public InputStream getInputStream(int index) throws Throwable {
+        if (null == this.getFile(index)) {
+            return null;
+        }
+        return new FileInputStream(this.getFile(index));
+    }
+
+    public List<InputStream> getInputStream() throws Throwable {
+        if (null == this.getFile()) {
+            return null;
+        }
+        List<InputStream> inputStreamList = new ArrayList<InputStream>();
+
+        for (File file : this.getFile()) {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            inputStreamList.add(fileInputStream);
+        }
+        return inputStreamList;
+    }
+
+    public String getFilename() {
+        if (StringUtils.isBlank(filename)) {
+            filename = "";
+        }
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public String getDirname() {
+        return dirname;
+    }
+
+    public void setDirname(String dirname) {
+        this.dirname = dirname;
+    }
+
+    public Boolean isDeleteFile() {
+        return deleteFile;
+    }
+
+    public void setDeleteFile(Boolean deleteFile) {
+        this.deleteFile = deleteFile;
+    }
+
+    public String getUploadFileName(int index) {
+        return uploadFileName.get(index);
+    }
+
+    public List<String> getUploadFileName() {
+        return uploadFileName;
+    }
+
+    public void setUploadFileName(List<String> uploadFileName) {
+        this.uploadFileName = uploadFileName;
+    }
+
+    public InputStream getUploadInputStream(int index) {
+        return this.uploadInputStream.get(index);
+    }
+
+    public void setUploadInputStream(List<InputStream> uploadInputStream) {
+        this.uploadInputStream = uploadInputStream;
+    }
+
+    public String[] getTextFileTypes() {
+        return this.getTextFileTypesCSV().split(",");
+    }
+
+    protected String getTextFileTypesCSV() {
+        return textFileTypesCSV;
+    }
+
+    public void setTextFileTypesCSV(String textFileTypesCSV) {
+        this.textFileTypesCSV = textFileTypesCSV;
+    }
+
+    public InputStream getDownloadInputStream() {
+        return downloadInputStream;
+    }
+
+    public void setDownloadInputStream(InputStream downloadInputStream) {
+        this.downloadInputStream = downloadInputStream;
+    }
+
+    public String getDownloadContentType() {
+        return downloadContentType;
+    }
+
+    public void setDownloadContentType(String downloadContentType) {
+        this.downloadContentType = downloadContentType;
+    }
+
+    public void setStorageManager(IStorageManager storageManager) {
+        this.storageManager = storageManager;
+    }
+
+    public List<File> getFile() {
+        return file;
+    }
+
+    public void setFile(List<File> file) {
+        this.file = file;
+    }
+
+    protected IStorageManager getStorageManager() {
+        return storageManager;
+    }
+
+    protected boolean getProtectedFolderBoolean() {
+        if (null == this.getProtectedFolder()) {
+            return false;
+        }
+        return Boolean.parseBoolean(this.getProtectedFolder());
+    }
+
+    protected String validateTextFileExtension(String filename) {
+        if (!this.isTextFile(filename)) {
+            this.addFieldError("textFileExtension", this.getText("error.filebrowser.addTextFile.wrongExtension"));
+            return INPUT;
+        }
+        return null;
+    }
+
+    protected String checkExistingFileExtension(String path, String filename, boolean expected, boolean protectedFolder) throws Throwable {
+        boolean exist = this.getStorageManager().exists(path + filename, protectedFolder);
+        if (exist != expected) {
+            String[] args = new String[]{filename};
+            if (expected) {
+                this.addFieldError("filename", this.getText("error.filebrowser.file.doesNotExist", args));
+            } else {
+                this.addFieldError("filename", this.getText("error.filebrowser.file.exist", args));
+            }
+            return INPUT;
+        }
+        return null;
+    }
+    
+  
     /**
      * Check the provided filename and currentPath parameters and raises an
      * error if one of these parameters are invalid
@@ -335,175 +563,8 @@ public class FileBrowserAction extends BaseAction {
         return null;
     }
 
-    public void setCurrentPath(String currentPath) {
-        this._currentPath = currentPath;
+    private List<InputStream> getUploadInputStream() {
+        return uploadInputStream;
     }
-
-    protected boolean getProtectedFolderBoolean() {
-        if (null == this.getProtectedFolder()) {
-            return false;
-        }
-        return Boolean.parseBoolean(this.getProtectedFolder());
-    }
-
-    public String getProtectedFolder() {
-        return _protectedFolder;
-    }
-
-    public void setProtectedFolder(String protectedFolder) {
-        this._protectedFolder = protectedFolder;
-    }
-
-    public String getFileText() {
-        return _fileText;
-    }
-
-    public void setFileText(String fileText) {
-        fileText = (null != fileText) ? fileText : "";
-        this._fileText = fileText;
-    }
-
-    public String getTextFileExtension() {
-        return _textFileExtension;
-    }
-
-    public void setTextFileExtension(String textFileExtension) {
-        this._textFileExtension = textFileExtension;
-    }
-
-    public int getStrutsAction() {
-        return _strutsAction;
-    }
-
-    public void setStrutsAction(int strutsAction) {
-        this._strutsAction = strutsAction;
-    }
-
-    public void setUpload(File file) {
-        this._file = file;
-    }
-
-    public File getUpload() {
-        return this._file;
-    }
-
-    public int getFileSize() {
-        return (int) this._file.length() / 1000;
-    }
-
-    public File getFile() {
-        return _file;
-    }
-
-    public InputStream getInputStream() throws Throwable {
-        if (null == this.getFile()) {
-            return null;
-        }
-        return new FileInputStream(this.getFile());
-    }
-
-    public String getFilename() {
-        if (StringUtils.isBlank(_filename)) {
-            _filename = "";
-        }
-        return _filename;
-    }
-
-    public void setFilename(String filename) {
-        this._filename = filename;
-    }
-
-    public String getDirname() {
-        return _dirname;
-    }
-
-    public void setDirname(String dirname) {
-        this._dirname = dirname;
-    }
-
-    public Boolean isDeleteFile() {
-        return _deleteFile;
-    }
-
-    public void setDeleteFile(Boolean deleteFile) {
-        this._deleteFile = deleteFile;
-    }
-
-    public String getUploadFileName() {
-        return _uploadFileName;
-    }
-
-    public void setUploadFileName(String uploadFileName) {
-        this._uploadFileName = uploadFileName;
-    }
-
-    public InputStream getUploadInputStream() {
-        return _uploadInputStream;
-    }
-
-    public void setUploadInputStream(InputStream uploadInputStream) {
-        this._uploadInputStream = uploadInputStream;
-    }
-
-    public String[] getTextFileTypes() {
-        return this.getTextFileTypesCSV().split(",");
-    }
-
-    protected String getTextFileTypesCSV() {
-        return _textFileTypesCSV;
-    }
-
-    public void setTextFileTypesCSV(String textFileTypesCSV) {
-        this._textFileTypesCSV = textFileTypesCSV;
-    }
-
-    public InputStream getDownloadInputStream() {
-        return _downloadInputStream;
-    }
-
-    public void setDownloadInputStream(InputStream downloadInputStream) {
-        this._downloadInputStream = downloadInputStream;
-    }
-
-    public String getDownloadContentType() {
-        return _downloadContentType;
-    }
-
-    public void setDownloadContentType(String downloadContentType) {
-        this._downloadContentType = downloadContentType;
-    }
-
-    protected IStorageManager getStorageManager() {
-        return _storageManager;
-    }
-
-    public void setStorageManager(IStorageManager storageManager) {
-        this._storageManager = storageManager;
-    }
-
-    private String _currentPath;
-    private String _protectedFolder = null;
-
-    private String _fileText;
-    private String _textFileExtension;
-    private String _filename;
-    private String _dirname;
-    private Boolean _deleteFile;
-    private int _strutsAction;
-
-    //variables for file upload
-    private File _file;
-    private String _uploadFileName;
-    private InputStream _uploadInputStream;
-    private String _textFileTypesCSV;
-
-    private InputStream _downloadInputStream;
-    private String _downloadContentType;
-
-    private IStorageManager _storageManager;
-
-    public static final int ADD_NEW_FILE = 11;
-    public static final int ADD_NEW_DIRECTORY = 12;
-    public static final int UPLOAD_NEW_FILE = 13;
 
 }

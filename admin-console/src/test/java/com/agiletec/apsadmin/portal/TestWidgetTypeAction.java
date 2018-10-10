@@ -459,6 +459,12 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertEquals(2, fieldErrors.size());
             assertEquals(1, fieldErrors.get("widgetTypeCode").size());
             assertEquals(1, fieldErrors.get("englishTitle").size());
+
+            result = this.executeAddUserWidgetType("admin", "long_long_long_long_long_long_long_long_long", "en", "it", "leftmenu");
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertEquals(1, fieldErrors.get("widgetTypeCode").size());
         } catch (Throwable t) {
             this._widgetTypeManager.deleteWidgetType(widgetTypeCode);
             throw t;

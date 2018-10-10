@@ -22,7 +22,12 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.opensymphony.xwork2.Action;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import static junit.framework.Assert.assertEquals;
 import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
 
 /**
@@ -30,7 +35,9 @@ import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
  */
 public class TestFileBrowserAction extends ApsAdminBaseTestCase {
 
-    private static final Logger _logger = LoggerFactory.getLogger(TestFileBrowserAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(TestFileBrowserAction.class);
+
+    private IStorageManager localStorageManager;
 
     @Override
     protected void setUp() throws Exception {
@@ -141,19 +148,19 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             String result = this.executeAddTextFile("admin", path, filename, extension, text, false);
             //FileBrowserAction action = (FileBrowserAction) this.getAction();
             assertEquals(Action.SUCCESS, result);
-            assertTrue(this._localStorageManager.exists(fullPath, false));
+            assertTrue(this.localStorageManager.exists(fullPath, false));
 
             result = this.executeAddTextFile("admin", path, filename, extension, text, false);
             assertEquals(Action.INPUT, result);
             assertEquals(1, this.getAction().getFieldErrors().size());
             assertEquals(1, this.getAction().getFieldErrors().get("filename").size());
 
-            String extractedText = this._localStorageManager.readFile(fullPath, false);
+            String extractedText = this.localStorageManager.readFile(fullPath, false);
             assertEquals(text, extractedText);
-            this._localStorageManager.deleteFile(fullPath, false);
-            assertFalse(this._localStorageManager.exists(fullPath, false));
+            this.localStorageManager.deleteFile(fullPath, false);
+            assertFalse(this.localStorageManager.exists(fullPath, false));
         } catch (Throwable t) {
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
             throw t;
         }
     }
@@ -173,7 +180,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             FileBrowserAction action = (FileBrowserAction) this.getAction();
             Collection<String> actionErrors = action.getActionErrors();
             assertEquals(1, actionErrors.size());
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
 
             String filename2 = "../" + filename;
             fullPath = path + filename2 + "." + extension;
@@ -182,7 +189,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             action = (FileBrowserAction) this.getAction();
             actionErrors = action.getActionErrors();
             assertEquals(1, actionErrors.size());
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
 
             path = "../" + path;
             fullPath = path + filename + "." + extension;
@@ -191,10 +198,10 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             action = (FileBrowserAction) this.getAction();
             actionErrors = action.getActionErrors();
             assertEquals(1, actionErrors.size());
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
 
         } catch (Throwable t) {
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
             throw t;
         }
     }
@@ -207,14 +214,14 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         String fullPath = path + fullFilename;
         String text = "This is the content";
         try {
-            assertFalse(this._localStorageManager.exists(fullPath, false));
-            this._localStorageManager.saveFile(fullPath, false, new ByteArrayInputStream(text.getBytes()));
-            assertTrue(this._localStorageManager.exists(fullPath, false));
+            assertFalse(this.localStorageManager.exists(fullPath, false));
+            this.localStorageManager.saveFile(fullPath, false, new ByteArrayInputStream(text.getBytes()));
+            assertTrue(this.localStorageManager.exists(fullPath, false));
             String result = this.executeDeleteFile("admin", path, fullFilename, true, false);
             assertEquals(Action.SUCCESS, result);
-            assertFalse(this._localStorageManager.exists(fullPath, false));
+            assertFalse(this.localStorageManager.exists(fullPath, false));
         } catch (Throwable t) {
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
             throw t;
         }
     }
@@ -226,11 +233,11 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         String fullFilename = filename + "." + extension;
         String fullPath = path + fullFilename;
         String text = "This is the content";
-        this._localStorageManager.deleteFile(fullPath, false);
+        this.localStorageManager.deleteFile(fullPath, false);
         try {
-            assertFalse(this._localStorageManager.exists(fullPath, false));
-            this._localStorageManager.saveFile(fullPath, false, new ByteArrayInputStream(text.getBytes()));
-            assertTrue(this._localStorageManager.exists(fullPath, false));
+            assertFalse(this.localStorageManager.exists(fullPath, false));
+            this.localStorageManager.saveFile(fullPath, false, new ByteArrayInputStream(text.getBytes()));
+            assertTrue(this.localStorageManager.exists(fullPath, false));
 
             String result = this.executeTrashFile("admin", path, fullFilename, false);
             assertEquals(Action.SUCCESS, result);
@@ -250,11 +257,11 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             assertEquals(1, actionErrors.size());
 
         } catch (Throwable t) {
-            this._localStorageManager.deleteFile(fullPath, false);
+            this.localStorageManager.deleteFile(fullPath, false);
             throw t;
         }
 
-        this._localStorageManager.deleteFile(fullPath, false);
+        this.localStorageManager.deleteFile(fullPath, false);
     }
 
     private String executeList(String currentUser, String path, Boolean isProtected) throws Throwable {
@@ -306,14 +313,58 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         return this.executeAction();
     }
 
+    public void testUploadFile() throws Throwable {
+        String filepath = "test/";
+        String filename1 = "test-upload1.txt";
+        String filename2 = "test-upload2.txt";
+
+        String filenameWithPath1 = filepath + filename1;
+        String filenameWithPath2 = filepath + filename2;
+
+        File fileResource1 = new File(filenameWithPath1);
+        File fileResource2 = new File(filenameWithPath2);
+
+        InputStream inputStream1 = new ByteArrayInputStream(filename1.getBytes());
+        InputStream inputStream2 = new ByteArrayInputStream(filename2.getBytes());
+
+        List<File> files = new ArrayList();
+        files.add(fileResource1);
+        files.add(fileResource2);
+        List<String> uploadFileNames = new ArrayList();
+        uploadFileNames.add(filename1);
+        uploadFileNames.add(filename2);
+        List<InputStream> uploadInputStreams = new ArrayList();
+        uploadInputStreams.add(inputStream1);
+        uploadInputStreams.add(inputStream2);
+
+        initAction("/do/FileBrowser", "upload");
+
+        FileBrowserAction action = (FileBrowserAction) super.getAction();
+
+        boolean protectedFolder = false;
+        String result = action.uploadFiles(files, uploadFileNames, uploadInputStreams, filepath, protectedFolder);
+
+        assertEquals(Action.SUCCESS, result);
+        assertTrue(localStorageManager.exists(filenameWithPath1, protectedFolder));
+        assertTrue(localStorageManager.exists(filenameWithPath2, protectedFolder));
+
+        result = action.uploadFiles(files, uploadFileNames, uploadInputStreams, filepath, protectedFolder);
+        assertEquals(Action.INPUT, result);
+
+        localStorageManager.deleteFile(filenameWithPath1, protectedFolder);
+        localStorageManager.deleteFile(filenameWithPath2, protectedFolder);
+
+        assertFalse(localStorageManager.exists(filenameWithPath1, protectedFolder));
+        assertFalse(localStorageManager.exists(filenameWithPath2, protectedFolder));
+    }
+
     private void init() throws Exception {
         try {
-            this._localStorageManager = (IStorageManager) this.getApplicationContext().getBean(SystemConstants.STORAGE_MANAGER);
+            this.localStorageManager = (IStorageManager) this.getApplicationContext().getBean(SystemConstants.STORAGE_MANAGER);
         } catch (Throwable t) {
-            _logger.error("error on init", t);
+            logger.error("error on init", t);
         }
     }
 
-    private IStorageManager _localStorageManager;
-
 }
+

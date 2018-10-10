@@ -181,7 +181,8 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
      *
      * @return Il nodo root virtuale.
      */
-    private PageTreeNodeWrapper getVirtualRoot() {
+    @Override
+    public PageTreeNodeWrapper getVirtualRoot() {
         PageTreeNodeWrapper virtualRoot = new PageTreeNodeWrapper();
         virtualRoot.setCode(AbstractPortalAction.VIRTUAL_ROOT_CODE);
         List<Lang> langs = this.getLangManager().getLangs();

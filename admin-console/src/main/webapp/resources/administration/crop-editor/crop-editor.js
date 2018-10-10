@@ -233,16 +233,17 @@ $(document).ready(function () {
                     store.splice(i, 1);
 
                     removeTab(storeItemId);
-                    removeField(storeItemId);
                     removeHiddenFields(storeItemId);
                 }
             }
 
             for (var j in pendingNewStoreItems) {
-                if (store[j].id == storeItemId) {
+                if (pendingNewStoreItems[j].id == storeItemId) {
                     pendingNewStoreItems.splice(j, 1);
                 }
             }
+
+            removeField(storeItemId);
         };
 
         var addTab = function (storeItem) {
@@ -361,14 +362,13 @@ $(document).ready(function () {
         };
 
         var removeHiddenFields = function (storeItemId) {
-            $('#bas64_image_' + storeItemId).remove();
+            $('#base64_image_' + storeItemId).remove();
             $('#file_upload_content_type_' + storeItemId).remove();
             $('#file_upload_name_' + storeItemId).remove();
         };
 
 
         var addFields = function () {
-            var numItems = $('#save').find('.file-description').length;
             var template = $('#hidden-fields-template').html();
 
             $('#fields-container').append(template);
@@ -468,7 +468,7 @@ $(document).ready(function () {
 
             $('#descr_' + storeItem.id).val(storeItem.name);
             $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-            $('.image-upload-form').append('<input type="hidden" name="base64Image" id="bas64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
+            $('.image-upload-form').append('<input type="hidden" name="base64Image" id="base64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
             $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">');
             $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
 
@@ -510,7 +510,7 @@ $(document).ready(function () {
 
             $('#descr_' + storeItem.id).val(storeItem.name);
             $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-            $('#bas64_image_' + storeItem.id ).val(storeItem.imageData);
+            $('#base64_image_' + storeItem.id ).val(storeItem.imageData);
             $('#file_upload_content_type_' + storeItem.id ).val(storeItem.type);
             $('#file_upload_name_' + storeItem.id ).val(storeItem.name);
         };

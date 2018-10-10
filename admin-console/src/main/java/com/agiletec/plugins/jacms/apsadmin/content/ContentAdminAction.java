@@ -16,7 +16,6 @@ package com.agiletec.plugins.jacms.apsadmin.content;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.apsadmin.admin.BaseAdminAction;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.IContentManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.ICmsSearchEngineManager;
 import com.agiletec.plugins.jacms.aps.system.services.searchengine.LastReloadInfo;
-import static com.opensymphony.xwork2.Action.SUCCESS;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -63,12 +61,7 @@ public class ContentAdminAction extends BaseAdminAction {
     @Override
     public void validate() {
         super.validate();
-        Map<String, List<String>> mapping = this.buildMapping();
-        if (!StringUtils.isBlank(this.getMetadataKey())) {
-            if (mapping.containsKey(this.getMetadataKey().trim())) {
-                this.addFieldError("metadataKey", this.getText("error.contentSettings.metadataAlreadyPresent", new String[]{this.getMetadataKey().trim()}));
-            }
-        }
+        this.buildMapping();
         this.validateAspectRatioList();
     }
 
@@ -138,6 +131,12 @@ public class ContentAdminAction extends BaseAdminAction {
 
     public String addMetadata() {
         Map<String, List<String>> newMappings = this.buildMapping();
+        if (!StringUtils.isBlank(this.getMetadataKey())) {
+            if (newMappings.containsKey(this.getMetadataKey().trim())) {
+                this.addFieldError("metadataKey", this.getText("error.contentSettings.metadataAlreadyPresent", new String[]{this.getMetadataKey().trim()}));
+                return INPUT;
+            }
+        }
         if (!StringUtils.isBlank(this.getMetadataKey()) && !newMappings.containsKey(this.getMetadataKey().trim())) {
             List<String> newMapping = new ArrayList<>();
             if (!StringUtils.isBlank(this.getMetadataMapping())) {
@@ -145,6 +144,8 @@ public class ContentAdminAction extends BaseAdminAction {
             }
             newMappings.put(this.getMetadataKey().trim(), newMapping);
         }
+        this.setMetadataKey(null);
+        this.setMetadataMapping(null);
         return SUCCESS;
     }
 

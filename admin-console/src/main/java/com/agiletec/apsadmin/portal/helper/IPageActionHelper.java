@@ -25,6 +25,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.BaseAction;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
+import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
 
 /**
  * Interface for the helper classes handling the portal pages.
@@ -36,6 +37,8 @@ public interface IPageActionHelper extends ITreeNodeBaseActionHelper {
     public boolean checkPageGroup(IPage page, BaseAction currentAction);
 
     public Map getReferencingObjects(IPage page, HttpServletRequest request) throws ApsSystemException;
+
+    public PageTreeNodeWrapper getVirtualRoot();
 
     /**
      * Return the root node of the page tree respecting the given permissions.

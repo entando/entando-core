@@ -34,8 +34,12 @@ import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
+import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import com.agiletec.apsadmin.system.ITreeAction;
+import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_CLOSE;
+import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_OPEN;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
+import static com.opensymphony.xwork2.Action.SUCCESS;
 import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
 
 /**
@@ -207,7 +211,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
         try {
             if (null != this.getResultCodes() && this.getResultCodes().size() > 0) {
                 IPage node = this.getPageManager().getDraftRoot();
-                root = new PageTreeNodeWrapper(node);
+                root = (this.isUserAllowed(node))
+                        ? new PageTreeNodeWrapper(node)
+                        : ((IPageActionHelper) this.getTreeHelper()).getVirtualRoot();
                 this.addTreeWrapper(root, node);
             }
         } catch (Throwable t) {
@@ -227,17 +233,24 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
             if (null == newCurrentNode) {
                 continue;
             }
-            PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
             if (this.getResultCodes().contains(newCurrentNode.getCode()) || this.isToIncludeInTreeResult(newCurrentNode, true)) {
-                parent.addChildCode(newNode.getCode());
-                parent.addChild(newNode);
-                newNode.setParent(parent);
-                this.addTreeWrapper(newNode, newCurrentNode);
+                if (this.isUserAllowed(newCurrentNode)) {
+                    PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
+                    parent.addChildCode(newNode.getCode());
+                    parent.addChild(newNode);
+                    newNode.setParent(parent);
+                    this.addTreeWrapper(newNode, newCurrentNode);
+                } else {
+                    this.addTreeWrapper(parent, newCurrentNode);
+                }
             }
         }
     }
 
     public boolean isTreeNodeCanBeOpenedForSearch(String pageCodeToAnalize, boolean isOnline) {
+        if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(pageCodeToAnalize)) {
+            return true;
+        }
         IPage pageToAnalize = (isOnline) ? this.getPageManager().getOnlinePage(pageCodeToAnalize) : this.getPageManager().getDraftPage(pageCodeToAnalize);
         return this.isToIncludeInTreeResult(pageToAnalize, false);
     }

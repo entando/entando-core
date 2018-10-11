@@ -215,6 +215,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
                         ? new PageTreeNodeWrapper(node)
                         : ((IPageActionHelper) this.getTreeHelper()).getVirtualRoot();
                 this.addTreeWrapper(root, node);
+                if (StringUtils.isBlank(this.getTreeNodeActionMarkerCode())) {
+                    this.getTreeNodesToOpen().add(root.getCode());
+                }
             }
         } catch (Throwable t) {
             _logger.error("error in getAllowedTreeRootNode", t);

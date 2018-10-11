@@ -34,12 +34,9 @@ import com.agiletec.aps.system.services.page.PageUtils;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
-import static com.agiletec.apsadmin.system.BaseAction.FAILURE;
 import com.agiletec.apsadmin.system.ITreeAction;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_CLOSE;
-import static com.agiletec.apsadmin.system.ITreeAction.ACTION_MARKER_OPEN;
 import com.agiletec.apsadmin.system.ITreeNodeBaseActionHelper;
-import static com.opensymphony.xwork2.Action.SUCCESS;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.apsadmin.portal.node.PageTreeNodeWrapper;
 
 /**
@@ -215,6 +212,9 @@ public class PageFinderAction extends AbstractPortalAction implements ITreeActio
                         ? new PageTreeNodeWrapper(node)
                         : ((IPageActionHelper) this.getTreeHelper()).getVirtualRoot();
                 this.addTreeWrapper(root, node);
+                if (StringUtils.isBlank(this.getTreeNodeActionMarkerCode())) {
+                    this.getTreeNodesToOpen().add(root.getCode());
+                }
             }
         } catch (Throwable t) {
             _logger.error("error in getAllowedTreeRootNode", t);

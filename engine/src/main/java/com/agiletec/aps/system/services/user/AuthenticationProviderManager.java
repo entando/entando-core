@@ -26,15 +26,17 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
- * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
+ * sistema. L'Authentication Provider Ã¨ l'oggetto delegato alla restituzione di
  * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
- * richiesta di autenticazione utente; questo oggetto non ha visibilità ai
+ * richiesta di autenticazione utente; questo oggetto non ha visibilitÃ  ai
  * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
  *
  * @author E.Santoboni
@@ -135,8 +137,23 @@ public class AuthenticationProviderManager extends AbstractService
     }
 
     @Override
-    public Authentication authenticate(Authentication a) throws AuthenticationException {
-        return new UsernamePasswordAuthenticationToken(a.getPrincipal(), a.getCredentials());
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        try {
+            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), authentication.getCredentials().toString());
+            if (null != user) {
+                Authentication newAuth
+                        = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),
+                                authentication.getCredentials(), user.getAuthorizations());
+                return newAuth;
+            } else {
+                throw new UsernameNotFoundException("Invalid username/password");
+            }
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error detected during user authentication", e);
+            throw new AuthenticationServiceException("Error detected during user authentication", e);
+        }
     }
 
     protected IUserManager getUserManager() {

@@ -11,7 +11,7 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!-- scans for annotated classes -->
-    <context:component-scan base-package="org.entando.entando.aps.servlet.security,org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
+    <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
     <context:annotation-config />
 
     <mvc:annotation-driven conversion-service="conversionService"

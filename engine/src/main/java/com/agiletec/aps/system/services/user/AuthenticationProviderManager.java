@@ -18,21 +18,18 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.role.Permission;
-import java.util.Calendar;
-import java.util.List;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
- * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
+ * sistema. L'Authentication Provider Ã¨ l'oggetto delegato alla restituzione di
  * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
- * richiesta di autenticazione utente; questo oggetto non ha visibilità ai
+ * richiesta di autenticazione utente; questo oggetto non ha visibilitÃ  ai
  * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
  *
  * @author E.Santoboni
@@ -127,6 +124,26 @@ public class AuthenticationProviderManager extends AbstractService
         for (int i = 0; i < auths.size(); i++) {
             Authorization authorization = auths.get(i);
             user.addAuthorization(authorization);
+        }
+    }
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        try {
+            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), authentication.getCredentials().toString());
+            if (null != user) {
+                Authentication newAuth
+                        = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),
+                                authentication.getCredentials(), user.getAuthorizations());
+                return newAuth;
+            } else {
+                throw new UsernameNotFoundException("Invalid username/password");
+            }
+        } catch (AuthenticationException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("Error detected during user authentication", e);
+            throw new AuthenticationServiceException("Error detected during user authentication", e);
         }
     }
 

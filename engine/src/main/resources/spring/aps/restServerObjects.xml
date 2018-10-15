@@ -10,22 +10,7 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd 
             http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd">
     
-    <!-- spring security --> 
-    
-    <context:annotation-config/>
-    <bean class="org.entando.entando.aps.servlet.security.AuthorizationServerConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.MethodSecurityConfig"/>
-    <bean class="org.entando.entando.aps.servlet.security.OAuth2SecurityConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.ResourceServerConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.SecurityWebApplicationInitializer"/>
-    
-	<security:http auto-config='true' authentication-manager-ref="AuthenticationProviderManager">
-        <security:intercept-url pattern="/api/**" access="ROLE_USER" />
-    </security:http>
-    
-    <!-- ************************ -->
-    
-	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
+    <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
         <property name="marshallerProperties">
             <map>
                 <entry>

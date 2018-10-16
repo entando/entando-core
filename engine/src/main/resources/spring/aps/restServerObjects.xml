@@ -10,15 +10,6 @@
 	         http://www.springframework.org/schema/context
 	         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!--xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-    http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-4.0.xsd
-    http://www.springframework.org/schema/util
-    http://www.springframework.org/schema/util/spring-util-4.0.xsd
-    ">-->
-
 	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
         <property name="marshallerProperties">
             <map>
@@ -57,20 +48,8 @@
 		<!-- <property name="serializeAsArray" value="true" /> -->
     </bean>
 
-
     <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
 
-
-    <bean id="Swagger" class="org.entando.entando.web.swagger.SwaggerConfig"/>
-    <bean id="SwaggerMvc" class="org.entando.entando.web.swagger.SwaggerMvcAdapter"/>
-<!--
-    <bean id="WidgetController" class="org.entando.entando.web.widget.WidgetController"/>
-    <bean id="WidgetValidator" class="org.entando.entando.web.widget.validator.WidgetValidator"/>
-
-    <bean id="PageController" class="org.entando.entando.web.page.PageController"/>
-    <bean id="PageValidator" class="org.entando.entando.web.page.validator.PageValidator"/>
-
-
-    <bean id="PageSettingsController" class="org.entando.entando.web.pagesettings.PageSettingsController"/>
--->
+    <bean id="swagger" class="org.entando.entando.web.swagger.SwaggerConfig"/>
+    <bean id="swaggerMvc" class="org.entando.entando.web.swagger.SwaggerMvcAdapter"/>
 </beans>

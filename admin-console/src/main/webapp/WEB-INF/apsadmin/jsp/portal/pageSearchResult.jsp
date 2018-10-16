@@ -47,7 +47,7 @@
         <s:form action="search" cssClass="action-form">
 
             <p class="sr-only">
-            <wpsf:hidden name="pageCodeToken" />
+                <wpsf:hidden name="pageCodeToken" />
             </p>
 
             <s:set var="pagesFound" value="pagesFound" />
@@ -147,7 +147,8 @@
         });
 
         function buildTree() {
-            var isTreeOnRequest = <s:property value="#pageTreeStyleVar == 'request'"/>;
+            var treeStyle = '<wp:info key="systemParam" paramName="treeStyle_page" />';
+            var isTreeOnRequest = (treeStyle === 'request') ? true : false;
             $('.table-treegrid').treegrid(null, isTreeOnRequest);
         }
         buildTree();

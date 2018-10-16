@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,24 +13,20 @@
  */
 package org.entando.entando.aps.system.services.oauth2.model;
 
-import java.util.Date;
+import java.io.Serializable;
+import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 
-@Deprecated
-public class OAuth2Token {
+/**
+ * @author E.Santoboni
+ */
+public class OAuth2AccessTokenImpl extends DefaultOAuth2AccessToken implements Serializable {
 
-    private String accessToken;
     private String clientId;
-    private Date expiresIn;
-    private String refreshToken;
     private String grantType;
     private String localUser;
 
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
+    public OAuth2AccessTokenImpl(String value) {
+        super(value);
     }
 
     public String getClientId() {
@@ -39,22 +35,6 @@ public class OAuth2Token {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
-    }
-
-    public Date getExpiresIn() {
-        return expiresIn;
-    }
-
-    public void setExpiresIn(Date expiresIn) {
-        this.expiresIn = expiresIn;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
     }
 
     public String getGrantType() {
@@ -72,4 +52,5 @@ public class OAuth2Token {
     public void setLocalUser(String localUser) {
         this.localUser = localUser;
     }
+
 }

@@ -22,10 +22,8 @@ import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
-import org.entando.entando.web.common.exceptions.EntandoTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +109,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             logger.info("User {} not found ", username);
         }
     }
-
+    /*
     protected void validateToken(HttpServletRequest request, String accessToken, final OAuth2Token token) {
         if (null == token) {
             throw new EntandoTokenException("no token found", request, "guest");
@@ -121,5 +119,5 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             throw new EntandoTokenException("expired token", request, "guest");
         }
     }
-
+     */
 }

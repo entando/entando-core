@@ -28,8 +28,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-    //private static String REALM = "MY_OAUTH_REALM";
     @Autowired
+    @Qualifier("OAuth2TokenManager")
     private TokenStore tokenStore;
 
     @Autowired
@@ -56,10 +56,5 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         endpoints.tokenStore(tokenStore).userApprovalHandler(userApprovalHandler)
                 .authenticationManager(authenticationManager).prefix("/api");
     }
-    /*
-    @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
-        oauthServer.realm(REALM + "/client");
-    }
-     */
+
 }

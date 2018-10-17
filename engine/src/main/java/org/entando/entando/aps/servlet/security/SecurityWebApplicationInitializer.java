@@ -15,6 +15,11 @@ package org.entando.entando.aps.servlet.security;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
+/**
+ * Inizializer Class for Spring Security
+ *
+ * @author E.Santoboni
+ */
 public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
 
 }

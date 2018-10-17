@@ -34,17 +34,6 @@ public class OAuth2SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Autowired
     private ClientDetailsService clientDetailsService;
 
-    //@Autowired
-    //@Qualifier("AuthenticationProviderManager")
-    //private AuthenticationManager authenticationManager;
-    /*
-    @Autowired
-    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("bill").password("abc123").roles("ADMIN").and()
-                .withUser("bob").password("abc123").roles("USER");
-    }
-     */
     // Very important for Spring 5.x
     @SuppressWarnings("deprecation")
     @Bean
@@ -61,13 +50,6 @@ public class OAuth2SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/oauth/token").permitAll();
     }
 
-    /*
-    @Override
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return this.authenticationManager; //super.authenticationManagerBean();
-    }
-     */
     @Bean
     @Autowired
     public TokenStoreUserApprovalHandler userApprovalHandler(TokenStore tokenStore) {

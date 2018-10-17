@@ -14,14 +14,19 @@
 package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
@@ -48,22 +53,82 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
 
     @Override
     protected String getMasterTableName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "api_oauth_tokens";
     }
 
     @Override
     protected String getMasterTableIdFieldName() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return "accesstoken";
     }
 
     @Override
     public List<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (StringUtils.isBlank(clientId) && StringUtils.isBlank(username)) {
+            throw new RuntimeException("clientId and username cannot both be null");
+        }
+        FieldSearchFilter expirationFilter = new FieldSearchFilter("expiresin");
+        expirationFilter.setOrder(FieldSearchFilter.Order.ASC);
+        FieldSearchFilter[] filters = {expirationFilter};
+        if (!StringUtils.isBlank(clientId)) {
+            FieldSearchFilter clientIdFilter = new FieldSearchFilter("clientid", clientId, true);
+            filters = ArrayUtils.add(filters, clientIdFilter);
+        }
+        if (!StringUtils.isBlank(username)) {
+            FieldSearchFilter usernameFilter = new FieldSearchFilter("localuser", username, true);
+            filters = ArrayUtils.add(filters, usernameFilter);
+        }
+        List<OAuth2AccessToken> accessTokens = new ArrayList<>();
+        List<String> tokens = super.searchId(filters);
+        if (tokens.isEmpty()) {
+            return accessTokens;
+        }
+        Connection conn = null;
+        try {
+            conn = this.getConnection();
+            for (String token : tokens) {
+                OAuth2AccessToken accessToken = this.getAccessToken(token, conn);
+                if (!accessToken.isExpired()) {
+                    accessTokens.add(accessToken);
+                }
+            }
+        } catch (Exception t) {
+            logger.error("Error while loading tokens", t);
+            throw new RuntimeException("Error while loading tokens", t);
+        } finally {
+            this.closeConnection(conn);
+        }
+        return accessTokens;
+    }
+
+    protected OAuth2AccessToken getAccessToken(final String token, Connection conn) {
+        OAuth2AccessTokenImpl accessToken = null;
+        PreparedStatement stat = null;
+        ResultSet res = null;
+        try {
+            stat = conn.prepareStatement(SELECT_TOKEN);
+            stat.setString(1, token);
+            res = stat.executeQuery();
+            while (res.next()) {
+                accessToken = new OAuth2AccessTokenImpl(token);
+                accessToken.setRefreshToken(new DefaultOAuth2RefreshToken(res.getString("refreshtoken")));
+                accessToken.setClientId(res.getString("clientid"));
+                accessToken.setGrantType(res.getString("granttype"));
+                Timestamp timestamp = res.getTimestamp("expiresin");
+                Date expiration = new Date(timestamp.getTime());
+                accessToken.setExpiration(expiration);
+            }
+        } catch (Throwable t) {
+            logger.error("Error loading token {}", token, t);
+            throw new RuntimeException("Error loading token " + token, t);
+        } finally {
+            closeDaoResources(res, stat);
+        }
+        return accessToken;
     }
 
     @Override
     public List<OAuth2AccessToken> findTokensByClientId(String clientId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.findTokensByClientIdAndUserName(clientId, null);
     }
 
     @Override
@@ -72,6 +137,11 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
         PreparedStatement stat = null;
         try {
             conn = this.getConnection();
+            String tokenValue = accessToken.getValue();
+            if (null != this.getAccessToken(tokenValue, conn)) {
+                logger.debug("storeAccessToken: Stored Token already exists");
+                return;
+            }
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(INSERT_TOKEN);
             stat.setString(1, accessToken.getValue());
@@ -126,6 +196,7 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
         }
     }
 
+    @Deprecated
     @Override
     public synchronized void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException {
         Connection conn = null;
@@ -149,29 +220,17 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    public OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
+    public OAuth2AccessToken getAccessToken(final String accessToken) {
         Connection conn = null;
-        OAuth2Token token = null;
-        PreparedStatement stat = null;
-        ResultSet res = null;
+        OAuth2AccessToken token = null;
         try {
             conn = this.getConnection();
-            stat = conn.prepareStatement(SELECT_TOKEN);
-            stat.setString(1, accessToken);
-            res = stat.executeQuery();
-            if (res.next()) {
-                token = new OAuth2Token();
-                token.setAccessToken(accessToken);
-                token.setRefreshToken(res.getString("refreshtoken"));
-                token.setClientId(res.getString("clientid"));
-                token.setGrantType(res.getString("granttype"));
-                token.setExpiresIn(res.getTimestamp("expiresin"));
-            }
-        } catch (ApsSystemException | SQLException t) {
+            token = this.getAccessToken(accessToken, conn);
+        } catch (Exception t) {
             logger.error("Error while loading token {}", accessToken, t);
-            throw new ApsSystemException("Error while loading token " + accessToken, t);
+            throw new RuntimeException("Error while loading token " + accessToken, t);
         } finally {
-            closeDaoResources(res, stat, conn);
+            this.closeConnection(conn);
         }
         return token;
     }

@@ -1,3 +1,16 @@
+/*
+ * Copyright 2018-Present Entando S.r.l. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractService;
@@ -115,14 +128,12 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public Collection<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String username) {
-        logger.warn("findTokensByClientIdAndUserName Not supported yet.");
-        throw new UnsupportedOperationException("findTokensByClientIdAndUserName Not supported yet.");
+        return this.getOAuth2TokenDAO().findTokensByClientIdAndUserName(clientId, username);
     }
 
     @Override
     public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
-        logger.warn("findTokensByClientId Not supported yet.");
-        throw new UnsupportedOperationException("findTokensByClientId Not supported yet.");
+        return this.getOAuth2TokenDAO().findTokensByClientId(clientId);
     }
 
     @Override
@@ -137,11 +148,10 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     }
 
     @Override
-    @Deprecated
-    public OAuth2Token getApiOAuth2Token(final String accessToken) throws ApsSystemException {
+    public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException {
         try {
             return this.getOAuth2TokenDAO().getAccessToken(accessToken);
-        } catch (ApsSystemException t) {
+        } catch (Exception t) {
             logger.error(ERROR_ADDING_TOKEN, t);
             throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
         }

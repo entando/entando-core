@@ -30,13 +30,13 @@ public interface IOAuth2TokenDAO {
     @Deprecated
     void addAccessToken(final OAuth2Token accessor, boolean isLocalUser) throws ApsSystemException;
 
-    @Deprecated
-    OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException;
+    public OAuth2AccessToken getAccessToken(final String accessToken);
 
     public void deleteAccessToken(final String accessToken) throws ApsSystemException;
 
     public void deleteExpiredToken() throws ApsSystemException;
 
+    @Deprecated
     public void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException;
 
 }

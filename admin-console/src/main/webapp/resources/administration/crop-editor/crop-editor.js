@@ -1,545 +1,311 @@
 $(document).ready(function () {
 
-    if ($('.image_cropper_enabled').length === 1) {
-
-        // Global configuration for crop editor.
-        var store = [];
-        var allowedFileTypes = [
+    /**
+     * Store - object which stores all store items.
+     * storeItem - object representing currently available store items in Store.
+     *
+     * Store/storeItem structure.
+     * {
+     *     items: {
+     *       item_1: {
+     *         id: 1,
+     *         type: "file type",
+     *         name: "store item name",
+     *         imageData: "base64string",
+     *         active: Bool -
+     *         $fieldGroup: jQuery reference to store item field group in DOM,
+     *         $tabPane: jQuery reference to store item tab pane in modal window,
+     *         $tabNavigationItem: jQuery reference to tab navigation item in modal window,
+     *       }
+     *     }
+     *     lastId: 0,
+     *
+     * }
+     *
+     *
+     */
+    var Store = {
+        items: {},
+        lastStoreItemId: false,
+        allowedFileTypes: [
             "image/jpeg",
             "image/png",
             "image/gif"
-        ];
-        var isCropEditorModalShown = false;
-        var pendingNewStoreItems = [];
-
-
-        var $imageNav;
-        var $tabContent;
-        var $newTabNavigationItem;
-        var $newTabPane;
-        var $newImage;
-
-
-        var save = function (storeItem) {
-            for (var i in store) {
-                if (store[i].id === storeItem.id) {
-                    // Replace storeItem with updated one.
-                    store[i] = storeItem;
-                    DOMStoreItemUpdated(storeItem);
-                    return;
-
-                }
+        ],
+        getNewStoreItemId: function () {
+            var newStoreItemId = 0;
+            if (this.lastStoreItemId !== false) {
+                newStoreItemId = this.lastStoreItemId + 1;
             }
 
-            // Add new storeItem.
-            store.push(storeItem);
+            return newStoreItemId;
+        },
+        saveNewStoreItem: function (newStoreItem) {
+            this.lastStoreItemId = newStoreItem.id;
+            this.items["item_" + newStoreItem.id] = newStoreItem;
+            newStoreItem.$fieldGroup.attr('data-store-item-id', newStoreItem.id);
+        },
+        updateStoreItem: function (storeItem) {
+            this.items["item_" + storeItem.id] = storeItem;
 
-            DOMStoreItemCreated(storeItem);
-
-        };
-
-
-        $('.image-upload-form').on('change', 'input:file', function () {
-            var input = this;
-
-            if (input.files && input.files[0] && allowedFileTypes.indexOf(input.files[0].type) !== -1) {
-                $('.bs-cropping-modal').modal('show');
-
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    // Check if currently modified storeItem already exists.
-                    var storeItemId = $(input).attr('id').split('_')[1];
-                    save({
-                        id: storeItemId,
-                        name: input.files[0].name,
-                        imageData: e.target.result,
-                        type: input.files[0].type
-                    });
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
-        });
-
-        var $cropEditorModal = $('.bs-cropping-modal');
-
-        $cropEditorModal.on('shown.bs.modal', function () {
-            isCropEditorModalShown = true;
-
-            if ($imageNav !== undefined) {
-                $imageNav.find('.active').removeClass('active');
+            // Update file description input fields with file name.
+            if (storeItem.name) {
+                storeItem.$fieldGroup.find('.file-description').val(storeItem.name);
             }
 
-            if ($tabContent !== undefined) {
-                $tabContent.find('.active').removeClass('active');
+            if (!storeItem.$tabPane && !storeItem.$tabNavigationItem) {
+                var newTab = addTab(storeItem);
+                storeItem.$tabPane = newTab.$newTabPane;
+                storeItem.$tabNavigationItem = newTab.$newTabNavigationItem;
             }
 
-            // Add active statest to newly created tab and nav item
-            $newTabNavigationItem.addClass('active');
-            $newTabPane.addClass('active');
-            processPending();
-        });
+        },
+        deleteStoreItem: function (storeItemId) {
+            var storeItem = this.getStoreItem(storeItemId);
+            storeItem.$fieldGroup.remove();
+            if(storeItem.$tabPane){ storeItem.$tabPane.remove()}
+            if(storeItem.$tabNavigationItem){ storeItem.$tabNavigationItem.remove()}
+            delete this.items["item_" + storeItemId];
+        },
+        getStoreItem: function (storeItemId) {
+            return this.items["item_" + storeItemId];
+        },
+        setupStoreItemFile: function (storeItemId, file) {
+            var storeItem = this.getStoreItem(storeItemId);
+            var reader = new FileReader();
 
-        $cropEditorModal.on('hidden.bs.modal', function () {
-            isCropEditorModalShown = false;
-        });
+            reader.onload = function (e) {
+                storeItem.name = file.name;
+                storeItem.type = file.type;
+                storeItem.imageData = e.target.result;
 
+                Store.updateStoreItem(storeItem);
+            };
 
-        $cropEditorModal.on('click', '.btn', function () {
-            var $btn = $(this);
+            reader.readAsDataURL(file);
+        }
+    };
 
-            switch ($btn.data('method')) {
-                case 'crop':
+    // Listen to add fields button click events and action on it.
+    $('#add-fields').on('click', function (e) {
+        e.preventDefault();
+        addFields();
+    });
 
-                    if ($('.singleImageUpload').length === 1) {
-                        var currentStoreItem = getCurrentStoreItem();
-                        var imageData = "";
-                        if (currentStoreItem) {
-                            imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
-                            currentStoreItem.cropper.replace(imageData);
-                            currentStoreItem.imageData = imageData;
-                            save(currentStoreItem);
-                        }
+    // Listen to file input change events and process files.
+    $('.image-upload-form').on('change', 'input:file', function () {
+        var input = this;
 
-                        DOMToastSuccess("Image cropped!");
-                    } else {
-                        DOMCropCreated();
-                        save(setupNewStoreItem());
+        if (input.files) {
+            for (var i = 0; i < input.files.length; i++) {
+                if (Store.allowedFileTypes.indexOf(input.files[i].type) !== -1) {
+                    var storeItemId = $(input).closest('.form-group').data('storeItemId');
+                    // If multiple files, create new field for each that is not first file.
+                    if (i !== 0) {
+                        storeItemId = addFields().id;
                     }
-                    break;
-                case 'remove':
-                    remove(getCurrentStoreItemId());
-                    break;
-                case 'setDragMode':
-                    getCurrentStoreItem().cropper.setDragMode($btn.data('option'));
-                    break;
-                case 'zoom':
-                    getCurrentStoreItem().cropper.zoom($btn.data('option'));
-                    break;
-                case 'scaleX':
-                    var option = $btn.data('option');
-                    getCurrentStoreItem().cropper.scaleX(option);
-                    $btn.data('option', -1 * option);
-                    break;
-                case 'scaleY':
-                    var option = $btn.data('option');
-                    getCurrentStoreItem().cropper.scaleY(option);
-                    $btn.data('option', -1 * option);
-                    break;
-                case 'move':
-                    getCurrentStoreItem().cropper.move($btn.data('option'), $btn.data('second-option'));
-                    break;
-                case 'rotate':
-                    getCurrentStoreItem().cropper.rotate($btn.data('option'));
-                    break;
-                case 'setAspectRatio':
-                    getCurrentStoreItem().cropper.setAspectRatio($btn.data('option'));
-                    break;
 
-                default:
-                    return true;
-            }
-        });
-
-
-        var getCurrentStoreItemId = function () {
-            var currentStoreItemId = 0;
-            if (store.length > 0) {
-                currentStoreItemId = $('.bs-cropping-modal').find('.tab-pane.active').data('itemId');
-            }
-
-            return currentStoreItemId;
-        };
-
-        var getCurrentStoreItem = function () {
-            var currentStoreItemId = getCurrentStoreItemId();
-
-            var result = {};
-            for (var i in store) {
-                var storeItemI = store[i];
-                if (parseInt(storeItemI.id) === currentStoreItemId) {
-                    result = storeItemI;
+                    Store.setupStoreItemFile(storeItemId, input.files[i]);
                 }
-
             }
+        }
+    });
 
-            return result;
-        };
+    // jQuery reference to fields-container.
+    var $fieldsContainer = $('#fields-container');
 
-        var setupCropper = function (storeItemId) {
-            // Return cropper created for specific storeItem.
-            return new Cropper(
-                $('.store_item_' + storeItemId)[0],
-                {
-                    maxWidth: 300,
-                    maxHeight: 300,
-                    aspectRatio: 16 / 9,
-                    preview: $('#store_item_' + storeItemId).find('.img-preview')
-                });
-        };
+    // Listen to edit fields kebab menu item click events
+    // and open related storeItem in modal.
+    $fieldsContainer.on('click', '.edit-fields', function (e) {
+        e.preventDefault();
 
+        var storeItemId = parseInt($(this).closest('.form-group').data('storeItemId'));
+        var storeItem = Store.getStoreItem(storeItemId);
 
-        var setupNewStoreItem = function (name) {
-            var newId = generateNewStoreItemId();
-            var currentStoreItem = getCurrentStoreItem();
+        // Remove previously active tab state.
+        $('.bs-cropping-modal').find('.active').removeClass('active');
 
+        // Add new active tab state;
+        storeItem.$tabPane.addClass('active');
+        storeItem.$tabNavigationItem.addClass('active');
 
-            var imageData = "";
-            if (currentStoreItem) {
-                imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
-            }
+        $('.bs-cropping-modal').modal('show');
 
-            if (!name) {
-                var nameParts = currentStoreItem.name.split(/\.(?=[^\.]+$)/);
-                name = nameParts[0] + "_" + newId + "." + nameParts[1]
+    });
 
-            }
+    // Listen to delete fields kebab menu item click events
+    // and delete related storeItem in modal.
+    $fieldsContainer.on("click", ".delete-fields", function (e) {
+        e.preventDefault();
+        var storeItemId = parseInt($(this).closest('.form-group').data('storeItemId'));
+        Store.deleteStoreItem(storeItemId);
+    });
 
-            return {
-                id: newId,
-                name: name,
-                imageData: imageData,
-                type: currentStoreItem.type
+    // jQuery reference to crop editor modal window.
+    var $cropEditorModal = $('.bs-cropping-modal');
+
+    $('.nav-tabs').on('shown.bs.tab', '[data-toggle="tab"]', function () {
+        var storeItemId = parseInt($(this).closest('.image-navigation-item').data('storeItemId'));
+        var storeItem = Store.getStoreItem(storeItemId);
+        if(!storeItem.cropper){
+            setupCropper(storeItemId);
+        }
+    });
+
+    $cropEditorModal.on('shown.bs.modal', function () {
+        var storeItemId = parseInt($(this).find('.image-navigation-item.active').data('storeItemId'));
+        var storeItem = Store.getStoreItem(storeItemId);
+        if(!storeItem.cropper){
+            setupCropper(storeItemId);
+        }
+    });
+
+    // Listen on crop editor toolbar buttons clicks and action accordingly.
+    $cropEditorModal.on('click', '.btn', function () {
+        var $btn = $(this);
+        var currentStoreItemId = parseInt($(this).closest('.tab-pane').data('storeItemId'));
+        var currentStoreItem = Store.getStoreItem(currentStoreItemId);
+
+        switch ($btn.data('method')) {
+            case 'crop':
+
+                if ($('.singleImageUpload').length === 1) {
+                    var imageData = "";
+                    if (currentStoreItem) {
+                        imageData = currentStoreItem.cropper.getCroppedCanvas().toDataURL(currentStoreItem.type);
+                        currentStoreItem.cropper.replace(imageData);
+                        currentStoreItem.imageData = imageData;
+                        Store.updateStoreItem(currentStoreItem);
+                    }
+
+                    // DOMToastSuccess("Image cropped!");
+                } else {
+                    var newStoreItem = addFields();
+
+                    var nameParts = currentStoreItem.name.split(/\.(?=[^\.]+$)/);
+                    newStoreItem.name = nameParts[0] + "_" + newStoreItem.id + "." + nameParts[1];
+
+                    addTab(newStoreItem);
+                }
+                break;
+            case 'remove':
+                Store.deleteStoreItem(currentStoreItemId);
+                break;
+            case 'setDragMode':
+                currentStoreItem.cropper.setDragMode($btn.data('option'));
+                break;
+            case 'zoom':
+                currentStoreItem.cropper.zoom($btn.data('option'));
+                break;
+            case 'scaleX':
+                var option = $btn.data('option');
+                currentStoreItem.cropper.scaleX(option);
+                $btn.data('option', -1 * option);
+                break;
+            case 'scaleY':
+                var option = $btn.data('option');
+                currentStoreItem.cropper.scaleY(option);
+                $btn.data('option', -1 * option);
+                break;
+            case 'move':
+                currentStoreItem.cropper.move($btn.data('option'), $btn.data('second-option'));
+                break;
+            case 'rotate':
+                currentStoreItem.cropper.rotate($btn.data('option'));
+                break;
+            case 'setAspectRatio':
+                currentStoreItem.cropper.setAspectRatio($btn.data('option'));
+                break;
+
+            default:
+                return true;
+        }
+    });
+
+    var setupInitialStoreItems = function () {
+        $fieldsContainer.find('.form-group ').each(function (i, element) {
+            var newStoreItem = {
+                id: Store.getNewStoreItemId(),
+                $fieldGroup: $(element)
             };
 
 
+            Store.saveNewStoreItem(newStoreItem);
+        });
+    };
+
+    setupInitialStoreItems();
+
+
+    var addFields = function () {
+        var newStoreItem = {
+            id: Store.getNewStoreItemId()
         };
 
-        var generateNewStoreItemId = function () {
-            var highestIdInStore = 0;
-            for (var i in store) {
-                var currentStoreItemId = parseInt(store[i].id);
-                if (currentStoreItemId > highestIdInStore) {
-                    highestIdInStore = currentStoreItemId;
-                }
-            }
-
-            highestIdInStore++;
-
-            return highestIdInStore;
-        };
+        var $template = $($('#hidden-fields-template').html());
 
 
-        var remove = function (storeItemId) {
+        $template.find('#newDescr').attr("name", "descr_" + newStoreItem.id);
+        $template.find('#newDescr').attr("id", "descr_" + newStoreItem.id);
 
-            for (var i in store) {
-                if (store[i].id == storeItemId) {
-                    if (store[i].hasOwnProperty('cropper')) {
-                        store[i].cropper.destroy();
-                    }
+        $template.find('#newImg').attr("id", "img_" + newStoreItem.id);
 
-                    // Remove storeItem from store.
-                    store.splice(i, 1);
+        $template.find('#newFileUpload_label').attr("for", "fileUpload_" + newStoreItem.id);
+        $template.find('#newFileUpload_label').attr("id", "fileUpload_label_" + newStoreItem.id);
 
-                    removeTab(storeItemId);
-                    removeHiddenFields(storeItemId);
-                }
-            }
+        $template.find('#newFileUpload_selected').attr("id", "fileUpload_" + newStoreItem.id + "_selected");
+        $template.find('#newFileUpload').attr("id", "fileUpload_" + newStoreItem.id);
 
-            for (var j in pendingNewStoreItems) {
-                if (pendingNewStoreItems[j].id == storeItemId) {
-                    pendingNewStoreItems.splice(j, 1);
-                }
-            }
-
-            removeField(storeItemId);
-        };
-
-        var addTab = function (storeItem) {
-            $imageNav = $('.image-navigation');
-            $tabContent = $('.bs-cropping-modal').find('.tab-content');
-
-            // Remove active states
-            // $imageNav.find('.active').removeClass('active');
-            // $tabContent.find('.active').removeClass('active');
+        $template.find('#newFileUpload_box').attr("id", "fileUpload_box_" + newStoreItem.id);
 
 
-            // Copy image navigation item - tab navigation item
-            $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
-            $newTabNavigationItem.addClass('image-navigation-item');
-            $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
-            $newTabNavigationItem.find('a').text(storeItem.name);
-            $newTabNavigationItem.removeClass('hidden');
-            $newTabNavigationItem.attr('id', 'image-navigation-item_' + storeItem.id);
-            $newTabNavigationItem.appendTo($imageNav);
+        newStoreItem.$fieldGroup = $template.appendTo($fieldsContainer);
 
-            // Copy tab pane
-            $newTabPane = $('#tab-pane-blueprint').clone();
-            $newTabPane.addClass('tab-pane');
-            $newTabPane.removeClass('hidden');
-            $newTabPane.attr('id', 'store_item_' + storeItem.id);
-            $newTabPane.attr('data-item-id', storeItem.id);
-            $newImage = $newTabPane.find('.store_item_');
-            $newImage.attr('src', storeItem.imageData);
-            $newImage.addClass('store_item_' + storeItem.id);
-            $newTabPane.appendTo($tabContent);
+        Store.saveNewStoreItem(newStoreItem);
 
-            // Add active statest to newly created tab and nav item
-            if (store.length === 1) {
-                $newTabNavigationItem.addClass('active');
-                $newTabPane.addClass('active');
-            }
+        return newStoreItem;
+    };
 
+    var addTab = function (storeItem) {
+        var $imageNav = $('.image-navigation');
+        var $tabContent = $('.bs-cropping-modal').find('.tab-content');
 
-            if (store.length > 0) {
-                pendingNewStoreItems.push({id: storeItem.id});
-            }
+        // Copy image navigation item - tab navigation item
+        var $newTabNavigationItem = $('#image-navigation-item-blueprint').clone();
+        $newTabNavigationItem.addClass('image-navigation-item');
+        $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
+        $newTabNavigationItem.find('a').text(storeItem.name);
+        $newTabNavigationItem.removeClass('hidden');
+        $newTabNavigationItem.attr('id', 'image-navigation-item_' + storeItem.id);
+        $newTabNavigationItem.attr('data-store-item-id', storeItem.id);
 
+        // Copy tab pane
+        var $newTabPane = $('#tab-pane-blueprint').clone();
+        $newTabPane.addClass('tab-pane');
+        $newTabPane.removeClass('hidden');
+        $newTabPane.attr('id', 'store_item_' + storeItem.id);
+        $newTabPane.attr('data-item-id', storeItem.id);
+        $newTabPane.attr('data-store-item-id', storeItem.id);
+        var $newImage = $newTabPane.find('.store_item_');
+        $newImage.attr('src', storeItem.imageData);
+        $newImage.addClass('store_item_' + storeItem.id);
 
-        };
+        return {
+            $newTabPane: $newTabNavigationItem.appendTo($imageNav),
+            $newTabNavigationItem: $newTabPane.appendTo($tabContent)
+        }
+    };
 
-
-        var updateTab = function (storeItem) {
-            $imageNav = $('.image-navigation');
-            $tabContent = $('.bs-cropping-modal').find('.tab-content');
-
-            // Remove active states
-            $imageNav.find('.active').removeClass('active');
-            $tabContent.find('.active').removeClass('active');
-
-
-            // Copy image navigation item - tab navigation item
-            $newTabNavigationItem = $('#image-navigation-item_' + storeItem.id);
-            $newTabNavigationItem.find('a').attr('href', '#store_item_' + storeItem.id);
-            $newTabNavigationItem.find('a').text(storeItem.name);
-            $newTabNavigationItem.removeClass('hidden');
-            $newTabNavigationItem.attr('id', 'image-navigation-item_' + storeItem.id);
-            $newTabNavigationItem.appendTo($imageNav);
-
-            // Copy tab pane
-            $newTabPane = $('#store_item_' + storeItem.id);
-            $newTabPane.removeClass('hidden');
-            $newTabPane.attr('id', 'store_item_' + storeItem.id);
-            $newTabPane.attr('data-item-id', storeItem.id);
-            $newImage = $newTabPane.find('.store_item_');
-            $newImage.attr('src', storeItem.imageData);
-            $newImage.addClass('store_item_' + storeItem.id);
-            $newTabPane.appendTo($tabContent);
-
-            // Add active statest to newly created tab and nav item
-            $newTabNavigationItem.addClass('active');
-            $newTabPane.addClass('active');
-
-
-            store = store.map(function (storeItemI) {
-                if (storeItemI.id === storeItem.id) {
-                    storeItemI.cropper.destroy();
-                }
-
-                return storeItemI;
+    var setupCropper = function (storeItemId) {
+        var storeItem = Store.getStoreItem(storeItemId);
+        storeItem.cropper = new Cropper(
+            $('.store_item_' + storeItemId)[0],
+            {
+                maxWidth: 300,
+                maxHeight: 300,
+                aspectRatio: 16 / 9,
+                preview: $('#store_item_' + storeItemId).find('.img-preview')
             });
-
-            pendingNewStoreItems.push({id: storeItem.id});
-
-        };
-
-        var removeTab = function (storeItemId) {
-            var $tabPaneToRemove = $('#store_item_' + storeItemId);
-            var $imageNavItemToRemove = $('#image-navigation-item_' + storeItemId);
-
-            var $nextTabPane = $tabPaneToRemove.next();
-            var $nextImageNavItem = $imageNavItemToRemove.next('.image-navigation-item');
-
-            $tabPaneToRemove.remove();
-            $imageNavItemToRemove.remove();
-
-
-            if ($nextTabPane.length > 0 && $nextImageNavItem.length > 0) {
-
-                $nextTabPane.addClass('active');
-                $nextImageNavItem.addClass('active');
-            } else {
-                $('.image-navigation-item').last().addClass('active');
-                $('.tab-pane').last().addClass('active');
-            }
-            processPending();
-
-        };
-
-        var removeField = function (storeItemId) {
-            $('#descr_' + storeItemId).closest('.form-group').remove();
-        };
-
-        var removeHiddenFields = function (storeItemId) {
-            $('#base64_image_' + storeItemId).remove();
-            $('#file_upload_content_type_' + storeItemId).remove();
-            $('#file_upload_name_' + storeItemId).remove();
-        };
-
-
-        var addFields = function () {
-            var template = $('#hidden-fields-template').html();
-
-            $('#fields-container').append(template);
-
-            var newId = generateNewStoreItemId();
-
-            $('#newDescr').attr("name", "descr_" + newId);
-            $('#newDescr').attr("id", "descr_" + newId);
-
-            $('#newImg').attr("id", "img_" + newId);
-
-            $('#newFileUpload_label').attr("for", "fileUpload_" + newId);
-            $('#newFileUpload_label').attr("id", "fileUpload_label_" + newId);
-
-            $('#newFileUpload_selected').attr("id", "fileUpload_" + newId + "_selected");
-            $('#newFileUpload').attr("id", "fileUpload_" + newId);
-
-            $('#newFileUpload_box').attr("id", "fileUpload_box_" + newId);
-        };
-
-        $('#add-fields').click(function (e) {
-            e.preventDefault();
-            addFields();
-            // var storeItem = setupNewStoreItem(true, "image.jpg");
-            // pendingNewStoreItems.push(storeItem.id);
-            //
-            // save(storeItem);
-        });
-
-        $('#save').on('click', '.edit-fields', function (e) {
-            e.preventDefault();
-            $('.bs-cropping-modal').modal('show');
-
-            var storeItemId = $(this).closest('.form-group').find('.file-description').attr('id').split('_')[1];
-
-            $imageNav = $('.image-navigation');
-            $tabContent = $('.bs-cropping-modal').find('.tab-content');
-
-
-            $newTabPane = $('#store_item_' + storeItemId);
-            $newTabNavigationItem = $('#image-navigation-item_' + storeItemId);
-
-
-        });
-
-
-        $('#fields-container').on("click", ".delete-fields", function (e) {
-            e.preventDefault();
-            var $fieldContainer = $(this).closest('.form-group');
-            var storeItemId = $fieldContainer.find('.file-description').attr('id').split('_')[1];
-            remove(storeItemId);
-
-        });
-
-        $('.bs-cropping-modal').on('click', '.image-navigation-item', function () {
-            $clickedNavigationItem = $(this);
-
-
-        });
-
-        $('.nav-tabs').on('shown.bs.tab', '[data-toggle="tab"]', function () {
-            processPending();
-        });
-
-
-        var processPending = function () {
-
-            var currentStoreItem = getCurrentStoreItem();
-
-
-            for (var i in pendingNewStoreItems) {
-                var storeItemI = pendingNewStoreItems[i];
-
-                if (currentStoreItem.id === storeItemI.id) {
-                    for (var j in store) {
-                        var storeItemJ = store[j];
-
-                        if (storeItemI.id === storeItemJ.id) {
-                            currentStoreItem.cropper = setupCropper(storeItemJ.id);
-                            store[j] = currentStoreItem;
-                            pendingNewStoreItems.splice(i, 1);
-                        }
-                    }
-
-                }
-            }
-        };
-
-
-        /*
-         * DOM Manipulation functions.
-         */
-        var DOMStoreItemCreated = function (storeItem) {
-
-            // Perform DOM manipulations.
-            addTab(storeItem);
-
-            $('#descr_' + storeItem.id).val(storeItem.name);
-            $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-            $('.image-upload-form').append('<input type="hidden" name="base64Image" id="base64_image_' + storeItem.id + '" value="' + storeItem.imageData + '">');
-            $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">');
-            $('.image-upload-form').append('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">');
-
-        };
-
-        var DOMCropCreated = function () {
-            addFields();
-            DOMToastSuccess();
-        };
-
-        var DOMToastSuccess = function (message) {
-
-            var $toast = $('.toast-success-blueprint').clone();
-
-            if (message) {
-                $toast.find('.toast-message').text(message);
-            }
-
-            $('body').append($toast);
-            $toast.fadeIn();
-            $toast.removeClass('hidden');
-
-            setTimeout(function () {
-                $toast.fadeOut(function () {
-                    $toast.remove();
-                });
-            }, 2000)
-
-        };
-
-
-        var DOMStoreItemUpdated = function (storeItem) {
-
-            if ($('.singleImageUpload').length !== 1) {
-                // Perform DOM manipulations.
-                updateTab(storeItem);
-            }
-
-
-            $('#descr_' + storeItem.id).val(storeItem.name);
-            $('#img_' + storeItem.id).attr("src", storeItem.imageData);
-            $('#base64_image_' + storeItem.id ).val(storeItem.imageData);
-            $('#file_upload_content_type_' + storeItem.id ).val(storeItem.type);
-            $('#file_upload_name_' + storeItem.id ).val(storeItem.name);
-        };
-
-        var DOMsetupAspectRatioToolbar = function () {
-            var defaultAspectRatios = $('#aspect-ratio-values').text().trim().split(";");
-            var $aspectRatioToolbar = $('.aspect-ratio-buttons');
-
-            var render = function (val) {
-                var aspectRatioValues = val.split(':');
-                var aspectRatio = aspectRatioValues[0] / aspectRatioValues[1];
-                var template =
-                    '<label class="btn btn-primary" data-method="setAspectRatio" data-option="' + aspectRatio + '">\n' +
-                    '<input type="radio" class="sr-only" name="aspectRatio" value="' + aspectRatio + '">\n' +
-                    '<span class="docs-tooltip">' + val + '</span>\n' +
-                    '</label>';
-
-                return template;
-            };
-
-            for (var i in defaultAspectRatios) {
-                if (defaultAspectRatios[i].length > 0) {
-                    $aspectRatioToolbar.find('.btn-group').append(render(defaultAspectRatios[i]));
-                }
-            }
-        };
-
-        DOMsetupAspectRatioToolbar();
-
-    }
-
+        Store.updateStoreItem(storeItem);
+    };
 });

@@ -313,7 +313,7 @@
                     <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
                              class="btn btn-default" key="label.button-choose-file"/>
                     <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                            label="label.file"/>
+                            label="label.file" multiple="true"/>
                     <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
                 <s:text name="label.no-file-selected"/>
             </span>
@@ -711,7 +711,7 @@
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
                     <s:text name="label.button-choose-file"/></label>
-                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"/>
+                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" multiple="true"/>
                 <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/>
                 </span>
             </div>

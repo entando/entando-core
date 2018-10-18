@@ -1,13 +1,10 @@
 package org.entando.entando.web.swagger;
 
-import io.swagger.models.auth.In;
-import org.apache.http.HttpHeaders;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
@@ -24,7 +21,8 @@ import static java.util.Collections.singletonList;
 @EnableWebMvc
 public class SwaggerConfig {
 
-    private static final String API_KEY = "apiKey";
+    private static final String ENTANDO_AUTH = "entando_auth";
+    private static final String AUTH_URL = "http://localhost:8080/demosw";
 
     @Bean
     public Docket api() {
@@ -34,15 +32,28 @@ public class SwaggerConfig {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .securitySchemes(singletonList(apiKey()))
+                .securitySchemes(singletonList(oAuth()))
                 .securityContexts(singletonList(securityContext()))
                 .directModelSubstitute(UserAuthoritiesRequest.class, String.class);
     }
 
-    private ApiKey apiKey() {
-        return new ApiKey(API_KEY,
-                        HttpHeaders.AUTHORIZATION,
-                        In.HEADER.name());
+    private OAuth oAuth() {
+        return new OAuthBuilder()
+                .name(ENTANDO_AUTH)
+                .grantTypes(grantTypes())
+                .scopes(scopes())
+                .build();
+    }
+
+    private List<GrantType> grantTypes() {
+        return singletonList(new AuthorizationCodeGrantBuilder()
+                .tokenEndpoint(new TokenEndpoint(AUTH_URL + "/OAuth2/access_token", "oauthtoken"))
+                .tokenRequestEndpoint(new TokenRequestEndpoint(AUTH_URL + "/OAuth2/authorize", "admin", "1234"))
+                .build());
+    }
+
+    private List<AuthorizationScope> scopes() {
+        return singletonList(new AuthorizationScope("global", "accessEverything"));
     }
 
     private SecurityContext securityContext() {
@@ -57,8 +68,11 @@ public class SwaggerConfig {
                 = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return singletonList(
-                new SecurityReference(API_KEY, authorizationScopes));//<18>
+
+        return singletonList(SecurityReference.builder()
+                .reference(ENTANDO_AUTH)
+                .scopes(authorizationScopes)
+                .build());
     }
 
     private ApiInfo apiInfo() {

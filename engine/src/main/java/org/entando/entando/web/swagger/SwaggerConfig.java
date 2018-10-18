@@ -1,6 +1,9 @@
 package org.entando.entando.web.swagger;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.baseconfig.BaseConfigManager;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -22,7 +25,13 @@ import static java.util.Collections.singletonList;
 public class SwaggerConfig {
 
     private static final String ENTANDO_AUTH = "entando_auth";
-    private static final String AUTH_URL = "http://localhost:8080/demosw";
+
+    private BaseConfigManager baseConfigManager;
+
+    @Autowired
+    public SwaggerConfig(BaseConfigManager baseConfigManager) {
+        this.baseConfigManager = baseConfigManager;
+    }
 
     @Bean
     public Docket api() {
@@ -41,19 +50,25 @@ public class SwaggerConfig {
         return new OAuthBuilder()
                 .name(ENTANDO_AUTH)
                 .grantTypes(grantTypes())
-                .scopes(scopes())
+                .scopes(singletonList(globalScope()))
                 .build();
     }
 
     private List<GrantType> grantTypes() {
+        String authUrl = baseConfigManager.getParam(SystemConstants.PAR_APPL_BASE_URL);
+
         return singletonList(new AuthorizationCodeGrantBuilder()
-                .tokenEndpoint(new TokenEndpoint(AUTH_URL + "/OAuth2/access_token", "oauthtoken"))
-                .tokenRequestEndpoint(new TokenRequestEndpoint(AUTH_URL + "/OAuth2/authorize", "admin", "1234"))
+                .tokenEndpoint(new TokenEndpointBuilder()
+                        .url(authUrl + "OAuth2/access_token")
+                        .build())
+                .tokenRequestEndpoint(new TokenRequestEndpointBuilder()
+                        .url(authUrl + "OAuth2/authorize")
+                        .build())
                 .build());
     }
 
-    private List<AuthorizationScope> scopes() {
-        return singletonList(new AuthorizationScope("global", "accessEverything"));
+    private AuthorizationScope globalScope() {
+        return new AuthorizationScope("global", "accessEverything");
     }
 
     private SecurityContext securityContext() {
@@ -64,10 +79,10 @@ public class SwaggerConfig {
     }
 
     private List<SecurityReference> defaultAuth() {
-        AuthorizationScope authorizationScope
-                = new AuthorizationScope("global", "accessEverything");
+        AuthorizationScope globalScope
+                = new AuthorizationScope("global", "Access everything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-        authorizationScopes[0] = authorizationScope;
+        authorizationScopes[0] = globalScope;
 
         return singletonList(SecurityReference.builder()
                 .reference(ENTANDO_AUTH)

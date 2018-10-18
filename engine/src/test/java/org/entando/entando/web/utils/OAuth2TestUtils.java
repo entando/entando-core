@@ -26,11 +26,11 @@ import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 public class OAuth2TestUtils {
-
+    
     public static OAuth2AccessToken getOAuth2Token(String username, String accessToken) {
         OAuth2AccessTokenImpl oAuth2Token = new OAuth2AccessTokenImpl(accessToken);
         oAuth2Token.setRefreshToken(new DefaultOAuth2RefreshToken("refresh_token"));
-        oAuth2Token.setClientId(username);
+        oAuth2Token.setLocalUser(username);
         Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
         calendar.add(Calendar.SECOND, 3600);
         oAuth2Token.setExpiration(calendar.getTime());

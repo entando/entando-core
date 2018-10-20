@@ -18,13 +18,8 @@ import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.BaseResourceDataBean;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
@@ -35,6 +30,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +70,7 @@ public class MultipleResourceAction extends ResourceAction {
                     ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                     this.checkRightFileType(resourcePrototype, this.getFileUploadBase64ImageFileName().get(0));
                 }
-            } else if (null != this.getFileUploadFileName()) {
+            } else if (fileUploadBase64ImageFileName != null) {
                 ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                 this.checkRightFileType(resourcePrototype, this.getFileUploadFileName().get(0));
             }
@@ -100,7 +96,7 @@ public class MultipleResourceAction extends ResourceAction {
             logger.error("Add error -> files in base64 string is empty. Exception:\n{}", ex);
         }
         if (null != getBase64Image()) {
-            validateFileDescriptions();
+            addFieldErrorsIfTheyExist(validateFileDescriptions());
             if (null != this.getResourceType()) {
                 ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                 this.getFileUploadBase64ImageFileName().forEach(imageFileName
@@ -109,6 +105,14 @@ public class MultipleResourceAction extends ResourceAction {
                 this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.genericError"));
                 logger.error("Add error -> genericError");
             }
+        }
+    }
+
+    private void addFieldErrorsIfTheyExist(List<FieldError> fieldErrors) {
+        if (fieldErrors.isEmpty()) return; // Nothing to do
+
+        for (FieldError fieldError : fieldErrors) {
+            addFieldError(fieldError.fieldName, fieldError.errorMessage);
         }
     }
 
@@ -127,7 +131,7 @@ public class MultipleResourceAction extends ResourceAction {
             logger.error("Add error -> files is void. Exception:\n{}", ex);
         }
         if (null != getFileUpload()) {
-            this.validateFileDescriptions();
+            addFieldErrorsIfTheyExist(validateFileDescriptions());
             if (null != this.getResourceType()) {
                 ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                 this.getFileUploadFileName().forEach(fileName
@@ -164,23 +168,22 @@ public class MultipleResourceAction extends ResourceAction {
         return SUCCESS;
     }
 
-    protected void validateFileDescriptions() {
-        int fileUploadSize = 0;
-        if (null != this.getFileUpload()) {
-            fileUploadSize = this.getFileUpload().size();
-        }
-        for (int i = 0; i < fileUploadSize; i++) {
-            if (null != fileDescriptions) {
-                if (!(fileDescriptions.get(i).length() > 0)) {
-                    this.addFieldError(DESCR_FIELD + i, this.getText("error.resource.file.descrEmpty"));
-                }
-                if (fileDescriptions.get(i).length() > 250) {
-                    this.addFieldError(DESCR_FIELD + i, this.getText("error.resource.file.descrTooLong"));
-                }
-            } else {
-                this.addFieldError(DESCR_FIELD + i, this.getText("error.resource.file.descrEmpty"));
+    private List<FieldError> validateFileDescriptions() {
+        List<FieldError> errors = new ArrayList<>();
+        if (fileDescriptions == null) return errors;
+
+        for (int i = 0; i < fileDescriptions.size(); i++) {
+            String fileDescription = fileDescriptions.get(i);
+
+            if (StringUtils.isEmpty(fileDescription)) {
+                errors.add(new FieldError(DESCR_FIELD + i, getText("error.resource.file.descrEmpty")));
+            }
+            if (fileDescription.length() > 250) {
+                errors.add(new FieldError(DESCR_FIELD + i, getText("error.resource.file.descrTooLong")));
             }
         }
+
+        return errors;
     }
 
     @Override
@@ -303,11 +306,14 @@ public class MultipleResourceAction extends ResourceAction {
 
                     baseResourceDataBeanList = new ArrayList<BaseResourceDataBean>();
                     baseResourceDataBeanList.add(resourceFile);
+                    String fileUploadName = getFilenameFromListOfNames(index);
+
                     try {
+
                         if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
                             this.getResourceManager().addResources(baseResourceDataBeanList);
                             this.addActionMessage(this.getText("message.resource.filename.uploaded",
-                                    new String[]{fileUploadFileName.get(index)}));
+                                    new String[]{fileUploadName}));
                             savedId.add(index);
                         } else if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
                             resourceFile.setResourceId(super.getResourceId());
@@ -315,9 +321,9 @@ public class MultipleResourceAction extends ResourceAction {
                         }
                     } catch (ApsSystemException ex) {
                         hasError = true;
-                        logger.error("error loading file {} ", fileUploadFileName.get(index), ex);
+                        logger.error("error loading file {} ", fileUploadName, ex);
                         this.addFieldError(String.valueOf(index), this.getText("error.resource.filename.uploadError",
-                                new String[]{fileUploadFileName.get(index)}));
+                                new String[]{fileUploadName}));
                     }
                 }
 
@@ -339,6 +345,16 @@ public class MultipleResourceAction extends ResourceAction {
             return FAILURE;
         }
         return SUCCESS;
+    }
+
+    private String getFilenameFromListOfNames(int i) {
+        return listContains(fileUploadBase64ImageFileName, i) ?
+                fileUploadBase64ImageFileName.get(i) :
+                null;
+    }
+
+    private boolean listContains(List list, int i) {
+        return list != null && i <= list.size();
     }
 
     public String getFileDescription(int i) {

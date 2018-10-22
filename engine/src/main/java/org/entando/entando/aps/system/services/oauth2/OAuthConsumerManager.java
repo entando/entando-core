@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -46,15 +47,25 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         BaseClientDetails details = new BaseClientDetails();
         try {
             ConsumerRecordVO consumer = this.getConsumerDAO().getConsumer(clientId);
+            if (null == consumer) {
+                return null;
+            }
             details.setClientId(clientId);
-            details.setAuthorizedGrantTypes(Arrays.asList("password", "authorization_code", "refresh_token", "implicit"));
-            details.setScope(Arrays.asList("read", "write", "trust"));
+            if (!StringUtils.isBlank(consumer.getAuthorizedGrantTypes())) {
+                details.setAuthorizedGrantTypes(Arrays.asList(consumer.getAuthorizedGrantTypes().split(",")));
+            }
+            if (!StringUtils.isBlank(consumer.getScope())) {
+                details.setScope(Arrays.asList(consumer.getScope().split(",")));
+            }
             details.setClientSecret(consumer.getSecret());
-            //details.setResourceIds(Arrays.asList("oauth2-resource"));
             Set<GrantedAuthority> authorities = new HashSet<>();
             authorities.add(new SimpleGrantedAuthority("ROLE_CLIENT"));
             details.setAuthorities(authorities);
-            //details.setRegisteredRedirectUri();
+            if (null != consumer.getCallbackUrl()) {
+                Set<String> uris = new HashSet<>();
+                uris.add(consumer.getCallbackUrl());
+                details.setRegisteredRedirectUri(uris);
+            }
         } catch (Exception t) {
             logger.error("Error extracting consumer record by key {}", clientId, t);
             throw new ClientRegistrationException("Error extracting consumer record by key " + clientId, t);

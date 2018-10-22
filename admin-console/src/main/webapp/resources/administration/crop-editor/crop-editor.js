@@ -420,8 +420,8 @@ $(document).ready(function () {
             $newImage.addClass('store_item_' + storeItem.id);
 
             return {
-                $newTabPane: $newTabNavigationItem.appendTo($imageNav),
-                $newTabNavigationItem: $newTabPane.appendTo($tabContent)
+                $newTabNavigationItem: $newTabNavigationItem.appendTo($imageNav),
+                $newTabPane: $newTabPane.appendTo($tabContent)
             }
         };
 
@@ -433,7 +433,19 @@ $(document).ready(function () {
                     maxWidth: 300,
                     maxHeight: 300,
                     aspectRatio: 16 / 9,
-                    preview: $('#store_item_' + storeItemId).find('.img-preview')
+                    preview: $('#store_item_' + storeItemId).find('.img-preview'),
+                    crop: function (e) {
+                        var actionedStoreItem = getStoreItem(storeItemId);
+                        var data = e.detail;
+
+                        actionedStoreItem.$tabPane.find('.dataX').val(Math.round(data.x));
+                        actionedStoreItem.$tabPane.find('.dataY').val(Math.round(data.y));
+                        actionedStoreItem.$tabPane.find('.dataHeight').val(Math.round(data.height));
+                        actionedStoreItem.$tabPane.find('.dataWidth').val(Math.round(data.width));
+                        actionedStoreItem.$tabPane.find('.dataRotate').val((typeof data.rotate !== 'undefined' ? data.rotate : ''));
+                        actionedStoreItem.$tabPane.find('.dataScaleX').val((typeof data.scaleX !== 'undefined' ? data.scaleX : ''));
+                        actionedStoreItem.$tabPane.find('.dataScaleY').val((typeof data.scaleY !== 'undefined' ? data.scaleY : ''));
+                    }
                 });
             updateStoreItem(storeItem);
         };

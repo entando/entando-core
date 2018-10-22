@@ -371,11 +371,13 @@
     <div class="modal-dialog modal-xlg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="<s:text name="cropEditor.button.close"/>">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="<s:text name="cropEditor.button.close"/>">
                     <s:text name="cropEditor.button.close"/>
                     <span class="fa fa-times"></span>
                 </button>
-                <h4 class="modal-title"><s:text name="cropEditor.label.editImage"/> <span class="image-name"></span></h4>
+                <h4 class="modal-title"><s:text name="cropEditor.label.editImage"/> <span class="image-name"></span>
+                </h4>
             </div>
             <div class="container-fluid no-padding">
                 <div class="row">
@@ -412,13 +414,85 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4">
+                                                <div class="docs-data">
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text" for="dataX">X</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataX"
+                                                               placeholder="x" disabled>
+                                                        <span class="input-group-append">
+                                                          <span class="input-group-text">px</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text" for="dataY">Y</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataY"
+                                                               placeholder="y" disabled>
+                                                        <span class="input-group-append">
+                                                          <span class="input-group-text">px</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text" for="dataWidth">Width</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataWidth"
+                                                               placeholder="width" disabled>
+                                                        <span class="input-group-append">
+                                                          <span class="input-group-text">px</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                    <span class="dimensions-label">
+                                                      <label class="input-group-text" for="dataHeight">Height</label>
+                                                    </span>
+                                                        <input type="text" class="form-control dataHeight"
+                                                               placeholder="height" disabled>
+                                                        <span class="input-group-append">
+                                                          <span class="input-group-text">px</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text"
+                                                                 for="dataRotate">Rotate</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataRotate"
+                                                               placeholder="rotate" disabled>
+                                                        <span class="input-group-append">
+                                                          <span class="input-group-text">deg</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text"
+                                                                 for="dataScaleX">ScaleX</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataScaleX"
+                                                               placeholder="scaleX" disabled>
+                                                    </div>
+                                                    <div class="input-group input-group-sm">
+                                                        <span class="dimensions-label">
+                                                          <label class="input-group-text"
+                                                                 for="dataScaleY">ScaleY</label>
+                                                        </span>
+                                                        <input type="text" class="form-control dataScaleY"
+                                                               placeholder="scaleY" disabled>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="row flex-container">
                                             <div class="col-md-8">
                                                 <div class="toolbar-container flex-container space-between">
                                                     <!-- scale -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.flip"/></span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.flip"/></span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="scaleX" data-option="-1"
                                                                 title="Flip Horizontal">
@@ -441,7 +515,8 @@
 
                                                     <!-- move -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.move"/> </span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.move"/> </span>
                                                         <button type="button" class="btn btn-primary" data-method="move"
                                                                 data-option="-10" data-second-option="0"
                                                                 title="Move Left">
@@ -480,7 +555,8 @@
 
                                                     <!-- rotate -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.rotate"/></span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.rotate"/></span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="rotate"
                                                                 data-option="-45" title="Rotate Left">
@@ -503,7 +579,8 @@
 
                                                     <!-- zoom -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.zoom"/></span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.zoom"/></span>
                                                         <button type="button" class="btn btn-primary" data-method="zoom"
                                                                 data-option="0.1" title="Zoom In">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -524,7 +601,8 @@
 
                                                     <!-- save and cancel -->
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.crop"/></span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.crop"/></span>
                                                         <button type="button" class="btn btn-primary" data-method="crop"
                                                                 title="<s:text name="cropEditor.label.crop"/>">
                                                     <span class="docs-tooltip" data-toggle="tooltip" title=""
@@ -536,7 +614,8 @@
                                                     <div class="divider flex-item"></div>
 
                                                     <div class="btn-group flex-item">
-                                                        <span class="btn-group__title"><s:text name="cropEditor.label.cancel"/></span>
+                                                        <span class="btn-group__title"><s:text
+                                                                name="cropEditor.label.cancel"/></span>
                                                         <button type="button" class="btn btn-primary"
                                                                 data-method="remove"
                                                                 title="Remove">
@@ -556,7 +635,8 @@
                                                             <input type="radio" class="sr-only" id="aspectRatio5"
                                                                    name="aspectRatio" value="NaN">
                                                             <span class="docs-tooltip" data-toggle="tooltip" title=""
-                                                                  data-original-title="aspectRatio: NaN"><s:text name="cropEditor.label.free"/></span>
+                                                                  data-original-title="aspectRatio: NaN"><s:text
+                                                                    name="cropEditor.label.free"/></span>
                                                         </label>
                                                     </div>
                                                 </div>
@@ -685,17 +765,18 @@
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
                     <s:text name="label.button-choose-file"/></label>
-                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" multiple="true"/>
+                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
+                        multiple="true"/>
                 <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/>
                 </span>
             </div>
         </div>
 
         <s:if test="%{resourceTypeCode == 'Attach'}">
-        <button type="button" class="btn-danger delete-fields "
-                title="<s:text name="label.remove-fileinput" />"
-        ><span class="fa fa-times white"></span>
-        </button>
+            <button type="button" class="btn-danger delete-fields "
+                    title="<s:text name="label.remove-fileinput" />"
+            ><span class="fa fa-times white"></span>
+            </button>
         </s:if>
 
         <s:if test="%{resourceTypeCode == 'Image'}">

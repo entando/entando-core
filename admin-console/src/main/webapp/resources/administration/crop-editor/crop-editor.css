@@ -300,3 +300,24 @@
     top: 80px;
     z-index: 1055;
 }
+
+
+.docs-data > .input-group input {
+    border: 1px solid #BBBBBB;
+    text-align: center;
+    width: auto;
+}
+
+.docs-data .input-group-append {
+    margin-left: 5px;
+}
+
+.docs-data span.dimensions-label {
+    width: 40px;
+    display: block;
+    float: left;
+    text-align: right;
+    margin-right: 5px;
+    font-weight: 300;
+    font-size: 12px;
+}

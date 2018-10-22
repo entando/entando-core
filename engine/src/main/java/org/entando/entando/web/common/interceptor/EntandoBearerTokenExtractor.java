@@ -22,7 +22,7 @@ import org.springframework.security.oauth2.provider.authentication.BearerTokenEx
 public class EntandoBearerTokenExtractor extends BearerTokenExtractor {
 
     @Override
-    protected String extractToken(HttpServletRequest request) {
+    public String extractToken(HttpServletRequest request) {
         return super.extractToken(request);
     }
 

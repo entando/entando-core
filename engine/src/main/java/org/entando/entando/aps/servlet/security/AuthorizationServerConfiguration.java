@@ -47,7 +47,6 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        //endpoints.pathMapping("/oauth/token", "/OAuth2/access_token");
         endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager).prefix("/api");
     }
 

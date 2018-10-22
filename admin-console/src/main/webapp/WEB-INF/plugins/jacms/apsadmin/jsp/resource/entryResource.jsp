@@ -334,11 +334,12 @@
 
                 <s:if test="%{resourceTypeCode == 'Attach'}">
 
-                <button type="button" class="btn-danger delete-fields "
-                        title="<s:text name="label.remove-fileinput" />"
-                ><span class="fa fa-times white"></span>
-                </button>
+                    <button type="button" class="btn-danger delete-fields "
+                            title="<s:text name="label.remove-fileinput" />"
+                    ><span class="fa fa-times white"></span>
+                    </button>
                 </s:if>
+
 
                 <s:if test="%{resourceTypeCode == 'Image'}">
                     <div class="col-sm-1">
@@ -416,72 +417,80 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="docs-data">
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="dimensions-label">
-                                                          <label class="input-group-text" for="dataX">X</label>
-                                                        </span>
-                                                        <input type="text" class="form-control dataX"
-                                                               placeholder="x" disabled>
-                                                        <span class="input-group-append">
-                                                          <span class="input-group-text">px</span>
-                                                        </span>
+                                                    <div class="field-group row">
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text" for="dataX">X</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataX"
+                                                                   placeholder="x" disabled>
+                                                            <span class="text-append">
+                                                              <span class="-text">px</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text" for="dataY">Y</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataY"
+                                                                   placeholder="y" disabled>
+                                                            <span class="text-append">
+                                                              <span class="-text">px</span>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="dimensions-label">
-                                                          <label class="input-group-text" for="dataY">Y</label>
-                                                        </span>
-                                                        <input type="text" class="form-control dataY"
-                                                               placeholder="y" disabled>
-                                                        <span class="input-group-append">
-                                                          <span class="input-group-text">px</span>
-                                                        </span>
+                                                    <div class="field-group row">
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text" for="dataWidth">Width</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataWidth"
+                                                                   placeholder="width" disabled>
+                                                            <span class="text-append">
+                                                              <span class="-text">px</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text" for="dataHeight">Height</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataHeight"
+                                                                   placeholder="height" disabled>
+                                                            <span class="text-append">
+                                                            <span class="-text">px</span>
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="dimensions-label">
-                                                          <label class="input-group-text" for="dataWidth">Width</label>
-                                                        </span>
-                                                        <input type="text" class="form-control dataWidth"
-                                                               placeholder="width" disabled>
-                                                        <span class="input-group-append">
-                                                          <span class="input-group-text">px</span>
-                                                        </span>
+
+
+                                                    <div class="field-group row">
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text"
+                                                                     for="dataScaleX">ScaleX</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataScaleX"
+                                                                   placeholder="scaleX" disabled>
+                                                        </div>
+                                                        <div class="col-md-6 col">
+                                                            <span class="dimensions-label">
+                                                              <label class="-text"
+                                                                     for="dataScaleY">ScaleY</label>
+                                                            </span>
+                                                            <input type="text" class="form-control dataScaleY"
+                                                                   placeholder="scaleY" disabled>
+                                                        </div>
                                                     </div>
-                                                    <div class="input-group input-group-sm">
-                                                    <span class="dimensions-label">
-                                                      <label class="input-group-text" for="dataHeight">Height</label>
-                                                    </span>
-                                                        <input type="text" class="form-control dataHeight"
-                                                               placeholder="height" disabled>
-                                                        <span class="input-group-append">
-                                                          <span class="input-group-text">px</span>
-                                                        </span>
-                                                    </div>
-                                                    <div class="input-group input-group-sm">
+                                                    <div class="field-group field-group-full">
                                                         <span class="dimensions-label">
-                                                          <label class="input-group-text"
+                                                          <label class="-text"
                                                                  for="dataRotate">Rotate</label>
                                                         </span>
                                                         <input type="text" class="form-control dataRotate"
                                                                placeholder="rotate" disabled>
-                                                        <span class="input-group-append">
-                                                          <span class="input-group-text">deg</span>
+                                                        <span class="text-append">
+                                                          <span class="">deg</span>
                                                         </span>
-                                                    </div>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="dimensions-label">
-                                                          <label class="input-group-text"
-                                                                 for="dataScaleX">ScaleX</label>
-                                                        </span>
-                                                        <input type="text" class="form-control dataScaleX"
-                                                               placeholder="scaleX" disabled>
-                                                    </div>
-                                                    <div class="input-group input-group-sm">
-                                                        <span class="dimensions-label">
-                                                          <label class="input-group-text"
-                                                                 for="dataScaleY">ScaleY</label>
-                                                        </span>
-                                                        <input type="text" class="form-control dataScaleY"
-                                                               placeholder="scaleY" disabled>
                                                     </div>
                                                 </div>
                                             </div>

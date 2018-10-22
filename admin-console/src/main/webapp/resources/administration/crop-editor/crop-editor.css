@@ -313,11 +313,33 @@
 }
 
 .docs-data span.dimensions-label {
-    width: 40px;
-    display: block;
     float: left;
-    text-align: right;
-    margin-right: 5px;
-    font-weight: 300;
-    font-size: 12px;
+    width: 100%;
+}
+
+.docs-data  .form-control {
+    width: 100%;
+}
+
+.docs-data .field-group {
+    position: relative;
+}
+
+.docs-data .text-append {
+    position: absolute;
+    top: 27px;
+    right: 26px;
+}
+
+.docs-data .field-group.field-group-full .text-append {
+    right: 7px;
+}
+
+.docs-data .field-group .col input {
+    margin: 0;
+}
+
+.docs-data label {
+    margin-top: 2px;
+    margin-bottom: 0px;
 }

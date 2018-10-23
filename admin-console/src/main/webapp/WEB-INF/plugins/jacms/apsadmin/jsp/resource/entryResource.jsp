@@ -382,7 +382,7 @@
             </div>
             <div class="container-fluid no-padding">
                 <div class="row">
-                    <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
+                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                     <div class="col-md-8 col-md-offset-2">
                         </s:if>
                         <s:else>
@@ -657,7 +657,7 @@
                             </div>
                         </div>
 
-                        <s:if test="%{isOnEditContent() && !isContentListAttribute()}">
+                        <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         </s:if>
                         <s:else>
                             <div class="col-md-4">
@@ -723,6 +723,14 @@
             <tbody>
         </table>
     </div>
+
+    <s:set var="resourceToShowVar" value="%{loadResource(resourceId)}"/>
+    <span
+            id="imageUrl"
+            data-value="<s:property value="%{#resourceToShowVar.getImagePath(0)}"/>"
+            class="hidden"
+    >
+    </span>
 </s:if>
 
 <div class="toast-pf alert alert-success alert-dismissable toast-crop-editor-success toast-success-blueprint hidden">
@@ -733,7 +741,7 @@
     <span class="toast-message"><s:text name="cropEditor.label.cropCreated"/> </span>
 </div>
 
-<s:if test="%{isOnEditContent() && !isContentListAttribute()}">
+<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
     <span class="hidden singleImageUpload"></span>
 </s:if>
 

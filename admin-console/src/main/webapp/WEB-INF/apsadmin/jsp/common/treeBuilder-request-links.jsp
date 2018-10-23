@@ -88,13 +88,15 @@
                             <s:text name="category.options.modify"/>
                         </a>
                     </li>
-                    <li>
-                        <a href="<s:url action="trash">
-                               <s:param name="selectedNode" value="%{#currentRoot.code}" /></s:url>"
-                           title="<s:text name="category.options.delete" />" class="btn-block">
-                            <s:text name="category.options.delete"/>
-                        </a>
-                    </li>
+                    <s:if test="%{!#currentRoot.isRoot()}">
+                        <li>
+                            <a href="<s:url action="trash">
+                                   <s:param name="selectedNode" value="%{#currentRoot.code}" /></s:url>"
+                               title="<s:text name="category.options.delete" />" class="btn-block">
+                                <s:text name="category.options.delete"/>
+                            </a>
+                        </li>
+                    </s:if>
                 </ul>
             </div>
         </td>

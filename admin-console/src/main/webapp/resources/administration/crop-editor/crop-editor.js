@@ -449,6 +449,7 @@ $(document).ready(function () {
         };
     }
 
+
     function toDataUrl(url, callback) {
         var xhr = new XMLHttpRequest();
         xhr.onload = function () {

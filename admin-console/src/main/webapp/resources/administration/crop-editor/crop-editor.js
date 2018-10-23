@@ -8,7 +8,7 @@ $(document).ready(function () {
      * General file manipulation.
      */
 
-    // jQuery reference to fields-container.
+        // jQuery reference to fields-container.
     var $fieldsContainer = $('#fields-container');
 
     /**
@@ -249,8 +249,6 @@ $(document).ready(function () {
         deleteStoreItem(storeItemId);
     });
 
-    setupInitialStoreItems();
-
     $(document).on({
         'dragover dragenter': function (e) {
             e.preventDefault();
@@ -315,15 +313,15 @@ $(document).ready(function () {
         $('.nav-tabs').on('shown.bs.tab', '[data-toggle="tab"]', function () {
             var storeItemId = parseInt($(this).closest('.image-navigation-item').data('storeItemId'));
             var storeItem = getStoreItem(storeItemId);
-            if (!storeItem.cropper) {
+            if (!storeItem.hasOwnProperty('cropper')) {
                 setupCropper(storeItemId);
             }
         });
 
         $cropEditorModal.on('shown.bs.modal', function () {
-            var storeItemId = parseInt($(this).find('.image-navigation-item.active').data('storeItemId'));
+            var storeItemId = parseInt($(this).find('.tab-pane.active').data('storeItemId'));
             var storeItem = getStoreItem(storeItemId);
-            if (!storeItem.cropper) {
+            if (!storeItem.hasOwnProperty('cropper')) {
                 setupCropper(storeItemId);
             }
         });
@@ -449,5 +447,38 @@ $(document).ready(function () {
                 });
             updateStoreItem(storeItem);
         };
+    }
+
+    function toDataUrl(url, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.onload = function () {
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result);
+            };
+            reader.readAsDataURL(xhr.response);
+        };
+        xhr.open('GET', url);
+        xhr.responseType = 'blob';
+        xhr.send();
+    }
+
+    setupInitialStoreItems();
+
+    var base64Image = undefined;
+    var singleImageEdit = $('#imageUrl');
+
+    if (singleImageEdit.length === 1) {
+        var imagePath = singleImageEdit.data('value');
+        toDataUrl(imagePath, function (imageData) {
+            base64Image = imageData;
+            var storeItem = getStoreItem(0);
+
+            storeItem.name = $('#descr_0').val();
+            storeItem.imageData = imageData;
+
+            storeItem.type = imageData.substring("data:".length, imageData.indexOf(";base64"));
+            updateStoreItem(storeItem);
+        });
     }
 });

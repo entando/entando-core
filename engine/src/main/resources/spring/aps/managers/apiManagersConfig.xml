@@ -76,4 +76,6 @@
         </property>
     </bean>
 
+    <bean class="org.entando.entando.aps.system.init.SwaggerInitializer" />
+
 </beans>

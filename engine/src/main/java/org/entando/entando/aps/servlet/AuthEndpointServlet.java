@@ -130,7 +130,7 @@ public class AuthEndpointServlet extends HttpServlet {
                     throw OAuthUtils.handleOAuthProblemException("Invalid clientId");
                 } else if (clientDetail.getExpirationDate().getTime() < System.currentTimeMillis()) {
                     throw OAuthUtils.handleOAuthProblemException("ClientId is expired");
-                } else if (!oauthRequest.getRedirectURI().endsWith(clientDetail.getCallbackUrl())) {
+                } else if (!clientDetail.getCallbackUrl().equals(oauthRequest.getRedirectURI())) {
                     throw OAuthUtils.handleOAuthProblemException("Invalid redirectUri");
                 }
 

@@ -40,7 +40,6 @@ INSERT INTO authuserprofiles (username, profiletype, profilexml, publicprofile) 
 <profile id="admin" typecode="PFL" typedescr="Default user profile"><descr /><groups /><categories /><attributes><attribute name="fullname" attributetype="Monotext" /><attribute name="email" attributetype="Monotext" /></attributes></profile>
 ', 0);
 
-INSERT INTO api_oauth_consumers (consumerkey, consumersecret, name, description, callbackurl, scope, authorizedgranttypes, expirationdate, issueddate) VALUES ('swagger', 'swaggerswagger', 'Swagger', 'Swagger', '/api/webjars/springfox-swagger-ui/oauth2-redirect.html', 'global', 'authorization_code', '2028-10-10 00:00:00', '2008-10-10 00:00:00');
 
 INSERT INTO actionlogrecords (id, username, actiondate, updatedate, namespace, actionname, parameters, activitystreaminfo) VALUES (1, 'admin', '2013-09-27 10:58:38', '2013-09-27 10:58:38', '/do/Page', 'save', 'selectedNode=service
 model=service

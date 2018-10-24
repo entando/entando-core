@@ -28,7 +28,7 @@ public class ApiOAuthConsumer {
     @DatabaseField(columnName = "consumerkey",
             dataType = DataType.STRING,
             width = 100,
-            canBeNull = false)
+            canBeNull = false, id = true)
     private String consumerKey;
 
     @DatabaseField(columnName = "consumersecret",
@@ -47,11 +47,9 @@ public class ApiOAuthConsumer {
             canBeNull = false)
     private String description;
 
-
     @DatabaseField(columnName = "callbackurl",
             dataType = DataType.LONG_STRING)
     private String callbackUrl;
-
 
     @DatabaseField(columnName = "scope",
             dataType = DataType.STRING,
@@ -70,7 +68,6 @@ public class ApiOAuthConsumer {
     @DatabaseField(columnName = "issueddate",
             dataType = DataType.DATE)
     private Date issuedDate;
-
 
     public static final String TABLE_NAME = "api_oauth_consumers";
 

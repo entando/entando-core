@@ -7,7 +7,6 @@ import org.entando.entando.aps.system.services.oauth2.OAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -22,9 +21,7 @@ public class SwaggerInitializer  implements ApplicationListener<ContextRefreshed
     private BaseConfigManager baseConfigManager;
     private OAuthConsumerManager consumerManager;
 
-    @Autowired
-    public SwaggerInitializer(BaseConfigManager baseConfigManager,
-                              OAuthConsumerManager consumerManager) {
+    public SwaggerInitializer(BaseConfigManager baseConfigManager, OAuthConsumerManager consumerManager) {
         this.baseConfigManager = baseConfigManager;
         this.consumerManager = consumerManager;
     }
@@ -40,6 +37,8 @@ public class SwaggerInitializer  implements ApplicationListener<ContextRefreshed
     }
 
     private void createSwaggerConsumer() throws ApsSystemException {
+        logger.info("Creating Swagger consumer");
+
         ConsumerRecordVO swaggerConsumer;
         String authUrl = baseConfigManager.getParam(SystemConstants.PAR_APPL_BASE_URL);
 

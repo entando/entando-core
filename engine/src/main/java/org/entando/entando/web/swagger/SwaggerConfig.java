@@ -6,6 +6,7 @@ import org.entando.entando.web.user.model.UserAuthoritiesRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
@@ -28,7 +29,6 @@ public class SwaggerConfig {
 
     private BaseConfigManager baseConfigManager;
 
-    @Autowired
     public SwaggerConfig(BaseConfigManager baseConfigManager) {
         this.baseConfigManager = baseConfigManager;
     }

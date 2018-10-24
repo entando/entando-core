@@ -13,6 +13,13 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content.model;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.util.ApsProperties;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +28,10 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.JacmsSystemConstants;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModel;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.IContentModelManager;
+import com.agiletec.plugins.jacms.aps.system.services.contentmodel.ContentModelReference;
 import com.opensymphony.xwork2.Action;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
 /**
  * @author E.Santoboni
@@ -33,6 +43,12 @@ public class TestContentModelAction  extends ApsAdminBaseTestCase {
 		super.setUp();
 		this.init();
 	}
+        
+        @Override
+        protected void tearDown() throws Exception {
+            this.deleteReferencingPage();
+            super.tearDown();
+        }
 	
 	public void testNewModel() throws Throwable {
 		this.setUserOnSession("admin");
@@ -241,17 +257,51 @@ public class TestContentModelAction  extends ApsAdminBaseTestCase {
 			throw t;
 		}
 	}
-	
-	public void testDeleteReferencedModel() throws Throwable {
-		this.setUserOnSession("admin");
-		this.initAction("/do/jacms/ContentModel", "trash");
-		this.addParameter("modelId", "2");
-		String result = this.executeAction();
-		assertEquals("references", result);
-		ContentModelAction action = (ContentModelAction) this.getAction();
-		assertEquals(1, action.getReferencingPages().size());
-	}
-	
+
+        public void testDeleteReferencedModel() throws Throwable {
+            this.setUserOnSession("admin");
+            this.initAction("/do/jacms/ContentModel", "trash");
+            this.addParameter("modelId", "2");
+            String result = this.executeAction();
+            assertEquals("references", result);
+            ContentModelAction action = (ContentModelAction) this.getAction();
+            
+            List<ContentModelReference> references = action.getContentModelReferences();
+            assertEquals(5, references.size());
+            
+            ContentModelReference ref0 = references.get(0);
+            assertEquals(1, ref0.getContentsId().size());
+            assertEquals("ART1", ref0.getContentsId().get(0));
+            assertEquals("homepage", ref0.getPageCode());
+            assertEquals(2, ref0.getWidgetPosition());
+            assertEquals(false, ref0.isOnline());
+            
+            ContentModelReference ref1 = references.get(1);
+            assertEquals(1, ref1.getContentsId().size());
+            assertEquals("ART1", ref1.getContentsId().get(0));
+            assertEquals("homepage", ref1.getPageCode());
+            assertEquals(2, ref1.getWidgetPosition());
+            assertEquals(true, ref1.isOnline());
+            
+            ContentModelReference ref2 = references.get(2);
+            assertEquals("ART1", ref2.getContentsId().get(0));
+            assertEquals("referencing_page", ref2.getPageCode());
+            assertEquals(0, ref2.getWidgetPosition());
+            assertEquals(false, ref2.isOnline());
+
+            ContentModelReference ref3 = references.get(3);
+            assertEquals(2, ref3.getContentsId().size());
+            assertEquals("referencing_page", ref3.getPageCode());
+            assertEquals(1, ref3.getWidgetPosition());
+            assertEquals(false, ref3.isOnline());
+
+            ContentModelReference ref4 = references.get(4);
+            assertFalse(ref4.getContentsId().isEmpty());
+            assertEquals("referencing_page", ref4.getPageCode());
+            assertEquals(2, ref4.getWidgetPosition());
+            assertEquals(false, ref4.isOnline());
+        }
+            
 	private void addModelForTest(long id, String contentType) throws Throwable {
 		ContentModel model = new ContentModel();
 		model.setId(id);
@@ -260,11 +310,78 @@ public class TestContentModelAction  extends ApsAdminBaseTestCase {
 		model.setContentShape("contentShape field value");
 		this._contentModelManager.addContentModel(model);
 	}
+
+        /**
+         * Sets up a page referencing some content models.
+         */
+        private void addReferencingPage() throws Exception {
+            this.deleteReferencingPage();
+            IPage root = this._pageManager.getDraftRoot();
+            Page page = new Page();
+            page.setCode("referencing_page");
+            page.setTitle("en", "Test");
+            page.setTitle("it", "Test");
+            page.setParent(root);
+            page.setParentCode(root.getCode());
+            page.setGroup(root.getGroup());
+            PageMetadata pageMetadata = new PageMetadata();
+            pageMetadata.setMimeType("text/html");
+            pageMetadata.setModel(root.getModel());
+            pageMetadata.setTitles(page.getTitles());
+            pageMetadata.setGroup(page.getGroup());
+            page.setMetadata(pageMetadata);
+            this._pageManager.addPage(page);
+            this._pageManager.joinWidget("referencing_page", getSingleContentWidget(), 0);
+            this._pageManager.joinWidget("referencing_page", getMultipleContentWidget(), 1);
+            this._pageManager.joinWidget("referencing_page", getListOfContentsWidget(), 2);
+        }
+
+        private Widget getSingleContentWidget() {
+            Widget widget = new Widget();
+            WidgetType widgetType = this._widgetTypeManager.getWidgetType("content_viewer");
+            widget.setType(widgetType);
+            ApsProperties widgetConfig = new ApsProperties();
+            widgetConfig.put("contentId", "ART1");
+            widgetConfig.put("modelId", "2");
+            widget.setConfig(widgetConfig);
+            return widget;
+        }
+
+        private Widget getMultipleContentWidget() {
+            Widget widget = new Widget();
+            WidgetType widgetType = this._widgetTypeManager.getWidgetType("row_content_viewer_list");
+            widget.setType(widgetType);
+            ApsProperties widgetConfig = new ApsProperties();
+            widgetConfig.put("contents", "[{contentId=ART1, modelId=2}, {modelId=2, contentId=ART187}]");
+            widgetConfig.put("modelId", "2");
+            widget.setConfig(widgetConfig);
+            return widget;
+        }
+
+        private Widget getListOfContentsWidget() {
+            Widget widget = new Widget();
+            WidgetType widgetType = this._widgetTypeManager.getWidgetType("content_viewer_list");
+            widget.setType(widgetType);
+            ApsProperties widgetConfig = new ApsProperties();
+            widgetConfig.put("maxElemForItem", "5");
+            widgetConfig.put("contentType", "ART");
+            widgetConfig.put("modelId", "2");
+            widget.setConfig(widgetConfig);
+            return widget;
+        }
+
+        private void deleteReferencingPage() throws Exception {
+            this._pageManager.deletePage("referencing_page");
+        }
 	
-	private void init() {
+	private void init() throws Exception {
+                this._widgetTypeManager = (IWidgetTypeManager) this.getService(SystemConstants.WIDGET_TYPE_MANAGER);
+                this._pageManager = (IPageManager) this.getService(SystemConstants.PAGE_MANAGER);
 		this._contentModelManager = (IContentModelManager) this.getService(JacmsSystemConstants.CONTENT_MODEL_MANAGER);
+                this.addReferencingPage();
 	}
 
 	private IContentModelManager _contentModelManager;
-
+        private IPageManager _pageManager;
+        private IWidgetTypeManager _widgetTypeManager;
 }

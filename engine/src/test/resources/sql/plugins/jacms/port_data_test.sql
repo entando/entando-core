@@ -302,6 +302,18 @@ INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode,
 <property key="filters">(order=ASC;attributeFilter=true;end=31/12/1999;key=DataInizio;start=01/01/1990)</property>
 <property key="contentType">EVN</property>
 </properties>', 0, NULL);
+INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) VALUES ('row_content_viewer_list', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Contents - Publish Contents</property>
+<property key="it">Contenuti - Pubblica Contenuti</property>
+</properties>', '<config>
+	<parameter name="contents">Contents to Publish (mandatory)</parameter>
+	<parameter name="maxElemForItem">Contents for each page</parameter>
+	<parameter name="title_{lang}">Widget Title in lang {lang}</parameter>
+	<parameter name="pageLink">The code of the Page to link</parameter>
+	<parameter name="linkDescr_{lang}">Link description in lang {lang}</parameter>
+	<action name="rowListViewerConfig" />
+</config>', 'jacms', NULL, NULL, 1, NULL);
 
 
 

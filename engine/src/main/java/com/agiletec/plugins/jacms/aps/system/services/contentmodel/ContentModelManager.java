@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -29,6 +30,7 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.Content;
 import com.agiletec.plugins.jacms.aps.system.services.content.model.SmallContentType;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.cache.IContentModelManagerCacheWrapper;
 import com.agiletec.plugins.jacms.aps.system.services.contentmodel.event.ContentModelChangedEvent;
+import org.entando.entando.plugins.jacms.aps.system.services.content.widget.RowContentListHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +71,6 @@ public class ContentModelManager extends AbstractService implements IContentMode
     public void setContentManager(IContentManager contentManager) {
         this.contentManager = contentManager;
     }
-
 
     protected IContentModelManagerCacheWrapper getCacheWrapper() {
         return cacheWrapper;
@@ -191,6 +192,134 @@ public class ContentModelManager extends AbstractService implements IContentMode
     }
 
     /**
+     * Returns a list of references of a given ContentModel from CMS widgets,
+     * both for draft and online pages.
+     *
+     * @param modelId identifier of the ContentModel
+     * @return the list of all references
+     */
+    @Override
+    public List<ContentModelReference> getContentModelReferences(long modelId) {
+        List<ContentModelReference> references = new ArrayList<>();
+        IPage root = this.getPageManager().getDraftRoot();
+        this.searchContentModelReferences(modelId, root, false, references);
+        root = this.getPageManager().getOnlineRoot();
+        this.searchContentModelReferences(modelId, root, true, references);
+        return references;
+    }
+
+    /**
+     * Recursively adds ContentModel references visiting the page tree.
+     */
+    private void searchContentModelReferences(Long modelId, IPage page, boolean online, List<ContentModelReference> references) {
+        addPageReferences(modelId, page, online, references);
+        for (String childCode : page.getChildrenCodes()) {
+            IPage child = online
+                    ? this.getPageManager().getOnlinePage(childCode)
+                    : this.getPageManager().getDraftPage(childCode);
+            if (null != child) {
+                this.searchContentModelReferences(modelId, child, online, references);
+            }
+        }
+    }
+
+    /**
+     * Searches for ContentModel references inside all page widgets.
+     */
+    private void addPageReferences(Long modelId, IPage page, boolean online, List<ContentModelReference> references) {
+        Widget[] widgets = page.getWidgets();
+        for (int i = 0; i < widgets.length; i++) {
+            Widget widget = widgets[i];
+            if (null != widget && null != widget.getConfig()) {
+
+                ContentModelReference reference = null;
+
+                switch (widget.getType().getCode()) {
+                    case "content_viewer":
+                        reference = getSingleContentWidgetReference(modelId, widget);
+                        break;
+                    case "content_viewer_list":
+                        reference = getContentListWidgetReference(modelId, widget);
+                        break;
+                    case "row_content_viewer_list":
+                        reference = getMultipleContentsWidgetReference(modelId, widget);
+                        break;
+                }
+
+                if (null != reference) {
+                    reference.setPageCode(page.getCode());
+                    reference.setOnline(online);
+                    reference.setWidgetPosition(i);
+                    references.add(reference);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns the ContentModelReference from a widget having type code
+     * "content_viewer" (Publish a Content), if the reference exists, null
+     * otherwise.
+     */
+    private ContentModelReference getSingleContentWidgetReference(Long modelId, Widget widget) {
+        String id = widget.getConfig().getProperty("modelId");
+        if (null != id && String.valueOf(modelId).equals(id)) {
+            ContentModelReference reference = new ContentModelReference();
+            String contentId = widget.getConfig().getProperty("contentId");
+            reference.setContentsId(Collections.singletonList(contentId));
+            return reference;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the ContentModelReference from a widget having type code
+     * "content_viewer_list" (Publish a List of Contents), if the reference
+     * exists, null otherwise.
+     */
+    private ContentModelReference getContentListWidgetReference(Long modelId, Widget widget) {
+        String id = widget.getConfig().getProperty("modelId");
+        if (null != id && String.valueOf(modelId).equals(id)) {
+            ContentModelReference reference = new ContentModelReference();
+            String contentType = widget.getConfig().getProperty("contentType");
+            try {
+                List<String> ids = contentManager.searchId(contentType, null);
+                reference.setContentsId(ids);
+            } catch (ApsSystemException e) {
+                throw new RuntimeException(e);
+            }
+            return reference;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the ContentModelReference from a widget having type code
+     * "row_content_viewer_list" (Publish Contents), if the reference exists,
+     * null otherwise.
+     */
+    private ContentModelReference getMultipleContentsWidgetReference(Long modelId, Widget widget) {
+        String contents = widget.getConfig().getProperty("contents");
+        List<Properties> contentsProperties = RowContentListHelper.fromParameterToContents(contents);
+
+        List<String> contentsId = new ArrayList<>();
+        for (Properties properties : contentsProperties) {
+            String id = properties.getProperty("modelId");
+            if (null != id && String.valueOf(modelId).equals(id)) {
+                String contentId = properties.getProperty("contentId");
+                contentsId.add(contentId);
+            }
+        }
+
+        if (!contentsId.isEmpty()) {
+            ContentModelReference reference = new ContentModelReference();
+            reference.setContentsId(contentsId);
+            return reference;
+        }
+        return null;
+    }
+
+    /**
      * Restituisce la mappa delle pagine referenziate dal modello di contenuto
      * specificato. La mappa è indicizzata in base ai codici dei contenuti
      * pubblicati tramite il modello specificato, ed il valore è rappresentato
@@ -200,6 +329,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
      * @param modelId Identificativo del modello di contenuto
      * @return La Mappa delle pagine referenziate.
      */
+    @Deprecated
     @Override
     public Map<String, List<IPage>> getReferencingPages(long modelId) {
         Map<String, List<IPage>> utilizers = new HashMap<String, List<IPage>>();
@@ -221,6 +351,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
      * @param utilizers La lista delle pagine in cui è utilizzato il modello di
      * contenuto
      */
+    @Deprecated
     private void searchReferencingPages(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
         this.addReferencingPage(modelId, page, utilizers);
         String[] children = page.getChildrenCodes();
@@ -235,6 +366,7 @@ public class ContentModelManager extends AbstractService implements IContentMode
         }
     }
 
+    @Deprecated
     private void addReferencingPage(long modelId, IPage page, Map<String, List<IPage>> utilizers) {
         if (null != page && null != page.getWidgets()) {
             Widget[] widgets = page.getWidgets();

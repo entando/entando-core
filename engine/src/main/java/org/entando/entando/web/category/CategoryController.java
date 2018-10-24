@@ -15,11 +15,6 @@ package org.entando.entando.web.category;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.validation.Valid;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.category.validator.CategoryValidator;
@@ -35,12 +30,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -75,7 +71,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
+    public ResponseEntity<RestResponse<List<CategoryDto>>> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
         logger.debug("getting category tree for parent {}", parentCode);
         List<CategoryDto> result = this.getCategoryService().getTree(parentCode);
         Map<String, String> metadata = new HashMap<>();
@@ -85,7 +81,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getCategory(@PathVariable String categoryCode) {
+    public ResponseEntity<RestResponse<CategoryDto>> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);
         CategoryDto category = this.getCategoryService().getCategory(categoryCode);
         return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
@@ -101,7 +97,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse<CategoryDto>> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         this.getCategoryValidator().validate(categoryRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -115,7 +111,7 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<CategoryDto>> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
         logger.debug("updating category {} with request {}", categoryCode, categoryRequest);
         //field validations
         if (bindingResult.hasErrors()) {

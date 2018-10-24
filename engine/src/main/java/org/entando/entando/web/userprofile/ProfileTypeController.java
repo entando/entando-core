@@ -16,9 +16,6 @@ package org.entando.entando.web.userprofile;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.HashMap;
-import java.util.Map;
-import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
@@ -44,11 +41,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -82,7 +80,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<List<EntityTypeShortDto>>> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList, UserProfileTypeDto.class);
         PagedMetadata<EntityTypeShortDto> result = this.getUserProfileTypeService().getShortUserProfileTypes(requestList);
         logger.debug("Main Response -> {}", result);
@@ -92,7 +90,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<UserProfileTypeDto>> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> {}", profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
             throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
@@ -104,7 +102,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
+    public ResponseEntity<RestResponse<UserProfileTypeDto>> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         //field validations
         this.getProfileTypeValidator().validate(bodyRequest, bindingResult);
@@ -128,7 +126,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateUserProfileType(@PathVariable String profileTypeCode,
+    public ResponseEntity<RestResponse<UserProfileTypeDto>> updateUserProfileType(@PathVariable String profileTypeCode,
             @Valid @RequestBody ProfileTypeDtoRequest request, BindingResult bindingResult) throws JsonProcessingException {
         int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -159,7 +157,7 @@ public class ProfileTypeController {
     // ********************* ATTRIBUTE TYPES *********************
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypeAttributes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfileAttributeTypes(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<List<String>>> getUserProfileAttributeTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList, AttributeTypeDto.class);
         PagedMetadata<String> result = this.getUserProfileTypeService().getAttributeTypes(requestList);
         logger.debug("Main Response -> {}", result);
@@ -169,7 +167,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypeAttributes/{attributeTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfileAttributeType(@PathVariable String attributeTypeCode) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<AttributeTypeDto>> getUserProfileAttributeType(@PathVariable String attributeTypeCode) throws JsonProcessingException {
         logger.debug("Extracting attribute type -> {}", attributeTypeCode);
         AttributeTypeDto attribute = this.getUserProfileTypeService().getAttributeType(attributeTypeCode);
         logger.debug("Main Response -> {}", attribute);
@@ -178,7 +176,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfileAttribute(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<EntityTypeAttributeFullDto>> getUserProfileAttribute(@PathVariable String profileTypeCode, @PathVariable String attributeCode) throws JsonProcessingException {
         logger.debug("Requested profile type {} - attribute {}", profileTypeCode, attributeCode);
         EntityTypeAttributeFullDto dto = this.getUserProfileTypeService().getUserProfileAttribute(profileTypeCode, attributeCode);
         logger.debug("Main Response -> {}", dto);
@@ -189,7 +187,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addUserProfileAttribute(@PathVariable String profileTypeCode, @Valid @RequestBody EntityTypeAttributeFullDto bodyRequest,
+    public ResponseEntity<RestResponse<EntityTypeAttributeFullDto>> addUserProfileAttribute(@PathVariable String profileTypeCode, @Valid @RequestBody EntityTypeAttributeFullDto bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Profile type {} - Adding attribute {}", profileTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
@@ -207,7 +205,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}/attribute/{attributeCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateUserProfileAttribute(@PathVariable String profileTypeCode,
+    public ResponseEntity<RestResponse<EntityTypeAttributeFullDto>> updateUserProfileAttribute(@PathVariable String profileTypeCode,
             @PathVariable String attributeCode, @Valid @RequestBody EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Profile type {} - Updating attribute {}", profileTypeCode, bodyRequest);
         if (bindingResult.hasErrors()) {
@@ -264,7 +262,7 @@ public class ProfileTypeController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/profileTypesStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> extractStatus() throws Throwable {
+    public ResponseEntity<RestResponse<EntityTypesStatusDto>> extractStatus() throws Throwable {
         logger.debug("Extract profile types status");
         EntityTypesStatusDto status = this.getUserProfileTypeService().getProfileTypesRefreshStatus();
         logger.debug("Extracted profile types status {}", status);

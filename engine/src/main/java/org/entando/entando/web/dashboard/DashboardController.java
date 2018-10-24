@@ -14,11 +14,6 @@
 package org.entando.entando.web.dashboard;
 
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.services.api.IApiCatalogManager;
 import org.entando.entando.aps.system.services.api.model.ApiResource;
@@ -35,6 +30,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.*;
 
 /**
  * @author E.Santoboni
@@ -122,7 +119,7 @@ public class DashboardController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPagesStatus() {
+    public ResponseEntity<RestResponse<PagesStatusDto>> getPagesStatus() {
         logger.debug("getting pages status count");
         PagesStatusDto result = this.getPageService().getPagesStatus();
         Map<String, String> metadata = new HashMap<>();

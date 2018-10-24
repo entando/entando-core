@@ -13,11 +13,6 @@
  */
 package org.entando.entando.web.page;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.services.role.Permission;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.page.IPageService;
@@ -37,12 +32,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 public class PageConfigurationController {
@@ -62,7 +56,7 @@ public class PageConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageConfiguration(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+    public ResponseEntity<RestResponse<PageConfigurationDto>> getPageConfiguration(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("requested {} configuration", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
@@ -72,7 +66,7 @@ public class PageConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+    public ResponseEntity<RestResponse<WidgetConfigurationDto[]>> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("requested {} widgets detail", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
@@ -82,7 +76,7 @@ public class PageConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getPageWidget(@PathVariable String pageCode,
+    public ResponseEntity<RestResponse<WidgetConfigurationDto>> getPageWidget(@PathVariable String pageCode,
             @PathVariable String frameId,
             @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status
     ) {
@@ -104,7 +98,7 @@ public class PageConfigurationController {
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageWidget(
+    public ResponseEntity<RestResponse<WidgetConfigurationDto>> updatePageWidget(
             @PathVariable String pageCode,
             @PathVariable String frameId,
             @Valid @RequestBody WidgetConfigurationRequest widget,
@@ -143,7 +137,7 @@ public class PageConfigurationController {
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/restore", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updatePageConfiguration(@PathVariable String pageCode) {
+    public ResponseEntity<RestResponse<PageConfigurationDto>> updatePageConfiguration(@PathVariable String pageCode) {
         logger.debug("restore configuration on page {}", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().restorePageConfiguration(pageCode);
         Map<String, String> metadata = new HashMap<>();
@@ -153,7 +147,7 @@ public class PageConfigurationController {
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/configuration/defaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {
+    public ResponseEntity<RestResponse<PageConfigurationDto>> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {
         logger.debug("applying default widgets on page {}", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().applyDefaultWidgets(pageCode);
         Map<String, String> metadata = new HashMap<>();

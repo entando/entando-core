@@ -13,11 +13,6 @@
  */
 package org.entando.entando.web.dataobjectmodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,12 +35,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/dataModels")
@@ -77,7 +72,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getDataObjectModels(RestListRequest requestList) {
+    public ResponseEntity<RestResponse<List<DataModelDto>>> getDataObjectModels(RestListRequest requestList) {
         this.getDataObjectModelValidator().validateRestListRequest(requestList, DataModelDto.class);
         PagedMetadata<DataModelDto> result = this.getDataObjectModelService().getDataObjectModels(requestList);
         this.getDataObjectModelValidator().validateRestListResult(requestList, result);
@@ -87,7 +82,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getDataObjectModel(@PathVariable String dataModelId) {
+    public ResponseEntity<RestResponse<DataModelDto>> getDataObjectModel(@PathVariable String dataModelId) {
         logger.debug("Requested data object model -> {}", dataModelId);
         MapBindingResult bindingResult = new MapBindingResult(new HashMap<>(), "dataModels");
         int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
@@ -104,7 +99,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest,
+    public ResponseEntity<RestResponse<DataModelDto>> addDataObjectModel(@Valid @RequestBody DataObjectModelRequest dataObjectModelRequest,
             BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Adding data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
@@ -131,7 +126,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateDataObjectModel(@PathVariable String dataModelId,
+    public ResponseEntity<RestResponse<DataModelDto>> updateDataObjectModel(@PathVariable String dataModelId,
             @Valid @RequestBody DataObjectModelRequest dataObjectModelRequest, BindingResult bindingResult) throws JsonProcessingException {
         logger.debug("Updating data object model -> {}", dataObjectModelRequest.getModelId());
         //field validations
@@ -176,7 +171,7 @@ public class DataObjectModelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/dictionary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
+    public ResponseEntity<RestResponse<IEntityModelDictionary>> getDictionary(@RequestParam(value = "typeCode", required = false) String typeCode) {
         logger.debug("loading data model dictionary {}", typeCode);
         IEntityModelDictionary dictionary = this.getDataObjectModelService().getDataModelDictionary(typeCode);
         return new ResponseEntity<>(new RestResponse(dictionary), HttpStatus.OK);

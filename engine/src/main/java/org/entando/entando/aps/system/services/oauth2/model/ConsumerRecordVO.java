@@ -78,12 +78,10 @@ public class ConsumerRecordVO {
         this.issuedDate = issuedDate;
     }
 
-    @Deprecated
     public String getName() {
         return name;
     }
 
-    @Deprecated
     public void setName(String name) {
         this.name = name;
     }

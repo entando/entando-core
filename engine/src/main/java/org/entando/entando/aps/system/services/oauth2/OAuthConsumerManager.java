@@ -17,6 +17,7 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
@@ -48,7 +49,10 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
         try {
             ConsumerRecordVO consumer = this.getConsumerDAO().getConsumer(clientId);
             if (null == consumer) {
-                return null;
+                throw new ClientRegistrationException("Client with id '" + clientId + "' does not exists");
+            }
+            if (null != consumer.getExpirationDate() && consumer.getExpirationDate().before(new Date())) {
+                throw new ClientRegistrationException("Client '" + clientId + "' is expired");
             }
             details.setClientId(clientId);
             if (!StringUtils.isBlank(consumer.getAuthorizedGrantTypes())) {

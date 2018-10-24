@@ -193,7 +193,7 @@
 
                                         <div class="card-pf-top-element">
                                             <%-- Dimension forced for img thumbnail --%>
-                                            <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" "
+                                            <img src="<s:property value="%{(null != #resource.getImagePath(1)) ? #resource.getImagePath(1) : #resource.getImagePath(0)}"/>" alt=" "
                                                  style="height:90px;max-width:130px" class="img-responsive center-block"/>
                                         </div>
                                         <h2 class="card-pf-title text-center">
@@ -294,7 +294,7 @@
                                 </div>
                                 <div class="list-view-pf-main-info">
                                     <div class="list-view-pf-left col-o" style="width: 130px">
-                                        <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " class="img-responsive center-block"/>
+                                        <img src="<s:property value="%{(null != #resource.getImagePath(1)) ? #resource.getImagePath(1) : #resource.getImagePath(0)}"/>" alt=" " class="img-responsive center-block"/>
                                     </div>
                                     <div class="list-view-pf-body">
                                         <div class="list-view-pf">

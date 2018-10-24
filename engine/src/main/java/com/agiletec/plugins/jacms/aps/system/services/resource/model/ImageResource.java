@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.imageresizer.IImageResizer;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
+import org.apache.commons.io.FilenameUtils;
 
 /**
  * Classe rappresentante una risorsa Image.
@@ -39,10 +40,10 @@ public class ImageResource extends AbstractMultiInstanceResource {
 
     private IImageDimensionReader imageDimensionReader;
     private Map<String, String> imageResizerClasses;
-    private boolean  imageMagickEnabled;
-    private boolean  imageMagickWindows;
-    private String  imageMagickPath;
-    
+    private boolean imageMagickEnabled;
+    private boolean imageMagickWindows;
+    private String imageMagickPath;
+
     private static final Logger _logger = LoggerFactory.getLogger(ImageResource.class);
 
     /**
@@ -156,11 +157,9 @@ public class ImageResource extends AbstractMultiInstanceResource {
             bean.setMimeType(masterInstance.getMimeType());
             this.saveResizedInstances(bean, tempMasterFile.getAbsolutePath());
             boolean deleted = tempMasterFile.delete();
-
             if (!deleted) {
                 _logger.warn("Failed to delete temp file {}", tempMasterFile);
             }
-
         } catch (Throwable t) {
             _logger.error("Error reloading image resource instances", t);
             throw new ApsSystemException("Error reloading image resource instances", t);
@@ -169,10 +168,14 @@ public class ImageResource extends AbstractMultiInstanceResource {
 
     private void saveResizedInstances(ResourceDataBean bean, String masterFilePath) throws ApsSystemException {
         try {
+            String extension = FilenameUtils.getExtension(bean.getFileName());
             Map<Integer, ImageResourceDimension> dimensions = this.getImageDimensionReader().getImageDimensions();
             Iterator<ImageResourceDimension> iterDimensions = dimensions.values().iterator();
             while (iterDimensions.hasNext()) {
                 ImageResourceDimension dimension = iterDimensions.next();
+                if (extension.equalsIgnoreCase("svg")) {
+                    continue;
+                }
                 //Is the system use ImageMagick?
                 if (!this.isImageMagickEnabled()) {
                     ImageIcon imageIcon = new ImageIcon(masterFilePath);

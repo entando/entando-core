@@ -13,7 +13,10 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.resource;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
 import com.agiletec.plugins.jacms.apsadmin.util.ResourceIconUtil;
@@ -26,6 +29,7 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +50,10 @@ public class ResourceFinderAction extends AbstractResourceAction {
     private IImageDimensionReader imageDimensionManager;
     private boolean openCollapsed = false;
 
+    private String lastOrder;
+    private String lastGroupBy;
+    private String groupBy;
+
     /**
      * Restituisce la lista di identificativi delle risorse che soddisfano i
      * parametri di ricerca immessi.
@@ -56,14 +64,76 @@ public class ResourceFinderAction extends AbstractResourceAction {
     public List<String> getResources() throws Throwable {
         List<String> resourceIds = null;
         try {
-            List<String> codesForSearch = this.getGroupCodesForSearch();
-            resourceIds = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(),
-                    this.getText(), this.getFileName(), this.getCategoryCode(), codesForSearch);
+            List<String> groupCodesForSearch = this.getGroupCodesForSearch();
+            resourceIds = this.getResourceManager().searchResourcesId(this.createSearchFilters(), this.getCategoryCode(), groupCodesForSearch);
         } catch (Throwable t) {
             logger.error("error in getResources", t);
             throw t;
         }
         return resourceIds;
+    }
+
+    protected FieldSearchFilter[] createSearchFilters() {
+        FieldSearchFilter typeCodeFilter = new FieldSearchFilter(IResourceManager.RESOURCE_TYPE_FILTER_KEY, this.getResourceTypeCode(), false);
+        FieldSearchFilter[] filters = {typeCodeFilter};
+        if (!StringUtils.isBlank(this.getText())) {
+            FieldSearchFilter textFilter = new FieldSearchFilter(IResourceManager.RESOURCE_DESCR_FILTER_KEY, this.getText(), true);
+            filters = ArrayUtils.add(filters, textFilter);
+        }
+        if (!StringUtils.isBlank(this.getFileName())) {
+            FieldSearchFilter filenameFilter = new FieldSearchFilter(IResourceManager.RESOURCE_FILENAME_FILTER_KEY, this.getFileName(), true);
+            filters = ArrayUtils.add(filters, filenameFilter);
+        }
+        filters = ArrayUtils.add(filters, this.getOrderFilter());
+        return filters;
+    }
+
+    protected EntitySearchFilter getOrderFilter() {
+        String groupBy = this.getGroupBy();
+        String order = "ASC";
+        if (!StringUtils.isBlank(this.getLastGroupBy())
+                && this.getLastGroupBy().equals(this.getGroupBy())
+                && !StringUtils.isBlank(this.getLastOrder())) {
+            order = (this.getLastOrder().equals("ASC")) ? "DESC" : "ASC";
+        }
+        String key = null;
+        if (StringUtils.isBlank(groupBy) || groupBy.equals("descr")) {
+            key = IResourceManager.RESOURCE_DESCR_FILTER_KEY;
+        } else if (groupBy.equals("lastModified")) {
+            key = IResourceManager.RESOURCE_MODIFY_DATE_FILTER_KEY;
+        } else if (groupBy.equals("created")) {
+            key = IResourceManager.RESOURCE_CREATION_DATE_FILTER_KEY;
+        } else {
+            key = IResourceManager.RESOURCE_DESCR_FILTER_KEY;
+        }
+        EntitySearchFilter filter = new EntitySearchFilter(key, false);
+        if (StringUtils.isBlank(order)) {
+            filter.setOrder(EntitySearchFilter.ASC_ORDER);
+        } else {
+            filter.setOrder(order);
+        }
+        return filter;
+    }
+
+    public String changeOrder() throws Exception {
+        try {
+            if (null == this.getGroupBy()) {
+                return SUCCESS;
+            }
+            if (this.getGroupBy().equals(this.getLastGroupBy())) {
+                boolean condition = (null == this.getLastOrder()
+                        || this.getLastOrder().equals(EntitySearchFilter.ASC_ORDER));
+                String order = (condition ? EntitySearchFilter.DESC_ORDER : EntitySearchFilter.ASC_ORDER);
+                this.setLastOrder(order);
+            } else {
+                this.setLastOrder(EntitySearchFilter.DESC_ORDER);
+            }
+            this.setLastGroupBy(this.getGroupBy());
+        } catch (Throwable t) {
+            logger.error("error in changeOrder", t);
+            throw new RuntimeException("error in changeOrder", t);
+        }
+        return this.execute();
     }
 
     public String getIconFile(String filename) {
@@ -164,4 +234,29 @@ public class ResourceFinderAction extends AbstractResourceAction {
         }
         return codesForSearch;
     }
+
+    public String getLastOrder() {
+        return lastOrder;
+    }
+
+    public void setLastOrder(String order) {
+        this.lastOrder = order;
+    }
+
+    public String getLastGroupBy() {
+        return lastGroupBy;
+    }
+
+    public void setLastGroupBy(String lastGroupBy) {
+        this.lastGroupBy = lastGroupBy;
+    }
+
+    public String getGroupBy() {
+        return groupBy;
+    }
+
+    public void setGroupBy(String groupBy) {
+        this.groupBy = groupBy;
+    }
+
 }

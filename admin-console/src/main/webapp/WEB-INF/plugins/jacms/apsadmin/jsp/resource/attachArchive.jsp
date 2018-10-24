@@ -82,6 +82,70 @@
     <br/>
 
     <div class="container-fluid">
+        <s:if test="onEditContent">
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">descr</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">created</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">lastModified</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+                
+                -----------
+        </s:if>
+        <s:else>
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">descr</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">created</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">lastModified</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+                
+                -----------
+        </s:else>
+                
         <div class="toolbar-pf">
             <div class="toolbar-pf-action-right mt-10">
                 <div class="form-group toolbar-pf-view-selector">
@@ -96,6 +160,8 @@
             </div>
         </div>
     </div>
+                    
+                    
 
     <div class="tab-content">
         <div id="table-view" class="tab-pane fade">
@@ -113,7 +179,7 @@
                     </s:if>
                     <wpsf:hidden name="contentOnSessionMarker"/>
                 </p>
-
+                
                 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5">
 
                     <!--carte-->
@@ -271,6 +337,11 @@
                                                 </s:if>
                                             </div>
                                             <h2 class="card-pf-title text-center">
+                                                *** RESOURCE BOX <s:property value="#resourceid" /> ***<br />
+                                                <div>
+                                                    <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                    <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                                </div>
                                                 <s:property value="#resource.descr"/>
                                                 <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}">
                                                     <span class="text-muted icon fa fa-lock"></span>
@@ -465,6 +536,11 @@
                                                         </s:if>
                                                     </div>
                                                     <div class="list-group-item-text">
+                                                        *** RISORSA <s:property value="#resourceid" /> *** <br />
+                                                        <div>
+                                                            <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                            <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                                        </div>
                                                         <a href="<s:property value="%{#resource.documentPath}" />"
                                                            title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />"
                                                            class="pull-left margin-small-top">

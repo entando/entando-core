@@ -32,6 +32,11 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
         
+        <action name="changeOrder" class="jacmsResourceFinderAction" method="changeOrder">
+            <result type="tiles">admin.jacms.resource.${resourceTypeCode}.list</result>
+        	<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
+        </action>
+        
         <!-- ######### FINE OPERAZIONI IN INTERFACCIA LISTA RISORSE ######### -->
         
         <!-- ######### INIZIO OPERAZIONI DI AGGIUNTA/MODIFICA RISORSE ######### -->
@@ -60,8 +65,6 @@
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
-        
-       
         
         <action name="save" class="jacmsMultipleResourceAction" method="save">
             <result type="tiles" name="input">admin.jacms.resource.entry</result>

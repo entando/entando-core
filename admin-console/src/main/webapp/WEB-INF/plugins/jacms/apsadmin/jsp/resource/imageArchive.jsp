@@ -95,6 +95,71 @@
     <br>
 
     <div class="container-fluid">
+        
+        <s:if test="onEditContent">
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">descr</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">created</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">lastModified</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+                
+                -----------
+        </s:if>
+        <s:else>
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">descr</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">created</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                
+                -----------
+                
+                <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
+					<s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+					<s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+					<s:param name="groupBy">lastModified</s:param>
+					<s:param name="entandoaction:changeOrder">changeOrder</s:param>
+					</s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+                
+                -----------
+        </s:else>
+        
         <div class="toolbar-pf">
             <div class="toolbar-pf-action-right mt-10">
                 <div class="form-group toolbar-pf-view-selector">
@@ -197,6 +262,11 @@
                                                  style="height:90px;max-width:130px" class="img-responsive center-block"/>
                                         </div>
                                         <h2 class="card-pf-title text-center">
+                                            *** RESOURCE BOX <s:property value="#resourceid" /> ***<br />
+                                            <div>
+                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                            </div>
                                             <s:set var="fileNameVar" value="#resource.masterFileName"/>
                                             <s:if test='%{#fileNameVar.length()>15}'>
                                                 <s:set var="fileNameVar"
@@ -298,6 +368,13 @@
                                     </div>
                                     <div class="list-view-pf-body">
                                         <div class="list-view-pf">
+                                            
+                                            *** RESOURCE <s:property value="#resourceid" /> ***<br />
+                                            <div>
+                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                            </div>
+                                            
                                             <div class="list-group-item-heading" style="font-size: 16px">
                                                 <s:set var="fileNameVar" value="#resource.masterFileName"/>
                                                 <s:set var="fileDescVar" value="#resource.description"/>

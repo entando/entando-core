@@ -23,6 +23,11 @@
 			<result type="tiles">admin.jacms.content.findResource.${resourceTypeCode}</result>
 			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
 		</action>
+        
+        <action name="changeOrder" class="jacmsExtendedResourceFinderAction" method="changeOrder">
+            <result type="tiles">admin.jacms.content.findResource.${resourceTypeCode}</result>
+			<interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">editContents</param></interceptor-ref>
+        </action>
 		
 		<action name="joinResource" class="jacmsExtendedResourceFinderAction" method="joinResource">
 			<result type="redirectActionWithAnchor">

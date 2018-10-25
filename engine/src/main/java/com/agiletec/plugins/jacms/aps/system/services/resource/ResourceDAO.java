@@ -32,6 +32,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceInterface;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ResourceRecordVO;
+import java.util.Date;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -78,15 +79,14 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
             stat = conn.prepareStatement(ADD_RESOURCE);
             stat.setString(1, resource.getId());
             stat.setString(2, resource.getType());
-            stat.setString(3, resource.getDescr());
+            stat.setString(3, resource.getDescription());
             stat.setString(4, resource.getMainGroup());
             stat.setString(5, resource.getXML());
             stat.setString(6, resource.getMasterFileName());
-            if (null != resource.getCreationDate()) {
-                stat.setDate(7, new java.sql.Date(resource.getCreationDate().getTime()));
-            } else {
-                stat.setDate(7, new java.sql.Date(new java.util.Date().getTime()));
-            }
+            Date creationDate = (null != resource.getCreationDate())
+                    ? resource.getCreationDate() : new Date();
+            stat.setTimestamp(7, new java.sql.Timestamp(creationDate.getTime()));
+            stat.setTimestamp(8, new java.sql.Timestamp(creationDate.getTime()));
             stat.executeUpdate();
         } catch (Throwable t) {
             _logger.error("Error adding resource record", t);
@@ -130,14 +130,14 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
         try {
             stat = conn.prepareStatement(UPDATE_RESOURCE);
             stat.setString(1, resource.getType());
-            stat.setString(2, resource.getDescr());
+            stat.setString(2, resource.getDescription());
             stat.setString(3, resource.getMainGroup());
             stat.setString(4, resource.getXML());
             stat.setString(5, resource.getMasterFileName());
             if (null != resource.getLastModified()) {
-                stat.setDate(6, new java.sql.Date(resource.getLastModified().getTime()));
+                stat.setTimestamp(6, new java.sql.Timestamp(resource.getLastModified().getTime()));
             } else {
-                stat.setDate(6, new java.sql.Date(new java.util.Date().getTime()));
+                stat.setTimestamp(6, new java.sql.Timestamp(new java.util.Date().getTime()));
             }
             stat.setString(7, resource.getId());
             stat.executeUpdate();
@@ -228,30 +228,36 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
             FieldSearchFilter filterToAdd = new FieldSearchFilter(IResourceManager.RESOURCE_FILENAME_FILTER_KEY, filename, true);
             filters = super.addFilter(filters, filterToAdd);
         }
-        if (groupCodes != null && groupCodes.size() > 0) {
-            List<String> allowedValues = new ArrayList<String>();
-            allowedValues.addAll(groupCodes);
-            FieldSearchFilter filterToAdd = new FieldSearchFilter(IResourceManager.RESOURCE_MAIN_GROUP_FILTER_KEY, allowedValues, false);
-            filters = super.addFilter(filters, filterToAdd);
-        }
+        filters = this.addGroupFilter(filters, groupCodes);
         if (filters.length == 0) {
             return null;
         }
         return filters;
     }
 
+    private FieldSearchFilter[] addGroupFilter(FieldSearchFilter[] filters, Collection<String> groupCodes) {
+        if (groupCodes != null && groupCodes.size() > 0) {
+            List<String> allowedValues = new ArrayList<>();
+            allowedValues.addAll(groupCodes);
+            FieldSearchFilter filterToAdd = new FieldSearchFilter(IResourceManager.RESOURCE_MAIN_GROUP_FILTER_KEY, allowedValues, false);
+            filters = super.addFilter(filters, filterToAdd);
+        }
+        return filters;
+    }
+
     @Override
     public List<String> searchResourcesId(FieldSearchFilter[] filters, String categoryCode, Collection<String> groupCodes) {
+        filters = this.addGroupFilter(filters, groupCodes);
         Connection conn = null;
-        List<String> resources = new ArrayList<String>();
+        List<String> resources = new ArrayList<>();
         PreparedStatement stat = null;
         ResultSet res = null;
         try {
             conn = this.getConnection();
-            stat = this.buildStatement(filters, categoryCode, groupCodes, conn);
+            stat = this.buildStatement(filters, categoryCode, conn);
             res = stat.executeQuery();
             this.flowResult(resources, filters, res);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             _logger.error("Error loading resources id", t);
             throw new RuntimeException("Error loading resources id", t);
         } finally {
@@ -260,8 +266,8 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
         return resources;
     }
 
-    private PreparedStatement buildStatement(FieldSearchFilter[] filters, String categoryCode, Collection<String> groupCodes, Connection conn) {
-        String query = this.createQueryString(filters, categoryCode, groupCodes);
+    private PreparedStatement buildStatement(FieldSearchFilter[] filters, String categoryCode, Connection conn) {
+        String query = this.createQueryString(filters, categoryCode);
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(query);
@@ -277,14 +283,15 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
         return stat;
     }
 
-    private String createQueryString(FieldSearchFilter[] filters, String categoryCode, Collection<String> groupCodes) {
+    private String createQueryString(FieldSearchFilter[] filters, String categoryCode) {
         StringBuffer query = this.createBaseQueryBlock(filters, false, categoryCode);
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (null != categoryCode && categoryCode.trim().length() > 0) {
             hasAppendWhereClause = this.verifyWhereClauseAppend(query, hasAppendWhereClause);
             query.append("resourcerelations.refcategory = ? ");
         }
-        query.append("ORDER BY resources.descr ");
+        super.appendOrderQueryBlocks(filters, query, false);
+        //query.append("ORDER BY resources.descr ");
         return query.toString();
     }
 
@@ -324,10 +331,10 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
                 resourceVo.setMainGroup(res.getString(3));
                 resourceVo.setXml(res.getString(4));
                 resourceVo.setMasterFileName(res.getString(5));
-                resourceVo.setCreationDate(res.getDate(6));
-                resourceVo.setLastModified(res.getDate(7));
+                resourceVo.setCreationDate(res.getTimestamp(6));
+                resourceVo.setLastModified(res.getTimestamp(7));
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             _logger.error("Errore loading resource {}", id, t);
             throw new RuntimeException("Errore loading resource" + id, t);
         } finally {
@@ -359,7 +366,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
                     stat.clearParameters();
                 }
                 stat.executeBatch();
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 _logger.error("Error adding resourcerelations record for {}", resource.getId(), t);
                 throw new RuntimeException("Error adding resourcerelations record for " + resource.getId(), t);
             } finally {
@@ -377,7 +384,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
      * @return Il set di codici di categorie.
      */
     private Set<String> getCategoryCodes(ResourceInterface resource) {
-        Set<String> codes = new HashSet<String>();
+        Set<String> codes = new HashSet<>();
         Iterator<Category> categoryIter = resource.getCategories().iterator();
         while (categoryIter.hasNext()) {
             Category category = (Category) categoryIter.next();
@@ -403,7 +410,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
             stat = conn.prepareStatement(query);
             stat.setString(1, resourceId);
             stat.executeUpdate();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             _logger.error("Error deleting resource records for resource {}", resourceId, t);
             throw new RuntimeException("Error deleting resource records for resource " + resourceId, t);
         } finally {
@@ -421,7 +428,7 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
             this.deleteRecordsById(resource.getId(), DELETE_RESOURCE_REL_RECORD, conn);
             this.addCategoryRelationsRecord(resource, conn);
             conn.commit();
-        } catch (Throwable t) {
+        } catch (Exception t) {
             this.executeRollback(conn);
             this.processDaoException(t, "Error updating resource category relations", "updateResourceRelations");
         } finally {
@@ -453,8 +460,8 @@ public class ResourceDAO extends AbstractSearcherDAO implements IResourceDAO {
             = "SELECT restype, descr, maingroup, resourcexml, masterfilename, creationdate, lastmodified FROM resources WHERE resid = ? ";
 
     private final String ADD_RESOURCE
-            = "INSERT INTO resources (resid, restype, descr, maingroup, resourcexml, masterfilename, creationdate) "
-            + "VALUES ( ? , ? , ? , ? , ? , ? , ? )";
+            = "INSERT INTO resources (resid, restype, descr, maingroup, resourcexml, masterfilename, creationdate, lastmodified) "
+            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
 
     private final String UPDATE_RESOURCE
             = "UPDATE resources SET restype = ? , descr = ? , maingroup = ? , resourcexml = ? , masterfilename = ? , lastmodified = ? WHERE resid = ? ";

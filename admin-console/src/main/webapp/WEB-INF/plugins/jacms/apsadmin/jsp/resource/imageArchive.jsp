@@ -97,6 +97,14 @@
     <div class="container-fluid">
 
         <s:if test="onEditContent">
+
+            <div class="btn-group">
+                <button type="button" class="btn btn-default">Left</button>
+                <button type="button" class="btn btn-default">Middle</button>
+                <button type="button" class="btn btn-default">Right</button>
+            </div>
+
+
             -----------
 
             <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
@@ -130,34 +138,27 @@
             -----------
         </s:if>
         <s:else>
-            -----------
 
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">descr</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
-
-            -----------
-
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">created</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
-
-            -----------
-
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">lastModified</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
-
-            -----------
+            <div class="btn-group btn-position" id="filters">
+                <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                        <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                        <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                        <s:param name="groupBy">descr</s:param>
+                        <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                        <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                        <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                        <s:param name="groupBy">created</s:param>
+                        <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                        <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                        <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                        <s:param name="groupBy">lastModified</s:param>
+                        <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+            </div>
         </s:else>
 
         <div class="toolbar-pf">
@@ -262,11 +263,7 @@
                                                  style="height:90px;max-width:130px" class="img-responsive center-block"/>
                                         </div>
                                         <h2 class="card-pf-title text-center">
-                                            *** RESOURCE BOX <s:property value="#resourceid" /> ***<br />
-                                            <div>
-                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
-                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
-                                            </div>
+
                                             <s:set var="fileNameVar" value="#resource.masterFileName"/>
                                             <s:if test='%{#fileNameVar.length()>15}'>
                                                 <s:set var="fileNameVar"
@@ -276,6 +273,10 @@
                                             <s:else>
                                                 <s:property value="#fileNameVar"/>
                                             </s:else>
+                                            <div class="creation-dates-card">
+                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                            </div>
                                         </h2>
                                     </div>
                                 </div>
@@ -369,11 +370,6 @@
                                     <div class="list-view-pf-body">
                                         <div class="list-view-pf">
 
-                                            *** RESOURCE <s:property value="#resourceid" /> ***<br />
-                                            <div>
-                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
-                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
-                                            </div>
 
                                             <div class="list-group-item-heading" style="font-size: 16px">
                                                 <s:set var="fileNameVar" value="#resource.masterFileName"/>
@@ -390,9 +386,14 @@
                                             <div class="list-group-item-text">
                                                 <s:property value="#fileDescVar"/>
                                             </div>
+                                            <div class="creation-dates">
+                                                <div class="list-date">
+                                                    <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                    <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                                </div> 
+                                            </div>
                                             <br>
                                             <div class="list-view-pf-additional-info" style="width: 100%">
-
 
                                                 <s:set var="dimensionId" value="0"/>
                                                 <s:set var="resourceInstance" value='%{#resource.getInstance(#dimensionId,null)}'/>
@@ -442,12 +443,24 @@
         $('#TabList button').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
+            console.log("click tab ", this);
+
         });
         // salva l' hash come id
         $("button").on("shown.bs.tab", function (e) {
             var id = $(e.target).attr("href").substr(1);
             window.location.hash = id;
+            console.log("hash ", window.location.hash);
         });
+
+        $('#filters a').click(function (e) {
+            e.preventDefault();
+            var newhash = window.location.hash;
+            var newhref = $(this).attr('href');
+            var link = newhref + newhash;
+            location.href = link;
+        });
+
         // al caricamento passa l' hash al tab
         var hash = window.location.hash;
         $('#TabList button[href="' + hash + '"]').tab('show');

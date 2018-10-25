@@ -98,66 +98,57 @@
 
         <s:if test="onEditContent">
 
-            <div class="btn-group">
-                <button type="button" class="btn btn-default">Left</button>
-                <button type="button" class="btn btn-default">Middle</button>
-                <button type="button" class="btn btn-default">Right</button>
+            <div class="btn-group btn-position filters">
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">descr</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" />
+                </a>
+                <a  class="btn btn-default "href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                        <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                        <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                        <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                        <s:param name="groupBy">created</s:param>
+                        <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" />
+                </a>
+                <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                        <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                        <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                        <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                        <s:param name="groupBy">lastModified</s:param>
+                        <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" />
+                </a>
             </div>
-
-
-            -----------
-
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">descr</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
-
-            -----------
-
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">created</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
-
-            -----------
-
-            <a href="<s:url action="changeOrder" anchor="" includeParams="all" >
-                   <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
-                   <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
-                   <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
-                   <s:param name="groupBy">lastModified</s:param>
-                   <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-               </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
-
-            -----------
         </s:if>
         <s:else>
 
-            <div class="btn-group btn-position" id="filters">
+            <div class="btn-group btn-position filters">
                 <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
                         <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                         <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
                         <s:param name="groupBy">descr</s:param>
                         <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" /></a>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" />
+                </a>
                 <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
                         <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                         <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
                         <s:param name="groupBy">created</s:param>
                         <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" /></a>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" />
+                </a>
                 <a  class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
                         <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                         <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
                         <s:param name="groupBy">lastModified</s:param>
                         <s:param name="entandoaction:changeOrder">changeOrder</s:param>
-                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" /></a>
+                    </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" />
+                </a>
             </div>
         </s:else>
 
@@ -443,24 +434,20 @@
         $('#TabList button').click(function (e) {
             e.preventDefault();
             $(this).tab('show');
-            console.log("click tab ", this);
-
         });
         // salva l' hash come id
         $("button").on("shown.bs.tab", function (e) {
             var id = $(e.target).attr("href").substr(1);
             window.location.hash = id;
-            console.log("hash ", window.location.hash);
         });
 
-        $('#filters a').click(function (e) {
+        $('.filters a').click(function (e) {
             e.preventDefault();
             var newhash = window.location.hash;
             var newhref = $(this).attr('href');
             var link = newhref + newhash;
             location.href = link;
         });
-
         // al caricamento passa l' hash al tab
         var hash = window.location.hash;
         $('#TabList button[href="' + hash + '"]').tab('show');

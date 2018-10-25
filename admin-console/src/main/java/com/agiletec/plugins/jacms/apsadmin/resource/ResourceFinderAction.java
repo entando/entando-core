@@ -16,6 +16,7 @@ package com.agiletec.plugins.jacms.apsadmin.resource;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.plugins.jacms.aps.system.services.resource.IResourceManager;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.ImageResourceDimension;
 import com.agiletec.plugins.jacms.aps.system.services.resource.model.util.IImageDimensionReader;
@@ -64,7 +65,8 @@ public class ResourceFinderAction extends AbstractResourceAction {
     public List<String> getResources() throws Throwable {
         List<String> resourceIds = null;
         try {
-            List<String> groupCodesForSearch = this.getGroupCodesForSearch();
+            List<String> userGroups = this.getGroupCodesForSearch();
+            List<String> groupCodesForSearch = (userGroups.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroups;
             resourceIds = this.getResourceManager().searchResourcesId(this.createSearchFilters(), this.getCategoryCode(), groupCodesForSearch);
         } catch (Throwable t) {
             logger.error("error in getResources", t);
@@ -76,6 +78,10 @@ public class ResourceFinderAction extends AbstractResourceAction {
     protected FieldSearchFilter[] createSearchFilters() {
         FieldSearchFilter typeCodeFilter = new FieldSearchFilter(IResourceManager.RESOURCE_TYPE_FILTER_KEY, this.getResourceTypeCode(), false);
         FieldSearchFilter[] filters = {typeCodeFilter};
+        if (!StringUtils.isBlank(this.getOwnerGroupName())) {
+            FieldSearchFilter groupFilter = new FieldSearchFilter(IResourceManager.RESOURCE_MAIN_GROUP_FILTER_KEY, this.getOwnerGroupName(), false);
+            filters = ArrayUtils.add(filters, groupFilter);
+        }
         if (!StringUtils.isBlank(this.getText())) {
             FieldSearchFilter textFilter = new FieldSearchFilter(IResourceManager.RESOURCE_DESCR_FILTER_KEY, this.getText(), true);
             filters = ArrayUtils.add(filters, textFilter);
@@ -224,15 +230,7 @@ public class ResourceFinderAction extends AbstractResourceAction {
     }
 
     protected List<String> getGroupCodesForSearch() {
-        List<String> groupCodes = super.getActualAllowedGroupCodes();
-        String ownerGroup = this.getOwnerGroupName();
-        List<String> codesForSearch = new ArrayList<String>();
-        if (StringUtils.isEmpty(ownerGroup)) {
-            codesForSearch.addAll(groupCodes);
-        } else if (groupCodes.contains(ownerGroup)) {
-            codesForSearch.add(ownerGroup);
-        }
-        return codesForSearch;
+        return super.getActualAllowedGroupCodes();
     }
 
     public String getLastOrder() {

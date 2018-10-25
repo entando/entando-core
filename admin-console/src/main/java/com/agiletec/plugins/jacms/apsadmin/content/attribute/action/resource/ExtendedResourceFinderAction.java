@@ -51,8 +51,9 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
             if (null != this.getContent().getMainGroup()) {
                 groupCodes.add(this.getContent().getMainGroup());
             }
+            List<String> groupCodesForSearch = (groupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : groupCodes;
             resourceIds = this.getResourceManager().searchResourcesId(this.createSearchFilters(),
-                    this.getCategoryCode(), groupCodes);
+                    this.getCategoryCode(), groupCodesForSearch);
         } catch (Throwable t) {
             _logger.error("error in getResources", t);
             throw t;

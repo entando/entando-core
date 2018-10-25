@@ -169,13 +169,13 @@ public class ImageResource extends AbstractMultiInstanceResource {
     private void saveResizedInstances(ResourceDataBean bean, String masterFilePath) throws ApsSystemException {
         try {
             String extension = FilenameUtils.getExtension(bean.getFileName());
+            if (extension.equalsIgnoreCase("svg")) {
+                return;
+            }
             Map<Integer, ImageResourceDimension> dimensions = this.getImageDimensionReader().getImageDimensions();
             Iterator<ImageResourceDimension> iterDimensions = dimensions.values().iterator();
             while (iterDimensions.hasNext()) {
                 ImageResourceDimension dimension = iterDimensions.next();
-                if (extension.equalsIgnoreCase("svg")) {
-                    continue;
-                }
                 //Is the system use ImageMagick?
                 if (!this.isImageMagickEnabled()) {
                     ImageIcon imageIcon = new ImageIcon(masterFilePath);

@@ -75,7 +75,10 @@ public interface IContentModelManager {
 	 * @param modelId Identificativo del modello di contenuto
 	 * @return La Mappa delle pagine referenziate.
 	 */
+        @Deprecated
 	public Map<String, List<IPage>> getReferencingPages(long modelId);
+        
+        public List<ContentModelReference> getContentModelReferences(long modelId);
 	
 	public SmallContentType getDefaultUtilizer(long modelId);
 	

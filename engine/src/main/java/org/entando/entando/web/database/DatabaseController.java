@@ -14,11 +14,6 @@
 package org.entando.entando.web.database;
 
 import com.agiletec.aps.system.services.role.Permission;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.validation.Valid;
 import org.entando.entando.aps.system.services.database.IDatabaseService;
 import org.entando.entando.aps.system.services.database.model.ComponentDto;
 import org.entando.entando.aps.system.services.database.model.DumpReportDto;
@@ -39,6 +34,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author E.Santoboni
  */
@@ -55,7 +56,7 @@ public class DatabaseController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getDumpReports(@Valid RestListRequest requestList) {
+    public ResponseEntity<RestResponse<List<ShortDumpReportDto>>> getDumpReports(@Valid RestListRequest requestList) {
         this.getDatabaseValidator().validateRestListRequest(requestList, DumpReportDto.class);
         PagedMetadata<ShortDumpReportDto> result = this.getDatabaseService().getShortDumpReportDtos(requestList);
         this.getDatabaseValidator().validateRestListResult(requestList, result);
@@ -74,7 +75,7 @@ public class DatabaseController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/initBackup", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> initBackup() {
+    public ResponseEntity<RestResponse<ComponentDto>> initBackup() {
         logger.debug("Required actual component configuration");
         List<ComponentDto> dtos = this.getDatabaseService().getCurrentComponents();
         logger.debug("Actual component configuration -> {}", dtos);
@@ -105,7 +106,7 @@ public class DatabaseController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/report/{reportCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getDumpReport(@PathVariable String reportCode) {
+    public ResponseEntity<RestResponse<DumpReportDto>> getDumpReport(@PathVariable String reportCode) {
         logger.debug("Required dump report -> code {}", reportCode);
         DumpReportDto result = this.getDatabaseService().getDumpReportDto(reportCode);
         logger.debug("Extracted dump report -> {}", result);

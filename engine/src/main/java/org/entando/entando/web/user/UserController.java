@@ -79,7 +79,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
+    public ResponseEntity<RestResponse<UserDto>> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
         logger.debug("getting users details with request {}", requestList);
         this.getUserValidator().validateRestListRequest(requestList, UserDto.class);
         PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList, withProfile);
@@ -91,7 +91,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable String username) {
+    public ResponseEntity<RestResponse<UserDto>> getUser(@PathVariable String username) {
         logger.debug("getting user {} details", username);
         UserDto user = this.getUserService().getUser(username);
         return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
@@ -99,7 +99,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse<UserDto>> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("adding user with request {}", userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -115,7 +115,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<UserDto>> updateUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
         logger.debug("updating user {} with request {}", target, userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -132,7 +132,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<UserDto>> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
         logger.debug("changing pasword for user {} with request {}", username, passwordRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -158,7 +158,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
         logger.debug("user {} requesting update authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -179,7 +179,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) {
+    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> getUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) {
         logger.debug("requesting authorities for username {}", target);
         List<UserAuthorityDto> authorities = this.getUserService().getUserAuthorities(target);
         return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
@@ -187,7 +187,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("user {} requesting add authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
         if (bindingResult.hasErrors()) {

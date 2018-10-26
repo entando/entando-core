@@ -40,7 +40,7 @@
 }
 
 .bs-cropping-modal .image-container {
-    min-height: 80%;
+    min-height: 300px;
 }
 
 .bs-cropping-modal .image-container img {

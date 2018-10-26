@@ -17,6 +17,7 @@
 			class="com.agiletec.plugins.jacms.apsadmin.content.model.ContentModelAction" parent="abstractBaseAction" >
 		<property name="contentManager" ref="jacmsContentManager" />
 		<property name="contentModelManager" ref="jacmsContentModelManager" />
+		<property name="pageManager" ref="PageManager" />
 		<property name="allowedPublicContentMethods" ref="jacmsAllowedPublicContentMethods" />
 		<property name="allowedPublicAttributeMethods" ref="jacmsAllowedPublicAttributeMethods" />
 	</bean>

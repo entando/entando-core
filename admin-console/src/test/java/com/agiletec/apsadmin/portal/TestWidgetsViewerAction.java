@@ -75,7 +75,7 @@ public class TestWidgetsViewerAction extends ApsAdminBaseTestCase {
 		}
 
 		List<SelectItem> jacmsWidgets = widgetFlavours.get(2);
-		assertEquals(3, jacmsWidgets.size());
+		assertEquals(4, jacmsWidgets.size());
 		SelectItem jacmsWidgetTypes = jacmsWidgets.get(1);
 		assertEquals("jacms", jacmsWidgetTypes.getOptgroup());
 		if (currentLang.getCode().equals("it")) {

@@ -3,7 +3,7 @@ $(document).ready(function () {
     var attachmentUploadEnabled = ($('.attachment_upload_enabled').length === 1);
 
     /**
-     * Checking if either crop editor or at least attachment upload form related functionality should be enabled.
+     * Checking if either crop editor or at least attachmend upload form related functionality should be enabled.
      */
     if (cropEditorEnabled || attachmentUploadEnabled) {
 

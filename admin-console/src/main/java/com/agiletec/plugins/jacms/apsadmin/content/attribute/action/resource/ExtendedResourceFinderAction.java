@@ -44,20 +44,21 @@ public class ExtendedResourceFinderAction extends ResourceFinderAction {
 
     @Override
     public List<String> getResources() throws Throwable {
-        List<String> resourcesId = null;
+        List<String> resourceIds = null;
         try {
-            List<String> groupCodes = new ArrayList<String>();
+            List<String> groupCodes = new ArrayList<>();
             groupCodes.add(Group.FREE_GROUP_NAME);
             if (null != this.getContent().getMainGroup()) {
                 groupCodes.add(this.getContent().getMainGroup());
             }
-            resourcesId = this.getResourceManager().searchResourcesId(this.getResourceTypeCode(),
-                    this.getText(), this.getFileName(), this.getCategoryCode(), groupCodes);
+            List<String> groupCodesForSearch = (groupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : groupCodes;
+            resourceIds = this.getResourceManager().searchResourcesId(this.createSearchFilters(),
+                    this.getCategoryCode(), groupCodesForSearch);
         } catch (Throwable t) {
             _logger.error("error in getResources", t);
             throw t;
         }
-        return resourcesId;
+        return resourceIds;
     }
 
     /**

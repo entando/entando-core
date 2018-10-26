@@ -236,7 +236,7 @@
     </fieldset>
     <br>
 
-    <s:if test="getStrutsAction() == 1 ">
+    <s:if test="%{ (getStrutsAction() == 1 and !isOnEditContent()) or (getStrutsAction() == 1 and isContentListAttribute() and isOnEditContent())}">
         <div class="form-group">
             <div class="col-sm-5 col-sm-offset-2">
                 <div id="add-resource-button">

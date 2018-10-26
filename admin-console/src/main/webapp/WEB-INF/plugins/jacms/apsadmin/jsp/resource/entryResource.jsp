@@ -741,12 +741,17 @@
     <span class="toast-message"><s:text name="cropEditor.label.cropCreated"/> </span>
 </div>
 
+<%--(getStrutsAction() == 2 this comparision checks if current action is to edit already uploaded image--%>
 <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
     <span class="hidden singleImageUpload"></span>
 </s:if>
 
 <s:if test="%{resourceTypeCode == 'Image'}">
     <span class="hidden image_cropper_enabled"></span>
+</s:if>
+
+<s:if test="%{resourceTypeCode == 'Attach'}">
+    <span class="hidden attachment_upload_enabled"></span>
 </s:if>
 
 

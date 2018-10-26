@@ -32,14 +32,12 @@
 			   </s:if>
 			</label>
         </td>
-	<td class="text-center">
-            <s:if test="%{!#currentRoot.isRoot()}">
+	    <td class="text-center">
 	        <wpsf:submit action="%{#actionName}" type="button" 
 	           title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
 	           <span class="icon fa fa-plus"></span>
 	        </wpsf:submit>
-            </s:if>
-	</td>
+	    </td>
 </tr>
 
 <s:if test="%{#currentRoot.getChildren().length>0}">

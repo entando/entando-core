@@ -214,6 +214,32 @@ $(document).ready(function () {
 
     };
 
+    var DOMsetupAspectRatioToolbar = function () {
+        var defaultAspectRatios = $('#aspect-ratio-values').text().trim().split(";");
+        var $aspectRatioToolbar = $('.aspect-ratio-buttons');
+
+        var render = function (val) {
+            var aspectRatioValues = val.split(':');
+            var aspectRatio = aspectRatioValues[0] / aspectRatioValues[1];
+            var template =
+                '<label class="btn btn-primary" data-method="setAspectRatio" data-option="' + aspectRatio + '">\n' +
+                '<input type="radio" class="sr-only" name="aspectRatio" value="' + aspectRatio + '">\n' +
+                '<span class="docs-tooltip">' + val + '</span>\n' +
+                '</label>';
+
+            return template;
+        };
+
+        for (var i in defaultAspectRatios) {
+            if (defaultAspectRatios[i].length > 0) {
+                $aspectRatioToolbar.find('.btn-group').append(render(defaultAspectRatios[i]));
+            }
+        }
+    };
+
+    DOMsetupAspectRatioToolbar();
+
+
     // Listen to add fields button click events and action on it.
     $('#add-fields').on('click', function (e) {
         e.preventDefault();

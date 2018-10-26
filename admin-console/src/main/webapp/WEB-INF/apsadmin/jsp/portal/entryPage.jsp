@@ -74,9 +74,9 @@
         <wpsf:hidden name="copyPageCode" />
         <wpsf:hidden name="groupSelectLock" />
         <s:iterator value="extraGroups" var="groupName"><wpsf:hidden name="extraGroups" value="%{#groupName}" /></s:iterator>
-		<s:if test="%{groupSelectLock}">
-			<wpsf:hidden name="group" />
-		</s:if>
+        <s:if test="%{groupSelectLock}">
+            <wpsf:hidden name="group" />
+        </s:if>
         <s:if test="strutsAction == 2">
             <wpsf:hidden name="parentPageCode" />
             <wpsf:hidden name="pageCode" />
@@ -233,7 +233,6 @@
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="extraGroups">
                 <s:text name="label.join" />&#32;<s:text name="label.group" />
-                <i class="fa fa-asterisk required-icon"></i>
             </label>
             <div class="col-sm-10">
                 <div class="input-group">

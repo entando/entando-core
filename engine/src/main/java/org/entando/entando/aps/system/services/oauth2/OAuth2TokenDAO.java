@@ -108,11 +108,12 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             stat = conn.prepareStatement(SELECT_TOKEN);
             stat.setString(1, token);
             res = stat.executeQuery();
-            while (res.next()) {
+            if (res.next()) {
                 accessToken = new OAuth2AccessTokenImpl(token);
                 accessToken.setRefreshToken(new DefaultOAuth2RefreshToken(res.getString("refreshtoken")));
                 accessToken.setClientId(res.getString("clientid"));
                 accessToken.setGrantType(res.getString("granttype"));
+                accessToken.setLocalUser(res.getString("localuser"));
                 Timestamp timestamp = res.getTimestamp("expiresin");
                 Date expiration = new Date(timestamp.getTime());
                 accessToken.setExpiration(expiration);

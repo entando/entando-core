@@ -50,5 +50,15 @@
 		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
 		<!-- <property name="serializeAsArray" value="true" /> -->
     </bean>
-    
+
+    <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
+
+    <beans profile="swagger">
+        <bean id="swagger" class="org.entando.entando.web.swagger.SwaggerConfig">
+            <constructor-arg ref="BaseConfigManager"/>
+        </bean>
+
+        <bean id="swaggerMvc" class="org.entando.entando.web.swagger.SwaggerMvcAdapter" />
+    </beans>
+
 </beans>

@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/permissions")
 public class PermissionController {
@@ -60,7 +62,7 @@ public class PermissionController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getPermissions(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<List<PermissionDto>>> getPermissions(RestListRequest requestList) throws JsonProcessingException {
         this.getPermissionValidator().validateRestListRequest(requestList, PermissionDto.class);
         PagedMetadata<PermissionDto> result = this.getRoleService().getPermissions(requestList);
         this.getPermissionValidator().validateRestListResult(requestList, result);

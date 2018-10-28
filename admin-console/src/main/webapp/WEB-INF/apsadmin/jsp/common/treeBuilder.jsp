@@ -59,13 +59,15 @@
                             <span> <s:text name="category.options.modify"/> </span>
                         </wpsf:submit>
                     </li>
-                    <li>
-                        <wpsf:submit type="button" name="entandoaction:trash" value="Submit"
-                                     title="%{getText('category.options.delete')}"
-                                     data-toggle="tooltip" cssClass="btn-block">
-                            <span> <s:text name="category.options.delete"/> </span>
-                        </wpsf:submit>
-                    </li>
+                    <s:if test="%{!#currentRoot.isRoot()}">
+                        <li>
+                            <wpsf:submit type="button" name="entandoaction:trash" value="Submit"
+                                         title="%{getText('category.options.delete')}"
+                                         data-toggle="tooltip" cssClass="btn-block">
+                                <span> <s:text name="category.options.delete"/> </span>
+                            </wpsf:submit>
+                        </li>
+                    </s:if>
                 </ul>
             </div>
         </td>

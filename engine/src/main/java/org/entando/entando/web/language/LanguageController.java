@@ -13,8 +13,6 @@
  */
 package org.entando.entando.web.language;
 
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.language.ILanguageService;
 import org.entando.entando.aps.system.services.language.LanguageDto;
@@ -32,11 +30,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/languages")
@@ -68,7 +65,7 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getLanguages(RestListRequest requestList) {
+    public ResponseEntity<RestResponse<List<LanguageDto>>> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
         this.getLanguageValidator().validateRestListRequest(requestList, LanguageDto.class);
         PagedMetadata<LanguageDto> result = this.getLanguageService().getLanguages(requestList);
@@ -78,7 +75,7 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getLanguage(@PathVariable String code) {
+    public ResponseEntity<RestResponse<LanguageDto>> getLanguage(@PathVariable String code) {
         logger.trace("loading language {}", code);
         LanguageDto result = this.getLanguageService().getLanguage(code);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
@@ -86,7 +83,7 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateLanguage(@PathVariable String code,
+    public ResponseEntity<RestResponse<LanguageDto>> updateLanguage(@PathVariable String code,
             @Valid @RequestBody LanguageRequest languageRequest, BindingResult bindingResult) {
         logger.trace("loading language {}", code);
         if (bindingResult.hasErrors()) {

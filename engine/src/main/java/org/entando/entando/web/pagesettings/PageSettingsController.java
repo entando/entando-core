@@ -13,8 +13,6 @@
  */
 package org.entando.entando.web.pagesettings;
 
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.pagesettings.IPageSettingsService;
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
@@ -53,14 +51,14 @@ public class PageSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getPageSettings() {
+    public ResponseEntity<RestResponse<PageSettingsDto>> getPageSettings() {
         PageSettingsDto pageSettings = this.getPageSettingsService().getPageSettings();
         return new ResponseEntity<>(new RestResponse(pageSettings), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updatePageSettings(@RequestBody PageSettingsRequest request) {
+    public ResponseEntity<RestResponse<PageSettingsDto>> updatePageSettings(@RequestBody PageSettingsRequest request) {
         //params validations
         if (request == null || request.isEmpty()) {
             DataBinder binder = new DataBinder(request);

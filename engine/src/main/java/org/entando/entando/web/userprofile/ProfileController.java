@@ -13,12 +13,16 @@
  */
 package org.entando.entando.web.userprofile;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.system.services.user.IUserManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
+import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileService;
+import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
@@ -31,11 +35,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 /**
  * @author E.Santoboni
@@ -50,6 +52,12 @@ public class ProfileController {
 
     @Autowired
     private ProfileValidator profileValidator;
+
+    @Autowired
+    private IUserManager userManager;
+
+    @Autowired
+    private IUserProfileManager userProfileManager;
 
     protected IUserProfileService getUserProfileService() {
         return userProfileService;
@@ -69,19 +77,47 @@ public class ProfileController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserProfile(@PathVariable String username) throws JsonProcessingException {
+    public ResponseEntity<RestResponse<EntityDto>> getUserProfile(@PathVariable String username) throws JsonProcessingException {
         logger.debug("Requested profile -> {}", username);
+        EntityDto dto;
         if (!this.getProfileValidator().existProfile(username)) {
-            throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Profile", username);
+            if (userExists(username)) {
+                // if the user exists but the profile doesn't, creates an empty profile
+                IUserProfile userProfile = createNewEmptyUserProfile(username);
+                dto = new EntityDto(userProfile);
+            } else {
+                throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Profile", username);
+            }
+        } else {
+            dto = this.getUserProfileService().getUserProfile(username);
         }
-        EntityDto dto = this.getUserProfileService().getUserProfile(username);
         logger.debug("Main Response -> {}", dto);
         return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
     }
 
+    private boolean userExists(String username) {
+        try {
+            return userManager.getUser(username) != null;
+        } catch (ApsSystemException e) {
+            logger.error("Error in checking user existence {}", username, e);
+            throw new RestServerError("Error in loading user", e);
+        }
+    }
+
+    private IUserProfile createNewEmptyUserProfile(String username) {
+        try {
+            IUserProfile userProfile = userProfileManager.getDefaultProfileType();
+            userProfileManager.addProfile(username, userProfile);
+            return userProfile;
+        } catch (ApsSystemException e) {
+            logger.error("Error in creating empty user profile {}", username, e);
+            throw new RestServerError("Error in loading user", e);
+        }
+    }
+
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> addUserProfile(@Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<EntityDto>> addUserProfile(@Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
         logger.debug("Add new user profile -> {}", bodyRequest);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -99,7 +135,7 @@ public class ProfileController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateUserProfile(@PathVariable String username,
+    public ResponseEntity<RestResponse<EntityDto>> updateUserProfile(@PathVariable String username,
             @Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
         logger.debug("Update user profile -> {}", bodyRequest);
         if (bindingResult.hasErrors()) {

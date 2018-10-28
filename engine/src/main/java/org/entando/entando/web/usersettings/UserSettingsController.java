@@ -13,8 +13,6 @@
  */
 package org.entando.entando.web.usersettings;
 
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.usersettings.IUserSettingsService;
 import org.entando.entando.aps.system.services.usersettings.model.UserSettingsDto;
@@ -33,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/userSettings")
@@ -53,7 +53,7 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getUserSettings() {
+    public ResponseEntity<RestResponse<UserSettingsDto>> getUserSettings() {
         logger.debug("loading user settings");
         UserSettingsDto userSettings = this.getUserSettingsService().getUserSettings();
         return new ResponseEntity<>(new RestResponse(userSettings), HttpStatus.OK);
@@ -61,7 +61,7 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<UserSettingsDto>> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
         logger.debug("updatinug user settings");
         //params validations
         if (bindingResult.hasErrors()) {

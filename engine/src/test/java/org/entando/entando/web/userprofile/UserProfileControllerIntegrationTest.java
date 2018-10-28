@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.userprofile;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.services.user.IUserManager;
@@ -21,6 +22,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Date;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileService;
@@ -58,8 +60,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
 
     @Test
     public void testGetUserProfileType() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
+        String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"editorCoach"})
                         .header("Authorization", "Bearer " + accessToken));
@@ -73,8 +74,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
 
     @Test
     public void testGetInvalidUserProfileType() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
+        String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"xxxxx"})
                         .header("Authorization", "Bearer " + accessToken));
@@ -84,8 +84,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
 
     @Test
     public void testGetValidUserProfileType() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
+        String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"editorCoach"})
                         .header("Authorization", "Bearer " + accessToken));
@@ -97,8 +96,8 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
     public void testAddUpdateUserProfile() throws Exception {
         try {
             Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
-            UserDetails userDetails = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-            String accessToken = mockOAuthInterceptor(userDetails);
+            String accessToken = this.createAccessToken();
+
             this.executeProfileTypePost("5_POST_type_valid.json", accessToken, status().isOk());
 
             Assert.assertNull(this.userManager.getUser("new_user"));
@@ -157,6 +156,47 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype("TST");
             }
         }
+    }
+
+    /* For an user created without profile, the profile has to be created the
+       first time the "/userProfiles/{user}" endpoint is requested. */
+    @Test
+    public void testGetProfileForNewUser() throws Exception {
+        String username = "another_new_user";
+
+        try {
+            String accessToken = this.createAccessToken();
+
+            Assert.assertNull(this.userManager.getUser(username));
+            User user = new User();
+            user.setUsername(username);
+            user.setPassword(username);
+            this.userManager.addUser(user);
+
+            ResultActions result = executeProfileGet(username, accessToken, status().isOk());
+
+            result.andExpect(jsonPath("$.payload.id", is(username)));
+            result.andExpect(jsonPath("$.payload.typeCode", is(SystemConstants.DEFAULT_PROFILE_TYPE_CODE)));
+            // Checking mandatory attributes with empty values
+            result.andExpect(jsonPath("$.payload.attributes[?(@.code == 'fullname')].value", is(Arrays.asList(""))));
+            result.andExpect(jsonPath("$.payload.attributes[?(@.code == 'email')].value", is(Arrays.asList(""))));
+        } finally {
+            this.userProfileManager.deleteProfile(username);
+            this.userManager.removeUser(username);
+        }
+    }
+
+    private String createAccessToken() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        return mockOAuthInterceptor(user);
+    }
+
+    private ResultActions executeProfileGet(String username, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/userProfiles/{username}", new Object[]{username})
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
     }
 
     private ResultActions executeProfilePost(String fileName, String accessToken, ResultMatcher expected) throws Exception {

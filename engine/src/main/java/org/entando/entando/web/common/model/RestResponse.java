@@ -17,20 +17,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class RestResponse {
+public class RestResponse<T> {
 
-    private Object payload = new ArrayList<>();
+    private T payload;
     private List<RestError> errors = new ArrayList<>();
     private Object metaData = new HashMap<>();
 
     public RestResponse() {
     }
 
-    public RestResponse(Object payload) {
+    public RestResponse(T payload) {
         this.payload = payload;
     }
 
-    public RestResponse(Object payload, List<RestError> errors, Object metaData) {
+    public RestResponse(T payload, List<RestError> errors, Object metaData) {
         if (null != payload) {
             this.setPayload(payload);
         }
@@ -42,11 +42,15 @@ public class RestResponse {
         }
     }
 
-    public Object getPayload() {
+    public T getPayload() {
+
+        if(payload == null) {
+            return (T)new ArrayList<>();
+        }
         return payload;
     }
 
-    public void setPayload(Object payload) {
+    public void setPayload(T payload) {
         this.payload = payload;
     }
 

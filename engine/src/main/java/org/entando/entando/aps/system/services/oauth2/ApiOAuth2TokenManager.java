@@ -152,8 +152,8 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         try {
             return this.getOAuth2TokenDAO().getAccessToken(accessToken);
         } catch (Exception t) {
-            logger.error(ERROR_ADDING_TOKEN, t);
-            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
+            logger.error("Error extracting token", t);
+            throw new ApsSystemException("Error extracting token", t);
         }
     }
 
@@ -162,8 +162,8 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         try {
             this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds);
         } catch (ApsSystemException t) {
-            logger.error(ERROR_ADDING_TOKEN, t);
-            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
+            logger.error("Error updating token", t);
+            throw new ApsSystemException("Error updating token", t);
         }
     }
 

@@ -7,7 +7,7 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app"/></li>
     <li><s:text name="breadcrumb.jacms"/></li>
-        <s:if test="onEditContent">
+    <s:if test="onEditContent">
         <li>
             <a href="<s:url action="list" namespace="/do/jacms/Content"/>">
                 <s:text name="breadcrumb.jacms.content.list"/>
@@ -22,10 +22,10 @@
                     <s:text name="breadcrumb.jacms.content.edit"/>
                 </s:else>
             </a></li>
-        </s:if>
-        <s:else>
+    </s:if>
+    <s:else>
         <li><s:text name="breadcrumb.digitalAsset"/></li>
-        </s:else>
+    </s:else>
     <li class="page-title-container">
         <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}"/>
     </li>
@@ -35,7 +35,7 @@
     <div class="row">
         <div class="col-sm-12 col-md-6">
             <h1 class="page-title-container">
-				<span class="pull-right">
+                <span class="pull-right">
                     <a tabindex="0" role="button" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                        data-content="<s:text name="label.digitalAsset.help"/>" data-placement="left" data-original-title="">
                         <i class="fa fa-question-circle-o" aria-hidden="true"></i>
@@ -70,21 +70,78 @@
     <s:include value="inc/resource_searchForm.jsp"/>
     <wp:ifauthorized permission="manageResources">
         <div class="col-sm-12">
-            <p><a href="<s:url action="new" >
-                      <s:param name="resourceTypeCode" value="resourceTypeCode" />
-                      <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
-                  </s:url>"
-                  class="btn btn-primary pull-right mb-5" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />" >
+            <p>
+                <a href="<s:url action="new" >
+                       <s:param name="resourceTypeCode" value="resourceTypeCode" />
+                       <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" />
+                   </s:url>"
+                   class="btn btn-primary pull-right mb-5" title="<s:property value="%{getText('label.' + resourceTypeCode + '.new')}" escapeXml="true" />" >
                     <s:property value="%{getText('label.' + resourceTypeCode + '.new')}"/>
-                </a></p>
+                </a>
+            </p>
         </div>
     </wp:ifauthorized>
     <br/>
 
     <div class="container-fluid">
+        <s:if test="onEditContent">
+            <div class="btn-group btn-position filters">
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">descr</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" />
+                </a>
+
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">created</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" />
+                </a>
+
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="resourceTypeCode"><s:property value="resourceTypeCode"/></s:param>
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">lastModified</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" />
+                </a>
+            </div>
+        </s:if>
+        <s:else>
+            <div class="btn-group btn-position filters">
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">descr</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.description" />
+                </a>
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">created</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.creationDate" />
+                </a>
+                <a class="btn btn-default" href="<s:url action="changeOrder" anchor="" includeParams="all" >
+                       <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
+                       <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
+                       <s:param name="groupBy">lastModified</s:param>
+                       <s:param name="entandoaction:changeOrder">changeOrder</s:param>
+                   </s:url>"><s:text name="label.orderBy" />: <s:text name="label.lastModified" />
+                </a>
+            </div>
+        </s:else>
         <div class="toolbar-pf">
             <div class="toolbar-pf-action-right mt-10">
-                <div class="form-group toolbar-pf-view-selector">
+                <div class="form-group toolbar-pf-view-selector" id="TabAttachList">
                     <span class="choose_view"><s:text name="label.visualization"/></span>
                     <button class="btn btn-link" data-toggle="tab" href="#table-view">
                         <i class="fa fa-th-large"></i>
@@ -96,6 +153,8 @@
             </div>
         </div>
     </div>
+
+
 
     <div class="tab-content">
         <div id="table-view" class="tab-pane fade">
@@ -127,7 +186,7 @@
                             <s:set var="resource" value="%{loadResource(#resourceid)}"></s:set>
                             <s:set var="resourceInstance" value="%{#resource.getInstance()}"></s:set>
 
-                                <!--attach card on edit attachment-->
+                            <!--attach card on edit attachment-->
                             <s:if test="onEditContent">
                                 <div class="col-xs-6 col-sm-4 col-md-3">
                                     <div class="card-pf card-pf-view card-pf-view-select">
@@ -170,15 +229,15 @@
                                             </h2>
                                             <p class="card-pf-info text-center">
                                                 <s:if test="!#resource.categories.empty">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <s:iterator var="category_resource" value="#resource.categories">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <s:iterator var="category_resource" value="#resource.categories">
                                                             <span class="badge">
                                                                 <span class="icon fa fa-tag"></span>&#32;
                                                                 <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
-                                                            </s:iterator>
-                                                    </div>
+                                                    </s:iterator>
                                                 </div>
+                                            </div>
                                             </s:if>
                                             <div class="row">
                                                 <div class="col-lg-12">
@@ -293,6 +352,10 @@
                                                         <span><s:property value="#fileNameVar"/></span>
                                                     </s:else>
                                                 </a>
+                                            <div class="creation-dates-card">
+                                                <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
+                                            </div>
                                             </p>
 
                                         </div>
@@ -364,15 +427,15 @@
                                             <div class="list-view-pf-additional-info">
                                                 <p class="list-group-item">
                                                     <s:if test="!#resource.categories.empty">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <s:iterator var="category_resource" value="#resource.categories">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <s:iterator var="category_resource" value="#resource.categories">
                                                                 <span class="badge">
                                                                     <span class="icon fa fa-tag fa-1x"></span>&#32;
                                                                     <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
-                                                                </s:iterator>
-                                                        </div>
+                                                        </s:iterator>
                                                     </div>
+                                                </div>
                                                 </s:if>
                                                 <div class="row">
                                                     <div class="col-lg-12">
@@ -457,31 +520,36 @@
                                         </div>
                                         <div class="list-view-pf-body">
                                             <div class="list-view-pf">
-                                                <div class="list-view-pf-description" style="width: 100%">
-                                                    <div class="list-group-item-heading">
-                                                        <s:property value="#resource.descr"/>
-                                                        <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}">
-                                                            <span class="text-muted icon fa fa-lock"></span>
-                                                        </s:if>
-                                                    </div>
-                                                    <div class="list-group-item-text">
-                                                        <a href="<s:property value="%{#resource.documentPath}" />"
-                                                           title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />"
-                                                           class="pull-left margin-small-top">
-                                                            <s:set var="fileNameVar" value="#resource.masterFileName"/>
-                                                            <s:if test='%{#fileNameVar.length()>25}'>
-                                                                <s:set var="fileNameVar"
-                                                                       value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}'/>
-                                                                <span>
-                                                                    <span title="<s:property value="#resource.masterFileName" />">
-                                                                        <s:property value="#fileNameVar"/>
-                                                                    </span>
+                                                <div class="list-group-item-heading">
+                                                    <s:property value="#resource.descr"/>
+                                                    <s:if test="%{#resource.mainGroup != null && !#resource.mainGroup.equals('free')}">
+                                                        <span class="text-muted icon fa fa-lock"></span>
+                                                    </s:if>
+                                                </div>
+                                                <div class="list-group-item-text">
+
+                                                    <a href="<s:property value="%{#resource.documentPath}" />"
+                                                       title="<s:text name="label.download" />: <s:property value="#resource.masterFileName" />"
+                                                       class="pull-left margin-small-top">
+                                                        <s:set var="fileNameVar" value="#resource.masterFileName"/>
+                                                        <s:if test='%{#fileNameVar.length()>25}'>
+                                                            <s:set var="fileNameVar"
+                                                                   value='%{#fileNameVar.substring(0,10)+"..."+#fileNameVar.substring(#fileNameVar.length()-10)}'/>
+                                                            <span>
+                                                                <span title="<s:property value="#resource.masterFileName" />">
+                                                                    <s:property value="#fileNameVar"/>
                                                                 </span>
-                                                            </s:if>
-                                                            <s:else>
-                                                                <span><s:property value="#fileNameVar"/></span>
-                                                            </s:else>
-                                                        </a>
+                                                            </span>
+                                                        </s:if>
+                                                        <s:else>
+                                                            <span><s:property value="#fileNameVar"/></span>
+                                                        </s:else>
+                                                    </a>
+                                                </div>
+                                                <div class="creation-dates">
+                                                    <div class="list-date">
+                                                        <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
+                                                        <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
                                                     </div>
                                                 </div>
                                                 <div class="list-view-pf-additional-info">
@@ -503,6 +571,29 @@
                     </div>
                 </wpsa:subset>
             </s:form>
+            <script>
+
+                $('#TabAttachList button').click(function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+                // salva l' hash come id
+                $("button").on("shown.bs.tab", function (e) {
+                    var id = $(e.target).attr("href").substr(1);
+                    window.location.hash = id;
+                });
+                $('.filters a').click(function (e) {
+                    e.preventDefault();
+                    var newhash = window.location.hash;
+                    var newhref = $(this).attr('href');
+                    var link = newhref + newhash;
+                    location.href = link;
+                });
+                // al caricamento passa l' hash al tab
+                var hash = window.location.hash;
+                $('#TabAttachList button[href="' + hash + '"]').tab('show');
+            </script>
+
         </div>
     </div>
 </div>

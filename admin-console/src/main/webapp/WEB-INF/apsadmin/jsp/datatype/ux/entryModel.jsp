@@ -89,7 +89,7 @@
         <s:set var="controlGroupErrorClassVar" value="%{#modelIdHasFieldErrorVar ? ' has-error' : ''}" />
 
         <label class="col-sm-2 control-label" for="modelId">
-            <s:text name="contentModel.code" /> <i class="fa fa-asterisk required-icon"></i>
+            <s:text name="dataObjectModel.code" /> <i class="fa fa-asterisk required-icon"></i>
             <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title=""
                data-placement="top" data-content="<s:text name="title.dataObjectModel.code.help" />" data-original-title="">
                 <span class="fa fa-info-circle"></span>

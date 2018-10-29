@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -21,7 +21,6 @@ import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -29,12 +28,24 @@ import java.util.Date;
  */
 public class ConsumerAction extends BaseAction {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ConsumerAction.class);
+    private static final Logger logger = LoggerFactory.getLogger(ConsumerAction.class);
+
+    private String consumerKey;
+    private int strutsAction;
+    private String secret;
+    private String description;
+    private String name;
+    private String callbackUrl;
+    private String scope;
+    private String authorizedGrantTyped;
+    private Date expirationDate;
+    private IOAuthConsumerManager oauthConsumerManager;
 
     public ConsumerAction() {
-        this._authorizedGrantTyped = "AUTHORIZATION_CODE";
+        this.authorizedGrantTyped = "AUTHORIZATION_CODE";
     }
 
+    @Override
     public void validate() {
         super.validate();
         try {
@@ -45,8 +56,8 @@ public class ConsumerAction extends BaseAction {
             } else if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT && null == consumer) {
                 this.addActionError(this.getText("error.consumer.notExist"));
             }
-        } catch (Throwable t) {
-            _logger.error("Error validating consumer", t);
+        } catch (Exception t) {
+            logger.error("Error validating consumer", t);
             this.addActionError(this.getText("error.consumer.systemError"));
         }
     }
@@ -70,9 +81,8 @@ public class ConsumerAction extends BaseAction {
             this.setName(consumer.getName());
             this.setScope(consumer.getScope());
             this.setExpirationDate(consumer.getExpirationDate());
-            this.setSecret(consumer.getSecret());
-        } catch (Throwable t) {
-            _logger.error("error in edit", t);
+        } catch (Exception t) {
+            logger.error("error in edit", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -91,7 +101,6 @@ public class ConsumerAction extends BaseAction {
             consumer.setDescription(this.getDescription());
             consumer.setName(this.getName());
             consumer.setExpirationDate(this.getExpirationDate());
-            consumer.setIssuedDate(Calendar.getInstance().getTime());
             consumer.setScope(this.getScope());
             consumer.setAuthorizedGrantTypes(this.getAuthorizedGrantTyped());
             consumer.setSecret(this.getSecret());
@@ -100,8 +109,8 @@ public class ConsumerAction extends BaseAction {
             } else if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT) {
                 this.getOauthConsumerManager().updateConsumer(consumer);
             }
-        } catch (Throwable t) {
-            _logger.error("error in save", t);
+        } catch (Exception t) {
+            logger.error("error in save", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -113,8 +122,8 @@ public class ConsumerAction extends BaseAction {
             if (null != check) {
                 return check;
             }
-        } catch (Throwable t) {
-            _logger.error("error in trash", t);
+        } catch (Exception t) {
+            logger.error("error in trash", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -127,8 +136,8 @@ public class ConsumerAction extends BaseAction {
                 return check;
             }
             this.getOauthConsumerManager().deleteConsumer(this.getConsumerKey());
-        } catch (Throwable t) {
-            _logger.error("error in delete", t);
+        } catch (Exception t) {
+            logger.error("error in delete", t);
             return FAILURE;
         }
         return SUCCESS;
@@ -149,94 +158,83 @@ public class ConsumerAction extends BaseAction {
     }
 
     public String getConsumerKey() {
-        return _consumerKey;
+        return consumerKey;
     }
 
     public void setConsumerKey(String consumerKey) {
-        this._consumerKey = consumerKey;
+        this.consumerKey = consumerKey;
     }
 
     public int getStrutsAction() {
-        return _strutsAction;
+        return strutsAction;
     }
 
     public void setStrutsAction(int strutsAction) {
-        this._strutsAction = strutsAction;
+        this.strutsAction = strutsAction;
     }
 
     public String getSecret() {
-        return _secret;
+        return secret;
     }
 
     public void setSecret(String secret) {
-        this._secret = secret;
+        this.secret = secret;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public void setDescription(String description) {
-        this._description = description;
+        this.description = description;
     }
 
     public String getCallbackUrl() {
-        return _callbackUrl;
+        return callbackUrl;
     }
 
     public void setCallbackUrl(String callbackUrl) {
-        this._callbackUrl = callbackUrl;
+        this.callbackUrl = callbackUrl;
     }
 
     public Date getExpirationDate() {
-        return _expirationDate;
+        return expirationDate;
     }
 
     public void setExpirationDate(Date expirationDate) {
-        this._expirationDate = expirationDate;
+        this.expirationDate = expirationDate;
     }
 
     public String getName() {
-        return _name;
+        return name;
     }
 
     public void setName(String name) {
-        this._name = name;
+        this.name = name;
     }
 
     public String getScope() {
-        return _scope;
+        return scope;
     }
 
     public void setScope(String scope) {
-        this._scope = scope;
+        this.scope = scope;
     }
 
     public String getAuthorizedGrantTyped() {
-        return _authorizedGrantTyped;
+        return authorizedGrantTyped;
     }
 
     public void setAuthorizedGrantTyped(String authorizedGrantTyped) {
-        this._authorizedGrantTyped = authorizedGrantTyped;
+        this.authorizedGrantTyped = authorizedGrantTyped;
     }
 
     protected IOAuthConsumerManager getOauthConsumerManager() {
-        return _oauthConsumerManager;
+        return oauthConsumerManager;
     }
 
     public void setOauthConsumerManager(IOAuthConsumerManager oauthConsumerManager) {
-        this._oauthConsumerManager = oauthConsumerManager;
+        this.oauthConsumerManager = oauthConsumerManager;
     }
-
-    private String _consumerKey;
-    private int _strutsAction;
-    private String _secret;
-    private String _description;
-    private String _name;
-    private String _callbackUrl;
-    private String _scope;
-    private String _authorizedGrantTyped;
-    private Date _expirationDate;
-    private IOAuthConsumerManager _oauthConsumerManager;
 
 }

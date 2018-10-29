@@ -3,10 +3,8 @@ package org.entando.entando.web.swagger;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.BaseConfigManager;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import springfox.documentation.builders.*;
 import springfox.documentation.service.*;
@@ -56,13 +54,12 @@ public class SwaggerConfig {
 
     private List<GrantType> grantTypes() {
         String authUrl = baseConfigManager.getParam(SystemConstants.PAR_APPL_BASE_URL);
-
         return singletonList(new AuthorizationCodeGrantBuilder()
                 .tokenEndpoint(new TokenEndpointBuilder()
-                        .url(authUrl + "OAuth2/access_token")
+                        .url(authUrl + "api/oauth/token")
                         .build())
                 .tokenRequestEndpoint(new TokenRequestEndpointBuilder()
-                        .url(authUrl + "OAuth2/authorize")
+                        .url(authUrl + "api/oauth/authorize")
                         .build())
                 .build());
     }
@@ -92,12 +89,12 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfo("Entando Rest API",
-                                  "Entando AppBuilder Rest APIs ",
-                                  "1",
-                                  "",
-                                  new Contact("Entando", "http://www.entando.com", null),
-                                  "",
-                                  "",
-                                      new ArrayList<>());
+                "Entando AppBuilder Rest APIs ",
+                "1",
+                "",
+                new Contact("Entando", "http://www.entando.com", null),
+                "",
+                "",
+                new ArrayList<>());
     }
 }

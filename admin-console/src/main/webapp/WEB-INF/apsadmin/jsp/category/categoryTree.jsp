@@ -121,11 +121,11 @@
                         <s:set var="selectedPage" value="%{getCategory(selectedNode)}" />
                         <s:set var="isPosition" value="true" />
                         <s:set var="treeItemIconName" value="'fa-folder'" />
-                        <s:if test="#categoryTreeStyleVar == 'classic'">
-                            <s:set var="currentRoot" value="allowedTreeRootNode" />
+                        <s:if test="%{#categoryTreeStyleVar == 'classic'}">
+                            <s:set var="currentRoot" value="%{allowedTreeRootNode}" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder.jsp" />
                         </s:if>
-                        <s:elseif test="#categoryTreeStyleVar == 'request'">
+                        <s:else>
                             <style>
                                 .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
                                     cursor: pointer;
@@ -134,9 +134,9 @@
                             </style>
                             <s:set var="openTreeActionName" value="'openCloseCategoryTree'" />
                             <s:set var="closeTreeActionName" value="'openCloseCategoryTree'" />
-                            <s:set var="currentRoot" value="showableTree" />
+                            <s:set var="currentRoot" value="%{showableTree}" />
                             <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-links.jsp" />
-                        </s:elseif>
+                        </s:else>
                     </tbody>
                 </table>
             </div>

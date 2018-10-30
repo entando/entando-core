@@ -312,14 +312,21 @@
                     <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
                     <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
                              class="btn btn-default" key="label.button-choose-file"/>
-                    <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                            label="label.file" multiple="true"/>
+
+                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>
+                    </s:if>
+                    <s:else>
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
+                                label="label.file"  multiple="true"/>
+                    </s:else>
+
                     <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
-                <s:text name="label.no-file-selected"/>
-            </span>
+                        <s:text name="label.no-file-selected"/>
+                    </span>
 
                     <s:if test="#hasFieldErrorVar">
-                <span class="help-block text-danger">
+                    <span class="help-block text-danger">
                     <s:iterator value="%{#uploadFieldErrorsVar}">
                         <s:property escapeHtml="false"/>
                         &#32;
@@ -328,7 +335,7 @@
                         <s:property escapeHtml="false"/>
                         &#32;
                     </s:iterator>
-                </span>
+                    </span>
                     </s:if>
                 </div>
 
@@ -786,11 +793,17 @@
 
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
-                    <s:text name="label.button-choose-file"/></label>
-                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
-                        multiple="true"/>
-                <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/>
-                </span>
+                    <s:text name="label.button-choose-file"/>
+                </label>
+
+                <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
+                </s:if>
+                <s:else>
+                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
+                            multiple="true"/>
+                </s:else>
+                <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/></span>
             </div>
         </div>
 

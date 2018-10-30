@@ -101,6 +101,10 @@ $(function() {
 	var selectedNode = $(".table-treegrid .subTreeToggler:checked");
 	$(selectedNode).closest(".treeRow").addClass("active").removeClass("hidden").addClass("collapsed");
 </s:if>
+<s:elseif test="%{#categoryTreeStyleVar == 'request'}">
+        $('.table-treegrid').treegrid(null, true);
+        $('#categoryTree .expand-icon').hide();
+</s:elseif>
 
 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/inc/js_trees_context_menu.jsp" />
 

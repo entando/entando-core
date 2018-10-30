@@ -84,6 +84,12 @@
                                         <s:set var="currentRoot" value="showableTree" />
                                         <s:set var="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                                         <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-submits.jsp" />
+                                        <style>
+                                            .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
+                                                cursor: pointer;
+                                                display: none;
+                                            }
+                                        </style>
                                     </s:elseif>
                                 </tbody>
                             </table>

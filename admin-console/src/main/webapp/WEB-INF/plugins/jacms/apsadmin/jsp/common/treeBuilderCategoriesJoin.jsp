@@ -12,6 +12,13 @@
 <s:if test="%{null == #actionName}">
     <s:set var="actionName" value="'joinCategory'"/>
 </s:if>
+<s:if test="%{null == #useAjax}">
+    <s:set var="useAjax" value="%{false}"/>
+</s:if>
+<s:if test="%{null == #joinCategoryEndpoint}">
+    <%-- use current URL --%>
+    <s:set var="joinCategoryEndpoint" value="''"/>
+</s:if>
 
 <s:set var="isHidden" value="%{#selectedTreeNode == null || (#selectedTreeNode != #currentRoot.code)}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
@@ -32,14 +39,23 @@
 			   </s:if>
 			</label>
         </td>
-	<td class="text-center">
+        <td class="text-center">
             <s:if test="%{!#currentRoot.isRoot()}">
-	        <wpsf:submit action="%{#actionName}" type="button" 
-	           title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
-	           <span class="icon fa fa-plus"></span>
-	        </wpsf:submit>
+                <s:if test="#useAjax">
+                    <button type="button" class="btn btn-sm btn-link js_joinCategory"
+                            onclick="categoriesAjax.joinCategory('<s:property value="#joinCategoryEndpoint"/>', '<s:property value="#currentRoot.code"/>', '<s:property value="#actionName"/>')"
+                            title="<s:text name="label.join" />">
+                        <span class="icon fa fa-plus"></span>
+                    </button>
+                </s:if>
+                <s:else>
+                    <wpsf:submit action="%{#actionName}" type="button" 
+                       title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
+                       <span class="icon fa fa-plus"></span>
+                    </wpsf:submit>
+                </s:else>
             </s:if>
-	</td>
+        </td>
 </tr>
 
 <s:if test="%{#currentRoot.getChildren().length>0}">

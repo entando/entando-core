@@ -13,6 +13,13 @@
 <s:if test="%{null == #actionName}">
     <s:set var="actionName" value="'joinCategory'"/>
 </s:if>
+<s:if test="%{null == #useAjax}">
+    <s:set var="useAjax" value="%{false}"/>
+</s:if>
+<s:if test="%{null == #joinCategoryEndpoint}">
+    <%-- use current URL --%>
+    <s:set var="joinCategoryEndpoint" value="''"/>
+</s:if>
 
 <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
@@ -25,34 +32,58 @@
     class="treeRow <s:if test="%{#currentRoot.code != 'home' && #isHidden}">collapsed childrenNodes</s:if> tree_node_flag ${liClassName}" >
         <td class="treegrid-node pointer">
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
-            <wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
-                <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-                <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
-                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
-                <wpsa:actionSubParam name="openCollapsed" value="'true'" />
-            </wpsa:actionParam>
-            <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#openTreeAction}"
-                         type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
-                <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
-                <span class="sr-only"><s:text name="label.open" /></span>
-                <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
-            </wpsf:submit>
+            <s:if test="#useAjax">
+                <button type="button" class="btn btn-link btn-xs"
+                        onclick="categoriesAjax.loadTreeNode(true, '<s:property value="#loadTreeActionName" />', '<s:property value="#openTreeActionName" />', '<s:property value="#currentRoot.code" />')"
+                        title="<s:text name="label.open" />">
+                    <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
+                    <span class="sr-only"><s:text name="label.open" /></span>
+                    <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
+                    <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                </button>
+            </s:if>
+            <s:else>
+                <wpsa:actionParam action="%{#openTreeActionName}" var="openTreeAction" >
+                    <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
+                    <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
+                    <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="open" />
+                    <wpsa:actionSubParam name="openCollapsed" value="'true'" />
+                </wpsa:actionParam>
+                <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#openTreeAction}"
+                             type="button" value="%{getText('label.open')}" title="%{getText('label.open')}">
+                    <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
+                    <span class="sr-only"><s:text name="label.open" /></span>
+                    <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
+                    <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                </wpsf:submit>
+            </s:else>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
-            <wpsa:actionParam action="%{#closeTreeActionName}" var="closeTreeAction" >
-                <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
-                <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
-                <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="close" />
-                <wpsa:actionSubParam name="openCollapsed" value="'true'" />
-            </wpsa:actionParam>
-            <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#closeTreeAction}"
-                         type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
-                <span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
-                <span class="sr-only"><s:text name="label.close" /></span>
-                <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
-            </wpsf:submit>
+            <s:if test="#useAjax">
+                <button type="button" class="btn btn-link btn-xs"
+                        onclick="categoriesAjax.loadTreeNode(false, '<s:property value="#loadTreeActionName" />', '<s:property value="#closeTreeActionName" />', '<s:property value="#currentRoot.code" />')"
+                        title="<s:text name="label.close" />">
+                    <span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
+                    <span class="sr-only"><s:text name="label.close" /></span>
+                    <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
+                    <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                </button>
+            </s:if>
+            <s:else>
+                <wpsa:actionParam action="%{#closeTreeActionName}" var="closeTreeAction" >
+                    <wpsa:actionSubParam name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
+                    <wpsa:actionSubParam name="targetNode" value="%{#currentRoot.code}" />
+                    <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="close" />
+                    <wpsa:actionSubParam name="openCollapsed" value="'true'" />
+                </wpsa:actionParam>
+                <wpsf:submit cssClass="btn btn-link btn-xs" action="%{#closeTreeAction}"
+                             type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">
+                    <span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
+                    <span class="sr-only"><s:text name="label.close" /></span>
+                    <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
+                    <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                </wpsf:submit>
+            </s:else>
         </s:elseif>
         <input type="radio" name="${inputFieldName}"
                id="fagianonode_${currentRoot.code}"
@@ -72,13 +103,22 @@
     <s:if test="%{#skipJoinAction == null || #skipJoinAction.equals('false')}">
         <td class="text-center">
             <s:if test="%{!#currentRoot.isRoot()}">
-                <wpsa:actionParam action="joinCategory" var="joinCategoryActionName" >
-                    <wpsa:actionSubParam name="categoryCode" value="%{#currentRoot.code}" />
-                </wpsa:actionParam>
-                <wpsf:submit action="%{#joinCategoryActionName}" type="button"
-                             title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
-                    <span class="icon fa fa-plus"></span>
-                </wpsf:submit>
+                <s:if test="#useAjax">
+                    <button type="button" class="btn btn-sm btn-link js_joinCategory"
+                            onclick="categoriesAjax.joinCategory('<s:property value="#joinCategoryEndpoint"/>', '<s:property value="#currentRoot.code"/>', '<s:property value="#actionName"/>')"
+                            title="<s:text name="label.join" />">
+                        <span class="icon fa fa-plus"></span>
+                    </button>
+                </s:if>
+                <s:else>
+                    <wpsa:actionParam action="joinCategory" var="joinCategoryActionName" >
+                        <wpsa:actionSubParam name="categoryCode" value="%{#currentRoot.code}" />
+                    </wpsa:actionParam>
+                    <wpsf:submit action="%{#joinCategoryActionName}" type="button"
+                                 title="%{getText('label.join')}" cssClass="btn btn-sm btn-link js_joinCategory">
+                        <span class="icon fa fa-plus"></span>
+                    </wpsf:submit>
+                </s:else>
             </s:if>
         </td>
     </s:if>

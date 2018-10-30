@@ -343,11 +343,14 @@ public class FileBrowserAction extends BaseAction {
     }
 
     public String getCurrentPath() {
-        if (StringUtils.isBlank(currentPath) || null == this.getProtectedFolder()) {
+        if (!StringUtils.isBlank(currentPath)) {
+            if (!currentPath.endsWith("/")) {
+                currentPath = currentPath + "/";
+            }
+        } else {
             currentPath = "";
-        } else if (!currentPath.endsWith("/")) {
-            currentPath = currentPath + "/";
         }
+
         return currentPath;
     }
 

@@ -49,49 +49,88 @@
                     <th>
                         <s:text name="label.page" />
                     </th>
+                    <th class="text-center">
+                        <s:text name="contentModel.reference.pageStatus" />
+                    </th>
                     <th>
-                        <s:text name="label.content"/>
+                        <s:text name="contentModel.reference.widgetPosition" />
+                    </th>
+                    <th>
+                        <s:text name="contentModel.reference.widgetTitle" />
+                    </th>
+                    <th>
+                        <s:text name="contentModel.reference.contents"/>
                     </th>
                     <th class="table-w-5 text-center">
                         <s:text name="label.actions" />
                     </th>
                 </tr>
-                <s:iterator var="contentId" value="referencedContentsOnPages">
-                    <s:iterator var="page" value="referencingPages[#contentId]">
-                        <tr>
-                            <s:set var="pageGroup" value="#page.group">
-                            </s:set>
-                            <td>
-                                <s:property value="#page.titles[currentLang.code]" />
+                <s:iterator var="reference" value="contentModelReferences">
+                    <s:set var="page" value="%{getPage(#reference)}">
+                    </s:set>
+                    <s:set var="widget" value="%{getWidget(#reference)}">
+                    </s:set>
+                    <tr>
+                        <td>
+                            <s:property value="#page.titles[currentLang.code]" />
+                        </td>
+                        <td class="text-center">
+                            <span class="statusField">
+                                <s:if test="!#reference.online"><i class="fa fa-circle yellow" aria-hidden="true" title="Draft"></i></s:if>
+                                <s:elseif test="#reference.online"><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:elseif>
+                                </span>
                             </td>
                             <td>
-                                <s:set var="content" value="%{getContentVo(#contentId)}">
-                                </s:set>
-                                <s:property value="#content.id" />
-                                <s:property value="#content.descr" />
-                            </td>
-                            <wp:ifauthorized groupName="${pageGroup}">
-                                <td class=" text-center table-view-pf-actions">
-                                    <div class="dropdown dropdown-kebab-pf">
-                                        <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                            <span class="fa fa-ellipsis-v"></span>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                            <s:property value="#reference.widgetPosition" />
+                        </td>
+                        <td>
+                            <s:property value="%{getWidgetTitle(#reference, currentLang.code)}" />
+                        </td>
+                        <td>
+                            <s:if test="%{#widget.getType().getCode() == 'content_viewer_list'}">
+                                * <code><s:property value="%{#widget.getConfig().get('contentType')}" /></code>
+                            </s:if>
+                            <s:else>
+                                <s:iterator var="contentId" value="#reference.contentsId" status="incr">
+                                    <s:if test="#incr.index > 0">
+                                        ,
+                                    </s:if>
+                                    <s:set var="content" value="%{getContentVo(#contentId)}">
+                                    </s:set>
+                                    <code><s:property value="#content.id" /></code>
+                                    &#32;
+                                    <s:property value="#content.descr" />
+                                </s:iterator>
+                            </s:else>
+                        </td>
+                        <wp:ifauthorized groupName="${page.group}">
+                            <td class=" text-center table-view-pf-actions">
+                                <div class="dropdown dropdown-kebab-pf">
+                                    <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        <span class="fa fa-ellipsis-v"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                                        <li>
+                                            <a href="<s:url action="configure" namespace="/do/Page"/>?pageCode=<s:property value="#page.code" />">
+                                                <span class="sr-only">
+                                                    <s:text name="label.configure" />&#32;
+                                                    <s:property value="#page.titles[currentLang.code]" />
+                                                </span>
+                                                <s:text name="contentModel.reference.configurePage" />
+                                            </a>
+                                        </li>
+                                        <s:if test="!#reference.online">
                                             <li>
-                                                <a href="<s:url action="new" namespace="/do/Page"/>?selectedNode=<s:property value="#page.code" />&amp;action:configure=true">
-                                                    <span class="sr-only">
-                                                        <s:text name="label.edit" />&#32;
-                                                        <s:property value="#model.description" />
-                                                    </span>
-                                                    <s:text name="label.edit" />
+                                                <a href="<s:url action="editFrame" namespace="/do/Page"/>?pageCode=<s:property value="#page.code" />&frame=<s:property value="#reference.widgetPosition" />">
+                                                    <s:text name="contentModel.reference.widgetSettings" />
                                                 </a>
                                             </li>
-                                        </ul>
-                                    </div>
-                                </td>
-                            </wp:ifauthorized>
-                        </tr>
-                    </s:iterator>
+                                        </s:if>
+                                    </ul>
+                                </div>
+                            </td>
+                        </wp:ifauthorized>
+                    </tr>
                 </s:iterator>
             </table>
         </div>

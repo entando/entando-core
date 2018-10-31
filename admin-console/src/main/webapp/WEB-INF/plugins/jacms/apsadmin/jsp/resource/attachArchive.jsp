@@ -7,7 +7,7 @@
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app"/></li>
     <li><s:text name="breadcrumb.jacms"/></li>
-        <s:if test="onEditContent">
+    <s:if test="onEditContent">
         <li>
             <a href="<s:url action="list" namespace="/do/jacms/Content"/>">
                 <s:text name="breadcrumb.jacms.content.list"/>
@@ -22,10 +22,10 @@
                     <s:text name="breadcrumb.jacms.content.edit"/>
                 </s:else>
             </a></li>
-        </s:if>
-        <s:else>
+    </s:if>
+    <s:else>
         <li><s:text name="breadcrumb.digitalAsset"/></li>
-        </s:else>
+    </s:else>
     <li class="page-title-container">
         <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}"/>
     </li>
@@ -186,7 +186,7 @@
                             <s:set var="resource" value="%{loadResource(#resourceid)}"></s:set>
                             <s:set var="resourceInstance" value="%{#resource.getInstance()}"></s:set>
 
-                                <!--attach card on edit attachment-->
+                            <!--attach card on edit attachment-->
                             <s:if test="onEditContent">
                                 <div class="col-xs-6 col-sm-4 col-md-3">
                                     <div class="card-pf card-pf-view card-pf-view-select">
@@ -229,15 +229,15 @@
                                             </h2>
                                             <p class="card-pf-info text-center">
                                                 <s:if test="!#resource.categories.empty">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <s:iterator var="category_resource" value="#resource.categories">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <s:iterator var="category_resource" value="#resource.categories">
                                                             <span class="badge">
                                                                 <span class="icon fa fa-tag"></span>&#32;
                                                                 <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
-                                                            </s:iterator>
-                                                    </div>
+                                                    </s:iterator>
                                                 </div>
+                                            </div>
                                             </s:if>
                                             <div class="row">
                                                 <div class="col-lg-12">
@@ -427,15 +427,15 @@
                                             <div class="list-view-pf-additional-info">
                                                 <p class="list-group-item">
                                                     <s:if test="!#resource.categories.empty">
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <s:iterator var="category_resource" value="#resource.categories">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        <s:iterator var="category_resource" value="#resource.categories">
                                                                 <span class="badge">
                                                                     <span class="icon fa fa-tag fa-1x"></span>&#32;
                                                                     <s:property value="%{#category_resource.getTitle(currentLang.code)}"/></span>
-                                                                </s:iterator>
-                                                        </div>
+                                                        </s:iterator>
                                                     </div>
+                                                </div>
                                                 </s:if>
                                                 <div class="row">
                                                     <div class="col-lg-12">
@@ -593,7 +593,6 @@
                 var hash = window.location.hash;
                 $('#TabAttachList button[href="' + hash + '"]').tab('show');
             </script>      
-
         </div>
     </div>
 </div>

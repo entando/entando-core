@@ -84,17 +84,8 @@
         <wpsf:hidden name="strutsAction"/>
         <wpsf:hidden name="resourceTypeCode"/>
         <wpsf:hidden name="contentOnSessionMarker"/>
-        <s:iterator value="categoryCodes" var="categoryCodeVar" status="rowstatus">
-            <input type="hidden" name="categoryCodes" value="<s:property value="#categoryCodeVar" />"
-                   id="categoryCodes-<s:property value="#rowstatus.index" />"/>
-        </s:iterator>
         <s:if test="strutsAction != 1">
             <wpsf:hidden name="resourceId"/>
-        </s:if>
-        <s:if test="#categoryTreeStyleVar == 'request'">
-            <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
-            </s:iterator>
         </s:if>
         <s:if test="%{lockGroupSelect}">
             <wpsf:hidden name="mainGroup"/>
@@ -143,50 +134,16 @@
             <div class="col-xs-10">
                 <script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
                 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp"/>
-                <table id="categoryTree"
-                       class="table table-bordered table-hover table-treegrid ${categoryTreeStyleVar}">
-                    <thead>
-                    <tr>
-                        <th>
-                            <s:text name="label.category.tree"/>
-                            <s:if test="#categoryTreeStyleVar == 'classic'">
-                                <button type="button" class="btn-no-button expand-button" id="expandAll">
-                                    <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>
-                                    &#32;
-                                    <s:text name="label.category.expandAll"/>
-                                </button>
-                                <button type="button" class="btn-no-button" id="collapseAll">
-                                    <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>
-                                    &#32;
-                                    <s:text name="label.category.collapseAll"/>
-                                </button>
-                            </s:if>
-                        </th>
-                        <th class="text-center table-w-10">
-                            <s:text name="label.category.join"/>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody>
+
+                <s:set var="useAjax" value="true" />
                     <s:set var="selectedTreeNode" value="selectedNode"/>
                     <s:set var="currentRoot" value="categoryRoot"/>
-                    <s:set var="inputFieldName" value="'categoryCode'"/>
-                    <s:set var="selectedTreeNode" value="categoryCode"/>
-                    <s:set var="liClassName" value="'category'"/>
-                    <s:set var="treeItemIconName" value="'fa-folder'"/>
-                    <s:if test="%{#categoryTreeStyleVar == 'classic'}">
-                        <s:set var="currentRoot" value="%{allowedTreeRootNode}"/>
-                        <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilderCategoriesJoin.jsp"/>
-                    </s:if>
-                    <s:elseif test="%{#categoryTreeStyleVar == 'request'}">
-                        <s:set var="currentRoot" value="%{showableTree}"/>
+                <s:set var="joinCategoryEndpoint" value="'joinCategory'"/>
+                <s:set var="loadTreeActionName" value="''"/>
                         <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
                         <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
-                        <s:include
-                                value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/treeBuilder-request-categories.jsp"/>
-                    </s:elseif>
-                    </tbody>
-                </table>
+                <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/categoryTreeTable.jsp" />
+
                 <s:if test="extraGroups.size() != 0">
                     <s:iterator value="extraGroups" var="groupName">
                         <wpsa:actionParam action="removeExtraGroup" var="actionName">
@@ -203,33 +160,40 @@
                         </div>
                     </s:iterator>
                 </s:if>
-                <s:if test="%{categoryCodes != null && !categoryCodes.empty}">
-                    <ul class="list-inline mt-20">
-                        <s:iterator value="categoryCodes" var="categoryCodeVar">
-                            <s:set var="resourceCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
-                            <li>
-                            <span class="label label-info">
-                                <span class="icon fa fa-tag"></span>
-                                &#32;
-                                <abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>">
-                                    <s:property value="#resourceCategory.getShortFullTitle(currentLang.code)"/>
-                                </abbr>
-                                &#32;
-                                <wpsa:actionParam action="removeCategory" var="actionName">
-                                    <wpsa:actionSubParam name="categoryCode" value="%{#resourceCategory.code}"/>
-                                </wpsa:actionParam>
-                                <wpsf:submit type="button" action="%{#actionName}"
-                                             title="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}"
-                                             cssClass="btn btn-link">
-                                    <span class="pficon pficon-close white"></span>
-                                    <span class="sr-only">x</span>
-                                </wpsf:submit>
-                            </span>
-                            </li>
-                        </s:iterator>
-                    </ul>
-                </s:if>
+                
+                <span id="categoryList">
 
+                    <p class="sr-only">
+                        <s:iterator value="categoryCodes" var="categoryCodeVar" status="rowstatus">
+                            <input type="hidden" name="categoryCodes" value="<s:property value="#categoryCodeVar" />"
+                                   id="categoryCodes-<s:property value="#rowstatus.index" />"/>
+                        </s:iterator>
+                    </p>
+
+                    <s:if test="%{categoryCodes != null && !categoryCodes.empty}">
+                        <ul class="list-inline mt-20">
+                            <s:iterator value="categoryCodes" var="categoryCodeVar">
+                                <s:set var="resourceCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
+                                    <li>
+                                        <span class="label label-info">
+                                            <span class="icon fa fa-tag"></span>
+                                            &#32;
+                                            <abbr title="<s:property value="#resourceCategory.getFullTitle(currentLang.code)"/>">
+                                            <s:property value="#resourceCategory.getShortFullTitle(currentLang.code)"/>
+                                        </abbr>
+                                        &#32;
+                                        <button type="button" class="btn btn-link"
+                                                onclick="categoriesAjax.removeCategory('removeCategory', '<s:property value="#resourceCategory.code"/>')"
+                                                title="<s:property value="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}" />">
+                                            <span class="pficon pficon-close white"></span>
+                                            <span class="sr-only">x</span>
+                                        </button>
+                                    </span>
+                                </li>
+                            </s:iterator>
+                        </ul>
+                    </s:if>
+                </span>
 
             </div>
         </div>
@@ -312,14 +276,21 @@
                     <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
                     <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
                              class="btn btn-default" key="label.button-choose-file"/>
-                    <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                            label="label.file" multiple="true"/>
+
+                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>
+                    </s:if>
+                    <s:else>
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
+                                label="label.file"  multiple="true"/>
+                    </s:else>
+
                     <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
-                <s:text name="label.no-file-selected"/>
-            </span>
+                        <s:text name="label.no-file-selected"/>
+                    </span>
 
                     <s:if test="#hasFieldErrorVar">
-                <span class="help-block text-danger">
+                    <span class="help-block text-danger">
                     <s:iterator value="%{#uploadFieldErrorsVar}">
                         <s:property escapeHtml="false"/>
                         &#32;
@@ -328,7 +299,7 @@
                         <s:property escapeHtml="false"/>
                         &#32;
                     </s:iterator>
-                </span>
+                    </span>
                     </s:if>
                 </div>
 
@@ -786,11 +757,17 @@
 
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
-                    <s:text name="label.button-choose-file"/></label>
-                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
-                        multiple="true"/>
-                <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/>
-                </span>
+                    <s:text name="label.button-choose-file"/>
+                </label>
+
+                <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
+                </s:if>
+                <s:else>
+                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
+                            multiple="true"/>
+                </s:else>
+                <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/></span>
             </div>
         </div>
 

@@ -30,7 +30,7 @@
     </s:if>
     <s:else>
         <li><s:text name="breadcrumb.digitalAsset"/></li>
-        </s:else>
+    </s:else>
     <li class="page-title-container">
         <s:property value="%{getText('breadcrumb.dataAsset.' + resourceTypeCode + '.list')}"/>
     </li>
@@ -249,8 +249,8 @@
                                         </div>
 
                                         <div class="card-pf-top-element">
-                                            <%-- Dimension forced for img thumbnail --%>
-                                            <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" "
+                                                <%-- Dimension forced for img thumbnail --%>
+                                            <img src="<s:property value="%{(null != #resource.getImagePath(1)) ? #resource.getImagePath(1) : #resource.getImagePath(0)}"/>" alt=" "
                                                  style="height:90px;max-width:130px" class="img-responsive center-block"/>
                                         </div>
                                         <h2 class="card-pf-title text-center">
@@ -356,7 +356,7 @@
                                 </div>
                                 <div class="list-view-pf-main-info">
                                     <div class="list-view-pf-left col-o" style="width: 130px">
-                                        <img src="<s:property value="%{#resource.getImagePath(1)}"/>" alt=" " class="img-responsive center-block"/>
+                                        <img src="<s:property value="%{(null != #resource.getImagePath(1)) ? #resource.getImagePath(1) : #resource.getImagePath(0)}"/>" alt=" " class="img-responsive center-block"/>
                                     </div>
                                     <div class="list-view-pf-body">
                                         <div class="list-view-pf">
@@ -407,9 +407,9 @@
                                                             x<s:property value="#dimInfo.dimy"/>&nbsp;px
                                                             <span class="badge">
                                                                 <s:property
-                                                                    value='#resourceInstance.fileLength.replaceAll(" ", "&nbsp;")'
-                                                                    escapeXml="false"
-                                                                    escapeHtml="false" escapeJavaScript="false"/>
+                                                                        value='#resourceInstance.fileLength.replaceAll(" ", "&nbsp;")'
+                                                                        escapeXml="false"
+                                                                        escapeHtml="false" escapeJavaScript="false"/>
                                                             </span>
                                                         </a>
                                                     </s:if>
@@ -449,8 +449,8 @@
         });
         var hash = window.location.hash;
         $('#TabList button[href="' + hash + '"]').tab('show');
-
     </script>      
+
 
     <wp:ifauthorized permission="superuser">
         <s:if test="!onEditContent">

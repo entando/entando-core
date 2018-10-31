@@ -9,6 +9,7 @@
 <script src="<wp:resourceURL />administration/js/generate-code-from-title.js"></script>
 
 <script type="text/javascript">
+    /*
     $(document).ready(function () {
 
         var treeStyle = '<wp:info key="systemParam" paramName="treeStyle_category" />';
@@ -32,4 +33,5 @@
             $('#categoryTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
         });
     });
+    */
 </script>

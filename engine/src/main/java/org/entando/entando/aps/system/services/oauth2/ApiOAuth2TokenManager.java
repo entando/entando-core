@@ -29,7 +29,9 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImp
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
+import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 
 public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
 

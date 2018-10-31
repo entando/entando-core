@@ -16,12 +16,15 @@ package org.entando.entando.apsadmin.api;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
+import java.util.Arrays;
 import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
+import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author E.Santoboni
@@ -37,14 +40,11 @@ public class ConsumerAction extends BaseAction {
     private String name;
     private String callbackUrl;
     private String scope;
-    private String authorizedGrantTyped;
+    private List<String> grantTypes;
     private Date expirationDate;
+    private Date issuedDate;
     private IOAuthConsumerManager oauthConsumerManager;
-
-    public ConsumerAction() {
-        this.authorizedGrantTyped = "AUTHORIZATION_CODE";
-    }
-
+    
     @Override
     public void validate() {
         super.validate();
@@ -81,6 +81,10 @@ public class ConsumerAction extends BaseAction {
             this.setName(consumer.getName());
             this.setScope(consumer.getScope());
             this.setExpirationDate(consumer.getExpirationDate());
+            this.setIssuedDate(consumer.getIssuedDate());
+            if (null != consumer.getAuthorizedGrantTypes()) {
+                this.setGrantTypes(Arrays.asList(consumer.getAuthorizedGrantTypes().split(",")));
+            }
         } catch (Exception t) {
             logger.error("error in edit", t);
             return FAILURE;
@@ -102,7 +106,8 @@ public class ConsumerAction extends BaseAction {
             consumer.setName(this.getName());
             consumer.setExpirationDate(this.getExpirationDate());
             consumer.setScope(this.getScope());
-            consumer.setAuthorizedGrantTypes(this.getAuthorizedGrantTyped());
+            String grantTypesCsv = (null != this.getGrantTypes()) ? StringUtils.join(this.getGrantTypes(), ",") : null;
+            consumer.setAuthorizedGrantTypes(grantTypesCsv);
             consumer.setSecret(this.getSecret());
             if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
                 this.getOauthConsumerManager().addConsumer(consumer);
@@ -156,6 +161,10 @@ public class ConsumerAction extends BaseAction {
     public ConsumerRecordVO getConsumer(String key) throws Throwable {
         return this.getOauthConsumerManager().getConsumerRecord(key);
     }
+    
+    public String[] getAllowedGrantTypes() {
+        return IOAuthConsumerManager.GRANT_TYPES;
+    }
 
     public String getConsumerKey() {
         return consumerKey;
@@ -205,6 +214,14 @@ public class ConsumerAction extends BaseAction {
         this.expirationDate = expirationDate;
     }
 
+    public Date getIssuedDate() {
+        return issuedDate;
+    }
+
+    public void setIssuedDate(Date issuedDate) {
+        this.issuedDate = issuedDate;
+    }
+
     public String getName() {
         return name;
     }
@@ -220,15 +237,15 @@ public class ConsumerAction extends BaseAction {
     public void setScope(String scope) {
         this.scope = scope;
     }
-
-    public String getAuthorizedGrantTyped() {
-        return authorizedGrantTyped;
+    
+    public List<String> getGrantTypes() {
+        return grantTypes;
     }
-
-    public void setAuthorizedGrantTyped(String authorizedGrantTyped) {
-        this.authorizedGrantTyped = authorizedGrantTyped;
+    
+    public void setGrantTypes(List<String> grantTypes) {
+        this.grantTypes = grantTypes;
     }
-
+    
     protected IOAuthConsumerManager getOauthConsumerManager() {
         return oauthConsumerManager;
     }

@@ -24,6 +24,9 @@ import org.springframework.security.oauth2.provider.ClientDetailsService;
  * @author E.Santoboni
  */
 public interface IOAuthConsumerManager extends ClientDetailsService {
+    
+    public static final String[] GRANT_TYPES = { "authorization_code", 
+        "client_credentials", "implicit", "password", "refresh_token"};
 
     public static final String CONSUMER_KEY_FILTER_KEY = "consumerkey";
     public static final String CONSUMER_SECRET_FILTER_KEY = "consumersecret";

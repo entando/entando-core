@@ -86,9 +86,8 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
                 consumer.setDescription(res.getString("description"));
                 consumer.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
                 consumer.setScope(res.getString("scope"));
-                consumer.setExpirationDate(res.getDate("expirationdate"));
-                consumer.setIssuedDate(res.getDate("issueddate"));
-
+                consumer.setExpirationDate(res.getTimestamp("expirationdate"));
+                consumer.setIssuedDate(res.getTimestamp("issueddate"));
             }
         } catch (SQLException | ApsSystemException t) {
             _logger.error("Error while loading consumer by clientid {}", clientId, t);

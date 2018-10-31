@@ -172,22 +172,12 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         String fullPath = path + filename + "." + extension;
         String text = "This is the content";
         try {
-
-            String filename1 = filename + "è";
-            fullPath = path + filename1 + "." + extension;
-            String result = this.executeAddTextFile("admin", path, filename1, extension, text, false);
+            String filename2 = "../" + filename;
+            fullPath = path + filename2 + "." + extension;
+            String result = this.executeAddTextFile("admin", path, filename2, extension, text, false);
             assertEquals(Action.INPUT, result);
             FileBrowserAction action = (FileBrowserAction) this.getAction();
             Collection<String> actionErrors = action.getActionErrors();
-            assertEquals(1, actionErrors.size());
-            this.localStorageManager.deleteFile(fullPath, false);
-
-            String filename2 = "../" + filename;
-            fullPath = path + filename2 + "." + extension;
-            result = this.executeAddTextFile("admin", path, filename2, extension, text, false);
-            assertEquals(Action.INPUT, result);
-            action = (FileBrowserAction) this.getAction();
-            actionErrors = action.getActionErrors();
             assertEquals(1, actionErrors.size());
             this.localStorageManager.deleteFile(fullPath, false);
 
@@ -199,7 +189,6 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             actionErrors = action.getActionErrors();
             assertEquals(1, actionErrors.size());
             this.localStorageManager.deleteFile(fullPath, false);
-
         } catch (Throwable t) {
             this.localStorageManager.deleteFile(fullPath, false);
             throw t;

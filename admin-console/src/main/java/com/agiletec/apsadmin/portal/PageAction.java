@@ -139,7 +139,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             if (null == title || title.trim().length() == 0) {
                 String[] args = {lang.getDescr()};
                 this.addFieldError(titleKey, this.getText("error.page.insertTitle", args));
-            } else if (title.length() >= PAGE_TITLE_MAX_LENGTH) {
+            } else if (title.length() > PAGE_TITLE_MAX_LENGTH) {
                 String[] args = {lang.getCode(), String.valueOf(PAGE_TITLE_MAX_LENGTH)};
                 this.addFieldError(titleKey, this.getText("error.page.wrongTitleMaxLength", args));
             }

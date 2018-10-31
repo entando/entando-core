@@ -13,7 +13,7 @@
     <%= request.getParameter("linkTypeVar") %>
 </c:set>
 
-  <c:if test="${prevLinkTypeVar!=null && prevLinkTypeVar!=''}">
+  <c:if test="%{prevLinkTypeVar!=null && prevLinkTypeVar!=''}">
          <div class="form-group mt-20">
              <div class="col-xs-12">
                  <div class="alert alert-info mt-20 no-mb">

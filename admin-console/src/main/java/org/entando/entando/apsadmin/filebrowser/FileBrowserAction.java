@@ -152,7 +152,7 @@ public class FileBrowserAction extends BaseAction {
 
     public String trash() {
         try {
-            String validatePath = this.validatePath();
+            String validatePath = this.validateFullPath();
             if (null != validatePath) {
                 return validatePath;
             }
@@ -176,7 +176,7 @@ public class FileBrowserAction extends BaseAction {
                 this.addActionError(this.getText("error.filebrowser.delete.missingInformation"));
                 return INPUT;
             }
-            String validatePath = this.validatePath();
+            String validatePath = this.validateFullPath();
             if (null != validatePath) {
                 return validatePath;
             }
@@ -257,7 +257,7 @@ public class FileBrowserAction extends BaseAction {
 
     public String download() {
         try {
-            String validatePath = this.validatePath();
+            String validatePath = this.validateFullPath();
             if (null != validatePath) {
                 return validatePath;
             }
@@ -531,14 +531,6 @@ public class FileBrowserAction extends BaseAction {
         return null;
     }
 
-    protected String validatePath() {
-        if (!StorageManagerUtil.isValidDirName(this.getCurrentPath())) {
-            this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
-            return INPUT;
-        }
-        return null;
-    }
-
     /**
      * Check the provided filename and currentPath parameters and raises an
      * error if one of these parameters are invalid
@@ -550,7 +542,11 @@ public class FileBrowserAction extends BaseAction {
             this.addActionError(this.getText("error.filebrowser.filename.invalid"));
             return INPUT;
         }
-        return this.validatePath();
+        if (!StorageManagerUtil.isValidDirName(this.getCurrentPath())) {
+            this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
+            return INPUT;
+        }
+        return null;
     }
 
 }

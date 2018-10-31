@@ -235,7 +235,7 @@
                                             <div class="col-sm-9">
                                                 <wpsf:select name="ownerGroupName" id="ownerGroupName"
                                                              list="#allowedGroupsVar" headerKey=""
-                                                             headerValue="%{getText('label.all')}" listKey
+                                                             headerValue="%{getText('label.all')}" listKey="name" 
                                                              listValue="descr" cssClass="form-control" />
                                             </div>
                                         </div>

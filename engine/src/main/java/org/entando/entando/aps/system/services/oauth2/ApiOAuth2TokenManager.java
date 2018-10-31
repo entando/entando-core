@@ -29,9 +29,7 @@ import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImp
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
-import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.token.AbstractTokenGranter;
 
 public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
 
@@ -105,26 +103,34 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         logger.warn("removeAccessTokenUsingRefreshToken Not supported yet.");
         throw new UnsupportedOperationException("removeAccessTokenUsingRefreshToken Not supported yet.");
     }
-
+    
+    @Override
+    public OAuth2AccessToken createAccessTokenForLocalUser(String username) {
+        OAuth2AccessToken token = this.getAccessToken(username, "LOCAL_USER", "implicit");
+        this.getOAuth2TokenDAO().storeAccessToken(token, null);
+        return token;
+    }
+    
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
-        return this.createToken(authentication, "implicit");
+        String principal = authentication.getPrincipal().toString();
+        String clientId = authentication.getOAuth2Request().getClientId();
+        String grantType = authentication.getOAuth2Request().getGrantType();
+        return this.getAccessToken(principal, clientId, grantType);
     }
 
-    private OAuth2AccessToken createToken(OAuth2Authentication authentication, String grantType) {
-        String tokenPrefix = authentication.getPrincipal().toString() + System.nanoTime();
+    protected OAuth2AccessToken getAccessToken(String principal, String clientId, String grantType) {
+        String tokenPrefix = principal + System.nanoTime();
         final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
         final String refreshToken = DigestUtils.md5Hex(tokenPrefix + "_refreshToken");
         final OAuth2AccessTokenImpl oAuth2Token = new OAuth2AccessTokenImpl(accessToken);
         oAuth2Token.setRefreshToken(new DefaultOAuth2RefreshToken(refreshToken));
-        if (null != authentication.getOAuth2Request()) {
-            oAuth2Token.setClientId(authentication.getOAuth2Request().getClientId());
-        }
-        oAuth2Token.setLocalUser(authentication.getPrincipal().toString());
+        oAuth2Token.setClientId(clientId);
+        oAuth2Token.setGrantType(grantType);
+        oAuth2Token.setLocalUser(principal);
         Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
         calendar.add(Calendar.SECOND, 3600);
         oAuth2Token.setExpiration(calendar.getTime());
-        oAuth2Token.setGrantType(grantType);
         return oAuth2Token;
     }
 

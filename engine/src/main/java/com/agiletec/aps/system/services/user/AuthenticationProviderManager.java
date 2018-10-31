@@ -31,6 +31,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
@@ -64,8 +65,12 @@ public class AuthenticationProviderManager extends AbstractService
     public UserDetails getUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password);
     }
-
+    
     protected UserDetails extractUser(String username, String password) throws ApsSystemException {
+        return this.extractUser(username, password, true);
+    }
+    
+    protected UserDetails extractUser(String username, String password, boolean addToken) throws ApsSystemException {
         UserDetails user = null;
         try {
             if (null == password) {
@@ -88,38 +93,15 @@ public class AuthenticationProviderManager extends AbstractService
                 return user;
             }
             this.addUserAuthorizations(user);
-            if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)) {
-                this.registerToken(user);
+            if (addToken) {
+                OAuth2AccessToken token = this.getTokenManager().createAccessTokenForLocalUser(username);
+                user.setAccessToken(token.getValue());
+                user.setRefreshToken(token.getRefreshToken().getValue());
             }
         } catch (Throwable t) {
             throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
         }
         return user;
-    }
-
-    private void registerToken(final UserDetails user) {
-        /*
-        try {
-            String tokenPrefix = user.getUsername() + System.nanoTime();
-            final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
-            final String refreshToken = DigestUtils.md5Hex(tokenPrefix + "_refreshToken");
-            user.setAccessToken(accessToken);
-            user.setRefreshToken(refreshToken);
-            final OAuth2Token oAuth2Token = new OAuth2Token();
-            oAuth2Token.setAccessToken(accessToken);
-            oAuth2Token.setRefreshToken(refreshToken);
-            oAuth2Token.setClientId("LOCAL_USER");
-            oAuth2Token.setLocalUser(user.getUsername());
-            Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-            calendar.add(Calendar.SECOND, 3600);
-            oAuth2Token.setExpiresIn(calendar.getTime());
-            oAuth2Token.setGrantType(GrantType.IMPLICIT.toString());
-            this.getTokenManager().addApiOAuth2Token(oAuth2Token, true);
-        } catch (ApsSystemException e) {
-            logger.error("ApsSystemException {} ", e.getMessage());
-            logger.debug("ApsSystemException {} ", e);
-        }
-         */
     }
 
     protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
@@ -139,7 +121,13 @@ public class AuthenticationProviderManager extends AbstractService
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), authentication.getCredentials().toString());
+            if (null == authentication || 
+                    null == authentication.getPrincipal() || 
+                    null == authentication.getCredentials()) {
+                throw new UsernameNotFoundException("Invalid principal and/or credentials");
+            }
+            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), 
+                    authentication.getCredentials().toString(), false);
             if (null != user) {
                 Authentication newAuth
                         = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),

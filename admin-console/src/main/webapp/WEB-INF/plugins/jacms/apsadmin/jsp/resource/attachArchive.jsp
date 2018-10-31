@@ -160,17 +160,17 @@
         <div id="table-view" class="tab-pane fade">
             <s:form action="search" class="container-fluid container-cards-pf">
                 <p class="sr-only">
-                    <wpsf:hidden name="text"/>
-                    <wpsf:hidden name="categoryCode"/>
-                    <wpsf:hidden name="resourceTypeCode"/>
-                    <wpsf:hidden name="fileName"/>
-                    <wpsf:hidden name="ownerGroupName"/>
-                    <s:if test="#categoryTreeStyleVar == 'request'">
-                        <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                            <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
-                        </s:iterator>
-                    </s:if>
-                    <wpsf:hidden name="contentOnSessionMarker"/>
+                <wpsf:hidden name="text"/>
+                <wpsf:hidden name="categoryCode"/>
+                <wpsf:hidden name="resourceTypeCode"/>
+                <wpsf:hidden name="fileName"/>
+                <wpsf:hidden name="ownerGroupName"/>
+                <s:if test="#categoryTreeStyleVar == 'request'">
+                    <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                        <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
+                    </s:iterator>
+                </s:if>
+                <wpsf:hidden name="contentOnSessionMarker"/>
                 </p>
 
                 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5">
@@ -377,17 +377,17 @@
         <div id="list-view" class="tab-pane fade in active">
             <s:form action="search" class="container-fluid">
                 <p class="sr-only">
-                    <wpsf:hidden name="text"/>
-                    <wpsf:hidden name="categoryCode"/>
-                    <wpsf:hidden name="resourceTypeCode"/>
-                    <wpsf:hidden name="fileName"/>
-                    <wpsf:hidden name="ownerGroupName"/>
-                    <s:if test="#categoryTreeStyleVar == 'request'">
-                        <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                            <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
-                        </s:iterator>
-                    </s:if>
-                    <wpsf:hidden name="contentOnSessionMarker"/>
+                <wpsf:hidden name="text"/>
+                <wpsf:hidden name="categoryCode"/>
+                <wpsf:hidden name="resourceTypeCode"/>
+                <wpsf:hidden name="fileName"/>
+                <wpsf:hidden name="ownerGroupName"/>
+                <s:if test="#categoryTreeStyleVar == 'request'">
+                    <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                        <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
+                    </s:iterator>
+                </s:if>
+                <wpsf:hidden name="contentOnSessionMarker"/>
                 </p>
                 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5">
 
@@ -592,8 +592,7 @@
                 // al caricamento passa l' hash al tab
                 var hash = window.location.hash;
                 $('#TabAttachList button[href="' + hash + '"]').tab('show');
-            </script>
-
+            </script>      
         </div>
     </div>
 </div>

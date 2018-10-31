@@ -7,14 +7,12 @@
 <%@ taglib prefix="jacmswpsa" uri="/jacms-apsadmin-core"%>
 
 <s:set var="targetNS" value="%{'/do/jacms/Content'}" />
-
 <!-- Admin console Breadcrumbs -->
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li><s:text name="breadcrumb.app" /></li>
     <li><s:text name="breadcrumb.jacms" /></li>
     <li class="page-title-container"><s:text name="breadcrumb.jacms.content.list" /></li>
 </ol>
-
 <!-- Page Title -->
 <s:set var="dataContent" value="%{'help block'}" />
 <s:set var="dataOriginalTitle" value="%{'Section Help'}" />
@@ -161,10 +159,11 @@
                                                                 name="note.range.from.attribute" />&#32;<s:property
                                                                 value="#attribute.name" />:</label>
                                                         <div class="col-sm-9">
-                                                            <wpsf:textfield id="%{currentFieldId}_start"
-                                                                            name="%{#numberStartInputFieldName}"
-                                                                            value="%{getSearchFormFieldValue(#numberStartInputFieldName)}"
-                                                                            cssClass="form-control" />
+                                                            <wpsf:textfield 
+                                                                id="%{currentFieldId}_start"
+                                                                name="%{#numberStartInputFieldName}"
+                                                                value="%{getSearchFormFieldValue(#numberStartInputFieldName)}"
+                                                                cssClass="form-control" />
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
@@ -173,10 +172,11 @@
                                                                 name="note.range.to.attribute" />&#32;<s:property
                                                                 value="#attribute.name" />:</label>
                                                         <div class="col-sm-9">
-                                                            <wpsf:textfield id="%{currentFieldId}_end"
-                                                                            name="%{#numberEndInputFieldName}"
-                                                                            value="%{getSearchFormFieldValue(#numberEndInputFieldName)}"
-                                                                            cssClass="form-control" />
+                                                            <wpsf:textfield 
+                                                                id="%{currentFieldId}_end"
+                                                                name="%{#numberEndInputFieldName}"
+                                                                value="%{getSearchFormFieldValue(#numberEndInputFieldName)}"
+                                                                cssClass="form-control" />
                                                         </div>
                                                     </div>
 
@@ -235,7 +235,7 @@
                                             <div class="col-sm-9">
                                                 <wpsf:select name="ownerGroupName" id="ownerGroupName"
                                                              list="#allowedGroupsVar" headerKey=""
-                                                             headerValue="%{getText('label.all')}" listKey="name"
+                                                             headerValue="%{getText('label.all')}" listKey
                                                              listValue="descr" cssClass="form-control" />
                                             </div>
                                         </div>
@@ -402,7 +402,6 @@
                 <wpsa:subset source="#contentIdsVar" count="10" objectName="groupContent" advanced="true" offset="5">
                     <s:set var="group" value="#groupContent" />
 
-
                     <!-- Toolbar -->
                     <div class="col-xs-12 no-padding" id="content-list-toolbar">
                         <div class="row toolbar-pf table-view-pf-toolbar border-bottom">
@@ -519,12 +518,12 @@
                             <table class="table table-striped table-bordered table-hover content-list" id="contentListTable">
                                 <thead>
                                     <tr>
-                                        <th class="text-center">
+                                        <th class="text-center table-w-3">
                                             <label class="sr-only" for="selectAll"><s:text name="label.selectAll" /></label>
                                             <input type="checkbox" class="js_selectAll">
                                         </th>
-                                        <th>
-                                            <a href="<s:url action="changeOrder" includeParams="all" >
+                                        <th class="text-center table-w-10">
+                                            <a id="name" href="<s:url action="changeOrder" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder" ><s:property value="lastOrder" /></s:param>
                                                    <s:param name="groupBy">descr</s:param>
@@ -532,11 +531,11 @@
                                                </s:url>">
                                                 <s:text name="label.description" /></a>
                                         </th>
-                                        <th class="text-center cell-w100">
+                                        <th class="text-center table-w-7">
                                             <s:text name="label.author"/>
                                         </th>
-                                        <th class="text-center cell-w100">
-                                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+                                        <th class="text-center table-w-3">
+                                            <a id="code" href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
                                                    <s:param name="groupBy">code</s:param>
@@ -544,18 +543,20 @@
                                                </s:url>"><s:text name="label.code" />
                                             </a>
                                         </th>
-                                        <th><s:text name="label.type" /></th>
-                                        <th class="text-center cell-w100">
+                                        <th class="text-center table-w-5">
+                                            <s:text name="label.type" />
+                                        </th>
+                                        <th class="text-center table-w-3">
                                             <s:text name="label.state" />
                                         </th>
-                                        <th class="text-center cell-w100">
+                                        <th class="text-center table-w-3">
                                             <s:text name="label.visible"/>
                                         </th>
-                                        <th>
+                                        <th class="text-center table-w-3">
                                             <s:text name="label.group" />
                                         </th>
-                                        <th>
-                                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+                                        <th class="text-center table-w-5">
+                                            <a id="creation" href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
                                                    <s:param name="groupBy">created</s:param>
@@ -563,8 +564,8 @@
                                                </s:url>"><s:text name="label.creationDate" />
                                             </a>
                                         </th>
-                                        <th>
-                                            <a href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
+                                        <th class="text-center table-w-5">
+                                            <a id="last_modified" href="<s:url action="changeOrder" anchor="content_list_intro" includeParams="all" >
                                                    <s:param name="lastGroupBy"><s:property value="lastGroupBy"/></s:param>
                                                    <s:param name="lastOrder"><s:property value="lastOrder" /></s:param>
                                                    <s:param name="groupBy">lastModified</s:param>
@@ -572,7 +573,7 @@
                                                </s:url>"><s:text name="label.lastEdit" />
                                             </a>
                                         </th>
-                                        <th class="text-center table-w-5">
+                                        <th class="text-center table-w-3">
                                             <s:text name="label.actions" />
                                         </th>
                                     </tr>
@@ -626,8 +627,8 @@
                                                 </s:else>
                                             </td>
                                             <td ><s:property value="%{getGroup(#content.mainGroupCode).descr}" /></td>
-                                            <td class="table-w-10"><s:date name="#content.create" format="dd/MM/yyyy HH:mm" /></td>
-                                            <td class="table-w-10"><s:date name="#content.modify" format="dd/MM/yyyy HH:mm" /></td>
+                                            <td><s:date name="#content.create" format="dd/MM/yyyy HH:mm" /></td>
+                                            <td><s:date name="#content.modify" format="dd/MM/yyyy HH:mm" /></td>
                                             <td class="table-view-pf-actions text-center">
                                                 <div class="dropdown dropdown-kebab-pf">
                                                     <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown">
@@ -699,5 +700,31 @@
             </s:else>
         </div>
 
+
+        <script>
+            $(document).ready(function () {
+                var activeLinkId = localStorage.getItem('link');
+                console.log("activeLinkId", activeLinkId);
+
+                if (activeLinkId != "undefined") {
+
+                    $('html, body').animate({
+                        scrollTop: $('#' + activeLinkId).offset().top
+                    }, 1000);
+
+                }
+
+                $('.table a').click(function (e) {
+                    event.preventDefault(e);
+                    localStorage.setItem('link', $(e.target).attr('id'));
+                    localStorage.setItem('link2', $(e.target).attr('href'));
+
+                    var activeLink = localStorage.getItem('link2');
+                    if (activeLink) {
+                        location.href = activeLink;
+                    }
+                });
+            });
+        </script>
     </s:form>
 </div>

@@ -146,7 +146,9 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(INSERT_TOKEN);
             stat.setString(1, accessToken.getValue());
-            if (null != authentication.getOAuth2Request()) {
+            if (accessToken instanceof OAuth2AccessTokenImpl) {
+                stat.setString(2, ((OAuth2AccessTokenImpl) accessToken).getClientId());
+            } else if (null != authentication.getOAuth2Request()) {
                 stat.setString(2, authentication.getOAuth2Request().getClientId());
             } else {
                 stat.setNull(2, Types.VARCHAR);

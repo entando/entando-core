@@ -21,6 +21,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 public interface IApiOAuth2TokenManager extends TokenStore {
 
     String BEAN_NAME = "OAuth2TokenManager";
+    
+    public OAuth2AccessToken createAccessTokenForLocalUser(String username);
 
     @Deprecated
     void addApiOAuth2Token(final OAuth2Token accessToken, final boolean isLocalUser) throws ApsSystemException;

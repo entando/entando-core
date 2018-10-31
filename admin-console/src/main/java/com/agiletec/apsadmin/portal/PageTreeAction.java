@@ -92,9 +92,6 @@ public class PageTreeAction extends AbstractTreeAction {
 	public String moveTree() {
 		String selectedNode = this.getSelectedNode();
 		String parentPageCode = this.getRequest().getParameter("parentPageCode");
-		if (StringUtils.isBlank(parentPageCode)) {
-			parentPageCode = this.getPageManager().getDraftRoot().getCode();
-		}
 		try {
 			String check = this.checkMovePage(selectedNode, parentPageCode);
 			if (null != check) {
@@ -120,6 +117,11 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.selectPage"));
 			return "pageTree";
 		}
+		if (StringUtils.isBlank(parentPageCode)) {
+			_logger.warn("Missing parentPageCode parameter");
+			this.addActionError(this.getText("error.parentPage.noSelection"));
+			return "pageTree";
+		}
 		if (currentPage.getCode().equals(this.getPageManager().getDraftRoot().getCode())) {
 			_logger.info("Root page cannot be moved");
 			this.addActionError(this.getText("error.page.move.rootNotAllowed"));
@@ -138,15 +140,15 @@ public class PageTreeAction extends AbstractTreeAction {
 		}
 		if (parent.getCode().equals(currentPage.getParentCode())) {
 			_logger.info("trying to move a node under its own parent..");
-			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
+			List<String> args = new ArrayList<>();
+			args.add(selectedNode);
+			args.add(parent.getCode());
+			this.addActionError(this.getText("error.page.move.childUnderParent.notAllowed", args));
 			return "pageTree";
 		}
 		if (parent.isChildOf(selectedNode)) {
 			_logger.info("trying to move a node under its own child..");
-			List<String> args = new ArrayList<String>();
-			args.add(parent.getCode());
-			args.add(selectedNode);
-			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed", args));
+			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
 			return "pageTree";
 		}
 		//group check

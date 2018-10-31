@@ -351,6 +351,25 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
 		assertEquals("pageTree", result);
 		assertEquals(1, this.getAction().getActionErrors().size());
 	}
+        
+	public void testMoveTreeChildToParent() throws Throwable {
+		this.setUserOnSession("pageManagerCoach");
+		this.initAction("/do/rs/Page", "moveTree");
+		this.addParameter("parentPageCode", "pagina_1");
+		this.addParameter("selectedNode", "pagina_11");
+		String result = this.executeAction();
+		assertEquals("pageTree", result);
+		assertEquals(1, this.getAction().getActionErrors().size());
+	}
+        
+	public void testMoveTreeMissingParent() throws Throwable {
+		this.setUserOnSession("pageManagerCoach");
+		this.initAction("/do/rs/Page", "moveTree");
+		this.addParameter("selectedNode", "pagina_11");
+		String result = this.executeAction();
+		assertEquals("pageTree", result);
+		assertEquals(1, this.getAction().getActionErrors().size());
+	}
 
 	public void testMoveTreeNullNode() throws Throwable {
 		this.setUserOnSession("pageManagerCoach");

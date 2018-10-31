@@ -172,17 +172,17 @@
 
             <s:form action="search" class="container-fluid container-cards-pf">
                 <p class="sr-only">
-                    <wpsf:hidden name="text"/>
-                    <wpsf:hidden name="categoryCode"/>
-                    <wpsf:hidden name="resourceTypeCode"/>
-                    <wpsf:hidden name="fileName"/>
-                    <wpsf:hidden name="ownerGroupName"/>
-                    <s:if test="#categoryTreeStyleVar == 'request'">
-                        <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                            <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
-                        </s:iterator>
-                    </s:if>
-                    <wpsf:hidden name="contentOnSessionMarker"/>
+                <wpsf:hidden name="text"/>
+                <wpsf:hidden name="categoryCode"/>
+                <wpsf:hidden name="resourceTypeCode"/>
+                <wpsf:hidden name="fileName"/>
+                <wpsf:hidden name="ownerGroupName"/>
+                <s:if test="#categoryTreeStyleVar == 'request'">
+                    <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                        <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
+                    </s:iterator>
+                </s:if>
+                <wpsf:hidden name="contentOnSessionMarker"/>
                 </p>
 
                 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5">
@@ -284,17 +284,17 @@
         <div id="list-view" class="tab-pane fade in active">
             <s:form action="search" class="container-fluid">
                 <p class="sr-only">
-                    <wpsf:hidden name="text"/>
-                    <wpsf:hidden name="categoryCode"/>
-                    <wpsf:hidden name="resourceTypeCode"/>
-                    <wpsf:hidden name="fileName"/>
-                    <wpsf:hidden name="ownerGroupName"/>
-                    <s:if test="#categoryTreeStyleVar == 'request'">
-                        <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
-                            <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
-                        </s:iterator>
-                    </s:if>
-                    <wpsf:hidden name="contentOnSessionMarker"/>
+                <wpsf:hidden name="text"/>
+                <wpsf:hidden name="categoryCode"/>
+                <wpsf:hidden name="resourceTypeCode"/>
+                <wpsf:hidden name="fileName"/>
+                <wpsf:hidden name="ownerGroupName"/>
+                <s:if test="#categoryTreeStyleVar == 'request'">
+                    <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                        <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}"/>
+                    </s:iterator>
+                </s:if>
+                <wpsf:hidden name="contentOnSessionMarker"/>
                 </p>
                 <wpsa:subset source="resources" count="10" objectName="groupResource" advanced="true" offset="5">
 
@@ -381,7 +381,7 @@
                                                 <div class="list-date">
                                                     <s:text name="label.creationDate" />&nbsp;<s:date name="#resource.creationDate" format="dd/MM/yyyy HH:mm" /><br />
                                                     <s:text name="label.lastModified" />&nbsp;<s:date name="#resource.lastModified" format="dd/MM/yyyy HH:mm" />
-                                                </div>
+                                                </div> 
                                             </div>
                                             <br>
                                             <div class="list-view-pf-additional-info" style="width: 100%">
@@ -435,7 +435,6 @@
             e.preventDefault();
             $(this).tab('show');
         });
-        // salva l' hash come id
         $("button").on("shown.bs.tab", function (e) {
             var id = $(e.target).attr("href").substr(1);
             window.location.hash = id;
@@ -448,11 +447,10 @@
             var link = newhref + newhash;
             location.href = link;
         });
-        // al caricamento passa l' hash al tab
         var hash = window.location.hash;
         $('#TabList button[href="' + hash + '"]').tab('show');
+    </script>      
 
-    </script>
 
     <wp:ifauthorized permission="superuser">
         <s:if test="!onEditContent">

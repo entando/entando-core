@@ -9,7 +9,7 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName"/>
 </s:else>
 
-<tr id="${currentRoot.code}" data-parent="${currentRoot.parent.code}"
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}"
     class="treeRow tree_node_flag ${liClassName} <s:if test="%{#currentRoot.code != 'homepage'}"></s:if> ">
 
         <td class="treegrid-node pointer">

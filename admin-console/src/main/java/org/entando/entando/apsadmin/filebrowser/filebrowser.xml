@@ -85,7 +85,7 @@
 		
 		<action name="trash" class="filebrowserAction" method="trash">
 			<result type="tiles">admin.Filebrowser.delete</result>
-			<result name="input" type="redirectAction">list</result>
+			<result name="input" type="tiles">admin.Filebrowser.list</result>
 			<interceptor-ref name="entandoDefaultStack">
 				<param name="chain.includeParameters">fieldErrors,actionErrors,actionMessages</param>
 				<param name="requestAuth.requiredPermission">superuser</param>

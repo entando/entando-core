@@ -44,17 +44,17 @@ public class ConsumerAction extends BaseAction {
     private Date expirationDate;
     private Date issuedDate;
     private IOAuthConsumerManager oauthConsumerManager;
-    
+
     @Override
     public void validate() {
         super.validate();
         try {
             ConsumerRecordVO consumer = this.getOauthConsumerManager().getConsumerRecord(this.getConsumerKey());
+            String[] args = {this.getConsumerKey()};
             if (this.getStrutsAction() == ApsAdminSystemConstants.ADD && null != consumer) {
-                String[] args = {this.getConsumerKey()};
-                this.addFieldError("consumerKey", this.getText("error.consumer.duplicated", args));
+                this.addFieldError("consumerKey", this.getText("error.consumer.exists", args));
             } else if (this.getStrutsAction() == ApsAdminSystemConstants.EDIT && null == consumer) {
-                this.addActionError(this.getText("error.consumer.notExist"));
+                this.addFieldError("consumerKey", this.getText("error.consumer.notExists", args));
             }
         } catch (Exception t) {
             logger.error("Error validating consumer", t);
@@ -73,7 +73,7 @@ public class ConsumerAction extends BaseAction {
             ConsumerRecordVO consumer = this.getOauthConsumerManager().getConsumerRecord(this.getConsumerKey());
             if (null == consumer) {
                 String[] args = {this.getConsumerKey()};
-                this.addActionError(this.getText("error.consumer.notExist", args));
+                this.addActionError(this.getText("error.consumer.notExists", args));
                 return "list";
             }
             this.setCallbackUrl(consumer.getCallbackUrl());
@@ -161,7 +161,7 @@ public class ConsumerAction extends BaseAction {
     public ConsumerRecordVO getConsumer(String key) throws Throwable {
         return this.getOauthConsumerManager().getConsumerRecord(key);
     }
-    
+
     public String[] getAllowedGrantTypes() {
         return IOAuthConsumerManager.GRANT_TYPES;
     }
@@ -237,15 +237,15 @@ public class ConsumerAction extends BaseAction {
     public void setScope(String scope) {
         this.scope = scope;
     }
-    
+
     public List<String> getGrantTypes() {
         return grantTypes;
     }
-    
+
     public void setGrantTypes(List<String> grantTypes) {
         this.grantTypes = grantTypes;
     }
-    
+
     protected IOAuthConsumerManager getOauthConsumerManager() {
         return oauthConsumerManager;
     }

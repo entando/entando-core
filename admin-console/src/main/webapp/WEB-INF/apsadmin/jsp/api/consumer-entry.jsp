@@ -76,16 +76,6 @@
         </div>
     </div>
 
-    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
-        <label class="col-sm-2 control-label" for="callbackUrl"><s:text name="label.callbackUrl" /></label>
-        <div class="col-sm-10">
-            <wpsf:textfield name="callbackUrl" id="callbackUrl" cssClass="form-control" />
-            <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
-            </s:if>
-        </div>
-    </div>
-
     <s:set var="currentFieldErrorsVar" value="%{fieldErrors['secret']}" />
     <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
@@ -99,7 +89,6 @@
         </div>
     </div>
 
-
     <s:set var="currentFieldErrorsVar" value="%{fieldErrors['name']}" />
     <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
@@ -112,6 +101,7 @@
             </s:if>
         </div>
     </div>
+    
     <s:set var="currentFieldErrorsVar" value="%{fieldErrors['description']}" />
     <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
     <s:set var="controlGroupErrorClassVar" value="%{#currentFieldHasFieldErrorVar ? ' has-error' : ''}" />
@@ -125,6 +115,15 @@
         </div>
     </div>
 
+    <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <label class="col-sm-2 control-label" for="callbackUrl"><s:text name="label.callbackUrl" /></label>
+        <div class="col-sm-10">
+            <wpsf:textfield name="callbackUrl" id="callbackUrl" cssClass="form-control" />
+            <s:if test="#currentFieldHasFieldErrorVar">
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+            </s:if>
+        </div>
+    </div>
 
     <s:set var="currentFieldErrorsVar" value="%{fieldErrors['scope']}" />
     <s:set var="currentFieldHasFieldErrorVar" value="#currentFieldErrorsVar != null && !#currentFieldErrorsVar.isEmpty()" />
@@ -151,8 +150,7 @@
             </s:if>
         </div>
     </div>
-            
-    
+
         <s:if test="%{strutsAction == 2 && null != issuedDate}">
     <div class="form-group">
         <label class="col-sm-2 control-label"><s:text name="label.issuedDate" /></label>
@@ -161,8 +159,6 @@
         </div>
     </div>
         </s:if>
-
-
 
     <legend><s:text name="label.authorizedGrantTypes" /></legend>
     <div class="form-group">

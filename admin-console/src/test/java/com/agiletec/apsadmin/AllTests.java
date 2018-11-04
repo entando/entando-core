@@ -42,6 +42,7 @@ import junit.framework.TestSuite;
 
 import org.entando.entando.aps.internalservlet.system.dispatcher.FrontServletActionRedirectResultIntegrationTest;
 import org.entando.entando.apsadmin.api.TestApiServiceFinderAction;
+import org.entando.entando.apsadmin.api.TestConsumerAction;
 import org.entando.entando.apsadmin.common.TestActivityStream;
 import org.entando.entando.apsadmin.common.TestActivityStreamAction;
 import org.entando.entando.apsadmin.common.currentuser.TestCurrentUserProfileAction;
@@ -94,6 +95,7 @@ public class AllTests {
         //API
         //suite.addTestSuite(TestApiMethodFinderAction.class);
         suite.addTestSuite(TestApiServiceFinderAction.class);
+        suite.addTestSuite(TestConsumerAction.class);
 
         //Category
         suite.addTestSuite(TestCategoryAction.class);

@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.List;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
@@ -27,16 +26,10 @@ public interface IOAuth2TokenDAO {
 
     public List<OAuth2AccessToken> findTokensByClientId(String clientId);
 
-    @Deprecated
-    void addAccessToken(final OAuth2Token accessor, boolean isLocalUser) throws ApsSystemException;
-
     public OAuth2AccessToken getAccessToken(final String accessToken);
 
-    public void deleteAccessToken(final String accessToken) throws ApsSystemException;
+    public void deleteAccessToken(final String accessToken);
 
     public void deleteExpiredToken() throws ApsSystemException;
-
-    @Deprecated
-    public void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException;
 
 }

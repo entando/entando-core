@@ -16,7 +16,6 @@ package org.entando.entando.aps.system.services.oauth2;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +36,6 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     private static final String ERROR_REMOVE_ACCESS_TOKEN = "Error while remove access token";
 
     private static final String INSERT_TOKEN = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype, localuser)  VALUES (? , ? , ? , ? , ?, ?)";
-
-    private static final String UPDATE_TOKEN = "UPDATE api_oauth_tokens SET expiresin = ? WHERE accesstoken = ?";
 
     private static final String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
@@ -174,55 +171,6 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    @Deprecated
-    public synchronized void addAccessToken(final OAuth2Token accessToken, boolean isLocalUser) throws ApsSystemException {
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = conn.prepareStatement(INSERT_TOKEN);
-            stat.setString(1, accessToken.getAccessToken());
-            stat.setString(2, accessToken.getClientId());
-            stat.setTimestamp(3, new Timestamp(accessToken.getExpiresIn().getTime()));
-            stat.setString(4, accessToken.getRefreshToken());
-            stat.setString(5, accessToken.getGrantType());
-            stat.setString(6, accessToken.getLocalUser());
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-            logger.error("Error while adding an access token", t);
-            throw new ApsSystemException("Error while adding an access token", t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
-    }
-
-    @Deprecated
-    @Override
-    public synchronized void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException {
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = conn.prepareStatement(UPDATE_TOKEN);
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis() + seconds * 1000);
-            stat.setTimestamp(1, timestamp);
-            stat.setString(2, accessToken);
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-            logger.error("Error while update access token", t);
-            throw new ApsSystemException("Error while update access token", t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
-    }
-
-    @Override
     public OAuth2AccessToken getAccessToken(final String accessToken) {
         Connection conn = null;
         OAuth2AccessToken token = null;
@@ -239,23 +187,8 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    public void deleteAccessToken(final String accessToken) throws ApsSystemException {
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = conn.prepareStatement(DELETE_TOKEN);
-            stat.setString(1, accessToken);
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-            logger.error(ERROR_REMOVE_ACCESS_TOKEN, t);
-            throw new ApsSystemException(ERROR_REMOVE_ACCESS_TOKEN, t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
+    public void deleteAccessToken(final String accessToken) {
+        super.executeQueryWithoutResultset(DELETE_TOKEN, accessToken);
     }
 
     @Override

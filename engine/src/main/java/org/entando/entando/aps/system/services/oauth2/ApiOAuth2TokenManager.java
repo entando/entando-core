@@ -17,7 +17,6 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Calendar;
 import java.util.Collection;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +33,6 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
-    private static final String ERROR_ADDING_TOKEN = "Error adding OAuth2Token";
     private transient final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     private IOAuth2TokenDAO oAuth2TokenDAO;
@@ -64,14 +62,12 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        logger.warn("readAccessToken Not supported yet.");
-        throw new UnsupportedOperationException("readAccessToken Not supported yet.");
+        return this.getOAuth2TokenDAO().getAccessToken(tokenValue);
     }
 
     @Override
     public void removeAccessToken(OAuth2AccessToken token) {
-        logger.warn("removeAccessToken Not supported yet.");
-        throw new UnsupportedOperationException("removeAccessToken Not supported yet.");
+        this.getOAuth2TokenDAO().deleteAccessToken(token.getValue());
     }
 
     @Override
@@ -103,14 +99,14 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         logger.warn("removeAccessTokenUsingRefreshToken Not supported yet.");
         throw new UnsupportedOperationException("removeAccessTokenUsingRefreshToken Not supported yet.");
     }
-    
+
     @Override
     public OAuth2AccessToken createAccessTokenForLocalUser(String username) {
         OAuth2AccessToken token = this.getAccessToken(username, "LOCAL_USER", "implicit");
         this.getOAuth2TokenDAO().storeAccessToken(token, null);
         return token;
     }
-    
+
     @Override
     public OAuth2AccessToken getAccessToken(OAuth2Authentication authentication) {
         String principal = authentication.getPrincipal().toString();
@@ -145,33 +141,12 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     }
 
     @Override
-    @Deprecated
-    public void addApiOAuth2Token(final OAuth2Token accessToken, final boolean isLocalUser) throws ApsSystemException {
-        try {
-            this.getOAuth2TokenDAO().addAccessToken(accessToken, isLocalUser);
-        } catch (ApsSystemException t) {
-            logger.error(ERROR_ADDING_TOKEN, t);
-            throw new ApsSystemException(ERROR_ADDING_TOKEN, t);
-        }
-    }
-
-    @Override
     public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException {
         try {
             return this.getOAuth2TokenDAO().getAccessToken(accessToken);
         } catch (Exception t) {
             logger.error("Error extracting token", t);
             throw new ApsSystemException("Error extracting token", t);
-        }
-    }
-
-    @Override
-    public void updateToken(final String accessToken, final long seconds) throws ApsSystemException {
-        try {
-            this.getOAuth2TokenDAO().updateAccessToken(accessToken, seconds);
-        } catch (ApsSystemException t) {
-            logger.error("Error updating token", t);
-            throw new ApsSystemException("Error updating token", t);
         }
     }
 

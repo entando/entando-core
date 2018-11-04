@@ -41,6 +41,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.aps.internalservlet.system.dispatcher.FrontServletActionRedirectResultIntegrationTest;
 import org.entando.entando.apsadmin.api.TestApiServiceFinderAction;
+import org.entando.entando.apsadmin.api.TestConsumerAction;
 import org.entando.entando.apsadmin.common.TestActivityStream;
 import org.entando.entando.apsadmin.common.TestActivityStreamAction;
 import org.entando.entando.apsadmin.common.currentuser.TestCurrentUserProfileAction;
@@ -50,7 +51,6 @@ import org.entando.entando.apsadmin.filebrowser.TestFileBrowserAction;
 import org.entando.entando.apsadmin.portal.guifragment.TestGuiFragmentAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelAction;
 import org.entando.entando.apsadmin.portal.model.TestPageModelFinderAction;
-
 import org.entando.entando.apsadmin.system.TestCustomTokenInterceptor;
 import org.entando.entando.apsadmin.system.resource.TestCustomLocalizedTextProvider;
 import org.entando.entando.apsadmin.system.services.activitystream.TestSocialActivityStreamDAO;
@@ -94,6 +94,7 @@ public class AllTests {
         //API
         //suite.addTestSuite(TestApiMethodFinderAction.class);
         suite.addTestSuite(TestApiServiceFinderAction.class);
+        suite.addTestSuite(TestConsumerAction.class);
 
         //Category
         suite.addTestSuite(TestCategoryAction.class);

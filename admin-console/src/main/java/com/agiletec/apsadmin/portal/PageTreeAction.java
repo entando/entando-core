@@ -92,9 +92,6 @@ public class PageTreeAction extends AbstractTreeAction {
 	public String moveTree() {
 		String selectedNode = this.getSelectedNode();
 		String parentPageCode = this.getRequest().getParameter("parentPageCode");
-		if (StringUtils.isBlank(parentPageCode)) {
-			parentPageCode = this.getPageManager().getDraftRoot().getCode();
-		}
 		try {
 			String check = this.checkMovePage(selectedNode, parentPageCode);
 			if (null != check) {
@@ -120,42 +117,56 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.selectPage"));
 			return "pageTree";
 		}
+		if (StringUtils.isBlank(parentPageCode)) {
+			_logger.warn("Missing parentPageCode parameter");
+			this.addActionError(this.getText("error.parentPage.noSelection"));
+			return "pageTree";
+		}
 		if (currentPage.getCode().equals(this.getPageManager().getDraftRoot().getCode())) {
 			_logger.info("Root page cannot be moved");
 			this.addActionError(this.getText("error.page.move.rootNotAllowed"));
 			return "pageTree";
 		}
-		if ("".equals(parentPageCode) || null == this.getPageManager().getDraftPage(parentPageCode)) {
-			_logger.info("Required a new parent node");
-			this.addActionError(this.getText("error.page.move.selectPageParent"));
-			return "pageTree";
-		}
 		IPage parent = this.getPage(parentPageCode);
 		if (null == parent) {
-			_logger.info("Required a selected node");
-			this.addActionError(this.getText("error.page.selectPageParent"));
+			_logger.info("Invalid parentPageCode parameter: '{}'", parentPageCode);
+			this.addActionError(this.getText("error.parentPage.noSelection"));
 			return "pageTree";
 		}
 		if (parent.getCode().equals(currentPage.getParentCode())) {
 			_logger.info("trying to move a node under its own parent..");
-			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
+			List<String> args = new ArrayList<>();
+			args.add(selectedNode);
+			args.add(parent.getCode());
+			this.addActionError(this.getText("error.page.move.childUnderParent.notAllowed", args));
 			return "pageTree";
 		}
 		if (parent.isChildOf(selectedNode)) {
 			_logger.info("trying to move a node under its own child..");
-			List<String> args = new ArrayList<String>();
-			args.add(parent.getCode());
-			args.add(selectedNode);
-			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed", args));
+			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
 			return "pageTree";
 		}
 		//group check
-		if (!currentPage.getGroup().equals(Group.FREE_GROUP_NAME)
-				&& !currentPage.getGroup().equals(parent.getGroup())) {
-			_logger.info("trying to move a node under a node with a differt restriction..");
-			this.addActionError(this.getText("error.page.move.differentRestriction.notAllowed"));
-			return "pageTree";
-		}
+	        String currentGroup = currentPage.getGroup();
+	        String parentGroup = parent.getGroup();
+	        if (!currentGroup.equals(parentGroup) // same group always allowed
+	                && !parentGroup.equals(Group.FREE_GROUP_NAME)) { // reserved page in free page allowed
+	            if (currentGroup.equals(Group.FREE_GROUP_NAME)) { // A free page CAN'T be moved inside a reserved node.
+	                _logger.info("trying to move a free page under a reserved page..");
+	                this.addActionError(this.getText("error.page.move.freeUnderReserved.notAllowed"));
+	                return "pageTree";
+	            }
+	            // Reserved pages with different groups:
+	            _logger.info("trying to move a node under a node with a differt restriction..");
+	            String[] args = new String[]{currentGroup, parentGroup};
+	            this.addActionError(this.getText("error.page.move.differentRestriction.notAllowed", args));
+	            return "pageTree";
+	        }
+	        // online/draft check
+	        if(currentPage.isOnline() && !parent.isOnline()) {
+	            this.addActionError(this.getText("error.page.move.onlineUnderDraft.notAllowed"));
+	            return "pageTree";
+	        }
 		return null;
 	}
 

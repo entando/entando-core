@@ -5,7 +5,7 @@
 <%@ taglib prefix="wp" uri="/aps-core" %>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></li>
+    <li><s:text name="menu.userSettings" /></li>
     <li class="page-title-container"><s:text name="title.userSettings" /></li>
 </ol>
 

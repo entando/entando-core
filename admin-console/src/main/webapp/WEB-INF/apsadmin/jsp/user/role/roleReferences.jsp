@@ -1,15 +1,15 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></a></li>
+    <li><s:text name="menu.userSettings"/></li>
     <li><a href="<s:url namespace="/do/Role" action="list" />">
-            <s:text name="title.roleManagement" />
-        </a></li>
+        <s:text name="title.roleManagement"/>
+    </a></li>
 
-    <li class="page-title-container"><s:text name="title.roleManagement.roleTrash" /></li>
+    <li class="page-title-container"><s:text name="title.roleManagement.roleTrash"/></li>
 </ol>
 
 <h1 class="page-title-container">
-    <s:text name="title.roleManagement.roleTrash" />
+    <s:text name="title.roleManagement.roleTrash"/>
 </h1>
 
 
@@ -24,11 +24,11 @@
             <span class="pficon pficon-close"></span>
         </button>
         <span class="pficon pficon-error-circle-o"></span>
-        <strong><s:text name="message.title.ActionErrors" /></strong>
+        <strong><s:text name="message.title.ActionErrors"/></strong>
         <ul>
-            <li><s:text name="message.note.resolveReferences" />:</li>
+            <li><s:text name="message.note.resolveReferences"/>:</li>
         </ul>
     </div>
-    <s:include value="/WEB-INF/apsadmin/jsp/user/role/include/roleInfo-references.jsp" />
+    <s:include value="/WEB-INF/apsadmin/jsp/user/role/include/roleInfo-references.jsp"/>
 
 </div>

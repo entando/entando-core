@@ -5,7 +5,7 @@
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
     <li>
-        <s:text name="title.userSetting" />
+        <s:text name="menu.userSettings" />
     </li>
     <li class="page-title-container">
         <s:text name="title.roleManagement" />

@@ -29,23 +29,29 @@
             <a class="treeOpenCloseJS"
                href="<s:url action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
+                   <s:param name="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
                    <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />
                    <s:param name="treeNodeActionMarkerCode" value="'open'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open"/></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
             </a>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
             <a class="treeOpenCloseJS noborder" href="<s:url action="%{#closeTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
+                   <s:param name="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="copyingPageCode" value="copyingPageCode" />
                    <s:param name="pageCodeToken" value="%{#pageCodeTokenCheckVar?#pageCodeTokenVar:''}" />
                    <s:param name="treeNodeActionMarkerCode" value="'close'" /><s:param name="targetNode" value="#currentRoot.code" /><s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close"/></span>
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
             </a>
         </s:elseif>
         <input
@@ -58,8 +64,10 @@
         </s:if>
                 <s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode"> checked="checked"</s:if> />
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
-            <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-            <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+            <s:if test="#currentRoot.empty">
+                <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
+                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+            </s:if>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
         </label>
     </td>

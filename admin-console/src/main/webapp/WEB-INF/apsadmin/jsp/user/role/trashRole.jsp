@@ -1,7 +1,7 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></a></li>
+    <li><s:text name="menu.userSettings" /></li>
     <li><a href="<s:url namespace="/do/Role" action="list" />">
             <s:text name="title.roleManagement" />
         </a></li>

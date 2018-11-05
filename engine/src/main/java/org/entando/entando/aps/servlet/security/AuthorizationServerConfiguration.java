@@ -13,6 +13,8 @@
  */
 package org.entando.entando.aps.servlet.security;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +35,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private TokenStore tokenStore;
 
     @Autowired
+    @Qualifier(SystemConstants.BASE_CONFIG_MANAGER)
+    private ConfigInterface configManager;
+
+    @Autowired
     @Qualifier("OAuthConsumerManager")
     private ClientDetailsService clientDetailsService;
 
@@ -47,7 +53,10 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager).prefix("/api");
+        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager);
+        if (!this.configManager.getParam(SystemConstants.INIT_PROP_CONFIG_VERSION).equals("test")) {
+            endpoints.prefix("/api");
+        }
     }
 
 }

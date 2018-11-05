@@ -50,6 +50,7 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
@@ -93,7 +94,7 @@ public class AllTests {
 
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
-
+        
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
         //
@@ -197,6 +198,7 @@ public class AllTests {
 
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
+        suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
 
         return suite;
     }

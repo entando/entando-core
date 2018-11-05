@@ -2,7 +2,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa"%>
 
 <ol class="breadcrumb page-tabs-header breadcrumb-position">
-    <li><s:text name="title.userSetting" /></a></li>
+    <li><s:text name="menu.userSettings" /></li>
     <li><a href="<s:url action="list" namespace="/do/Role"></s:url>"
            title="<s:text name="note.goToSomewhere" />: <s:text name="title.roleManagement" />">
             <s:text name="title.roleManagement" />

@@ -50,6 +50,7 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
 import org.entando.entando.aps.system.CaseInsensitiveBeanComparatorTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
@@ -199,6 +200,7 @@ public class AllTests {
 
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
+        suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
 
         return suite;
     }

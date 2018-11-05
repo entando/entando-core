@@ -18,6 +18,10 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import java.util.List;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +32,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
- * sistema. L'Authentication Provider Ã¨ l'oggetto delegato alla restituzione di
+ * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
  * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
  * richiesta di autenticazione utente; questo oggetto non ha visibilitÃ  ai
  * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
@@ -36,7 +40,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService
-        implements IAuthenticationProviderManager {
+        implements IAuthenticationProviderManager, AuthenticationManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 
@@ -58,11 +62,11 @@ public class AuthenticationProviderManager extends AbstractService
     public UserDetails getUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password);
     }
-    
+
     protected UserDetails extractUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password, true);
     }
-    
+
     protected UserDetails extractUser(String username, String password, boolean addToken) throws ApsSystemException {
         UserDetails user = null;
         try {
@@ -114,12 +118,12 @@ public class AuthenticationProviderManager extends AbstractService
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            if (null == authentication || 
-                    null == authentication.getPrincipal() || 
-                    null == authentication.getCredentials()) {
+            if (null == authentication
+                    || null == authentication.getPrincipal()
+                    || null == authentication.getCredentials()) {
                 throw new UsernameNotFoundException("Invalid principal and/or credentials");
             }
-            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), 
+            UserDetails user = this.extractUser(authentication.getPrincipal().toString(),
                     authentication.getCredentials().toString(), false);
             if (null != user) {
                 Authentication newAuth

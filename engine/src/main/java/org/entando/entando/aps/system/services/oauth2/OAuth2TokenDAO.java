@@ -156,12 +156,12 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
                 stat.setString(5, ((OAuth2AccessTokenImpl) accessToken).getGrantType());
                 stat.setString(6, ((OAuth2AccessTokenImpl) accessToken).getLocalUser());
             } else {
-                stat.setNull(5, Types.VARCHAR);
+                stat.setString(5, authentication.getOAuth2Request().getGrantType());
                 stat.setNull(6, Types.VARCHAR);
             }
             stat.executeUpdate();
             conn.commit();
-        } catch (ApsSystemException | SQLException t) {
+        } catch (Exception t) {
             this.executeRollback(conn);
             logger.error("Error while adding an access token", t);
             throw new RuntimeException("Error while adding an access token", t);

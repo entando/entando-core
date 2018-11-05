@@ -76,12 +76,10 @@ public class FileBrowserAction extends BaseAction {
             if (null != result) {
                 return result;
             }
-
             String validatePath = this.validateFullPath();
             if (null != validatePath) {
                 return validatePath;
             }
-
             String fullPath = this.getCurrentPath() + this.getFilename();
             BasicFileAttributeView fileAttributeView = this.getStorageManager().getAttributes(fullPath, this.getProtectedFolderBoolean());
             if (null == fileAttributeView || fileAttributeView.isDirectory()) {
@@ -90,7 +88,6 @@ public class FileBrowserAction extends BaseAction {
             String text = this.getStorageManager().readFile(fullPath, this.getProtectedFolderBoolean());
             this.setFileText(text);
             this.setStrutsAction(ApsAdminSystemConstants.EDIT);
-
         } catch (Throwable t) {
             logger.error("error editing file, fullPath: {}", this.getCurrentPath(), t);
             return FAILURE;
@@ -114,49 +111,43 @@ public class FileBrowserAction extends BaseAction {
     }
 
     public String upload() throws Throwable {
-        logger.error("upload :" + this.getUploadFileName());
-
+        logger.debug("upload :" + this.getUploadFileName());
         if (null != this.getFile()) {
             logger.debug("Upload {} files ", this.getFile().size());
         } else {
             logger.debug("Upload null files list, nothing to save");
         }
-
         return uploadFiles(this.getFile(),
-                           this.getUploadFileName(),
-                           this.getInputStream(),
-                           this.getCurrentPath(), 
-                           this.getProtectedFolderBoolean());
-       
+                this.getUploadFileName(),
+                this.getInputStream(),
+                this.getCurrentPath(),
+                this.getProtectedFolderBoolean());
     }
 
-    public String uploadFiles(List<File> files, List<String> fileNames, List<InputStream> inputStreams, String currentPath, boolean protectedFolder ) {
-        if (null!=files){
-            logger.debug("Upload Files :"+files.size());
+    public String uploadFiles(List<File> files, List<String> fileNames, List<InputStream> inputStreams, String currentPath, boolean protectedFolder) {
+        if (null != files) {
+            logger.debug("Upload Files :" + files.size());
         }
-        try { 
+        try {
             int index = 0;
             for (File file : files) {
                 logger.debug("Upload file {} with filename ", index, fileNames.get(index));
-
                 if (!StorageManagerUtil.isValidDirName(currentPath)) {
                     this.addActionError(this.getText("error.filebrowser.filepath.invalid"));
                     return INPUT;
                 }
                 String result = this.checkExistingFileExtension(currentPath, fileNames.get(index), false, protectedFolder);
-
                 if (null != result) {
                     return result;
                 }
                 this.getStorageManager().saveFile(currentPath + fileNames.get(index), protectedFolder, inputStreams.get(index));
-
                 index++;
             }
         } catch (Throwable t) {
             logger.error("error in upload", t);
             return FAILURE;
         }
-        return SUCCESS; 
+        return SUCCESS;
     }
 
     public String trash() {
@@ -205,7 +196,6 @@ public class FileBrowserAction extends BaseAction {
     public String save() {
         logger.debug("Save file {}", filename);
         try {
-
             String validatePath = this.validateFullPath();
             if (null != validatePath) {
                 return validatePath;
@@ -220,12 +210,11 @@ public class FileBrowserAction extends BaseAction {
                 return result;
             }
             boolean expectedExist = (this.getStrutsAction() == ApsAdminSystemConstants.EDIT);
-            result = this.checkExistingFileExtension(this.getCurrentPath(), filename, expectedExist,this.getProtectedFolderBoolean());
+            result = this.checkExistingFileExtension(this.getCurrentPath(), filename, expectedExist, this.getProtectedFolderBoolean());
             if (null != result) {
                 return result;
             }
             this.getStorageManager().editFile(this.getCurrentPath() + filename, this.getProtectedFolderBoolean(), stream);
-
         } catch (Throwable t) {
             logger.error("error saving file, fullPath: {} text: {}", this.getCurrentPath(), this.getFileText(), t);
             return FAILURE;
@@ -240,8 +229,7 @@ public class FileBrowserAction extends BaseAction {
             return false;
         }
         String[] extensions = this.getTextFileTypes();
-        for (int i = 0; i < extensions.length; i++) {
-            String allowedExtension = extensions[i];
+        for (String allowedExtension : extensions) {
             if (allowedExtension.equalsIgnoreCase(extension)) {
                 return true;
             }
@@ -276,7 +264,7 @@ public class FileBrowserAction extends BaseAction {
             String fullPath = this.getCurrentPath() + this.getFilename();
             InputStream is = this.getStorageManager().getStream(fullPath, this.getProtectedFolderBoolean());
             if (null == is) {
-                this.addActionError(this.getText("error.filebrowser.download.missingFile"));
+                this.addActionError(this.getText("error.filebrowser.file.doesNotExist", new String[]{fullPath}));
                 return INPUT;
             }
             this.setDownloadInputStream(is);
@@ -298,7 +286,7 @@ public class FileBrowserAction extends BaseAction {
         if (null == this.getProtectedFolder()) {
             return null;
         }
-        List<SelectItem> items = new ArrayList<SelectItem>();
+        List<SelectItem> items = new ArrayList<>();
         RootFolderAttributeView rootFolder = this.getRootFolder(this.getProtectedFolderBoolean());
         items.add(new SelectItem(null, rootFolder.getName()));
         String currentPath = this.getCurrentPath();
@@ -415,9 +403,8 @@ public class FileBrowserAction extends BaseAction {
         if (null == this.getFile()) {
             return null;
         }
-        List<InputStream> inputStreamList = new ArrayList<InputStream>();
-        
-        for(File file:this.getFile()){
+        List<InputStream> inputStreamList = new ArrayList<>();
+        for (File file : this.getFile()) {
             FileInputStream fileInputStream = new FileInputStream(file);
             inputStreamList.add(fileInputStream);
         }
@@ -560,10 +547,6 @@ public class FileBrowserAction extends BaseAction {
             return INPUT;
         }
         return null;
-    }
-
-    private List<InputStream> getUploadInputStream() {
-        return uploadInputStream;
     }
 
 }

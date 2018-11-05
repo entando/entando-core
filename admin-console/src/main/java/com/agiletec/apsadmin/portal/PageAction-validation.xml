@@ -18,14 +18,17 @@
     
     <field name="pageCode">
         <field-validator type="regex" short-circuit="true">
-           <param name="regex"><![CDATA[([a-zA-Z0-9_])*]]></param>
-           <message key="wrongCharacters" />
+            <param name="regex"><![CDATA[([a-zA-Z0-9_])*]]></param>
+            <message key="wrongCharacters" />
         </field-validator>
-		<field-validator type="stringlength" short-circuit="true">
-			<param name="maxLength">30</param>
-			<param name="trim">true</param>
-			<message key="wrongMaxLength" />
-		</field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+            <param name="maxLength">30</param>
+            <param name="trim">true</param>
+            <message key="wrongMaxLength" />
+        </field-validator>
+        <field-validator type="requiredstring">
+            <message key="requiredstring"/>
+        </field-validator>
     </field>
     
 </validators>

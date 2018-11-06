@@ -43,6 +43,7 @@ import com.agiletec.aps.system.services.role.TestRoleManager;
 import com.agiletec.aps.system.services.url.TestURLManager;
 import com.agiletec.aps.system.services.user.TestAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.TestUserDAO;
+import com.agiletec.aps.system.services.user.TestUserManager;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
@@ -79,8 +80,8 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelMa
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
-import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserManager;
+import org.entando.entando.aps.system.services.storage.LocalStorageManagerIntegrationTest;
+import org.entando.entando.aps.system.services.storage.StorageManagerUtilTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerAspectTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
@@ -158,7 +159,8 @@ public class AllTests {
         suite.addTestSuite(TestActionLogDAO.class);
         suite.addTestSuite(TestActionLogManager.class);
         //
-        suite.addTestSuite(TestLocalStorageManager.class);
+        suite.addTestSuite(LocalStorageManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(StorageManagerUtilTest.class));
         //
         suite.addTestSuite(UserProfileManagerIntegrationTest.class);
         suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);

@@ -46,8 +46,8 @@
                     <s:iterator value="fieldErrors">
                         <s:iterator value="value">
                             <li><s:property escapeHtml="false" /></li>
-                            </s:iterator>
                         </s:iterator>
+                    </s:iterator>
                 </ul>
             </div>
         </s:if>
@@ -62,7 +62,7 @@
                 <ul class="margin-base-top">
                     <s:iterator value="actionErrors">
                         <li><s:property escapeHtml="false" /></li>
-                        </s:iterator>
+                    </s:iterator>
                 </ul>
             </div>
         </s:if>
@@ -85,11 +85,11 @@
                             <div class="col-sm-10">
                                 <p class="form-control-static">
                                     <s:property value="filename" />
-                                    &#32; <a title="Download: <s:property value="#fileVar.name"/>"
+                                    &#32; <a title="Download: <s:property value="filename"/>"
                                              href="<s:url namespace="/do/FileBrowser" action="download" >
                                                  <s:param name="currentPath"><s:property escapeHtml="true" value="%{currentPath}"/></s:param>
-                                                 <s:param name="filename"> <s:property escapeHtml="false" value="filename"/></s:param>
-                                                 <s:param name="protectedFolder"> <s:property escapeHtml="false" value="%{protectedFolder}"/></s:param>
+                                                 <s:param name="filename"><s:property escapeHtml="false" value="filename"/></s:param>
+                                                 <s:param name="protectedFolder"><s:property escapeHtml="false" value="%{protectedFolder}"/></s:param>
                                              </s:url>">
                                         <span class="icon fa fa-download"></span> <span
                                             class="sr-only"> <s:text name="label.download" />: <s:property

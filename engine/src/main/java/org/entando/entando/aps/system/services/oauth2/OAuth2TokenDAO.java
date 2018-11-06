@@ -125,6 +125,11 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
+    public List<OAuth2AccessToken> findTokensByUserName(String username) {
+        return this.findTokensByClientIdAndUserName(null, username);
+    }
+    
+    @Override
     public List<OAuth2AccessToken> findTokensByClientId(String clientId) {
         return this.findTokensByClientIdAndUserName(clientId, null);
     }

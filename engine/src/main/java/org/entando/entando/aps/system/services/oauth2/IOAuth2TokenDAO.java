@@ -25,6 +25,8 @@ public interface IOAuth2TokenDAO {
     public List<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String username);
 
     public List<OAuth2AccessToken> findTokensByClientId(String clientId);
+    
+    public List<OAuth2AccessToken> findTokensByUserName(String username);
 
     public OAuth2AccessToken getAccessToken(final String accessToken);
 

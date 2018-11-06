@@ -21,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.springframework.security.crypto.codec.Base64;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import static org.hamcrest.CoreMatchers.anything;
+import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -75,5 +77,65 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
             }
         }
     }
+    
+    @Test
+    public void authenticationFailed() throws Exception {
+        this.authenticationFailed("admin", "adminxx");
+        this.authenticationFailed("admin", "");
+        //this.authenticationFailed("", "admin");
+        this.authenticationFailed("mainEditor", "mainEditorxx");
+        this.authenticationFailed("supervisorCustomers", "supervisorCustomersxx");
+    }
+    
+    private void authenticationFailed(String username, String password) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", username);
+        params.add("password", password);
+        String hash = new String(Base64.encode("test_consumer:secret".getBytes()));
+        ResultActions result
+                = mockMvc.perform(post("/oauth/token")
+                        .params(params)
+                        .header("Authorization", "Basic " + hash)
+                        .accept("application/json;charset=UTF-8"))
+                        .andExpect(status().isUnauthorized())
+                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        result.andExpect(jsonPath("$.error", is("unauthorized")));
+        result.andExpect(jsonPath("$.error_description", anything()));
+        Assert.assertTrue(StringUtils.isNotBlank(resultString));
+        Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
+        Assert.assertEquals(0, oauthTokens.size());
+    }
+    
+    @Test
+    public void missingGrant() throws Exception {
+        this.missingGrant("admin", "adminxx");
+        this.missingGrant("mainEditor", "mainEditorxx");
+        this.missingGrant("supervisorCustomers", "supervisorCustomersxx");
+    }
+    
+    private void missingGrant(String username, String password) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        //params.add("grant_type", "password");
+        params.add("username", username);
+        params.add("password", password);
+        String hash = new String(Base64.encode("test_consumer:secret".getBytes()));
+        ResultActions result
+                = mockMvc.perform(post("/oauth/token")
+                        .params(params)
+                        .header("Authorization", "Basic " + hash)
+                        .accept("application/json;charset=UTF-8"))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        result.andExpect(jsonPath("$.error", is("invalid_request")));
+        result.andExpect(jsonPath("$.error_description", is("Missing grant type")));
+        Assert.assertTrue(StringUtils.isNotBlank(resultString));
+        Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
+        Assert.assertEquals(0, oauthTokens.size());
+    }
+    
+    
     
 }

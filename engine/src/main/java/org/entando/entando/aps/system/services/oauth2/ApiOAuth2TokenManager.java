@@ -136,6 +136,11 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     }
 
     @Override
+    public Collection<OAuth2AccessToken> findTokensByUserName(String username) {
+        return this.getOAuth2TokenDAO().findTokensByUserName(username);
+    }
+
+    @Override
     public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
         return this.getOAuth2TokenDAO().findTokensByClientId(clientId);
     }

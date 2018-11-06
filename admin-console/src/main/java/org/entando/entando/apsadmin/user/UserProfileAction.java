@@ -87,7 +87,7 @@ public class UserProfileAction extends AbstractApsEntityAction {
 			*/
             if (StringUtils.isBlank(profileTypeCode)) {
                 String[] args = {profileTypeCode};
-                this.addFieldError("profileTypeCode", this.getText("error.newUserProfile.invalidProfileType", args));
+                this.addFieldError("profileTypeCode", this.getText("error.profileType.mandatory", args));
                 return INPUT;
             }
             IUserProfile prototype = (IUserProfile) this.getUserProfileManager().getEntityPrototype(profileTypeCode);

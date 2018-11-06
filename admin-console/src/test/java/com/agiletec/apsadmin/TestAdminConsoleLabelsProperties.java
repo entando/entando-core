@@ -13,23 +13,17 @@
  */
 package com.agiletec.apsadmin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.agiletec.apsadmin.TestLabelsProperties;
-
 public class TestAdminConsoleLabelsProperties extends TestLabelsProperties {
 
-    private static final Logger logger = LoggerFactory.getLogger(TestAdminConsoleLabelsProperties.class);
     private static String APSADMIN1_PATH = "com/agiletec/apsadmin/";
     private static String APSADMIN2_PATH = "org/entando/entando/apsadmin/";
 
-    // TODO Fix the missing labels in the it property file
-    /*    
+
     public void testGlobalAdminProperties1() throws Throwable {
         super.testGlobalMessagesLabelsTranslations(APSADMIN1_PATH);
     }
-    */
-    
+
+
     public void testGlobalAdminProperties2() throws Throwable {
         super.testGlobalMessagesLabelsTranslations(APSADMIN2_PATH);
     }
@@ -62,13 +56,10 @@ public class TestAdminConsoleLabelsProperties extends TestLabelsProperties {
         super.testPackageLabelsTranslations(APSADMIN1_PATH + "user/role/");
     }
 
-    // TODO Fix the missing labels in the it property file
-    /*
     public void testAdminProperties() throws Throwable {
         super.testPackageLabelsTranslations(APSADMIN2_PATH + "admin/");
     }
-    */
-    
+
     public void testApiProperties() throws Throwable {
         super.testPackageLabelsTranslations(APSADMIN2_PATH + "api/");
     }
@@ -89,14 +80,11 @@ public class TestAdminConsoleLabelsProperties extends TestLabelsProperties {
         super.testPackageLabelsTranslations(APSADMIN2_PATH + "portal/guifragment/");
     }
 
-    // TODO Fix the missing labels in the it property file
-    /*
     public void testPortalModelProperties() throws Throwable {
         super.testPackageLabelsTranslations(APSADMIN2_PATH + "portal/model/");
     }
-     
+
     public void testUserProperties() throws Throwable {
         super.testPackageLabelsTranslations(APSADMIN2_PATH + "user/");
     }
-    */
 }

@@ -37,6 +37,7 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -386,7 +387,8 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             String result = this.executeSave(params, "admin");
             assertEquals(Action.INPUT, result);
             Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
-            assertEquals(5, fieldErrors.size());
+            assertEquals(6, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("pageCode"));
             assertTrue(fieldErrors.containsKey("parentPageCode"));
             assertTrue(fieldErrors.containsKey("model"));
             assertTrue(fieldErrors.containsKey("group"));
@@ -397,7 +399,8 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             result = this.executeSave(params, "admin");
             assertEquals(Action.INPUT, result);
             fieldErrors = this.getAction().getFieldErrors();
-            assertEquals(4, fieldErrors.size());
+            assertEquals(5, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("pageCode"));
             assertTrue(fieldErrors.containsKey("model"));
             assertTrue(fieldErrors.containsKey("group"));
             assertTrue(fieldErrors.containsKey("langit"));
@@ -408,7 +411,8 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             result = this.executeSave(params, "admin");
             assertEquals(Action.INPUT, result);
             fieldErrors = this.getAction().getFieldErrors();
-            assertEquals(2, fieldErrors.size());
+            assertEquals(3, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("pageCode"));
             assertTrue(fieldErrors.containsKey("group"));
             assertTrue(fieldErrors.containsKey("langen"));
 
@@ -428,6 +432,14 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             fieldErrors = this.getAction().getFieldErrors();
             assertEquals(1, fieldErrors.size());
             assertTrue(fieldErrors.containsKey("pageCode"));
+            
+            params.put("langen", String.join("", Collections.nCopies(71, "x"))); // very long title
+            result = this.executeSave(params, "admin");
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(2, fieldErrors.size());
+            assertTrue(fieldErrors.containsKey("pageCode"));
+            assertTrue(fieldErrors.containsKey("langen"));
         } catch (Throwable t) {
             this._pageManager.deletePage(pageCode);
             this._pageManager.deletePage(longPageCode);

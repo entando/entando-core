@@ -46,6 +46,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 
     private static final Logger logger = LoggerFactory.getLogger(PageAction.class);
 
+    private static final int PAGE_TITLE_MAX_LENGTH = 70;
+    
     private String pageCode;
     private String parentPageCode;
     private String copyPageCode;
@@ -133,10 +135,13 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         while (langsIter.hasNext()) {
             Lang lang = langsIter.next();
             String title = (String) this.getTitles().get(lang.getCode());
+            String titleKey = "lang" + lang.getCode();
             if (null == title || title.trim().length() == 0) {
                 String[] args = {lang.getDescr()};
-                String titleKey = "lang" + lang.getCode();
                 this.addFieldError(titleKey, this.getText("error.page.insertTitle", args));
+            } else if (title.length() > PAGE_TITLE_MAX_LENGTH) {
+                String[] args = {lang.getCode(), String.valueOf(PAGE_TITLE_MAX_LENGTH)};
+                this.addFieldError(titleKey, this.getText("error.page.wrongTitleMaxLength", args));
             }
         }
     }

@@ -85,7 +85,8 @@
                 greedy: true,
                 drop: function (event, ui) {
                     moveTree({
-                        selectedNode: ui.draggable.attr("id")
+                        selectedNode: ui.draggable.attr("id"),
+                        parentPageCode: $(this).attr('id')
                     });
                 }
             });

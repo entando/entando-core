@@ -515,7 +515,7 @@
 
                     <div class="col-xs-12 no-padding">
                         <div class="mt-20">
-                            <table class="table table-striped table-bordered table-hover content-list" id="contentListTable">
+                            <table class="table table-striped table-bordered table-hover content-list" id="contentListTable" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th class="text-center table-w-3">
@@ -700,30 +700,27 @@
             </s:else>
         </div>
 
-
         <script>
             $(document).ready(function () {
                 var activeLinkId = localStorage.getItem('link');
                 console.log("activeLinkId", activeLinkId);
 
-                if (activeLinkId != "undefined") {
-
+                if (activeLinkId != null) {
                     $('html, body').animate({
                         scrollTop: $('#' + activeLinkId).offset().top
                     }, 1000);
-
                 }
 
                 $('.table a').click(function (e) {
                     event.preventDefault(e);
                     localStorage.setItem('link', $(e.target).attr('id'));
                     localStorage.setItem('link2', $(e.target).attr('href'));
-
                     var activeLink = localStorage.getItem('link2');
                     if (activeLink) {
                         location.href = activeLink;
                     }
                 });
+
             });
         </script>
     </s:form>

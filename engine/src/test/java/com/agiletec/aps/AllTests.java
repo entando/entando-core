@@ -50,6 +50,7 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.system.CaseInsensitiveBeanComparatorTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
@@ -84,6 +85,7 @@ import org.entando.entando.aps.system.services.userprofile.TestUserManager;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerAspectTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
+import org.entando.entando.aps.system.services.userprofile.UserProfileTypeServiceTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 
 /**
@@ -94,6 +96,7 @@ public class AllTests {
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
 
+        suite.addTest(new JUnit4TestAdapter(CaseInsensitiveBeanComparatorTest.class));
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
         //
@@ -164,6 +167,7 @@ public class AllTests {
         suite.addTestSuite(org.entando.entando.aps.system.services.userprofile.TestUserManager.class);
         suite.addTest(new JUnit4TestAdapter(UserProfileManagerTest.class));
         suite.addTest(new JUnit4TestAdapter(UserProfileManagerAspectTest.class));
+        suite.addTest(new JUnit4TestAdapter(UserProfileTypeServiceTest.class));
         //
         suite.addTestSuite(GuiFragmentManagerIntegrationTest.class);
         //

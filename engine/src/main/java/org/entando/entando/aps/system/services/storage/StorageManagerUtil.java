@@ -34,6 +34,12 @@ public class StorageManagerUtil {
         if (StringUtils.isBlank(fullname)) {
             return false;
         }
+        if (fullname.endsWith(".")) {
+            return false;
+        }
+        if (!isValidPath(fullname)) {
+            return false;
+        }
         String basename = FilenameUtils.getBaseName(fullname);
         String extension = FilenameUtils.getExtension(fullname);
         return isValidFilename(basename, extension);
@@ -59,6 +65,9 @@ public class StorageManagerUtil {
 
     public static boolean isValidFilenameNoExtension(String basename) {
         if (StringUtils.isBlank(basename)) {
+            return false;
+        }
+        if (!isValidPath(basename)) {
             return false;
         }
         Pattern pattern = Pattern.compile(REGEXP_FILE_BASENAME);
@@ -91,10 +100,9 @@ public class StorageManagerUtil {
         return matcher.matches();
     }
 
-    public static boolean isValidPath(String path) {
-        final boolean check = true;
+    private static boolean isValidPath(String path) {
         if (StringUtils.isBlank(path)) {
-            return check;
+            return true;
         }
         if (path.contains("../")
                 || path.contains("%2e%2e%2f")
@@ -103,9 +111,9 @@ public class StorageManagerUtil {
                 || path.contains("%2e%2e/")
                 || path.contains("%2e%2e" + File.separator)) {
             _logger.info("Attack avoided - requested path {}", path);
-            return !check;
+            return false;
         }
-        return check;
+        return true;
     }
 
     private static boolean endWithParentDir(String path) {

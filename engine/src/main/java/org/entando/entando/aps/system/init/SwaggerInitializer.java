@@ -50,7 +50,7 @@ public class SwaggerInitializer  implements ApplicationListener<ContextRefreshed
         swaggerConsumer.setDescription("Swagger");
         swaggerConsumer.setCallbackUrl(authUrl + "api/webjars/springfox-swagger-ui/oauth2-redirect.html");
         swaggerConsumer.setScope("global");
-        swaggerConsumer.setAuthorizedGrantTypes("authorization_code");
+        swaggerConsumer.setAuthorizedGrantTypes("password");
         swaggerConsumer.setIssuedDate(Date.from(LocalDateTime.now().toInstant(ZoneOffset.UTC)));
         swaggerConsumer.setExpirationDate(Date.from(LocalDateTime.now().plusYears(10).toInstant(ZoneOffset.UTC)));
 

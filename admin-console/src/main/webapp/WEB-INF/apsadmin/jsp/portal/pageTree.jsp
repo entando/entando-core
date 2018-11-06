@@ -45,6 +45,13 @@
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 
                 <div class="table-responsive overflow-visible">
+                    <s:if test="%{#pageTreeStyleVar == 'request'}">
+                        <p class="sr-only">
+                            <s:iterator value="treeNodesToOpen" var="treeNodeToOpenVar">
+                                <wpsf:hidden name="treeNodesToOpen" value="%{#treeNodeToOpenVar}" />
+                            </s:iterator>
+                        </p>
+                    </s:if>
                     <table id="pageTree" class="table table-bordered table-hover table-treegrid">
                         <thead>
                             <tr>

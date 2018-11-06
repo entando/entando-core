@@ -316,19 +316,13 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         return this.executeAction();
     }
 
-    public void testMoveTreeSuccess() throws Throwable {
-        String pageCode = "testPage";
-        IPage root = this._pageManager.getDraftRoot();
+    /**
+     * A free page can be moved inside a other free node.
+     */
+    public void testMoveTreeFreePageIntoFreePage() throws Throwable {
+        String pageCode = "testFreePage";
         try {
-            Page testPage = new Page();
-            testPage.setCode(pageCode);
-            testPage.setParent(this._pageManager.getDraftRoot());
-            testPage.setParentCode(root.getCode());
-            PageMetadata draft = new PageMetadata();
-            draft.setTitle("en", pageCode);
-            draft.setTitle("it", pageCode);
-            draft.setModel(root.getMetadata().getModel());
-            testPage.setMetadata(draft);
+            Page testPage = createDraftPage(pageCode);
             testPage.setGroup(Group.FREE_GROUP_NAME);
             this._pageManager.addPage(testPage);
             this.setUserOnSession("pageManagerCoach");
@@ -342,11 +336,175 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         }
     }
 
+    /**
+     * A reserved page can be moved inside a free node.
+     */
+    public void testMoveReservedPageIntoFreePage() throws Throwable {
+        String pageCode = "testReservedPage";
+        try {
+            Page testPage = createDraftPage(pageCode);
+            testPage.setGroup(Group.ADMINS_GROUP_NAME);
+            this._pageManager.addPage(testPage);
+            this.setUserOnSession("admin");
+            this.initAction("/do/rs/Page", "moveTree");
+            this.addParameter("selectedNode", pageCode);
+            this.addParameter("parentPageCode", "pagina_2");
+            String result = this.executeAction();
+            assertEquals("success", result);
+        } finally {
+            this._pageManager.deletePage(pageCode);
+        }
+    }
+
+    /**
+     * A reserved page can be moved inside a reserved node (ONLY when owners
+     * group are equals).
+     */
+    public void testMoveReservedPageIntoParentWithSameGroup() throws Throwable {
+        String parentCode = "testReservedParent";
+        String childCode = "testReservedChild";
+        try {
+            Page parent = createDraftPage(parentCode);
+            Page child = createDraftPage(childCode);
+            parent.setGroup(Group.ADMINS_GROUP_NAME);
+            child.setGroup(Group.ADMINS_GROUP_NAME);
+            this._pageManager.addPage(parent);
+            this._pageManager.addPage(child);
+            this.setUserOnSession("admin");
+            this.initAction("/do/rs/Page", "moveTree");
+            this.addParameter("selectedNode", childCode);
+            this.addParameter("parentPageCode", parentCode);
+            String result = this.executeAction();
+            assertEquals("success", result);
+        } finally {
+            this._pageManager.deletePage(childCode);
+            this._pageManager.deletePage(parentCode);
+        }
+    }
+
+    /**
+     * A reserved page CAN'T be moved inside a reserved node having different
+     * owners group.
+     */
+    public void testMoveReservedPageIntoParentWithDifferentGroup() throws Throwable {
+        this.setUserOnSession("admin");
+        this.initAction("/do/rs/Page", "moveTree");
+        this.addParameter("selectedNode", "customers_page");
+        this.addParameter("parentPageCode", "coach_page");
+        String result = this.executeAction();
+        assertEquals("pageTree", result);
+        assertEquals(1, this.getAction().getActionErrors().size());
+    }
+
+    /**
+     * A free page CAN'T be moved inside a reserved node.
+     */
+    public void testMoveTreeFreePageIntoReservedPage() throws Throwable {
+        this.setUserOnSession("admin");
+        this.initAction("/do/rs/Page", "moveTree");
+        this.addParameter("selectedNode", "service");
+        this.addParameter("parentPageCode", "coach_page");
+        String result = this.executeAction();
+        assertEquals("pageTree", result);
+        assertEquals(1, this.getAction().getActionErrors().size());
+    }
+
+    /**
+     * An unpublished page can be moved inside a public node.
+     */
+    public void testMoveTreeDraftInsideOnline() throws Throwable {
+        String pageCode = "testPage";
+        try {
+            Page testPage = createDraftPage(pageCode);
+            testPage.setGroup(Group.FREE_GROUP_NAME);
+            this._pageManager.addPage(testPage);
+            this.setUserOnSession("admin");
+            this.initAction("/do/rs/Page", "moveTree");
+            this.addParameter("selectedNode", pageCode);
+            this.addParameter("parentPageCode", "pagina_2");
+            String result = this.executeAction();
+            assertEquals("success", result);
+        } finally {
+            this._pageManager.deletePage(pageCode);
+        }
+    }
+
+    /**
+     * A public page CAN'T be moved inside an unpublished node.
+     */
+    public void testMoveTreeOnlineInsideDraft() throws Throwable {
+        String draftPageCode = "testDraft";
+        String onlinePageCode = "testOnline";
+        try {
+            Page draftPage = createDraftPage(draftPageCode);
+            draftPage.setGroup(Group.FREE_GROUP_NAME);
+            this._pageManager.addPage(draftPage);
+            Page onlinePage = createDraftPage(onlinePageCode);
+            onlinePage.setGroup(Group.FREE_GROUP_NAME);
+            this._pageManager.addPage(onlinePage);
+            this._pageManager.setPageOnline(onlinePageCode);
+            this.setUserOnSession("admin");
+            this.initAction("/do/rs/Page", "moveTree");
+            this.addParameter("selectedNode", onlinePageCode);
+            this.addParameter("parentPageCode", draftPageCode);
+            String result = this.executeAction();
+            assertEquals("pageTree", result);
+            assertEquals(1, this.getAction().getActionErrors().size());
+        } finally {
+            this._pageManager.deletePage(onlinePageCode);
+            this._pageManager.deletePage(draftPageCode);
+        }
+    }
+
+    /**
+     * A draft page can be moved inside another draft page.
+     */
+    public void testMoveDraftInsideDraft() throws Throwable {
+        String draft1PageCode = "draft1";
+        String draft2PageCode = "draft2";
+        try {
+            Page draft1 = createDraftPage(draft1PageCode);
+            draft1.setGroup(Group.FREE_GROUP_NAME);
+            this._pageManager.addPage(draft1);
+            Page draft2 = createDraftPage(draft2PageCode);
+            draft2.setGroup(Group.FREE_GROUP_NAME);
+            this._pageManager.addPage(draft2);
+            this.setUserOnSession("admin");
+            this.initAction("/do/rs/Page", "moveTree");
+            this.addParameter("selectedNode", draft1PageCode);
+            this.addParameter("parentPageCode", draft2PageCode);
+            String result = this.executeAction();
+            assertEquals("success", result);
+        } finally {
+            this._pageManager.deletePage(draft1PageCode);
+            this._pageManager.deletePage(draft2PageCode);
+        }
+    }
+
     public void testMoveTreeParentToChild() throws Throwable {
         this.setUserOnSession("pageManagerCoach");
         this.initAction("/do/rs/Page", "moveTree");
         this.addParameter("selectedNode", "pagina_1");
         this.addParameter("parentPageCode", "pagina_11");
+        String result = this.executeAction();
+        assertEquals("pageTree", result);
+        assertEquals(1, this.getAction().getActionErrors().size());
+    }
+
+    public void testMoveTreeChildToParent() throws Throwable {
+        this.setUserOnSession("pageManagerCoach");
+        this.initAction("/do/rs/Page", "moveTree");
+        this.addParameter("parentPageCode", "pagina_1");
+        this.addParameter("selectedNode", "pagina_11");
+        String result = this.executeAction();
+        assertEquals("pageTree", result);
+        assertEquals(1, this.getAction().getActionErrors().size());
+    }
+
+    public void testMoveTreeMissingParent() throws Throwable {
+        this.setUserOnSession("pageManagerCoach");
+        this.initAction("/do/rs/Page", "moveTree");
+        this.addParameter("selectedNode", "pagina_11");
         String result = this.executeAction();
         assertEquals("pageTree", result);
         assertEquals(1, this.getAction().getActionErrors().size());
@@ -371,6 +529,20 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         String result = this.executeAction();
         assertEquals("pageTree", result);
         assertEquals(1, this.getAction().getActionErrors().size());
+    }
+
+    private Page createDraftPage(String pageCode) {
+        IPage root = this._pageManager.getDraftRoot();
+        Page testPage = new Page();
+        testPage.setCode(pageCode);
+        testPage.setParent(root);
+        testPage.setParentCode(root.getCode());
+        PageMetadata draft = new PageMetadata();
+        draft.setTitle("en", pageCode);
+        draft.setTitle("it", pageCode);
+        draft.setModel(root.getMetadata().getModel());
+        testPage.setMetadata(draft);
+        return testPage;
     }
 
     private void init() throws Exception {

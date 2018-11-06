@@ -13,25 +13,25 @@
  */
 package com.agiletec.apsadmin;
 
-import java.util.Properties;
-import java.util.Set;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import java.util.Properties;
+import java.util.Set;
 
 public class TestLabelsProperties extends TestCase {
 
     private static final Logger logger = LoggerFactory.getLogger(TestLabelsProperties.class);
 
     protected void testGlobalMessagesLabelsTranslations(String propertiesFolder) throws Throwable {
-         testLabelsTranslations( propertiesFolder, 
-                 "global-messages_en.properties",
-                 "global-messages_it.properties");
+        testLabelsTranslations(propertiesFolder,
+                "global-messages_en.properties",
+                "global-messages_it.properties");
     }
-    
+
     protected void testPackageLabelsTranslations(String propertiesFolder) throws Throwable {
         testLabelsTranslations(propertiesFolder,
                 "package_en.properties",

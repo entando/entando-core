@@ -186,6 +186,10 @@ public class TestUserAction extends ApsAdminBaseTestCase {
             result = this.executeSaveNew("admin", "", "password", "password");
             this.verifyErrors(result, 1, "username", 1);
 
+            // username too short
+            result = this.executeSaveNew("admin", "usr", "password", "password");
+            this.verifyErrors(result, 1, "username", 1);
+            
             // username troppo lunga
             result = this.executeSaveNew("admin", "usernameDecisamenteTroppoLunga", "password", "password");
             this.verifyErrors(result, 1, "username", 1);

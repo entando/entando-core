@@ -40,6 +40,7 @@ import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.entando.entando.web.user.validator.UserValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
@@ -52,6 +53,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -198,6 +200,48 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println(response);
         result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_NEW_PASSWORD_EQUALS)));
+    }
+    
+    @Test
+    public void shouldAdd4CharsUsernamePost() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String mockJson = "{\"username\": \"user\",\n"
+                + "    \"password\": \"new_password\",\n"
+                + "    \"status\": \"active\"\n"
+                + "}";
+        when(this.userService.addUser(any(UserRequest.class))).thenReturn(this.mockUser());
+        ResultActions result = mockMvc.perform(
+                post("/users")
+                        .sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println(response);
+        result.andExpect(jsonPath("$.errors", hasSize(0)));
+    }
+
+    @Test
+    public void shouldValidateTooShortUsernamePost() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String mockJson = "{\"username\": \"usr\",\n"
+                + "    \"password\": \"new_password\",\n"
+                + "    \"status\": \"active\"\n"
+                + "}";
+        when(this.userService.addUser(any(UserRequest.class))).thenReturn(this.mockUser());
+        ResultActions result = mockMvc.perform(
+                post("/users")
+                        .sessionAttr("user", user)
+                        .content(mockJson)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isBadRequest());
+        String response = result.andReturn().getResponse().getContentAsString();
+        System.out.println(response);
+        result.andExpect(jsonPath("$.errors[0].code", is(UserValidator.ERRCODE_USERNAME_FORMAT_INVALID)));
     }
 
     @Test

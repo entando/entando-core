@@ -26,7 +26,7 @@
             <i class="fa fa-exclamation esclamation-big" aria-hidden="true"></i>
             <p class="esclamation-underline"><s:text name="note.deletePage.areYouSure" />&#32;</p>
 
-            <p class="esclamation-underline-text"><s:property value="%{getPage(nodeToBeDelete).getDraftTitle(currentLang.getCode())}" />&nbsp;?</p>
+            <p class="esclamation-underline-text"><s:property value="%{getPage(nodeToBeDelete).getTitle(currentLang.getCode())}" />&nbsp;?</p>
 
             <div class="text-center margin-large-top">
                 <a class="btn btn-default button-fixed-width" href="<s:url action="viewTree" namespace="/do/Page"/>" ><s:text name="label.back" /></a>

@@ -38,9 +38,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.CaseInsensitiveBeanComparator;
 import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -108,7 +108,7 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         List<IApsEntity> entityTypes = new ArrayList<>(entityManager.getEntityPrototypes().values());
         Map<String, String> fieldMapping = this.getEntityTypeFieldNameMapping();
         entityTypes.stream().filter(i -> this.filterObjects(i, requestList.getFilters(), fieldMapping));
-        Collections.sort(entityTypes, new BeanComparator(this.getFieldName(requestList.getSort(), fieldMapping)));
+        Collections.sort(entityTypes, new CaseInsensitiveBeanComparator(this.getFieldName(requestList.getSort(), fieldMapping)));
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
             Collections.reverse(entityTypes);
         }

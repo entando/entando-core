@@ -102,6 +102,7 @@ $(document).ready(function () {
             // Update file description input fields with file name.
             if (storeItem.name) {
                 storeItem.$fieldGroup.find('.file-description').val(storeItem.name);
+                storeItem.$fieldGroup.find('.file-upload-selected-name').text(storeItem.name);
             }
 
             if (cropEditorEnabled) {
@@ -112,7 +113,7 @@ $(document).ready(function () {
                 }
             }
 
-            setupHiddenFields(storeItem);
+            Store.items["item_" + storeItem.id] = setupHiddenFields(storeItem);
         };
 
         // Setup file for storeItem
@@ -190,6 +191,8 @@ $(document).ready(function () {
                 $fileUploadBase64ImageContentType: $('<input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_' + storeItem.id + '" value="' + storeItem.type + '">').appendTo(imageUploadForm),
                 $fileUploadBase64ImageFileName: $('<input type="hidden" name="fileUploadBase64ImageFileName" id="file_upload_name_' + storeItem.id + '" value="' + storeItem.name + '">').appendTo(imageUploadForm)
             };
+
+            return storeItem;
         };
 
         // Delete storeItem from Store using storeItemId.

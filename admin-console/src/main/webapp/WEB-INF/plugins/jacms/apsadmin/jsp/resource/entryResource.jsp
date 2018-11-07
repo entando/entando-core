@@ -767,7 +767,7 @@
                     <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
                             multiple="true"/>
                 </s:else>
-                <span id="newFileUpload_selected"><s:text name="label.no-file-selected"/></span>
+                <span id="newFileUpload_selected" class="file-upload-selected-name"><s:text name="label.no-file-selected"/></span>
             </div>
         </div>
 

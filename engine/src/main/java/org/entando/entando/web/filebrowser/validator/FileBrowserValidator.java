@@ -23,6 +23,7 @@ import org.entando.entando.web.filebrowser.model.FileBrowserRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
@@ -44,6 +45,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
     public static final String ERRCODE_INVALID_FILENAME = "6";
 
     @Autowired
+    @Qualifier(SystemConstants.STORAGE_MANAGER)
     private IStorageManager storageManager;
 
     @Override

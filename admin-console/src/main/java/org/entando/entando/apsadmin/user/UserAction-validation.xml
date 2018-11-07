@@ -9,6 +9,7 @@
             <message key="requiredstring"/>
         </field-validator>
 		<field-validator type="stringlength" short-circuit="true">
+			<param name="minLength">4</param>
 			<param name="maxLength">20</param>
 			<param name="trim">true</param>
            <message key="stringlength" />
@@ -28,7 +29,7 @@
 			<param name="minLength">8</param>
 			<param name="maxLength">20</param>
 			<param name="trim">true</param>
-			<message key="error.user.wrongPasswordLength" />
+			<message key="stringlength" />
 		</field-validator>
         <field-validator type="fieldexpression" short-circuit="true">
             <param name="expression">(password == passwordConfirm)</param>

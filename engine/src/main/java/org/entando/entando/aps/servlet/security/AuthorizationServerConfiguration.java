@@ -57,6 +57,7 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
         if (!this.configManager.getParam(SystemConstants.INIT_PROP_CONFIG_VERSION).equals("test")) {
             endpoints.prefix("/api");
         }
+        endpoints.exceptionTranslator(new CustomWebResponseExceptionTranslator());
     }
 
 }

@@ -14,9 +14,7 @@
 package org.entando.entando.aps.servlet.security;
 
 import com.jayway.jsonpath.JsonPath;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.springframework.security.crypto.codec.Base64;
@@ -36,17 +34,17 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public class AuthorizationServerConfigurationTest extends AbstractControllerIntegrationTest {
-    
+
     @Autowired
     private IApiOAuth2TokenManager apiOAuth2TokenManager;
-    
+
     @Test
     public void obtainAccessToken_1() throws Exception {
         this.obtainAccessToken_1("admin", "admin");
         this.obtainAccessToken_1("mainEditor", "mainEditor");
         this.obtainAccessToken_1("supervisorCustomers", "supervisorCustomers");
     }
-    
+
     private void obtainAccessToken_1(String username, String password) throws Exception {
         OAuth2AccessToken oauthToken = null;
         try {
@@ -59,8 +57,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                             .params(params)
                             .header("Authorization", "Basic " + new String(Base64.encode("test_consumer:secret".getBytes())))
                             .accept("application/json;charset=UTF-8"))
-                            .andExpect(status().isOk())
-                            .andExpect(content().contentType("application/json;charset=UTF-8"));
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType("application/json;charset=UTF-8"));
             String resultString = result.andReturn().getResponse().getContentAsString();
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
             String token = JsonPath.parse(resultString).read("$.access_token");
@@ -77,16 +75,16 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
             }
         }
     }
-    
+
     @Test
     public void authenticationFailed() throws Exception {
         this.authenticationFailed("admin", "adminxx");
         this.authenticationFailed("admin", "");
-        //this.authenticationFailed("", "admin");
+        this.authenticationFailed("", "admin");
         this.authenticationFailed("mainEditor", "mainEditorxx");
         this.authenticationFailed("supervisorCustomers", "supervisorCustomersxx");
     }
-    
+
     private void authenticationFailed(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
@@ -98,23 +96,26 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isUnauthorized())
-                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
         String resultString = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.error", is("unauthorized")));
         result.andExpect(jsonPath("$.error_description", anything()));
         Assert.assertTrue(StringUtils.isNotBlank(resultString));
-        Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
-        Assert.assertEquals(0, oauthTokens.size());
+        if (!StringUtils.isEmpty(username)) {
+            Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
+            Assert.assertEquals(0, oauthTokens.size());
+        }
     }
-    
+
     @Test
     public void missingGrant() throws Exception {
+        this.missingGrant("admin", "admin");
         this.missingGrant("admin", "adminxx");
+        this.missingGrant("mainEditor", "mainEditor");
         this.missingGrant("mainEditor", "mainEditorxx");
-        this.missingGrant("supervisorCustomers", "supervisorCustomersxx");
     }
-    
+
     private void missingGrant(String username, String password) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         //params.add("grant_type", "password");
@@ -126,8 +127,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
         String resultString = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.error", is("invalid_request")));
         result.andExpect(jsonPath("$.error_description", is("Missing grant type")));
@@ -135,7 +136,41 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
         Assert.assertEquals(0, oauthTokens.size());
     }
-    
-    
-    
+
+    /*
+    @Test
+    public void badRequests() throws Exception {
+        //this.authenticationFailed("admin", "adminxx");
+        //this.authenticationFailed("admin", "");
+        this.badRequests("", "admin", "test_consumer", "secret");
+        //this.authenticationFailed("mainEditor", "mainEditorxx");
+        //this.authenticationFailed("supervisorCustomers", "supervisorCustomersxx");
+    }
+
+    private void badRequests(String username, String password, String clientId, String secret) throws Exception {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "password");
+        params.add("username", username);
+        params.add("password", password);
+        String hash = new String(Base64.encode((clientId + ":" + secret).getBytes()));
+        ResultActions result
+                = mockMvc.perform(post("/oauth/token")
+                        .params(params)
+                        .header("Authorization", "Basic " + hash)
+                        .accept("application/json;charset=UTF-8"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
+        String resultString = result.andReturn().getResponse().getContentAsString();
+        System.out.println("------------------------------");
+        System.out.println(resultString);
+        System.out.println("------------------------------");
+        result.andExpect(jsonPath("$.error", is("bad_request")));
+        result.andExpect(jsonPath("$.error_description", anything()));
+        Assert.assertTrue(StringUtils.isNotBlank(resultString));
+        if (!StringUtils.isEmpty(username)) {
+            Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
+            Assert.assertEquals(0, oauthTokens.size());
+        }
+    }
+     */
 }

@@ -11,7 +11,7 @@
 </s:else>
 <s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
 <s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"> <s:if test="%{#currentRoot.code == #selectedTreeNode}">active</s:if></s:if>" >
         <td class="treegrid-node pointer">
         <s:if test="#pageCodeTokenCheckVar">
             <s:set var="openTreeActionName" value="'openCloseTreeResultNode'" /><s:set var="closeTreeActionName" value="'openCloseTreeResultNode'" />

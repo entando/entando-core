@@ -13,12 +13,6 @@
  */
 package org.entando.entando.aps.system.services.group;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -41,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.BeanPropertyBindingResult;
+
+import java.util.*;
 
 public class GroupService implements IGroupService, ApplicationContextAware {
 
@@ -126,7 +122,11 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         }
         List<?> dtoList = utilizer.getGroupUtilizer(groupCode);
         List<?> subList = restRequest.getSublist(dtoList);
-        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        int size = 0;
+        if (dtoList != null) {
+            size = dtoList.size();
+        }
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(size, subList);
         PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;

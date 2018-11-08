@@ -68,6 +68,8 @@ public class UserValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_SELF_UPDATE = "6";
 
+    public static final String ERRCODE_DELETE_ADMIN = "7";
+
     @Autowired
     IUserManager userManager;
 

@@ -37,7 +37,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.MapBindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -156,7 +155,7 @@ public class UserController {
         logger.debug("deleting {}", username);
 
         if (!userValidator.isValidDeleteUser(username)) {
-            throw new ValidationGenericException(createBindingResult(username));
+            throw new ValidationGenericException(createDeleteAdminError(username));
         }
 
         this.getUserService().removeUser(username);
@@ -165,12 +164,11 @@ public class UserController {
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
     }
 
-    private BindingResult createBindingResult(@PathVariable String username) {
+    private BindingResult createDeleteAdminError(@PathVariable String username) {
         Map<String, String> map = new HashMap<>();
         map.put("username", username);
         BindingResult bindingResult = new MapBindingResult(map, "username");
-        ObjectError error = new ObjectError("username", "Sorry. You can't delete the administrator user");
-        bindingResult.addError(error);
+        bindingResult.reject(UserValidator.ERRCODE_DELETE_ADMIN, new String[]{}, "user.admin.cant.delete");
         return bindingResult;
     }
 

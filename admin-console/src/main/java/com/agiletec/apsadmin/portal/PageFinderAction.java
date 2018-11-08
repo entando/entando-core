@@ -67,7 +67,7 @@ public class PageFinderAction extends AbstractPortalAction {
         try {
             List<IPage> pages = this.getPageManager().loadLastUpdatedPages(this.getLastUpdateResponseSize());
             if (null != pages && !pages.isEmpty()) {
-                response = new ArrayList<PageJO>();
+                response = new ArrayList<>();
                 Iterator<IPage> it = pages.iterator();
                 while (it.hasNext()) {
                     IPage page = it.next();

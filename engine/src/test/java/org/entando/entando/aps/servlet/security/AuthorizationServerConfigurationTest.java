@@ -22,6 +22,7 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.is;
 import org.junit.Assert;
+import org.junit.Before;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -38,14 +39,21 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
     @Autowired
     private IApiOAuth2TokenManager apiOAuth2TokenManager;
 
-    @Test
-    public void obtainAccessToken_1() throws Exception {
-        this.obtainAccessToken_1("admin", "admin");
-        this.obtainAccessToken_1("mainEditor", "mainEditor");
-        this.obtainAccessToken_1("supervisorCustomers", "supervisorCustomers");
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        this.removeTokens("admin", "mainEditor", "supervisorCustomers");
     }
 
-    private void obtainAccessToken_1(String username, String password) throws Exception {
+    @Test
+    public void obtainAccessToken() throws Exception {
+        this.obtainAccessToken("admin", "admin");
+        this.obtainAccessToken("mainEditor", "mainEditor");
+        this.obtainAccessToken("supervisorCustomers", "supervisorCustomers");
+    }
+
+    private void obtainAccessToken(String username, String password) throws Exception {
         OAuth2AccessToken oauthToken = null;
         try {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -173,4 +181,11 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         }
     }
      */
+    private void removeTokens(String... usernames) {
+        for (String username : usernames) {
+            Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
+            oauthTokens.stream().forEach(oaat -> apiOAuth2TokenManager.removeAccessToken(oaat));
+        }
+    }
+
 }

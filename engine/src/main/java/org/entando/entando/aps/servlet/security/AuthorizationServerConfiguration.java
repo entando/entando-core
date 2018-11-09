@@ -29,9 +29,9 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
-
+    
     @Autowired
-    @Qualifier("OAuth2TokenManager")
+    @Qualifier(SystemConstants.OAUTH_TOKEN_MANAGER)
     private TokenStore tokenStore;
 
     @Autowired
@@ -39,11 +39,11 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     private ConfigInterface configManager;
 
     @Autowired
-    @Qualifier("OAuthConsumerManager")
+    @Qualifier(SystemConstants.OAUTH_CONSUMER_MANAGER)
     private ClientDetailsService clientDetailsService;
 
     @Autowired
-    @Qualifier("AuthenticationProviderManager")
+    @Qualifier(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER)
     private AuthenticationManager authenticationManager;
 
     @Override

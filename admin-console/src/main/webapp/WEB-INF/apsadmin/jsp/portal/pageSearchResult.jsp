@@ -45,69 +45,127 @@
     <div role="search">
 
         <s:form action="search" cssClass="action-form">
-
-            <p class="sr-only">
-                <wpsf:hidden name="pageCodeToken" />
-            </p>
-
-            <s:set var="pagesFound" value="pagesFound" />
-
-            <s:if test="%{#pagesFound != null && #pagesFound.isEmpty() == false}">
-
-                <a href="<s:url namespace="/do/Page" action="new" />" class="btn btn-primary pull-right" title="<s:text name="label.new" />" style="margin-bottom: 5px">
-                    <s:text name="label.add" />
-                </a>
-                <s:form cssClass="form-horizontal" namespace="/do/Page">
-
-                    <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
-
-                        <div class="table-responsive overflow-visible">
-                            <table id="pageTree" class="table table-bordered table-hover table-treegrid">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 68%;">Tree Pages
-                                        <s:if test="#pageTreeStyleVar == 'classic'">
-                                            <button type="button" class="btn-no-button expand-button" id="expandAll">
-                                                <i class="fa fa-plus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Expand All
-                                            </button>
-                                            <button type="button" class="btn-no-button" id="collapseAll">
-                                                <i class="fa fa-minus-square-o treeInteractionButtons" aria-hidden="true"></i>&#32;Collapse All
-                                            </button>
-                                        </s:if>
-                                    </th>
-                                    <th class="text-center" style="width: 8%;"><s:text name="label.add|move" /></th>
-                                    <th class="text-center" style="width: 8%;"><s:text name="label.state" /></th>
-                                    <th class="text-center" style="width: 8%;"><s:text name="label.pageInMenu" /></th>
-                                    <th class="text-center" style="width: 5%;"><s:text name="label.actions" /></th>
+            <p class="sr-only"><wpsf:hidden name="pageCodeToken" /></p>
+            <s:set var="pagesFoundVar" value="pagesFound" />
+            <s:if test="%{#pagesFoundVar != null && #pagesFoundVar.isEmpty() == false}">
+                <wpsa:subset source="#pagesFoundVar" count="10"
+                             objectName="pagesFoundGroupsVar" advanced="true" offset="5">
+                    <s:set var="group" value="#pagesFoundGroupsVar" />
+                    <div class="mt-20">
+                        <table class="table table-striped table-bordered table-hover no-mb">
+                            <thead>
+                                <tr>
+                                    <th><s:text name="label.code" /></th>
+                                        <%--<th><s:text name="label.title" /></th>--%>
+                                    <th><s:text name="label.fullTitle" /></th>
+                                    <th style="width: 8%;"><s:text name="label.state" /></th>
+                                    <th style="width: 8%;"><s:text name="label.pageInMenu" /></th>
+                                    <th class="text-center table-w-5"><s:text name="label.actions" /></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <s:set var="inputFieldName" value="%{'selectedNode'}" />
-                                <s:set var="selectedTreeNode" value="%{selectedNode}" />
-                                <s:set var="selectedPage" value="%{getPage(selectedNode)}" />
-                                <s:set var="liClassName" value="'page'" />
-                                <s:set var="treeItemIconName" value="'fa-folder'" />
-                                <s:if test="#pageTreeStyleVar == 'classic'">
-                                    <s:set var="currentRoot" value="allowedTreeRootNode" />
-                                    <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilderPages.jsp" />
-                                </s:if>
-                                <s:else>
-                                <style>
-                                    .table-treegrid span.collapse-icon, .table-treegrid span.expand-icon {
-                                        cursor: pointer;
-                                        display: none;
-                                    }
-                                </style>
-                                <s:set var="currentRoot" value="showableTree" />
-                                <s:include value="/WEB-INF/apsadmin/jsp/common/treeBuilder-request-linksPages.jsp" />
-                            </s:else>
+                                <s:iterator var="pageVar">
+                                    <tr>
+                                        <td><s:property value="#pageVar.code" /></td>
+                                        <%-- <td><s:property value="getTitle(#pageVar.code, #pageVar.titles)" /></td> --%>
+                                        <td><s:property value="%{#pageVar.getFullTitle(currentLang.code)}" /></td>
+                                        <td class="text-center">
+                                            <span class="statusField">
+                                                <s:if test="%{!#pageVar.isOnline()}">
+                                                    <i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i>
+                                                </s:if>
+                                                <s:elseif test="%{#pageVar.isChanged()}">
+                                                    <i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i>
+                                                </s:elseif>
+                                                <s:else>
+                                                    <i class="fa fa-circle green" aria-hidden="true" title="Online"></i>
+                                                </s:else>
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <s:if test="%{#pageVar.isOnline() && #pageVar.getMetadata().isShowable()}">
+                                                <s:text name="label.pageInMenu.displayed" />
+                                            </s:if>
+                                            <s:else>
+                                                <s:text name="label.pageInMenu.notdisplayed" />
+                                            </s:else>
+                                        </td>
+
+                                        <td class=" table-view-pf-actions text-center">
+                                            <div class="dropdown dropdown-kebab-pf">
+                                                <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                    <span class="fa fa-ellipsis-v"></span></button>
+                                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
+                                                    <li>
+                                                        <a title="<s:text name="page.options.viewInTree" />"
+                                                           href="<s:url action="viewTree"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="label.viewInTree" /></span></a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="<s:text name="page.options.new" />"
+                                                           href="<s:url action="new"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="label.add" /></span></a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="<s:text name="page.options.modify" />"
+                                                           href="<s:url action="edit"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="label.edit" /></span></a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="<s:text name="page.options.configure" />"
+                                                           href="<s:url action="doConfigure"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="label.configure" /></span></a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="<s:text name="page.options.detail" />"
+                                                           href="<s:url action="detail"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="label.view" /></span></a>
+                                                    </li>
+                                                    <li>
+                                                        <a title="<s:text name="page.options.copy" />"
+                                                           href="<s:url action="copy"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                            <span><s:text name="title.clonePage" /></span></a>
+                                                    </li>
+                                                    <s:if test="%{#pageVar.online}">
+                                                        <li>
+                                                            <a title="<s:text name="page.options.offline" />"
+                                                               href="<s:url action="checkSetOffline"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                                <span><s:text name="page.options.offline" /></span></a>
+                                                        </li>
+                                                    </s:if>
+                                                    <s:else>
+                                                        <li>
+                                                            <a title="<s:text name="page.options.delete" />"
+                                                               href="<s:url action="trash"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                                <span><s:text name="label.delete" /></span></a>
+                                                        </li>
+                                                    </s:else>
+                                                    <s:if test="%{!#pageVar.online || #pageVar.changed}">
+                                                        <li>
+                                                            <a title="<s:text name="page.options.online" />"
+                                                               href="<s:url action="checkSetOnline"><s:param name="selectedNode" value="%{#pageVar.code}" /></s:url>">
+                                                                <span><s:text name="page.options.online" /></span></a>
+                                                        </li>
+                                                    </s:if>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </s:iterator>
                             </tbody>
                         </table>
                     </div>
-                    <p class="sr-only"><wpsf:hidden name="copyingPageCode" /></p>
-
-                </s:form>
-
+                    <div class="content-view-pf-pagination clearfix">
+                        <div class="form-group">
+                            <span><s:include
+                                    value="/WEB-INF/apsadmin/jsp/common/inc/pagerInfo.jsp" /></span>
+                            <div class="mt-5">
+                                <s:include
+                                    value="/WEB-INF/apsadmin/jsp/common/inc/pager_formTable.jsp" />
+                            </div>
+                        </div>
+                    </div>
+                </wpsa:subset>
             </s:if>
             <s:else>
                 <div class="alert alert-danger alert-dismissable">
@@ -118,39 +176,6 @@
                     <strong><s:text name="noPages.found" /></strong>
                 </div>
             </s:else>
-
         </s:form>
     </div>
-
 </div>
-
-<script>
-    $(document).ready(function () {
-        $("#expandAll").click(function () {
-            $("#pageTree .childrenNodes").removeClass("hidden");
-            $("#pageTree .childrenNodes").removeClass("collapsed");
-            $('#pageTree .icon.fa-angle-right').removeClass('fa-angle-right').addClass('fa-angle-down');
-        });
-        $("#collapseAll").click(function () {
-            $(".childrenNodes").addClass("hidden");
-            $(".childrenNodes").addClass("collapsed");
-            $('#pageTree .icon.fa-angle-down').removeClass('fa-angle-down').addClass('fa-angle-right');
-
-        });
-
-        $(".treeRow ").on("click", function (event) {
-            $(".treeRow").removeClass("active");
-            $(".moveButtons").addClass("hidden");
-            $(this).find('.subTreeToggler').prop("checked", true);
-            $(this).addClass("active");
-            $(this).find(".moveButtons").removeClass("hidden");
-        });
-
-        function buildTree() {
-            var treeStyle = '<wp:info key="systemParam" paramName="treeStyle_page" />';
-            var isTreeOnRequest = (treeStyle === 'request') ? true : false;
-            $('.table-treegrid').treegrid(null, isTreeOnRequest);
-        }
-        buildTree();
-    });
-</script>

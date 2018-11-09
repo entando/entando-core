@@ -9,7 +9,7 @@
 <s:else>
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if> <s:if test="%{#currentRoot.code == #selectedTreeNode}">active</s:if>">
         <td class="treegrid-node pointer">
         <s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
         <s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />

@@ -160,7 +160,7 @@
                         </div>
                     </s:iterator>
                 </s:if>
-                
+
                 <span id="categoryList">
 
                     <p class="sr-only">
@@ -274,8 +274,14 @@
 
                 <div class="col-sm-4">
                     <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                    <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                             class="btn btn-default" key="label.button-choose-file"/>
+                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                                 class="btn btn-default" key="label.button-choose-file"/>
+                    </s:if>
+                    <s:else>
+                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                                 class="btn btn-default" key="label.button-choose-files"/>
+                    </s:else>
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>
@@ -757,7 +763,12 @@
 
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
-                    <s:text name="label.button-choose-file"/>
+                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
+                        <s:text name="label.button-choose-file"/>
+                    </s:if>
+                    <s:else>
+                        <s:text name="label.button-choose-files"/>
+                    </s:else>
                 </label>
 
                 <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">

@@ -11,7 +11,7 @@
     "attributes": [
         {
             "code": "Title",
-            "value": "Mio titolo"
+            "value": "My title"
         }, {
             "code": "Subtitle",
             "values": {
@@ -61,7 +61,7 @@
             ]
         }, {
             "code": "multilist",
-            "listElements": {
+            "listelements": {
                 "it": [
                     {
                         "code": "multilist",

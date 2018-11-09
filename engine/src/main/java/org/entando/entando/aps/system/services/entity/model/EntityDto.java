@@ -73,7 +73,7 @@ public class EntityDto implements Serializable {
         prototype.setDescription(this.getDescription());
         prototype.setMainGroup(this.getMainGroup());
         if (null != this.getGroups()) {
-            this.getGroups().stream().forEach(i -> prototype.addGroup(typeCode));
+            this.getGroups().stream().forEach(groupCode -> prototype.addGroup(groupCode));
         }
         if (null != this.getCategories()) {
             this.getCategories().stream().forEach(i -> {

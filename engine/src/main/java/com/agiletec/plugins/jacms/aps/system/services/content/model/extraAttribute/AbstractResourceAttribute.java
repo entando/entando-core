@@ -277,14 +277,16 @@ public abstract class AbstractResourceAttribute extends TextAttribute
         }
         Element metadatasElement = new Element("metadatas");
         this.getMetadatas().keySet().stream().forEach(key -> {
-            Map<String, String> map = this.getMetadatas().get(key);
-            map.keySet().stream().forEach(langCode -> {
-                Element metadataElement = new Element("metadata");
-                metadataElement.setAttribute("key", key);
-                metadataElement.setAttribute("lang", langCode);
-                metadataElement.setText(map.get(langCode).trim());
-                metadatasElement.addContent(metadataElement);
-            });
+            if (null != key) {
+                Map<String, String> map = this.getMetadatas().get(key);
+                map.keySet().stream().forEach(langCode -> {
+                    Element metadataElement = new Element("metadata");
+                    metadataElement.setAttribute("key", key);
+                    metadataElement.setAttribute("lang", langCode);
+                    metadataElement.setText(map.get(langCode).trim());
+                    metadatasElement.addContent(metadataElement);
+                });
+            }
         });
         attributeElement.addContent(metadatasElement);
     }

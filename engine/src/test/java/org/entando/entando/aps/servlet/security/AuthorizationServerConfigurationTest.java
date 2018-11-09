@@ -145,17 +145,16 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         Assert.assertEquals(0, oauthTokens.size());
     }
 
-    /*
     @Test
-    public void badRequests() throws Exception {
-        //this.authenticationFailed("admin", "adminxx");
-        //this.authenticationFailed("admin", "");
-        this.badRequests("", "admin", "test_consumer", "secret");
-        //this.authenticationFailed("mainEditor", "mainEditorxx");
-        //this.authenticationFailed("supervisorCustomers", "supervisorCustomersxx");
+    public void unauthorized() throws Exception {
+        this.unauthorized("admin", "admin", "test_consumer", "secretwrong");
+        this.unauthorized("admin", "admin", "", "secret");
+        this.unauthorized("admin", "admin", "test_consumer", "");
+        this.unauthorized("admin", "admin", null, "secret");
+        this.unauthorized("admin", "admin", "test_consumer", null);
     }
 
-    private void badRequests(String username, String password, String clientId, String secret) throws Exception {
+    private void unauthorized(String username, String password, String clientId, String secret) throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "password");
         params.add("username", username);
@@ -166,21 +165,15 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isUnauthorized());
         String resultString = result.andReturn().getResponse().getContentAsString();
-        System.out.println("------------------------------");
-        System.out.println(resultString);
-        System.out.println("------------------------------");
-        result.andExpect(jsonPath("$.error", is("bad_request")));
-        result.andExpect(jsonPath("$.error_description", anything()));
-        Assert.assertTrue(StringUtils.isNotBlank(resultString));
+        Assert.assertTrue(StringUtils.isBlank(resultString));
         if (!StringUtils.isEmpty(username)) {
             Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);
             Assert.assertEquals(0, oauthTokens.size());
         }
     }
-     */
+
     private void removeTokens(String... usernames) {
         for (String username : usernames) {
             Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);

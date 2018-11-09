@@ -36,6 +36,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
+import org.springframework.validation.MapBindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -48,6 +50,7 @@ import java.util.Map;
  *
  * @author paddeo
  */
+@Validated
 @RestController
 @RequestMapping(value = "/users")
 @SessionAttributes("user")
@@ -150,10 +153,23 @@ public class UserController {
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteUser(@PathVariable String username) throws ApsSystemException {
         logger.debug("deleting {}", username);
+
+        if (!userValidator.isValidDeleteUser(username)) {
+            throw new ValidationGenericException(createDeleteAdminError(username));
+        }
+
         this.getUserService().removeUser(username);
         Map<String, String> result = new HashMap<>();
         result.put("code", username);
         return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+    }
+
+    private BindingResult createDeleteAdminError(@PathVariable String username) {
+        Map<String, String> map = new HashMap<>();
+        map.put("username", username);
+        BindingResult bindingResult = new MapBindingResult(map, "username");
+        bindingResult.reject(UserValidator.ERRCODE_DELETE_ADMIN, new String[]{}, "user.admin.cant.delete");
+        return bindingResult;
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)

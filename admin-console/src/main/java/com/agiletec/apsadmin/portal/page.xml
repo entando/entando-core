@@ -514,18 +514,11 @@
             </interceptor-ref>
         </action>
 
-        <action name="search" class="pageFinderAction">
+        <action name="search" class="pageFinderAction" method="search">
+            <result name="pageTree" type="redirectAction">viewTree</result>
             <result name="input" type="tiles">admin.Page.searchResult</result>
             <result type="tiles">admin.Page.searchResult</result>
             <interceptor-ref name="entandoValidationStack">
-                <param name="requestAuth.requiredPermission">managePages</param>
-            </interceptor-ref>
-        </action>
-
-        <action name="openCloseTreeResultNode" class="pageFinderAction" method="buildTree">
-            <result name="input" type="tiles">admin.Page.searchResult</result>
-            <result type="tiles">admin.Page.searchResult</result>
-            <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">managePages</param>
             </interceptor-ref>
         </action>

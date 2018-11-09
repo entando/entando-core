@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -127,7 +128,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
             Assert.assertTrue(booleanValue);
             Boolean threeState = (Boolean) profile.getAttribute("ThreeState").getValue();
             Assert.assertNull(threeState);
-            
+
             ResultActions result3 = this.executeProfilePut("5_PUT_valid.json", "invalid", accessToken, status().isConflict());
             result3.andExpect(jsonPath("$.payload.size()", is(0)));
             result3.andExpect(jsonPath("$.errors.size()", is(1)));
@@ -138,6 +139,12 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
             result4.andExpect(jsonPath("$.payload.id", is("new_user")));
             result4.andExpect(jsonPath("$.errors.size()", is(0)));
             result4.andExpect(jsonPath("$.metaData.size()", is(0)));
+            result4.andExpect(jsonPath("$.payload.attributes[0].code", is("Title")));
+            result4.andExpect(jsonPath("$.payload.attributes[0].value", is("My title")));
+            result4.andExpect(jsonPath("$.payload.attributes[0].values", Matchers.anything()));
+            result4.andExpect(jsonPath("$.payload.attributes[0].elements.size()", is(0)));
+            result4.andExpect(jsonPath("$.payload.attributes[0].compositeelements.size()", is(0)));
+            result4.andExpect(jsonPath("$.payload.attributes[0].listelements", Matchers.anything()));
             profile = this.userProfileManager.getProfile("new_user");
             date = (Date) profile.getAttribute("Date").getValue();
             Assert.assertEquals("2018-03-21", DateConverter.getFormattedDate(date, "yyyy-MM-dd"));

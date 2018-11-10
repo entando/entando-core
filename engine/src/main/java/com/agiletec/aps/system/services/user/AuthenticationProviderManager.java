@@ -95,8 +95,9 @@ public class AuthenticationProviderManager extends AbstractService
                 user.setAccessToken(token.getValue());
                 user.setRefreshToken(token.getRefreshToken().getValue());
             }
-        } catch (Throwable t) {
-            throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
+        } catch (Exception e) {
+            logger.error("Error detected during the authentication of the user '{}'", username, e);
+            throw new ApsSystemException("Error detected during the authentication of the user " + username, e);
         }
         return user;
     }

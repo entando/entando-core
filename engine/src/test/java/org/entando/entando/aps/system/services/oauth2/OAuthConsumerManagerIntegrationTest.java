@@ -21,6 +21,8 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.util.DateConverter;
 import java.util.Date;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
 
 /**
  * @author E.Santoboni
@@ -48,7 +50,7 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
     }
 
     public void testAddConsumer() throws Exception {
-        ConsumerRecordVO consumer = this.createConsumer("key", "secret");
+        ConsumerRecordVO consumer = this.createConsumer("key", "secret", false);
         try {
             assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
             oauthConsumerManager.addConsumer(consumer);
@@ -73,7 +75,7 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
     }
 
     public void testUpdateRemoveCategory() throws Throwable {
-        ConsumerRecordVO consumer = this.createConsumer("key_2", "secret_2");
+        ConsumerRecordVO consumer = this.createConsumer("key_2", "secret_2", false);
         try {
             assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
             oauthConsumerManager.addConsumer(consumer);
@@ -108,13 +110,54 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
         assertEquals(1, keys.size());
         assertEquals("test1_consumer", keys.get(0));
     }
+    
+    public void testLoadClientByClientId_1() {
+        ClientDetails client = this.oauthConsumerManager.loadClientByClientId("test1_consumer");
+        assertNotNull(client);
+        assertEquals(3, client.getScope().size());
+        assertEquals(4, client.getAuthorizedGrantTypes().size());
+    }
+    
+    public void testLoadClientByClientId_2() throws Throwable {
+        ConsumerRecordVO consumer = this.createConsumer("key_3", "secret_3", true);
+        try {
+            assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
+            oauthConsumerManager.addConsumer(consumer);
+            ConsumerRecordVO extractedConsumer = oauthConsumerManager.getConsumerRecord(consumer.getKey());
+            assertNotNull(extractedConsumer);
+            this.oauthConsumerManager.loadClientByClientId("key_3");
+            fail();
+        } catch (ClientRegistrationException t) {
+            assertEquals("Client 'key_3' is expired", t.getMessage());
+        } catch (Throwable t) {
+            throw t;
+        } finally {
+            oauthConsumerManager.deleteConsumer(consumer.getKey());
+            assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
+        }
+    }
+    
+    public void testLoadClientByClientId_3() {
+        try {
+            this.oauthConsumerManager.loadClientByClientId("invalid");
+            fail();
+        } catch (ClientRegistrationException t) {
+            assertEquals("Client with id 'invalid' does not exists", t.getMessage());
+        } catch (Throwable t) {
+            throw t;
+        }
+    }
 
-    private ConsumerRecordVO createConsumer(String key, String secret) {
+    private ConsumerRecordVO createConsumer(String key, String secret, boolean expired) {
         ConsumerRecordVO consumer = new ConsumerRecordVO();
         consumer.setAuthorizedGrantTypes("password");
         consumer.setCallbackUrl("http://test.test");
         consumer.setDescription("Test Description");
-        consumer.setExpirationDate(DateConverter.parseDate("2099", "yyyy"));
+        if (expired) {
+            consumer.setExpirationDate(DateConverter.parseDate("2000", "yyyy"));
+        } else {
+            consumer.setExpirationDate(DateConverter.parseDate("2099", "yyyy"));
+        }
         consumer.setKey(key);
         consumer.setName("Test Name");
         consumer.setScope("trust");

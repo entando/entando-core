@@ -70,6 +70,8 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
                 uris.add(consumer.getCallbackUrl());
                 details.setRegisteredRedirectUri(uris);
             }
+        } catch (ClientRegistrationException t) {
+            throw t;
         } catch (Exception t) {
             logger.error("Error extracting consumer record by key {}", clientId, t);
             throw new ClientRegistrationException("Error extracting consumer record by key " + clientId, t);

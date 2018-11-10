@@ -15,7 +15,6 @@ package com.agiletec.aps.system.services.user;
 
 import java.util.List;
 
-import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
- * sistema. L'Authentication Provider Ã¨ l'oggetto delegato alla restituzione di
+ * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
  * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
  * richiesta di autenticazione utente; questo oggetto non ha visibilitÃ  ai
  * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
@@ -98,8 +97,9 @@ public class AuthenticationProviderManager extends AbstractService
                 user.setAccessToken(token.getValue());
                 user.setRefreshToken(token.getRefreshToken().getValue());
             }
-        } catch (Throwable t) {
-            throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
+        } catch (Exception e) {
+            logger.error("Error detected during the authentication of the user '{}'", username, e);
+            throw new ApsSystemException("Error detected during the authentication of the user " + username, e);
         }
         return user;
     }

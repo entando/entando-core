@@ -23,15 +23,11 @@ import static junit.framework.Assert.assertTrue;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
 /**
  *

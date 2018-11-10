@@ -22,7 +22,7 @@ import com.agiletec.aps.system.SystemConstants;
  * @version 1.0
  * @author M.Casari
  */
-public class TestUserManager extends BaseTestCase {
+public class UserManagerIntegrationTest extends BaseTestCase {
 
     protected void setUp() throws Exception {
         super.setUp();

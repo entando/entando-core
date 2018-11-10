@@ -41,9 +41,10 @@ import com.agiletec.aps.system.services.role.TestPermissionDAO;
 import com.agiletec.aps.system.services.role.TestRoleDAO;
 import com.agiletec.aps.system.services.role.TestRoleManager;
 import com.agiletec.aps.system.services.url.TestURLManager;
-import com.agiletec.aps.system.services.user.TestAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.TestUserDAO;
-import com.agiletec.aps.system.services.user.TestUserManager;
+import com.agiletec.aps.system.services.user.AuthenticationProviderManagerIntegrationTest;
+import com.agiletec.aps.system.services.user.UserDAOIntegrationTest;
+import com.agiletec.aps.system.services.user.UserManagerIntegrationTest;
+import com.agiletec.aps.system.services.user.UserManagerTest;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
@@ -152,9 +153,10 @@ public class AllTests {
         //
         suite.addTestSuite(TestURLManager.class);
         //
-        suite.addTestSuite(TestAuthenticationProviderManager.class);
-        suite.addTestSuite(TestUserDAO.class);
-        suite.addTestSuite(TestUserManager.class);
+        suite.addTestSuite(AuthenticationProviderManagerIntegrationTest.class);
+        suite.addTestSuite(UserDAOIntegrationTest.class);
+        suite.addTestSuite(UserManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(UserManagerTest.class));
         //
         suite.addTestSuite(TestApplicationContext.class);
         //

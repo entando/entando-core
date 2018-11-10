@@ -28,15 +28,12 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
 
-<%-- TODO: gestire visibilità nodo padre se nodo figlio è attivo 
-    && !#selectedTreeNode.isChildOf(#currentRoot.code)
---%>
-<s:set var="isHidden" value="%{#selectedTreeNode == null || (#selectedTreeNode != #currentRoot.code)}" ></s:set>
+<%-- treeNodesToOpen variable is used also for classic node mode (see treeClassicNodesState.jsp) --%>
+<s:set var="isHidden" value="%{!#currentRoot.isRoot() && (treeNodesToOpen == null || !treeNodesToOpen.contains(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
-<s:set var="nodeType" value="%{(#currentRoot.code != 'home')?'collapsed childrenNodes ':''}"/>
 
 <tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}" 
-    class="treeRow tree_node_flag ${nodeType} ${liClassName}" >
+    class="treeRow <s:if test="%{#isHidden}">collapsed childrenNodes</s:if> tree_node_flag ${liClassName}" >
         <td class="treegrid-node pointer">
             <input type="radio" name="${inputFieldName}"  
                 id="fagianonode_${currentRoot.code}" 

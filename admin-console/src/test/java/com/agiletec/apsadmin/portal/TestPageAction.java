@@ -39,6 +39,7 @@ import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @author E.Santoboni
@@ -758,6 +759,28 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         } finally {
             this._pageManager.deletePage(pageCode);
         }
+    }
+
+    public void testJoinRemoveExtraGroup() throws Throwable {
+        this.setUserOnSession("admin");
+
+        // Add 2 groups
+        String[] groupsToAdd = new String[]{"group1", "group2"};
+        this.initAction("/do/Page", "joinExtraGroup");
+        this.addParameter("extraGroupNameToAdd", groupsToAdd);
+        assertEquals(Action.SUCCESS, this.executeAction());
+        Set<String> extraGroups = ((PageAction) this.getAction()).getExtraGroups();
+        assertEquals(2, extraGroups.size());
+        assertTrue(extraGroups.containsAll(Arrays.asList(groupsToAdd)));
+
+        // Remove 1 group
+        this.initAction("/do/Page", "removeExtraGroup");
+        this.addParameter("extraGroups", groupsToAdd);
+        this.addParameter("extraGroupNameToRemove", "group1");
+        assertEquals(Action.SUCCESS, this.executeAction());
+        extraGroups = ((PageAction) this.getAction()).getExtraGroups();
+        assertEquals(1, extraGroups.size());
+        assertTrue(extraGroups.contains("group2"));
     }
 
     private void addPage(String pageCode) throws ApsSystemException {

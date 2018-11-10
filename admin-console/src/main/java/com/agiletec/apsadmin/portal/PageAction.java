@@ -208,7 +208,12 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     public String joinExtraGroup() {
         try {
             this.updateTitles();
-            this.getExtraGroups().add(super.getParameter("extraGroupNameToAdd"));
+            String[] groupNameList = super.getParameters().get("extraGroupNameToAdd");
+            if (groupNameList != null) {
+                for (String groupName : groupNameList) {
+                    this.getExtraGroups().add(groupName);
+                }
+            }
         } catch (Throwable t) {
             _logger.error("error in joinExtraGroup", t);
             return FAILURE;

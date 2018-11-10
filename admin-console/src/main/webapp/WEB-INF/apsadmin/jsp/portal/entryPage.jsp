@@ -237,8 +237,12 @@
             </label>
             <div class="col-sm-10">
                 <div class="input-group">
-                    <wpsf:select name="extraGroupNameToAdd" id="extraGroups" list="groups" listKey="name" listValue="descr" headerKey="" headerValue="%{getText('note.choose')}" cssClass="combobox form-control" />
-                    <span class="input-group-btn">
+                    <wpsf:select
+                        name="extraGroupNameToAdd" id="extraGroups" list="groups"
+                        listKey="name" listValue="descr" headerKey=""
+                        cssClass="combobox form-control" multiple="true" size="4"
+                        />
+                    <span class="input-group-btn" style="vertical-align: top">
                         <wpsf:submit type="button" action="joinExtraGroup" cssClass="btn btn-primary">
                             <span class="icon fa fa-plus"></span>&#32;
                             <s:property value="label.join" />
@@ -253,8 +257,8 @@
                         </wpsa:actionParam>
                         <div class="label label-default label-tag label-sm">
                             <s:property value="%{getSystemGroups()[#groupNameVar].getDescr()}"/>&#32;
-                            <wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-tag">
-                                <span class="icon fa fa-times"></span>
+                            <wpsf:submit type="button" action="%{#actionName}" value="%{getText('label.remove')}" title="%{getText('label.remove')}" cssClass="btn btn-link">
+                                <span class="pficon pficon-close white"></span>
                                 <span class="sr-only">x</span>
                             </wpsf:submit>
                         </div>
@@ -385,3 +389,10 @@
     </div>
 </s:form>
 </div>
+<script>
+    $('#extraGroups option').mousedown(function (e) {
+        e.preventDefault();
+        $(this).prop('selected', !$(this).prop('selected'));
+        return false;
+    });
+</script>

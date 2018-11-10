@@ -42,6 +42,7 @@ import com.agiletec.aps.system.services.role.TestRoleDAO;
 import com.agiletec.aps.system.services.role.TestRoleManager;
 import com.agiletec.aps.system.services.url.TestURLManager;
 import com.agiletec.aps.system.services.user.AuthenticationProviderManagerIntegrationTest;
+import com.agiletec.aps.system.services.user.AuthenticationProviderManagerTest;
 import com.agiletec.aps.system.services.user.UserDAOIntegrationTest;
 import com.agiletec.aps.system.services.user.UserManagerIntegrationTest;
 import com.agiletec.aps.system.services.user.UserManagerTest;
@@ -97,7 +98,7 @@ public class AllTests {
 
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
-
+        
         suite.addTest(new JUnit4TestAdapter(CaseInsensitiveBeanComparatorTest.class));
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
@@ -153,6 +154,7 @@ public class AllTests {
         suite.addTestSuite(TestURLManager.class);
         //
         suite.addTestSuite(AuthenticationProviderManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(AuthenticationProviderManagerTest.class));
         suite.addTestSuite(UserDAOIntegrationTest.class);
         suite.addTestSuite(UserManagerIntegrationTest.class);
         suite.addTest(new JUnit4TestAdapter(UserManagerTest.class));
@@ -204,7 +206,7 @@ public class AllTests {
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
         suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
-
+        
         return suite;
     }
 

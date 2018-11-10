@@ -55,11 +55,11 @@ public class TestConsumerAction extends ApsAdminBaseTestCase {
         ConsumerAction action = (ConsumerAction) this.getAction();
         assertEquals(1, action.getActionErrors().size());
 
-        result = this.executeEdit("admin", "test_consumer");
+        result = this.executeEdit("admin", "test1_consumer");
         assertEquals(Action.SUCCESS, result);
         action = (ConsumerAction) this.getAction();
-        assertEquals("test_consumer", action.getConsumerKey());
-        assertEquals("Test Consumer", action.getName());
+        assertEquals("test1_consumer", action.getConsumerKey());
+        assertEquals("Test 1 Consumer", action.getName());
     }
 
     public void testSaveNew_1() throws Throwable {
@@ -83,7 +83,7 @@ public class TestConsumerAction extends ApsAdminBaseTestCase {
     }
 
     public void testSaveNew_2() throws Throwable {
-        String key_existing = "test_consumer";
+        String key_existing = "test1_consumer";
         String key_invalid = "key_&_test";
         String key_long = StringUtils.repeat("test", 50);
         String key_short = "sh";

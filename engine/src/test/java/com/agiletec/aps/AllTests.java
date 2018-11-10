@@ -84,6 +84,7 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelMa
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
+import org.entando.entando.aps.system.services.oauth2.OAuthConsumerManagerIntegrationTest;
 import org.entando.entando.aps.system.services.storage.LocalStorageManagerIntegrationTest;
 import org.entando.entando.aps.system.services.storage.StorageManagerUtilTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerAspectTest;
@@ -205,7 +206,9 @@ public class AllTests {
         suite.addTestSuite(TestDataObjectDispenser.class);
 
         suite.addTestSuite(TestSearchEngineManager.class);
-
+        
+        suite.addTestSuite(OAuthConsumerManagerIntegrationTest.class);
+        
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
         suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));

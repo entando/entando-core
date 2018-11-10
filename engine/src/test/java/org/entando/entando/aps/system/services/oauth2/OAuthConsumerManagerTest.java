@@ -59,9 +59,13 @@ public class OAuthConsumerManagerTest {
     @Test(expected = ApsSystemException.class)
     public void getConsumer_2() throws Exception {
         Mockito.doThrow(RuntimeException.class).when(this.consumerDAO).getConsumer(Mockito.anyString());
-        ConsumerRecordVO extracted = this.consumerManager.getConsumerRecord("key");
-        Assert.assertNull(extracted);
-        Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        try {
+            ConsumerRecordVO extracted = this.consumerManager.getConsumerRecord("key");
+        } catch (ApsSystemException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        }
     }
     
     @Test
@@ -75,8 +79,13 @@ public class OAuthConsumerManagerTest {
     public void addConsumer_2() throws Exception {
         ConsumerRecordVO record = this.createMockConsumer("key_2", "secret", false);
         Mockito.doThrow(RuntimeException.class).when(this.consumerDAO).addConsumer(record);
-        this.consumerManager.addConsumer(record);
-        Mockito.verify(consumerDAO, Mockito.times(1)).addConsumer(Mockito.any(ConsumerRecordVO.class));
+        try {
+            this.consumerManager.addConsumer(record);
+        } catch (ApsSystemException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).addConsumer(Mockito.any(ConsumerRecordVO.class));
+        }
     }
 
     @Test
@@ -90,8 +99,13 @@ public class OAuthConsumerManagerTest {
     public void updateConsumer_2() throws Exception {
         ConsumerRecordVO record = this.createMockConsumer("key_2", "secret", false);
         Mockito.doThrow(RuntimeException.class).when(this.consumerDAO).updateConsumer(record);
-        this.consumerManager.updateConsumer(record);
-        Mockito.verify(consumerDAO, Mockito.times(1)).updateConsumer(Mockito.any(ConsumerRecordVO.class));
+        try {
+            this.consumerManager.updateConsumer(record);
+        } catch (ApsSystemException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).updateConsumer(Mockito.any(ConsumerRecordVO.class));
+        }
     }
 
     @Test
@@ -103,8 +117,13 @@ public class OAuthConsumerManagerTest {
     @Test(expected = ApsSystemException.class)
     public void deleteConsumer_2() throws Exception {
         Mockito.doThrow(RuntimeException.class).when(this.consumerDAO).deleteConsumer(Mockito.anyString());
-        this.consumerManager.deleteConsumer("key_test_2");
-        Mockito.verify(consumerDAO, Mockito.times(1)).deleteConsumer(Mockito.anyString());
+        try {
+            this.consumerManager.deleteConsumer("key_test_2");
+        } catch (ApsSystemException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).deleteConsumer(Mockito.anyString());
+        }
     }
     
     @Test
@@ -121,9 +140,13 @@ public class OAuthConsumerManagerTest {
     @Test(expected = ApsSystemException.class)
     public void getConsumerKeys_2() throws Exception {
         Mockito.doThrow(RuntimeException.class).when(this.consumerDAO).getConsumerKeys(Mockito.any(FieldSearchFilter[].class));
-        List<String> keys = this.consumerManager.getConsumerKeys(new FieldSearchFilter[]{});
-        Assert.assertNull(keys);
-        Mockito.verify(consumerDAO, Mockito.times(1)).getConsumerKeys(Mockito.any(FieldSearchFilter[].class));
+        try {
+            List<String> keys = this.consumerManager.getConsumerKeys(new FieldSearchFilter[]{});
+        } catch (ApsSystemException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).getConsumerKeys(Mockito.any(FieldSearchFilter[].class));
+        }
     }
     
     @Test
@@ -139,25 +162,37 @@ public class OAuthConsumerManagerTest {
     public void loadClient_2() throws Exception {
         ConsumerRecordVO record = this.createMockConsumer("key_1", "secret", true);
         when(this.consumerDAO.getConsumer(Mockito.anyString())).thenReturn(record);
-        ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
-        Assert.assertNull(extracted);
-        Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        try {
+            ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
+        } catch (ClientRegistrationException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        }
     }
     
     @Test(expected = ClientRegistrationException.class)
     public void loadClient_3() throws Exception {
         when(this.consumerDAO.getConsumer(Mockito.anyString())).thenReturn(null);
-        ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
-        Assert.assertNull(extracted);
-        Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        try {
+            ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
+        } catch (ClientRegistrationException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        }
     }
     
     @Test(expected = ClientRegistrationException.class)
     public void loadClient_4() throws Exception {
         when(this.consumerDAO.getConsumer(Mockito.anyString())).thenThrow(RuntimeException.class);
-        ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
-        Assert.assertNull(extracted);
-        Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        try {
+            ClientDetails extracted = this.consumerManager.loadClientByClientId("key_1");
+        } catch (ClientRegistrationException e) {
+            throw e;
+        } finally {
+            Mockito.verify(consumerDAO, Mockito.times(1)).getConsumer(Mockito.anyString());
+        }
     }
 
     private ConsumerRecordVO createMockConsumer(String key, String secret, boolean expired) {

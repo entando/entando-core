@@ -281,14 +281,15 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             query.append("* ");
         } else {
             query.append(this.getMasterTableIdFieldName());
+            /*
             if (filters != null) {
-
                 for (FieldSearchFilter filter : filters) {
                     if (filter.isLikeOption()) {
                         query.append(", ").append(masterTableName).append(".").append(this.getTableFieldName(filter.getKey()));
                     }
                 }
             }
+            */
         }
         query.append(" FROM ").append(masterTableName).append(" ");
         return query;

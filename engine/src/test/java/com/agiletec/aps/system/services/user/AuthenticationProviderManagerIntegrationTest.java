@@ -33,6 +33,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author E.Santoboni
@@ -213,7 +214,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
         }
     }
     
-    public void testAuthentication_1() throws Exception {
+    public void testAuthentication() throws Exception {
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "admin");
         try {
             Authentication auth = ((AuthenticationManager) this.authenticationProvider).authenticate(authTest);
@@ -225,7 +226,25 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             throw e;
         }
     }
-
+    
+    public void testFailedAuthentication() throws Exception {
+        TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "wrong");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+        authTest = new TestingAuthenticationToken("admin", "");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+        authTest = new TestingAuthenticationToken(null, "");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+    }
+    
+    private void testFailedAuthentication(Authentication auth, Class expectedException) throws Exception {
+        try {
+            ((AuthenticationManager) this.authenticationProvider).authenticate(auth);
+            fail();
+        } catch (Exception e) {
+            assertEquals(expectedException, e.getClass());
+        }
+    }
+    
     /**
      * Toggle the privacy module on or off
      *

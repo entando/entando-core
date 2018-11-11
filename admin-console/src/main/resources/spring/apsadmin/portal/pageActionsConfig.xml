@@ -41,8 +41,6 @@
     
     <bean id="pageFinderAction" scope="prototype"
               class="com.agiletec.apsadmin.portal.PageFinderAction" parent="abstractPortalAction">
-		<property name="pageActionHelper" ref="pageActionHelperDraft"/>
-                <property name="treeHelper" ref="pageActionHelperDraft" />
     </bean>
     
     <bean id="pageAction" scope="prototype" 

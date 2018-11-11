@@ -23,6 +23,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.util.DateConverter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,9 +45,11 @@ public class EntityAttributeDto {
 
     private List<EntityAttributeDto> elements = new ArrayList<>();
 
-    private List<EntityAttributeDto> compositeelements = new ArrayList<>();
+    @JsonProperty("compositeelements")
+    private List<EntityAttributeDto> compositeElements = new ArrayList<>();
 
-    private Map<String, List<EntityAttributeDto>> listelements = new HashMap<>();
+    @JsonProperty("listelements")
+    private Map<String, List<EntityAttributeDto>> listElements = new HashMap<>();
 
     public EntityAttributeDto() {
     }
@@ -80,14 +83,14 @@ public class EntityAttributeDto {
             list.stream().forEach(element -> this.getElements().add(new EntityAttributeDto(element)));
         } else if (src instanceof CompositeAttribute) {
             Map<String, AttributeInterface> map = ((CompositeAttribute) src).getAttributeMap();
-            map.keySet().stream().forEach(key -> this.getCompositeelements().add(new EntityAttributeDto(map.get(key))));
+            map.keySet().stream().forEach(key -> this.getCompositeElements().add(new EntityAttributeDto(map.get(key))));
         } else if (src instanceof ListAttribute) {
             Map<String, List<AttributeInterface>> map = ((ListAttribute) src).getAttributeListMap();
             map.keySet().stream().forEach(key -> {
                 List<EntityAttributeDto> dtos = new ArrayList<>();
                 List<AttributeInterface> list = map.get(key);
                 list.stream().forEach(element -> dtos.add(new EntityAttributeDto(element)));
-                this.getListelements().put(key, dtos);
+                this.getListElements().put(key, dtos);
             });
         }
     }
@@ -119,8 +122,8 @@ public class EntityAttributeDto {
             ((DateAttribute) attribute).setDate(date);
             ((DateAttribute) attribute).setFailedDateString(dateValue);
         }
-        if (attribute instanceof CompositeAttribute && (null != this.getCompositeelements())) {
-            this.getCompositeelements().stream().forEach(i -> {
+        if (attribute instanceof CompositeAttribute && (null != this.getCompositeElements())) {
+            this.getCompositeElements().stream().forEach(i -> {
                 AttributeInterface compositeElement = ((CompositeAttribute) attribute).getAttribute(i.getCode());
                 i.fillEntityAttribute(compositeElement, bindingResult);
             });
@@ -130,9 +133,9 @@ public class EntityAttributeDto {
                 prototype.setName(((MonoListAttribute) attribute).getName());
                 i.fillEntityAttribute(prototype, bindingResult);
             });
-        } else if (attribute instanceof ListAttribute && (null != this.getListelements())) {
-            this.getListelements().keySet().stream().forEach(langCode -> {
-                List<EntityAttributeDto> list = this.getListelements().get(langCode);
+        } else if (attribute instanceof ListAttribute && (null != this.getListElements())) {
+            this.getListElements().keySet().stream().forEach(langCode -> {
+                List<EntityAttributeDto> list = this.getListElements().get(langCode);
                 list.stream().forEach(i -> {
                     AttributeInterface prototype = ((ListAttribute) attribute).addAttribute(langCode);
                     prototype.setName(((ListAttribute) attribute).getName());
@@ -174,19 +177,20 @@ public class EntityAttributeDto {
         this.elements = elements;
     }
 
-    public List<EntityAttributeDto> getCompositeelements() {
-        return compositeelements;
+    public List<EntityAttributeDto> getCompositeElements() {
+        return compositeElements;
     }
 
-    public void setCompositeelements(List<EntityAttributeDto> compositeelements) {
-        this.compositeelements = compositeelements;
+    public void setCompositeElements(List<EntityAttributeDto> compositeElements) {
+        this.compositeElements = compositeElements;
     }
 
-    public Map<String, List<EntityAttributeDto>> getListelements() {
-        return listelements;
+    public Map<String, List<EntityAttributeDto>> getListElements() {
+        return listElements;
     }
 
-    public void setListelements(Map<String, List<EntityAttributeDto>> listelements) {
-        this.listelements = listelements;
+    public void setListElements(Map<String, List<EntityAttributeDto>> listElements) {
+        this.listElements = listElements;
     }
+    
 }

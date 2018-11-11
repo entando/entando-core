@@ -15,7 +15,6 @@ package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.exception.ApsSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +160,11 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
                 stat.setString(5, ((OAuth2AccessTokenImpl) accessToken).getGrantType());
                 stat.setString(6, ((OAuth2AccessTokenImpl) accessToken).getLocalUser());
             } else {
-                stat.setString(5, authentication.getOAuth2Request().getGrantType());
+                if (null != authentication.getOAuth2Request()) {
+                    stat.setString(5, authentication.getOAuth2Request().getGrantType());
+                } else {
+                    stat.setNull(5, Types.VARCHAR);
+                }
                 stat.setNull(6, Types.VARCHAR);
             }
             stat.executeUpdate();
@@ -197,7 +200,7 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    public void deleteExpiredToken() throws ApsSystemException {
+    public void deleteExpiredToken() {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -207,10 +210,10 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             stat.executeUpdate();
             conn.commit();
-        } catch (SQLException t) {
+        } catch (Exception t) {
             this.executeRollback(conn);
             logger.error(ERROR_REMOVE_ACCESS_TOKEN, t);
-            throw new ApsSystemException(ERROR_REMOVE_ACCESS_TOKEN, t);
+            throw new RuntimeException(ERROR_REMOVE_ACCESS_TOKEN, t);
         } finally {
             closeDaoResources(null, stat, conn);
         }

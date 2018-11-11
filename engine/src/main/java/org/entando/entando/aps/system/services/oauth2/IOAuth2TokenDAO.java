@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.List;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -32,6 +31,6 @@ public interface IOAuth2TokenDAO {
 
     public void deleteAccessToken(final String accessToken);
 
-    public void deleteExpiredToken() throws ApsSystemException;
+    public void deleteExpiredToken();
 
 }

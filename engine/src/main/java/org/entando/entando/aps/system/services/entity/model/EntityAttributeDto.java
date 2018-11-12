@@ -23,7 +23,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
 import com.agiletec.aps.util.DateConverter;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,16 +39,16 @@ public class EntityAttributeDto {
 
     private String code;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     private Object value;
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private Map<String, Object> values = new HashMap<>();
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private List<EntityAttributeDto> elements = new ArrayList<>();
 
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @JsonProperty("compositeelements")
+    private List<EntityAttributeDto> compositeElements = new ArrayList<>();
+
+    @JsonProperty("listelements")
     private Map<String, List<EntityAttributeDto>> listElements = new HashMap<>();
 
     public EntityAttributeDto() {
@@ -83,7 +83,7 @@ public class EntityAttributeDto {
             list.stream().forEach(element -> this.getElements().add(new EntityAttributeDto(element)));
         } else if (src instanceof CompositeAttribute) {
             Map<String, AttributeInterface> map = ((CompositeAttribute) src).getAttributeMap();
-            map.keySet().stream().forEach(key -> this.getElements().add(new EntityAttributeDto(map.get(key))));
+            map.keySet().stream().forEach(key -> this.getCompositeElements().add(new EntityAttributeDto(map.get(key))));
         } else if (src instanceof ListAttribute) {
             Map<String, List<AttributeInterface>> map = ((ListAttribute) src).getAttributeListMap();
             map.keySet().stream().forEach(key -> {
@@ -122,8 +122,8 @@ public class EntityAttributeDto {
             ((DateAttribute) attribute).setDate(date);
             ((DateAttribute) attribute).setFailedDateString(dateValue);
         }
-        if (attribute instanceof CompositeAttribute && (null != this.getElements())) {
-            this.getElements().stream().forEach(i -> {
+        if (attribute instanceof CompositeAttribute && (null != this.getCompositeElements())) {
+            this.getCompositeElements().stream().forEach(i -> {
                 AttributeInterface compositeElement = ((CompositeAttribute) attribute).getAttribute(i.getCode());
                 i.fillEntityAttribute(compositeElement, bindingResult);
             });
@@ -177,6 +177,14 @@ public class EntityAttributeDto {
         this.elements = elements;
     }
 
+    public List<EntityAttributeDto> getCompositeElements() {
+        return compositeElements;
+    }
+
+    public void setCompositeElements(List<EntityAttributeDto> compositeElements) {
+        this.compositeElements = compositeElements;
+    }
+
     public Map<String, List<EntityAttributeDto>> getListElements() {
         return listElements;
     }
@@ -184,5 +192,5 @@ public class EntityAttributeDto {
     public void setListElements(Map<String, List<EntityAttributeDto>> listElements) {
         this.listElements = listElements;
     }
-
+    
 }

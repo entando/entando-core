@@ -1,29 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-	        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd 
-            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd">
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	            http://www.springframework.org/schema/beans/spring-beans.xsd
+	         http://www.springframework.org/schema/util
+	         http://www.springframework.org/schema/util/spring-util.xsd
+	         http://www.springframework.org/schema/context
+	         http://www.springframework.org/schema/context/spring-context.xsd">
     
-    <!-- spring security --> 
-    
-    <context:annotation-config/>
-    <bean class="org.entando.entando.aps.servlet.security.AuthorizationServerConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.MethodSecurityConfig"/>
-    <bean class="org.entando.entando.aps.servlet.security.OAuth2SecurityConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.ResourceServerConfiguration"/>
-    <bean class="org.entando.entando.aps.servlet.security.SecurityWebApplicationInitializer"/>
-    
-	<security:http auto-config='true' authentication-manager-ref="AuthenticationProviderManager">
-        <security:intercept-url pattern="/api/**" access="ROLE_USER" />
-    </security:http>
-    
-    <!-- ************************ -->
-    
-	<bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
+    <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
         <property name="marshallerProperties">
             <map>
                 <entry>
@@ -46,8 +33,8 @@
     <bean id="jsonProvider" class="org.entando.entando.aps.system.services.api.provider.json.JSONProvider">
         <property name="produceMediaTypes" ref="ApiJsonTypes"/>
         <property name="consumeMediaTypes" ref="ApiJsonTypes"/>
-		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
-		<!-- <property name="serializeAsArray" value="true" /> -->
+        <!-- <property name="dropCollectionWrapperElement" value="true" /> -->
+        <!-- <property name="serializeAsArray" value="true" /> -->
     </bean>
     
     <util:list id="ApiJsonpTypes">
@@ -57,8 +44,8 @@
     <bean id="jsonpProvider" class="org.entando.entando.aps.system.services.api.provider.jsonp.JSONPProvider">
         <property name="produceMediaTypes" ref="ApiJsonpTypes" />
         <!-- <property name="consumeMediaTypes" ref="ApiJsonpTypes"/> -->
-		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
-		<!-- <property name="serializeAsArray" value="true" /> -->
+        <!-- <property name="dropCollectionWrapperElement" value="true" /> -->
+        <!-- <property name="serializeAsArray" value="true" /> -->
     </bean>
 
     <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />

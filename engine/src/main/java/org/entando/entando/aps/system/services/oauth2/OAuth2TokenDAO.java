@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,122 +13,194 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.common.AbstractDAO;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
+import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
+public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenDAO {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2TokenDAO.class);
 
-    private final String ERROR_REMOVE_ACCESS_TOKEN = "Error while remove access token";
+    private static final String ERROR_REMOVE_ACCESS_TOKEN = "Error while remove access token";
 
-    public synchronized void addAccessToken(final OAuth2Token accessToken, boolean isLocalUser) throws ApsSystemException {
+    private static final String INSERT_TOKEN = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype, localuser)  VALUES (? , ? , ? , ? , ?, ?)";
 
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = isLocalUser ? conn.prepareStatement(INSERT_TOKEN_LOCAL_USER) : conn.prepareStatement(INSERT_TOKEN);
-            stat.setString(1, accessToken.getAccessToken());
-            stat.setString(2, accessToken.getClientId());
-            stat.setTimestamp(3, new Timestamp(accessToken.getExpiresIn().getTime()));
-            stat.setString(4, accessToken.getRefreshToken());
-            stat.setString(5, accessToken.getGrantType());
-            if (isLocalUser) {
-                stat.setString(6, accessToken.getLocalUser());
-            }
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-            logger.error("Error while adding an access token", t);
-            throw new ApsSystemException("Error while adding an access token", t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
-    }
+    private static final String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
-    public synchronized void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException {
+    private static final String SELECT_TOKEN = "SELECT * FROM api_oauth_tokens WHERE accesstoken = ? ";
 
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = conn.prepareStatement(UPDATE_TOKEN);
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis() + seconds * 1000);
-            stat.setTimestamp(1, timestamp);
-            stat.setString(2, accessToken);
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-            logger.error("Error while update access token", t);
-            throw new ApsSystemException("Error while update access token", t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
-    }
-
+    private static final String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? ";
 
     @Override
-    public OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException {
+    protected String getTableFieldName(String metadataFieldKey) {
+        return metadataFieldKey;
+    }
+
+    @Override
+    protected String getMasterTableName() {
+        return "api_oauth_tokens";
+    }
+
+    @Override
+    protected String getMasterTableIdFieldName() {
+        return "accesstoken";
+    }
+
+    @Override
+    public List<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String username) {
+        if (StringUtils.isBlank(clientId) && StringUtils.isBlank(username)) {
+            throw new RuntimeException("clientId and username cannot both be null");
+        }
+        FieldSearchFilter expirationFilter = new FieldSearchFilter("expiresin");
+        expirationFilter.setOrder(FieldSearchFilter.Order.ASC);
+        FieldSearchFilter[] filters = {expirationFilter};
+        if (!StringUtils.isBlank(clientId)) {
+            FieldSearchFilter clientIdFilter = new FieldSearchFilter("clientid", clientId, true);
+            filters = ArrayUtils.add(filters, clientIdFilter);
+        }
+        if (!StringUtils.isBlank(username)) {
+            FieldSearchFilter usernameFilter = new FieldSearchFilter("localuser", username, true);
+            filters = ArrayUtils.add(filters, usernameFilter);
+        }
+        List<OAuth2AccessToken> accessTokens = new ArrayList<>();
+        List<String> tokens = super.searchId(filters);
+        if (tokens.isEmpty()) {
+            return accessTokens;
+        }
         Connection conn = null;
-        OAuth2Token token = null;
+        try {
+            conn = this.getConnection();
+            for (String token : tokens) {
+                OAuth2AccessToken accessToken = this.getAccessToken(token, conn);
+                if (!accessToken.isExpired()) {
+                    accessTokens.add(accessToken);
+                }
+            }
+        } catch (Exception t) {
+            logger.error("Error while loading tokens", t);
+            throw new RuntimeException("Error while loading tokens", t);
+        } finally {
+            this.closeConnection(conn);
+        }
+        return accessTokens;
+    }
+
+    protected OAuth2AccessToken getAccessToken(final String token, Connection conn) {
+        OAuth2AccessTokenImpl accessToken = null;
         PreparedStatement stat = null;
         ResultSet res = null;
         try {
-            conn = this.getConnection();
             stat = conn.prepareStatement(SELECT_TOKEN);
-            stat.setString(1, accessToken);
+            stat.setString(1, token);
             res = stat.executeQuery();
             if (res.next()) {
-                token = new OAuth2Token();
-                token.setAccessToken(accessToken);
-                token.setRefreshToken(res.getString("refreshtoken"));
-                token.setClientId(res.getString("clientid"));
-                token.setGrantType(res.getString("granttype"));
-                token.setExpiresIn(res.getTimestamp("expiresin"));
-
+                accessToken = new OAuth2AccessTokenImpl(token);
+                accessToken.setRefreshToken(new DefaultOAuth2RefreshToken(res.getString("refreshtoken")));
+                accessToken.setClientId(res.getString("clientid"));
+                accessToken.setGrantType(res.getString("granttype"));
+                accessToken.setLocalUser(res.getString("localuser"));
+                Timestamp timestamp = res.getTimestamp("expiresin");
+                Date expiration = new Date(timestamp.getTime());
+                accessToken.setExpiration(expiration);
             }
-        } catch (ApsSystemException | SQLException t) {
-            logger.error("Error while loading token {}", accessToken, t);
-            throw new ApsSystemException("Error while loading token " + accessToken, t);
+        } catch (Throwable t) {
+            logger.error("Error loading token {}", token, t);
+            throw new RuntimeException("Error loading token " + token, t);
         } finally {
-            closeDaoResources(res, stat, conn);
+            closeDaoResources(res, stat);
+        }
+        return accessToken;
+    }
+
+    @Override
+    public List<OAuth2AccessToken> findTokensByUserName(String username) {
+        return this.findTokensByClientIdAndUserName(null, username);
+    }
+    
+    @Override
+    public List<OAuth2AccessToken> findTokensByClientId(String clientId) {
+        return this.findTokensByClientIdAndUserName(clientId, null);
+    }
+
+    @Override
+    public void storeAccessToken(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
+        Connection conn = null;
+        PreparedStatement stat = null;
+        try {
+            conn = this.getConnection();
+            String tokenValue = accessToken.getValue();
+            if (null != this.getAccessToken(tokenValue, conn)) {
+                logger.debug("storeAccessToken: Stored Token already exists");
+                return;
+            }
+            conn.setAutoCommit(false);
+            stat = conn.prepareStatement(INSERT_TOKEN);
+            stat.setString(1, accessToken.getValue());
+            if (accessToken instanceof OAuth2AccessTokenImpl) {
+                stat.setString(2, ((OAuth2AccessTokenImpl) accessToken).getClientId());
+            } else if (null != authentication.getOAuth2Request()) {
+                stat.setString(2, authentication.getOAuth2Request().getClientId());
+            } else {
+                stat.setNull(2, Types.VARCHAR);
+            }
+            stat.setTimestamp(3, new Timestamp(accessToken.getExpiration().getTime()));
+            stat.setString(4, accessToken.getRefreshToken().getValue());
+            if (accessToken instanceof OAuth2AccessTokenImpl) {
+                stat.setString(5, ((OAuth2AccessTokenImpl) accessToken).getGrantType());
+                stat.setString(6, ((OAuth2AccessTokenImpl) accessToken).getLocalUser());
+            } else {
+                if (null != authentication.getOAuth2Request()) {
+                    stat.setString(5, authentication.getOAuth2Request().getGrantType());
+                } else {
+                    stat.setNull(5, Types.VARCHAR);
+                }
+                stat.setNull(6, Types.VARCHAR);
+            }
+            stat.executeUpdate();
+            conn.commit();
+        } catch (Exception t) {
+            this.executeRollback(conn);
+            logger.error("Error while adding an access token", t);
+            throw new RuntimeException("Error while adding an access token", t);
+        } finally {
+            closeDaoResources(null, stat, conn);
+        }
+    }
+
+    @Override
+    public OAuth2AccessToken getAccessToken(final String accessToken) {
+        Connection conn = null;
+        OAuth2AccessToken token = null;
+        try {
+            conn = this.getConnection();
+            token = this.getAccessToken(accessToken, conn);
+        } catch (Exception t) {
+            logger.error("Error while loading token {}", accessToken, t);
+            throw new RuntimeException("Error while loading token " + accessToken, t);
+        } finally {
+            this.closeConnection(conn);
         }
         return token;
     }
 
     @Override
-    public void deleteAccessToken(final String accessToken) throws ApsSystemException {
-        Connection conn = null;
-        PreparedStatement stat = null;
-        try {
-            conn = this.getConnection();
-            conn.setAutoCommit(false);
-            stat = conn.prepareStatement(DELETE_TOKEN);
-            stat.setString(1, accessToken);
-            stat.executeUpdate();
-            conn.commit();
-        } catch (ApsSystemException | SQLException t) {
-            this.executeRollback(conn);
-
-            logger.error(ERROR_REMOVE_ACCESS_TOKEN, t);
-            throw new ApsSystemException(ERROR_REMOVE_ACCESS_TOKEN, t);
-        } finally {
-            closeDaoResources(null, stat, conn);
-        }
+    public void deleteAccessToken(final String accessToken) {
+        super.executeQueryWithoutResultset(DELETE_TOKEN, accessToken);
     }
 
     @Override
-    public void deleteExpiredToken() throws ApsSystemException {
+    public void deleteExpiredToken() {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -138,27 +210,13 @@ public class OAuth2TokenDAO extends AbstractDAO implements IOAuth2TokenDAO {
             stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
             stat.executeUpdate();
             conn.commit();
-        } catch (SQLException t) {
+        } catch (Exception t) {
             this.executeRollback(conn);
             logger.error(ERROR_REMOVE_ACCESS_TOKEN, t);
-            throw new ApsSystemException(ERROR_REMOVE_ACCESS_TOKEN, t);
+            throw new RuntimeException(ERROR_REMOVE_ACCESS_TOKEN, t);
         } finally {
             closeDaoResources(null, stat, conn);
         }
-
     }
-
-    private String INSERT_TOKEN = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype)  VALUES (? , ? , ? , ? , ?)";
-
-    private String INSERT_TOKEN_LOCAL_USER = "INSERT INTO api_oauth_tokens (accesstoken, clientid, expiresin, refreshtoken, granttype, localuser)  VALUES (? , ? , ? , ? , ?, ?)";
-
-    private String UPDATE_TOKEN = "UPDATE api_oauth_tokens SET expiresin = ? WHERE accesstoken = ?";
-
-    private String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
-
-    private String SELECT_TOKEN = "SELECT * FROM api_oauth_tokens WHERE accesstoken = ? ";
-
-    private String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? ";
-
 
 }

@@ -136,7 +136,6 @@ public class AbstractControllerTest {
         when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
         when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
         when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
-
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 UserDetails user = (UserDetails) invocation.getArguments()[0];

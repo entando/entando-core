@@ -21,7 +21,7 @@ import com.agiletec.aps.BaseTestCase;
  * @version 1.0
  * @author M.Diana
  */
-public class TestUserDAO extends BaseTestCase {
+public class UserDAOIntegrationTest extends BaseTestCase {
 	
     protected void setUp() throws Exception {
 		super.setUp();

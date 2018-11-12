@@ -10,7 +10,6 @@
             http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-
     <!-- scans for annotated classes -->
     <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
     <context:annotation-config />

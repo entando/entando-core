@@ -23,9 +23,12 @@ import java.util.List;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import java.sql.Types;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * @author E.Santoboni
@@ -34,10 +37,35 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
 
     private static final Logger _logger = LoggerFactory.getLogger(OAuthConsumerDAO.class);
 
+    private static final String SELECT_CONSUMER
+            = "SELECT consumerkey, consumersecret, name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate "
+            + "FROM api_oauth_consumers WHERE consumerkey = ? ";
+
+    private static final String ADD_CONSUMER
+            = "INSERT INTO api_oauth_consumers (consumerkey, consumersecret,name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate) VALUES (?,?,?,?,?,?,?,?,?) ";
+
+    private static final String UPDATE_CONSUMER_PREFIX = "UPDATE api_oauth_consumers SET ";
+
+    private static final String UPDATE_CONSUMER_SECRET = "consumersecret = ? , ";
+
+    private static final String UPDATE_CONSUMER_SUFFIX = "name = ? , description = ? , callbackurl = ?, scope=?, authorizedgranttypes = ?, expirationdate = ? WHERE consumerkey = ? ";
+
+    private static final String UPDATE_CONSUMER = UPDATE_CONSUMER_PREFIX + UPDATE_CONSUMER_SUFFIX;
+
+    private static final String UPDATE_CONSUMER_WITH_SECRET = UPDATE_CONSUMER_PREFIX + UPDATE_CONSUMER_SECRET + UPDATE_CONSUMER_SUFFIX;
+
+    private static final String DELETE_CONSUMER
+            = "DELETE FROM api_oauth_consumers WHERE consumerkey = ? ";
+
+    private static final String DELETE_CONSUMER_TOKENS
+            = "DELETE FROM api_oauth_tokens WHERE clientid = ? ";
+
+    @Override
     public List<String> getConsumerKeys(FieldSearchFilter[] filters) {
         return super.searchId(filters);
     }
 
+    @Override
     public ConsumerRecordVO getConsumer(String clientId) {
         Connection conn = null;
         ConsumerRecordVO consumer = null;
@@ -58,9 +86,8 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
                 consumer.setDescription(res.getString("description"));
                 consumer.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
                 consumer.setScope(res.getString("scope"));
-                consumer.setExpirationDate(res.getDate("expirationdate"));
-                consumer.setIssuedDate(res.getDate("issueddate"));
-
+                consumer.setExpirationDate(res.getTimestamp("expirationdate"));
+                consumer.setIssuedDate(res.getTimestamp("issueddate"));
             }
         } catch (SQLException | ApsSystemException t) {
             _logger.error("Error while loading consumer by clientid {}", clientId, t);
@@ -71,7 +98,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         return consumer;
     }
 
-
+    @Override
     public void addConsumer(ConsumerRecordVO consumer) {
         Connection conn = null;
         PreparedStatement stat = null;
@@ -81,7 +108,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(ADD_CONSUMER);
             stat.setString(index++, consumer.getKey());
-            index = this.fillStatement(consumer, index, stat);
+            index = this.fillStatement(consumer, index, true, stat);
             stat.executeUpdate();
             conn.commit();
         } catch (SQLException | ApsSystemException t) {
@@ -93,6 +120,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         }
     }
 
+    @Override
     public void updateConsumer(ConsumerRecordVO consumer) {
         Connection conn = null;
         PreparedStatement stat = null;
@@ -100,8 +128,9 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
-            stat = conn.prepareStatement(UPDATE_CONSUMER);
-            index = this.fillStatement(consumer, index, stat);
+            String query = (!StringUtils.isBlank(consumer.getSecret())) ? UPDATE_CONSUMER_WITH_SECRET : UPDATE_CONSUMER;
+            stat = conn.prepareStatement(query);
+            index = this.fillStatement(consumer, index, false, stat);
             stat.setString(index++, consumer.getKey());
             stat.executeUpdate();
             conn.commit();
@@ -114,9 +143,12 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         }
     }
 
-    private int fillStatement(ConsumerRecordVO consumer, int index, PreparedStatement stat) throws SQLException {
+    private int fillStatement(ConsumerRecordVO consumer, int index, boolean add, PreparedStatement stat) throws SQLException {
         int idx = index;
-        stat.setString(idx++, consumer.getSecret());
+        if (add || !StringUtils.isBlank(consumer.getSecret())) {
+            String encoded = new BCryptPasswordEncoder().encode(consumer.getSecret());
+            stat.setString(idx++, "{bcrypt}" + encoded);
+        }
         stat.setString(idx++, consumer.getName());
         stat.setString(idx++, consumer.getDescription());
         stat.setString(idx++, consumer.getCallbackUrl());
@@ -125,71 +157,45 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
         if (null != consumer.getExpirationDate()) {
             stat.setTimestamp(idx++, new Timestamp(consumer.getExpirationDate().getTime()));
         } else {
-            // no operation
+            stat.setNull(idx++, Types.TIMESTAMP);
         }
-        stat.setTimestamp(idx++, new Timestamp(System.currentTimeMillis()));
+        if (add) {
+            stat.setTimestamp(idx++, new Timestamp(System.currentTimeMillis()));
+        }
         return idx;
     }
 
+    @Override
     public void deleteConsumer(String clientId) {
         Connection conn = null;
-        PreparedStatement stat = null;
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
-            this.delete(clientId, DELETE_CONSUMER_TOKENS, conn);
-            this.delete(clientId, DELETE_CONSUMER, conn);
+            super.executeQueryWithoutResultset(conn, DELETE_CONSUMER_TOKENS, clientId);
+            super.executeQueryWithoutResultset(conn, DELETE_CONSUMER, clientId);
             conn.commit();
         } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
             _logger.error("Error while deleting consumer '{}' and its tokens", clientId, t);
             throw new RuntimeException("Error while deleting a consumer and its tokens", t);
         } finally {
-            closeDaoResources(null, stat, conn);
+            this.closeConnection(conn);
         }
     }
 
-    public void delete(String clientId, String query, Connection conn) {
-        PreparedStatement stat = null;
-        try {
-            stat = conn.prepareStatement(query);
-            stat.setString(1, clientId);
-            stat.executeUpdate();
-        } catch (SQLException t) {
-            this.executeRollback(conn);
-            _logger.error("Error while deleting records for {}", clientId, t);
-            throw new RuntimeException("Error while deleting records", t);
-        } finally {
-            closeDaoResources(null, stat);
-        }
-    }
-
+    @Override
     protected String getMasterTableIdFieldName() {
         return "consumerkey";
     }
 
+    @Override
     protected String getMasterTableName() {
         return "api_oauth_consumers";
     }
 
+    @Override
     protected String getTableFieldName(String metadataFieldKey) {
         return metadataFieldKey;
     }
-
-    private String SELECT_CONSUMER
-            = "SELECT consumerkey, consumersecret, name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate "
-            + "FROM api_oauth_consumers WHERE consumerkey = ? ";
-
-    private String ADD_CONSUMER
-            = "INSERT INTO api_oauth_consumers (consumerkey, consumersecret,name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate) VALUES (?,?,?,?,?,?,?,?,?) ";
-
-    private String UPDATE_CONSUMER
-            = "UPDATE api_oauth_consumers SET consumersecret = ? , name=?, description = ? , callbackurl = ?, scope=?, authorizedgranttypes = ?, expirationdate = ? , issueddate = ? WHERE consumerkey = ? ";
-
-    private String DELETE_CONSUMER
-            = "DELETE FROM api_oauth_consumers WHERE consumerkey = ? ";
-
-    private String DELETE_CONSUMER_TOKENS
-            = "DELETE FROM api_oauth_tokens WHERE clientid = ? ";
 
 }

@@ -56,14 +56,6 @@
                 <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
-
-    </bean>
-
-
-    <bean id="OAuth2AuthorizationCodeManager"
-          class="org.entando.entando.aps.system.services.oauth2.ApiOAuthorizationCodeManager"
-          parent="abstractService">
-
     </bean>
 
     <bean id="OAuth2TokenManager"

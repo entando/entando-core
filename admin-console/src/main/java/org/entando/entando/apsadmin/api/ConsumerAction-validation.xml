@@ -9,6 +9,7 @@
             <message key="requiredstring"/>
         </field-validator>
         <field-validator type="stringlength" short-circuit="true">
+            <param name="minLength">4</param>
             <param name="maxLength">100</param>
             <param name="trim">true</param>
             <message key="stringlength" />
@@ -20,8 +21,9 @@
     </field>
     
     <field name="secret">
-        <field-validator type="requiredstring" short-circuit="true">
-            <message key="requiredstring"/>
+        <field-validator type="fieldexpression">
+			<param name="expression"><![CDATA[!(strutsAction == 1 && secret.trim().length() == 0)]]></param>
+			<message key="requiredstring" />
         </field-validator>
         <field-validator type="stringlength" short-circuit="true">
             <param name="maxLength">100</param>
@@ -31,6 +33,17 @@
         <field-validator type="regex" short-circuit="true">
             <param name="regex"><![CDATA[([a-zA-Z0-9_\.])+]]></param>
             <message key="wrongCharacters" />
+        </field-validator>
+    </field>
+    
+    <field name="name">
+        <field-validator type="requiredstring" short-circuit="true">
+            <message key="requiredstring"/>
+        </field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+            <param name="maxLength">100</param>
+            <param name="trim">true</param>
+            <message key="stringlength" />
         </field-validator>
     </field>
     

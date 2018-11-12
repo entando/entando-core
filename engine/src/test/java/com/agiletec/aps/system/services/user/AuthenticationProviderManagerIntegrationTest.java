@@ -26,15 +26,29 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupManager;
-import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.role.RoleManager;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author E.Santoboni
  */
-public class TestAuthenticationProviderManager extends BaseTestCase {
+public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
+    
+    private IAuthenticationProviderManager authenticationProvider = null;
+    private IUserManager userManager = null;
+    private ConfigInterface configurationManager = null;
+    private DataSource dataSource = null;
+    
+    private RoleManager roleManager = null;
+    private GroupManager groupManager = null;
+    
+    private IAuthorizationManager authorizationManager;
     
     @Override
     protected void setUp() throws Exception {
@@ -43,15 +57,15 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     }
     
     public void testGetUser() throws Throwable {
-        UserDetails adminUser = this._authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
+        UserDetails adminUser = this.authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
         assertNotNull(adminUser);
         assertEquals("admin", adminUser.getUsername());
         assertEquals(1, adminUser.getAuthorizations().size());
         
-        adminUser = this._authenticationProvider.getUser("admin", "wrongPassword");
+        adminUser = this.authenticationProvider.getUser("admin", "wrongPassword");
         assertNull(adminUser);
         
-        UserDetails nullUser = this._authenticationProvider.getUser("wrongUserName", "wrongPassword");
+        UserDetails nullUser = this.authenticationProvider.getUser("wrongUserName", "wrongPassword");
         assertNull(nullUser);
     }
     
@@ -61,21 +75,21 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
         this.addUserForTest(username, password);
         UserDetails extractedUser = null;
         try {
-            extractedUser = this._authenticationProvider.getUser(username, password);
+            extractedUser = this.authenticationProvider.getUser(username, password);
             assertEquals(username, extractedUser.getUsername());
             assertNotNull(extractedUser);
             assertEquals(1, extractedUser.getAuthorizations().size());
             
-            this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
+            this.authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
             
-            extractedUser = this._authenticationProvider.getUser(username, password);
+            extractedUser = this.authenticationProvider.getUser(username, password);
             assertNotNull(extractedUser);
             assertEquals(2, extractedUser.getAuthorizations().size());
-        } catch (Throwable t) {
-            throw t;
+        } catch (Exception e) {
+            throw e;
         } finally {
-            this._userManager.removeUser(extractedUser);
-            extractedUser = this._userManager.getUser(username);
+            this.userManager.removeUser(extractedUser);
+            extractedUser = this.userManager.getUser(username);
             assertNull(extractedUser);
         }
     }
@@ -85,21 +99,21 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
         String password = "123456";
         
         this.addUserForTest(username, password);
-        MockUserDAO mockUserDao = new MockUserDAO(this._dataSource);
+        MockUserDAO mockUserDao = new MockUserDAO(this.dataSource);
         try {
             boolean privacyModuleStatus = this.getPrivacyModuleStatus();
             assertTrue(!privacyModuleStatus);
             this.togglePrivacyModuleStatus(true);
             privacyModuleStatus = this.getPrivacyModuleStatus();
             assertTrue(privacyModuleStatus);
-            UserDetails user = this._authenticationProvider.getUser(username, password);
+            UserDetails user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
 
             // change the last access date  
             mockUserDao.setLastAccessDate(username, DateConverter.parseDate("02/06/1977", "dd/MM/yyyy"));
             // reload user auths
-            user = this._authenticationProvider.getUser(username, password);
+            user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertTrue(!user.isAccountNotExpired());
             assertEquals(0, user.getAuthorizations().size());
@@ -108,17 +122,17 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
             assertTrue(!user.isAccountNotExpired());
             assertEquals(0, user.getAuthorizations().size());
             
-            user = this._authenticationProvider.getUser(username, password);
+            user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertTrue(user.isAccountNotExpired());
             assertEquals(1, user.getAuthorizations().size());
             
-        } catch (Throwable t) {
-            throw t;
+        } catch (Exception e) {
+            throw e;
         } finally {
             this.togglePrivacyModuleStatus(false);
-            this._userManager.removeUser(username);
-            UserDetails verify = this._userManager.getUser(username);
+            this.userManager.removeUser(username);
+            UserDetails verify = this.userManager.getUser(username);
             assertNull(verify);
         }
     }
@@ -130,14 +144,14 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
         Calendar pastDate = Calendar.getInstance();
         pastDate.add(Calendar.MONTH, -4);
         this.addUserForTest(username, password);
-        MockUserDAO mockUserDao = new MockUserDAO(this._dataSource);
+        MockUserDAO mockUserDao = new MockUserDAO(this.dataSource);
         try {
             boolean privacyModuleStatus = this.getPrivacyModuleStatus();
             assertTrue(!privacyModuleStatus);
             this.togglePrivacyModuleStatus(true);
             privacyModuleStatus = this.getPrivacyModuleStatus();
             assertTrue(privacyModuleStatus);
-            UserDetails user = this._authenticationProvider.getUser(username, password);
+            UserDetails user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
             assertTrue(user.isAccountNotExpired());
@@ -146,25 +160,25 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
             // change the last password date 
             mockUserDao.setLastPasswordChange(username, pastDate.getTime());
             // check credentials
-            user = this._authenticationProvider.getUser(username, password);
+            user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(0, user.getAuthorizations().size());
             assertTrue(user.isAccountNotExpired());
             assertTrue(!user.isCredentialsNotExpired());
 
             // change password
-            this._userManager.changePassword(username, newPassword);
-            user = this._authenticationProvider.getUser(username, newPassword);
+            this.userManager.changePassword(username, newPassword);
+            user = this.authenticationProvider.getUser(username, newPassword);
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
             assertTrue(user.isAccountNotExpired());
             assertTrue(user.isCredentialsNotExpired());
-        } catch (Throwable t) {
-            throw t;
+        } catch (Exception e) {
+            throw e;
         } finally {
             this.togglePrivacyModuleStatus(false);
-            this._userManager.removeUser(username);
-            UserDetails verify = this._userManager.getUser(username);
+            this.userManager.removeUser(username);
+            UserDetails verify = this.userManager.getUser(username);
             assertNull(verify);
         }
     }
@@ -179,29 +193,58 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
             this.togglePrivacyModuleStatus(true);
             privacyModuleStatus = this.getPrivacyModuleStatus();
             assertTrue(privacyModuleStatus);
-            UserDetails user = this._authenticationProvider.getUser(username, password);
+            UserDetails user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
-
+            
             // update role
-            Role adminRole = this._roleManager.getRole("admin");
-            Group freeGroup = this._groupManager.getGroup(Group.FREE_GROUP_NAME);
-            this._authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
+            this.authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
 
             // verify role
-            user = this._authenticationProvider.getUser(username, password);
+            user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(2, user.getAuthorizations().size());
-        } catch (Throwable t) {
-            throw t;
+        } catch (Exception e) {
+            throw e;
         } finally {
             this.togglePrivacyModuleStatus(false);
-            this._userManager.removeUser(username);
-            UserDetails verify = this._userManager.getUser(username);
+            this.userManager.removeUser(username);
+            UserDetails verify = this.userManager.getUser(username);
             assertNull(verify);
         }
     }
-
+    
+    public void testAuthentication() throws Exception {
+        TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "admin");
+        try {
+            Authentication auth = ((AuthenticationManager) this.authenticationProvider).authenticate(authTest);
+            assertNotNull(auth);
+            assertTrue(auth instanceof UsernamePasswordAuthenticationToken);
+            assertEquals("admin", auth.getPrincipal());
+            assertEquals(1, auth.getAuthorities().size());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+    
+    public void testFailedAuthentication() throws Exception {
+        TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "wrong");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+        authTest = new TestingAuthenticationToken("admin", "");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+        authTest = new TestingAuthenticationToken(null, "");
+        this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
+    }
+    
+    private void testFailedAuthentication(Authentication auth, Class expectedException) throws Exception {
+        try {
+            ((AuthenticationManager) this.authenticationProvider).authenticate(auth);
+            fail();
+        } catch (Exception e) {
+            assertEquals(expectedException, e.getClass());
+        }
+    }
+    
     /**
      * Toggle the privacy module on or off
      *
@@ -210,15 +253,15 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
      */
     private void togglePrivacyModuleStatus(boolean enable) throws Throwable {
         try {
-            String originalParams = this._configurationManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+            String originalParams = this.configurationManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
             assertNotNull(originalParams);
             Map<String, String> systemParams = SystemParamsUtils.getParams(originalParams);
             String status = enable ? "true" : "false";
             systemParams.put("extendedPrivacyModuleEnabled", status);
             String newXmlParams = SystemParamsUtils.getNewXmlParams(originalParams, systemParams);
-            this._configurationManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
-        } catch (Throwable t) {
-            throw t;
+            this.configurationManager.updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
+        } catch (Exception e) {
+            throw e;
         }
     }
 
@@ -231,27 +274,27 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
     private boolean getPrivacyModuleStatus() throws Throwable {
         Boolean status = false;
         try {
-            String originalParams = this._configurationManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
+            String originalParams = this.configurationManager.getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
             assertNotNull(originalParams);
             Map<String, String> systemParams = SystemParamsUtils.getParams(originalParams);
             status = systemParams.containsKey("extendedPrivacyModuleEnabled") && systemParams.get("extendedPrivacyModuleEnabled").trim().equalsIgnoreCase("true");
-        } catch (Throwable t) {
-            throw t;
+        } catch (Exception e) {
+            throw e;
         }
         return status;
     }
     
     private void init() throws Exception {
         try {
-            this._dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
-            this._authenticationProvider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
-            this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
-            this._roleManager = (RoleManager) this.getService(SystemConstants.ROLE_MANAGER);
-            this._groupManager = (GroupManager) this.getService(SystemConstants.GROUP_MANAGER);
-            this._configurationManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
-            this._authorizationManager = (IAuthorizationManager) this.getService(SystemConstants.AUTHORIZATION_SERVICE);
-        } catch (Throwable t) {
-            throw new Exception(t);
+            this.dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
+            this.authenticationProvider = (IAuthenticationProviderManager) this.getService(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER);
+            this.userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+            this.roleManager = (RoleManager) this.getService(SystemConstants.ROLE_MANAGER);
+            this.groupManager = (GroupManager) this.getService(SystemConstants.GROUP_MANAGER);
+            this.configurationManager = (ConfigInterface) this.getService(SystemConstants.BASE_CONFIG_MANAGER);
+            this.authorizationManager = (IAuthorizationManager) this.getService(SystemConstants.AUTHORIZATION_SERVICE);
+        } catch (Exception e) {
+            throw e;
         }
     }
     
@@ -259,24 +302,14 @@ public class TestAuthenticationProviderManager extends BaseTestCase {
         MockUser user = new MockUser();
         user.setUsername(username);
         user.setPassword(password);
-        Authorization auth = new Authorization(this._groupManager.getGroup(Group.FREE_GROUP_NAME),
-                this._roleManager.getRole("editor"));
+        Authorization auth = new Authorization(this.groupManager.getGroup(Group.FREE_GROUP_NAME),
+                this.roleManager.getRole("editor"));
         user.addAuthorization(auth);
-        this._userManager.removeUser(user);
-        UserDetails extractedUser = _userManager.getUser(username);
+        this.userManager.removeUser(user);
+        UserDetails extractedUser = userManager.getUser(username);
         assertNull(extractedUser);
-        this._userManager.addUser(user);
-        this._authorizationManager.addUserAuthorization(username, auth);
+        this.userManager.addUser(user);
+        this.authorizationManager.addUserAuthorization(username, auth);
     }
-    
-    private IAuthenticationProviderManager _authenticationProvider = null;
-    private IUserManager _userManager = null;
-    private ConfigInterface _configurationManager = null;
-    private DataSource _dataSource = null;
-    
-    private RoleManager _roleManager = null;
-    private GroupManager _groupManager = null;
-    
-    private IAuthorizationManager _authorizationManager;
     
 }

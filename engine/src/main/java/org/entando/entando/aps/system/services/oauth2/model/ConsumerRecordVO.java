@@ -20,73 +20,86 @@ import java.util.Date;
  */
 public class ConsumerRecordVO {
 
+    private String key;
+    private String secret;
+    private String name;
+    private String description;
+    private String callbackUrl;
+    private String scope;
+    private String authorizedGrantTypes;
+    private Date expirationDate;
+    private Date issuedDate;
+
     public String getKey() {
-        return _key;
+        return key;
     }
 
     public void setKey(String key) {
-        this._key = key;
+        this.key = key;
     }
 
     public String getSecret() {
-        return _secret;
+        return secret;
     }
 
     public void setSecret(String secret) {
-        this._secret = secret;
+        this.secret = secret;
     }
 
     public String getDescription() {
-        return _description;
+        return description;
     }
 
     public void setDescription(String description) {
-        this._description = description;
+        this.description = description;
     }
 
     public String getCallbackUrl() {
-        return _callbackUrl;
+        return callbackUrl;
     }
 
     public void setCallbackUrl(String callbackUrl) {
-        this._callbackUrl = callbackUrl;
+        this.callbackUrl = callbackUrl;
     }
 
     public Date getExpirationDate() {
-        return _expirationDate;
+        return expirationDate;
     }
 
     public void setExpirationDate(Date expirationDate) {
-        this._expirationDate = expirationDate;
+        this.expirationDate = expirationDate;
     }
 
     public Date getIssuedDate() {
-        return _issuedDate;
+        return issuedDate;
     }
 
     public void setIssuedDate(Date issuedDate) {
-        this._issuedDate = issuedDate;
+        this.issuedDate = issuedDate;
     }
 
-    public String getName() { return _name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String _name) { this._name = _name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getScope() { return _scope; }
+    public String getScope() {
+        return scope;
+    }
 
-    public void setScope(String _scope) { this._scope = _scope; }
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
-    public String getAuthorizedGrantTypes() { return _authorizedGrantTypes; }
+    public String getAuthorizedGrantTypes() {
+        return authorizedGrantTypes;
+    }
 
-    public void setAuthorizedGrantTypes(String _authorizedGrantTypes) { this._authorizedGrantTypes = _authorizedGrantTypes; }
+    public void setAuthorizedGrantTypes(String authorizedGrantTypes) {
+        this.authorizedGrantTypes = authorizedGrantTypes;
+    }
 
-    private String _key;
-    private String _secret;
-    private String _name;
-    private String _description;
-    private String _callbackUrl;
-    private String _scope;
-    private String _authorizedGrantTypes;
-    private Date _expirationDate;
-    private Date _issuedDate;
 }

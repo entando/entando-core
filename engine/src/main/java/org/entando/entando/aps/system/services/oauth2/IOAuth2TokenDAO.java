@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -13,20 +13,24 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
-
+import java.util.List;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 public interface IOAuth2TokenDAO {
 
-    void addAccessToken(final OAuth2Token accessor, boolean isLocalUser) throws ApsSystemException;
+    public void storeAccessToken(OAuth2AccessToken accessToken, OAuth2Authentication authentication);
 
-    OAuth2Token getAccessToken(final String accessToken) throws ApsSystemException;
+    public List<OAuth2AccessToken> findTokensByClientIdAndUserName(String clientId, String username);
 
-    void deleteAccessToken(final String accessToken) throws ApsSystemException;
+    public List<OAuth2AccessToken> findTokensByClientId(String clientId);
+    
+    public List<OAuth2AccessToken> findTokensByUserName(String username);
 
-    void deleteExpiredToken() throws ApsSystemException;
+    public OAuth2AccessToken getAccessToken(final String accessToken);
 
-    void updateAccessToken(final String accessToken, long seconds) throws ApsSystemException;
+    public void deleteAccessToken(final String accessToken);
+
+    public void deleteExpiredToken();
 
 }

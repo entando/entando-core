@@ -20,8 +20,9 @@ import com.agiletec.aps.system.services.authorization.AuthorizationManager;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import javax.servlet.Filter;
 import org.entando.entando.TestEntandoJndiUtils;
-import org.entando.entando.aps.servlet.CORSFilter;
+import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -63,6 +64,9 @@ public class AbstractControllerIntegrationTest {
     @Resource
     protected WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private Filter springSecurityFilterChain;
+
     @Mock
     protected IApiOAuth2TokenManager apiOAuth2TokenManager;
 
@@ -85,7 +89,7 @@ public class AbstractControllerIntegrationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter())
+                .addFilters(new CORSFilter(), springSecurityFilterChain)
                 .build();
 
     }

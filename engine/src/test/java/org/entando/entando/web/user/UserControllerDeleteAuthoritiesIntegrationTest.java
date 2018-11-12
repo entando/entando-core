@@ -20,7 +20,7 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.TestEntandoJndiUtils;
-import org.entando.entando.aps.servlet.CORSFilter;
+import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.user.validator.UserValidator;

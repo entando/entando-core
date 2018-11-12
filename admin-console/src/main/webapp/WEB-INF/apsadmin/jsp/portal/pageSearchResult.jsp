@@ -57,7 +57,7 @@
                                 <tr>
                                     <th><s:text name="label.code" /></th>
                                         <%--<th><s:text name="label.title" /></th>--%>
-                                    <th><s:text name="label.fullTitle" /></th>
+                                    <th><s:text name="label.fullPath" /></th>
                                     <th style="width: 8%;"><s:text name="label.state" /></th>
                                     <th style="width: 8%;"><s:text name="label.pageInMenu" /></th>
                                     <th class="text-center table-w-5"><s:text name="label.actions" /></th>

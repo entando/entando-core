@@ -134,8 +134,16 @@ public class UserValidator extends AbstractPaginationValidator {
         this.checkNewPassword(username, request.getPassword(), bindingResult);
     }
 
-    public boolean isValidDeleteUser(String username) {
+    public static boolean isValidDeleteUser(String username) {
         return !StringUtils.equalsIgnoreCase("admin", username);
+    }
+
+    public static BindingResult createDeleteAdminError() {
+        Map<String, String> map = new HashMap<>();
+        map.put("username", "admin");
+        BindingResult bindingResult = new MapBindingResult(map, "username");
+        bindingResult.reject(UserValidator.ERRCODE_DELETE_ADMIN, new String[]{}, "user.admin.cant.delete");
+        return bindingResult;
     }
 
     public void validateGroupsAndRoles(UserAuthoritiesRequest request, Errors errors) {

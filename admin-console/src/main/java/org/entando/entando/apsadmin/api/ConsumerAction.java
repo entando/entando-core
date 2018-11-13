@@ -16,13 +16,11 @@ package org.entando.entando.apsadmin.api;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
-import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.entando.entando.aps.system.services.oauth2.IOAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -34,7 +32,7 @@ public class ConsumerAction extends BaseAction {
     private static final Logger _logger = LoggerFactory.getLogger(ConsumerAction.class);
 
     public ConsumerAction() {
-        this._authorizedGrantTyped = GrantType.AUTHORIZATION_CODE.toString();
+        this._authorizedGrantTyped = "AUTHORIZATION_CODE";
     }
 
     public void validate() {
@@ -112,7 +110,9 @@ public class ConsumerAction extends BaseAction {
     public String trash() {
         try {
             String check = this.checkForDelete();
-            if (null != check) return check;
+            if (null != check) {
+                return check;
+            }
         } catch (Throwable t) {
             _logger.error("error in trash", t);
             return FAILURE;
@@ -123,7 +123,9 @@ public class ConsumerAction extends BaseAction {
     public String delete() {
         try {
             String check = this.checkForDelete();
-            if (null != check) return check;
+            if (null != check) {
+                return check;
+            }
             this.getOauthConsumerManager().deleteConsumer(this.getConsumerKey());
         } catch (Throwable t) {
             _logger.error("error in delete", t);
@@ -218,7 +220,6 @@ public class ConsumerAction extends BaseAction {
         this._authorizedGrantTyped = authorizedGrantTyped;
     }
 
-
     protected IOAuthConsumerManager getOauthConsumerManager() {
         return _oauthConsumerManager;
     }
@@ -226,7 +227,6 @@ public class ConsumerAction extends BaseAction {
     public void setOauthConsumerManager(IOAuthConsumerManager oauthConsumerManager) {
         this._oauthConsumerManager = oauthConsumerManager;
     }
-
 
     private String _consumerKey;
     private int _strutsAction;

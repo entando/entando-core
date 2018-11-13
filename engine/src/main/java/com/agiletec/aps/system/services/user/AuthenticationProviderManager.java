@@ -13,54 +13,54 @@
  */
 package com.agiletec.aps.system.services.user;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractService;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.authorization.Authorization;
+import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.role.Permission;
 import java.util.Calendar;
 import java.util.List;
-
-import com.agiletec.aps.system.services.role.Permission;
-import org.apache.oltu.oauth2.as.issuer.MD5Generator;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
-import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.oltu.oauth2.common.message.types.GrantType;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.Authorization;
-import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-
 /**
- * Implementazione concreta dell'oggetto Authentication Provider di default del sistema.
- * L'Authentication Provider è l'oggetto delegato alla restituzione di un'utenza 
- * (comprensiva delle sue autorizzazioni) in occasione di una richiesta di autenticazione utente; 
- * questo oggetto non ha visibilità ai singoli sistemi (concreti) delegati alla gestione 
- * delle autorizzazioni.
+ * Implementazione concreta dell'oggetto Authentication Provider di default del
+ * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
+ * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
+ * richiesta di autenticazione utente; questo oggetto non ha visibilità ai
+ * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
+ *
  * @author E.Santoboni
  */
-public class AuthenticationProviderManager extends AbstractService 
-		implements IAuthenticationProviderManager {
+public class AuthenticationProviderManager extends AbstractService
+        implements IAuthenticationProviderManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
-	
-	@Override
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
+
+    private IUserManager userManager;
+    private IAuthorizationManager authorizationManager;
+    private IApiOAuth2TokenManager tokenManager;
+
+    @Override
     public void init() throws Exception {
-        _logger.debug("{} ready", this.getClass().getName() );
+        logger.debug("{} ready", this.getClass().getName());
     }
-    
-	@Override
+
+    @Override
     public UserDetails getUser(String username) throws ApsSystemException {
         return this.extractUser(username, null);
     }
-    
-	@Override
+
+    @Override
     public UserDetails getUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password);
     }
-    
+
     protected UserDetails extractUser(String username, String password) throws ApsSystemException {
         UserDetails user = null;
         try {
@@ -74,22 +74,19 @@ public class AuthenticationProviderManager extends AbstractService
             }
             if (!user.getUsername().equals(SystemConstants.ADMIN_USER_NAME)) {
                 if (!user.isAccountNotExpired()) {
-                    _logger.info("USER ACCOUNT '{}' EXPIRED", user.getUsername());
+                    logger.info("USER ACCOUNT '{}' EXPIRED", user.getUsername());
                     return user;
                 }
             }
             this.getUserManager().updateLastAccess(user);
             if (!user.isCredentialsNotExpired()) {
-                _logger.info("USER '{}' credentials EXPIRED", user.getUsername());
+                logger.info("USER '{}' credentials EXPIRED", user.getUsername());
                 return user;
             }
             this.addUserAuthorizations(user);
-
-            if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)){
+            if (this.getAuthorizationManager().isAuthOnPermission(user, Permission.SUPERUSER)) {
                 this.registerToken(user);
             }
-
-
         } catch (Throwable t) {
             throw new ApsSystemException("Error detected during the authentication of the user " + username, t);
         }
@@ -97,14 +94,12 @@ public class AuthenticationProviderManager extends AbstractService
     }
 
     private void registerToken(final UserDetails user) {
-
-        OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
         try {
-            final String accessToken = oauthIssuerImpl.accessToken();
-            final String refreshToken = oauthIssuerImpl.refreshToken();
+            String tokenPrefix = user.getUsername() + System.nanoTime();
+            final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
+            final String refreshToken = DigestUtils.md5Hex(tokenPrefix + "_refreshToken");
             user.setAccessToken(accessToken);
             user.setRefreshToken(refreshToken);
-
             final OAuth2Token oAuth2Token = new OAuth2Token();
             oAuth2Token.setAccessToken(accessToken);
             oAuth2Token.setRefreshToken(refreshToken);
@@ -114,49 +109,44 @@ public class AuthenticationProviderManager extends AbstractService
             calendar.add(Calendar.SECOND, 3600);
             oAuth2Token.setExpiresIn(calendar.getTime());
             oAuth2Token.setGrantType(GrantType.IMPLICIT.toString());
-            tokenManager.addApiOAuth2Token(oAuth2Token,true);
-        } catch (OAuthSystemException e) {
-            _logger.error("OAuthSystemException {} ", e.getMessage());
-            _logger.debug("OAuthSystemException {} ", e);
-
+            this.getTokenManager().addApiOAuth2Token(oAuth2Token, true);
         } catch (ApsSystemException e) {
-            _logger.error("ApsSystemException {} ", e.getMessage());
-            _logger.debug("ApsSystemException {} ", e);
+            logger.error("ApsSystemException {} ", e.getMessage());
+            logger.debug("ApsSystemException {} ", e);
         }
-
-
     }
 
     protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
         if (null == user) {
             return;
         }
-		List<Authorization> auths = this.getAuthorizationManager().getUserAuthorizations(user.getUsername());
-		if (null == auths) {
-			return;
-		}
-		for (int i = 0; i < auths.size(); i++) {
-			Authorization authorization = auths.get(i);
-			user.addAuthorization(authorization);
-		}
+        List<Authorization> auths = this.getAuthorizationManager().getUserAuthorizations(user.getUsername());
+        if (null == auths) {
+            return;
+        }
+        for (int i = 0; i < auths.size(); i++) {
+            Authorization authorization = auths.get(i);
+            user.addAuthorization(authorization);
+        }
     }
 
-	
     protected IUserManager getUserManager() {
-        return _userManager;
+        return userManager;
     }
-    public void setUserManager(IUserManager userManager) {
-        this._userManager = userManager;
-    }
-	
-	protected IAuthorizationManager getAuthorizationManager() {
-		return _authorizationManager;
-	}
-	public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
-		this._authorizationManager = authorizationManager;
-	}
 
-    public IApiOAuth2TokenManager getTokenManager() {
+    public void setUserManager(IUserManager userManager) {
+        this.userManager = userManager;
+    }
+
+    protected IAuthorizationManager getAuthorizationManager() {
+        return authorizationManager;
+    }
+
+    public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
+        this.authorizationManager = authorizationManager;
+    }
+
+    protected IApiOAuth2TokenManager getTokenManager() {
         return tokenManager;
     }
 
@@ -164,8 +154,4 @@ public class AuthenticationProviderManager extends AbstractService
         this.tokenManager = tokenManager;
     }
 
-    private IUserManager _userManager;
-	private IAuthorizationManager _authorizationManager;
-    private IApiOAuth2TokenManager tokenManager;
-    
 }

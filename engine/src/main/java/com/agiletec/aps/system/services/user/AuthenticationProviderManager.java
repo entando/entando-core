@@ -13,22 +13,20 @@
  */
 package com.agiletec.aps.system.services.user;
 
-import java.util.List;
-
-import com.agiletec.aps.system.services.role.Permission;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
+import com.agiletec.aps.system.services.role.Permission;
+import java.util.Calendar;
+import java.util.List;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.oltu.oauth2.common.message.types.GrantType;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementazione concreta dell'oggetto Authentication Provider di default del
@@ -40,7 +38,7 @@ import org.springframework.security.core.AuthenticationException;
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService
-        implements IAuthenticationProviderManager, AuthenticationManager {
+        implements IAuthenticationProviderManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 
@@ -96,7 +94,6 @@ public class AuthenticationProviderManager extends AbstractService
     }
 
     private void registerToken(final UserDetails user) {
-        /*
         try {
             String tokenPrefix = user.getUsername() + System.nanoTime();
             final String accessToken = DigestUtils.md5Hex(tokenPrefix + "_accessToken");
@@ -117,7 +114,6 @@ public class AuthenticationProviderManager extends AbstractService
             logger.error("ApsSystemException {} ", e.getMessage());
             logger.debug("ApsSystemException {} ", e);
         }
-         */
     }
 
     protected void addUserAuthorizations(UserDetails user) throws ApsSystemException {
@@ -132,11 +128,6 @@ public class AuthenticationProviderManager extends AbstractService
             Authorization authorization = auths.get(i);
             user.addAuthorization(authorization);
         }
-    }
-
-    @Override
-    public Authentication authenticate(Authentication a) throws AuthenticationException {
-        return new UsernamePasswordAuthenticationToken(a.getPrincipal(), a.getCredentials());
     }
 
     protected IUserManager getUserManager() {

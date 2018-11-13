@@ -17,37 +17,30 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.user.IUserService;
-import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
-import org.entando.entando.aps.system.services.user.model.UserDto;
+import org.entando.entando.aps.system.services.user.model.*;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
-import org.entando.entando.web.user.model.UserAuthoritiesRequest;
-import org.entando.entando.web.user.model.UserPasswordRequest;
-import org.entando.entando.web.user.model.UserRequest;
+import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.user.model.*;
 import org.entando.entando.web.user.validator.UserValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.DataBinder;
+import org.springframework.http.*;
+import org.springframework.validation.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import static org.entando.entando.web.user.validator.UserValidator.createDeleteAdminError;
+import static org.entando.entando.web.user.validator.UserValidator.isValidDeleteUser;
 
 /**
  *
  * @author paddeo
  */
+@Validated
 @RestController
 @RequestMapping(value = "/users")
 @SessionAttributes("user")
@@ -148,8 +141,13 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> deleteUser(@PathVariable String username) throws ApsSystemException {
+    public ResponseEntity<RestResponse> deleteUser(@PathVariable String username) throws ApsSystemException {
         logger.debug("deleting {}", username);
+
+        if (!isValidDeleteUser(username)) {
+            throw new ValidationGenericException(createDeleteAdminError());
+        }
+
         this.getUserService().removeUser(username);
         Map<String, String> result = new HashMap<>();
         result.put("code", username);

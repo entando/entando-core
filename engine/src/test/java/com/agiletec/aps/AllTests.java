@@ -41,8 +41,11 @@ import com.agiletec.aps.system.services.role.TestPermissionDAO;
 import com.agiletec.aps.system.services.role.TestRoleDAO;
 import com.agiletec.aps.system.services.role.TestRoleManager;
 import com.agiletec.aps.system.services.url.TestURLManager;
-import com.agiletec.aps.system.services.user.TestAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.TestUserDAO;
+import com.agiletec.aps.system.services.user.AuthenticationProviderManagerIntegrationTest;
+import com.agiletec.aps.system.services.user.AuthenticationProviderManagerTest;
+import com.agiletec.aps.system.services.user.UserDAOIntegrationTest;
+import com.agiletec.aps.system.services.user.UserManagerIntegrationTest;
+import com.agiletec.aps.system.services.user.UserManagerTest;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDAO;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeDOM;
 import com.agiletec.aps.system.services.widgettype.TestWidgetTypeManager;
@@ -50,6 +53,7 @@ import com.agiletec.aps.util.TestHtmlHandler;
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
 import org.entando.entando.aps.system.CaseInsensitiveBeanComparatorTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
@@ -80,8 +84,12 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelMa
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
+import org.entando.entando.aps.system.services.oauth2.ApiOAuth2TokenManagerTest;
+import org.entando.entando.aps.system.services.oauth2.OAuth2TokenDAOTest;
+import org.entando.entando.aps.system.services.oauth2.OAuthConsumerDAOTest;
+import org.entando.entando.aps.system.services.oauth2.OAuthConsumerManagerIntegrationTest;
+import org.entando.entando.aps.system.services.oauth2.OAuthConsumerManagerTest;
 import org.entando.entando.aps.system.services.storage.TestLocalStorageManager;
-import org.entando.entando.aps.system.services.userprofile.TestUserManager;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerIntegrationTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileTypeServiceTest;
@@ -149,9 +157,11 @@ public class AllTests {
         //
         suite.addTestSuite(TestURLManager.class);
         //
-        suite.addTestSuite(TestAuthenticationProviderManager.class);
-        suite.addTestSuite(TestUserDAO.class);
-        suite.addTestSuite(TestUserManager.class);
+        suite.addTestSuite(AuthenticationProviderManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(AuthenticationProviderManagerTest.class));
+        suite.addTestSuite(UserDAOIntegrationTest.class);
+        suite.addTestSuite(UserManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(UserManagerTest.class));
         //
         suite.addTestSuite(TestApplicationContext.class);
         //
@@ -197,8 +207,15 @@ public class AllTests {
 
         suite.addTestSuite(TestSearchEngineManager.class);
 
+        suite.addTestSuite(OAuthConsumerManagerIntegrationTest.class);
+        suite.addTest(new JUnit4TestAdapter(OAuthConsumerManagerTest.class));
+        suite.addTest(new JUnit4TestAdapter(OAuthConsumerDAOTest.class));
+        suite.addTest(new JUnit4TestAdapter(OAuth2TokenDAOTest.class));
+        suite.addTest(new JUnit4TestAdapter(ApiOAuth2TokenManagerTest.class));
+        
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
+        suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
 
         return suite;
     }

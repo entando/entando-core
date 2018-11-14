@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ * Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
  *
  * This library is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General  License as published by the Free
@@ -18,31 +18,34 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 
 import java.util.List;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
 
 /**
  * @author E.Santoboni
  */
-public interface IOAuthConsumerManager {
+public interface IOAuthConsumerManager extends ClientDetailsService {
+    
+    public static final String[] GRANT_TYPES = { "authorization_code", 
+        "client_credentials", "implicit", "password", "refresh_token"};
 
-    ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException;
+    public static final String CONSUMER_KEY_FILTER_KEY = "consumerkey";
+    public static final String CONSUMER_SECRET_FILTER_KEY = "consumersecret";
+    public static final String NAME_FILTER_NAME = "name";
+    public static final String CONSUMER_DESCRIPTION_FILTER_KEY = "description";
+    public static final String CONSUMER_CALLBACKURL_FILTER_KEY = "callbackurl";
+    public static final String CONSUMER_EXPIRATIONDATE_FILTER_KEY = "expirationdate";
+    public static final String CONSUMER_ISSUEDDATE_FILTER_KEY = "issueddate";
+    public static final String SCOPE_FILTER_KEY = "scope";
+    public static final String AUTHORIZED_GRANT_TYPE_FILTER_KEY = "authorizedgranttypes";
 
-    void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
+    public ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException;
 
-    void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
+    public void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
 
-    void deleteConsumer(String consumerKey) throws ApsSystemException;
+    public void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
 
-    List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException;
+    public void deleteConsumer(String consumerKey) throws ApsSystemException;
 
-
-    String CONSUMER_KEY_FILTER_KEY = "consumerkey";
-    String CONSUMER_SECRET_FILTER_KEY = "consumersecret";
-    String NAME_FILTER_NAME = "name";
-    String CONSUMER_DESCRIPTION_FILTER_KEY = "description";
-    String CONSUMER_CALLBACKURL_FILTER_KEY = "callbackurl";
-    String CONSUMER_EXPIRATIONDATE_FILTER_KEY = "expirationdate";
-    String CONSUMER_ISSUEDDATE_FILTER_KEY = "issueddate";
-    String SCOPE_FILTER_KEY = "scope";
-    String AUTHORIZED_GRANT_TYPE_FILTER_KEY = "authorizedgranttypes";
+    public List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException;
 
 }

@@ -21,25 +21,22 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
-import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.EntandoTokenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 /**
- *
- * @author paddeo
+ * @author P.Addeo - E.Santoboni
  */
 public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
@@ -53,14 +50,6 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private IAuthorizationManager authorizationManager;
-
-    protected IAuthenticationProviderManager getAuthenticationProviderManager() {
-        return authenticationProviderManager;
-    }
-
-    public void setAuthenticationProviderManager(IAuthenticationProviderManager authenticationProviderManager) {
-        this.authenticationProviderManager = authenticationProviderManager;
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -81,33 +70,34 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     protected void extractOAuthParameters(HttpServletRequest request, String permission) {
         try {
             logger.debug("Permission required: {}", permission);
-            OAuthAccessResourceRequest requestMessage = new OAuthAccessResourceRequest(request, ParameterStyle.HEADER);
-
-            String accessToken = requestMessage.getAccessToken();
+            String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
             if (StringUtils.isBlank(accessToken)) {
                 logger.warn("no access token found");
                 throw new EntandoTokenException("no access token found", request, null);
             }
-
-            final OAuth2Token token = oAuth2TokenManager.getApiOAuth2Token(accessToken);
+            final OAuth2AccessToken token = this.getoAuth2TokenManager().getApiOAuth2Token(accessToken);
             this.validateToken(request, accessToken, token);
-
-            String username = token.getClientId();
+            String username = null;
+            if (token instanceof OAuth2AccessTokenImpl) {
+                username = ((OAuth2AccessTokenImpl) token).getLocalUser();
+            } else {
+                Authentication auth = new EntandoBearerTokenExtractor().extract(request);
+                username = auth.getPrincipal().toString();
+            }
             this.checkAuthorization(username, permission, request);
-
-        } catch (OAuthSystemException | ApsSystemException | OAuthProblemException ex) {
+        } catch (ApsSystemException ex) {
             logger.error("System exception {}", ex.getMessage());
             throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
         }
     }
 
     protected void checkAuthorization(String username, String permission, HttpServletRequest request) throws ApsSystemException {
-        UserDetails user = getAuthenticationProviderManager().getUser(username);
+        UserDetails user = this.getAuthenticationProviderManager().getUser(username);
         if (user != null) {
             request.getSession().setAttribute("user", user);
             logger.debug("User {} requesting resource that requires {} permission ", username, permission);
             if (StringUtils.isNotBlank(permission)) {
-                if (!authorizationManager.isAuthOnPermission(user, permission)) {
+                if (!this.getAuthorizationManager().isAuthOnPermission(user, permission)) {
                     logger.warn("User {} is missing the required permission {}", username, permission);
                     throw new EntandoAuthorizationException(null, request, username);
                 }
@@ -117,14 +107,38 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    protected void validateToken(HttpServletRequest request, String accessToken, final OAuth2Token token) {
+    protected void validateToken(HttpServletRequest request, String accessToken, final OAuth2AccessToken token) {
         if (null == token) {
             throw new EntandoTokenException("no token found", request, "guest");
-        } else if (!token.getAccessToken().equals(accessToken)) {
+        } else if (!token.getValue().equals(accessToken)) {
             throw new EntandoTokenException("invalid token", request, "guest");
-        } else if (token.getExpiresIn().getTime() < System.currentTimeMillis()) {
+        } else if (token.isExpired()) {
             throw new EntandoTokenException("expired token", request, "guest");
         }
+    }
+
+    protected IApiOAuth2TokenManager getoAuth2TokenManager() {
+        return oAuth2TokenManager;
+    }
+
+    public void setoAuth2TokenManager(IApiOAuth2TokenManager oAuth2TokenManager) {
+        this.oAuth2TokenManager = oAuth2TokenManager;
+    }
+
+    protected IAuthorizationManager getAuthorizationManager() {
+        return authorizationManager;
+    }
+
+    public void setAuthorizationManager(IAuthorizationManager authorizationManager) {
+        this.authorizationManager = authorizationManager;
+    }
+
+    protected IAuthenticationProviderManager getAuthenticationProviderManager() {
+        return authenticationProviderManager;
+    }
+
+    public void setAuthenticationProviderManager(IAuthenticationProviderManager authenticationProviderManager) {
+        this.authenticationProviderManager = authenticationProviderManager;
     }
 
 }

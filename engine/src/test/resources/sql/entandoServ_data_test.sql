@@ -485,6 +485,7 @@ INSERT INTO dataobjectattributeroles (dataid, attrname, rolename) VALUES ('ALL4'
 
 
 
-
+INSERT INTO api_oauth_consumers (consumerkey, consumersecret, name, description, callbackurl, scope, authorizedgranttypes, expirationdate, issueddate) VALUES ('test1_consumer', '{bcrypt}$2a$10$PYqyHKEZIrI19ADxqzmlfO8Za3X5oADPoL7nhbtxLeVe8TJyO//Zu', 'Test 1 Consumer', 'Test 1 Consumer Description', 'http://localhost/login', 'read,write,trust', 'password,authorization_code,refresh_token,implicit', '2028-10-10 00:00:00', '2008-01-01 00:00:00');
+INSERT INTO api_oauth_consumers (consumerkey, consumersecret, name, description, callbackurl, scope, authorizedgranttypes, expirationdate, issueddate) VALUES ('test2_consumer', '{bcrypt}$2a$10$PYqyHKEZIrI19ADxqzmlfO8Za3X5oADPoL7nhbtxLeVe8TJyO//Zu', 'Test 2 Consumer', 'Test 2 Consumer Description', 'http://localhost/login', 'read,write,trust', 'authorization_code,implicit', '2028-10-10 00:00:00', '2008-01-01 00:00:00');
 
 

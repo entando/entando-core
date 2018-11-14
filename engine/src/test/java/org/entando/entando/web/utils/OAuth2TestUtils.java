@@ -21,18 +21,19 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.User;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2Token;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 public class OAuth2TestUtils {
-
-    public static OAuth2Token getOAuth2Token(String username, String accessToken) {
-        OAuth2Token oAuth2Token = new OAuth2Token();
-        oAuth2Token.setAccessToken(accessToken);
-        oAuth2Token.setRefreshToken("refresh_token");
-        oAuth2Token.setClientId(username);
+    
+    public static OAuth2AccessToken getOAuth2Token(String username, String accessToken) {
+        OAuth2AccessTokenImpl oAuth2Token = new OAuth2AccessTokenImpl(accessToken);
+        oAuth2Token.setRefreshToken(new DefaultOAuth2RefreshToken("refresh_token"));
+        oAuth2Token.setLocalUser(username);
         Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
         calendar.add(Calendar.SECOND, 3600);
-        oAuth2Token.setExpiresIn(calendar.getTime());
+        oAuth2Token.setExpiration(calendar.getTime());
         oAuth2Token.setGrantType("password");
         return oAuth2Token;
     }

@@ -78,8 +78,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        logger.warn("readRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("readRefreshToken Not supported yet.");
+        return this.getOAuth2TokenDAO().readRefreshToken(tokenValue);
     }
 
     @Override

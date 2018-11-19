@@ -45,15 +45,15 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         super.setUp();
         this.removeTokens("admin", "mainEditor", "supervisorCustomers");
     }
-
+    
     @Test
     public void obtainAccessToken() throws Exception {
-        this.obtainAccessToken("admin", "admin");
-        this.obtainAccessToken("mainEditor", "mainEditor");
-        this.obtainAccessToken("supervisorCustomers", "supervisorCustomers");
+        this.obtainAccessToken("admin", "admin", true);
+        this.obtainAccessToken("mainEditor", "mainEditor", true);
+        this.obtainAccessToken("supervisorCustomers", "supervisorCustomers", true);
     }
-
-    private void obtainAccessToken(String username, String password) throws Exception {
+    
+    private OAuth2AccessToken obtainAccessToken(String username, String password, boolean remove) throws Exception {
         OAuth2AccessToken oauthToken = null;
         try {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -79,12 +79,44 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         } catch (Exception e) {
             throw e;
         } finally {
+            if (null != oauthToken && remove) {
+                this.apiOAuth2TokenManager.removeAccessToken(oauthToken);
+            }
+        }
+        return oauthToken;
+    }
+    
+    @Test
+    public void refreshAccessToken() throws Exception {
+        OAuth2AccessToken accessToken = this.obtainAccessToken("admin", "admin", false);
+        this.refreshAccessToken(accessToken);
+    }
+    
+    private void refreshAccessToken(OAuth2AccessToken accessToken) throws Exception {
+        OAuth2AccessToken oauthToken = null;
+        try {
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "refresh_token");
+            params.add("refresh_token", accessToken.getRefreshToken().getValue());
+            String hash = new String(Base64.encode("test1_consumer:secret".getBytes()));
+            ResultActions result
+                    = mockMvc.perform(post("/oauth/token")
+                            .params(params)
+                            .header("Authorization", "Basic " + hash)
+                            .accept("application/json;charset=UTF-8"))
+                            .andExpect(status().isOk())
+                            .andExpect(content().contentType("application/json;charset=UTF-8"));
+            String resultString = result.andReturn().getResponse().getContentAsString();
+            Assert.assertTrue(StringUtils.isNotBlank(resultString));
+        } catch (Exception e) {
+            throw e;
+        } finally {
             if (null != oauthToken) {
                 this.apiOAuth2TokenManager.removeAccessToken(oauthToken);
             }
         }
     }
-
+    
     @Test
     public void authenticationFailed() throws Exception {
         this.authenticationFailed("admin", "adminxx");

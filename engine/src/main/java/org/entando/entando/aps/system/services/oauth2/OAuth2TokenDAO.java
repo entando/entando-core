@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenDAO {
@@ -218,5 +219,16 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             closeDaoResources(null, stat, conn);
         }
     }
-
+    
+    @Override
+    public OAuth2RefreshToken readRefreshToken(String tokenValue) {
+        FieldSearchFilter filter = new FieldSearchFilter("refreshtoken", tokenValue, true);
+        FieldSearchFilter[] filters = {filter};
+        List<String> accessTokens = super.searchId(filters);
+        if (null != accessTokens && accessTokens.size() > 0) {
+            return new DefaultOAuth2RefreshToken(tokenValue);
+        }
+        return null;
+    }
+    
 }

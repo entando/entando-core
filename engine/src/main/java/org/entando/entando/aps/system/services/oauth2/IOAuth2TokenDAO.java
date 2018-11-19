@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.oauth2;
 
 import java.util.List;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
 public interface IOAuth2TokenDAO {
@@ -32,5 +33,7 @@ public interface IOAuth2TokenDAO {
     public void deleteAccessToken(final String accessToken);
 
     public void deleteExpiredToken();
+
+    public OAuth2RefreshToken readRefreshToken(String tokenValue);
 
 }

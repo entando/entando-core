@@ -75,9 +75,7 @@
         </legend>
 
         <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/content/include/snippet-content.jsp" />
-
-
-
+        
         <a href="<s:url action="backToEntryContent" >
                <s:param name="contentOnSessionMarker" value="contentOnSessionMarker" /></s:url>"
            title="<s:text name="note.content.backToEdit" />" >
@@ -136,13 +134,12 @@
                 </div>
 
                 <!-- Extra Groups List -->
-                <s:if test="content.groups.size != 0">
+                <s:if test="%{content.groups.size != 0}">
                     <div class="mt-20">
                         <s:iterator value="content.groups" var="groupName">
                             <wpsa:actionParam action="removeGroup" var="actionName" >
-                                <wpsa:actionSubParam name="extraGroupNames" value="%{#groupName}" />
+                                <wpsa:actionSubParam name="groupToRemove" value="%{#groupName}" />
                             </wpsa:actionParam>
-
                             <div class="label label-default label-tag label-sm">
                                 <s:property value="%{getGroupsMap()[#groupName].getDescr()}"/>&#32;
                                 <wpsf:submit type="button" cssClass="btn btn-link" action="%{#actionName}"

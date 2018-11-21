@@ -193,11 +193,11 @@
     	<action name="saveAttribute" class="entityAttributeConfigAction" method="saveAttribute">
 			<result name="input" type="tiles">admin.entityManagement.entryEntityAttributeType</result>
 			<result name="configureListElementAttribute" type="redirectAction">
-				<param name="namespace">/do/Entity/ListAttribute/</param>
+				<param name="namespace">/do/Entity/ListAttribute</param>
 				<param name="actionName">configureListElement</param>
 			</result>
 			<result name="configureCompositeAttribute" type="redirectAction">
-				<param name="namespace">/do/Entity/CompositeAttribute/</param>
+				<param name="namespace">/do/Entity/CompositeAttribute</param>
 				<param name="actionName">entryCompositeAttribute</param>
 			</result>
 			<result type="redirectAction">

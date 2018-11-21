@@ -13,6 +13,9 @@
  */
 package com.agiletec.plugins.jacms.apsadmin.content;
 
+import java.util.List;
+import java.util.Map;
+
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
@@ -27,9 +30,6 @@ import com.agiletec.plugins.jacms.aps.system.services.content.model.extraAttribu
 import com.agiletec.plugins.jacms.apsadmin.content.util.AbstractBaseTestContentAction;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author E.Santoboni
@@ -352,7 +352,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
             assertTrue(contentOnEdit.getGroups().contains("helpdesk"));
 
             this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
-            this.addParameter("extraGroupNames", "customers");
+            this.addParameter("groupToRemove", "customers");
             this.addParameter("descr", contentOnEdit.getDescription());
             result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
@@ -433,6 +433,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         this.executeEdit(contentId, "admin");
         String groupToAdd = "coach";
         String extraGroupFieldName = "extraGroupNames";
+        String groupToRemoveFieldName = "groupToRemove";
         Content contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
         assertNotNull(contentOnSession);
         assertEquals(0, contentOnSession.getGroups().size());
@@ -444,6 +445,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
         assertNotNull(contentOnSession);
         assertEquals(1, contentOnSession.getGroups().size());
+        assertTrue(((ContentAction) this.getAction()).getExtraGroupNames().isEmpty());
 
         //tentativo aggiunta gruppo duplicata
         this.initContentAction("/do/jacms/Content", "joinGroup", contentOnSessionMarker);
@@ -453,6 +455,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
         assertNotNull(contentOnSession);
         assertEquals(1, contentOnSession.getGroups().size());
+        assertTrue(((ContentAction) this.getAction()).getExtraGroupNames().isEmpty());
 
         //tentativo aggiunta gruppo inesistente
         this.initContentAction("/do/jacms/Content", "joinGroup", contentOnSessionMarker);
@@ -463,9 +466,10 @@ public class TestContentAction extends AbstractBaseTestContentAction {
         contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
         assertNotNull(contentOnSession);
         assertEquals(1, contentOnSession.getGroups().size());
+        assertTrue(((ContentAction) this.getAction()).getExtraGroupNames().isEmpty());
 
         this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
-        this.addParameter(extraGroupFieldName, groupToAdd);
+        this.addParameter(groupToRemoveFieldName, groupToAdd);
         result = this.executeAction();
         assertEquals(Action.SUCCESS, result);
         contentOnSession = this.getContentOnEdit(contentOnSessionMarker);
@@ -516,7 +520,7 @@ public class TestContentAction extends AbstractBaseTestContentAction {
             assertTrue(contentOnSession.getGroups().contains(groupToRemove));
 
             this.initContentAction("/do/jacms/Content", "removeGroup", contentOnSessionMarker);
-            this.addParameter("extraGroupNames", groupToRemove);
+            this.addParameter("groupToRemove", groupToRemove);
             String result = this.executeAction();
             assertEquals(Action.SUCCESS, result);
 

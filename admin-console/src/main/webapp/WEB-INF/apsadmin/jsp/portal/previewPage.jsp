@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/patternfly/css/patternfly.min.css"/>
     <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/previewPage.css"/>
 
-    <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script>
         var PROPERTY = {
             baseUrl: '<wp:info key="systemParam" paramName="applicationBaseURL" />',

@@ -23,30 +23,23 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.document.DateTools;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntField;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.SimpleFSLockFactory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Data Access Object dedita alla indicizzazione di documenti.
@@ -55,7 +48,11 @@ import org.slf4j.LoggerFactory;
  */
 public class IndexerDAO implements IIndexerDAO {
 
-	private static final Logger _logger = LoggerFactory.getLogger(IndexerDAO.class);
+	private static final Logger logger = LoggerFactory.getLogger(IndexerDAO.class);
+
+	private Directory dir;
+
+	private ILangManager langManager;
 
 	/**
 	 * Inizializzazione dell'indicizzatore.
@@ -66,31 +63,30 @@ public class IndexerDAO implements IIndexerDAO {
 	@Override
 	public void init(File dir) throws ApsSystemException {
 		try {
-			this._dir = FSDirectory.open(dir);
-			this._dir.setLockFactory(new SimpleFSLockFactory(dir));
+			this.dir = FSDirectory.open(dir.toPath(), SimpleFSLockFactory.INSTANCE);
 		} catch (Throwable t) {
-			_logger.error("Error creating directory", t);
+			logger.error("Error creating directory", t);
 			throw new ApsSystemException("Error creating directory", t);
 		}
-		_logger.debug("Indexer: search engine index ok.");
+		logger.debug("Indexer: search engine index ok.");
 	}
 
 	@Override
 	public synchronized void add(IApsEntity entity) throws ApsSystemException {
 		IndexWriter writer = null;
 		try {
-			writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+			writer = new IndexWriter(this.dir, this.getIndexWriterConfig());
 			Document document = this.createDocument(entity);
 			writer.addDocument(document);
 		} catch (Throwable t) {
-			_logger.error("Errore saving entity {}", entity.getId(), t);
+			logger.error("Errore saving entity {}", entity.getId(), t);
 			throw new ApsSystemException("Error saving entity", t);
 		} finally {
 			if (null != writer) {
 				try {
 					writer.close();
 				} catch (IOException ex) {
-					_logger.error("Error closing IndexWriter", ex);
+					logger.error("Error closing IndexWriter", ex);
 				}
 			}
 		}
@@ -136,7 +132,7 @@ public class IndexerDAO implements IIndexerDAO {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error creating document", t);
+			logger.error("Error creating document", t);
 			throw new ApsSystemException("Error creating document", t);
 		}
 		return document;
@@ -182,7 +178,12 @@ public class IndexerDAO implements IIndexerDAO {
 						field = new TextField(name,
 								DateTools.timeToString(info.getDate().getTime(), DateTools.Resolution.MINUTE), Field.Store.YES);
 					} else if (null != info.getBigDecimal()) {
-						field = new IntField(name, info.getBigDecimal().intValue(), Field.Store.YES);
+						int value = info.getBigDecimal().intValue();
+						field = new IntPoint(name, value);
+
+						//For int points a separate stored field must be added for future indexed search
+						StoredField stored = new StoredField(name, value);
+						document.add(stored);
 					} else {
 						field = new TextField(name, info.getString(), Field.Store.YES);
 					}
@@ -204,11 +205,11 @@ public class IndexerDAO implements IIndexerDAO {
 	@Override
 	public synchronized void delete(String name, String value) throws ApsSystemException {
 		try {
-			IndexWriter writer = new IndexWriter(this._dir, this.getIndexWriterConfig());
+			IndexWriter writer = new IndexWriter(this.dir, this.getIndexWriterConfig());
 			writer.deleteDocuments(new Term(name, value));
 			writer.close();
 		} catch (IOException e) {
-			_logger.error("Error deleting document", e);
+			logger.error("Error deleting document", e);
 			throw new ApsSystemException("Error deleting document", e);
 		}
 	}
@@ -223,20 +224,18 @@ public class IndexerDAO implements IIndexerDAO {
 	}
 
 	private IndexWriterConfig getIndexWriterConfig() {
-		return new IndexWriterConfig(Version.LUCENE_4_10_4, this.getAnalyzer());
+		return new IndexWriterConfig(this.getAnalyzer());
 	}
 
 	protected ILangManager getLangManager() {
-		return _langManager;
+		return langManager;
 	}
 
 	@Override
 	public void setLangManager(ILangManager langManager) {
-		this._langManager = langManager;
+		this.langManager = langManager;
 	}
 
-	private Directory _dir;
 
-	private ILangManager _langManager;
 
 }

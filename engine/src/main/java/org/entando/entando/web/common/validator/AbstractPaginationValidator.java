@@ -13,27 +13,28 @@
  */
 package org.entando.entando.web.common.validator;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author E.Santoboni
  */
 public abstract class AbstractPaginationValidator implements Validator {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
     public static final String ERRCODE_PAGE_INVALID = "110";
     public static final String ERRCODE_NO_ITEM_ON_PAGE = "111";
     public static final String ERRCODE_PAGE_SIZE_INVALID = "112";
@@ -107,7 +108,7 @@ public abstract class AbstractPaginationValidator implements Validator {
                     subType = fields.get(fieldClass).getType();
                     return isValidField(subFields, subType);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.error("Failed to validate field ",e);
                     return false;
                 }
             } else {

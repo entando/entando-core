@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.entando.entando.web.common.model.PagedRestResponse;
 
 @RestController
 @RequestMapping(value = "/permissions")
@@ -62,12 +63,12 @@ public class PermissionController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<PermissionDto>>> getPermissions(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<PagedRestResponse<PermissionDto>> getPermissions(RestListRequest requestList) throws JsonProcessingException {
         this.getPermissionValidator().validateRestListRequest(requestList, PermissionDto.class);
         PagedMetadata<PermissionDto> result = this.getRoleService().getPermissions(requestList);
         this.getPermissionValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
 }

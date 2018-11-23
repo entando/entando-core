@@ -72,27 +72,27 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserDto>> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
+    public ResponseEntity<PagedRestResponse<UserDto>> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
         logger.debug("getting users details with request {}", requestList);
         this.getUserValidator().validateRestListRequest(requestList, UserDto.class);
         PagedMetadata<UserDto> result = this.getUserService().getUsers(requestList, withProfile);
         if (withProfile != null) {
             result.addAdditionalParams("withProfile", withProfile);
         }
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserDto>> getUser(@PathVariable String username) {
+    public ResponseEntity<SimpleRestResponse<UserDto>> getUser(@PathVariable String username) {
         logger.debug("getting user {} details", username);
         UserDto user = this.getUserService().getUser(username);
-        return new ResponseEntity<>(new RestResponse(user), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(user), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserDto>> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<UserDto>> addUser(@Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("adding user with request {}", userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -103,12 +103,12 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         UserDto dto = this.getUserService().addUser(userRequest);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserDto>> updateUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<UserDto>> updateUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserRequest userRequest, BindingResult bindingResult) {
         logger.debug("updating user {} with request {}", target, userRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -120,12 +120,12 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         UserDto userDto = this.getUserService().updateUser(userRequest);
-        return new ResponseEntity<>(new RestResponse(userDto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(userDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserDto>> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<UserDto>> updateUserPassword(@PathVariable String username, @Valid @RequestBody UserPasswordRequest passwordRequest, BindingResult bindingResult) {
         logger.debug("changing pasword for user {} with request {}", username, passwordRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -136,12 +136,12 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         UserDto userDto = this.getUserService().updateUserPassword(passwordRequest);
-        return new ResponseEntity<>(new RestResponse(userDto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(userDto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteUser(@PathVariable String username) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<Map>> deleteUser(@PathVariable String username) throws ApsSystemException {
         logger.debug("deleting {}", username);
 
         if (!isValidDeleteUser(username)) {
@@ -151,12 +151,12 @@ public class UserController {
         this.getUserService().removeUser(username);
         Map<String, String> result = new HashMap<>();
         result.put("code", username);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<List<UserAuthorityDto>>> updateUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) {
         logger.debug("user {} requesting update authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -172,20 +172,20 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         List<UserAuthorityDto> authorities = this.getUserService().updateUserAuthorities(target, authRequest);
-        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(authorities), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> getUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) {
+    public ResponseEntity<SimpleRestResponse<List<UserAuthorityDto>>> getUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) {
         logger.debug("requesting authorities for username {}", target);
         List<UserAuthorityDto> authorities = this.getUserService().getUserAuthorities(target);
-        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(authorities), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<UserAuthorityDto>>> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<List<UserAuthorityDto>>> addUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target, @Valid @RequestBody UserAuthoritiesRequest authRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("user {} requesting add authorities for username {} with req {}", user.getUsername(), target, authRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -201,12 +201,12 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         List<UserAuthorityDto> authorities = this.getUserService().addUserAuthorities(target, authRequest);
-        return new ResponseEntity<>(new RestResponse(authorities), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(authorities), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @RequestMapping(value = "/{target:.+}/authorities", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse> deleteUserAuthorities(@ModelAttribute("user") UserDetails user, @PathVariable String target) throws ApsSystemException {
         logger.debug("user {} requesting delete authorities for username {}", user.getUsername(), target);
         DataBinder binder = new DataBinder(target);
         BindingResult bindingResult = binder.getBindingResult();
@@ -220,7 +220,7 @@ public class UserController {
             throw new ValidationGenericException(bindingResult);
         }
         this.getUserService().deleteUserAuthorities(target);
-        return new ResponseEntity<>(new RestResponse(new ArrayList<>()), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(new ArrayList<>()), HttpStatus.OK);
     }
 
 }

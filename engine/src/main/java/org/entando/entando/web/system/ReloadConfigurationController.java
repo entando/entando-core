@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -39,12 +39,12 @@ public class ReloadConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> reloadConfiguration(HttpServletRequest request) throws Throwable {
+    public ResponseEntity<SimpleRestResponse<Map>> reloadConfiguration(HttpServletRequest request) throws Throwable {
         logger.debug("reload configuration: start..");
         ApsWebApplicationUtils.executeSystemRefresh(request);
         logger.debug("reload configuration: done!");
         Map<String, String> result = new HashMap<>();
         result.put("status", "success");
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 }

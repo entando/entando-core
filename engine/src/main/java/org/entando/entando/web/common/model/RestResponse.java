@@ -14,39 +14,34 @@
 package org.entando.entando.web.common.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class RestResponse<T> {
+public class RestResponse<T, M> {
 
     private T payload;
-    private List<RestError> errors = new ArrayList<>();
-    private Object metaData = new HashMap<>();
+    private M metaData;
+    private List<RestError> errors;
 
-    public RestResponse() {
+    protected RestResponse() {
+        errors = new ArrayList<>();
     }
 
-    public RestResponse(T payload) {
+    public RestResponse(T payload, M metadata) {
+        this(payload, metadata, new ArrayList<>());
+    }
+
+    public RestResponse(T payload, M metadata, List<RestError> errors) {
         this.payload = payload;
-    }
+        this.metaData = metadata;
 
-    public RestResponse(T payload, List<RestError> errors, Object metaData) {
-        if (null != payload) {
-            this.setPayload(payload);
-        }
-        if (null != errors) {
-            this.setErrors(errors);
-        }
-        if (null != metaData) {
-            this.setMetaData(metaData);
+        if (errors != null) {
+            this.errors = errors;
+        } else {
+            this.errors = new ArrayList<>();
         }
     }
 
     public T getPayload() {
-
-        if(payload == null) {
-            return (T)new ArrayList<>();
-        }
         return payload;
     }
 
@@ -54,11 +49,11 @@ public class RestResponse<T> {
         this.payload = payload;
     }
 
-    public Object getMetaData() {
+    public M getMetaData() {
         return metaData;
     }
 
-    public void setMetaData(Object metaData) {
+    public void setMetaData(M metaData) {
         this.metaData = metaData;
     }
 
@@ -72,7 +67,5 @@ public class RestResponse<T> {
 
     public void addErrors(List<RestError> errors) {
         this.errors.addAll(errors);
-
     }
-
 }

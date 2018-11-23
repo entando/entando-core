@@ -17,7 +17,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleRestResponse<T> extends RestResponse<T, Map> {
+/**
+ * Represents a response that needs only a payload.
+ * 
+ * NOTE: Using Map<Object, Object> is necessary for Swagger.
+ */
+public class SimpleRestResponse<T> extends RestResponse<T, Map<Object, Object>> {
 
     protected SimpleRestResponse() {
         super();

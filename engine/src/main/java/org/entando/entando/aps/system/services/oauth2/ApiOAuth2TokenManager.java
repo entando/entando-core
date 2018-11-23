@@ -83,8 +83,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
-        logger.warn("readAuthenticationForRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("readAuthenticationForRefreshToken Not supported yet.");
+        return this.getOAuth2TokenDAO().readAuthenticationForRefreshToken(refreshToken);
     }
 
     @Override
@@ -95,8 +94,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
-        logger.warn("removeAccessTokenUsingRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("removeAccessTokenUsingRefreshToken Not supported yet.");
+        this.getOAuth2TokenDAO().deleteAccessTokenUsingRefreshToken(refreshToken.getValue());
     }
 
     @Override

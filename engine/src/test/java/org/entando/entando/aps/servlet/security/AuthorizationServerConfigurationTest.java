@@ -108,6 +108,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                             .andExpect(content().contentType("application/json;charset=UTF-8"));
             String resultString = result.andReturn().getResponse().getContentAsString();
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
+            String refreshtoken = JsonPath.parse(resultString).read("$.refresh_token");
+            Assert.assertEquals(refreshtoken, accessToken.getRefreshToken().getValue());
         } catch (Exception e) {
             throw e;
         } finally {
@@ -235,7 +237,7 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
             Assert.assertEquals(0, oauthTokens.size());
         }
     }
-
+    
     private void removeTokens(String... usernames) {
         for (String username : usernames) {
             Collection<OAuth2AccessToken> oauthTokens = apiOAuth2TokenManager.findTokensByUserName(username);

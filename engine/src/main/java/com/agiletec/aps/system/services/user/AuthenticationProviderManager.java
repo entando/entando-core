@@ -24,7 +24,6 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,7 +41,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService
-        implements IAuthenticationProviderManager, AuthenticationManager {
+        implements IAuthenticationProviderManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 
@@ -141,6 +140,22 @@ public class AuthenticationProviderManager extends AbstractService
         } catch (Exception e) {
             logger.error("Error detected during user authentication", e);
             throw new AuthenticationServiceException("Error detected during user authentication", e);
+        }
+    }
+
+    @Override
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            UserDetails localUser = this.extractUser(username, null, false);
+            if (null == localUser) {
+                throw new UsernameNotFoundException("User " + username + " not found");
+            }
+            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username, 
+                    "", !localUser.isDisabled(), localUser.isAccountNotExpired(), 
+                    localUser.isCredentialsNotExpired(), true, localUser.getAuthorizations());
+            return user;
+        } catch (ApsSystemException ex) {
+            throw new RuntimeException("Error extracting user", ex);
         }
     }
 

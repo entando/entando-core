@@ -38,6 +38,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 /**
  * @author E.Santoboni
@@ -77,7 +78,7 @@ public class ProfileController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles/{username}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<EntityDto>> getUserProfile(@PathVariable String username) throws JsonProcessingException {
+    public ResponseEntity<SimpleRestResponse<EntityDto>> getUserProfile(@PathVariable String username) throws JsonProcessingException {
         logger.debug("Requested profile -> {}", username);
         EntityDto dto;
         if (!this.getProfileValidator().existProfile(username)) {
@@ -92,7 +93,7 @@ public class ProfileController {
             dto = this.getUserProfileService().getUserProfile(username);
         }
         logger.debug("Main Response -> {}", dto);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(dto), HttpStatus.OK);
     }
 
     private boolean userExists(String username) {
@@ -117,7 +118,7 @@ public class ProfileController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<EntityDto>> addUserProfile(@Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<EntityDto>> addUserProfile(@Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
         logger.debug("Add new user profile -> {}", bodyRequest);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -130,12 +131,12 @@ public class ProfileController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(response), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/userProfiles/{username}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<EntityDto>> updateUserProfile(@PathVariable String username,
+    public ResponseEntity<SimpleRestResponse<EntityDto>> updateUserProfile(@PathVariable String username,
             @Valid @RequestBody EntityDto bodyRequest, BindingResult bindingResult) {
         logger.debug("Update user profile -> {}", bodyRequest);
         if (bindingResult.hasErrors()) {
@@ -146,7 +147,7 @@ public class ProfileController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        return new ResponseEntity<>(new RestResponse(response), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(response), HttpStatus.OK);
     }
 
 }

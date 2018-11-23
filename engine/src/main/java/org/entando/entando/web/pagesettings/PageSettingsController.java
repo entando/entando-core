@@ -18,7 +18,7 @@ import org.entando.entando.aps.system.services.pagesettings.IPageSettingsService
 import org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.pagesettings.model.PageSettingsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -51,14 +51,14 @@ public class PageSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageSettingsDto>> getPageSettings() {
+    public ResponseEntity<SimpleRestResponse<PageSettingsDto>> getPageSettings() {
         PageSettingsDto pageSettings = this.getPageSettingsService().getPageSettings();
-        return new ResponseEntity<>(new RestResponse(pageSettings), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(pageSettings), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageSettingsDto>> updatePageSettings(@RequestBody PageSettingsRequest request) {
+    public ResponseEntity<SimpleRestResponse<PageSettingsDto>> updatePageSettings(@RequestBody PageSettingsRequest request) {
         //params validations
         if (request == null || request.isEmpty()) {
             DataBinder binder = new DataBinder(request);
@@ -67,7 +67,7 @@ public class PageSettingsController {
             throw new ValidationGenericException(bindingResult);
         }
         PageSettingsDto pageSettings = this.getPageSettingsService().updatePageSettings(request);
-        return new ResponseEntity<>(new RestResponse(pageSettings), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(pageSettings), HttpStatus.OK);
     }
 
 }

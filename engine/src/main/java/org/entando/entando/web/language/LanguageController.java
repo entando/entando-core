@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 @RequestMapping(value = "/languages")
@@ -65,32 +67,32 @@ public class LanguageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<LanguageDto>>> getLanguages(RestListRequest requestList) {
+    public ResponseEntity<PagedRestResponse<LanguageDto>> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
         this.getLanguageValidator().validateRestListRequest(requestList, LanguageDto.class);
         PagedMetadata<LanguageDto> result = this.getLanguageService().getLanguages(requestList);
         this.getLanguageValidator().validateRestListResult(requestList, result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<LanguageDto>> getLanguage(@PathVariable String code) {
+    public ResponseEntity<SimpleRestResponse<LanguageDto>> getLanguage(@PathVariable String code) {
         logger.trace("loading language {}", code);
         LanguageDto result = this.getLanguageService().getLanguage(code);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<LanguageDto>> updateLanguage(@PathVariable String code,
+    public ResponseEntity<SimpleRestResponse<LanguageDto>> updateLanguage(@PathVariable String code,
             @Valid @RequestBody LanguageRequest languageRequest, BindingResult bindingResult) {
         logger.trace("loading language {}", code);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         LanguageDto result = this.getLanguageService().updateLanguage(code, languageRequest.getStatus());
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
 }

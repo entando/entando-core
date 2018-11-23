@@ -33,10 +33,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 /**
  * @author E.Santoboni
@@ -71,33 +72,33 @@ public class CategoryController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<CategoryDto>>> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
+    public ResponseEntity<RestResponse<List<CategoryDto>, Map<String, String>>> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
         logger.debug("getting category tree for parent {}", parentCode);
         List<CategoryDto> result = this.getCategoryService().getTree(parentCode);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("parentCode", parentCode);
-        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse<>(result, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<CategoryDto>> getCategory(@PathVariable String categoryCode) {
+    public ResponseEntity<SimpleRestResponse<CategoryDto>> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);
         CategoryDto category = this.getCategoryService().getCategory(categoryCode);
-        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(category), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}/references/{holder}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getCategoryReferences(@PathVariable String categoryCode, @PathVariable String holder, RestListRequest requestList) {
+    public ResponseEntity<PagedRestResponse<?>> getCategoryReferences(@PathVariable String categoryCode, @PathVariable String holder, RestListRequest requestList) {
         logger.debug("getting category references - {}", categoryCode);
         PagedMetadata<?> result = this.getCategoryService().getCategoryReferences(categoryCode, holder, requestList);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<CategoryDto>> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<CategoryDto>> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         this.getCategoryValidator().validate(categoryRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -106,12 +107,12 @@ public class CategoryController {
         //business validations
         this.getCategoryValidator().validatePostReferences(categoryRequest, bindingResult);
         CategoryDto category = this.getCategoryService().addCategory(categoryRequest);
-        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), new HashMap<>()), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(category), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<CategoryDto>> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<CategoryDto, Map<String, String>>> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
         logger.debug("updating category {} with request {}", categoryCode, categoryRequest);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -123,17 +124,17 @@ public class CategoryController {
         }
         CategoryDto category = this.getCategoryService().updateCategory(categoryRequest);
         Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(category, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse<>(category, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteCategory(@PathVariable String categoryCode) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<Map<String, String>>> deleteCategory(@PathVariable String categoryCode) throws ApsSystemException {
         logger.debug("Deleting category -> " + categoryCode);
         this.getCategoryService().deleteCategory(categoryCode);
         Map<String, String> payload = new HashMap<>();
         payload.put("code", categoryCode);
-        return new ResponseEntity<>(new RestResponse(payload), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(payload), HttpStatus.OK);
     }
 
 }

@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 /**
  * @author E.Santoboni
@@ -68,20 +70,20 @@ public class EntityManagerController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<String>>> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<PagedRestResponse<String>> getEntityManagers(RestListRequest requestList) throws JsonProcessingException {
         this.getEntityManagerValidator().validateRestListRequest(requestList, null);
         PagedMetadata<String> result = this.getEntityManagerService().getEntityManagers(requestList);
         logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{entityManagerCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<EntityManagerDto>> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
+    public ResponseEntity<SimpleRestResponse<EntityManagerDto>> getEntityManager(@PathVariable String entityManagerCode) throws JsonProcessingException {
         logger.debug("Requested manager -> {}", entityManagerCode);
         EntityManagerDto dto = this.getEntityManagerService().getEntityManager(entityManagerCode);
         logger.debug("Main Response -> {}", dto);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(dto), HttpStatus.OK);
     }
 
 }

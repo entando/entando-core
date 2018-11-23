@@ -20,7 +20,6 @@ import org.entando.entando.aps.system.services.api.model.ApiResource;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.model.RestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 /**
  * @author E.Santoboni
@@ -77,12 +77,12 @@ public class DashboardController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/integration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> getIntegrationInfos() {
+    public ResponseEntity<SimpleRestResponse<Map>> getIntegrationInfos() {
         logger.debug("dashboard - getting integration");
         Map<String, String> infos = new HashMap<>();
         infos.put("components", String.valueOf(this.extractNumberOfComponents()));
         infos.put("apis", String.valueOf(this.extractNumberOfApis()));
-        return new ResponseEntity<>(new RestResponse(infos), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(infos), HttpStatus.OK);
     }
 
     private int extractNumberOfComponents() {
@@ -119,11 +119,10 @@ public class DashboardController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pageStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PagesStatusDto>> getPagesStatus() {
+    public ResponseEntity<SimpleRestResponse<PagesStatusDto>> getPagesStatus() {
         logger.debug("getting pages status count");
         PagesStatusDto result = this.getPageService().getPagesStatus();
-        Map<String, String> metadata = new HashMap<>();
-        return new ResponseEntity<>(new RestResponse(result, new ArrayList<>(), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
 }

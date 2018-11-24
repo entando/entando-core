@@ -69,6 +69,7 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                             .andExpect(status().isOk())
                             .andExpect(content().contentType("application/json;charset=UTF-8"));
             String resultString = result.andReturn().getResponse().getContentAsString();
+            System.out.println(resultString);
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
             String token = JsonPath.parse(resultString).read("$.access_token");
             Assert.assertTrue(StringUtils.isNotBlank(token));
@@ -89,11 +90,14 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
     @Test
     public void refreshAccessToken() throws Exception {
         OAuth2AccessToken accessToken = this.obtainAccessToken("admin", "admin", false);
-        this.refreshAccessToken(accessToken);
+        this.refreshAccessToken(accessToken, "admin");
+        accessToken = this.obtainAccessToken("mainEditor", "mainEditor", false);
+        this.refreshAccessToken(accessToken, "mainEditor");
+        accessToken = this.obtainAccessToken("supervisorCustomers", "supervisorCustomers", false);
+        this.refreshAccessToken(accessToken, "supervisorCustomers");
     }
     
-    private void refreshAccessToken(OAuth2AccessToken accessToken) throws Exception {
-        OAuth2AccessToken oauthToken = null;
+    private void refreshAccessToken(OAuth2AccessToken accessToken, String username) throws Exception {
         try {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
             params.add("grant_type", "refresh_token");
@@ -107,14 +111,23 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                             .andExpect(status().isOk())
                             .andExpect(content().contentType("application/json;charset=UTF-8"));
             String resultString = result.andReturn().getResponse().getContentAsString();
+            System.out.println(resultString);
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
+            String newAccesstoken = JsonPath.parse(resultString).read("$.access_token");
+            Assert.assertFalse(newAccesstoken.equals(accessToken.getValue()));
             String refreshtoken = JsonPath.parse(resultString).read("$.refresh_token");
             Assert.assertEquals(refreshtoken, accessToken.getRefreshToken().getValue());
+            Collection<OAuth2AccessToken> oauthTokens = this.apiOAuth2TokenManager.findTokensByUserName(username);
+            Assert.assertEquals(1, oauthTokens.size());
+            OAuth2AccessToken newOauthToken = oauthTokens.stream().findFirst().get();
+            Assert.assertEquals(newAccesstoken, newOauthToken.getValue());
+            Assert.assertEquals(refreshtoken, newOauthToken.getRefreshToken().getValue());
         } catch (Exception e) {
             throw e;
         } finally {
-            if (null != oauthToken) {
-                this.apiOAuth2TokenManager.removeAccessToken(oauthToken);
+            Collection<OAuth2AccessToken> tokens = this.apiOAuth2TokenManager.findTokensByUserName(username);
+            for (OAuth2AccessToken token : tokens) {
+                this.apiOAuth2TokenManager.removeAccessToken(token);
             }
         }
     }
@@ -244,5 +257,5 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
             oauthTokens.stream().forEach(oaat -> apiOAuth2TokenManager.removeAccessToken(oaat));
         }
     }
-
+    
 }

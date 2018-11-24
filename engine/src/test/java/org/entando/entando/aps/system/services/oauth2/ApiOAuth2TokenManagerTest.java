@@ -28,6 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -121,24 +122,35 @@ public class ApiOAuth2TokenManagerTest {
         this.tokenManager.storeRefreshToken(new DefaultOAuth2RefreshToken("value"), this.createMockAuthentication());
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void readRefreshToken() throws Exception {
-        this.tokenManager.readRefreshToken("refresh_token");
+        when(tokenDAO.readRefreshToken(Mockito.anyString())).thenReturn(Mockito.any(OAuth2RefreshToken.class));
+        OAuth2RefreshToken refreshToken = this.tokenManager.readRefreshToken("refresh_token");
+        Assert.assertNull(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).readRefreshToken("refresh_token");
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void readAuthenticationForRefreshToken() throws Exception {
-        this.tokenManager.readAuthenticationForRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        when(tokenDAO.readAuthenticationForRefreshToken(Mockito.any(OAuth2RefreshToken.class))).thenReturn(Mockito.any(OAuth2Authentication.class));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value");
+        OAuth2Authentication auth = this.tokenManager.readAuthenticationForRefreshToken(refreshToken);
+        Assert.assertNull(auth);
+        Mockito.verify(tokenDAO, Mockito.times(1)).readAuthenticationForRefreshToken(refreshToken);
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void removeRefreshToken() throws Exception {
-        this.tokenManager.removeRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value_1");
+        this.tokenManager.removeRefreshToken(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).deleteAccessTokenUsingRefreshToken("value_1");
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void removeAccessTokenUsingRefreshToken() throws Exception {
-        this.tokenManager.removeAccessTokenUsingRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value_2");
+        this.tokenManager.removeAccessTokenUsingRefreshToken(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).deleteAccessTokenUsingRefreshToken("value_2");
     }
     
     @Test

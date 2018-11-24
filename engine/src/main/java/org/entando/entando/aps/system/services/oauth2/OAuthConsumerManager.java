@@ -70,6 +70,8 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
                 uris.add(consumer.getCallbackUrl());
                 details.setRegisteredRedirectUri(uris);
             }
+            details.setAccessTokenValiditySeconds(3600);
+            details.setRefreshTokenValiditySeconds(86400);
         } catch (ClientRegistrationException t) {
             throw t;
         } catch (Exception t) {

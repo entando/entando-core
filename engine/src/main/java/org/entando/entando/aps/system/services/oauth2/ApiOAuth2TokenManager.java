@@ -39,10 +39,20 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public void init() throws Exception {
+        this.scheduler.scheduleAtFixedRate(new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO(), 86400), 0, 1, TimeUnit.HOURS);
         logger.debug("{}  initialized ", this.getClass().getName());
-        scheduler.scheduleAtFixedRate(new ScheduledDeleteExpiredTokenThread(oAuth2TokenDAO), 0, 1, TimeUnit.HOURS);
     }
 
+    @Override
+    protected void release() {
+        this.scheduler.shutdown();
+    }
+
+    @Override
+    public void destroy() {
+        this.scheduler.shutdown();
+    }
+    
     @Override
     public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
         logger.warn("readAuthentication Not supported yet.");

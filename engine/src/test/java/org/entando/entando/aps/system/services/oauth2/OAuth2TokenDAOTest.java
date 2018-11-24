@@ -298,7 +298,7 @@ public class OAuth2TokenDAOTest {
     
     @Test
     public void deleteExpiredToken_1() throws Exception {
-        this.tokenDAO.deleteExpiredToken();
+        this.tokenDAO.deleteExpiredToken(3600);
         Mockito.verify(stat, Mockito.times(1)).setTimestamp(Mockito.anyInt(), Mockito.any(Timestamp.class));
         Mockito.verify(stat, Mockito.times(1)).close();
         Mockito.verify(conn, Mockito.times(1)).close();
@@ -308,7 +308,7 @@ public class OAuth2TokenDAOTest {
     public void deleteExpiredToken_2() throws Exception {
         try {
             Mockito.doThrow(SQLException.class).when(stat).setTimestamp(Mockito.anyInt(), Mockito.any(Timestamp.class));
-            this.tokenDAO.deleteExpiredToken();
+            this.tokenDAO.deleteExpiredToken(3600);
             Assert.fail();
         } catch (RuntimeException e) {
             Mockito.verify(stat, Mockito.times(1)).close();

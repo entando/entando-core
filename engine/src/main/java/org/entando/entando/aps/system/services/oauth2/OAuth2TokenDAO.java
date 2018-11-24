@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -224,14 +225,16 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
     
     @Override
-    public void deleteExpiredToken() {
+    public void deleteExpiredToken(int expirationTime) {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.SECOND, -expirationTime);
             stat = conn.prepareStatement(DELETE_EXPIRED_TOKENS);
-            stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            stat.setTimestamp(1, new Timestamp(calendar.getTimeInMillis()));
             stat.executeUpdate();
             conn.commit();
         } catch (Exception t) {

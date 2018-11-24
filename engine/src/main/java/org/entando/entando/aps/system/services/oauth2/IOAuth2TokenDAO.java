@@ -31,8 +31,8 @@ public interface IOAuth2TokenDAO {
     public OAuth2AccessToken getAccessToken(final String accessToken);
 
     public void deleteAccessToken(final String accessToken);
-
-    public void deleteExpiredToken();
+    
+    public void deleteExpiredToken(int expirationTime);
 
     public OAuth2RefreshToken readRefreshToken(String tokenValue);
     

@@ -27,6 +27,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
@@ -179,7 +180,11 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
                 } else {
                     stat.setNull(5, Types.VARCHAR);
                 }
-                stat.setNull(6, Types.VARCHAR);
+                if (authentication.getPrincipal() instanceof UserDetails) {
+                    stat.setString(6, ((UserDetails) authentication.getPrincipal()).getUsername());
+                } else {
+                    stat.setString(6, authentication.getPrincipal().toString());
+                }
             }
             stat.executeUpdate();
             conn.commit();

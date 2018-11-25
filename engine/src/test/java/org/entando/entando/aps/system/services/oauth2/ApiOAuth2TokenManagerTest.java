@@ -77,14 +77,6 @@ public class ApiOAuth2TokenManagerTest {
         Assert.assertTrue(token instanceof OAuth2AccessTokenImpl);
         Assert.assertEquals("LOCAL_USER", ((OAuth2AccessTokenImpl)token).getClientId());
     }
-    
-    @Test
-    public void getApiOAuth2Token() throws Exception {
-        when(tokenDAO.getAccessToken(Mockito.anyString())).thenReturn(new OAuth2AccessTokenImpl("token"));
-        OAuth2AccessToken token = tokenManager.getApiOAuth2Token("token");
-        Assert.assertNotNull(token);
-        Assert.assertTrue(token instanceof OAuth2AccessTokenImpl);
-    }
 
     @Test(expected = UnsupportedOperationException.class)
     public void readAuthentication_1() throws Exception {

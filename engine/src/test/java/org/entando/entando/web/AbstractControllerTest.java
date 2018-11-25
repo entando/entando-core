@@ -133,7 +133,7 @@ public class AbstractControllerTest {
 
     protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {
         String accessToken = OAuth2TestUtils.getValidAccessToken();
-        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
+        when(apiOAuth2TokenManager.readAccessToken(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
         when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
         when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
             @Override

@@ -14,7 +14,6 @@
 package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Calendar;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -149,16 +148,6 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     @Override
     public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
         return this.getOAuth2TokenDAO().findTokensByClientId(clientId);
-    }
-
-    @Override
-    public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException {
-        try {
-            return this.getOAuth2TokenDAO().getAccessToken(accessToken);
-        } catch (Exception t) {
-            logger.error("Error extracting token", t);
-            throw new ApsSystemException("Error extracting token", t);
-        }
     }
 
     protected IOAuth2TokenDAO getOAuth2TokenDAO() {

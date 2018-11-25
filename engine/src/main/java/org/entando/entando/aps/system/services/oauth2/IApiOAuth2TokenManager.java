@@ -26,6 +26,4 @@ public interface IApiOAuth2TokenManager extends TokenStore {
 
     public OAuth2AccessToken createAccessTokenForLocalUser(String username);
 
-    public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException;
-
 }

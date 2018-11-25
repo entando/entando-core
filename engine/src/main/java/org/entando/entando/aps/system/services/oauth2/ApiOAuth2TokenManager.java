@@ -81,8 +81,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
-        logger.warn("storeRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("storeRefreshToken Not supported yet.");
+        logger.info("storeRefreshToken - nothing to do");
     }
 
     @Override

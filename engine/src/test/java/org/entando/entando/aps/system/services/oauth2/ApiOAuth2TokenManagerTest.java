@@ -109,9 +109,10 @@ public class ApiOAuth2TokenManagerTest {
         Mockito.verify(tokenDAO, Mockito.times(1)).deleteAccessToken(Mockito.anyString());
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void storeRefreshToken() throws Exception {
         this.tokenManager.storeRefreshToken(new DefaultOAuth2RefreshToken("value"), this.createMockAuthentication());
+        Mockito.verifyZeroInteractions(tokenDAO);
     }
     
     @Test

@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Collection;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;

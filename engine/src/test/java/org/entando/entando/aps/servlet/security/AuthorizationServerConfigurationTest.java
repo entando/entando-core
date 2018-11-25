@@ -115,13 +115,13 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
             String newAccesstoken = JsonPath.parse(resultString).read("$.access_token");
             Assert.assertFalse(newAccesstoken.equals(accessToken.getValue()));
-            String refreshtoken = JsonPath.parse(resultString).read("$.refresh_token");
-            Assert.assertEquals(refreshtoken, accessToken.getRefreshToken().getValue());
+            String newRefreshtoken = JsonPath.parse(resultString).read("$.refresh_token");
+            Assert.assertNotEquals(newRefreshtoken, accessToken.getRefreshToken().getValue());
             Collection<OAuth2AccessToken> oauthTokens = this.apiOAuth2TokenManager.findTokensByUserName(username);
             Assert.assertEquals(1, oauthTokens.size());
             OAuth2AccessToken newOauthToken = oauthTokens.stream().findFirst().get();
             Assert.assertEquals(newAccesstoken, newOauthToken.getValue());
-            Assert.assertEquals(refreshtoken, newOauthToken.getRefreshToken().getValue());
+            Assert.assertEquals(newRefreshtoken, newOauthToken.getRefreshToken().getValue());
         } catch (Exception e) {
             throw e;
         } finally {

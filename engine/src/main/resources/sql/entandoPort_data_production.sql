@@ -1846,6 +1846,13 @@ INSERT INTO sysconfig (version, item, descr, config) values ('production', 'user
 </profiletypes>');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataTypeDefinitions', 'Definition of the Type Types', '<datatypes />');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'dataobjectsubdir', 'Name of the sub-directory containing dataobject indexing files', 'index');
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'marketplaces', 'Available Marketplace instances', '<?xml version="1.0" encoding="UTF-8"?>
+<marketplaces>
+  <marketplace>
+    <name>Marketplace 1</name>
+    <url></url>
+  </marketplace>
+</marketplaces>');
 
 
 INSERT INTO uniquekeys (id, keyvalue) VALUES (1, 1);

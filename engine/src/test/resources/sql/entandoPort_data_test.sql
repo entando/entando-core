@@ -882,7 +882,13 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataTypeDe
 </datatypes>
 ');
 INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'dataobjectsubdir', 'Name of the sub-directory containing dataobject indexing files', 'index');
-
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'marketplaces', 'Available Marketplace instances', '<?xml version="1.0" encoding="UTF-8"?>
+<marketplaces>
+  <marketplace>
+    <name>Marketplace 1</name>
+    <url>https://www.entando.com/</url>
+  </marketplace>
+</marketplaces>');
 
 
 INSERT INTO uniquekeys (id, keyvalue) VALUES (1, 200);

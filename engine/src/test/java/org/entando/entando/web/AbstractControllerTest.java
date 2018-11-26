@@ -13,8 +13,6 @@
  */
 package org.entando.entando.web;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.AuthorizationManager;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -32,17 +30,12 @@ import org.entando.entando.web.common.handlers.RestExceptionHandler;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.when;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -131,19 +124,13 @@ public class AbstractControllerTest {
         return mapper.writeValueAsBytes(object);
     }
 
-    protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {
-        String accessToken = OAuth2TestUtils.getValidAccessToken();
-        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
-        when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
-        when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                UserDetails user = (UserDetails) invocation.getArguments()[0];
-                String permissionName = (String) invocation.getArguments()[1];
-                return new AuthorizationManager().isAuthOnPermission(user, permissionName);
-            }
-        });
-        return accessToken;
+    protected String mockOAuthInterceptor(UserDetails user) {
+        return OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
     }
 
+    protected AuthRequestBuilder createAuthRequest(MockHttpServletRequestBuilder requestBuilder) {
+        return new AuthRequestBuilder(apiOAuth2TokenManager,
+                authenticationProviderManager, authorizationManager,
+                mockMvc, requestBuilder);
+    }
 }

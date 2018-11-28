@@ -63,11 +63,11 @@ public class AuthenticationProviderManager extends AbstractService
     public UserDetails getUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password);
     }
-    
+
     protected UserDetails extractUser(String username, String password) throws ApsSystemException {
         return this.extractUser(username, password, true);
     }
-    
+
     protected UserDetails extractUser(String username, String password, boolean addToken) throws ApsSystemException {
         UserDetails user = null;
         try {
@@ -120,12 +120,12 @@ public class AuthenticationProviderManager extends AbstractService
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            if (null == authentication || 
-                    null == authentication.getPrincipal() || 
-                    null == authentication.getCredentials()) {
+            if (null == authentication
+                    || null == authentication.getPrincipal()
+                    || null == authentication.getCredentials()) {
                 throw new UsernameNotFoundException("Invalid principal and/or credentials");
             }
-            UserDetails user = this.extractUser(authentication.getPrincipal().toString(), 
+            UserDetails user = this.extractUser(authentication.getPrincipal().toString(),
                     authentication.getCredentials().toString(), false);
             if (null != user) {
                 Authentication newAuth
@@ -150,8 +150,8 @@ public class AuthenticationProviderManager extends AbstractService
             if (null == localUser) {
                 throw new UsernameNotFoundException("User " + username + " not found");
             }
-            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username, 
-                    "", !localUser.isDisabled(), localUser.isAccountNotExpired(), 
+            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username,
+                    "", !localUser.isDisabled(), localUser.isAccountNotExpired(),
                     localUser.isCredentialsNotExpired(), true, localUser.getAuthorizations());
             return user;
         } catch (ApsSystemException ex) {

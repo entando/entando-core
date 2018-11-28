@@ -35,6 +35,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 @RequestMapping(value = "/labels")
@@ -66,50 +68,50 @@ public class LabelController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<LabelDto>>> getLables(RestListRequest requestList) {
+    public ResponseEntity<PagedRestResponse<LabelDto>> getLables(RestListRequest requestList) {
         logger.debug("loading labels");
         this.getLabelValidator().validateRestListRequest(requestList, LabelDto.class);
         PagedMetadata<LabelDto> result = this.getLabelService().getLabelGroups(requestList);
         this.getLabelValidator().validateRestListResult(requestList, result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<LabelDto>> geLabelGroup(@PathVariable String labelCode) {
+    public ResponseEntity<SimpleRestResponse<LabelDto>> geLabelGroup(@PathVariable String labelCode) {
         logger.debug("loading label {}", labelCode);
         LabelDto label = this.getLabelService().getLabelGroup(labelCode);
-        return new ResponseEntity<>(new RestResponse(label, null, new HashMap<>()), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(label), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<LabelDto>> updateLabelGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<LabelDto>> updateLabelGroup(@PathVariable String labelCode, @Valid @RequestBody LabelRequest labelRequest, BindingResult bindingResult) {
         logger.debug("updating label {}", labelRequest.getKey());
         this.getLabelValidator().validateBodyName(labelCode, labelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         LabelDto group = this.getLabelService().updateLabelGroup(labelRequest);
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(group), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<LabelDto>> addLabelGroup(@Valid @RequestBody LabelRequest labelRequest) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<LabelDto>> addLabelGroup(@Valid @RequestBody LabelRequest labelRequest) throws ApsSystemException {
         logger.debug("adding label {}", labelRequest.getKey());
         LabelDto group = this.getLabelService().addLabelGroup(labelRequest);
-        return new ResponseEntity<>(new RestResponse(group), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(group), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{labelCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<Map>> deleteLabelGroup(@PathVariable String labelCode) throws ApsSystemException {
         logger.debug("deleting label {}", labelCode);
         this.getLabelService().removeLabelGroup(labelCode);
         Map<String, String> result = new HashMap<>();
         result.put("key", labelCode);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
 }

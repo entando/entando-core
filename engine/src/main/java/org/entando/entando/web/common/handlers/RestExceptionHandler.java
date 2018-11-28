@@ -18,7 +18,7 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.*;
 import org.entando.entando.web.common.model.RestError;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.ErrorRestResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,133 +58,106 @@ public class RestExceptionHandler {
     @ExceptionHandler(value = RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
-    public RestResponse processRuntimeExceptionException(RuntimeException ex) {
+    public ErrorRestResponse processRuntimeExceptionException(RuntimeException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.INTERNAL_ERROR, this.resolveLocalizedErrorMessage("GENERIC_ERROR", new Object[]{ex.getMessage()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
-        return response;
+        return new ErrorRestResponse(error);
     }
 
     @ExceptionHandler(value = EntandoAuthorizationException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public RestResponse processEntandoAuthorizationException(EntandoAuthorizationException ex) {
+    public ErrorRestResponse processEntandoAuthorizationException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED", new Object[]{ex.getUsername(), ex.getRequestURI(), ex.getMethod()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
-        return response;
+        return new ErrorRestResponse(error);
     }
 
     @ExceptionHandler(value = EntandoTokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
-    public RestResponse processEntandoTokenException(EntandoAuthorizationException ex) {
+    public ErrorRestResponse processEntandoTokenException(EntandoAuthorizationException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = new RestResponse();
         RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED", new Object[]{ex.getUsername(), ex.getRequestURI(), ex.getMethod()}));
-        List<RestError> errors = new ArrayList<>();
-        errors.add(error);
-        response.setErrors(errors);
-        return response;
+        return new ErrorRestResponse(error);
     }
 
     @ExceptionHandler(value = ResourcePermissionsException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public RestResponse processEntandoTokenException(ResourcePermissionsException ex) {
+    public ErrorRestResponse processEntandoTokenException(ResourcePermissionsException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = null;
         if (null != ex.getBindingResult()) {
             BindingResult result = ex.getBindingResult();
-            response = processAllErrors(result);
+            return processAllErrors(result);
         } else {
-            response = new RestResponse();
             RestError error = new RestError(RestErrorCodes.UNAUTHORIZED, this.resolveLocalizedErrorMessage("UNAUTHORIZED_ON_RESOURCE", new Object[]{ex.getUsername(), ex.getResource()}));
-            List<RestError> errors = new ArrayList<>();
-            errors.add(error);
-            response.setErrors(errors);
+            return new ErrorRestResponse(error);
         }
-        return response;
     }
 
     @ExceptionHandler(value = RestRourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public RestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
+    public ErrorRestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
-        RestResponse response = null;
         if (null != ex.getBindingResult()) {
             BindingResult result = ex.getBindingResult();
-            response = processAllErrors(result);
+            return processAllErrors(result);
         } else {
-            response = new RestResponse();
             RestError error = new RestError(ex.getErrorCode(), this.resolveLocalizedErrorMessage("NOT_FOUND", new Object[]{ex.getObjectName(), ex.getObjectCode()}));
-            List<RestError> errors = new ArrayList<>();
-            errors.add(error);
-            response.setErrors(errors);
-            response.setMetaData(new HashMap<>());
+            return new ErrorRestResponse(error);
         }
-        return response;
     }
 
     @ExceptionHandler(value = ValidationConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
-    public RestResponse processValidationError(ValidationConflictException ex) {
+    public ErrorRestResponse processValidationError(ValidationConflictException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
-        RestResponse response = processAllErrors(result);
-        return response;
+        return processAllErrors(result);
     }
 
     @ExceptionHandler(value = ValidationGenericException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public RestResponse processValidationError(ValidationGenericException ex) {
+    public ErrorRestResponse processValidationError(ValidationGenericException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
-        RestResponse response = processAllErrors(result);
-        return response;
+        return processAllErrors(result);
     }
 
     @ExceptionHandler(value = ValidationUpdateSelfException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ResponseBody
-    public RestResponse processValidationError(ValidationUpdateSelfException ex) {
+    public ErrorRestResponse processValidationError(ValidationUpdateSelfException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
-        RestResponse response = processAllErrors(result);
-        return response;
+        return processAllErrors(result);
     }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public RestResponse processValidationError(MethodArgumentNotValidException ex) {
+    public ErrorRestResponse processValidationError(MethodArgumentNotValidException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
-        RestResponse response = processAllErrors(result);
-        return response;
+        return processAllErrors(result);
     }
 
-    private RestResponse processAllErrors(BindingResult result) {
+    private ErrorRestResponse processAllErrors(BindingResult result) {
         return processAllErrors(result.getFieldErrors(), result.getGlobalErrors());
     }
 
-    private RestResponse processAllErrors(List<FieldError> fieldErrors, List<ObjectError> objectErrors) {
-        RestResponse dto = new RestResponse();
+    private ErrorRestResponse processAllErrors(List<FieldError> fieldErrors, List<ObjectError> objectErrors) {
+        ErrorRestResponse dto = new ErrorRestResponse();
         processFieldErrors(dto, fieldErrors);
         processGlobalErrors(dto, objectErrors);
         return dto;
     }
 
-    private RestResponse processFieldErrors(RestResponse dto, List<FieldError> fieldErrors) {
+    private ErrorRestResponse processFieldErrors(ErrorRestResponse dto, List<FieldError> fieldErrors) {
         if (null != fieldErrors) {
             List<RestError> errors = new ArrayList<>();
             for (FieldError fieldError : fieldErrors) {
@@ -197,7 +169,7 @@ public class RestExceptionHandler {
         return dto;
     }
 
-    private RestResponse processGlobalErrors(RestResponse dto, List<ObjectError> globalErrors) {
+    private ErrorRestResponse processGlobalErrors(ErrorRestResponse dto, List<ObjectError> globalErrors) {
         if (null != globalErrors) {
             List<RestError> errors = new ArrayList<>();
             for (ObjectError globalError : globalErrors) {

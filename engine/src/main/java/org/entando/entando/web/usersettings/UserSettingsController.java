@@ -14,6 +14,7 @@
 package org.entando.entando.web.usersettings;
 
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.Map;
 import org.entando.entando.aps.system.services.usersettings.IUserSettingsService;
 import org.entando.entando.aps.system.services.usersettings.model.UserSettingsDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 @RequestMapping(value = "/userSettings")
@@ -53,22 +55,22 @@ public class UserSettingsController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserSettingsDto>> getUserSettings() {
+    public ResponseEntity<SimpleRestResponse<UserSettingsDto>> getUserSettings() {
         logger.debug("loading user settings");
         UserSettingsDto userSettings = this.getUserSettingsService().getUserSettings();
-        return new ResponseEntity<>(new RestResponse(userSettings), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(userSettings), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<UserSettingsDto>> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<UserSettingsDto>> updateUserSettings(@Valid @RequestBody UserSettingsRequest request, BindingResult bindingResult) {
         logger.debug("updatinug user settings");
         //params validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         UserSettingsDto settings = this.getUserSettingsService().updateUserSettings(request);
-        return new ResponseEntity<>(new RestResponse(settings), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(settings), HttpStatus.OK);
     }
 
 }

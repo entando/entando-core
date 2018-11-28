@@ -39,6 +39,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 @RequestMapping(value = "/roles")
@@ -69,33 +71,33 @@ public class RoleController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<RoleDto>>> getRoles(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<PagedRestResponse<RoleDto>> getRoles(RestListRequest requestList) throws JsonProcessingException {
         this.getRoleValidator().validateRestListRequest(requestList, RoleDto.class);
         PagedMetadata<RoleDto> result = this.getRoleService().getRoles(requestList);
         this.getRoleValidator().validateRestListResult(requestList, result);
         logger.debug("loading role list -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<RoleDto>> getRole(@PathVariable String roleCode) {
+    public ResponseEntity<SimpleRestResponse<RoleDto>> getRole(@PathVariable String roleCode) {
         logger.debug("loading role {}", roleCode);
         RoleDto role = this.getRoleService().getRole(roleCode);
-        return new ResponseEntity<>(new RestResponse(role), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(role), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}/userreferences", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<UserDto>>> getRoleReferences(@PathVariable String roleCode, RestListRequest requestList) {
+    public ResponseEntity<PagedRestResponse<UserDto>> getRoleReferences(@PathVariable String roleCode, RestListRequest requestList) {
         logger.debug("loading user references for role {}", roleCode);
         PagedMetadata<UserDto> result = this.getRoleService().getRoleReferences(roleCode, requestList);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<RoleDto>> updateRole(@PathVariable String roleCode, @Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<RoleDto>> updateRole(@PathVariable String roleCode, @Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) {
         logger.debug("updating role {}", roleCode);
         //field validations
         if (bindingResult.hasErrors()) {
@@ -106,29 +108,29 @@ public class RoleController {
             throw new ValidationGenericException(bindingResult);
         }
         RoleDto role = this.getRoleService().updateRole(roleRequest);
-        return new ResponseEntity<>(new RestResponse(role), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(role), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<RoleDto>> addRole(@Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<RoleDto>> addRole(@Valid @RequestBody RoleRequest roleRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.debug("adding role");
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         RoleDto dto = this.getRoleService().addRole(roleRequest);
-        return new ResponseEntity<>(new RestResponse(dto), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(dto), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{roleCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteRole(@PathVariable String roleCode) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<Map>> deleteRole(@PathVariable String roleCode) throws ApsSystemException {
         logger.info("deleting {}", roleCode);
         this.getRoleService().removeRole(roleCode);
         Map<String, String> result = new HashMap<>();
         result.put("code", roleCode);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
 }

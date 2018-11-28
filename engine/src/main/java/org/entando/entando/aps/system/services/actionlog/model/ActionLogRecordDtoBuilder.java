@@ -1,8 +1,5 @@
 package org.entando.entando.aps.system.services.actionlog.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamManager;
@@ -10,6 +7,9 @@ import org.entando.entando.aps.system.services.activitystream.model.ActivityStre
 import org.entando.entando.aps.system.services.activitystream.model.ActivityStreamLikeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActionLogRecordDtoBuilder extends DtoBuilder<ActionLogRecord, ActionLogRecordDto> {
 
@@ -44,8 +44,7 @@ public class ActionLogRecordDtoBuilder extends DtoBuilder<ActionLogRecord, Actio
             try {
                 out.add(toDto(i, socialActivityStreamManager.getActionLikeRecords(i.getId()), socialActivityStreamManager.getActionCommentRecords(i.getId())));
             } catch (ApsSystemException e) {
-                logger.error("error converting list");
-                e.printStackTrace();
+                logger.error("error converting list ",e);
             }
         });
 

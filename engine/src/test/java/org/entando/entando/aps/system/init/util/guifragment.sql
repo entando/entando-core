@@ -1812,7 +1812,6 @@ INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, lock
 	<@wp.freemarkerTemplateParameter var="previousLevel" valueName="previousLevel" />
 	<@wp.fragment code="entando-widget-navigation_bar_include" escapeXml=false />
 </#if>
-
 	<@wp.freemarkerTemplateParameter var="previousPage" valueName="page" />
 </@wp.nav>
 

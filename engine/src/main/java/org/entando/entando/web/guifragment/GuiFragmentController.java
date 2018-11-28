@@ -40,6 +40,8 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 @RequestMapping(value = "/fragments")
@@ -72,24 +74,24 @@ public class GuiFragmentController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<GuiFragmentDtoSmall>>> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
+    public ResponseEntity<PagedRestResponse<GuiFragmentDtoSmall>> getGuiFragments(RestListRequest requestList) throws JsonProcessingException {
         this.getGuiFragmentValidator().validateRestListRequest(requestList, GuiFragmentDto.class);
         PagedMetadata<GuiFragmentDtoSmall> result = this.getGuiFragmentService().getGuiFragments(requestList);
         this.getGuiFragmentValidator().validateRestListResult(requestList, result);
         logger.debug("Main Response -> {}", result);
-        return new ResponseEntity<>(new RestResponse(result.getBody(), null, result), HttpStatus.OK);
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<GuiFragmentDto>>> getGuiFragment(@PathVariable String fragmentCode) {
+    public ResponseEntity<SimpleRestResponse<GuiFragmentDto>> getGuiFragment(@PathVariable String fragmentCode) {
         GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
-        return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(fragment), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<GuiFragmentDto>>> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<GuiFragmentDto>> addGuiFragment(@Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -100,12 +102,12 @@ public class GuiFragmentController {
             throw new ValidationGenericException(bindingResult);
         }
         GuiFragmentDto fragment = this.getGuiFragmentService().addGuiFragment(guiFragmentRequest);
-        return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(fragment), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<GuiFragmentDto>> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
+    public ResponseEntity<SimpleRestResponse<GuiFragmentDto>> updateGuiFragment(@PathVariable String fragmentCode, @Valid @RequestBody GuiFragmentRequestBody guiFragmentRequest, BindingResult bindingResult) {
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -119,26 +121,26 @@ public class GuiFragmentController {
             }
         }
         GuiFragmentDto fragment = this.getGuiFragmentService().updateGuiFragment(guiFragmentRequest);
-        return new ResponseEntity<>(new RestResponse(fragment), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(fragment), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{fragmentCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<Map>> deleteGuiFragment(@PathVariable String fragmentCode) throws ApsSystemException {
         logger.info("deleting {}", fragmentCode);
         this.getGuiFragmentService().removeGuiFragment(fragmentCode);
         Map<String, String> result = new HashMap<>();
         result.put("code", fragmentCode);
-        return new ResponseEntity<>(new RestResponse(result), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/info/plugins", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<List<String>>> getPluginCodes() throws ApsSystemException {
+    public ResponseEntity<SimpleRestResponse<List<String>>> getPluginCodes() throws ApsSystemException {
         logger.info("loading plugin list");
         List<String> plugins = this.getGuiFragmentService().getPluginCodes();
 
-        return new ResponseEntity<>(new RestResponse(plugins), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(plugins), HttpStatus.OK);
     }
 
 }

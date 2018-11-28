@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.common.AbstractService;
 import java.util.Calendar;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
+public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiOAuth2TokenManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
     private transient final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -38,7 +37,9 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public void init() throws Exception {
-        this.scheduler.scheduleAtFixedRate(new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO(), 86400), 0, 1, TimeUnit.HOURS);
+        ScheduledDeleteExpiredTokenThread sdett
+                = new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO(), this.getRefreshTokenValiditySeconds());
+        this.scheduler.scheduleAtFixedRate(sdett, 0, 1, TimeUnit.HOURS);
         logger.debug("{}  initialized ", this.getClass().getName());
     }
 
@@ -51,7 +52,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     public void destroy() {
         this.scheduler.shutdown();
     }
-    
+
     @Override
     public OAuth2Authentication readAuthentication(OAuth2AccessToken token) {
         logger.warn("readAuthentication Not supported yet.");
@@ -129,7 +130,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         oAuth2Token.setGrantType(grantType);
         oAuth2Token.setLocalUser(principal);
         Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-        calendar.add(Calendar.SECOND, 3600);
+        calendar.add(Calendar.SECOND, this.getAccessTokenValiditySeconds());
         oAuth2Token.setExpiration(calendar.getTime());
         return oAuth2Token;
     }

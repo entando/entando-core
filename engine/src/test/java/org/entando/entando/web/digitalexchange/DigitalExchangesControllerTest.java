@@ -11,12 +11,11 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.digitalexchange.marketplace;
+package org.entando.entando.web.digitalexchange;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.MarketplacesService;
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.model.Marketplace;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.AbstractControllerTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,19 +35,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 
-public class MarketplacesControllerTest extends AbstractControllerTest {
+public class DigitalExchangesControllerTest extends AbstractControllerTest {
 
-    private static final String BASE_URL = "/digitalExchange/marketplaces";
+    private static final String BASE_URL = "/digitalExchange/exchanges";
 
     @Mock
-    private MarketplacesService service;
+    private DigitalExchangesService service;
 
     @Spy
-    private MarketplaceValidator marketplaceValidator;
+    private DigitalExchangeValidator digitalExchangeValidator;
 
     @InjectMocks
-    private MarketplacesControllerResource controller;
+    private DigitalExchangesResourceController controller;
 
     @Before
     public void setUp() throws Exception {
@@ -59,29 +59,31 @@ public class MarketplacesControllerTest extends AbstractControllerTest {
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
 
-        when(service.getMarketplaces()).thenReturn(getFakeMarketplaces());
+        when(service.getDigitalExchanges()).thenReturn(getFakeDigitalExchanges());
         when(service.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(service.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
-        when(service.findByName(any())).thenReturn(getFakeMarketplaces().get(0));
+        when(service.findByName(any())).thenReturn(getFakeDigitalExchanges().get(0));
     }
 
     @Test
-    public void shouldCreateMarketplace() throws Exception {
+    public void shouldCreateDigitalExchange() throws Exception {
 
+        String name = "New DE";
+        
         ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(getMarketplace("New Marketplace")).execute();
+                .setContent(getDigitalExchange(name)).execute();
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload.name", is("New Marketplace")));
+        result.andExpect(jsonPath("$.payload.name", is(name)));
     }
 
     @Test
-    public void shouldFailCreatingMarketplaceBecauseNameIsEmpty() throws Exception {
+    public void shouldFailCreatingDigitalExchangeBecauseNameIsEmpty() throws Exception {
 
         ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(new Marketplace()).execute();
+                .setContent(new DigitalExchange()).execute();
 
         result.andExpect(status().is4xxClientError());
         result.andExpect(jsonPath("$.metaData").isEmpty());
@@ -89,7 +91,7 @@ public class MarketplacesControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void shouldReturnMarketplaces() throws Exception {
+    public void shouldReturnDigitalExchanges() throws Exception {
 
         ResultActions result = createAuthRequest(get(BASE_URL)).execute();
 
@@ -97,30 +99,30 @@ public class MarketplacesControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
         result.andExpect(jsonPath("$.payload", hasSize(1)));
-        result.andExpect(jsonPath("$.payload[0]", is("Marketplace 1")));
+        result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
     }
 
     @Test
-    public void shouldFindMarketplace() throws Exception {
+    public void shouldFindDigitalExchange() throws Exception {
 
-        ResultActions result = createAuthRequest(get(BASE_URL + "/{marketplaceName}", "Marketplace 1")).execute();
+        ResultActions result = createAuthRequest(get(BASE_URL + "/{name}", "DE 1")).execute();
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload.name", is("Marketplace 1")));
+        result.andExpect(jsonPath("$.payload.name", is("DE 1")));
     }
 
     @Test
-    public void shouldUpdateMarketplace() throws Exception {
+    public void shouldUpdateDigitalExchange() throws Exception {
 
-        String name = "Marketplace 1";
-        Marketplace marketplace = getMarketplace(name);
-        String url = "http://www.entando.com";
-        marketplace.setUrl(url);
+        String name = "DE 1";
+        DigitalExchange digitalExchange = getDigitalExchange(name);
+        String url = "http://de1.entando.com";
+        digitalExchange.setUrl(url);
 
-        ResultActions result = createAuthRequest(put(BASE_URL + "/{marketplaceName}", name))
-                .setContent(marketplace).execute();
+        ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", name))
+                .setContent(digitalExchange).execute();
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
@@ -130,25 +132,25 @@ public class MarketplacesControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void shouldFailUpdatingMarketplaceBecauseNameMismatch() throws Exception {
+    public void shouldFailUpdatingDigitalExchangeBecauseNameMismatch() throws Exception {
 
-        Marketplace marketplace = getMarketplace("Marketplace 1");
+        DigitalExchange digitalExchange = getDigitalExchange("DE 1");
 
-        ResultActions result = createAuthRequest(put(BASE_URL + "/{marketplaceName}", "Different Name"))
-                .setContent(marketplace).execute();
+        ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", "Different Name"))
+                .setContent(digitalExchange).execute();
 
         result.andExpect(status().is4xxClientError());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(MarketplaceValidator.ERRCODE_URINAME_MISMATCH)));
+        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_URINAME_MISMATCH)));
         result.andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
-    public void shouldDeleteMarketplace() throws Exception {
+    public void shouldDeleteDigitalExchange() throws Exception {
 
-        String name = "Marketplace 1";
-        ResultActions result = createAuthRequest(delete(BASE_URL + "/{marketplaceName}", name)).execute();
+        String name = "DE 1";
+        ResultActions result = createAuthRequest(delete(BASE_URL + "/{name}", name)).execute();
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
@@ -156,15 +158,15 @@ public class MarketplacesControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.payload", is(name)));
     }
 
-    private List<Marketplace> getFakeMarketplaces() {
-        List<Marketplace> marketplaces = new ArrayList<>();
-        marketplaces.add(getMarketplace("Marketplace 1"));
-        return marketplaces;
+    private List<DigitalExchange> getFakeDigitalExchanges() {
+        List<DigitalExchange> digitalExchanges = new ArrayList<>();
+        digitalExchanges.add(getDigitalExchange("DE 1"));
+        return digitalExchanges;
     }
 
-    private Marketplace getMarketplace(String name) {
-        Marketplace marketplace = new Marketplace();
-        marketplace.setName(name);
-        return marketplace;
+    private DigitalExchange getDigitalExchange(String name) {
+        DigitalExchange digitalExchange = new DigitalExchange();
+        digitalExchange.setName(name);
+        return digitalExchange;
     }
 }

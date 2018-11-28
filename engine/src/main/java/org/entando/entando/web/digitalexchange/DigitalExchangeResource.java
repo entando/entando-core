@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.digitalexchange.marketplace;
+package org.entando.entando.web.digitalexchange;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.model.Marketplace;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -27,37 +27,37 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(tags = {"digital-exchange", "marketplaces"})
-@RequestMapping(value = "/digitalExchange/marketplaces")
-public interface MarketplacesResource {
+@Api(tags = {"digital-exchange"})
+@RequestMapping(value = "/digitalExchange/exchanges")
+public interface DigitalExchangeResource {
 
-    @ApiOperation(value = "Create a new Marketplace configuration")
+    @ApiOperation(value = "Create a new Digital Exchange configuration")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK")
     })
-    ResponseEntity<SimpleRestResponse<Marketplace>> create(@Valid @RequestBody Marketplace marketplace, BindingResult bindingResult);
+    ResponseEntity<SimpleRestResponse<DigitalExchange>> create(@Valid @RequestBody DigitalExchange digitalExchange, BindingResult bindingResult);
 
-    @ApiOperation(value = "Returns a Marketplace configuration")
+    @ApiOperation(value = "Returns a Digital Exchange configuration")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")
     })
-    ResponseEntity<SimpleRestResponse<Marketplace>> get(@PathVariable("name") String name);
+    ResponseEntity<SimpleRestResponse<DigitalExchange>> get(@PathVariable("name") String name);
 
-    @ApiOperation(value = "Returns the list of all Marketplace configurations")
+    @ApiOperation(value = "Returns the list of all Digital Exchange configurations")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK")
     })
     ResponseEntity<SimpleRestResponse<List<String>>> list();
 
-    @ApiOperation(value = "Update a Marketplace configuration")
+    @ApiOperation(value = "Update a Digital Exchange configuration")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")
     })
-    ResponseEntity<SimpleRestResponse<Marketplace>> update(@PathVariable("name") String name, @Valid @RequestBody Marketplace marketplace, BindingResult bindingResult);
+    ResponseEntity<SimpleRestResponse<DigitalExchange>> update(@PathVariable("name") String name, @Valid @RequestBody DigitalExchange digitalExchange, BindingResult bindingResult);
 
-    @ApiOperation(value = "Delete a Marketplace configuration")
+    @ApiOperation(value = "Delete a Digital Exchange configuration")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK"),
         @ApiResponse(code = 404, message = "Not Found")

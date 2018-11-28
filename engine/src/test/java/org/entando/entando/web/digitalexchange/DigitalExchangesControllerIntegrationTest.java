@@ -11,10 +11,9 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.digitalexchange.marketplace;
+package org.entando.entando.web.digitalexchange;
 
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.MarketplacesService;
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.model.Marketplace;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +26,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 
-public class MarketplacesControllerIntegrationTest extends AbstractControllerIntegrationTest {
+public class DigitalExchangesControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
-    private static final String BASE_URL = "/digitalExchange/marketplaces";
+    private static final String BASE_URL = "/digitalExchange/exchanges";
 
     @Autowired
-    private MarketplacesService marketplacesService;
+    private DigitalExchangesService digitalExchangeService;
 
     @Test
-    public void shouldReturnMarketplaces() throws Exception {
+    public void shouldReturnDigitalExchanges() throws Exception {
 
         ResultActions result = createAuthRequest(get(BASE_URL)).execute();
 
@@ -44,113 +44,113 @@ public class MarketplacesControllerIntegrationTest extends AbstractControllerInt
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
         result.andExpect(jsonPath("$.payload", hasSize(1)));
-        result.andExpect(jsonPath("$.payload[0]", is("Marketplace 1")));
+        result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
     }
 
     @Test
-    public void testCRUDMarketplace() throws Exception {
+    public void testCRUDDigitalExchange() throws Exception {
 
-        String marketplaceName = "New Marketplace";
+        String digitalExchangeName = "New DE";
 
         try {
             // Create
-            Marketplace marketplace = getMarketplace(marketplaceName);
+            DigitalExchange digitalExchange = getDigitalExchange(digitalExchangeName);
 
             ResultActions result = createAuthRequest(post(BASE_URL))
-                    .setContent(marketplace).execute();
+                    .setContent(digitalExchange).execute();
 
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.metaData").isEmpty());
             result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(marketplaceName)));
+            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
 
             // Read
-            result = createAuthRequest(get(BASE_URL + "/{name}", marketplaceName)).execute();
+            result = createAuthRequest(get(BASE_URL + "/{name}", digitalExchangeName)).execute();
 
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.metaData").isEmpty());
             result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(marketplaceName)));
+            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
 
             // Update
             String url = "http://www.entando.com/";
-            marketplace.setUrl(url);
-            result = createAuthRequest(put(BASE_URL + "/{name}", marketplaceName))
-                    .setContent(marketplace).execute();
+            digitalExchange.setUrl(url);
+            result = createAuthRequest(put(BASE_URL + "/{name}", digitalExchangeName))
+                    .setContent(digitalExchange).execute();
 
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.metaData").isEmpty());
             result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(marketplaceName)));
+            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
             result.andExpect(jsonPath("$.payload.url", is(url)));
 
             // Delete
-            result = createAuthRequest(delete(BASE_URL + "/{name}", marketplaceName)).execute();
+            result = createAuthRequest(delete(BASE_URL + "/{name}", digitalExchangeName)).execute();
 
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.metaData").isEmpty());
             result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload", is(marketplaceName)));
+            result.andExpect(jsonPath("$.payload", is(digitalExchangeName)));
         } catch (Exception ex) {
-            marketplacesService.delete(marketplaceName);
+            digitalExchangeService.delete(digitalExchangeName);
             throw ex;
         }
     }
 
     @Test
-    public void shouldFailCreatingMarketplaceBecauseAlreadyExists() throws Exception {
+    public void shouldFailCreatingDigitalExchangeBecauseAlreadyExists() throws Exception {
 
         ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(getMarketplace("Marketplace 1")).execute();
+                .setContent(getDigitalExchange("DE 1")).execute();
 
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(MarketplaceValidator.ERRCODE_MARKETPLACE_ALREADY_EXISTS)));
+        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS)));
     }
 
     @Test
-    public void shouldFailFindingMarketplace() throws Exception {
+    public void shouldFailFindingDigitalExchange() throws Exception {
 
-        ResultActions result = createAuthRequest(get(BASE_URL + "/{name}", "Inexistent Marketplace")).execute();
+        ResultActions result = createAuthRequest(get(BASE_URL + "/{name}", "Inexistent DE")).execute();
 
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(MarketplaceValidator.ERRCODE_MARKETPLACE_NOT_FOUND)));
+        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
         result.andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
-    public void shouldFailUpdatingMarketplaceBecauseNotFound() throws Exception {
+    public void shouldFailUpdatingDigitalExchangeBecauseNotFound() throws Exception {
 
-        Marketplace marketplace = getMarketplace("Inexistent Marketplace");
+        DigitalExchange digitalExchange = getDigitalExchange("Inexistent DE");
 
-        ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", marketplace.getName()))
-                .setContent(marketplace).execute();
+        ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", digitalExchange.getName()))
+                .setContent(digitalExchange).execute();
 
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(MarketplaceValidator.ERRCODE_MARKETPLACE_NOT_FOUND)));
+        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
         result.andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
-    public void shouldFailDeletingMarketplaceBecauseNotFound() throws Exception {
+    public void shouldFailDeletingDigitalExchangeBecauseNotFound() throws Exception {
 
-        ResultActions result = createAuthRequest(delete(BASE_URL + "/{name}", "Inexistent Marketplace")).execute();
+        ResultActions result = createAuthRequest(delete(BASE_URL + "/{name}", "Inexistent DE")).execute();
 
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(MarketplaceValidator.ERRCODE_MARKETPLACE_NOT_FOUND)));
+        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
         result.andExpect(jsonPath("$.payload").isEmpty());
     }
     
-    private Marketplace getMarketplace(String name) {
-        Marketplace marketplace = new Marketplace();
-        marketplace.setName(name);
-        return marketplace;
+    private DigitalExchange getDigitalExchange(String name) {
+        DigitalExchange digitalExchange = new DigitalExchange();
+        digitalExchange.setName(name);
+        return digitalExchange;
     }
 }

@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.digitalexchange.marketplace.model;
+package org.entando.entando.aps.system.services.digitalexchange.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -26,7 +26,7 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ApiModel
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Marketplace {
+public class DigitalExchange {
 
     @NotNull
     @Size(min = 3, message = "string.size.invalid")

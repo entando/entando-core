@@ -11,7 +11,7 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.digitalexchange.marketplace.model;
+package org.entando.entando.aps.system.services.digitalexchange.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,23 +19,23 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "marketplaces")
-public class MarketplacesConfig {
+@XmlRootElement(name = "digitalExchanges")
+public class DigitalExchangesConfig {
 
-    private List<Marketplace> marketplaces;
+    private List<DigitalExchange> digitalExchanges;
 
-    public MarketplacesConfig() {
-        this.marketplaces = new ArrayList<>();
+    public DigitalExchangesConfig() {
+        this.digitalExchanges = new ArrayList<>();
     }
-    
+
     @XmlElements({
-        @XmlElement(name = "marketplace")
+        @XmlElement(name = "digitalExchange")
     })
-    public List<Marketplace> getMarketplaces() {
-        return marketplaces;
+    public List<DigitalExchange> getDigitalExchanges() {
+        return digitalExchanges;
     }
 
-    public void setMarketplaces(List<Marketplace> marketplaces) {
-        this.marketplaces = marketplaces;
+    public void setDigitalExchanges(List<DigitalExchange> digitalExchanges) {
+        this.digitalExchanges = digitalExchanges;
     }
 }

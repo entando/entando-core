@@ -267,7 +267,7 @@ public interface SystemConstants {
 
     public static final String CONFIG_ITEM_PARAMS = "params";
     
-    public static final String CONFIG_ITEM_MARKETPLACES = "marketplaces";
+    public static final String CONFIG_ITEM_DIGITAL_EXCHANGES = "digitalExchanges";
 
     /**
      * Parametro di sistema: abilitazione del modulo Privacy. Possibili

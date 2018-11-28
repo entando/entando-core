@@ -11,22 +11,22 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.digitalexchange.marketplace;
+package org.entando.entando.web.digitalexchange;
 
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.model.Marketplace;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
 @Component
-public class MarketplaceValidator {
+public class DigitalExchangeValidator {
 
-    public static final String ERRCODE_MARKETPLACE_NOT_FOUND = "1";
-    public static final String ERRCODE_MARKETPLACE_ALREADY_EXISTS = "2";
+    public static final String ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND = "1";
+    public static final String ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
 
-    public void validateBodyName(String name, Marketplace marketplace, Errors errors) {
-        if (!marketplace.getName().equals(name)) {
-            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new Object[]{name, marketplace.getName()}, "marketplace.name.mismatch");
+    public void validateBodyName(String name, DigitalExchange digitalExchange, Errors errors) {
+        if (!digitalExchange.getName().equals(name)) {
+            errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new Object[]{name, digitalExchange.getName()}, "digitalExchange.name.mismatch");
         }
     }
 }

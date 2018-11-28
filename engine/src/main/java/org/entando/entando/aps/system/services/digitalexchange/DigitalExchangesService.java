@@ -11,20 +11,20 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.digitalexchange.marketplace;
+package org.entando.entando.aps.system.services.digitalexchange;
 
 import java.util.List;
-import org.entando.entando.aps.system.services.digitalexchange.marketplace.model.Marketplace;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 
-public interface MarketplacesService {
+public interface DigitalExchangesService {
 
-    List<Marketplace> getMarketplaces();
+    List<DigitalExchange> getDigitalExchanges();
 
-    Marketplace findByName(String name);
+    DigitalExchange findByName(String name);
 
-    Marketplace create(Marketplace marketplace);
+    DigitalExchange create(DigitalExchange digitalExchange);
 
-    Marketplace update(Marketplace marketplace);
+    DigitalExchange update(DigitalExchange digitalExchange);
 
-    void delete(String marketplaceName);
+    void delete(String digitalExchangeName);
 }

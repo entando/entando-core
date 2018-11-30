@@ -488,7 +488,7 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
 
     String getMultiFileUniqueBaseName(String baseName, String suffix, String extension) {
         Assert.hasLength(baseName);
-        Assert.hasLength(suffix);
+        Assert.notNull(suffix);
 
         String suggestedName = baseName + suffix;
 

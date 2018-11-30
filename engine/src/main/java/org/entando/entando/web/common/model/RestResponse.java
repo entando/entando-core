@@ -68,4 +68,8 @@ public class RestResponse<T, M> {
     public void addErrors(List<RestError> errors) {
         this.errors.addAll(errors);
     }
+    
+    public void addError(RestError error) {
+        this.errors.add(error);
+    }
 }

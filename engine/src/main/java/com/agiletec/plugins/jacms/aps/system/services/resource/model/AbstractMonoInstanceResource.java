@@ -18,6 +18,7 @@ import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM
 
 import java.io.InputStream;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,17 +105,15 @@ public abstract class AbstractMonoInstanceResource extends AbstractResource {
         return resourceDom.getXMLDocument();
     }
     
-    protected String getNewInstanceFileName(String masterFileName) throws Throwable {
-		StringBuilder fileName = null;
-		do {
-			String baseName = super.getNewUniqueFileName(masterFileName);
-			fileName = new StringBuilder(baseName);
-			String extension = super.getFileExtension(masterFileName);
-			if (StringUtils.isNotEmpty(extension)) {
-				fileName.append(".").append(extension);
-			}
-		} while (this.exists(fileName.toString()));
-    	return fileName.toString();
+    String getNewInstanceFileName(String masterFileName) throws Throwable {
+		String baseName = getUniqueBaseName(masterFileName);
+
+		String extension = FilenameUtils.getExtension(masterFileName);
+		if (StringUtils.isNotEmpty(extension)) {
+			baseName += "." + extension;
+		}
+
+    	return baseName;
 	}
     
 	private ResourceInstance _instance;

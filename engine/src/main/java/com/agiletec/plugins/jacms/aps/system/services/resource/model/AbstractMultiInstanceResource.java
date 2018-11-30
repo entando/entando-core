@@ -15,18 +15,10 @@ package com.agiletec.plugins.jacms.aps.system.services.resource.model;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.plugins.jacms.aps.system.services.resource.parse.ResourceDOM;
+import org.apache.commons.io.FilenameUtils;
+import org.slf4j.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.jdom.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  * Classe astratta di base per l'implementazione di oggetti Risorsa
@@ -122,23 +114,24 @@ public abstract class AbstractMultiInstanceResource extends AbstractResource {
      * multiInstanza.
      * @return Il nome corretto del file.
      */
-    protected String getNewInstanceFileName(String masterFileName, int size, String langCode) {
-        StringBuilder fileName = null;
-        do {
-            String baseName = super.getNewUniqueFileName(masterFileName);
-            fileName = new StringBuilder(baseName);
-            String extension = super.getFileExtension(masterFileName);
-            if (size >= 0) {
-                fileName.append("_d").append(size);
-            }
-            if (langCode != null) {
-                fileName.append("_").append(langCode);
-            }
-            if (StringUtils.isNotEmpty(extension)) {
-                fileName.append(".").append(extension);
-            }
-        } while (this.exists(fileName.toString()));
-        return fileName.toString();
+    String getNewInstanceFileName(String masterFileName, int size, String langCode) {
+        String baseName = FilenameUtils.getBaseName(masterFileName);
+        String extension = FilenameUtils.getExtension(masterFileName);
+
+        String suffix = "";
+
+        if (size >= 0) {
+            suffix += "_d" + size;
+        }
+
+        if (langCode != null) {
+            suffix += "_" + langCode;
+        }
+
+        return createFilePlusExtensionName(
+                getMultiFileUniqueBaseName(baseName, suffix, extension),
+                extension
+        );
     }
 
     /**

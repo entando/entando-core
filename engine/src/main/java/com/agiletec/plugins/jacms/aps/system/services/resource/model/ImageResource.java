@@ -102,7 +102,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
     @Override
     @Deprecated
     public String getInstanceFileName(String masterFileName, int size, String langCode) {
-        return this.getNewInstanceFileName(masterFileName, size, langCode);
+        return getNewInstanceFileName(masterFileName, size, langCode);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
     @Override
     public void saveResourceInstances(ResourceDataBean bean) throws ApsSystemException {
         try {
-            String masterImageFileName = this.getNewInstanceFileName(bean.getFileName(), 0, null);
+            String masterImageFileName = getNewInstanceFileName(bean.getFileName(), 0, null);
             String subPath = this.getDiskSubFolder() + masterImageFileName;
             this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
             File tempMasterFile = this.saveTempFile("temp_" + masterImageFileName, bean.getInputStream());
@@ -195,8 +195,6 @@ public class ImageResource extends AbstractMultiInstanceResource {
      *
      * @param bean
      * @param dimension
-     * @param mimeType
-     * @param baseDiskFolder
      * @throws ApsSystemException
      */
     private void saveResizedImage(ResourceDataBean bean, ImageResourceDimension dimension) throws ApsSystemException {
@@ -204,7 +202,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
             //salta l'elemento con id zero che non va ridimensionato
             return;
         }
-        String imageName = this.getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
+        String imageName = getNewInstanceFileName(bean.getFileName(), dimension.getIdDim(), null);
         String subPath = super.getDiskSubFolder() + imageName;
         try {
             this.getStorageManager().deleteFile(subPath, this.isProtectedResource());
@@ -263,7 +261,7 @@ public class ImageResource extends AbstractMultiInstanceResource {
     }
 
     private IImageResizer getImageResizer(String filePath) {
-        String extension = super.getFileExtension(filePath); //filePath.substring(filePath.lastIndexOf('.') + 1).trim();
+        String extension = FilenameUtils.getExtension(filePath);
         String resizerClassName = this.getImageResizerClasses().get(extension);
         if (null == resizerClassName) {
             resizerClassName = this.getImageResizerClasses().get("DEFAULT_RESIZER");

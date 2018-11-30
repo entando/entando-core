@@ -23,16 +23,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.*;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
 
 /**
  * Classe astratta di base per gli oggetti Resource.
@@ -473,19 +470,39 @@ public abstract class AbstractResource implements ResourceInterface, Serializabl
         return new File(filePath);
     }
 
-    protected String getNewUniqueFileName(String masterFileName) {
-        int index = (null != masterFileName) ? masterFileName.lastIndexOf('.') : -1;
-        String baseName = (index > 0) ? masterFileName.substring(0, index) : masterFileName;
-        baseName += System.currentTimeMillis();
-        return DigestUtils.md5Hex(baseName);
+    String getUniqueBaseName(String originalFileName) {
+        Assert.hasLength(originalFileName, "File name must not be null or empty");
+
+        String baseName = FilenameUtils.getBaseName(originalFileName);
+        String extension = FilenameUtils.getExtension(originalFileName);
+
+        String suggestedName = baseName;
+        int fileOrder = 1;
+        while(exists(createFilePlusExtensionName(suggestedName, extension))) {
+            suggestedName = baseName + '_' +fileOrder;
+            fileOrder ++;
+        }
+
+        return suggestedName;
     }
 
-    protected String getFileExtension(String fileName) {
-        int index = (null != fileName) ? fileName.lastIndexOf('.') : -1;
-        if (index < 0) {
-            return "";
+    String getMultiFileUniqueBaseName(String baseName, String suffix, String extension) {
+        Assert.hasLength(baseName);
+        Assert.notNull(suffix);
+
+        String suggestedName = baseName + suffix;
+
+        int fileOrder = 1;
+        while(exists(createFilePlusExtensionName(suggestedName, extension))) {
+            suggestedName = baseName + '_' + fileOrder + suffix;
+            fileOrder ++;
         }
-        return fileName.substring(index + 1).trim();
+
+        return suggestedName;
+    }
+
+    String createFilePlusExtensionName(String baseName, String extension) {
+        return extension == null ? baseName : baseName + '.' + extension;
     }
 
     protected boolean exists(String instanceFileName) {

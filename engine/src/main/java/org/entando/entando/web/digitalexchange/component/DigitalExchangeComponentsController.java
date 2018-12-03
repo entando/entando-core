@@ -17,6 +17,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsService;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -39,6 +40,12 @@ public class DigitalExchangeComponentsController implements DigitalExchangeCompo
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<PagedRestResponse<DigitalExchangeComponent>> getComponents(RestListRequest requestList) {
-        return ResponseEntity.ok(new PagedRestResponse<>(componentsService.getComponents(requestList)));
+
+        ResilientPagedMetadata resilientPagedMetadata = componentsService.getComponents(requestList);
+
+        PagedRestResponse<DigitalExchangeComponent> response = new PagedRestResponse<>(resilientPagedMetadata);
+        response.setErrors(resilientPagedMetadata.getErrors());
+
+        return ResponseEntity.ok(response);
     }
 }

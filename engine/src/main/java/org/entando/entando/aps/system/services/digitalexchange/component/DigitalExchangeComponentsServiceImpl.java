@@ -31,30 +31,38 @@ import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponen
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Service
 public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComponentsService {
 
     public static final String ERRCODE_DE_HTTP_ERROR = "1";
-    public static final String ERRCODE_DE_EMPTY_BODY = "2";
+    public static final String ERRCODE_DE_UNREACHABLE = "2";
+    public static final String ERRCODE_DE_INVALID_URL = "3";
+    public static final String ERRCODE_DE_WRONG_PAYLOAD = "4";
 
-    private static final String DE_COMPONENTS_ENDPOINT = "digitalExchange/components";
+    private static final String[] DE_COMPONENTS_PATH_SEGMENTS = new String[]{"digitalExchange", "components"};
 
     private static final Logger logger = LoggerFactory.getLogger(DigitalExchangeComponentsServiceImpl.class);
 
     private final DigitalExchangesService digitalExchangesService;
     private final RestTemplate restTemplate;
+    private final MessageSource messageSource;
 
     @Autowired
-    public DigitalExchangeComponentsServiceImpl(DigitalExchangesService digitalExchangesService, RestTemplate restTemplate) {
+    public DigitalExchangeComponentsServiceImpl(DigitalExchangesService digitalExchangesService,
+            RestTemplate restTemplate, MessageSource messageSource) {
         this.digitalExchangesService = digitalExchangesService;
         this.restTemplate = restTemplate;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -88,7 +96,7 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
 
         CompletableFuture<PagedRestResponse<DigitalExchangeComponent>>[] futureResults
                 = digitalExchangesService.getDigitalExchanges()
-                        .stream().map(m -> getComponents(m, requestList))
+                        .stream().map(m -> CompletableFuture.supplyAsync(() -> getComponents(m, requestList)))
                         .toArray(CompletableFuture[]::new);
 
         return CompletableFuture.allOf(futureResults)
@@ -137,33 +145,55 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
                 .toList();
     }
 
-    @Async
-    private CompletableFuture<PagedRestResponse<DigitalExchangeComponent>> getComponents(DigitalExchange digitalExchange, RestListRequest requestList) {
+    private PagedRestResponse<DigitalExchangeComponent> getComponents(DigitalExchange digitalExchange, RestListRequest requestList) {
 
-        PagedRestResponse<DigitalExchangeComponent> result;
+        String url;
 
-        String url = getComponentsURL(digitalExchange, requestList);
+        try {
+            url = getComponentsURL(digitalExchange, requestList);
+        } catch (IllegalArgumentException ex) {
+            logger.error("Error calling {}. Invalid URL", digitalExchange.getUrl());
+            
+            String msg = messageSource.getMessage("digitalExchange.invalidUrl",
+                    new Object[]{digitalExchange.getName(), digitalExchange.getUrl()}, null);
+            
+            return getErrorResponse(ERRCODE_DE_INVALID_URL, msg);
+        }
 
         try {
             ResponseEntity<PagedRestResponse<DigitalExchangeComponent>> responseEntity = restTemplate
                     .exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<PagedRestResponse<DigitalExchangeComponent>>() {
                     });
-            PagedRestResponse<DigitalExchangeComponent> response = responseEntity.getBody();
-            if (response == null) {
-                // TODO error msg
-                result = getErrorResponse(ERRCODE_DE_EMPTY_BODY, "response == null");
-            } else {
-                result = response;
-            }
-        } catch (HttpStatusCodeException ex) {
-            logger.error("Error retrieving components", ex);
-            logger.error("Error calling {}. Status code {}. Server response:\n{}",
-                    url, ex.getStatusCode().value(), ex.getResponseBodyAsString());
-            // TODO error msg
-            result = getErrorResponse(ERRCODE_DE_HTTP_ERROR, String.valueOf(ex.getStatusCode().value()));
-        }
 
-        return CompletableFuture.completedFuture(result);
+            PagedRestResponse<DigitalExchangeComponent> response = responseEntity.getBody();
+
+            if (response == null || response.getPayload() == null) {
+
+                logger.error("Error calling {}. Unable to parse response", url);
+
+                String msg = messageSource.getMessage("digitalExchange.unparsableResponse",
+                        new Object[]{digitalExchange.getName()}, null);
+                return getErrorResponse(ERRCODE_DE_WRONG_PAYLOAD, msg);
+            } else {
+                return response;
+            }
+
+        } catch (RestClientResponseException ex) { // Error response
+
+            logger.error("Error calling {}. Status code: {}", url, ex.getRawStatusCode());
+
+            String msg = messageSource.getMessage("digitalExchange.httpError",
+                    new Object[]{digitalExchange.getName(), ex.getRawStatusCode()}, null);
+            return getErrorResponse(ERRCODE_DE_HTTP_ERROR, msg);
+
+        } catch (RestClientException ex) { // Other (e.g. unknown host)
+
+            logger.error("Error calling {}. Exception message: {}", url, ex.getMessage());
+
+            String msg = messageSource.getMessage("digitalExchange.unreachable",
+                    new Object[]{digitalExchange.getName()}, null);
+            return getErrorResponse(ERRCODE_DE_UNREACHABLE, msg);
+        }
     }
 
     private PagedRestResponse<DigitalExchangeComponent> getErrorResponse(String errorCode, String errorMessage) {
@@ -179,7 +209,7 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
 
         UriComponentsBuilder baseBuilder = UriComponentsBuilder
                 .fromHttpUrl(digitalExchange.getUrl())
-                .path(DE_COMPONENTS_ENDPOINT);
+                .pathSegment(DE_COMPONENTS_PATH_SEGMENTS);
 
         return new RestListRequestUriBuilder(baseBuilder, digitalExchangeRequest).toUriString();
     }

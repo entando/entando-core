@@ -43,7 +43,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", hasSize(1)));
+        result.andExpect(jsonPath("$.payload", hasSize(3)));
         result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
     }
 

@@ -888,6 +888,14 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'digitalExc
     <name>DE 1</name>
     <url>https://de1.entando.com/</url>
   </digitalExchange>
+  <digitalExchange>
+    <name>DE 2</name>
+    <url>https://de2.entando.com/</url>
+  </digitalExchange>
+  <digitalExchange>
+    <name>Broken DE</name>
+    <url>https://de3.entando.com/</url>
+  </digitalExchange>
 </digitalExchanges>');
 
 

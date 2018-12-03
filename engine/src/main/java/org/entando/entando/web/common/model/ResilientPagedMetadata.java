@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.common.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import java.util.List;
  */
 public class ResilientPagedMetadata<T> extends PagedMetadata<T> {
 
+    @JsonIgnore
     private List<RestError> errors;
 
     public ResilientPagedMetadata() {

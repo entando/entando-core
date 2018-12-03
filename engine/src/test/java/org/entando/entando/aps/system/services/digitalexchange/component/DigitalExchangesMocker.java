@@ -18,8 +18,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.ResilientPagedMetadata;
@@ -30,82 +30,86 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 public class DigitalExchangesMocker {
 
+    private static final String[] COMPONENTS_1 = new String[]{"A", "B", "C", "F", "I", "M", "N", "P"};
+    private static final String[] COMPONENTS_2 = new String[]{"D", "E", "G", "H", "L", "O"};
+
     private final RestTemplate restTemplate;
-    private final DigitalExchangesService digitalExchangesService;
-
-    private final List<DigitalExchange> fakeDigitalExchanges;
+    private final List<DigitalExchange> exchanges;
     private final Map<String, List<DigitalExchangeComponent>> componentsMap;
-    private final List<String> brokenInstances;
+    private final Map<String, Callable<ResponseEntity<PagedRestResponse<DigitalExchangeComponent>>>> brokenInstances;
 
-    public DigitalExchangesMocker(RestTemplate restTemplate, DigitalExchangesService digitalExchangesService) {
+    private DigitalExchangesMocker(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.digitalExchangesService = digitalExchangesService;
-        fakeDigitalExchanges = new ArrayList<>();
+        this.exchanges = new ArrayList<>();
         componentsMap = new HashMap<>();
-        brokenInstances = new ArrayList<>();
+        brokenInstances = new HashMap<>();
+    }
+
+    public static RestTemplate getRestMockedRestTemplate() {
+        RestTemplate restTemplate = mock(RestTemplate.class);
+        initRestTemplateMocks(restTemplate);
+        return restTemplate;
+    }
+
+    public static DigitalExchangesMocker initRestTemplateMocks(RestTemplate restTemplate) {
+        DigitalExchangesMocker mocker = new DigitalExchangesMocker(restTemplate)
+                .addDigitalExchange("DE 1", COMPONENTS_1)
+                .addDigitalExchange("DE 2", COMPONENTS_2)
+                // Broken instance
+                .addDigitalExchange("Broken DE",
+                        () -> {
+                            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "This instance is broken");
+                        });
+        mocker.initMocks();
+        return mocker;
+    }
+
+    public List<DigitalExchange> getFakeExchanges() {
+        return exchanges;
+    }
+
+    public static int getTotalComponentsCount() {
+        return COMPONENTS_1.length + COMPONENTS_2.length;
+    }
+
+    private DigitalExchange getDigitalExchange(String name) {
+        return getDigitalExchange(name, String.format("https://de%s.entando.com/", exchanges.size() + 1));
+    }
+
+    private DigitalExchange getDigitalExchange(String name, String url) {
+        DigitalExchange digitalExchange = new DigitalExchange();
+        digitalExchange.setName(name);
+        digitalExchange.setUrl(url);
+        return digitalExchange;
     }
 
     public DigitalExchangesMocker addDigitalExchange(String name, String... componentNames) {
-
-        DigitalExchange digitalExchange = new DigitalExchange();
-        digitalExchange.setName(name);
-        digitalExchange.setUrl(String.format("http://de%s.entando.org", fakeDigitalExchanges.size()));
-
-        fakeDigitalExchanges.add(digitalExchange);
-
-        if (componentNames.length == 0) {
-            brokenInstances.add(name);
-        } else {
-            componentsMap.put(name, getDigitalExchangeComponents(componentNames));
-        }
-
+        DigitalExchange digitalExchange = getDigitalExchange(name);
+        exchanges.add(digitalExchange);
+        componentsMap.put(digitalExchange.getUrl(), getDigitalExchangeComponents(componentNames));
         return this;
     }
 
-    public DigitalExchangesMocker initMocks() {
-        initDigitalExchangesServiceMocks();
-        initRestTemplateMocks();
+    public DigitalExchangesMocker addDigitalExchange(String name, Callable<ResponseEntity<PagedRestResponse<DigitalExchangeComponent>>> callable) {
+        DigitalExchange digitalExchange = getDigitalExchange(name);
+        exchanges.add(digitalExchange);
+        brokenInstances.put(digitalExchange.getUrl(), callable);
         return this;
     }
 
-    public long getTotalComponentsCount() {
-        return componentsMap.values().stream().flatMap(List::stream).count();
-    }
-
-    private void initDigitalExchangesServiceMocks() {
-        when(digitalExchangesService.getDigitalExchanges())
-                .thenReturn(fakeDigitalExchanges);
-    }
-
-    private void initRestTemplateMocks() {
-        when(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), eq(null), any(ParameterizedTypeReference.class)))
-                .thenAnswer(invocation -> {
-                    String url = invocation.getArgument(0);
-
-                    DigitalExchange calledDE = digitalExchangesService
-                            .getDigitalExchanges().stream()
-                            .filter(de -> url.startsWith(de.getUrl()))
-                            .findFirst().get();
-
-                    if (brokenInstances.contains(calledDE.getName())) {
-                        throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "This instance is broken");
-                    }
-
-                    List<DigitalExchangeComponent> components = componentsMap.get(calledDE.getName());
-
-                    int questionMarkPosition = url.indexOf("?");
-                    Map<String, String> urlParameters = getURLParameters(url);
-                    int pageSize = Integer.parseInt(urlParameters.get("pageSize"));
-                    String nameFilter = urlParameters.get("filters[0].value");
-
-                    return getFakeResponse(components, pageSize, nameFilter);
-                });
+    public DigitalExchangesMocker addDigitalExchange(String name, String url, Callable<ResponseEntity<PagedRestResponse<DigitalExchangeComponent>>> callable) {
+        DigitalExchange digitalExchange = getDigitalExchange(name, url);
+        exchanges.add(digitalExchange);
+        brokenInstances.put(digitalExchange.getUrl(), callable);
+        return this;
     }
 
     private List<DigitalExchangeComponent> getDigitalExchangeComponents(String... names) {
@@ -114,6 +118,34 @@ public class DigitalExchangesMocker {
             component.setName(name);
             return component;
         }).collect(Collectors.toList());
+    }
+
+    private RestTemplate initMocks() {
+
+        when(restTemplate.exchange(any(String.class), eq(HttpMethod.GET), eq(null), any(ParameterizedTypeReference.class)))
+                .thenAnswer(invocation -> {
+                    String url = invocation.getArgument(0);
+                    String baseUrl = getBaseUrl(url);
+
+                    if (brokenInstances.containsKey(baseUrl)) {
+                        return brokenInstances.get(baseUrl).call();
+                    }
+
+                    List<DigitalExchangeComponent> components = componentsMap.get(baseUrl);
+
+                    Map<String, String> urlParameters = getURLParameters(url);
+                    int pageSize = Integer.parseInt(urlParameters.get("pageSize"));
+                    String nameFilter = urlParameters.get("filters[0].value");
+
+                    return getFakeResponse(components, pageSize, nameFilter);
+                });
+
+        return restTemplate;
+    }
+
+    private String getBaseUrl(String url) {
+        return exchanges.stream().map(ex -> ex.getUrl())
+                .filter(baseUrl -> url.startsWith(baseUrl)).findFirst().get();
     }
 
     private Map<String, String> getURLParameters(String url) {

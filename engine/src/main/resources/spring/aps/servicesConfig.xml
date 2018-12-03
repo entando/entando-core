@@ -165,8 +165,6 @@
         <property name="socialActivityStreamManager" ref="SocialActivityStreamManager" />
     </bean>
 
-
-
     <bean id="DatabaseService" class="org.entando.entando.aps.system.services.database.DatabaseService" >
         <property name="databaseManager" ref="DatabaseManager" />
         <property name="componentManager" ref="ComponentManager" />
@@ -176,4 +174,7 @@
         <property name="storageManager" ref="StorageManager" />
     </bean>
 
+    <bean id="DigitalExchangesService" class="org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesServiceImpl" >
+        <property name="configManager" ref="BaseConfigManager" />
+    </bean>
 </beans>

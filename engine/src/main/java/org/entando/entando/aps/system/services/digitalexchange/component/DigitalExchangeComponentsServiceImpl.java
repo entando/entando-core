@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.RestListRequestUriBuilder;
@@ -84,9 +83,11 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
             }
         }
 
-        joinedList = filterAndSort(joinedList, requestList);
+        joinedList = new DigitalExchangeComponentListProcessor(requestList, joinedList)
+                .filterAndSort().toList();
+        List<DigitalExchangeComponent> subList = requestList.getSublist(joinedList);
 
-        ResilientPagedMetadata pagedMetadata = new ResilientPagedMetadata(requestList, joinedList, total);
+        ResilientPagedMetadata pagedMetadata = new ResilientPagedMetadata(requestList, subList, total);
         pagedMetadata.setErrors(errors);
 
         return pagedMetadata;
@@ -107,44 +108,6 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
                 }).join();
     }
 
-    private List<DigitalExchangeComponent> filterAndSort(List<DigitalExchangeComponent> joinedList, RestListRequest listRequest) {
-
-        return RequestListProcessor.fromList(joinedList, listRequest)
-                .filter((attribute, value) -> {
-                    switch (attribute) {
-                        case "name":
-                            return c -> c.getName().toLowerCase().contains(value.toLowerCase());
-                        case "version":
-                            return c -> c.getVersion().toLowerCase().contains(value.toLowerCase());
-                        case "type":
-                            return c -> c.getType().toLowerCase().contains(value.toLowerCase());
-                        case "rating":
-                            return c -> c.getRating() == Integer.parseInt(value);
-                        case "installed":
-                            return c -> c.isInstalled() == Boolean.parseBoolean(value.toLowerCase());
-                    }
-                    return null;
-                })
-                .sort(sort -> {
-                    switch (sort) {
-                        case "name":
-                            return (a, b) -> a.getName().compareToIgnoreCase(b.getName());
-                        case "lastUpdate":
-                            return (a, b) -> a.getLastUpdate().compareTo(b.getLastUpdate());
-                        case "version":
-                            return (a, b) -> a.getVersion().compareToIgnoreCase(b.getVersion());
-                        case "type":
-                            return (a, b) -> a.getType().compareToIgnoreCase(b.getType());
-                        case "rating":
-                            return (a, b) -> Integer.compare(a.getRating(), b.getRating());
-                        case "installed":
-                            return (a, b) -> Boolean.compare(a.isInstalled(), b.isInstalled());
-                    }
-                    return null;
-                })
-                .toList();
-    }
-
     private PagedRestResponse<DigitalExchangeComponent> getComponents(DigitalExchange digitalExchange, RestListRequest requestList) {
 
         String url;
@@ -153,10 +116,10 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
             url = getComponentsURL(digitalExchange, requestList);
         } catch (IllegalArgumentException ex) {
             logger.error("Error calling {}. Invalid URL", digitalExchange.getUrl());
-            
+
             String msg = messageSource.getMessage("digitalExchange.invalidUrl",
                     new Object[]{digitalExchange.getName(), digitalExchange.getUrl()}, null);
-            
+
             return getErrorResponse(ERRCODE_DE_INVALID_URL, msg);
         }
 

@@ -24,16 +24,27 @@ import java.util.stream.Stream;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 
-public class RequestListProcessor<T> {
+public abstract class RequestListProcessor<T> {
 
     private final RestListRequest restListRequest;
     private Stream<T> stream;
 
-    private RequestListProcessor(RestListRequest restListRequest) {
+    public RequestListProcessor(RestListRequest restListRequest, Stream<T> stream) {
         this.restListRequest = restListRequest;
+        this.stream = stream;
     }
 
-    public RequestListProcessor<T> filter(BiFunction<String, String, Predicate<T>> predicatesProvider) {
+    public RequestListProcessor(RestListRequest restListRequest, List<T> items) {
+        this(restListRequest, items.stream());
+    }
+
+    protected abstract BiFunction<String, String, Predicate<T>> getPredicates();
+
+    protected abstract Function<String, Comparator<T>> getComparators();
+
+    public RequestListProcessor<T> filter() {
+
+        BiFunction<String, String, Predicate<T>> predicatesProvider = getPredicates();
 
         if (null != restListRequest && null != restListRequest.getFilters()) {
 
@@ -52,7 +63,9 @@ public class RequestListProcessor<T> {
         return this;
     }
 
-    public RequestListProcessor<T> sort(Function<String, Comparator<T>> comparatorsProvider) {
+    public RequestListProcessor<T> sort() {
+
+        Function<String, Comparator<T>> comparatorsProvider = getComparators();
 
         String sort = restListRequest.getSort();
         String direction = restListRequest.getDirection();
@@ -71,23 +84,16 @@ public class RequestListProcessor<T> {
 
         return this;
     }
+    
+    public RequestListProcessor<T> filterAndSort() {
+        return filter().sort();
+    }
 
     public Stream<T> getStream() {
         return stream;
     }
 
     public List<T> toList() {
-        List<T> resultList = stream.collect(Collectors.toList());
-        return restListRequest.getSublist(resultList);
-    }
-
-    public static <T> RequestListProcessor<T> fromList(List<T> items, RestListRequest restListRequest) {
-        return fromStream(items.stream(), restListRequest);
-    }
-
-    public static <T> RequestListProcessor<T> fromStream(Stream<T> stream, RestListRequest restListRequest) {
-        RequestListProcessor<T> processor = new RequestListProcessor<>(restListRequest);
-        processor.stream = stream;
-        return processor;
+        return stream.collect(Collectors.toList());
     }
 }

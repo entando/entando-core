@@ -31,7 +31,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiOAuth2TokenManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
-    private transient final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private transient ScheduledExecutorService scheduler = null;
 
     private IOAuth2TokenDAO oAuth2TokenDAO;
 
@@ -39,6 +39,7 @@ public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiO
     public void init() throws Exception {
         ScheduledDeleteExpiredTokenThread sdett
                 = new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO(), this.getRefreshTokenValiditySeconds());
+        this.scheduler = Executors.newScheduledThreadPool(1);
         this.scheduler.scheduleAtFixedRate(sdett, 0, 1, TimeUnit.HOURS);
         logger.debug("{}  initialized ", this.getClass().getName());
     }

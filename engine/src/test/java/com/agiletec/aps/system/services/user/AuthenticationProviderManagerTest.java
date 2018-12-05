@@ -184,7 +184,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test
-    public void authenticate_1() throws Exception {
+    public void authenticate() throws Exception {
         UserDetails activeUser = this.createMockUser("admin", true, false, false);
         when(this.userManager.getUser(Mockito.anyString(), Mockito.anyString())).thenReturn(activeUser);
         when(this.authorizationManager.getUserAuthorizations("admin")).thenReturn(this.createMockAuthorization());
@@ -201,7 +201,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test(expected = UsernameNotFoundException.class)
-    public void authenticate_2() throws Exception {
+    public void authenticate_userNotFound_1() throws Exception {
         when(this.userManager.getUser(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "");
         try {
@@ -217,7 +217,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test(expected = UsernameNotFoundException.class)
-    public void authenticate_3() throws Exception {
+    public void authenticate_userNotFound_2() throws Exception {
         when(this.userManager.getUser(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("username", "password");
         try {
@@ -233,13 +233,13 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test(expected = AuthenticationServiceException.class)
-    public void authenticate_4() throws Exception {
+    public void failAuthenticate_serviceError() throws Exception {
         when(this.userManager.getUser(Mockito.anyString(), Mockito.anyString())).thenThrow(new ApsSystemException("System error"));
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("username", "password");
         try {
             Authentication auth = this.authenticationProviderManager.authenticate(authTest);
             Assert.fail();
-        } catch (UsernameNotFoundException e) {
+        } catch (AuthenticationServiceException e) {
             Mockito.verify(userManager, Mockito.times(1)).getUser(Mockito.anyString(), Mockito.anyString());
             Mockito.verify(userManager, Mockito.times(0)).updateLastAccess(Mockito.any(UserDetails.class));
             Mockito.verify(authorizationManager, Mockito.times(0)).getUserAuthorizations(Mockito.anyString());
@@ -249,7 +249,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test
-    public void loadUserByUsername_1() throws Exception {
+    public void loadUserByUsername() throws Exception {
         UserDetails activeUser = this.createMockUser("admin", true, false, false);
         when(this.userManager.getUser(Mockito.anyString())).thenReturn(activeUser);
         when(this.authorizationManager.getUserAuthorizations("admin")).thenReturn(this.createMockAuthorization());
@@ -266,7 +266,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     @Test(expected = UsernameNotFoundException.class)
-    public void loadUserByUsername_2() throws Exception {
+    public void failLoadUserByUsername_1() throws Exception {
         when(this.userManager.getUser(Mockito.anyString())).thenReturn(null);
         try {
             org.springframework.security.core.userdetails.UserDetails userDetails
@@ -279,8 +279,8 @@ public class AuthenticationProviderManagerTest {
         }
     }
 
-    @Test(expected = RuntimeException.class)
-    public void loadUserByUsername_3() throws Exception {
+    @Test(expected = UsernameNotFoundException.class)
+    public void failLoadUserByUsername_2() throws Exception {
         when(this.userManager.getUser(Mockito.anyString())).thenThrow(new ApsSystemException("System error"));
         try {
             org.springframework.security.core.userdetails.UserDetails userDetails

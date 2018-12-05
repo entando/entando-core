@@ -155,7 +155,8 @@ public class AuthenticationProviderManager extends AbstractService
                     localUser.isCredentialsNotExpired(), true, localUser.getAuthorizations());
             return user;
         } catch (ApsSystemException ex) {
-            throw new RuntimeException("Error extracting user", ex);
+            logger.error("Error extracting user {}", username, ex);
+            throw new UsernameNotFoundException("Error extracting user " + username, ex);
         }
     }
 

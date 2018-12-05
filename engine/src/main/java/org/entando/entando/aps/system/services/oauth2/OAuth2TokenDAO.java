@@ -247,7 +247,7 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
     
     @Override
-    public OAuth2RefreshToken readRefreshToken(String tokenValue) {
+    public OAuth2RefreshToken getRefreshToken(String tokenValue) {
         FieldSearchFilter filter = new FieldSearchFilter("refreshtoken", tokenValue, true);
         FieldSearchFilter[] filters = {filter};
         List<String> accessTokens = super.searchId(filters);
@@ -258,7 +258,7 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
     
     @Override
-    public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
+    public OAuth2Authentication getAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
         OAuth2Authentication authentication = null;
         Connection conn = null;
         PreparedStatement stat = null;

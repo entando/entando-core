@@ -19,8 +19,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 public interface IApiOAuth2TokenManager extends TokenStore {
 
-    String BEAN_NAME = "OAuth2TokenManager";
-
     public Collection<OAuth2AccessToken> findTokensByUserName(String username);
 
     public OAuth2AccessToken createAccessTokenForLocalUser(String username);

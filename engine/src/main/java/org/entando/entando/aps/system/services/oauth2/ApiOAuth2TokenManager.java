@@ -88,12 +88,12 @@ public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiO
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        return this.getOAuth2TokenDAO().readRefreshToken(tokenValue);
+        return this.getOAuth2TokenDAO().getRefreshToken(tokenValue);
     }
 
     @Override
     public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
-        return this.getOAuth2TokenDAO().readAuthenticationForRefreshToken(refreshToken);
+        return this.getOAuth2TokenDAO().getAuthenticationForRefreshToken(refreshToken);
     }
 
     @Override

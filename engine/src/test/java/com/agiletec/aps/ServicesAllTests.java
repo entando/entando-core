@@ -21,6 +21,7 @@ import org.entando.entando.aps.system.services.database.DatabaseServiceTest;
 import org.entando.entando.aps.system.services.category.CategoryServiceTest;
 import org.entando.entando.aps.system.services.dataobject.DataObjectServiceTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelServiceTest;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesServiceTest;
 import org.entando.entando.aps.system.services.entity.EntityManagerServiceIntegrationTest;
 import org.entando.entando.aps.system.services.entity.EntityManagerServiceTest;
 import org.entando.entando.aps.system.services.group.GroupServiceIntegrationTest;
@@ -61,9 +62,9 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(CategoryServiceTest.class));
         suite.addTestSuite(UserServiceIntegrationTest.class);
         suite.addTest(new JUnit4TestAdapter(DatabaseServiceTest.class));
-
         suite.addTest(new JUnit4TestAdapter(EntandoMessageCodesResolverTest.class));
         suite.addTest(new JUnit4TestAdapter(PageDtoBuilderTest.class));
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangesServiceTest.class));
         return suite;
     }
 

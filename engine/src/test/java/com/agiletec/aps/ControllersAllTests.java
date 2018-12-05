@@ -28,6 +28,8 @@ import org.entando.entando.web.dataobject.DataTypeControllerIntegrationTest;
 import org.entando.entando.web.dataobject.DataTypeControllerTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerIntegrationTest;
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
+import org.entando.entando.web.digitalexchange.DigitalExchangesControllerIntegrationTest;
+import org.entando.entando.web.digitalexchange.DigitalExchangesControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
 import org.entando.entando.web.filebrowser.FileBrowserControllerIntegrationTest;
 import org.entando.entando.web.filebrowser.FileBrowserControllerTest;
@@ -130,6 +132,9 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(StreamInterceptorIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DashboardControllerIntegrationTest.class));
+        
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangesControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangesControllerTest.class));
         
         return suite;
     }

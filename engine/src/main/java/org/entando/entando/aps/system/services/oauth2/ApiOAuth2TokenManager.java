@@ -73,12 +73,12 @@ public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiO
 
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        return this.getOAuth2TokenDAO().getAccessToken(tokenValue);
+        return this.getOAuth2TokenDAO().readAccessToken(tokenValue);
     }
 
     @Override
     public void removeAccessToken(OAuth2AccessToken token) {
-        this.getOAuth2TokenDAO().deleteAccessToken(token.getValue());
+        this.getOAuth2TokenDAO().removeAccessToken(token.getValue());
     }
 
     @Override
@@ -88,22 +88,22 @@ public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiO
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        return this.getOAuth2TokenDAO().getRefreshToken(tokenValue);
+        return this.getOAuth2TokenDAO().readRefreshToken(tokenValue);
     }
 
     @Override
     public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
-        return this.getOAuth2TokenDAO().getAuthenticationForRefreshToken(refreshToken);
+        return this.getOAuth2TokenDAO().readAuthenticationForRefreshToken(refreshToken);
     }
 
     @Override
     public void removeRefreshToken(OAuth2RefreshToken refreshToken) {
-        this.getOAuth2TokenDAO().deleteAccessTokenUsingRefreshToken(refreshToken.getValue());
+        this.getOAuth2TokenDAO().removeAccessTokenUsingRefreshToken(refreshToken.getValue());
     }
 
     @Override
     public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
-        this.getOAuth2TokenDAO().deleteAccessTokenUsingRefreshToken(refreshToken.getValue());
+        this.getOAuth2TokenDAO().removeAccessTokenUsingRefreshToken(refreshToken.getValue());
     }
 
     @Override

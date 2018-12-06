@@ -41,6 +41,12 @@ public class ReloadConfigurationController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse> reloadConfiguration(HttpServletRequest request) throws Throwable {
         logger.debug("reload configuration: start..");
+        try {
+            ApsWebApplicationUtils.executeSystemRefresh(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
         ApsWebApplicationUtils.executeSystemRefresh(request);
         logger.debug("reload configuration: done!");
         Map<String, String> result = new HashMap<>();

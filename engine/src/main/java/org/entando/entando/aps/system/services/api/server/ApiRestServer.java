@@ -270,8 +270,8 @@ public class ApiRestServer {
         try {
             _logger.info("Permission required: {}", permission);
             String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
-            IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(IApiOAuth2TokenManager.BEAN_NAME, request);
-            final OAuth2AccessTokenImpl token = (OAuth2AccessTokenImpl) tokenManager.getApiOAuth2Token(accessToken);
+            IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_TOKEN_MANAGER, request);
+            final OAuth2AccessTokenImpl token = (OAuth2AccessTokenImpl) tokenManager.readAccessToken(accessToken);
             if (token != null) {
                 // Validate the access token
                 if (!token.getValue().equals(accessToken)) {

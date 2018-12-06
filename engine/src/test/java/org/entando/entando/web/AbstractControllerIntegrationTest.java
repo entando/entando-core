@@ -91,7 +91,6 @@ public class AbstractControllerIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilters(new CORSFilter(), springSecurityFilterChain)
                 .build();
-
     }
 
     protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {

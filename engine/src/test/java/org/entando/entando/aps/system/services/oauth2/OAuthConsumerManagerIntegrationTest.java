@@ -30,13 +30,13 @@ import org.springframework.security.oauth2.provider.ClientRegistrationException;
 public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
 
     private IOAuthConsumerManager oauthConsumerManager;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
     }
-    
+
     public void testGetConsumer() throws Exception {
         ConsumerRecordVO consumer = oauthConsumerManager.getConsumerRecord("test1_consumer");
         assertNotNull(consumer);
@@ -44,7 +44,7 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
         assertEquals(consumer.getDescription(), "Test 1 Consumer Description");
         assertEquals(consumer.getScope(), "read,write,trust");
         assertEquals("2028-10-10", DateConverter.getFormattedDate(consumer.getExpirationDate(), "yyyy-MM-dd"));
-        
+
         consumer = oauthConsumerManager.getConsumerRecord("test1_consumer_wrong");
         assertNull(consumer);
     }
@@ -60,7 +60,7 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
             assertEquals(consumer.getCallbackUrl(), extractedConsumer.getCallbackUrl());
             assertEquals(consumer.getDescription(), extractedConsumer.getDescription());
             assertEquals(consumer.getExpirationDate(), extractedConsumer.getExpirationDate());
-            assertEquals(DateConverter.getFormattedDate(new Date(), "dd-MM-yyyy"), 
+            assertEquals(DateConverter.getFormattedDate(new Date(), "dd-MM-yyyy"),
                     DateConverter.getFormattedDate(extractedConsumer.getIssuedDate(), "dd-MM-yyyy"));
             assertEquals(consumer.getKey(), extractedConsumer.getKey());
             assertEquals(consumer.getName(), extractedConsumer.getName());
@@ -110,15 +110,15 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
         assertEquals(1, keys.size());
         assertEquals("test1_consumer", keys.get(0));
     }
-    
-    public void testLoadClientByClientId_1() {
+
+    public void testLoadClientByClientId() {
         ClientDetails client = this.oauthConsumerManager.loadClientByClientId("test1_consumer");
         assertNotNull(client);
         assertEquals(3, client.getScope().size());
         assertEquals(4, client.getAuthorizedGrantTypes().size());
     }
-    
-    public void testLoadClientByClientId_2() throws Throwable {
+
+    public void testFailLoadClientByClientId() throws Throwable {
         ConsumerRecordVO consumer = this.createConsumer("key_3", "secret_3", true);
         try {
             assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
@@ -136,8 +136,8 @@ public class OAuthConsumerManagerIntegrationTest extends BaseTestCase {
             assertNull(this.oauthConsumerManager.getConsumerRecord(consumer.getKey()));
         }
     }
-    
-    public void testLoadClientByClientId_3() {
+
+    public void testLoadClientByInvalidClientId() {
         try {
             this.oauthConsumerManager.loadClientByClientId("invalid");
             fail();

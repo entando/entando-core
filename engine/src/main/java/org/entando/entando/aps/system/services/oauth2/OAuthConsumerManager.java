@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Arrays;
@@ -32,7 +31,7 @@ import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientRegistrationException;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 
-public class OAuthConsumerManager extends AbstractService implements IOAuthConsumerManager {
+public class OAuthConsumerManager extends AbstractOAuthManager implements IOAuthConsumerManager {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuthConsumerManager.class);
 
@@ -70,6 +69,8 @@ public class OAuthConsumerManager extends AbstractService implements IOAuthConsu
                 uris.add(consumer.getCallbackUrl());
                 details.setRegisteredRedirectUri(uris);
             }
+            details.setAccessTokenValiditySeconds(this.getAccessTokenValiditySeconds());
+            details.setRefreshTokenValiditySeconds(this.getRefreshTokenValiditySeconds());
         } catch (ClientRegistrationException t) {
             throw t;
         } catch (Exception t) {

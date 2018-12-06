@@ -39,36 +39,36 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @author E.Santoboni
  */
 public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
-    
+
     private IAuthenticationProviderManager authenticationProvider = null;
     private IUserManager userManager = null;
     private ConfigInterface configurationManager = null;
     private DataSource dataSource = null;
-    
+
     private RoleManager roleManager = null;
     private GroupManager groupManager = null;
-    
+
     private IAuthorizationManager authorizationManager;
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
     }
-    
+
     public void testGetUser() throws Throwable {
         UserDetails adminUser = this.authenticationProvider.getUser("admin", "admin");//nel database di test, username e password sono uguali
         assertNotNull(adminUser);
         assertEquals("admin", adminUser.getUsername());
         assertEquals(1, adminUser.getAuthorizations().size());
-        
+
         adminUser = this.authenticationProvider.getUser("admin", "wrongPassword");
         assertNull(adminUser);
-        
+
         UserDetails nullUser = this.authenticationProvider.getUser("wrongUserName", "wrongPassword");
         assertNull(nullUser);
     }
-    
+
     public void testUpdateUserAuthorities() throws Throwable {
         String username = "UserForTest2";
         String password = "PasswordForTest2";
@@ -79,9 +79,9 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertEquals(username, extractedUser.getUsername());
             assertNotNull(extractedUser);
             assertEquals(1, extractedUser.getAuthorizations().size());
-            
+
             this.authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
-            
+
             extractedUser = this.authenticationProvider.getUser(username, password);
             assertNotNull(extractedUser);
             assertEquals(2, extractedUser.getAuthorizations().size());
@@ -93,11 +93,11 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertNull(extractedUser);
         }
     }
-    
+
     public void testGetUserWithPrivacyModuleEnabled() throws Throwable {
         String username = "MEMisUserExpired";
         String password = "123456";
-        
+
         this.addUserForTest(username, password);
         MockUserDAO mockUserDao = new MockUserDAO(this.dataSource);
         try {
@@ -110,23 +110,23 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
 
-            // change the last access date  
+            // change the last access date
             mockUserDao.setLastAccessDate(username, DateConverter.parseDate("02/06/1977", "dd/MM/yyyy"));
             // reload user auths
             user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertTrue(!user.isAccountNotExpired());
             assertEquals(0, user.getAuthorizations().size());
-            
+
             mockUserDao.setLastAccessDate(username, new Date());
             assertTrue(!user.isAccountNotExpired());
             assertEquals(0, user.getAuthorizations().size());
-            
+
             user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertTrue(user.isAccountNotExpired());
             assertEquals(1, user.getAuthorizations().size());
-            
+
         } catch (Exception e) {
             throw e;
         } finally {
@@ -136,7 +136,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertNull(verify);
         }
     }
-    
+
     public void testAuthWithPrivacyModuleEnabled() throws Throwable {
         String username = "MEMhasAuthExpired";
         String password = "123456";
@@ -157,7 +157,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertTrue(user.isAccountNotExpired());
             assertTrue(user.isCredentialsNotExpired());
 
-            // change the last password date 
+            // change the last password date
             mockUserDao.setLastPasswordChange(username, pastDate.getTime());
             // check credentials
             user = this.authenticationProvider.getUser(username, password);
@@ -182,7 +182,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertNull(verify);
         }
     }
-    
+
     public void testUpdateRoleWithPrivacyModuleEnabled() throws Throwable {
         String username = "MEMisToUpdateRole";
         String password = "123456";
@@ -196,7 +196,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             UserDetails user = this.authenticationProvider.getUser(username, password);
             assertNotNull(user);
             assertEquals(1, user.getAuthorizations().size());
-            
+
             // update role
             this.authorizationManager.addUserAuthorization(username, Group.FREE_GROUP_NAME, "admin");
 
@@ -213,7 +213,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertNull(verify);
         }
     }
-    
+
     public void testAuthentication() throws Exception {
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "admin");
         try {
@@ -226,7 +226,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             throw e;
         }
     }
-    
+
     public void testFailedAuthentication() throws Exception {
         TestingAuthenticationToken authTest = new TestingAuthenticationToken("admin", "wrong");
         this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
@@ -235,7 +235,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
         authTest = new TestingAuthenticationToken(null, "");
         this.testFailedAuthentication(authTest, UsernameNotFoundException.class);
     }
-    
+
     private void testFailedAuthentication(Authentication auth, Class expectedException) throws Exception {
         try {
             ((AuthenticationManager) this.authenticationProvider).authenticate(auth);
@@ -244,7 +244,29 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             assertEquals(expectedException, e.getClass());
         }
     }
-    
+
+    public void testLoadUserByUsername() throws Exception {
+        try {
+            org.springframework.security.core.userdetails.UserDetails userDetails
+                    = this.authenticationProvider.loadUserByUsername("admin");
+            assertNotNull(userDetails);
+            assertEquals("admin", userDetails.getUsername());
+            assertEquals(1, userDetails.getAuthorities().size());
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+    public void testFailedLoadUserByUsername() throws Exception {
+        try {
+            org.springframework.security.core.userdetails.UserDetails userDetails
+                    = this.authenticationProvider.loadUserByUsername("wrong_username");
+            fail();
+        } catch (Exception e) {
+            assertTrue(e instanceof UsernameNotFoundException);
+        }
+    }
+
     /**
      * Toggle the privacy module on or off
      *
@@ -283,7 +305,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
         }
         return status;
     }
-    
+
     private void init() throws Exception {
         try {
             this.dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
@@ -297,7 +319,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
             throw e;
         }
     }
-    
+
     private void addUserForTest(String username, String password) throws Throwable {
         MockUser user = new MockUser();
         user.setUsername(username);
@@ -311,5 +333,5 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
         this.userManager.addUser(user);
         this.authorizationManager.addUserAuthorization(username, auth);
     }
-    
+
 }

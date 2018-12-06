@@ -101,7 +101,7 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @Test
     public void testDeleteAuthorities() throws Exception {
         String accessToken = "ok";
-        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token("admin", "ok"));
+        when(apiOAuth2TokenManager.readAccessToken(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token("admin", "ok"));
 
         String username = "valid.username_ok";
         String password = "valid.123_ok";
@@ -131,7 +131,7 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     public void testDeleteAuthoritiesSameUser() throws Exception {
         String currentUserName = "admin";
         String accessToken = "ok";
-        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(currentUserName, "ok"));
+        when(apiOAuth2TokenManager.readAccessToken(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(currentUserName, "ok"));
         try {
             ResultActions result = this.executeDeleteUserAuthorities(currentUserName, accessToken);
             result.andExpect(status().isForbidden());

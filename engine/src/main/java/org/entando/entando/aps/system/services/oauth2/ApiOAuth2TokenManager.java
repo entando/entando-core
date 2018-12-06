@@ -13,8 +13,6 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Calendar;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -30,17 +28,30 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
-public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2TokenManager {
+public class ApiOAuth2TokenManager extends AbstractOAuthManager implements IApiOAuth2TokenManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ApiOAuth2TokenManager.class);
-    private transient final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private transient ScheduledExecutorService scheduler = null;
 
     private IOAuth2TokenDAO oAuth2TokenDAO;
 
     @Override
     public void init() throws Exception {
+        ScheduledDeleteExpiredTokenThread sdett
+                = new ScheduledDeleteExpiredTokenThread(this.getOAuth2TokenDAO(), this.getRefreshTokenValiditySeconds());
+        this.scheduler = Executors.newScheduledThreadPool(1);
+        this.scheduler.scheduleAtFixedRate(sdett, 0, 1, TimeUnit.HOURS);
         logger.debug("{}  initialized ", this.getClass().getName());
-        scheduler.scheduleAtFixedRate(new ScheduledDeleteExpiredTokenThread(oAuth2TokenDAO), 0, 1, TimeUnit.HOURS);
+    }
+
+    @Override
+    protected void release() {
+        this.scheduler.shutdown();
+    }
+
+    @Override
+    public void destroy() {
+        this.scheduler.shutdown();
     }
 
     @Override
@@ -62,42 +73,37 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
 
     @Override
     public OAuth2AccessToken readAccessToken(String tokenValue) {
-        return this.getOAuth2TokenDAO().getAccessToken(tokenValue);
+        return this.getOAuth2TokenDAO().readAccessToken(tokenValue);
     }
 
     @Override
     public void removeAccessToken(OAuth2AccessToken token) {
-        this.getOAuth2TokenDAO().deleteAccessToken(token.getValue());
+        this.getOAuth2TokenDAO().removeAccessToken(token.getValue());
     }
 
     @Override
     public void storeRefreshToken(OAuth2RefreshToken refreshToken, OAuth2Authentication authentication) {
-        logger.warn("storeRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("storeRefreshToken Not supported yet.");
+        logger.info("storeRefreshToken - nothing to do");
     }
 
     @Override
     public OAuth2RefreshToken readRefreshToken(String tokenValue) {
-        logger.warn("readRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("readRefreshToken Not supported yet.");
+        return this.getOAuth2TokenDAO().readRefreshToken(tokenValue);
     }
 
     @Override
     public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
-        logger.warn("readAuthenticationForRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("readAuthenticationForRefreshToken Not supported yet.");
+        return this.getOAuth2TokenDAO().readAuthenticationForRefreshToken(refreshToken);
     }
 
     @Override
     public void removeRefreshToken(OAuth2RefreshToken refreshToken) {
-        logger.warn("removeRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("removeRefreshToken Not supported yet.");
+        this.getOAuth2TokenDAO().removeAccessTokenUsingRefreshToken(refreshToken.getValue());
     }
 
     @Override
     public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
-        logger.warn("removeAccessTokenUsingRefreshToken Not supported yet.");
-        throw new UnsupportedOperationException("removeAccessTokenUsingRefreshToken Not supported yet.");
+        this.getOAuth2TokenDAO().removeAccessTokenUsingRefreshToken(refreshToken.getValue());
     }
 
     @Override
@@ -125,7 +131,7 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
         oAuth2Token.setGrantType(grantType);
         oAuth2Token.setLocalUser(principal);
         Calendar calendar = Calendar.getInstance(); // gets a calendar using the default time zone and locale.
-        calendar.add(Calendar.SECOND, 3600);
+        calendar.add(Calendar.SECOND, this.getAccessTokenValiditySeconds());
         oAuth2Token.setExpiration(calendar.getTime());
         return oAuth2Token;
     }
@@ -143,16 +149,6 @@ public class ApiOAuth2TokenManager extends AbstractService implements IApiOAuth2
     @Override
     public Collection<OAuth2AccessToken> findTokensByClientId(String clientId) {
         return this.getOAuth2TokenDAO().findTokensByClientId(clientId);
-    }
-
-    @Override
-    public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException {
-        try {
-            return this.getOAuth2TokenDAO().getAccessToken(accessToken);
-        } catch (Exception t) {
-            logger.error("Error extracting token", t);
-            throw new ApsSystemException("Error extracting token", t);
-        }
     }
 
     protected IOAuth2TokenDAO getOAuth2TokenDAO() {

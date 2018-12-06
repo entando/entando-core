@@ -89,7 +89,7 @@ public class AbstractControllerIntegrationTest {
     protected String mockOAuthInterceptor(UserDetails user) {
         return OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
     }
-
+    
     protected AuthRequestBuilder createAuthRequest(MockHttpServletRequestBuilder requestBuilder) {
         return new AuthRequestBuilder(mockMvc, getAccessToken(), requestBuilder);
     }

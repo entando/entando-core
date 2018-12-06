@@ -48,12 +48,12 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
 
     @Test
     public void obtainAccessToken() throws Exception {
-        this.obtainAccessToken("admin", "admin");
-        this.obtainAccessToken("mainEditor", "mainEditor");
-        this.obtainAccessToken("supervisorCustomers", "supervisorCustomers");
+        this.obtainAccessToken("admin", "admin", true);
+        this.obtainAccessToken("mainEditor", "mainEditor", true);
+        this.obtainAccessToken("supervisorCustomers", "supervisorCustomers", true);
     }
 
-    private void obtainAccessToken(String username, String password) throws Exception {
+    private OAuth2AccessToken obtainAccessToken(String username, String password, boolean remove) throws Exception {
         OAuth2AccessToken oauthToken = null;
         try {
             MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -66,9 +66,10 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                             .params(params)
                             .header("Authorization", "Basic " + hash)
                             .accept("application/json;charset=UTF-8"))
-                            .andExpect(status().isOk())
-                            .andExpect(content().contentType("application/json;charset=UTF-8"));
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType("application/json;charset=UTF-8"));
             String resultString = result.andReturn().getResponse().getContentAsString();
+            System.out.println(resultString);
             Assert.assertTrue(StringUtils.isNotBlank(resultString));
             String token = JsonPath.parse(resultString).read("$.access_token");
             Assert.assertTrue(StringUtils.isNotBlank(token));
@@ -79,8 +80,57 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
         } catch (Exception e) {
             throw e;
         } finally {
-            if (null != oauthToken) {
+            if (null != oauthToken && remove) {
                 this.apiOAuth2TokenManager.removeAccessToken(oauthToken);
+            }
+        }
+        return oauthToken;
+    }
+
+    @Test
+    public void refreshAccessToken() throws Exception {
+        OAuth2AccessToken accessToken = this.obtainAccessToken("admin", "admin", false);
+        this.refreshAccessToken(accessToken, "admin");
+        accessToken = this.obtainAccessToken("mainEditor", "mainEditor", false);
+        this.refreshAccessToken(accessToken, "mainEditor");
+        accessToken = this.obtainAccessToken("supervisorCustomers", "supervisorCustomers", false);
+        this.refreshAccessToken(accessToken, "supervisorCustomers");
+    }
+
+    private void refreshAccessToken(OAuth2AccessToken accessToken, String username) throws Exception {
+        String refreshToken = accessToken.getRefreshToken().getValue();
+        try {
+            Assert.assertNotNull(this.apiOAuth2TokenManager.readRefreshToken(refreshToken));
+            MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+            params.add("grant_type", "refresh_token");
+            params.add("refresh_token", refreshToken);
+            String hash = new String(Base64.encode("test1_consumer:secret".getBytes()));
+            ResultActions result
+                    = mockMvc.perform(post("/oauth/token")
+                            .params(params)
+                            .header("Authorization", "Basic " + hash)
+                            .accept("application/json;charset=UTF-8"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().contentType("application/json;charset=UTF-8"));
+            String resultString = result.andReturn().getResponse().getContentAsString();
+            System.out.println(resultString);
+            Assert.assertTrue(StringUtils.isNotBlank(resultString));
+            String newAccesstoken = JsonPath.parse(resultString).read("$.access_token");
+            Assert.assertFalse(newAccesstoken.equals(accessToken.getValue()));
+            String newRefreshtoken = JsonPath.parse(resultString).read("$.refresh_token");
+            Assert.assertNotEquals(newRefreshtoken, refreshToken);
+            Collection<OAuth2AccessToken> oauthTokens = this.apiOAuth2TokenManager.findTokensByUserName(username);
+            Assert.assertEquals(1, oauthTokens.size());
+            OAuth2AccessToken newOauthToken = oauthTokens.stream().findFirst().get();
+            Assert.assertEquals(newAccesstoken, newOauthToken.getValue());
+            Assert.assertEquals(newRefreshtoken, newOauthToken.getRefreshToken().getValue());
+            Assert.assertNull(this.apiOAuth2TokenManager.readRefreshToken(refreshToken));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            Collection<OAuth2AccessToken> tokens = this.apiOAuth2TokenManager.findTokensByUserName(username);
+            for (OAuth2AccessToken token : tokens) {
+                this.apiOAuth2TokenManager.removeAccessToken(token);
             }
         }
     }
@@ -105,8 +155,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isUnauthorized())
-                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
         String resultString = result.andReturn().getResponse().getContentAsString();
         Assert.assertTrue(StringUtils.isNotBlank(resultString));
         result.andExpect(jsonPath("$.error", is("unauthorized")));
@@ -133,8 +183,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isUnauthorized())
-                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
         String resultString = result.andReturn().getResponse().getContentAsString();
         Assert.assertTrue(StringUtils.isNotBlank(resultString));
         result.andExpect(jsonPath("$.error", is("invalid_client")));
@@ -165,8 +215,8 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isBadRequest())
-                        .andExpect(content().contentType("application/json;charset=UTF-8"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType("application/json;charset=UTF-8"));
         String resultString = result.andReturn().getResponse().getContentAsString();
         Assert.assertTrue(StringUtils.isNotBlank(resultString));
         result.andExpect(jsonPath("$.error", is("invalid_request")));
@@ -195,7 +245,7 @@ public class AuthorizationServerConfigurationTest extends AbstractControllerInte
                         .params(params)
                         .header("Authorization", "Basic " + hash)
                         .accept("application/json;charset=UTF-8"))
-                        .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized());
         String resultString = result.andReturn().getResponse().getContentAsString();
         Assert.assertTrue(StringUtils.isBlank(resultString));
         if (!StringUtils.isEmpty(username)) {

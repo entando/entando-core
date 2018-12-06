@@ -56,6 +56,8 @@
                 <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
             </bean>
         </property>
+        <property name="accessTokenValiditySeconds"><value>${oauth2.accessToken.validitySeconds}</value></property>
+        <property name="refreshTokenValiditySeconds"><value>${oauth2.refreshToken.validitySeconds}</value></property>
     </bean>
 
     <bean id="OAuth2TokenManager"
@@ -66,6 +68,8 @@
                 <property name="dataSource" ref="servDataSource"/>
             </bean>
         </property>
+        <property name="accessTokenValiditySeconds"><value>${oauth2.accessToken.validitySeconds}</value></property>
+        <property name="refreshTokenValiditySeconds"><value>${oauth2.refreshToken.validitySeconds}</value></property>
     </bean>
 
     <beans profile="swagger">

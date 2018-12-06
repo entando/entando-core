@@ -75,7 +75,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
                 logger.warn("no access token found");
                 throw new EntandoTokenException("no access token found", request, null);
             }
-            final OAuth2AccessToken token = this.getoAuth2TokenManager().getApiOAuth2Token(accessToken);
+            final OAuth2AccessToken token = this.getoAuth2TokenManager().readAccessToken(accessToken);
             this.validateToken(request, accessToken, token);
             String username = null;
             if (token instanceof OAuth2AccessTokenImpl) {

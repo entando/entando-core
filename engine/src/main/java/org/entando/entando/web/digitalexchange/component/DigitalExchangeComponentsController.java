@@ -15,9 +15,9 @@ package org.entando.entando.web.digitalexchange.component;
 
 import com.agiletec.aps.system.services.role.Permission;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsService;
+import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

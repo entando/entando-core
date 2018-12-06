@@ -186,15 +186,10 @@
         <property name="configManager" ref="BaseConfigManager" />
     </bean>
     
-    <bean id="RestTemplate" class="org.springframework.web.client.RestTemplate">
-        <constructor-arg>
-            <bean class="org.springframework.http.client.HttpComponentsClientHttpRequestFactory">
-                <property name="readTimeout" value="10000" />
-                <property name="connectTimeout" value="5000" />
-            </bean>
-        </constructor-arg>
-    </bean>
+    <bean id="RestTemplate" class="org.springframework.web.client.RestTemplate" />
     
-    <context:component-scan base-package="org.entando.entando.aps.system.services.digitalexchange.component" />
+    <context:component-scan 
+        base-package="org.entando.entando.aps.system.services.digitalexchange.client
+                      org.entando.entando.aps.system.services.digitalexchange.component" />
 
 </beans>

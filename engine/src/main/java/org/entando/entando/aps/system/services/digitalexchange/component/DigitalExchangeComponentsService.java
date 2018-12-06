@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.component;
 
-import org.entando.entando.web.common.model.ResilientPagedMetadata;
+import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponent;
 

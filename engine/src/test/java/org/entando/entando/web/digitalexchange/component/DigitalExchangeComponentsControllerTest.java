@@ -16,8 +16,8 @@ package org.entando.entando.web.digitalexchange.component;
 import java.util.Arrays;
 import java.util.List;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsService;
+import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.common.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.RestError;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,48 +41,48 @@ public class DigitalExchangeComponentsControllerTest extends AbstractControllerT
 
     @Mock
     private DigitalExchangeComponentsService service;
-    
+
     @InjectMocks
     private DigitalExchangeComponentsController controller;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        
+
         mockMvc = MockMvcBuilders.standaloneSetup(controller)
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
-        
+
         initServiceMocks();
     }
-    
+
     @Test
     public void shouldReturnComponents() throws Exception {
-                
+
         ResultActions result = createAuthRequest(get(BASE_URL)).execute();
-        
+
         result.andExpect(status().isOk());
-        
+
         result.andExpect(jsonPath("$.metaData").isNotEmpty());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.payload", hasSize(1)));
         result.andExpect(jsonPath("$.payload[0].name", is("A")));
     }
-    
+
     private void initServiceMocks() {
-        
-        DigitalExchangeComponent component  = new DigitalExchangeComponent();
+
+        DigitalExchangeComponent component = new DigitalExchangeComponent();
         component.setName("A");
-        List<DigitalExchangeComponent> components  = Arrays.asList(component);
-        
+        List<DigitalExchangeComponent> components = Arrays.asList(component);
+
         RestError error = new RestError("1", "DE not available");
-        
+
         ResilientPagedMetadata<DigitalExchangeComponent> fakeResponse = new ResilientPagedMetadata<>();
         fakeResponse.setBody(components);
-        
+
         fakeResponse.setErrors(Arrays.asList(error));
-        
+
         when(service.getComponents(any()))
                 .thenReturn(fakeResponse);
     }

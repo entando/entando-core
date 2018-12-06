@@ -30,6 +30,7 @@ import org.entando.entando.web.common.handlers.RestExceptionHandler;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -129,8 +130,21 @@ public class AbstractControllerTest {
     }
 
     protected AuthRequestBuilder createAuthRequest(MockHttpServletRequestBuilder requestBuilder) {
-        return new AuthRequestBuilder(apiOAuth2TokenManager,
-                authenticationProviderManager, authorizationManager,
-                mockMvc, requestBuilder);
+        return new AuthRequestBuilder(mockMvc, getAccessToken(), requestBuilder);
+    }
+    
+    @Before
+    public void cleanToken() {
+        accessToken = null;
+    }
+
+    private String accessToken;
+
+    private String getAccessToken() {
+        if (this.accessToken == null) {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            this.accessToken = OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
+        }
+        return this.accessToken;
     }
 }

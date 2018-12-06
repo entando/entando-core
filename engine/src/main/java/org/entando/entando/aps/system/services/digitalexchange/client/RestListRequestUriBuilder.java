@@ -11,21 +11,25 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.common;
+package org.entando.entando.aps.system.services.digitalexchange.client;
 
 import java.util.function.Supplier;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Adds to an URL all the query parameters necessary for representing a
+ * RestListRequest. It is used to forward a RestListRequest to a DE instance.
+ */
 public class RestListRequestUriBuilder {
 
     private final RestListRequest request;
     private final UriComponentsBuilder builder;
 
-    public RestListRequestUriBuilder(UriComponentsBuilder builder, RestListRequest request) {
+    public RestListRequestUriBuilder(String url, RestListRequest request) {
         this.request = request;
-        this.builder = builder;
+        this.builder = UriComponentsBuilder.fromHttpUrl(url);
     }
 
     public String toUriString() {

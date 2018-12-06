@@ -13,8 +13,9 @@
  */
 package org.entando.entando.web.digitalexchange.component;
 
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsMocker;
 import org.junit.Test;
-import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangesMocker;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,13 +32,19 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
 
     private static final String BASE_URL = "/digitalExchange/components";
 
+    private static final String[] COMPONENTS_1 = new String[]{"A", "C", "E"};
+    private static final String[] COMPONENTS_2 = new String[]{"B", "D"};
+
     @Configuration
     public static class TestConfig {
 
         @Bean
         @Primary
         public RestTemplate getRestTemplate() {
-            return DigitalExchangesMocker.getRestMockedRestTemplate();
+            return new DigitalExchangesMocker()
+                    .addDigitalExchange("DE 1", DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
+                    .addDigitalExchange("DE 2", DigitalExchangeComponentsMocker.mock(COMPONENTS_2))
+                    .initMocks();
         }
     }
 
@@ -54,9 +60,9 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
         result.andExpect(jsonPath("$.metaData").isNotEmpty());
         result.andExpect(jsonPath("$.metaData.pageSize", is(3)));
         result.andExpect(jsonPath("$.metaData.page", is(1)));
-        result.andExpect(jsonPath("$.metaData.totalItems", is(DigitalExchangesMocker.getTotalComponentsCount())));
+        result.andExpect(jsonPath("$.metaData.totalItems", is(COMPONENTS_1.length + COMPONENTS_2.length)));
 
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.errors").isEmpty());
 
         result.andExpect(jsonPath("$.payload[0].name", is("A")));
         result.andExpect(jsonPath("$.payload[1].name", is("B")));

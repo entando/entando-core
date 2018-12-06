@@ -13,63 +13,36 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.component;
 
-import java.util.Arrays;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponent;
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClientMocker;
+import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.Filter;
-import org.entando.entando.web.common.model.ResilientPagedMetadata;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.context.MessageSource;
-import org.springframework.web.client.RestClientException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsServiceImpl.*;
 
 public class DigitalExchangeComponentsServiceTest {
 
-    @Mock
-    private DigitalExchangesService digitalExchangesService;
+    private static final String[] COMPONENTS_1 = new String[]{"A", "B", "C", "F", "I", "M", "N", "P"};
+    private static final String[] COMPONENTS_2 = new String[]{"D", "E", "G", "H", "L", "O"};
 
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Mock
-    private MessageSource messageSource;
-
-    @InjectMocks
     private DigitalExchangeComponentsServiceImpl service;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        DigitalExchangesClientMocker clientMocker = new DigitalExchangesClientMocker();
+        clientMocker.getDigitalExchangesMocker()
+                .addDigitalExchange("DE 1", DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
+                .addDigitalExchange("DE 2", DigitalExchangeComponentsMocker.mock(COMPONENTS_2));
 
-        DigitalExchangesMocker mocker
-                = DigitalExchangesMocker.initRestTemplateMocks(restTemplate);
+        DigitalExchangesClient mockedClient = clientMocker.build();
 
-        mocker.addDigitalExchange("Unreachable DE",
-                () -> {
-                    throw new RestClientException("Connection refused");
-                })
-                .addDigitalExchange("Wrong Payload DE", () -> new ResponseEntity(HttpStatus.OK))
-                .addDigitalExchange("Wrong URL DE", "invalid-url", () -> null);
-
-        when(digitalExchangesService.getDigitalExchanges())
-                .thenReturn(mocker.getFakeExchanges());
-
-        when(messageSource.getMessage(any(), any(), any())).thenReturn("Mocked Message");
+        service = new DigitalExchangeComponentsServiceImpl(mockedClient);
     }
 
     @Test
@@ -98,11 +71,9 @@ public class DigitalExchangeComponentsServiceTest {
     private void verifyPage(ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata, String... values) {
         assertNotNull(pagedMetadata.getBody());
         assertEquals(values.length, pagedMetadata.getBody().size());
-        assertEquals(DigitalExchangesMocker.getTotalComponentsCount(), pagedMetadata.getTotalItems());
+        assertEquals(COMPONENTS_1.length + COMPONENTS_2.length, pagedMetadata.getTotalItems());
         assertArrayEquals(pagedMetadata.getBody().stream()
                 .map(c -> c.getName()).toArray(String[]::new), values);
-
-        verifyResilience(pagedMetadata);
     }
 
     @Test
@@ -121,14 +92,5 @@ public class DigitalExchangeComponentsServiceTest {
         assertEquals(1, pagedMetadata.getBody().size());
         assertEquals("M", pagedMetadata.getBody().get(0).getName());
         assertEquals(1, pagedMetadata.getTotalItems());
-    }
-
-    private void verifyResilience(ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata) {
-        assertEquals(4, pagedMetadata.getErrors().size());
-
-        assertTrue(pagedMetadata.getErrors().stream().map(e -> e.getCode()).allMatch(code
-                -> Arrays.asList(ERRCODE_DE_HTTP_ERROR, ERRCODE_DE_UNREACHABLE,
-                        ERRCODE_DE_INVALID_URL, ERRCODE_DE_WRONG_PAYLOAD).
-                        contains(code)));
     }
 }

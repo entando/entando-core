@@ -11,11 +11,14 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.common.model;
+package org.entando.entando.aps.system.services.digitalexchange.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestError;
+import org.entando.entando.web.common.model.RestListRequest;
 
 /**
  * PagedMetadata for handling responses with partial failure.

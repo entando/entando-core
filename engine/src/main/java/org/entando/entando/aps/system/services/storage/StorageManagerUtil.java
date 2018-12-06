@@ -13,18 +13,20 @@
  */
 package org.entando.entando.aps.system.services.storage;
 
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
-public class StorageManagerUtil {
+import java.io.File;
+import java.util.regex.*;
 
-    private static final Logger _logger = LoggerFactory.getLogger(StorageManagerUtil.class);
+public final class StorageManagerUtil {
+
+    private StorageManagerUtil() {
+        // Utility class, not to be instantiated
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(StorageManagerUtil.class);
 
     private static final String REGEXP_FILE_EXTENSION = "([\\w|\\-]+?$)";
     private static final String REGEXP_FILE_BASENAME = "\\A(?!(?:COM[0-9]|CON|LPT[0-9]|NUL|PRN|AUX|com[0-9]|con|lpt[0-9]|nul|prn|aux)|[\\s\\.])[^\\\\/:*\"?<>|]{1,254}\\z";
@@ -56,9 +58,7 @@ public class StorageManagerUtil {
             return false;
         }
         if (StringUtils.isNotBlank(extension)) {
-            if (!isValidExtension(extension)) {
-                return false;
-            }
+            return isValidExtension(extension);
         }
         return true;
     }
@@ -86,7 +86,7 @@ public class StorageManagerUtil {
         Matcher matcher = pattern.matcher(basename);
         boolean check = matcher.matches();
         if (!check) {
-            return check;
+            return false;
         }
         return endWithParentDir(basename);
     }
@@ -110,7 +110,7 @@ public class StorageManagerUtil {
                 || path.contains(".." + File.separator)
                 || path.contains("%2e%2e/")
                 || path.contains("%2e%2e" + File.separator)) {
-            _logger.info("Attack avoided - requested path {}", path);
+            logger.info("Attack avoided - requested path {}", path);
             return false;
         }
         return true;
@@ -121,9 +121,8 @@ public class StorageManagerUtil {
             return true;
         }
         if (path.endsWith("..")
-                || path.endsWith("..")
                 || path.endsWith("%2e%2e")) {
-            _logger.info("Attack avoided - requested path {}", path);
+            logger.info("Attack avoided - requested path {}", path);
             return false;
         }
         return true;

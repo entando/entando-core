@@ -266,7 +266,7 @@ public interface SystemConstants {
     public static final String CONFIG_ITEM_LICENSE = "license";
 
     public static final String CONFIG_ITEM_PARAMS = "params";
-    
+
     public static final String CONFIG_ITEM_DIGITAL_EXCHANGES = "digitalExchanges";
 
     /**
@@ -407,5 +407,9 @@ public interface SystemConstants {
     public static final String API_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static final String PERMISSION_EDIT_DATAOBJECTS = "editDataObjects";
+
+    public static final Integer OAUTH2_ACCESS_TOKEN_DEFAULT_VALIDITY_SECOND = 3600;
+
+    public static final Integer OAUTH2_REFRESH_TOKEN_DEFAULT_VALIDITY_SECOND = 86400;
 
 }

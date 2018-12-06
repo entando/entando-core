@@ -19,20 +19,20 @@ import org.slf4j.LoggerFactory;
 public class ScheduledDeleteExpiredTokenThread implements Runnable {
 
     private final static Logger logger = LoggerFactory.getLogger(ScheduledDeleteExpiredTokenThread.class);
-
+    
     private IOAuth2TokenDAO tokenDAO;
-
-    public ScheduledDeleteExpiredTokenThread(IOAuth2TokenDAO tokenDAO) {
+    private int expirationTime;
+    
+    public ScheduledDeleteExpiredTokenThread(IOAuth2TokenDAO tokenDAO, int expirationTime) {
         this.tokenDAO = tokenDAO;
+        this.expirationTime = expirationTime;
     }
-
+    
     @Override
     public void run() {
         logger.debug("start delete expired access token");
         try {
-            if (tokenDAO != null) {
-                tokenDAO.deleteExpiredToken();
-            }
+            this.tokenDAO.deleteExpiredToken(this.expirationTime);
         } catch (Exception e) {
             logger.error("Error in deleteExpiredToken {}", e);
         }

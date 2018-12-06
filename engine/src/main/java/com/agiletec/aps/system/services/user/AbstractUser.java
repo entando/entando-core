@@ -138,7 +138,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 
     @Override
     public void setRefreshToken(final String refreshToken) {
-
+        this.refreshToken = refreshToken;
     }
 
     @Override

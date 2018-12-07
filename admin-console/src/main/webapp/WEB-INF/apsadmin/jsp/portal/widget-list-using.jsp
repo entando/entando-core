@@ -65,7 +65,9 @@
                                     <s:else>
                                         <div class="col-sm-9 col-lg-9 padding-small-top padding-small-bottom">
                                         </s:else>
-                                        <s:property value="%{#singlePage.getShortFullTitle(currentLang.code)}" />
+                                            <s:property value="%{#singlePage.getShortFullTitle(currentLang.code)}" />&nbsp;&nbsp;
+                                            <s:if test="%{#singlePage.isOnlineInstance()}"><code class="label label-success"><s:text name="label.online" /></code></s:if>
+                                            <s:else><code class="label label-default"><s:text name="label.draft" /></code></s:else>
                                     </div>
                             </h2>
                         </div>
@@ -129,7 +131,7 @@
                                                 </a>
                                             </div>
                                             <div class="col-sm-10 col-lg-10 padding-small-top padding-small-bottom">
-                                                <s:text name="label.placedOn" /> <strong><s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/></strong>&nbsp;&nbsp;n.&nbsp;<span class="label label-default"><s:property value="#rowstatus.index"/></span>
+                                                <s:text name="label.placedOn" />&nbsp;<strong><s:property value="#singlePage.model.getFrames()[#rowstatus.index]"/></strong>&nbsp;&nbsp;n.&nbsp;<span class="label label-default"><s:property value="#rowstatus.index"/></span>
                                                 <a href="<s:url action="trashWidgetFromPage" namespace="/do/Portal/WidgetType">
                                                        <s:param name="pageCode"><s:property value="#singlePage.code"/></s:param>
                                                        <s:param name="frame"><s:property value="#rowstatus.index"/></s:param>

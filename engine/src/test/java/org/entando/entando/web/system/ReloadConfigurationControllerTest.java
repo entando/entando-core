@@ -33,14 +33,12 @@ public class ReloadConfigurationControllerTest extends AbstractControllerIntegra
 
     @Test
     public void should_execute_reload_and_have_headers() throws Exception {
-
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(post("/reloadConfiguration")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-
         /**
          * The response should have the correct CORS headers and the CORS
          * configuration should reflect the one set in

@@ -15,10 +15,10 @@ package org.entando.entando.aps.servlet.security;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -44,19 +44,20 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
 
     @Autowired
     @Qualifier(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER)
-    private AuthenticationManager authenticationManager;
-
+    private IAuthenticationProviderManager authenticationManager;
+    
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.withClientDetails(this.clientDetailsService);
     }
-
+    
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager);
+        endpoints.tokenStore(tokenStore).authenticationManager(authenticationManager)
+                .userDetailsService(authenticationManager).reuseRefreshTokens(false);
         if (!this.configManager.getParam(SystemConstants.INIT_PROP_CONFIG_VERSION).equals("test")) {
             endpoints.prefix("/api");
         }
     }
-
+    
 }

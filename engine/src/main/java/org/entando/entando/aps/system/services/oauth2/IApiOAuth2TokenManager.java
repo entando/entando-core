@@ -13,19 +13,14 @@
  */
 package org.entando.entando.aps.system.services.oauth2;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Collection;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 
 public interface IApiOAuth2TokenManager extends TokenStore {
 
-    String BEAN_NAME = "OAuth2TokenManager";
-
     public Collection<OAuth2AccessToken> findTokensByUserName(String username);
 
     public OAuth2AccessToken createAccessTokenForLocalUser(String username);
-
-    public OAuth2AccessToken getApiOAuth2Token(final String accessToken) throws ApsSystemException;
 
 }

@@ -35,7 +35,7 @@ import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 public class OAuth2TestUtils {
-    
+
     public static OAuth2AccessToken getOAuth2Token(String username, String accessToken) {
         OAuth2AccessTokenImpl oAuth2Token = new OAuth2AccessTokenImpl(accessToken);
         oAuth2Token.setRefreshToken(new DefaultOAuth2RefreshToken("refresh_token"));
@@ -66,14 +66,12 @@ public class OAuth2TestUtils {
     }
 
     public static void addAuthorization(User user, String groupName, String roleName, String[] permissions) {
-
         Group group = null;
         if (StringUtils.isNotBlank(groupName)) {
             group = new Group();
             group.setName(groupName);
             group.setDescription(groupName + " descr");
         }
-
         Role role = null;
         if (StringUtils.isNotBlank(roleName)) {
             role = new Role();
@@ -85,18 +83,17 @@ public class OAuth2TestUtils {
                 }
             }
         }
-
         Authorization auth = new Authorization(group, role);
         user.addAuthorization(auth);
     }
-    
+
     public static String mockOAuthInterceptor(IApiOAuth2TokenManager apiOAuth2TokenManager,
             IAuthenticationProviderManager authenticationProviderManager,
             IAuthorizationManager authorizationManager,
             UserDetails user) {
         try {
             String accessToken = OAuth2TestUtils.getValidAccessToken();
-            when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
+            when(apiOAuth2TokenManager.readAccessToken(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
             when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
             when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(invocation -> {
                 UserDetails user1 = (UserDetails) invocation.getArguments()[0];

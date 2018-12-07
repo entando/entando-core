@@ -33,7 +33,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
      */
     @Override
     public String getUsername() {
-        return this._username;
+        return this.username;
     }
 
     /**
@@ -42,7 +42,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
      * @param username Stringa identificatrice della username.
      */
     public void setUsername(String username) {
-        this._username = username;
+        this.username = username;
     }
 
     /**
@@ -52,7 +52,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
      */
     @Override
     public String getPassword() {
-        return _password;
+        return password;
     }
 
     /**
@@ -61,7 +61,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
      * @param password Stringa identificatrice della password.
      */
     public void setPassword(String password) {
-        this._password = password;
+        this.password = password;
     }
 
     @Override
@@ -88,8 +88,7 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 
     @Override
     public void addAuthorizations(List<Authorization> auths) {
-        for (int i = 0; i < auths.size(); i++) {
-            Authorization auth = auths.get(i);
+        for (Authorization auth : auths) {
             this.addAuthorization(auth);
         }
     }
@@ -111,20 +110,20 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 
     @Override
     public List<Authorization> getAuthorizations() {
-        return _authorizations;
+        return authorizations;
     }
 
     public void setAuthorizations(List<Authorization> authorizations) {
-        this._authorizations = authorizations;
+        this.authorizations = authorizations;
     }
 
     @Override
     public Object getProfile() {
-        return _profile;
+        return profile;
     }
 
     public void setProfile(Object profile) {
-        this._profile = profile;
+        this.profile = profile;
     }
 
     @Override
@@ -139,22 +138,22 @@ public abstract class AbstractUser implements UserDetails, Serializable {
 
     @Override
     public void setRefreshToken(final String refreshToken) {
-
+        this.refreshToken = refreshToken;
     }
 
     @Override
     public String getRefreshToken() {
-        return this.getRefreshToken();
+        return refreshToken;
     }
 
-    private String _username;
-    private String _password;
+    private String username;
+    private String password;
 
-    private Object _profile;
+    private Object profile;
 
     private String accessToken;
     private String refreshToken;
 
-    private List<Authorization> _authorizations = new ArrayList<Authorization>();
+    private List<Authorization> authorizations = new ArrayList<>();
 
 }

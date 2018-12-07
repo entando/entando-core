@@ -13,20 +13,29 @@
  */
 package org.entando.entando.web.utils;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Calendar;
 
 import com.agiletec.aps.system.services.authorization.Authorization;
+import com.agiletec.aps.system.services.authorization.AuthorizationManager;
+import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
+import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import static org.mockito.ArgumentMatchers.anyString;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 
 public class OAuth2TestUtils {
-    
+
     public static OAuth2AccessToken getOAuth2Token(String username, String accessToken) {
         OAuth2AccessTokenImpl oAuth2Token = new OAuth2AccessTokenImpl(accessToken);
         oAuth2Token.setRefreshToken(new DefaultOAuth2RefreshToken("refresh_token"));
@@ -57,14 +66,12 @@ public class OAuth2TestUtils {
     }
 
     public static void addAuthorization(User user, String groupName, String roleName, String[] permissions) {
-
         Group group = null;
         if (StringUtils.isNotBlank(groupName)) {
             group = new Group();
             group.setName(groupName);
             group.setDescription(groupName + " descr");
         }
-
         Role role = null;
         if (StringUtils.isNotBlank(roleName)) {
             role = new Role();
@@ -76,9 +83,27 @@ public class OAuth2TestUtils {
                 }
             }
         }
-
         Authorization auth = new Authorization(group, role);
         user.addAuthorization(auth);
+    }
+
+    public static String mockOAuthInterceptor(IApiOAuth2TokenManager apiOAuth2TokenManager,
+            IAuthenticationProviderManager authenticationProviderManager,
+            IAuthorizationManager authorizationManager,
+            UserDetails user) {
+        try {
+            String accessToken = OAuth2TestUtils.getValidAccessToken();
+            when(apiOAuth2TokenManager.readAccessToken(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
+            when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
+            when(authorizationManager.isAuthOnPermission(Mockito.any(UserDetails.class), anyString())).then(invocation -> {
+                UserDetails user1 = (UserDetails) invocation.getArguments()[0];
+                String permissionName = (String) invocation.getArguments()[1];
+                return new AuthorizationManager().isAuthOnPermission(user1, permissionName);
+            });
+            return accessToken;
+        } catch (ApsSystemException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public static class UserBuilder {

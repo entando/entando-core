@@ -22,7 +22,6 @@ import java.util.List;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,13 +33,13 @@ import org.springframework.security.oauth2.common.OAuth2AccessToken;
  * Implementazione concreta dell'oggetto Authentication Provider di default del
  * sistema. L'Authentication Provider è l'oggetto delegato alla restituzione di
  * un'utenza (comprensiva delle sue autorizzazioni) in occasione di una
- * richiesta di autenticazione utente; questo oggetto non ha visibilitÃ  ai
+ * richiesta di autenticazione utente; questo oggetto non ha visibilità ai
  * singoli sistemi (concreti) delegati alla gestione delle autorizzazioni.
  *
  * @author E.Santoboni
  */
 public class AuthenticationProviderManager extends AbstractService
-        implements IAuthenticationProviderManager, AuthenticationManager {
+        implements IAuthenticationProviderManager {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationProviderManager.class);
 
@@ -139,6 +138,23 @@ public class AuthenticationProviderManager extends AbstractService
         } catch (Exception e) {
             logger.error("Error detected during user authentication", e);
             throw new AuthenticationServiceException("Error detected during user authentication", e);
+        }
+    }
+
+    @Override
+    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try {
+            UserDetails localUser = this.extractUser(username, null, false);
+            if (null == localUser) {
+                throw new UsernameNotFoundException("User " + username + " not found");
+            }
+            org.springframework.security.core.userdetails.User user = new org.springframework.security.core.userdetails.User(username,
+                    "", !localUser.isDisabled(), localUser.isAccountNotExpired(),
+                    localUser.isCredentialsNotExpired(), true, localUser.getAuthorizations());
+            return user;
+        } catch (ApsSystemException ex) {
+            logger.error("Error extracting user {}", username, ex);
+            throw new UsernameNotFoundException("Error extracting user " + username, ex);
         }
     }
 

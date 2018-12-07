@@ -28,6 +28,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.OAuth2Request;
 
@@ -35,18 +36,18 @@ import org.springframework.security.oauth2.provider.OAuth2Request;
  * @author E.Santoboni
  */
 public class ApiOAuth2TokenManagerTest {
-    
+
     @Mock
     private OAuth2TokenDAO tokenDAO;
-    
+
     @InjectMocks
     private ApiOAuth2TokenManager tokenManager;
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
     }
-    
+
     @Test
     public void findTokensByUserName() {
         when(tokenDAO.findTokensByClientIdAndUserName(Mockito.anyString(), Mockito.anyString())).thenReturn(new ArrayList<>());
@@ -67,80 +68,84 @@ public class ApiOAuth2TokenManagerTest {
         Collection<OAuth2AccessToken> tokens = tokenManager.findTokensByClientId("clientId");
         Assert.assertNotNull(tokens);
     }
-    
+
     @Test
     public void createAccessTokenForLocalUser() {
         OAuth2AccessToken token = this.tokenManager.createAccessTokenForLocalUser("username");
         Assert.assertNotNull(token);
         Mockito.verify(tokenDAO, Mockito.times(1)).storeAccessToken(Mockito.any(OAuth2AccessToken.class), Mockito.eq(null));
         Assert.assertTrue(token instanceof OAuth2AccessTokenImpl);
-        Assert.assertEquals("LOCAL_USER", ((OAuth2AccessTokenImpl)token).getClientId());
-    }
-    
-    @Test
-    public void getApiOAuth2Token() throws Exception {
-        when(tokenDAO.getAccessToken(Mockito.anyString())).thenReturn(new OAuth2AccessTokenImpl("token"));
-        OAuth2AccessToken token = tokenManager.getApiOAuth2Token("token");
-        Assert.assertNotNull(token);
-        Assert.assertTrue(token instanceof OAuth2AccessTokenImpl);
+        Assert.assertEquals("LOCAL_USER", ((OAuth2AccessTokenImpl) token).getClientId());
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void readAuthentication_1() throws Exception {
+    public void readUnsupportedAuthenticationByAccessTokenObject() throws Exception {
         this.tokenManager.readAuthentication(this.createMockAccessToken());
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void readAuthentication_2() throws Exception {
+    public void readUnsupportedAuthenticationByAccessToken() throws Exception {
         this.tokenManager.readAuthentication("token");
     }
-    
+
     @Test
     public void storeAccessToken() {
         this.tokenManager.storeAccessToken(this.createMockAccessToken(), this.createMockAuthentication());
         Mockito.verify(tokenDAO, Mockito.times(1)).storeAccessToken(Mockito.any(OAuth2AccessToken.class), Mockito.any(OAuth2Authentication.class));
     }
-    
+
     @Test
     public void readAccessToken() throws Exception {
-        when(tokenDAO.getAccessToken(Mockito.anyString())).thenReturn(new OAuth2AccessTokenImpl("token"));
+        when(tokenDAO.readAccessToken(Mockito.anyString())).thenReturn(new OAuth2AccessTokenImpl("token"));
         OAuth2AccessToken token = tokenManager.readAccessToken("token");
         Assert.assertNotNull(token);
         Assert.assertTrue(token instanceof OAuth2AccessTokenImpl);
         Assert.assertEquals("token", token.getValue());
     }
-    
+
     @Test
     public void removeAccessToken() throws Exception {
         this.tokenManager.removeAccessToken(this.createMockAccessToken());
-        Mockito.verify(tokenDAO, Mockito.times(1)).deleteAccessToken(Mockito.anyString());
+        Mockito.verify(tokenDAO, Mockito.times(1)).removeAccessToken(Mockito.anyString());
     }
-    
-    @Test(expected = UnsupportedOperationException.class)
+
+    @Test
     public void storeRefreshToken() throws Exception {
         this.tokenManager.storeRefreshToken(new DefaultOAuth2RefreshToken("value"), this.createMockAuthentication());
+        Mockito.verifyZeroInteractions(tokenDAO);
     }
-    
-    @Test(expected = UnsupportedOperationException.class)
+
+    @Test
     public void readRefreshToken() throws Exception {
-        this.tokenManager.readRefreshToken("refresh_token");
+        when(tokenDAO.readRefreshToken(Mockito.anyString())).thenReturn(Mockito.any(OAuth2RefreshToken.class));
+        OAuth2RefreshToken refreshToken = this.tokenManager.readRefreshToken("refresh_token");
+        Assert.assertNull(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).readRefreshToken("refresh_token");
     }
-    
-    @Test(expected = UnsupportedOperationException.class)
+
+    @Test
     public void readAuthenticationForRefreshToken() throws Exception {
-        this.tokenManager.readAuthenticationForRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        when(tokenDAO.readAuthenticationForRefreshToken(Mockito.any(OAuth2RefreshToken.class))).thenReturn(Mockito.any(OAuth2Authentication.class));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value");
+        OAuth2Authentication auth = this.tokenManager.readAuthenticationForRefreshToken(refreshToken);
+        Assert.assertNull(auth);
+        Mockito.verify(tokenDAO, Mockito.times(1)).readAuthenticationForRefreshToken(refreshToken);
     }
-    
-    @Test(expected = UnsupportedOperationException.class)
+
+    @Test
     public void removeRefreshToken() throws Exception {
-        this.tokenManager.removeRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value_1");
+        this.tokenManager.removeRefreshToken(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).removeAccessTokenUsingRefreshToken("value_1");
     }
-    
-    @Test(expected = UnsupportedOperationException.class)
+
+    @Test
     public void removeAccessTokenUsingRefreshToken() throws Exception {
-        this.tokenManager.removeAccessTokenUsingRefreshToken(new DefaultOAuth2RefreshToken("value"));
+        OAuth2RefreshToken refreshToken = new DefaultOAuth2RefreshToken("value_2");
+        this.tokenManager.removeAccessTokenUsingRefreshToken(refreshToken);
+        Mockito.verify(tokenDAO, Mockito.times(1)).removeAccessTokenUsingRefreshToken("value_2");
     }
-    
+
     @Test
     public void getAccessToken() throws Exception {
         OAuth2AccessToken token = tokenManager.getAccessToken(this.createMockAuthentication());
@@ -149,7 +154,7 @@ public class ApiOAuth2TokenManagerTest {
         Assert.assertEquals("clientId", ((OAuth2AccessTokenImpl) token).getClientId());
         Assert.assertEquals("username", ((OAuth2AccessTokenImpl) token).getLocalUser());
     }
-    
+
     private OAuth2AccessToken createMockAccessToken() {
         OAuth2AccessTokenImpl token = new OAuth2AccessTokenImpl("token");
         token.setValue("token");
@@ -168,5 +173,5 @@ public class ApiOAuth2TokenManagerTest {
         OAuth2Authentication authentication = new OAuth2Authentication(oAuth2Request, mock);
         return authentication;
     }
-    
+
 }

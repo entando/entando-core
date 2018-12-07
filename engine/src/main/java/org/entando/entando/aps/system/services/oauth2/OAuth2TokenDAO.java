@@ -20,13 +20,21 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.DefaultOAuth2RefreshToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.common.OAuth2RefreshToken;
+import org.springframework.security.oauth2.common.util.OAuth2Utils;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
 
 public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenDAO {
 
@@ -38,9 +46,17 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
 
     private static final String DELETE_EXPIRED_TOKENS = "DELETE FROM api_oauth_tokens WHERE expiresin < ?";
 
-    private static final String SELECT_TOKEN = "SELECT * FROM api_oauth_tokens WHERE accesstoken = ? ";
+    private static final String SELECT_TOKEN_PREFIX = "SELECT * FROM api_oauth_tokens ";
 
-    private static final String DELETE_TOKEN = "DELETE FROM api_oauth_tokens WHERE accesstoken = ? ";
+    private static final String SELECT_TOKEN = SELECT_TOKEN_PREFIX + "WHERE accesstoken = ? ";
+
+    private static final String SELECT_TOKEN_BY_REFRESH = SELECT_TOKEN_PREFIX + "WHERE refreshtoken = ? ";
+
+    private static final String DELETE_TOKEN_PREFIX = "DELETE FROM api_oauth_tokens ";
+
+    private static final String DELETE_TOKEN = DELETE_TOKEN_PREFIX + "WHERE accesstoken = ? ";
+
+    private static final String DELETE_TOKEN_BY_REFRESH = DELETE_TOKEN_PREFIX + "WHERE refreshtoken = ? ";
 
     @Override
     protected String getTableFieldName(String metadataFieldKey) {
@@ -165,7 +181,11 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
                 } else {
                     stat.setNull(5, Types.VARCHAR);
                 }
-                stat.setNull(6, Types.VARCHAR);
+                if (authentication.getPrincipal() instanceof UserDetails) {
+                    stat.setString(6, ((UserDetails) authentication.getPrincipal()).getUsername());
+                } else {
+                    stat.setString(6, authentication.getPrincipal().toString());
+                }
             }
             stat.executeUpdate();
             conn.commit();
@@ -179,7 +199,7 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    public OAuth2AccessToken getAccessToken(final String accessToken) {
+    public OAuth2AccessToken readAccessToken(final String accessToken) {
         Connection conn = null;
         OAuth2AccessToken token = null;
         try {
@@ -195,19 +215,26 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
     }
 
     @Override
-    public void deleteAccessToken(final String accessToken) {
+    public void removeAccessToken(final String accessToken) {
         super.executeQueryWithoutResultset(DELETE_TOKEN, accessToken);
     }
-
+    
     @Override
-    public void deleteExpiredToken() {
+    public void removeAccessTokenUsingRefreshToken(String refreshToken) {
+        super.executeQueryWithoutResultset(DELETE_TOKEN_BY_REFRESH, refreshToken);
+    }
+    
+    @Override
+    public void deleteExpiredToken(int expirationTime) {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.SECOND, -expirationTime);
             stat = conn.prepareStatement(DELETE_EXPIRED_TOKENS);
-            stat.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+            stat.setTimestamp(1, new Timestamp(calendar.getTimeInMillis()));
             stat.executeUpdate();
             conn.commit();
         } catch (Exception t) {
@@ -218,5 +245,45 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             closeDaoResources(null, stat, conn);
         }
     }
-
+    
+    @Override
+    public OAuth2RefreshToken readRefreshToken(String tokenValue) {
+        FieldSearchFilter filter = new FieldSearchFilter("refreshtoken", tokenValue, true);
+        FieldSearchFilter[] filters = {filter};
+        List<String> accessTokens = super.searchId(filters);
+        if (null != accessTokens && accessTokens.size() > 0) {
+            return new DefaultOAuth2RefreshToken(tokenValue);
+        }
+        return null;
+    }
+    
+    @Override
+    public OAuth2Authentication readAuthenticationForRefreshToken(OAuth2RefreshToken refreshToken) {
+        OAuth2Authentication authentication = null;
+        Connection conn = null;
+        PreparedStatement stat = null;
+        ResultSet res = null;
+        try {
+            conn = this.getConnection();
+            stat = conn.prepareStatement(SELECT_TOKEN_BY_REFRESH);
+            stat.setString(1, refreshToken.getValue());
+            res = stat.executeQuery();
+            if (res.next()) {
+                String username = res.getString("localuser");
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, "");
+                String clientid = res.getString("clientid");
+                Map<String, String> requestParameters = new HashMap<>();
+                requestParameters.put(OAuth2Utils.GRANT_TYPE, res.getString("granttype"));
+                OAuth2Request oAuth2Request = new OAuth2Request(requestParameters, clientid, null, true, null, null, null, null, null);
+                authentication = new OAuth2Authentication(oAuth2Request, auth);
+            }
+        } catch (Exception t) {
+            logger.error("Error while reading tokens", t);
+            throw new RuntimeException("Error while reading tokens", t);
+        } finally {
+            this.closeDaoResources(res, stat, conn);
+        }
+        return authentication;
+    }
+    
 }

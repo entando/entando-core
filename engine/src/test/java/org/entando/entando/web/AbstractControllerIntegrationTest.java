@@ -15,8 +15,6 @@ package org.entando.entando.web;
 
 import javax.annotation.Resource;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.AuthorizationManager;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -31,10 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -42,10 +37,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -91,22 +82,10 @@ public class AbstractControllerIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilters(new CORSFilter(), springSecurityFilterChain)
                 .build();
-
     }
 
-    protected String mockOAuthInterceptor(UserDetails user) throws Exception, ApsSystemException {
-        String accessToken = OAuth2TestUtils.getValidAccessToken();
-        when(apiOAuth2TokenManager.getApiOAuth2Token(Mockito.anyString())).thenReturn(OAuth2TestUtils.getOAuth2Token(user.getUsername(), accessToken));
-        when(authenticationProviderManager.getUser(user.getUsername())).thenReturn(user);
-        when(authorizationManager.isAuthOnPermission(any(UserDetails.class), anyString())).then(new Answer<Boolean>() {
-
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                UserDetails user = (UserDetails) invocation.getArguments()[0];
-                String permissionName = (String) invocation.getArguments()[1];
-                return new AuthorizationManager().isAuthOnPermission(user, permissionName);
-            }
-        });
-        return accessToken;
+    protected String mockOAuthInterceptor(UserDetails user) {
+        return OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
     }
+
 }

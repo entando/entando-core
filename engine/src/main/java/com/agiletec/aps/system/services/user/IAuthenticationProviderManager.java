@@ -14,6 +14,8 @@
 package com.agiletec.aps.system.services.user;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 /**
  * Interfaccia base dell'oggetto Authentication Provider.
@@ -21,7 +23,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
  * (comprensiva delle sue autorizzazioni) in occasione di una richiesta di autenticazione utente.
  * @author E.Santoboni
  */
-public interface IAuthenticationProviderManager {
+public interface IAuthenticationProviderManager extends AuthenticationManager, UserDetailsService {
     
     /**
      * Restituisce un'utente (comprensivo delle autorizzazioni) in base ad username. 

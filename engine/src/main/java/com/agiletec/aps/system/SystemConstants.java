@@ -406,4 +406,8 @@ public interface SystemConstants {
 
     public static final String PERMISSION_EDIT_DATAOBJECTS = "editDataObjects";
 
+    public static final Integer OAUTH2_ACCESS_TOKEN_DEFAULT_VALIDITY_SECOND = 3600;
+
+    public static final Integer OAUTH2_REFRESH_TOKEN_DEFAULT_VALIDITY_SECOND = 86400;
+
 }

@@ -39,7 +39,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
     "classpath*:spring/testpropertyPlaceholder.xml",
@@ -84,6 +83,7 @@ public class AbstractControllerIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .addFilters(new CORSFilter(), springSecurityFilterChain)
                 .build();
+        accessToken = null;
     }
 
     protected String mockOAuthInterceptor(UserDetails user) {
@@ -91,8 +91,16 @@ public class AbstractControllerIntegrationTest {
     }
     
     protected AuthRequestBuilder createAuthRequest(MockHttpServletRequestBuilder requestBuilder) {
-        return new AuthRequestBuilder(apiOAuth2TokenManager,
-                authenticationProviderManager, authorizationManager,
-                mockMvc, requestBuilder);
+        return new AuthRequestBuilder(mockMvc, getAccessToken(), requestBuilder);
+    }
+
+    private String accessToken;
+
+    private String getAccessToken() {
+        if (this.accessToken == null) {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            this.accessToken = OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
+        }
+        return this.accessToken;
     }
 }

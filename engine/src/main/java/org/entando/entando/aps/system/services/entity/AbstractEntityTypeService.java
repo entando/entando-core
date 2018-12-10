@@ -35,9 +35,6 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeVali
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.CaseInsensitiveBeanComparator;
@@ -138,19 +135,10 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
     protected PagedMetadata<String> getAttributeTypes(String entityManagerCode, RestListRequest requestList) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         List<AttributeInterface> mainList = new ArrayList<>(entityManager.getEntityAttributePrototypes().values());
-        Stream<AttributeInterface> stream = mainList.stream();
-        //filter
-        List<Predicate<AttributeInterface>> filters = AttributeTypeServiceUtils.getPredicates(requestList);
-        for (Predicate<AttributeInterface> predicate : filters) {
-            stream = stream.filter(predicate);
-        }
-        //sort
-        Comparator<AttributeInterface> comparator = AttributeTypeServiceUtils.getComparator(requestList.getSort(), requestList.getDirection());
-        if (null != comparator) {
-            stream = stream.sorted(comparator);
-        }
-        List<String> attributeCodes = new ArrayList<>();
-        stream.forEach(i -> attributeCodes.add(i.getType()));
+        List<String> attributeCodes = new AttributeTypeRequestListProcessor(requestList, mainList)
+                .filterAndSort().getStream()
+                .map(i -> i.getType())
+                .collect(Collectors.toList());
         List<String> sublist = requestList.getSublist(attributeCodes);
         PagedMetadata<String> pagedMetadata = new PagedMetadata<>(requestList, attributeCodes.size());
         pagedMetadata.setBody(sublist);

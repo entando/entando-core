@@ -1,10 +1,6 @@
 package org.entando.entando.aps.system.services.language;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 
@@ -15,7 +11,7 @@ import com.agiletec.aps.system.services.lang.Lang;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.entando.entando.aps.system.services.language.utils.LangUtils;
+import org.entando.entando.aps.system.services.language.utils.LanguageRequestListProcessor;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -57,22 +53,9 @@ public class LanguageService implements ILanguageService {
         try {
             List<Lang> sysLangs = this.getLangManager().getAssignableLangs();
             List<LanguageDto> langs = this.getLanguageDtoBuilder().convert(sysLangs);
-
-            Stream<LanguageDto> stream = langs.stream();
-
-            //filter
-            List<Predicate<LanguageDto>> filters = LangUtils.getPredicates(requestList);
-            for (Predicate<LanguageDto> predicate : filters) {
-                stream = stream.filter(predicate);
-            }
-
-            //sort
-            Comparator<LanguageDto> comparator = LangUtils.getComparator(requestList.getSort(), requestList.getDirection());
-            if (null != comparator) {
-                stream = stream.sorted(comparator);
-            }
-
-            langs = stream.collect(Collectors.toList());
+            
+            langs = new LanguageRequestListProcessor(requestList, langs)
+                    .filterAndSort().toList();
 
             //page
             SearcherDaoPaginatedResult<LanguageDto> langsResult = new SearcherDaoPaginatedResult<>(langs.size(), langs);

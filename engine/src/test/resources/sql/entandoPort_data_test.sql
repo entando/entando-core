@@ -887,6 +887,14 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('test', 'digitalExc
   <digitalExchange>
     <name>DE 1</name>
     <url>https://de1.entando.com/</url>
+    <timeout>1000</timeout>
+    <active>true</active>
+  </digitalExchange>
+  <digitalExchange>
+    <name>DE 2</name>
+    <url>https://de2.entando.com/</url>
+    <timeout>1000</timeout>
+    <active>true</active>
   </digitalExchange>
 </digitalExchanges>');
 

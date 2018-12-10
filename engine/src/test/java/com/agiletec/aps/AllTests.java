@@ -82,6 +82,7 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDA
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClientTest;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.oauth2.ApiOAuth2TokenManagerTest;
@@ -216,7 +217,9 @@ public class AllTests {
         suite.addTest(new JUnit4TestAdapter(OAuthConsumerDAOTest.class));
         suite.addTest(new JUnit4TestAdapter(OAuth2TokenDAOTest.class));
         suite.addTest(new JUnit4TestAdapter(ApiOAuth2TokenManagerTest.class));
-        
+
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangesClientTest.class));
+
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
         suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));

@@ -25,10 +25,6 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -114,18 +110,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         try {
             List<WidgetType> types = this.getWidgetManager().getWidgetTypes();
             List<WidgetDto> dtoList = dtoBuilder.convert(types);
-            Stream<WidgetDto> stream = dtoList.stream();
-            //filter
-            List<Predicate<WidgetDto>> filters = WidgetTypeServiceUtils.getPredicates(restListReq);
-            for (Predicate<WidgetDto> predicate : filters) {
-                stream = stream.filter(predicate);
-            }
-            //sort
-            Comparator<WidgetDto> comparator = WidgetTypeServiceUtils.getComparator(restListReq.getSort(), restListReq.getDirection());
-            if (null != comparator) {
-                stream = stream.sorted(comparator);
-            }
-            List<WidgetDto> resultList = stream.collect(Collectors.toList());
+            List<WidgetDto> resultList = new WidgetTypeListProcessor(restListReq, dtoList)
+                    .filterAndSort().toList();
             List<WidgetDto> sublist = restListReq.getSublist(resultList);
             SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult(resultList.size(), sublist);
             PagedMetadata<WidgetDto> pagedMetadata = new PagedMetadata<>(restListReq, paginatedResult);

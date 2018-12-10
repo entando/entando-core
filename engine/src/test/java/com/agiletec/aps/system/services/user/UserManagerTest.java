@@ -17,22 +17,17 @@ import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.util.DefaultApsEncrypter;
 import java.util.ArrayList;
 import java.util.List;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-import static junit.framework.Assert.assertTrue;
 import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 
-/**
- *
- * @author paddeo
- */
 public class UserManagerTest {
 
     @Mock
@@ -129,7 +124,7 @@ public class UserManagerTest {
         userManager.init();
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
-        assertTrue(usersList.size() == 6);
+        assertEquals(6, usersList.size());
         boolean res = true;
         for (UserDetails user : usersList) {
             res = this.userManager.isArgon2Encrypted(user.getPassword());
@@ -153,7 +148,7 @@ public class UserManagerTest {
         userManager.init();
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
-        assertTrue(usersList.size() == 6);
+        assertEquals(6, usersList.size());
         boolean res = true;
         for (UserDetails user : usersList) {
             res = this.userManager.isArgon2Encrypted(user.getPassword());
@@ -177,7 +172,7 @@ public class UserManagerTest {
         userManager.init();
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
-        assertTrue(usersList.size() == 6);
+        assertEquals(6, usersList.size());
         boolean res = true;
         for (UserDetails user : usersList) {
             res = this.userManager.isArgon2Encrypted(user.getPassword());
@@ -189,21 +184,17 @@ public class UserManagerTest {
     }
 
     private void mockAdminPlainText() {
-        UserDetails admin = null;
         User user = new User();
         user.setUsername("admin");
         user.setPassword("adminadmin");
-        admin = user;
-        users.add(admin);
+        users.add(user);
     }
 
     private void mockAdminOldEncryption() throws Exception {
-        UserDetails admin = null;
         User user = new User();
         user.setUsername("admin");
         user.setPassword(DefaultApsEncrypter.encryptString("adminadmin"));
-        admin = user;
-        users.add(admin);
+        users.add(user);
     }
 
     private void mockUsersPlainText() {
@@ -259,8 +250,7 @@ public class UserManagerTest {
     }
 
     private void changePasswordMock(String username, String password) {
-        List<UserDetails> oldUsers = new ArrayList<>();
-        oldUsers.addAll(users);
+        List<UserDetails> oldUsers = new ArrayList<>(users);
         this.emptyUsers();
         for (UserDetails user : oldUsers) {
             if (user.getUsername().equals(username)) {
@@ -282,7 +272,7 @@ public class UserManagerTest {
                 this.changePasswordMock(username, user.getPassword());
             }
         }
-        UserDetails admin = null;
+        UserDetails admin;
         if ((admin = this.getMockUser("admin")) != null) {
             Mockito.doNothing().when(userDao).changePassword(admin.getUsername(), admin.getPassword());
             this.changePasswordMock("admin", admin.getPassword());

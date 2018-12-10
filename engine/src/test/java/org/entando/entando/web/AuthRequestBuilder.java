@@ -13,13 +13,8 @@
  */
 package org.entando.entando.web;
 
-import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -36,27 +31,21 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
  */
 public class AuthRequestBuilder {
 
-    private final IApiOAuth2TokenManager apiOAuth2TokenManager;
-    private final IAuthenticationProviderManager authenticationProviderManager;
-    private final IAuthorizationManager authorizationManager;
     private final MockMvc mockMvc;
-    private MockHttpServletRequestBuilder requestBuilder;
+    private final String accessToken;
     private final ObjectMapper mapper;
+    private MockHttpServletRequestBuilder requestBuilder;
     private String mediaType;
-
     private String content;
 
-    public AuthRequestBuilder(IApiOAuth2TokenManager apiOAuth2TokenManager,
-            IAuthenticationProviderManager authenticationProviderManager,
-            IAuthorizationManager authorizationManager,
-            MockMvc mockMvc, MockHttpServletRequestBuilder requestBuilder) {
+    public AuthRequestBuilder(MockMvc mockMvc, String accessToken,
+            MockHttpServletRequestBuilder requestBuilder) {
 
-        this.apiOAuth2TokenManager = apiOAuth2TokenManager;
-        this.authenticationProviderManager = authenticationProviderManager;
-        this.authorizationManager = authorizationManager;
         this.mockMvc = mockMvc;
-        this.requestBuilder = requestBuilder;
+        this.accessToken = accessToken;
         this.mapper = new ObjectMapper();
+
+        this.requestBuilder = requestBuilder;
 
         // default
         mediaType = MediaType.APPLICATION_JSON_VALUE;
@@ -82,8 +71,6 @@ public class AuthRequestBuilder {
     }
 
     public ResultActions execute() {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = OAuth2TestUtils.mockOAuthInterceptor(apiOAuth2TokenManager, authenticationProviderManager, authorizationManager, user);
 
         requestBuilder = requestBuilder
                 .contentType(mediaType)

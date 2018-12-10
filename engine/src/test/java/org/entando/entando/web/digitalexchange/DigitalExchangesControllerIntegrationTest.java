@@ -34,7 +34,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
 
     @Autowired
     private DigitalExchangesService digitalExchangeService;
-
+    
     @Test
     public void shouldReturnDigitalExchanges() throws Exception {
 
@@ -43,7 +43,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData").isEmpty());
         result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", hasSize(1)));
+        result.andExpect(jsonPath("$.payload", hasSize(2)));
         result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
     }
 
@@ -147,7 +147,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
         result.andExpect(jsonPath("$.payload").isEmpty());
     }
-    
+
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);

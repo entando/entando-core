@@ -39,6 +39,14 @@ public class DigitalExchange {
     @XmlElement
     private String url;
 
+    @JsonProperty("timeout")
+    @XmlElement
+    private int timeout;
+
+    @JsonProperty("active")
+    @XmlElement    
+    private boolean active;
+
     public String getName() {
         return name;
     }
@@ -53,5 +61,21 @@ public class DigitalExchange {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

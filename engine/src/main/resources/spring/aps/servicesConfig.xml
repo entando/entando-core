@@ -20,6 +20,14 @@
     <!--  async support -->
     <task:annotation-driven   />
 
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="basename">
+            <value>rest/messages</value>
+        </property>
+        <property name="fallbackToSystemLocale" value="true" />
+    </bean>
 
     <!-- === WIDGET VALIDATORS === -->
 
@@ -177,4 +185,11 @@
     <bean id="DigitalExchangesService" class="org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesServiceImpl" >
         <property name="configManager" ref="BaseConfigManager" />
     </bean>
+    
+    <bean id="RestTemplate" class="org.springframework.web.client.RestTemplate" />
+    
+    <context:component-scan 
+        base-package="org.entando.entando.aps.system.services.digitalexchange.client
+                      org.entando.entando.aps.system.services.digitalexchange.component" />
+
 </beans>

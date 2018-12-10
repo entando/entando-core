@@ -24,8 +24,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,9 +84,7 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 			pbeCipher.init(Cipher.ENCRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return base64Encode(pbeCipher.doFinal(property.getBytes("UTF-8")));
 
-		} catch (GeneralSecurityException e) {
-			logger.error("Error in encrypt", e);
-		} catch (UnsupportedEncodingException e) {
+		} catch (GeneralSecurityException | UnsupportedEncodingException e) {
 			logger.error("Error in encrypt", e);
 		}
 		return null;
@@ -102,11 +99,9 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 			Cipher pbeCipher = Cipher.getInstance("PBEWithMD5AndDES");
 			pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return new String(pbeCipher.doFinal(base64Decode(property)), "UTF-8");
-		} catch (GeneralSecurityException e) {
+		} catch (GeneralSecurityException | IOException e) {
 			logger.error("Error in decrypt");
-		} catch (IOException e) {
-			logger.error("Error in decrypt");
-		} 
+		}
 		return null;
 	}
 

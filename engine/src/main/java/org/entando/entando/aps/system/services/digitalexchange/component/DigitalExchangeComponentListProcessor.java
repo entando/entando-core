@@ -49,8 +49,9 @@ public class DigitalExchangeComponentListProcessor extends RequestListProcessor<
                     return c -> c.getRating() == Integer.parseInt(value);
                 case INSTALLED:
                     return c -> c.isInstalled() == Boolean.parseBoolean(value.toLowerCase());
+                default:
+                    return null;
             }
-            return null;
         };
     }
 

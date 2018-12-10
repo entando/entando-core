@@ -41,7 +41,7 @@ public class DigitalExchangeComponentsController implements DigitalExchangeCompo
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<PagedRestResponse<DigitalExchangeComponent>> getComponents(RestListRequest requestList) {
 
-        ResilientPagedMetadata resilientPagedMetadata = componentsService.getComponents(requestList);
+        ResilientPagedMetadata<DigitalExchangeComponent> resilientPagedMetadata = componentsService.getComponents(requestList);
 
         PagedRestResponse<DigitalExchangeComponent> response = new PagedRestResponse<>(resilientPagedMetadata);
         response.setErrors(resilientPagedMetadata.getErrors());

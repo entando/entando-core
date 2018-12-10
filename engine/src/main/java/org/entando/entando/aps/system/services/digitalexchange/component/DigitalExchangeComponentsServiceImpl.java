@@ -20,16 +20,12 @@ import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPa
 import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.core.ParameterizedTypeReference;
 
 @Service
 public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComponentsService {
-
-    private static final Logger logger = LoggerFactory.getLogger(DigitalExchangeComponentsServiceImpl.class);
 
     private final DigitalExchangesClient client;
 

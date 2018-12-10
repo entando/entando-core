@@ -83,6 +83,7 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
 
     private <R extends RestResponse, C> List<R> queryAllDigitalExchanges(DigitalExchangeCall<R, C> call) {
 
+        @SuppressWarnings("unchecked")
         CompletableFuture<R>[] futureResults
                 = digitalExchangesService.getDigitalExchanges()
                         .stream()
@@ -92,15 +93,15 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
 
         return CompletableFuture.allOf(futureResults)
                 .thenApply(v -> {
-                    return Arrays.asList(futureResults).stream()
-                            .map(future -> future.join())
+                    return Arrays.stream(futureResults)
+                            .map(CompletableFuture::join)
                             .collect(Collectors.toList());
                 }).join();
     }
 
     private <R extends RestResponse, C> CompletableFuture getResponseOrTimeout(DigitalExchange digitalExchange, DigitalExchangeCall<R, C> call) {
-        CompletableFuture responseFuture = CompletableFuture.supplyAsync(() -> getResponse(digitalExchange, call));
-        CompletableFuture timeoutFuture = getTimeoutFuture(digitalExchange, call);
+        CompletableFuture<R> responseFuture = CompletableFuture.supplyAsync(() -> getResponse(digitalExchange, call));
+        CompletableFuture<R> timeoutFuture = getTimeoutFuture(digitalExchange, call);
 
         CompletableFuture result = CompletableFuture.anyOf(responseFuture, timeoutFuture);
 
@@ -164,7 +165,7 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
 
         int timeout = digitalExchange.getTimeout() > 0 ? digitalExchange.getTimeout() : DEFAULT_TIMEOUT;
 
-        CompletableFuture result = new CompletableFuture();
+        CompletableFuture<R> result = new CompletableFuture<>();
 
         timeoutService.schedule(() -> result.complete(
                 getErrorResponse(call, ERRCODE_DE_TIMEOUT, "digitalExchange.timeout",

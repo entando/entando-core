@@ -34,19 +34,19 @@ public class RestListRequestUriBuilder {
 
     public String toUriString() {
 
-        addQueryParam("page", () -> request.getPage());
-        addQueryParam("pageSize", () -> request.getPageSize());
-        addQueryParam("direction", () -> request.getDirection());
-        addQueryParam("sort", () -> request.getSort());
+        addQueryParam("page", request::getPage);
+        addQueryParam("pageSize", request::getPageSize);
+        addQueryParam("direction", request::getDirection);
+        addQueryParam("sort", request::getSort);
 
         if (request.getFilters() != null) {
             int index = 0;
             for (Filter filter : request.getFilters()) {
                 String prefix = String.format("filters[%s].", index);
-                addQueryParam(prefix + "attribute", () -> filter.getAttribute());
-                addQueryParam(prefix + "entityAttr", () -> filter.getEntityAttr());
-                addQueryParam(prefix + "operator", () -> filter.getOperator());
-                addQueryParam(prefix + "value", () -> filter.getValue());
+                addQueryParam(prefix + "attribute", filter::getAttribute);
+                addQueryParam(prefix + "entityAttr", filter::getEntityAttr);
+                addQueryParam(prefix + "operator", filter::getOperator);
+                addQueryParam(prefix + "value", filter::getValue);
                 index++;
             }
         }
@@ -56,9 +56,9 @@ public class RestListRequestUriBuilder {
         return builder.build(false).toUriString();
     }
 
-    private void addQueryParam(String key, Supplier supplier) {
+    private <T> void addQueryParam(String key, Supplier<T> supplier) {
 
-        Object value = supplier.get();
+        T value = supplier.get();
 
         if (value != null) {
             builder.queryParam(key, value);

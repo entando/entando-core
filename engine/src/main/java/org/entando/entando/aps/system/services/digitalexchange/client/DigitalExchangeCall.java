@@ -33,7 +33,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public abstract class DigitalExchangeCall<R extends RestResponse, C> {
 
     private final HttpMethod method;
-    private final ParameterizedTypeReference parameterizedTypeReference;
+    private final ParameterizedTypeReference<R> parameterizedTypeReference;
     private final String[] urlSegments;
     private HttpEntity entity;
 
@@ -48,7 +48,7 @@ public abstract class DigitalExchangeCall<R extends RestResponse, C> {
      * the endpoint URL
      */
     public DigitalExchangeCall(HttpMethod method,
-            ParameterizedTypeReference parameterizedTypeReference,
+            ParameterizedTypeReference<R> parameterizedTypeReference,
             String... urlSegments) {
 
         this.method = method;
@@ -71,7 +71,7 @@ public abstract class DigitalExchangeCall<R extends RestResponse, C> {
         this.entity = entity;
     }
 
-    public ParameterizedTypeReference getParameterizedTypeReference() {
+    public ParameterizedTypeReference<R> getParameterizedTypeReference() {
         return parameterizedTypeReference;
     }
 

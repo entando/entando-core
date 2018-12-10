@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,27 +133,10 @@ public class DigitalExchangesMocker {
                             .setUrlParams(urlParameters)
                             .setEntity(invocation.getArgument(2));
 
-                    checkParameterizedTypeReference(invocation.getArgument(3));
-
                     return ResponseEntity.ok(responsesMap.get(baseUrl).apply(request));
                 });
 
         return restTemplate;
-    }
-
-    /**
-     * This is an additional check on the structure of the
-     * ParameterizedTypeReference. This method will throw a ClassCastException
-     * if the generic type inside the ParameterizedTypeReference doesn't inherit
-     * from RestResponse. This can be useful because, mocking all the calls (and
-     * without this check), tests can work even if the service class defined
-     * this object in a wrong way.
-     */
-    private void checkParameterizedTypeReference(ParameterizedTypeReference typeRef) {
-        ParameterizedType typeRefType = (ParameterizedType) typeRef.getClass().getGenericSuperclass();
-        ParameterizedType genericType = (ParameterizedType) typeRefType.getActualTypeArguments()[0];
-        Class<?> wrappedClass = (Class<?>) genericType.getRawType();
-        wrappedClass.asSubclass(RestResponse.class);
     }
 
     private String getBaseUrl(String url) {

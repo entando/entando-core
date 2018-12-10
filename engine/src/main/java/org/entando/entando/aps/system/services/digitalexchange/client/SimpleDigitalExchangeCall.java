@@ -26,7 +26,7 @@ import org.springframework.http.HttpMethod;
 public class SimpleDigitalExchangeCall<T> extends DigitalExchangeCall<SimpleRestResponse<T>, ResilientListWrapper<T>> {
 
     public SimpleDigitalExchangeCall(HttpMethod method,
-            ParameterizedTypeReference parameterizedTypeReference, String... urlSegments) {
+            ParameterizedTypeReference<SimpleRestResponse<T>> parameterizedTypeReference, String... urlSegments) {
         super(method, parameterizedTypeReference, urlSegments);
     }
 

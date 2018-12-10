@@ -34,13 +34,13 @@ public abstract class PagedDigitalExchangeCall<T> extends DigitalExchangeCall<Pa
     private final RestListRequest request;
 
     public PagedDigitalExchangeCall(HttpMethod method, RestListRequest restListRequest,
-            ParameterizedTypeReference parameterizedTypeReference, String... urlSegments) {
+            ParameterizedTypeReference<PagedRestResponse<T>> parameterizedTypeReference, String... urlSegments) {
         super(method, parameterizedTypeReference, urlSegments);
         this.request = restListRequest;
     }
 
     public PagedDigitalExchangeCall(RestListRequest restListRequest,
-            ParameterizedTypeReference parameterizedTypeReference, String... urlSegments) {
+            ParameterizedTypeReference<PagedRestResponse<T>> parameterizedTypeReference, String... urlSegments) {
         this(HttpMethod.GET, restListRequest, parameterizedTypeReference, urlSegments);
     }
 
@@ -80,7 +80,7 @@ public abstract class PagedDigitalExchangeCall<T> extends DigitalExchangeCall<Pa
     }
 
     @Override
-    protected PagedRestResponse getEmptyRestResponse() {
+    protected PagedRestResponse<T> getEmptyRestResponse() {
         return new PagedRestResponse<>(new PagedMetadata<>());
     }
 
@@ -107,7 +107,7 @@ public abstract class PagedDigitalExchangeCall<T> extends DigitalExchangeCall<Pa
 
         List<T> subList = request.getSublist(joinedList);
 
-        ResilientPagedMetadata pagedMetadata = new ResilientPagedMetadata(request, subList, total);
+        ResilientPagedMetadata<T> pagedMetadata = new ResilientPagedMetadata<>(request, subList, total);
         pagedMetadata.setErrors(errors);
 
         return pagedMetadata;

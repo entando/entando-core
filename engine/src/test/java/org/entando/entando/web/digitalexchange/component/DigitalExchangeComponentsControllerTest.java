@@ -13,8 +13,11 @@
  */
 package org.entando.entando.web.digitalexchange.component;
 
+import com.agiletec.aps.system.SystemConstants;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TimeZone;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsService;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.AbstractControllerTest;
@@ -38,6 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DigitalExchangeComponentsControllerTest extends AbstractControllerTest {
 
     private static final String BASE_URL = "/digitalExchange/components";
+
+    private static final String LAST_UPDATE = "2018-12-01 12:00:00";
 
     @Mock
     private DigitalExchangeComponentsService service;
@@ -68,12 +73,18 @@ public class DigitalExchangeComponentsControllerTest extends AbstractControllerT
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.payload", hasSize(1)));
         result.andExpect(jsonPath("$.payload[0].name", is("A")));
+        result.andExpect(jsonPath("$.payload[0].lastUpdate", is(LAST_UPDATE)));
     }
 
-    private void initServiceMocks() {
+    private void initServiceMocks() throws Exception {
 
         DigitalExchangeComponent component = new DigitalExchangeComponent();
         component.setName("A");
+
+        SimpleDateFormat df = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        component.setLastUpdate(df.parse(LAST_UPDATE));
+
         List<DigitalExchangeComponent> components = Arrays.asList(component);
 
         RestError error = new RestError("1", "DE not available");

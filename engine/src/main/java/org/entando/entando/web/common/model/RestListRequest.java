@@ -143,7 +143,7 @@ public class RestListRequest {
         return null;
     }
 
-    public List getSublist(List master) {
+    public <E> List<E> getSublist(List<E> master) {
         if (null == master) {
             return null;
         }

@@ -66,7 +66,7 @@ public class DigitalExchangeComponentListProcessor extends RequestListProcessor<
                 case TYPE:
                     return (a, b) -> a.getType().compareToIgnoreCase(b.getType());
                 case RATING:
-                    return (a, b) -> Integer.compare(a.getRating(), b.getRating());
+                    return (a, b) -> Double.compare(a.getRating(), b.getRating());
                 case INSTALLED:
                     return (a, b) -> Boolean.compare(a.isInstalled(), b.isInstalled());
                 case NAME:

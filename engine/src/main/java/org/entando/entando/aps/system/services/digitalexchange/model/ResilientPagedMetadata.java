@@ -30,10 +30,12 @@ public class ResilientPagedMetadata<T> extends PagedMetadata<T> {
 
     public ResilientPagedMetadata() {
         super();
+        this.errors = new ArrayList<>();
     }
     
     public ResilientPagedMetadata(RestListRequest req, List<T> body, int totalItems) {
         super(req, body, totalItems);
+        this.errors = new ArrayList<>();
     }
 
     public List<RestError> getErrors() {

@@ -41,7 +41,7 @@ public class LocalStorageManagerInterface implements IApiExportable {
 
 	private static final Logger logger = LoggerFactory.getLogger(LocalStorageManagerInterface.class);
 
-	private IStorageManager _storageManager;
+	private IStorageManager storageManager;
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_IS_PROTECTED = "protected";
 	private static final String PARAM_DELETE_RECURSIVE = "recursive";
@@ -243,9 +243,9 @@ public class LocalStorageManagerInterface implements IApiExportable {
 	
 
 	protected IStorageManager getStorageManager() {
-		return _storageManager;
+		return storageManager;
 	}
 	public void setStorageManager(IStorageManager storageManager) {
-		this._storageManager = storageManager;
+		this.storageManager = storageManager;
 	}
 }

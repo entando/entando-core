@@ -100,7 +100,7 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 			pbeCipher.init(Cipher.DECRYPT_MODE, key, new PBEParameterSpec(this.getSalt().getBytes(), 20));
 			return new String(pbeCipher.doFinal(base64Decode(property)), "UTF-8");
 		} catch (GeneralSecurityException | IOException e) {
-			logger.error("Error in decrypt");
+			logger.error("Error in decrypt", e);
 		}
 		return null;
 	}

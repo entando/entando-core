@@ -18,37 +18,23 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
-import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeAttributeFullDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
-import org.entando.entando.aps.system.services.entity.model.EntityTypesStatusDto;
+import org.entando.entando.aps.system.services.entity.model.*;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.exceptions.*;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.entity.validator.AbstractEntityTypeValidator;
-import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
-import org.entando.entando.web.userprofile.model.ProfileTypeRefreshRequest;
+import org.entando.entando.web.userprofile.model.*;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import java.util.*;
 
 /**
  * @author E.Santoboni
@@ -294,5 +280,4 @@ public class ProfileTypeController {
         result.put("movement", movement);
         return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
-
 }

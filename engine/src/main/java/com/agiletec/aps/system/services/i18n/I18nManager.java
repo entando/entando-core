@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +34,14 @@ import com.agiletec.aps.util.ApsProperties;
 /**
  * Servizio che fornisce stringhe "localizzate". Le stringhe sono specificate 
  * da una chiave di identificazione e dalla lingua di riferimento.
- * @author S.Didaci - E.Santoboni - S.Puddu
  */
 public class I18nManager extends AbstractService implements II18nManager {
 
-	private static final Logger _logger = LoggerFactory.getLogger(I18nManager.class);
+	private static final Logger logger = LoggerFactory.getLogger(I18nManager.class);
 	
 	private II18nManagerCacheWrapper cacheWrapper;
 
-	private ILangManager _langManager;
+	private ILangManager langManager;
 	
 	private II18nDAO i18nDAO;
 
@@ -55,10 +54,10 @@ public class I18nManager extends AbstractService implements II18nManager {
 	}
 	
 	protected ILangManager getLangManager() {
-		return _langManager;
+		return langManager;
 	}
 	public void setLangManager(ILangManager langManager) {
-		this._langManager = langManager;
+		this.langManager = langManager;
 	}
 
 	protected II18nManagerCacheWrapper getCacheWrapper() {
@@ -76,7 +75,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 	@Override
 	public void init() throws Exception {
 		this.getCacheWrapper().initCache(this.getI18nDAO());
-		_logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
+		logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
 	}
 
 	/**
@@ -126,12 +125,11 @@ public class I18nManager extends AbstractService implements II18nManager {
 	 * @param key La chiave
 	 * @param langCode Il codice della lingua.
 	 * @return La label richiesta.
-	 * @throws ApsSystemException
 	 */
 	@Override
-	public String getLabel(String key, String langCode) throws ApsSystemException {
+	public String getLabel(String key, String langCode) {
 		String label = null;
-		ApsProperties labelsProp = (ApsProperties) this.getCacheWrapper().getLabelGroups().get(key);
+		ApsProperties labelsProp = this.getCacheWrapper().getLabelGroups().get(key);
 		if (labelsProp != null) {
 			label = labelsProp.getProperty(langCode);
 		}
@@ -140,7 +138,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 	
 	@Override
 	public ApsProperties getLabelGroup(String key) throws ApsSystemException {
-		ApsProperties labelsProp = (ApsProperties) this.getCacheWrapper().getLabelGroups().get(key);
+		ApsProperties labelsProp = this.getCacheWrapper().getLabelGroups().get(key);
 		if (null == labelsProp) {
 			return null;
 		}
@@ -159,7 +157,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 			this.getI18nDAO().addLabelGroup(key, labels);
 			this.getCacheWrapper().addLabelGroup(key, labels);
 		} catch (Throwable t) {
-			_logger.error("Error while adding a group of labels by key '{}'", key, t);
+			logger.error("Error while adding a group of labels by key '{}'", key, t);
 			throw new ApsSystemException("Error while adding a group of labels", t);
 		}
 	}
@@ -175,7 +173,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 			this.getI18nDAO().deleteLabelGroup(key);
 			this.getCacheWrapper().removeLabelGroup(key);
 		} catch (Throwable t) {
-			_logger.error("Error while deleting a label by key {}", key, t);
+			logger.error("Error while deleting a label by key {}", key, t);
 			throw new ApsSystemException("Error while deleting a label", t);
 		}
 	}
@@ -192,7 +190,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 			this.getI18nDAO().updateLabelGroup(key, labels);
 			this.getCacheWrapper().updateLabelGroup(key, labels);
 		} catch (Throwable t) {
-			_logger.error("Error while updating label with key {}", key, t);
+			logger.error("Error while updating label with key {}", key, t);
 			throw new ApsSystemException("Error while updating a label", t);
 		}
 	}
@@ -213,13 +211,12 @@ public class I18nManager extends AbstractService implements II18nManager {
 	@Override
 	public List<String> searchLabelsKey(String insertedText, boolean doSearchByKey, 
 			boolean doSearchByLang, String langCode) {
-		List<String> keys = new ArrayList<String>();
+		List<String> keys = new ArrayList<>();
 		Pattern pattern = Pattern.compile(insertedText,Pattern.CASE_INSENSITIVE + Pattern.LITERAL);
 		Matcher matcher = pattern.matcher("");
-		List<String> allKeys = new ArrayList<String>(this.getLabelGroups().keySet());
-		for (int i=0; i<allKeys.size(); i++) {
-			String key = allKeys.get(i);
-			ApsProperties properies = (ApsProperties) this.getLabelGroups().get(key);
+		List<String> allKeys = new ArrayList<>(this.getLabelGroups().keySet());
+		for (String key : allKeys) {
+			ApsProperties properies = this.getLabelGroups().get(key);
 			if (!doSearchByKey && !doSearchByLang) {
 				matcher = matcher.reset(key);
 				if (matcher.find()) {
@@ -242,7 +239,7 @@ public class I18nManager extends AbstractService implements II18nManager {
 				}
 			} else if (!doSearchByKey && doSearchByLang) {
 				String target = properies.getProperty(langCode);
-				if(this.labelMatch(target, matcher)) {
+				if (this.labelMatch(target, matcher)) {
 					keys.add(key);
 				}
 			}

@@ -13,23 +13,14 @@
  */
 package com.agiletec.aps.system.services.page;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.time.DateUtils;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import org.apache.commons.lang3.time.DateUtils;
+import org.entando.entando.aps.system.services.widgettype.*;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
 
 public class PageTestUtil {
 
@@ -114,8 +105,7 @@ public class PageTestUtil {
 
 	public static IPage getPageByCode(List<IPage> pages, String code) {
 		IPage extractedPage = null;
-		for (int i = 0; i < pages.size(); i++) {
-			IPage page = pages.get(i);
+		for (IPage page : pages) {
 			if (page.getCode().equals(code)) {
 				extractedPage = page;
 				break;
@@ -194,8 +184,7 @@ public class PageTestUtil {
 			}
 			widgetsInUse = new Widget[inUse];
 			int index = 0;
-			for (int i = 0; i < widgets.length; i++) {
-				Widget current = widgets[i];
+			for (Widget current : widgets) {
 				if (current != null) {
 					widgetsInUse[index++] = current;
 				}

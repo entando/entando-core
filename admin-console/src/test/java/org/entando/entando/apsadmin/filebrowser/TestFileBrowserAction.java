@@ -13,26 +13,15 @@
  */
 package org.entando.entando.apsadmin.filebrowser;
 
-import org.entando.entando.aps.system.services.storage.BasicFileAttributeView;
-import org.entando.entando.aps.system.services.storage.IStorageManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.opensymphony.xwork2.Action;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import static junit.framework.Assert.assertEquals;
-import org.entando.entando.aps.system.services.storage.RootFolderAttributeView;
+import org.entando.entando.aps.system.services.storage.*;
+import org.slf4j.*;
 
-/**
- * @author E.Santoboni
- */
+import java.io.*;
+import java.util.*;
+
 public class TestFileBrowserAction extends ApsAdminBaseTestCase {
 
     private static final Logger logger = LoggerFactory.getLogger(TestFileBrowserAction.class);
@@ -78,8 +67,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         boolean containsConf = false;
         boolean prevDirectory = true;
         String prevName = null;
-        for (int i = 0; i < fileAttributes.length; i++) {
-            BasicFileAttributeView bfav = fileAttributes[i];
+        for (BasicFileAttributeView bfav : fileAttributes) {
             if (!prevDirectory && bfav.isDirectory()) {
                 fail();
             }
@@ -103,8 +91,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         assertEquals(3, fileAttributes.length);
         int dirCounter = 0;
         int fileCounter = 0;
-        for (int i = 0; i < fileAttributes.length; i++) {
-            BasicFileAttributeView bfav = fileAttributes[i];
+        for (BasicFileAttributeView bfav : fileAttributes) {
             if (bfav.isDirectory()) {
                 dirCounter++;
             } else {
@@ -284,7 +271,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         this.initAction("/do/FileBrowser", "delete");
         this.addParameter("currentPath", currentPath);
         this.addParameter("filename", filename);
-        this.addParameter("deleteFile", new Boolean(deleteFile).toString());
+        this.addParameter("deleteFile", Boolean.toString(deleteFile));
         if (null != isProtected) {
             this.addParameter("protectedFolder", isProtected.toString());
         }
@@ -316,13 +303,13 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         InputStream inputStream1 = new ByteArrayInputStream(filename1.getBytes());
         InputStream inputStream2 = new ByteArrayInputStream(filename2.getBytes());
 
-        List<File> files = new ArrayList();
+        List<File> files = new ArrayList<>();
         files.add(fileResource1);
         files.add(fileResource2);
-        List<String> uploadFileNames = new ArrayList();
+        List<String> uploadFileNames = new ArrayList<>();
         uploadFileNames.add(filename1);
         uploadFileNames.add(filename2);
-        List<InputStream> uploadInputStreams = new ArrayList();
+        List<InputStream> uploadInputStreams = new ArrayList<>();
         uploadInputStreams.add(inputStream1);
         uploadInputStreams.add(inputStream2);
 
@@ -347,7 +334,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         assertFalse(localStorageManager.exists(filenameWithPath2, protectedFolder));
     }
 
-    private void init() throws Exception {
+    private void init() {
         try {
             this.localStorageManager = (IStorageManager) this.getApplicationContext().getBean(SystemConstants.STORAGE_MANAGER);
         } catch (Throwable t) {

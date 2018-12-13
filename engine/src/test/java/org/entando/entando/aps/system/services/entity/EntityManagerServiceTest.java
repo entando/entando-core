@@ -14,12 +14,13 @@
 package org.entando.entando.aps.system.services.entity;
 
 import java.util.ArrayList;
-import junit.framework.Assert;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
+
+import static org.junit.Assert.fail;
 
 public class EntityManagerServiceTest {
 
@@ -35,7 +36,7 @@ public class EntityManagerServiceTest {
     @Test(expected = RestRourceNotFoundException.class)
     public void testGetNotExistingManager() throws RestRourceNotFoundException {
         this.entityManagerService.getEntityManager("customCode");
-        Assert.fail();
+        fail();
     }
 
 }

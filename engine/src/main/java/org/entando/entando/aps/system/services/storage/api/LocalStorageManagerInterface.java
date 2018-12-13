@@ -24,8 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.CharEncoding;
+import org.apache.commons.lang.*;
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.IApiExportable;
 import org.entando.entando.aps.system.services.api.model.ApiException;
@@ -40,10 +39,15 @@ import com.agiletec.aps.system.SystemConstants;
 
 public class LocalStorageManagerInterface implements IApiExportable {
 
-	private static final Logger _logger = LoggerFactory.getLogger(LocalStorageManagerInterface.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocalStorageManagerInterface.class);
+
+	private IStorageManager storageManager;
+	private static final String PARAM_PATH = "path";
+	private static final String PARAM_IS_PROTECTED = "protected";
+	private static final String PARAM_DELETE_RECURSIVE = "recursive";
 
 	public List<LinkedListItem> getListDirectory(Properties properties) throws Throwable {
-		List<LinkedListItem> list = new ArrayList<LinkedListItem>();
+		List<LinkedListItem> list = new ArrayList<>();
 		String pathValue = properties.getProperty(PARAM_PATH);
 		String protectedValue = properties.getProperty(PARAM_IS_PROTECTED);
 		boolean isProtected = StringUtils.equalsIgnoreCase(protectedValue, "true");
@@ -53,8 +57,7 @@ public class LocalStorageManagerInterface implements IApiExportable {
 				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "The path '" + pathValue + "' does not exists", Response.Status.CONFLICT);
 			}
 			BasicFileAttributeView[] files = this.getStorageManager().listAttributes(pathValue, isProtected);
-			for (int i = 0; i < files.length; i++) {
-				BasicFileAttributeView fileAttributeView = files[i];
+			for (BasicFileAttributeView fileAttributeView : files) {
 				String url = this.getApiResourceURLWithParams(properties, fileAttributeView, pathValue, isProtected);
 				LinkedListItem item = new LinkedListItem();
 				item.setCode(this.buildResourcePath(fileAttributeView, pathValue));
@@ -62,13 +65,13 @@ public class LocalStorageManagerInterface implements IApiExportable {
 				list.add(item);
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting storage resources in path: {} and protected flag: {} ", pathValue, isProtected, t);
+			logger.error("Error extracting storage resources in path: {} and protected flag: {} ", pathValue, isProtected, t);
 			throw t;
 		}
 		return list;
 	}
 
-	public JAXBBasicFileAttributeView getFile(Properties properties) throws ApiException, Throwable {
+	public JAXBBasicFileAttributeView getFile(Properties properties) throws Throwable {
 		JAXBBasicFileAttributeView apiResult;
 		String pathValue = properties.getProperty(PARAM_PATH);
 		String protectedValue = properties.getProperty(PARAM_IS_PROTECTED);
@@ -88,13 +91,13 @@ public class LocalStorageManagerInterface implements IApiExportable {
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error extracting storage resource in path: {} and protected flag: {} ", pathValue, isProtected, t);
+			logger.error("Error extracting storage resource in path: {} and protected flag: {} ", pathValue, isProtected, t);
 			throw t;
 		}
 		return apiResult;
 	}
 	
-    public void addResource(JAXBStorageResource storageResource, Properties properties) throws ApiException, Throwable {
+    public void addResource(JAXBStorageResource storageResource, Properties properties) throws Throwable {
 		try {
 		boolean isProtected = storageResource.isProtectedResource();
 			//validate parent directory;
@@ -134,12 +137,12 @@ public class LocalStorageManagerInterface implements IApiExportable {
 
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error adding new storage resource", t);
+			logger.error("Error adding new storage resource", t);
 			throw t;
 		}
     }
 
-    public void deleteResource(Properties properties) throws ApiException, Throwable {
+    public void deleteResource(Properties properties) throws Throwable {
 		String pathValue = properties.getProperty(PARAM_PATH);
 		String protectedValue = properties.getProperty(PARAM_IS_PROTECTED);
 		boolean isProtected = StringUtils.equalsIgnoreCase(protectedValue, "true");
@@ -184,7 +187,7 @@ public class LocalStorageManagerInterface implements IApiExportable {
     		
     		throw ae;
     	} catch (Throwable t) {
-    		_logger.error("Error adding new storage resource", t);
+    		logger.error("Error adding new storage resource", t);
     		throw t;
     	}
     }
@@ -240,14 +243,9 @@ public class LocalStorageManagerInterface implements IApiExportable {
 	
 
 	protected IStorageManager getStorageManager() {
-		return _storageManager;
+		return storageManager;
 	}
 	public void setStorageManager(IStorageManager storageManager) {
-		this._storageManager = storageManager;
+		this.storageManager = storageManager;
 	}
-
-	private IStorageManager _storageManager;
-	private static final String PARAM_PATH = "path";
-	private static final String PARAM_IS_PROTECTED = "protected";
-	private static final String PARAM_DELETE_RECURSIVE = "recursive";
 }

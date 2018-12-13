@@ -31,7 +31,7 @@ public class FilterUtilsTest {
         assertTrue(filterString("a", FilterOperator.EQUAL, "a"));
         assertFalse(filterString("a", FilterOperator.EQUAL, "A"));
         assertTrue(filterString("a", FilterOperator.NOT_EQUAL, "b"));
-        assertTrue(filterString("a", FilterOperator.LIKE, "A"));
+        assertTrue(filterString("a", FilterOperator.LIKE, "-A-"));
         assertTrue(filterString("b", FilterOperator.GREATER, "a"));
         assertTrue(filterString("a", FilterOperator.LOWER, "b"));
     }

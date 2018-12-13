@@ -34,7 +34,7 @@ public class FilterUtils {
             case NOT_EQUAL:
                 return !value.equals(filterValue);
             case LIKE:
-                return value.toLowerCase().equals(filterValue.toLowerCase());
+                return value.toLowerCase().contains(filterValue.toLowerCase());
             case GREATER:
                 return value.compareTo(filterValue) >= 0;
             case LOWER:

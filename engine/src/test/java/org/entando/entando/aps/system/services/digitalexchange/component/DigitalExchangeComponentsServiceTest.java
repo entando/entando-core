@@ -19,6 +19,7 @@ import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExc
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClientMocker;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.Filter;
+import org.entando.entando.web.common.model.FilterOperator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -84,6 +85,7 @@ public class DigitalExchangeComponentsServiceTest {
         Filter filter = new Filter();
         filter.setAttribute("name");
         filter.setValue("M");
+        filter.setOperator(FilterOperator.EQUAL.getValue());
         listRequest.addFilter(filter);
 
         ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata = service.getComponents(listRequest);

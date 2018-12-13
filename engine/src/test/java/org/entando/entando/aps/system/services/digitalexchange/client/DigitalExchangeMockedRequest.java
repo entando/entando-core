@@ -69,7 +69,7 @@ public class DigitalExchangeMockedRequest {
                         filter = new Filter();
                         filters.put(index, filter);
                     }
-                    String filterField = paramName.substring(endIndex + 1, paramName.length());
+                    String filterField = paramName.substring(endIndex + 2, paramName.length());
                     String filterValue = entry.getValue();
                     switch (filterField) {
                         case "attribute":
@@ -77,6 +77,9 @@ public class DigitalExchangeMockedRequest {
                             break;
                         case "operator":
                             filter.setOperator(filterValue);
+                            break;
+                        case "value":
+                            filter.setValue(filterValue);
                             break;
                     }
                 }

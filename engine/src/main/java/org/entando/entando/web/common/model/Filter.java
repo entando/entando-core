@@ -23,7 +23,7 @@ public class Filter {
 
     private String attribute;
     private String entityAttr;
-    private String operator = FilterOperator.EQUAL.getValue();
+    private String operator = FilterOperator.LIKE.getValue();
     private String value;
 
     public String getAttribute() {

@@ -15,11 +15,12 @@ package org.entando.entando.aps.system.services.language.utils;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.language.LanguageDto;
+import org.entando.entando.web.common.FilterUtils;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 
 public class LanguageRequestListProcessor extends RequestListProcessor<LanguageDto> {
@@ -34,17 +35,17 @@ public class LanguageRequestListProcessor extends RequestListProcessor<LanguageD
     }
 
     @Override
-    protected BiFunction<String, String, Predicate<LanguageDto>> getPredicates() {
-        return (attribute, value) -> {
-            switch (attribute) {
+    protected Function<Filter, Predicate<LanguageDto>> getPredicates() {
+        return (filter) -> {
+            switch (filter.getValue()) {
                 case CODE:
-                    return p -> p.getCode().equalsIgnoreCase(value);
+                    return p -> FilterUtils.filterString(filter, p::getCode);
                 case DESCRIPTION:
-                    return p -> p.getDescription().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getDescription);
                 case DEFAULT:
-                    return p -> p.isDefaultLang() == Boolean.valueOf(value);
+                    return p -> FilterUtils.filterBoolean(filter, p::isDefaultLang);
                 case ACTIVE:
-                    return p -> p.isActive() == Boolean.valueOf(value);
+                    return p -> FilterUtils.filterBoolean(filter, p::isActive);
             }
             return null;
         };

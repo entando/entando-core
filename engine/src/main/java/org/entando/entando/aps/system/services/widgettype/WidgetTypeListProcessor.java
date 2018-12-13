@@ -15,11 +15,12 @@ package org.entando.entando.aps.system.services.widgettype;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
+import org.entando.entando.web.common.FilterUtils;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 
 public class WidgetTypeListProcessor extends RequestListProcessor<WidgetDto> {
@@ -35,19 +36,19 @@ public class WidgetTypeListProcessor extends RequestListProcessor<WidgetDto> {
     }
 
     @Override
-    protected BiFunction<String, String, Predicate<WidgetDto>> getPredicates() {
-        return (attribute, value) -> {
-            switch (attribute) {
+    protected Function<Filter, Predicate<WidgetDto>> getPredicates() {
+        return (filter) -> {
+            switch (filter.getAttribute()) {
                 case CODE:
-                    return p -> p.getCode().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getCode);
                 case USED:
-                    return p -> p.getUsed() == Integer.parseInt(value);
+                    return p -> FilterUtils.filterInt(filter, p::getUsed);
                 case TYPOLOGY:
-                    return p -> p.getTypology().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getTypology);
                 case GROUP:
-                    return p -> p.getGroup().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getGroup);
                 case PLUGIN_CODE:
-                    return p -> p.getPluginCode().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getPluginCode);
             }
             return null;
         };

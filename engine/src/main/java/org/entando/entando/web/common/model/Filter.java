@@ -21,11 +21,9 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 public class Filter {
 
-    private static final String DEFAULT_OP = "like";
-
     private String attribute;
     private String entityAttr;
-    private String operator = DEFAULT_OP;
+    private String operator = FilterOperator.EQUAL.getValue();
     private String value;
 
     public String getAttribute() {

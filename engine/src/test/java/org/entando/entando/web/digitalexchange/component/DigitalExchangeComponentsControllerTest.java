@@ -76,6 +76,20 @@ public class DigitalExchangeComponentsControllerTest extends AbstractControllerT
         result.andExpect(jsonPath("$.payload[0].lastUpdate", is(LAST_UPDATE)));
     }
 
+    @Test
+    public void shouldValidateDate() throws Exception {
+        ResultActions result = createAuthRequest(get(BASE_URL)
+                .param("filters[0].attribute", "lastUpdate")
+                .param("filters[0].value", "invalid-date"))
+                .execute();
+
+        result.andExpect(status().is4xxClientError());
+
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(jsonPath("$.metaData").isEmpty());
+        result.andExpect(jsonPath("$.payload").isEmpty());
+    }
+
     private void initServiceMocks() throws Exception {
 
         DigitalExchangeComponent component = new DigitalExchangeComponent();

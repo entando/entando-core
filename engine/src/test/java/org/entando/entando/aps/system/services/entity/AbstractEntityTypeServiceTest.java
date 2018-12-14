@@ -18,7 +18,6 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class AbstractEntityTypeServiceTest {
 
@@ -42,15 +41,7 @@ public class AbstractEntityTypeServiceTest {
     public void getShortEntityTypesFilterWorks() {
         UserProfile user2 = createUserProfile("user2");
         UserProfile user1 = createUserProfile("USER1");
-
-        Map<String, IApsEntity> mapOfEntities = ImmutableMap.of(
-                "B",  user2,
-                "A", user1,
-                "C",  createUserProfile("xyz")
-        );
-
-        when(entityManager.getName()).thenReturn(ENTITY_MANAGER_CODE);
-        when(entityManager.getEntityPrototypes()).thenReturn(mapOfEntities);
+        mockUserEntities(user1, user2);
 
         RestListRequest requestList = new RestListRequest();
         Filter filter = new Filter();
@@ -58,28 +49,14 @@ public class AbstractEntityTypeServiceTest {
         filter.setValue("user");
         requestList.addFilter(filter);
 
-        PagedMetadata entities = service.getShortEntityTypes(ENTITY_MANAGER_CODE, requestList);
-
-        assertThat(entities).isNotNull();
-        assertThat(entities.getTotalItems()).isEqualTo(2);
-        //noinspection unchecked
-        assertThat(entities.getBody()).containsExactly(
-                new EntityTypeShortDto(user1), new EntityTypeShortDto(user2));
+        checkResult(requestList, new EntityTypeShortDto(user1), new EntityTypeShortDto(user2));
     }
 
     @Test
     public void getShortEntityTypesFilterWorksReversed() {
         UserProfile user2 = createUserProfile("user2");
         UserProfile user1 = createUserProfile("USER1");
-
-        Map<String, IApsEntity> mapOfEntities = ImmutableMap.of(
-                "B",  user2,
-                "A", user1,
-                "C",  createUserProfile("xyz")
-        );
-
-        when(entityManager.getName()).thenReturn(ENTITY_MANAGER_CODE);
-        when(entityManager.getEntityPrototypes()).thenReturn(mapOfEntities);
+        mockUserEntities(user1, user2);
 
         RestListRequest requestList = new RestListRequest();
         Filter filter = new Filter();
@@ -89,13 +66,23 @@ public class AbstractEntityTypeServiceTest {
 
         requestList.setDirection(FieldSearchFilter.Order.DESC.toString());
 
-        PagedMetadata entities = service.getShortEntityTypes(ENTITY_MANAGER_CODE, requestList);
+        checkResult(requestList, new EntityTypeShortDto(user2), new EntityTypeShortDto(user1));
+    }
 
-        assertThat(entities).isNotNull();
-        assertThat(entities.getTotalItems()).isEqualTo(2);
-        //noinspection unchecked
-        assertThat(entities.getBody()).containsExactly(
-                new EntityTypeShortDto(user2), new EntityTypeShortDto(user1));
+    @Test
+    public void getShortEntityTypesFilterWorksWithEqualOperator() {
+        UserProfile user2 = createUserProfile("user2");
+        UserProfile user1 = createUserProfile("USER1");
+        mockUserEntities(user1, user2);
+
+        RestListRequest requestList = new RestListRequest();
+        Filter filter = new Filter();
+        filter.setAttribute("id");
+        filter.setValue("user2");
+        filter.setOperator(FilterOperator.EQUAL.getValue());
+        requestList.addFilter(filter);
+
+        checkResult(requestList, new EntityTypeShortDto(user2));
     }
 
     private UserProfile createUserProfile(String userId) {
@@ -108,4 +95,24 @@ public class AbstractEntityTypeServiceTest {
         return userProfile;
     }
 
+    private void mockUserEntities(UserProfile user1, UserProfile user2) {
+
+        Map<String, IApsEntity> mapOfEntities = ImmutableMap.of(
+                "B", user2,
+                "A", user1,
+                "C", createUserProfile("xyz")
+        );
+
+        when(entityManager.getName()).thenReturn(ENTITY_MANAGER_CODE);
+        when(entityManager.getEntityPrototypes()).thenReturn(mapOfEntities);
+    }
+
+    private void checkResult(RestListRequest requestList, EntityTypeShortDto... items) {
+        PagedMetadata entities = service.getShortEntityTypes(ENTITY_MANAGER_CODE, requestList);
+
+        assertThat(entities).isNotNull();
+        assertThat(entities.getTotalItems()).isEqualTo(items.length);
+        //noinspection unchecked
+        assertThat(entities.getBody()).containsExactly(items);
+    }
 }

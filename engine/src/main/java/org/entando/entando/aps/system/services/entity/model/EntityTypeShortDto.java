@@ -20,6 +20,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.util.Objects;
+
 /**
  * @author E.Santoboni
  */
@@ -67,4 +69,18 @@ public class EntityTypeShortDto {
         this.status = status;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityTypeShortDto that = (EntityTypeShortDto) o;
+        return Objects.equals(code, that.code) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(status, that.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, name, status);
+    }
 }

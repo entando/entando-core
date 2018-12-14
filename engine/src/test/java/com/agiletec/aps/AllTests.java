@@ -54,7 +54,6 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
-import org.entando.entando.aps.system.CaseInsensitiveBeanComparatorTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
@@ -83,6 +82,7 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelMa
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClientTest;
+import org.entando.entando.aps.system.services.entity.*;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.oauth2.ApiOAuth2TokenManagerTest;
@@ -97,6 +97,7 @@ import org.entando.entando.aps.system.services.userprofile.UserProfileManagerInt
 import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTest;
 import org.entando.entando.aps.system.services.userprofile.UserProfileTypeServiceTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
+import org.entando.entando.aps.util.FilterUtilsTest;
 
 /**
  * @author W.Ambu
@@ -106,7 +107,6 @@ public class AllTests {
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for APS");
         
-        suite.addTest(new JUnit4TestAdapter(CaseInsensitiveBeanComparatorTest.class));
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
         //
@@ -223,7 +223,10 @@ public class AllTests {
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
         suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
-        
+
+        suite.addTest(new JUnit4TestAdapter(FilterUtilsTest.class));
+        suite.addTest(new JUnit4TestAdapter(AbstractEntityTypeServiceTest.class));
+
         return suite;
     }
 

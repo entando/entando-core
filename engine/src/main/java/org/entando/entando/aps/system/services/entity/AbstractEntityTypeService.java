@@ -42,6 +42,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.entando.entando.aps.util.FilterUtils.createCaseInsensitiveComparator;
 import static org.entando.entando.web.entity.validator.AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST;
 
 public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends EntityTypeFullDto> implements BeanFactoryAware {
@@ -82,9 +83,9 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
 
         Map<String, String> fieldMapping = this.getEntityTypeFieldNameMapping();
 
-        TransformingComparator caseInsensitiveComparator = createCaseInsensitiveComparator();
+        Comparator caseInsensitiveComparator = createCaseInsensitiveComparator();
         if (!RestListRequest.DIRECTION_VALUE_DEFAULT.equals(requestList.getDirection())) {
-            caseInsensitiveComparator.reversed();
+            caseInsensitiveComparator = caseInsensitiveComparator.reversed();
         }
 
         List<IApsEntity> entityTypes = entityManager.getEntityPrototypes()
@@ -103,18 +104,6 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         }
         pagedMetadata.setBody(body);
         return pagedMetadata;
-    }
-
-    private TransformingComparator createCaseInsensitiveComparator() {
-        Transformer caseInsensitiveTransformer = input -> {
-            if (input instanceof String) {
-                return ((String)input).toLowerCase();
-            } else {
-                return input;
-            }
-        };
-
-        return new TransformingComparator(caseInsensitiveTransformer);
     }
 
     protected Map<String, String> getEntityTypeFieldNameMapping() {

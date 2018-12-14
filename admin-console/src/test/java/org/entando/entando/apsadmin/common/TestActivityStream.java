@@ -29,18 +29,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertNull;
 
 import org.entando.entando.aps.system.services.actionlog.ActionLoggerTestHelper;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordSearchBean;
 
-/**
- * @author E.Santoboni
- */
 public class TestActivityStream extends ApsAdminBaseTestCase {
 
     private IActionLogManager actionLoggerManager;
@@ -88,12 +82,11 @@ public class TestActivityStream extends ApsAdminBaseTestCase {
         assertNull(this.pageManager.getDraftPage(pageCode));
         try {
             IPage root = this.pageManager.getOnlineRoot();
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put("strutsAction", String.valueOf(ApsAdminSystemConstants.ADD));
             params.put("parentPageCode", root.getCode());
             List<Lang> langs = this.langManager.getLangs();
-            for (int i = 0; i < langs.size(); i++) {
-                Lang lang = langs.get(i);
+            for (Lang lang : langs) {
                 params.put("lang" + lang.getCode(), "Page " + lang.getDescr());
             }
             params.put("model", "home");

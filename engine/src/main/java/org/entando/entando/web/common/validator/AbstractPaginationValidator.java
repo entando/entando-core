@@ -13,16 +13,22 @@
  */
 package org.entando.entando.web.common.validator;
 
+import com.agiletec.aps.system.SystemConstants;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.Filter;
+import org.entando.entando.web.common.model.FilterOperator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Validator;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,7 +50,6 @@ public abstract class AbstractPaginationValidator implements Validator {
     public static final String ERRCODE_FILTERING_OP_INVALID = "103";
 
     private static final String[] directions = {"ASC", "DESC"};
-    private static final String[] operations = {"eq", "gt", "lt", "not", "like"};
 
     public void validateRestListRequest(RestListRequest listRequest, Class<?> type) {
         this.checkDefaultSortField(listRequest);
@@ -71,13 +76,25 @@ public abstract class AbstractPaginationValidator implements Validator {
             if (attributes.size() > 0) {
                 bindingResult.reject(ERRCODE_FILTERING_ATTR_INVALID, new Object[]{attributes.get(0)}, "filtering.filter.attr.name.invalid");
             }
-            List<String> operations = Arrays.asList(listRequest.getFilters()).stream()
-                    .map(filter -> filter.getOperator())
-                    .filter(attr -> !Arrays.asList(AbstractPaginationValidator.operations)
-                    .contains(attr)).collect(Collectors.toList());
-            if (operations.size() > 0) {
+
+            if (Arrays.stream(FilterOperator.values())
+                    .map(FilterOperator::getValue)
+                    .noneMatch(op -> Arrays.stream(listRequest.getFilters())
+                    .map(Filter::getOperator)
+                    .anyMatch(op::equals))) {
                 bindingResult.reject(ERRCODE_FILTERING_OP_INVALID, new Object[]{}, "filtering.filter.operation.invalid");
             }
+
+            Arrays.stream(listRequest.getFilters())
+                    .filter(f -> getDateFilterKeys().contains(f.getAttribute()))
+                    .forEach(f -> {
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
+                            sdf.parse(f.getValue());
+                        } catch (ParseException ex) {
+                            bindingResult.reject(ERRCODE_FILTERING_OP_INVALID, new Object[]{f.getValue(), f.getAttribute()}, "filtering.filter.date.format.invalid");
+                        }
+                    });
         }
         if (!Arrays.asList(directions).contains(listRequest.getDirection())) {
             bindingResult.reject(ERRCODE_DIRECTION_INVALID, new Object[]{}, "sorting.direction.invalid");
@@ -86,6 +103,10 @@ public abstract class AbstractPaginationValidator implements Validator {
             throw new ValidationGenericException(bindingResult);
         }
 
+    }
+
+    protected List<String> getDateFilterKeys() {
+        return new ArrayList<>();
     }
 
     public void validateRestListResult(RestListRequest listRequest, PagedMetadata<?> result) {
@@ -108,7 +129,7 @@ public abstract class AbstractPaginationValidator implements Validator {
                     subType = fields.get(fieldClass).getType();
                     return isValidField(subFields, subType);
                 } catch (Exception e) {
-                    logger.error("Failed to validate field ",e);
+                    logger.error("Failed to validate field ", e);
                     return false;
                 }
             } else {

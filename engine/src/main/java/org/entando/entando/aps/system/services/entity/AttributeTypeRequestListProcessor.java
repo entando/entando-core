@@ -16,10 +16,11 @@ package org.entando.entando.aps.system.services.entity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.entando.entando.aps.system.services.RequestListProcessor;
+import org.entando.entando.aps.util.FilterUtils;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 
 public class AttributeTypeRequestListProcessor extends RequestListProcessor<AttributeInterface> {
@@ -31,13 +32,14 @@ public class AttributeTypeRequestListProcessor extends RequestListProcessor<Attr
     }
 
     @Override
-    protected BiFunction<String, String, Predicate<AttributeInterface>> getPredicates() {
-        return (attribute, value) -> {
-            switch (attribute) {
+    protected Function<Filter, Predicate<AttributeInterface>> getPredicates() {
+        return (filter) -> {
+            switch (filter.getAttribute()) {
                 case KEY_CODE:
-                    return p -> p.getType().toLowerCase().contains(value.toLowerCase());
+                    return p -> FilterUtils.filterString(filter, p::getType);
+                default:
+                    return null;
             }
-            return null;
         };
     }
 

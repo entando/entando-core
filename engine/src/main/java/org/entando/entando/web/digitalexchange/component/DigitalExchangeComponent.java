@@ -13,18 +13,21 @@
  */
 package org.entando.entando.web.digitalexchange.component;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 public class DigitalExchangeComponent {
 
     private String id;
     private String name;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SystemConstants.API_DATE_FORMAT)
     private Date lastUpdate;
     private String version;
     private String type;
     private String description;
     private String image;
-    private int rating;
+    private double rating;
     private boolean installed;
 
     public String getId() {
@@ -83,11 +86,11 @@ public class DigitalExchangeComponent {
         this.image = image;
     }
 
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(double rating) {
         this.rating = rating;
     }
 

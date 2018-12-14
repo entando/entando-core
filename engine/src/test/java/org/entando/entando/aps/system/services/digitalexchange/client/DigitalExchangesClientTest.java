@@ -16,7 +16,6 @@ package org.entando.entando.aps.system.services.digitalexchange.client;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.entando.entando.aps.system.services.RequestListProcessor;
@@ -27,6 +26,7 @@ import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientListWrapper;
 import org.entando.entando.web.common.model.RestError;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.common.model.RestResponse;
 import org.springframework.core.ParameterizedTypeReference;
@@ -77,7 +77,7 @@ public class DigitalExchangesClientTest {
                 .addDigitalExchange("Unreachable DE", () -> {
                     throw new RestClientException("Connection refused");
                 })
-                .addDigitalExchange("Wrong Payload DE", () -> new ResponseEntity(HttpStatus.OK))
+                .addDigitalExchange("Wrong Payload DE", () -> new ResponseEntity<>(HttpStatus.OK))
                 .addDigitalExchange("Wrong URL DE", () -> {
                 }, de -> {
                     de.setUrl("invalid-url");
@@ -176,7 +176,7 @@ public class DigitalExchangesClientTest {
             return new RequestListProcessor<String>(request, joinedList) {
 
                 @Override
-                protected BiFunction<String, String, Predicate<String>> getPredicates() {
+                protected Function<Filter, Predicate<String>> getPredicates() {
                     return null;
                 }
 

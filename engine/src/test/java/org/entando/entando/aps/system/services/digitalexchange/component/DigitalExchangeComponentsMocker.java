@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.digitalexchange.component;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -30,23 +31,28 @@ public class DigitalExchangeComponentsMocker {
     public static Function<DigitalExchangeMockedRequest, RestResponse> mock(String... names) {
 
         return request -> {
-            Stream<DigitalExchangeComponent> stream = Arrays.asList(names)
-                    .stream().map(name -> {
-                        DigitalExchangeComponent component = new DigitalExchangeComponent();
-                        component.setName(name);
-                        return component;
-                    });
-            
-            String nameFilter = request.getUrlParams().get("filters[0].value");
-            if (nameFilter != null) {
-                stream = stream.filter(c -> c.getName().equals(nameFilter));
-            }
+            Stream<DigitalExchangeComponent> stream
+                    = Arrays.stream(names).map(name
+                            -> new DigitalExchangeComponentBuilder(name)
+                            .setLastUpdate(new Date()).build());
 
-            List<DigitalExchangeComponent> components = stream.collect(Collectors.toList());
-            PagedMetadata<DigitalExchangeComponent> pagedMetadata
-                    = new PagedMetadata<>(new RestListRequest(), components, components.size());
-
-            return new PagedRestResponse(pagedMetadata);
+            return mock(request, stream);
         };
+    }
+
+    public static Function<DigitalExchangeMockedRequest, RestResponse> mock(DigitalExchangeComponent... components) {
+        return request -> mock(request, Arrays.stream(components));
+    }
+
+    private static PagedRestResponse<DigitalExchangeComponent> mock(DigitalExchangeMockedRequest request, Stream<DigitalExchangeComponent> stream) {
+
+        stream = new DigitalExchangeComponentListProcessor(request.getRestListRequest(), stream)
+                .filterAndSort().getStream();
+
+        List<DigitalExchangeComponent> components = stream.collect(Collectors.toList());
+        PagedMetadata<DigitalExchangeComponent> pagedMetadata
+                = new PagedMetadata<>(new RestListRequest(), components, components.size());
+
+        return new PagedRestResponse<>(pagedMetadata);
     }
 }

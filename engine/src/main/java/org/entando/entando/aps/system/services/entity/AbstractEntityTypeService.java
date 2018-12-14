@@ -39,6 +39,7 @@ import org.springframework.validation.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.entando.entando.aps.util.FilterUtils;
 
 import static org.entando.entando.aps.util.FilterUtils.createCaseInsensitiveComparator;
 import static org.entando.entando.web.entity.validator.AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST;
@@ -353,9 +354,7 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
                 if (null == value) {
                     continue;
                 }
-                if (!value.toLowerCase().contains(filter.getValue().toLowerCase())) {
-                    return false;
-                }
+                return FilterUtils.filterString(filter, () -> value);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             logger.error("error filtering bean " + bean.getClass().getName(), e);

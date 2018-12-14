@@ -13,16 +13,14 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmapper;
 
-import org.entando.entando.aps.system.services.dataobjectmapper.cache.*;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.events.PageChangedEvent;
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapper;
+import org.junit.*;
+import org.mockito.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author E.Santoboni
@@ -56,11 +54,11 @@ public class DataObjectMapperManagerTest {
     }
 	
 	@Test
-    public void testGetPage() throws Throwable {
+    public void testGetPage() {
 		Mockito.when(cacheWrapper.getPageCode(Mockito.anyString())).thenReturn("pageCode");
         String pageCode = this.pageMapperManager.getPageCode("dataId");
-		Assert.assertNotNull(pageCode);
-		Assert.assertEquals("pageCode", pageCode);
+		assertNotNull(pageCode);
+		assertEquals("pageCode", pageCode);
     }
 	
 	@Test

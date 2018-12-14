@@ -24,12 +24,10 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.Arrays;
 import java.util.List;
-import junit.framework.Assert;
 import org.entando.entando.aps.system.services.dataobjectmapper.DataObjectPageMapper;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -37,9 +35,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
-/**
- * @author E.Santoboni
- */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 public class DataObjectMapperCacheWrapperTest {
 	
 	@Mock
@@ -75,7 +73,7 @@ public class DataObjectMapperCacheWrapperTest {
 	}
 	
 	@Test
-	public void testGetPageCode() throws Throwable {
+	public void testGetPageCode() {
 		DataObjectPageMapper dataObjectPageMapper = new DataObjectPageMapper();
 		dataObjectPageMapper.add("dataId", "temp_model");
 		dataObjectPageMapper.add("dataId2", "wring_page");
@@ -83,8 +81,8 @@ public class DataObjectMapperCacheWrapperTest {
 		Mockito.when(cache.get(Mockito.anyString())).thenReturn(valueWrapper);
 		Mockito.when(cacheManager.getCache(Mockito.anyString())).thenReturn(this.cache);
 		String pageCode = this.cacheWrapper.getPageCode("dataId");
-		Assert.assertNotNull(pageCode);
-		Assert.assertEquals("temp_model", pageCode);
+		assertNotNull(pageCode);
+		assertEquals("temp_model", pageCode);
 	}
 	
 	private IPage createMockPage() {
@@ -119,7 +117,7 @@ public class DataObjectMapperCacheWrapperTest {
 		param1.setName("dataId");
 		WidgetTypeParameter param2 = new WidgetTypeParameter();
 		param2.setName("testParam");
-		List<WidgetTypeParameter> params = Arrays.asList(new WidgetTypeParameter[]{param1, param2});
+		List<WidgetTypeParameter> params = Arrays.asList(param1, param2);
 		type.setTypeParameters(params);
 		widget.setType(type);
 		ApsProperties props = new ApsProperties();

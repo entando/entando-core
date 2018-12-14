@@ -1,5 +1,6 @@
 package org.entando.entando.aps.system.services.entity;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
@@ -64,6 +65,37 @@ public class AbstractEntityTypeServiceTest {
         //noinspection unchecked
         assertThat(entities.getBody()).containsExactly(
                 new EntityTypeShortDto(user1), new EntityTypeShortDto(user2));
+    }
+
+    @Test
+    public void getShortEntityTypesFilterWorksReversed() {
+        UserProfile user2 = createUserProfile("user2");
+        UserProfile user1 = createUserProfile("USER1");
+
+        Map<String, IApsEntity> mapOfEntities = ImmutableMap.of(
+                "B",  user2,
+                "A", user1,
+                "C",  createUserProfile("xyz")
+        );
+
+        when(entityManager.getName()).thenReturn(ENTITY_MANAGER_CODE);
+        when(entityManager.getEntityPrototypes()).thenReturn(mapOfEntities);
+
+        RestListRequest requestList = new RestListRequest();
+        Filter filter = new Filter();
+        filter.setAttribute("id");
+        filter.setValue("user");
+        requestList.addFilter(filter);
+
+        requestList.setDirection(FieldSearchFilter.Order.DESC.toString());
+
+        PagedMetadata entities = service.getShortEntityTypes(ENTITY_MANAGER_CODE, requestList);
+
+        assertThat(entities).isNotNull();
+        assertThat(entities.getTotalItems()).isEqualTo(2);
+        //noinspection unchecked
+        assertThat(entities.getBody()).containsExactly(
+                new EntityTypeShortDto(user2), new EntityTypeShortDto(user1));
     }
 
     private UserProfile createUserProfile(String userId) {

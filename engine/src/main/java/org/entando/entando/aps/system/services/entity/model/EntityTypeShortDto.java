@@ -83,4 +83,13 @@ public class EntityTypeShortDto {
     public int hashCode() {
         return Objects.hash(code, name, status);
     }
+
+    @Override
+    public String toString() {
+        return "EntityTypeShortDto{" +
+                "code='" + code + '\'' +
+                ", name='" + name + '\'' +
+                ", status='" + status + '\'' +
+                '}';
+    }
 }

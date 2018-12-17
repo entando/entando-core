@@ -26,11 +26,10 @@ import java.util.Date;
  */
 public class JsonDateSerializer extends JsonSerializer<Date> {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
-
     @Override
     public void serialize(Date date, JsonGenerator gen, SerializerProvider provider) throws IOException {
         if (null != date) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
             String formattedDate = dateFormat.format(date);
             gen.writeString(formattedDate);
         }

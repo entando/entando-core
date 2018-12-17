@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.digitalexchange.component;
 
+import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentBuilder;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsMocker;
 import org.junit.Test;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,8 +34,11 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
 
     private static final String BASE_URL = "/digitalExchange/components";
 
+    private static final String LAST_UPDATE_B = "2018-12-01 12:00:00";
+    private static final String LAST_UPDATE_D = "2018-10-01 00:00:00";
+
     private static final String[] COMPONENTS_1 = new String[]{"A", "C", "E"};
-    private static final String[] COMPONENTS_2 = new String[]{"B", "D"};
+    private static final DigitalExchangeComponent[] COMPONENTS_2 = new DigitalExchangeComponent[]{getComponentB(), getComponentD()};
 
     @Configuration
     public static class TestConfig {
@@ -67,5 +72,45 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
         result.andExpect(jsonPath("$.payload[0].name", is("A")));
         result.andExpect(jsonPath("$.payload[1].name", is("B")));
         result.andExpect(jsonPath("$.payload[2].name", is("C")));
+    }
+
+    @Test
+    public void shouldFilterByDateEq() throws Exception {
+        ResultActions result = createAuthRequest(get(BASE_URL)
+                .param("filters[0].attribute", "lastUpdate")
+                .param("filters[0].operator", "eq")
+                .param("filters[0].value", LAST_UPDATE_B))
+                .execute();
+
+        result.andExpect(status().isOk());
+
+        result.andExpect(jsonPath("$.payload", hasSize(1)));
+        result.andExpect(jsonPath("$.payload[0].name", is("B")));
+    }
+
+    @Test
+    public void shouldFilterByDateLt() throws Exception {
+        ResultActions result = createAuthRequest(get(BASE_URL)
+                .param("filters[0].attribute", "lastUpdate")
+                .param("filters[0].operator", "lt")
+                .param("filters[0].value", "2018-11-01 00:00:00"))
+                .execute();
+
+        result.andExpect(status().isOk());
+
+        result.andExpect(jsonPath("$.payload", hasSize(1)));
+        result.andExpect(jsonPath("$.payload[0].name", is("D")));
+    }
+
+    private static DigitalExchangeComponent getComponentB() {
+        return new DigitalExchangeComponentBuilder("B")
+                .setLastUpdate(LAST_UPDATE_B)
+                .build();
+    }
+
+    private static DigitalExchangeComponent getComponentD() {
+        return new DigitalExchangeComponentBuilder("D")
+                .setLastUpdate(LAST_UPDATE_D)
+                .build();
     }
 }

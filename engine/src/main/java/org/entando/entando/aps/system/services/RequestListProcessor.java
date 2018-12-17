@@ -16,7 +16,6 @@ package org.entando.entando.aps.system.services;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -38,13 +37,13 @@ public abstract class RequestListProcessor<T> {
         this(restListRequest, items.stream());
     }
 
-    protected abstract BiFunction<String, String, Predicate<T>> getPredicates();
+    protected abstract Function<Filter, Predicate<T>> getPredicates();
 
     protected abstract Function<String, Comparator<T>> getComparators();
 
     public RequestListProcessor<T> filter() {
 
-        BiFunction<String, String, Predicate<T>> predicatesProvider = getPredicates();
+        Function<Filter, Predicate<T>> predicatesProvider = getPredicates();
 
         if (null != restListRequest && null != restListRequest.getFilters()) {
 
@@ -52,7 +51,7 @@ public abstract class RequestListProcessor<T> {
                 String filterAttribute = filter.getAttribute();
                 String filterValue = filter.getValue();
                 if (filterAttribute != null && filterValue != null) {
-                    Predicate<T> p = predicatesProvider.apply(filterAttribute, filterValue);
+                    Predicate<T> p = predicatesProvider.apply(filter);
                     if (null != p) {
                         stream = stream.filter(p);
                     }

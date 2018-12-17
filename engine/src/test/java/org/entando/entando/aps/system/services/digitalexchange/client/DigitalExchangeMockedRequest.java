@@ -14,6 +14,9 @@
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
 import java.util.Map;
+import java.util.TreeMap;
+import org.entando.entando.web.common.model.Filter;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
@@ -45,6 +48,47 @@ public class DigitalExchangeMockedRequest {
     public DigitalExchangeMockedRequest setUrlParams(Map<String, String> urlParams) {
         this.urlParams = urlParams;
         return this;
+    }
+
+    public RestListRequest getRestListRequest() {
+        RestListRequest restListRequest = new RestListRequest();
+        restListRequest.setFilters(getFilters());
+        return restListRequest;
+    }
+
+    private Filter[] getFilters() {
+        Map<Integer, Filter> filters = new TreeMap<>();
+        if (urlParams != null) {
+            urlParams.entrySet().forEach(entry -> {
+                String paramName = entry.getKey();
+                if (paramName.startsWith("filters[")) {
+                    int endIndex = paramName.indexOf("]");
+                    int index = Integer.parseInt(paramName.substring("filters[".length(), endIndex));
+                    Filter filter = filters.get(index);
+                    if (filter == null) {
+                        filter = new Filter();
+                        filters.put(index, filter);
+                    }
+                    String filterField = paramName.substring(endIndex + 2, paramName.length());
+                    String filterValue = entry.getValue();
+                    switch (filterField) {
+                        case "attribute":
+                            filter.setAttribute(filterValue);
+                            break;
+                        case "operator":
+                            filter.setOperator(filterValue);
+                            break;
+                        case "value":
+                            filter.setValue(filterValue);
+                            break;
+                    }
+                }
+            });
+        }
+        if (filters.isEmpty()) {
+            return null;
+        }
+        return filters.values().toArray(new Filter[filters.size()]);
     }
 
     public HttpEntity getEntity() {

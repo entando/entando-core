@@ -35,7 +35,7 @@ public class PagedMetadata<T> {
     private String sort;
     private String direction;
     private Filter[] filters = new Filter[0];
-    private Map<String, String> additionalParams = new HashMap();
+    private Map<String, String> additionalParams = new HashMap<>();
 
     @JsonIgnore
     private int actualSize;
@@ -209,7 +209,6 @@ public class PagedMetadata<T> {
     }
 
     private boolean isValidObj(Filter filter, Object obj) {
-        boolean isValid = false;
         String fieldToScan = filter.getAttribute();
         Object value = this.getFieldValue(obj, fieldToScan);
         return value != null && value instanceof String && ((String) value).contains(filter.getValue());
@@ -223,8 +222,6 @@ public class PagedMetadata<T> {
         String[] nestedFields = StringUtils.split(fieldName, ".");
         try {
             for (String nested : nestedFields) {
-//                String fieldClass = fieldName.substring(0, fieldName.indexOf("."));
-//                fieldName = fieldName.substring(fieldName.indexOf(".") + 1);
                 Field field = fields.get(nested);
                 if (field == null) {
                     return null;

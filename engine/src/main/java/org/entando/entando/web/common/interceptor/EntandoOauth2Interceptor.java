@@ -55,7 +55,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
-            if (method.getMethod().isAnnotationPresent(RequestMapping.class)) {
+            if (method.hasMethodAnnotation(RequestMapping.class)) {
                 RestAccessControl rqm = method.getMethodAnnotation(RestAccessControl.class);
                 if (null == rqm) {
                     return true;

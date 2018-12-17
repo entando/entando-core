@@ -30,6 +30,8 @@ import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerIntegrat
 import org.entando.entando.web.dataobjectmodel.DataObjectModelControllerTest;
 import org.entando.entando.web.digitalexchange.DigitalExchangesControllerIntegrationTest;
 import org.entando.entando.web.digitalexchange.DigitalExchangesControllerTest;
+import org.entando.entando.web.digitalexchange.category.DigitalExchangeCategoriesControllerIntegrationTest;
+import org.entando.entando.web.digitalexchange.category.DigitalExchangeCategoriesControllerTest;
 import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponentsControllerIntegrationTest;
 import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponentsControllerTest;
 import org.entando.entando.web.entity.EntityManagerControllerTest;
@@ -140,6 +142,9 @@ public class ControllersAllTests extends TestCase {
         
         suite.addTest(new JUnit4TestAdapter(DigitalExchangeComponentsControllerIntegrationTest.class));
         suite.addTest(new JUnit4TestAdapter(DigitalExchangeComponentsControllerTest.class));
+        
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangeCategoriesControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangeCategoriesControllerTest.class));
         
         return suite;
     }

@@ -45,4 +45,8 @@ public class DigitalExchangesClientMocker {
         when(digitalExchangesService.getDigitalExchanges()).thenReturn(digitalExchangesMocker.getFakeExchanges());
         return new DigitalExchangesClientImpl(digitalExchangesService, digitalExchangesMocker.getRestTemplate(), messageSource);
     }
+    
+    public MessageSource getMessageSource() {
+        return messageSource;
+    }
 }

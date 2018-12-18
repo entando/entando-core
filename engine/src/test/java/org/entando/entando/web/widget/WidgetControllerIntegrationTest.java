@@ -77,6 +77,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         assertNotNull(response);
     }
 
+    @Test
     public void testGetWidget_2() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);

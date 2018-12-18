@@ -39,12 +39,10 @@ import com.agiletec.aps.system.services.group.IGroupManager;
  * an entity, used during the normal execution of the system, is to make a
  * request to the service: it will clone the prototype of the entity previously
  * defined in the configuration.
- *
- * @author E.Santoboni
  */
 public class ApsEntity implements IApsEntity {
 
-    private static final Logger _logger = LoggerFactory.getLogger(ApsEntity.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApsEntity.class);
 
     /**
      * Initialization of the entity with its related elements.
@@ -340,7 +338,7 @@ public class ApsEntity implements IApsEntity {
             }
             entity.setEntityDOM(this.getEntityDOM());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            _logger.error("Error creating entity prototype", e);
+            logger.error("Error creating entity prototype", e);
             throw new RuntimeException("Error creating entity prototype", e);
         }
         return entity;

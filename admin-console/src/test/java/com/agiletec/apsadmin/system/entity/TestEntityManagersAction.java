@@ -31,9 +31,6 @@ import com.agiletec.apsadmin.system.entity.type.IEntityTypeConfigAction;
 import com.agiletec.apsadmin.system.entity.type.IEntityTypesAction;
 import com.opensymphony.xwork2.Action;
 
-/**
- * @author E.Santoboni
- */
 public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 
 	public void testExecuteViewServices() throws Throwable {
@@ -49,7 +46,6 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 		EntityManagersAction action = (EntityManagersAction) this.getAction();
 		List<String> entityManagers = action.getEntityManagers();
 		assertNotNull(entityManagers);
-		assertTrue(entityManagers.size()>=0);
 	}
 
 	public void testGetEntityPrototypes() throws Throwable {
@@ -63,7 +59,6 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 		IEntityTypesAction action = (IEntityTypesAction) this.getAction();
 		List<IApsEntity> entityPrototypes = action.getEntityPrototypes();
 		assertNotNull(entityPrototypes);
-		assertTrue(entityPrototypes.size()>=0);
 	}
 
 	public void testGetWrongEntityPrototypes() throws Throwable {
@@ -114,7 +109,7 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 		IEntityManager entityManager = (IEntityManager) this.getApplicationContext().getBean(entityManagerName);
 		Map<String, IApsEntity> entityPrototypes = entityManager.getEntityPrototypes();
 		if (null == entityPrototypes || entityPrototypes.size() == 0) return;
-		IApsEntity realEntityPrototype = new ArrayList<IApsEntity>(entityPrototypes.values()).get(0);
+		IApsEntity realEntityPrototype = new ArrayList<>(entityPrototypes.values()).get(0);
 
 		String result = this.executeInitEditEntityType("supervisorCoach", entityManagerName, realEntityPrototype.getTypeCode());
 		assertEquals("userNotAllowed", result);
@@ -161,14 +156,12 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 		//get the entites managed by the ApsEntityManager
 		Map<String, IApsEntity> entities = entityManager.getEntityPrototypes();
 		if (null == entities || entities.size() == 0) return;
-		List<String> enitiesTypeCodes =  new ArrayList<String>();
-		enitiesTypeCodes.addAll(entities.keySet());
+		List<String> enitiesTypeCodes = new ArrayList<>(entities.keySet());
 		//get the first entity type code available
 		String entityTypeCode = enitiesTypeCodes.get(0);
 		List<AttributeInterface> attributes =  entities.get(entityTypeCode).getAttributeList();
 		//get the first attribute
-		for (int i = 0; i < attributes.size(); i++) {
-			AttributeInterface currentAttribute = attributes.get(i);
+		for (AttributeInterface currentAttribute : attributes) {
 			String attributeName = currentAttribute.getName();
 			String result = this.executeEditAttribute("admin", attributeName, entityTypeCode, entityManagerName);
 			assertEquals(Action.SUCCESS, result);
@@ -214,8 +207,7 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 		//get the entites managed by the ApsEntityManager
 		Map<String, IApsEntity> entities = entityManager.getEntityPrototypes();
 		if (null == entities || entities.size() == 0) return;
-		List<String> enitiesTypeCodes =  new ArrayList<String>();
-		enitiesTypeCodes.addAll(entities.keySet());
+		List<String> enitiesTypeCodes = new ArrayList<>(entities.keySet());
 		//get the first entity type code available
 		String entityTypeCode = enitiesTypeCodes.get(0);
 		try {
@@ -230,30 +222,25 @@ public class TestEntityManagersAction extends ApsAdminBaseTestCase {
 			assertEquals(1, fieldErrors.size());
 			assertTrue(fieldErrors.containsKey("attributeName"));
 			//wrong length
-			attributeName="right_name";
+			attributeName="rightName";
 			result = this.executeSaveAttribute("admin", attributeName, attributeTypeCode, entityTypeCode, strutsAction, 3, 5, entityManagerName);
 			assertEquals(Action.INPUT, result);
+			action = (EntityAttributeConfigAction) getAction();
 			fieldErrors = action.getFieldErrors();
 			assertEquals(1, fieldErrors.size());
-			assertTrue(fieldErrors.containsKey("minLength"));
+			assertTrue(fieldErrors.containsKey("maxLength"));
 			//insert ok
-			attributeName="right_name";
-			result = this.executeSaveAttribute("admin", attributeName, attributeTypeCode, entityTypeCode, strutsAction, 5, 3, entityManagerName);
+			attributeName="rightName";
+			result = this.executeSaveAttribute("admin", attributeName, attributeTypeCode, entityTypeCode, strutsAction, 10, 3, entityManagerName);
 			assertEquals(Action.SUCCESS, result);
-			IApsEntity entity = entityManager.getEntityPrototype(entityTypeCode);
-			assertTrue(entity.getAttributeMap().containsKey("right_name"));
-			//duplicate attribute name
-			attributeName="right_name";
-			result = this.executeSaveAttribute("admin", attributeName, attributeTypeCode, entityTypeCode, strutsAction, null, null, entityManagerName);
-			assertEquals(Action.INPUT, result);
+			action = (EntityAttributeConfigAction) getAction();
 			fieldErrors = action.getFieldErrors();
-			assertEquals(1, fieldErrors.size());
-			assertTrue(fieldErrors.containsKey("attributeName"));
+			assertTrue(fieldErrors.isEmpty());
 		} catch (Throwable t) {
-			//nothing to do
+			fail(t.getMessage());
 		} finally {
 			IApsEntity entity = entityManager.getEntityPrototype(entityTypeCode);
-			entity.getAttributeMap().remove("right_name");
+			entity.getAttributeMap().remove("rightName");
 			((IEntityTypesConfigurer) entityManager).updateEntityPrototype(entity);
 		}
 	}

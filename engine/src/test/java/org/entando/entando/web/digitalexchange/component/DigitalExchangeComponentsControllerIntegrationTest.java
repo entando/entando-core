@@ -21,6 +21,8 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("DEcomponentsTest")
 public class DigitalExchangeComponentsControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     private static final String BASE_URL = "/digitalExchange/components";
@@ -41,6 +44,7 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
     private static final DigitalExchangeComponent[] COMPONENTS_2 = new DigitalExchangeComponent[]{getComponentB(), getComponentD()};
 
     @Configuration
+    @Profile("DEcomponentsTest")
     public static class TestConfig {
 
         @Bean

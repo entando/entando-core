@@ -11,30 +11,29 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.web.digitalexchange.component;
+package org.entando.entando.web.digitalexchange.category;
 
 import com.agiletec.aps.system.services.role.Permission;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@Api(tags = {"digital-exchange", "components"})
-@RequestMapping(value = "/digitalExchange/components")
-public interface DigitalExchangeComponentResource {
-    
-    @ApiOperation(value = "Returns available Digital Exchange components")
+@Api(tags = {"digital-exchange"})
+@RequestMapping(value = "/digitalExchange/categories")
+public interface DigitalExchangeCategoriesResource {
+
+    @ApiOperation(value = "Returns Digital Exchange categories")
     @ApiResponses({
         @ApiResponse(code = 200, message = "OK")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PagedRestResponse<DigitalExchangeComponent>> getComponents(RestListRequest requestList);
+    SimpleRestResponse<List<String>> getCategories();
 }

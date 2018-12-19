@@ -30,20 +30,20 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import static org.entando.entando.web.digitalexchange.DigitalExchangeValidator.*;
 
+@Service
 public class DigitalExchangesServiceImpl implements DigitalExchangesService {
 
     private static final String DIGITAL_EXCHANGE_LABEL = "digitalExchange";
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private ConfigInterface configManager;
+    private final ConfigInterface configManager;
 
-    public ConfigInterface getConfigManager() {
-        return configManager;
-    }
-
-    public void setConfigManager(ConfigInterface configManager) {
+    @Autowired
+    public DigitalExchangesServiceImpl(ConfigInterface configManager) {
         this.configManager = configManager;
     }
 

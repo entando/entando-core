@@ -13,22 +13,17 @@
  */
 package org.entando.entando.web.digitalexchange;
 
-import com.agiletec.aps.system.services.role.Permission;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
-import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 
@@ -45,8 +40,6 @@ public class DigitalExchangesResourceController implements DigitalExchangeResour
     }
 
     @Override
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<SimpleRestResponse<List<String>>> list() {
         List<String> digitalExchangeNames = digitalExchangeService.getDigitalExchanges()
                 .stream().map(m -> m.getName())
@@ -55,8 +48,6 @@ public class DigitalExchangesResourceController implements DigitalExchangeResour
     }
 
     @Override
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<SimpleRestResponse<DigitalExchange>> create(@Valid @RequestBody DigitalExchange digitalExchange, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -65,15 +56,11 @@ public class DigitalExchangesResourceController implements DigitalExchangeResour
     }
 
     @Override
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<SimpleRestResponse<DigitalExchange>> get(@PathVariable("name") String name) {
         return ResponseEntity.ok(new SimpleRestResponse<>(digitalExchangeService.findByName(name)));
     }
 
     @Override
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PUT)
     public ResponseEntity<SimpleRestResponse<DigitalExchange>> update(@PathVariable("name") String name, @Valid @RequestBody DigitalExchange digitalExchange, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
@@ -86,8 +73,6 @@ public class DigitalExchangesResourceController implements DigitalExchangeResour
     }
 
     @Override
-    @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<SimpleRestResponse<String>> delete(@PathVariable("name") String name) {
         digitalExchangeService.delete(name);
         return ResponseEntity.ok(new SimpleRestResponse<>(name));

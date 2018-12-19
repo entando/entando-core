@@ -13,13 +13,14 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
+import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import org.entando.entando.aps.system.services.RequestListProcessor;
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesManager;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.PagedRestResponse;
@@ -36,8 +37,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -53,10 +55,7 @@ import static org.entando.entando.aps.system.services.digitalexchange.client.Dig
 public class DigitalExchangesClientTest {
 
     @Mock
-    private RestTemplate restTemplate;
-
-    @Mock
-    private DigitalExchangesService service;
+    private DigitalExchangesManager manager;
 
     @Mock
     private MessageSource messageSource;
@@ -68,14 +67,20 @@ public class DigitalExchangesClientTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        DigitalExchangesMocker mocker = new DigitalExchangesMocker(restTemplate)
+        DigitalExchangesMocker mocker = new DigitalExchangesMocker()
                 .addDigitalExchange("DE 1", buildWorkingDE("A", "C"))
                 .addDigitalExchange("DE 2", buildWorkingDE("B", "D"))
                 .addDigitalExchange("Broken DE", () -> {
                     throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "This instance is broken");
                 })
                 .addDigitalExchange("Unreachable DE", () -> {
-                    throw new RestClientException("Connection refused");
+                    throw new ResourceAccessException("Connection refused");
+                })
+                .addDigitalExchange("Unreachable DE During Authentication", () -> {
+                    throw new OAuth2Exception("", new ResourceAccessException("Connection refused"));
+                })
+                .addDigitalExchange("OAuth issue DE", () -> {
+                    throw new OAuth2Exception("error retriving token");
                 })
                 .addDigitalExchange("Wrong Payload DE", () -> new ResponseEntity<>(HttpStatus.OK))
                 .addDigitalExchange("Wrong URL DE", () -> {
@@ -83,21 +88,20 @@ public class DigitalExchangesClientTest {
                     de.setUrl("invalid-url");
                 })
                 .addDigitalExchange("Timeout DE", () -> {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                    }
+                    throw new ResourceAccessException("", new SocketTimeoutException());
                 })
                 .addDigitalExchange("Disabled DE", () -> {
                 }, de -> de.setActive(false));
 
-        mocker.initMocks();
+        DigitalExchangeOAuth2RestTemplateFactory restTemplateFactory = mocker.initMocks();
 
-        when(service.getDigitalExchanges()).thenReturn(mocker.getFakeExchanges());
+        when(manager.getDigitalExchanges()).thenReturn(mocker.getFakeExchanges());
+        OAuth2RestTemplate restTemplate = restTemplateFactory.createOAuth2RestTemplate(null);
+        when(manager.getRestTemplate(any())).thenReturn(restTemplate);
         when(messageSource.getMessage(any(), any(), any())).thenReturn("Mocked Message");
     }
 
-    private Function<DigitalExchangeMockedRequest, RestResponse> buildWorkingDE(String... values) {
+    private Function<DigitalExchangeMockedRequest, RestResponse<?, ?>> buildWorkingDE(String... values) {
         return request -> {
             switch (request.getMethod()) {
                 case GET:
@@ -140,10 +144,10 @@ public class DigitalExchangesClientTest {
     @Test
     public void testSimpleResultWithPOST() {
 
-        ParameterizedTypeReference type = new ParameterizedTypeReference<SimpleRestResponse<String>>() {
-        };
-        SimpleDigitalExchangeCall<String> postCall = new SimpleDigitalExchangeCall<>(HttpMethod.POST, type, "test");
-        postCall.setEntity(new HttpEntity("entity"));
+        SimpleDigitalExchangeCall<String> postCall = new SimpleDigitalExchangeCall<>(
+                HttpMethod.POST, new ParameterizedTypeReference<SimpleRestResponse<String>>() {
+        }, "test");
+        postCall.setEntity(new HttpEntity<>("entity"));
 
         ResilientListWrapper<String> result = client.getCombinedResult(postCall);
 
@@ -153,13 +157,13 @@ public class DigitalExchangesClientTest {
     }
 
     private <T> void verifyResilience(List<RestError> errors) {
-        assertEquals(5, errors.stream()
+        assertEquals(6, errors.stream()
                 .map(e -> e.getCode()).distinct().count());
 
         assertTrue(errors.stream().map(e -> e.getCode()).allMatch(code
                 -> Arrays.asList(ERRCODE_DE_HTTP_ERROR, ERRCODE_DE_UNREACHABLE,
                         ERRCODE_DE_INVALID_URL, ERRCODE_DE_WRONG_PAYLOAD,
-                        ERRCODE_DE_TIMEOUT).
+                        ERRCODE_DE_TIMEOUT, ERRCODE_DE_AUTH).
                         contains(code)));
     }
 

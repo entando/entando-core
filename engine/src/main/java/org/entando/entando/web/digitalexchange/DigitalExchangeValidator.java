@@ -23,6 +23,7 @@ public class DigitalExchangeValidator {
     public static final String ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND = "1";
     public static final String ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_DIGITAL_EXCHANGE_INVALID_URL = "4";
 
     public void validateBodyName(String name, DigitalExchange digitalExchange, Errors errors) {
         if (!digitalExchange.getName().equals(name)) {

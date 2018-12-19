@@ -151,6 +151,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);
+        digitalExchange.setUrl("http://www.entando.com");
         return digitalExchange;
     }
 }

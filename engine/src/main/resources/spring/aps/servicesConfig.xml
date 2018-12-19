@@ -182,8 +182,6 @@
         <property name="storageManager" ref="StorageManager" />
     </bean>
     
-    <bean id="RestTemplate" class="org.springframework.web.client.RestTemplate" />
-    
     <context:component-scan base-package="org.entando.entando.aps.system.services.digitalexchange" />
 
 </beans>

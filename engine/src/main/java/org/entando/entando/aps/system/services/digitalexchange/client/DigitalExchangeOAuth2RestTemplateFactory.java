@@ -13,19 +13,10 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
-public interface DigitalExchangesClient {
+public interface DigitalExchangeOAuth2RestTemplateFactory {
 
-    /**
-     * Calls in parallel all the configured and active DE instances and returns
-     * a combined result of all the responses.
-     *
-     * @param <R> the type of each DE response
-     * @param <C> the type of the combined response
-     * @param call information necessary to execute the HTTP call and process
-     * the result
-     * @return a combined response
-     */
-    <R extends RestResponse<?, ?>, C> C getCombinedResult(DigitalExchangeCall<R, C> call);
+    OAuth2RestTemplate createOAuth2RestTemplate(DigitalExchange digitalExchange);
 }

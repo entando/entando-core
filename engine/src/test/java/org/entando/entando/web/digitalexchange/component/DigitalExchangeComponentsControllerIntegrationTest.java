@@ -13,8 +13,9 @@
  */
 package org.entando.entando.web.digitalexchange.component;
 
-import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentBuilder;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeOAuth2RestTemplateFactory;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentBuilder;
 import org.entando.entando.aps.system.services.digitalexchange.component.DigitalExchangeComponentsMocker;
 import org.junit.Test;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -24,7 +25,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.client.RestTemplate;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -49,7 +49,7 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
 
         @Bean
         @Primary
-        public RestTemplate getRestTemplate() {
+        public DigitalExchangeOAuth2RestTemplateFactory getRestTemplateFactory() {
             return new DigitalExchangesMocker()
                     .addDigitalExchange("DE 1", DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
                     .addDigitalExchange("DE 2", DigitalExchangeComponentsMocker.mock(COMPONENTS_2))

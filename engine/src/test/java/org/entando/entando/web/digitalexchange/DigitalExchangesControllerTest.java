@@ -69,7 +69,7 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
     public void shouldCreateDigitalExchange() throws Exception {
 
         String name = "New DE";
-        
+
         ResultActions result = createAuthRequest(post(BASE_URL))
                 .setContent(getDigitalExchange(name)).execute();
 
@@ -83,7 +83,20 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
     public void shouldFailCreatingDigitalExchangeBecauseNameIsEmpty() throws Exception {
 
         ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(new DigitalExchange()).execute();
+                .setContent(getDigitalExchange("")).execute();
+
+        result.andExpect(status().is4xxClientError());
+        result.andExpect(jsonPath("$.metaData").isEmpty());
+        result.andExpect(jsonPath("$.errors", hasSize(1)));
+    }
+
+    @Test
+    public void shouldFailCreatingDigitalExchangeBecauseURLIsNotSet() throws Exception {
+        DigitalExchange digitalExchange = getDigitalExchange("New DE");
+        digitalExchange.setUrl(null);
+
+        ResultActions result = createAuthRequest(post(BASE_URL))
+                .setContent(digitalExchange).execute();
 
         result.andExpect(status().is4xxClientError());
         result.andExpect(jsonPath("$.metaData").isEmpty());
@@ -167,6 +180,7 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);
+        digitalExchange.setUrl("http://www.entando.com/");
         return digitalExchange;
     }
 }

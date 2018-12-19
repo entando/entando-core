@@ -24,7 +24,7 @@ import org.entando.entando.web.common.model.RestResponse;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -52,22 +52,16 @@ import static org.mockito.Mockito.when;
  */
 public class DigitalExchangesMocker {
 
-    private final RestTemplate restTemplate;
+    private final OAuth2RestTemplate restTemplate;
+    private final DigitalExchangeOAuth2RestTemplateFactory restTemplateFactory;
     private final List<DigitalExchange> exchanges;
-    private final Map<String, Function<DigitalExchangeMockedRequest, RestResponse>> responsesMap;
+    private final Map<String, Function<DigitalExchangeMockedRequest, RestResponse<?, ?>>> responsesMap;
 
     public DigitalExchangesMocker() {
-        this(mock(RestTemplate.class));
-    }
-
-    public DigitalExchangesMocker(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+        this.restTemplate = mock(OAuth2RestTemplate.class);
+        this.restTemplateFactory = mock(DigitalExchangeOAuth2RestTemplateFactory.class);
         this.exchanges = new ArrayList<>();
         this.responsesMap = new HashMap<>();
-    }
-
-    public RestTemplate getRestTemplate() {
-        return restTemplate;
     }
 
     public List<DigitalExchange> getFakeExchanges() {
@@ -87,7 +81,7 @@ public class DigitalExchangesMocker {
         return digitalExchange;
     }
 
-    public DigitalExchangesMocker addDigitalExchange(String name, RestResponse result) {
+    public DigitalExchangesMocker addDigitalExchange(String name, RestResponse<?, ?> result) {
         return addDigitalExchange(name, (request) -> result, null);
     }
 
@@ -102,11 +96,11 @@ public class DigitalExchangesMocker {
         }, deConsumer);
     }
 
-    public DigitalExchangesMocker addDigitalExchange(String name, Function<DigitalExchangeMockedRequest, RestResponse> function) {
+    public DigitalExchangesMocker addDigitalExchange(String name, Function<DigitalExchangeMockedRequest, RestResponse<?, ?>> function) {
         return addDigitalExchange(name, function, null);
     }
 
-    public DigitalExchangesMocker addDigitalExchange(String name, Function<DigitalExchangeMockedRequest, RestResponse> function, Consumer<DigitalExchange> deConsumer) {
+    public DigitalExchangesMocker addDigitalExchange(String name, Function<DigitalExchangeMockedRequest, RestResponse<?, ?>> function, Consumer<DigitalExchange> deConsumer) {
 
         DigitalExchange digitalExchange = getDigitalExchange(name);
         if (deConsumer != null) {
@@ -119,7 +113,7 @@ public class DigitalExchangesMocker {
         return this;
     }
 
-    public RestTemplate initMocks() {
+    public DigitalExchangeOAuth2RestTemplateFactory initMocks() {
 
         when(restTemplate.exchange(any(String.class), any(HttpMethod.class), any(), any(ParameterizedTypeReference.class)))
                 .thenAnswer(invocation -> {
@@ -136,7 +130,9 @@ public class DigitalExchangesMocker {
                     return ResponseEntity.ok(responsesMap.get(baseUrl).apply(request));
                 });
 
-        return restTemplate;
+        when(restTemplateFactory.createOAuth2RestTemplate(any())).thenReturn(restTemplate);
+
+        return restTemplateFactory;
     }
 
     private String getBaseUrl(String url) {

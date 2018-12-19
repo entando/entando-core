@@ -24,11 +24,15 @@ import org.mockito.MockitoAnnotations;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.digitalexchange.DigitalExchangeValidator;
+import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+import org.springframework.context.MessageSource;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DigitalExchangesServiceTest {
@@ -37,6 +41,9 @@ public class DigitalExchangesServiceTest {
 
     @Mock
     private DigitalExchangesManager manager;
+
+    @Mock
+    private MessageSource messageSource;
 
     @InjectMocks
     private DigitalExchangesServiceImpl service;
@@ -114,6 +121,18 @@ public class DigitalExchangesServiceTest {
         }
     }
 
+    @Test
+    public void shouldTestInstance() {
+
+        OAuth2RestTemplate restTemplate = new DigitalExchangesMocker()
+                .addDigitalExchange(DE_1, r -> new SimpleRestResponse<>("OK"))
+                .initMocks().createOAuth2RestTemplate(null);
+
+        when(manager.getRestTemplate(any())).thenReturn(restTemplate);
+        
+        assertThat(service.test(DE_1)).isEmpty();
+    }
+
     private void mockManager() {
 
         DigitalExchange digitalExchange = getDigitalExchange(DE_1);
@@ -130,7 +149,7 @@ public class DigitalExchangesServiceTest {
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);
-        digitalExchange.setUrl("http://www.entando.com");
+        digitalExchange.setUrl("https://de1.entando.com/");
         return digitalExchange;
     }
 }

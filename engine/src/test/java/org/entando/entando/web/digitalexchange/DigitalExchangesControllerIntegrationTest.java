@@ -18,6 +18,16 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeOAuth2RestTemplateFactory;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,15 +36,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 
+@ActiveProfiles("DEconfigTest")
 public class DigitalExchangesControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     private static final String BASE_URL = "/digitalExchange/exchanges";
 
     @Autowired
     private DigitalExchangesService digitalExchangeService;
-    
+
+    @Configuration
+    @Profile("DEconfigTest")
+    public static class TestConfig {
+
+        @Bean
+        @Primary
+        public DigitalExchangeOAuth2RestTemplateFactory getRestTemplateFactory() {
+            return new DigitalExchangesMocker()
+                    .addDigitalExchange("DE 1", new SimpleRestResponse<>("OK"))
+                    .initMocks();
+        }
+    }
+
     @Test
     public void shouldReturnDigitalExchanges() throws Exception {
 
@@ -146,6 +169,17 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
         result.andExpect(jsonPath("$.payload").isEmpty());
+    }
+
+    @Test
+    public void shouldTestInstance() throws Exception {
+
+        ResultActions result = createAuthRequest(get(BASE_URL + "/test/{name}", "DE 1")).execute();
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData").isEmpty());
+        result.andExpect(jsonPath("$.errors").isEmpty());
+        result.andExpect(jsonPath("$.payload", is("OK")));
     }
 
     private DigitalExchange getDigitalExchange(String name) {

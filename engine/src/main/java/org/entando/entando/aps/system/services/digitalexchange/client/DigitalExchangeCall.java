@@ -83,6 +83,7 @@ public abstract class DigitalExchangeCall<R extends RestResponse, C> {
         return UriComponentsBuilder
                 .fromHttpUrl(digitalExchange.getUrl())
                 .pathSegment(urlSegments)
+                .build(false) // disable encoding: it will be done by RestTemplate
                 .toUriString();
     }
 

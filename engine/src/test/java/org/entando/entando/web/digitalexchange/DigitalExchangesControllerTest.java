@@ -63,6 +63,7 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         when(service.create(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(service.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(service.findByName(any())).thenReturn(getFakeDigitalExchanges().get(0));
+        when(service.test(any())).thenReturn(new ArrayList<>());
     }
 
     @Test
@@ -171,6 +172,18 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.payload", is(name)));
     }
 
+    @Test
+    public void shouldTestInstance() throws Exception {
+        
+        String name = "DE 1";
+        ResultActions result = createAuthRequest(get(BASE_URL + "/test/{name}", name)).execute();
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.metaData").isEmpty());
+        result.andExpect(jsonPath("$.errors").isEmpty());
+        result.andExpect(jsonPath("$.payload", is("OK")));
+    }
+    
     private List<DigitalExchange> getFakeDigitalExchanges() {
         List<DigitalExchange> digitalExchanges = new ArrayList<>();
         digitalExchanges.add(getDigitalExchange("DE 1"));
@@ -180,7 +193,7 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);
-        digitalExchange.setUrl("http://www.entando.com/");
+        digitalExchange.setUrl("http://de1.entando.com/");
         return digitalExchange;
     }
 }

@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.digitalexchange;
 
 import java.util.List;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
+import org.entando.entando.web.common.model.RestError;
 
 public interface DigitalExchangesService {
 
@@ -27,4 +28,6 @@ public interface DigitalExchangesService {
     DigitalExchange update(DigitalExchange digitalExchange);
 
     void delete(String digitalExchangeName);
+
+    List<RestError> test(String digitalExchangeName);
 }

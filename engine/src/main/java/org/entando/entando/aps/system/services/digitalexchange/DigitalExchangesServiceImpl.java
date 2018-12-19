@@ -15,13 +15,20 @@ package org.entando.entando.aps.system.services.digitalexchange;
 
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeCallExecutor;
+import org.entando.entando.aps.system.services.digitalexchange.client.SimpleDigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
+import org.entando.entando.web.common.model.RestError;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import static org.entando.entando.web.digitalexchange.DigitalExchangeValidator.*;
+import org.springframework.context.MessageSource;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import static org.entando.entando.web.digitalexchange.DigitalExchangeValidator.*;
 
 @Service
 public class DigitalExchangesServiceImpl implements DigitalExchangesService {
@@ -29,10 +36,12 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
     private static final String DIGITAL_EXCHANGE_LABEL = "digitalExchange";
 
     private final DigitalExchangesManager manager;
+    private final MessageSource messageSource;
 
     @Autowired
-    public DigitalExchangesServiceImpl(DigitalExchangesManager manager) {
+    public DigitalExchangesServiceImpl(DigitalExchangesManager manager, MessageSource messageSource) {
         this.manager = manager;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -72,6 +81,21 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
     public void delete(String digitalExchangeName) {
         findByName(digitalExchangeName);
         manager.delete(digitalExchangeName);
+    }
+
+    @Override
+    public List<RestError> test(String digitalExchangeName) {
+        DigitalExchange digitalExchange = findByName(digitalExchangeName);
+
+        SimpleDigitalExchangeCall<String> call = new SimpleDigitalExchangeCall<>(
+                HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<String>>() {
+        }, "digitalExchange", "exchanges", "test", digitalExchangeName);
+
+        SimpleRestResponse<String> response
+                = new DigitalExchangeCallExecutor<>(messageSource, digitalExchange,
+                        manager.getRestTemplate(digitalExchangeName), call).getResponse();
+
+        return response.getErrors();
     }
 
     private void validateURL(DigitalExchange digitalExchange) {

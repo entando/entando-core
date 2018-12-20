@@ -34,12 +34,28 @@ import java.util.List;
 /**
  * Classe action delegata alla gestione delle operazioni di associazione 
  * tra utenza e autorizzazioni.
- * @author E.Santoboni
  */
 public class UserAuthorizationAction extends BaseAction {
-	
-	private static final Logger _logger =  LoggerFactory.getLogger(UserAuthorizationAction.class);
-	
+
+	private static final String CURRENT_FORM_USER_AUTHS_PARAM_NAME = "currentUserAuthoritiesOnForm";
+	private static final String USER_LIST = "userList";
+
+
+	private static final Logger logger =  LoggerFactory.getLogger(UserAuthorizationAction.class);
+
+
+	private String username;
+
+	private String roleName;
+	private String groupName;
+
+	private Integer index;
+
+	private IUserManager userManager;
+	private IRoleManager roleManager;
+	private IGroupManager groupManager;
+
+
 	public String edit() {
 		try {
 			String result = this.checkUser();
@@ -48,7 +64,7 @@ public class UserAuthorizationAction extends BaseAction {
 			UserAuthsFormBean userAuthsFormBean = new UserAuthsFormBean(this.getUsername(), authorizations);
 			this.getRequest().getSession().setAttribute(CURRENT_FORM_USER_AUTHS_PARAM_NAME,  userAuthsFormBean);
 		} catch (Throwable t) {
-			_logger.error("error in edit", t);
+			logger.error("error in edit", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -57,15 +73,15 @@ public class UserAuthorizationAction extends BaseAction {
 	private String checkUser() throws Throwable {
 		if (!this.existsUser()) {
 			this.addActionError(this.getText("error.user.notExist"));
-			return "userList";
+			return USER_LIST;
 		}
 		if (SystemConstants.ADMIN_USER_NAME.equals(this.getUsername())) {
 			this.addActionError(this.getText("error.user.cannotModifyAdminUser"));
-			return "userList";
+			return USER_LIST;
 		}
 		if (this.isCurrentUser()) {
 			this.addActionError(this.getText("error.user.cannotModifyCurrentUser"));
-			return "userList";
+			return USER_LIST;
 		}
 		return null;
 	}
@@ -73,10 +89,8 @@ public class UserAuthorizationAction extends BaseAction {
 	public String addAuthorization() {
 		try {
 			if (!this.checkAuthorizationSessionBean()) {
-				return "userList";
+				return USER_LIST;
 			}
-			String groupName = this.getGroupName();
-			String roleName = this.getRoleName();
 			Group group = this.getGroupManager().getGroup(groupName);
 			Role role = this.getRoleManager().getRole(roleName);
 			if (!StringUtils.isEmpty(groupName) && null == group) {
@@ -99,7 +113,7 @@ public class UserAuthorizationAction extends BaseAction {
 				return INPUT;
 			}
 		} catch (Throwable t) {
-			_logger.error("error adding user authorization", t);
+			logger.error("error adding user authorization", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -108,13 +122,13 @@ public class UserAuthorizationAction extends BaseAction {
 	public String removeAuthorization() {
 		try {
 			if (!this.checkAuthorizationSessionBean()) {
-				return "userList";
+				return USER_LIST;
 			}
 			if (null == this.getIndex()) return INPUT;
 			boolean result = this.getUserAuthsFormBean().removeAuthorization(this.getIndex());
 			if (!result) return INPUT;
 		} catch (Throwable t) {
-			_logger.error("error removing user authorization", t);
+			logger.error("error removing user authorization", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -125,14 +139,13 @@ public class UserAuthorizationAction extends BaseAction {
 			String result = this.checkUser();
 			if (null != result) return result;
 			if (!this.checkAuthorizationSessionBean()) {
-				return "userList";
+				return USER_LIST;
 			}
-			String username = this.getUsername();
 			UserAuthsFormBean authsBean = this.getUserAuthsFormBean();
 			this.getAuthorizationManager().updateUserAuthorizations(username, authsBean.getAuthorizations());
 			this.getRequest().getSession().removeAttribute(CURRENT_FORM_USER_AUTHS_PARAM_NAME);
 		} catch (Throwable t) {
-			_logger.error("error in save", t);
+			logger.error("error in save", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -149,13 +162,10 @@ public class UserAuthorizationAction extends BaseAction {
 	 * @throws ApsSystemException In caso di errore.
 	 */
 	protected boolean existsUser() throws ApsSystemException {
-		String username = this.getUsername();
-		boolean exists = (username!=null && username.trim().length()>=0 && this.getUserManager().getUser(username)!=null);
-		return exists;
+		return (username != null) && (userManager.getUser(username) != null);
 	}
 	
 	private boolean checkAuthorizationSessionBean() {
-		String username = this.getUsername();
 		UserAuthsFormBean authsBean = this.getUserAuthsFormBean();
 		if (null == username || null == authsBean || !username.equals(authsBean.getUsername())) {
 			this.addActionError(this.getText("error.userAuthorization.invalidSessionBean"));
@@ -170,76 +180,63 @@ public class UserAuthorizationAction extends BaseAction {
 	
 	public List<Group> getGroups() {
 		List<Group> groups = this.getGroupManager().getGroups();
-		Collections.sort(groups, new BeanComparator("description"));
+		groups.sort(new BeanComparator<>("description"));
 		return groups;
 	}
 	
 	public List<Role> getRoles() {
 		List<Role> roles = this.getRoleManager().getRoles();
-		Collections.sort(roles, new BeanComparator("description"));
+		roles.sort(new BeanComparator<>("description"));
 		return roles;
 	}
 	
 	public String getUsername() {
-		return _username;
+		return username;
 	}
 	public void setUsername(String username) {
-		this._username = username;
+		this.username = username;
 	}
 	
 	public String getRoleName() {
-		return _roleName;
+		return roleName;
 	}
 	public void setRoleName(String roleName) {
-		this._roleName = roleName;
+		this.roleName = roleName;
 	}
 	
 	public String getGroupName() {
-		return _groupName;
+		return groupName;
 	}
 	public void setGroupName(String groupName) {
-		this._groupName = groupName;
+		this.groupName = groupName;
 	}
 	
 	public Integer getIndex() {
-		return _index;
+		return index;
 	}
 	public void setIndex(Integer index) {
-		this._index = index;
+		this.index = index;
 	}
 	
 	protected IUserManager getUserManager() {
-		return _userManager;
+		return userManager;
 	}
 	public void setUserManager(IUserManager userManager) {
-		this._userManager = userManager;
+		this.userManager = userManager;
 	}
 	
 	protected IRoleManager getRoleManager() {
-		return _roleManager;
+		return roleManager;
 	}
 	public void setRoleManager(IRoleManager roleManager) {
-		this._roleManager = roleManager;
+		this.roleManager = roleManager;
 	}
 	
 	protected IGroupManager getGroupManager() {
-		return _groupManager;
+		return groupManager;
 	}
 	public void setGroupManager(IGroupManager groupManager) {
-		this._groupManager = groupManager;
+		this.groupManager = groupManager;
 	}
-	
-	private String _username;
-	
-	private String _roleName;
-	private String _groupName;
-	
-	private Integer _index;
-	
-	private IUserManager _userManager;
-	private IRoleManager _roleManager;
-	private IGroupManager _groupManager;
-	
-	public static final String CURRENT_FORM_USER_AUTHS_PARAM_NAME = "currentUserAuthoritiesOnForm";
 	
 }

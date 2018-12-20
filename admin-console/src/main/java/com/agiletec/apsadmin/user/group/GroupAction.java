@@ -28,19 +28,34 @@ import com.agiletec.apsadmin.user.group.helper.IGroupActionHelper;
 
 /**
  * Classi action della gestione Gruppi.
- * @author E.Santoboni - E.Mezzano
  */
 public class GroupAction extends AbstractAuthorityAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(GroupAction.class);
-	
+	private static final String ERROR_GROUP_NOT_EXIST = "error.group.notExist";
+
+
+	private static final Logger logger = LoggerFactory.getLogger(GroupAction.class);
+	private static final String GROUP_LIST = "groupList";
+
+
+	private int strutsAction;
+	private String name;
+	private String description;
+
+	private Map<String, List<Object>> references;
+
+	private IGroupManager groupManager;
+
+	private IGroupActionHelper helper;
+
+
 	@Override
 	public void validate() {
 		super.validate();
 		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
 			this.checkDuplicatedGroup();
 		} else if (!this.existsGroup()) {
-			this.addActionError(this.getText("error.group.notExist"));
+			addActionError(getText(ERROR_GROUP_NOT_EXIST));
 		}
 	}
 	
@@ -75,14 +90,14 @@ public class GroupAction extends AbstractAuthorityAction {
 	protected String extractGroupFormValues() {
 		try {
 			if (!this.existsGroup()) {
-				this.addActionError(this.getText("error.group.notExist"));
-				return "groupList";
+				addActionError(getText(ERROR_GROUP_NOT_EXIST));
+				return GROUP_LIST;
 			}
 			Group group = this.getGroupManager().getGroup(this.getName());
 			this.setName(group.getName());
 			this.setDescription(group.getDescr());
 		} catch (Throwable t) {
-			_logger.error("error in extractGroupFormValues", t);
+			logger.error("error in extractGroupFormValues", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -99,7 +114,7 @@ public class GroupAction extends AbstractAuthorityAction {
 				this.getGroupManager().updateGroup(group);
 			}
 		} catch (Throwable t) {
-			_logger.error("error in save", t);
+			logger.error("error in save", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -110,7 +125,7 @@ public class GroupAction extends AbstractAuthorityAction {
 			String check = this.checkGroupForDelete();
 			if (null != check) return check;
 		} catch (Throwable t) {
-			_logger.error("error in trash", t);
+			logger.error("error in trash", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -120,11 +135,10 @@ public class GroupAction extends AbstractAuthorityAction {
 		try {
 			String check = this.checkGroupForDelete();
 			if (null != check) return check;
-			IGroupManager groupManager = this.getGroupManager();
 			Group group = groupManager.getGroup(this.getName());
 			this.getGroupManager().removeGroup(group);
 		} catch (Throwable t) {
-			_logger.error("error in delete", t);
+			logger.error("error in delete", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -135,9 +149,7 @@ public class GroupAction extends AbstractAuthorityAction {
 	 * @return true in caso positivo, false nel caso il gruppo non esista.
 	 */
 	protected boolean existsGroup() {
-		String name = this.getName();
-		boolean exists = (name!=null && name.trim().length()>=0 && this.getGroupManager().getGroup(name)!=null);
-		return exists;
+		return (name != null) && (groupManager.getGroup(name) != null);
 	}
 	
 	/**
@@ -148,13 +160,12 @@ public class GroupAction extends AbstractAuthorityAction {
 	 */
 	protected String checkGroupForDelete() throws ApsSystemException {
 		if (!this.existsGroup()) {
-			this.addActionError(this.getText("error.group.notExist"));
-			return "groupList";
+			addActionError(getText(ERROR_GROUP_NOT_EXIST));
+			return GROUP_LIST;
 		}
-		String name = this.getName();
 		if (Group.FREE_GROUP_NAME.equals(name) || Group.ADMINS_GROUP_NAME.equals(name)) {
-			this.addActionError(this.getText("error.group.undeletable"));
-			return "groupList";
+			addActionError(getText("error.group.undeletable"));
+			return GROUP_LIST;
 		}
 		this.extractReferencingObjects(name);
 		if (null != this.getReferences() && this.getReferences().size() > 0) {
@@ -173,60 +184,50 @@ public class GroupAction extends AbstractAuthorityAction {
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting referenced objects by group '{}'", groupCode, t);
+			logger.error("Error extracting referenced objects by group '{}'", groupCode, t);
 		}
 	}
 	
 	public int getStrutsAction() {
-		return _strutsAction;
+		return strutsAction;
 	}
 	public void setStrutsAction(int strutsAction) {
-		this._strutsAction = strutsAction;
+		this.strutsAction = strutsAction;
 	}
 	
 	public String getName() {
-		return _name;
+		return name;
 	}
 	public void setName(String name) {
-		this._name = name;
+		this.name = name;
 	}
 	
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 	public void setDescription(String description) {
-		this._description = description;
+		this.description = description;
 	}
 	
 	protected IGroupManager getGroupManager() {
-		return _groupManager;
+		return groupManager;
 	}
 	public void setGroupManager(IGroupManager groupManager) {
-		this._groupManager = groupManager;
+		this.groupManager = groupManager;
 	}
 	
 	protected IGroupActionHelper getHelper() {
-		return _helper;
+		return helper;
 	}
 	public void setHelper(IGroupActionHelper helper) {
-		this._helper = helper;
+		this.helper = helper;
 	}
 	
 	public Map<String, List<Object>> getReferences() {
-		return _references;
+		return references;
 	}
 	protected void setReferences(Map<String, List<Object>> references) {
-		this._references = references;
+		this.references = references;
 	}
-	
-	private int _strutsAction;
-	private String _name;
-	private String _description;
-	
-	private Map<String, List<Object>> _references;
-	
-	private IGroupManager _groupManager;
-	
-	private IGroupActionHelper _helper;
 	
 }

@@ -13,36 +13,41 @@
  */
 package com.agiletec.apsadmin.user.role;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.role.IRoleManager;
-import com.agiletec.aps.system.services.role.Permission;
-import com.agiletec.aps.system.services.role.Role;
+import com.agiletec.aps.system.services.role.*;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.user.AbstractAuthorityAction;
+import org.slf4j.*;
+
+import java.util.*;
 
 /**
  * Classe action della gestione Ruoli.
- * @author E.Mezzano - E.Santoboni
  */
 public class RoleAction extends AbstractAuthorityAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(RoleAction.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(RoleAction.class);
+	private static final String ERROR_ROLE_NOT_EXIST = "error.role.notExist";
+	private static final String ROLE_LIST = "roleList";
+
+
+	private int strutsAction;
+	private String name;
+	private String description;
+	private Set<String> permissionNames;
+
+	private List<String> references;
+
+	private IRoleManager roleManager;
+
+
 	@Override
 	public void validate() {
 		super.validate();
 		if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
 			this.checkDuplicatedRole();
 		} else if (!this.existsRole()) {
-			this.addActionError(this.getText("error.role.notExist"));
+			addActionError(getText(ERROR_ROLE_NOT_EXIST));
 		}
 	}
 	
@@ -66,14 +71,14 @@ public class RoleAction extends AbstractAuthorityAction {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		try {
 			if (!this.existsRole()) {
-				this.addActionError(this.getText("error.role.notExist"));
-				return "roleList";
+				addActionError(getText(ERROR_ROLE_NOT_EXIST));
+				return ROLE_LIST;
 			}
 			Role role = this.getRoleManager().getRole(this.getName());
 			this.setDescription(role.getDescription());
 			this.setPermissionNames(role.getPermissions());
 		} catch (Throwable t) {
-			_logger.error("error in edit", t);
+			logger.error("error in edit", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -88,12 +93,15 @@ public class RoleAction extends AbstractAuthorityAction {
 				this.getRoleManager().updateRole(role);
 			}
 		} catch (Throwable t) {
-			_logger.error("error in save", t);
+			logger.error("error in save", t);
 			return FAILURE;
 		}
 		return SUCCESS;
 	}
-	
+
+	/**
+	 * Replaced by {@link #showDetail()}
+	 */
 	@Deprecated
 	public String view() {
 		return this.showDetail();
@@ -103,15 +111,15 @@ public class RoleAction extends AbstractAuthorityAction {
 		this.setStrutsAction(ApsAdminSystemConstants.EDIT);
 		try {
 			if (!this.existsRole()) {
-				this.addActionError(this.getText("error.role.notExist"));
-				return "roleList";
+				addActionError(getText(ERROR_ROLE_NOT_EXIST));
+				return ROLE_LIST;
 			}
 			Role role = this.getRoleManager().getRole(this.getName());
 			this.setDescription(role.getDescription());
 			this.setPermissionNames(role.getPermissions());
 			this.isRoleInUse();
 		} catch (Throwable t) {
-			_logger.error("error in view", t);
+			logger.error("error in view", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -122,7 +130,7 @@ public class RoleAction extends AbstractAuthorityAction {
 			String result = this.checkRoleForDelete();
 			if (null != result) return result;
 		} catch (Throwable t) {
-			_logger.error("error in trash", t);
+			logger.error("error in trash", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -132,11 +140,10 @@ public class RoleAction extends AbstractAuthorityAction {
 		try {
 			String result = this.checkRoleForDelete();
 			if (null != result) return result;
-			IRoleManager roleManager = this.getRoleManager();
 			Role role = roleManager.getRole(this.getName());
 			roleManager.removeRole(role);
 		} catch (Throwable t) {
-			_logger.error("error in delete", t);
+			logger.error("error in delete", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -147,11 +154,7 @@ public class RoleAction extends AbstractAuthorityAction {
 	 * @return true in caso positivo, false nel caso il ruolo non esista.
 	 */
 	protected boolean existsRole() {
-		String name = this.getName();
-		boolean exists = (name != null 
-				&& name.trim().length()>=0 
-				&& this.getRoleManager().getRole(name) != null);
-		return exists;
+		return (name != null) && (roleManager.getRole(name) != null);
 	}
 	
 	/**
@@ -160,7 +163,6 @@ public class RoleAction extends AbstractAuthorityAction {
 	 * @throws ApsSystemException In caso di errore.
 	 */
 	protected boolean isRoleInUse() throws ApsSystemException {
-		IRoleManager roleManager = this.getRoleManager();
 		Role role = roleManager.getRole(this.getName());
 		List<String> usernames = super.getAuthorizationManager().getUsersByRole(role, false);
 		this.setReferences(usernames);
@@ -176,8 +178,8 @@ public class RoleAction extends AbstractAuthorityAction {
 	 */
 	protected String checkRoleForDelete() throws ApsSystemException {
 		if (!this.existsRole()) {
-			this.addActionError(this.getText("error.role.notExist"));
-			return "roleList";
+			addActionError(getText(ERROR_ROLE_NOT_EXIST));
+			return ROLE_LIST;
 		} else if (this.isRoleInUse()) {
 			this.addActionError(this.getText("error.role.used"));
 			return "references";
@@ -201,39 +203,36 @@ public class RoleAction extends AbstractAuthorityAction {
 	}
 	
 	public int getStrutsAction() {
-		return _strutsAction;
+		return strutsAction;
 	}
 	public void setStrutsAction(int strutsAction) {
-		this._strutsAction = strutsAction;
+		this.strutsAction = strutsAction;
 	}
 	
 	public String getName() {
-		return _name;
+		return name;
 	}
 	public void setName(String name) {
-		this._name = name;
+		this.name = name;
 	}
 	
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 	public void setDescription(String description) {
-		this._description = description;
+		this.description = description;
 	}
 	
 	public Set<String> getPermissionNames() {
-		return _permissionNames;
+		return permissionNames;
 	}
 	public void setPermissionNames(Set<String> permissionNames) {
-		this._permissionNames = permissionNames;
+		this.permissionNames = permissionNames;
 	}
 	
 	public Set<Permission> getRolePermissions() {
-		Set<String> permissionNames = this.getPermissionNames();
-		Set<Permission> rolePermissions = new HashSet<Permission>(permissionNames.size());
-		Iterator<String> permsIter = permissionNames.iterator();
-		while (permsIter.hasNext()) {
-			String permissionName = permsIter.next();
+		Set<Permission> rolePermissions = new HashSet<>(permissionNames.size());
+		for (String permissionName : permissionNames) {
 			Permission permission = this.getRoleManager().getPermission(permissionName);
 			rolePermissions.add(permission);
 		}
@@ -245,26 +244,17 @@ public class RoleAction extends AbstractAuthorityAction {
 	}
 	
 	public List<String> getReferences() {
-		return _references;
+		return references;
 	}
 	protected void setReferences(List<String> references) {
-		this._references = references;
+		this.references = references;
 	}
 	
 	protected IRoleManager getRoleManager() {
-		return _roleManager;
+		return roleManager;
 	}
 	public void setRoleManager(IRoleManager roleManager) {
-		this._roleManager = roleManager;
+		this.roleManager = roleManager;
 	}
-	
-	private int _strutsAction;
-	private String _name;
-	private String _description;
-	private Set<String> _permissionNames;
-	
-	private List<String> _references;
-	
-	private IRoleManager _roleManager;
 	
 }

@@ -30,13 +30,25 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.agiletec.apsadmin.system.BaseAction;
 import java.util.List;
 
-/**
- * @author E.Santoboni
- */
 public class UserAction extends BaseAction {
 	
-	private static final Logger _logger =  LoggerFactory.getLogger(UserAction.class);
-	
+	private static final Logger logger =  LoggerFactory.getLogger(UserAction.class);
+
+	private IUserManager userManager;
+	private IUserProfileManager userProfileManager;
+
+	private int strutsAction;
+	private String username;
+	private String password;
+	private String passwordConfirm;
+
+	private String profileTypeCode;
+
+	private boolean active = false;
+	private boolean reset;
+
+	private UserDetails user;
+
 	@Override
 	public void validate() {
 		super.validate();
@@ -45,12 +57,11 @@ public class UserAction extends BaseAction {
 		} else {
 			try {
 				if (this.hasActionErrors() || this.hasErrors() || this.hasFieldErrors()) {
-					String username = this.getUsername();
 					UserDetails user = this.getUserManager().getUser(username);
 					this.setUser(user);
 				}
 			} catch (Throwable t) {
-				_logger.error("Error validating user", t);
+				logger.error("Error validating user", t);
 			}
 		}
 	}
@@ -68,7 +79,7 @@ public class UserAction extends BaseAction {
 				this.addFieldError("profileTypeCode", this.getText("error.user.profileTypeCode.invalid", args));
 			}
 		} catch (Throwable t) {
-			_logger.error("Error checking user '{}'", username, t);
+			logger.error("Error checking user '{}'", username, t);
 		}
 	}
 	
@@ -82,7 +93,6 @@ public class UserAction extends BaseAction {
 		try {
 			String result = this.checkUserForEdit();
 			if (null != result) return result;
-			String username = this.getUsername();
 			UserDetails user = this.getUserManager().getUser(username);
 			if (!user.isEntandoUser()) {
 				this.addActionError(this.getText("error.user.notLocal"));
@@ -91,7 +101,7 @@ public class UserAction extends BaseAction {
 			this.setActive(!user.isDisabled());
 			this.setUser(user);
 		} catch (Throwable t) {
-			_logger.error("error in edit", t);
+			logger.error("error in edit", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -138,7 +148,7 @@ public class UserAction extends BaseAction {
 				return "editProfile";
 			}
 		} catch (Throwable t) {
-			_logger.error("error in executeSave", t);
+			logger.error("error in executeSave", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -161,7 +171,7 @@ public class UserAction extends BaseAction {
 				return true;
 			}
 		} catch (Throwable t) {
-			_logger.error("Error adding default profile for user {}", username, t);
+			logger.error("Error adding default profile for user {}", username, t);
 			throw new ApsSystemException("Error adding default profile for user " + username, t);
 		}
 		return false;
@@ -172,7 +182,7 @@ public class UserAction extends BaseAction {
 			String result = this.checkUserForDelete();
 			if (null != result) return result;
 		} catch (Throwable t) {
-			_logger.error("error in trash", t);
+			logger.error("error in trash", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -184,7 +194,7 @@ public class UserAction extends BaseAction {
 			if (null != result) return result;
 			this.getUserManager().removeUser(this.getUsername());
 		} catch (Throwable t) {
-			_logger.error("error in delete", t);
+			logger.error("error in delete", t);
 			return FAILURE;
 		}
 		return SUCCESS;
@@ -196,9 +206,12 @@ public class UserAction extends BaseAction {
 	}
 	
 	protected boolean existsUser(String username) throws Throwable {
-		return (username != null && username.trim().length() >= 0 && null != this.getUserManager().getUser(username));
+		return (username != null) && (userManager.getUser(username) != null);
 	}
-	
+
+	/**
+	 * @deprecated Replaced by {@link #isEntandoUser(String)}
+	 */
 	@Deprecated
 	protected boolean isJapsUser(String username) throws Throwable {
 		return this.isEntandoUser(username);
@@ -243,88 +256,72 @@ public class UserAction extends BaseAction {
 	}
 	
 	public int getStrutsAction() {
-		return _strutsAction;
+		return strutsAction;
 	}
 	public void setStrutsAction(int strutsAction) {
-		this._strutsAction = strutsAction;
+		this.strutsAction = strutsAction;
 	}
 	
 	public String getUsername() {
-		return _username;
+		return username;
 	}
 	public void setUsername(String username) {
-		this._username = username;
+		this.username = username;
 	}
 	
 	public String getPassword() {
-		return _password;
+		return password;
 	}
 	public void setPassword(String password) {
-		this._password = password;
+		this.password = password;
 	}
 	
 	public String getPasswordConfirm() {
-		return _passwordConfirm;
+		return passwordConfirm;
 	}
 	public void setPasswordConfirm(String passwordConfirm) {
-		this._passwordConfirm = passwordConfirm;
+		this.passwordConfirm = passwordConfirm;
 	}
 	
 	public String getProfileTypeCode() {
-		return _profileTypeCode;
+		return profileTypeCode;
 	}
 	public void setProfileTypeCode(String profileTypeCode) {
-		this._profileTypeCode = profileTypeCode;
+		this.profileTypeCode = profileTypeCode;
 	}
 	
 	public boolean isActive() {
-		return _active;
+		return active;
 	}
 	public void setActive(boolean active) {
-		this._active = active;
+		this.active = active;
 	}
 	
 	public boolean isReset() {
-		return _reset;
+		return reset;
 	}
 	public void setReset(boolean reset) {
-		this._reset = reset;
+		this.reset = reset;
 	}
 	
 	public UserDetails getUser() {
-		return _user;
+		return user;
 	}
 	public void setUser(UserDetails user) {
-		this._user = user;
+		this.user = user;
 	}
 	
 	protected IUserManager getUserManager() {
-		return _userManager;
+		return userManager;
 	}
 	public void setUserManager(IUserManager userManager) {
-		this._userManager = userManager;
+		this.userManager = userManager;
 	}
 	
 	protected IUserProfileManager getUserProfileManager() {
-		return _userProfileManager;
+		return userProfileManager;
 	}
 	public void setUserProfileManager(IUserProfileManager userProfileManager) {
-		this._userProfileManager = userProfileManager;
+		this.userProfileManager = userProfileManager;
 	}
-	
-	private IUserManager _userManager;
-	private IUserProfileManager _userProfileManager;
-	
-	private int _strutsAction;
-	private String _username;
-	private String _password;
-	private String _passwordConfirm;
-	
-	private String _profileTypeCode;
-	
-	private boolean _active = false;
-	private boolean _reset;
-	
-	private UserDetails _user;
-	
 }

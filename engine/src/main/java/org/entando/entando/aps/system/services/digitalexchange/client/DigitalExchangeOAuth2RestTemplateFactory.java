@@ -11,23 +11,12 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.services.digitalexchange;
+package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import java.util.List;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
-import org.entando.entando.web.common.model.RestError;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
-public interface DigitalExchangesService {
+public interface DigitalExchangeOAuth2RestTemplateFactory {
 
-    List<DigitalExchange> getDigitalExchanges();
-
-    DigitalExchange findByName(String name);
-
-    DigitalExchange create(DigitalExchange digitalExchange);
-
-    DigitalExchange update(DigitalExchange digitalExchange);
-
-    void delete(String digitalExchangeName);
-
-    List<RestError> test(String digitalExchangeName);
+    OAuth2RestTemplate createOAuth2RestTemplate(DigitalExchange digitalExchange);
 }

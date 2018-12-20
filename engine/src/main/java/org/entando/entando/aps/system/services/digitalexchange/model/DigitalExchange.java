@@ -28,14 +28,16 @@ import org.springframework.validation.annotation.Validated;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DigitalExchange {
 
-    @NotNull
-    @Size(min = 3, message = "string.size.invalid")
+    @NotNull(message = "digitalExchange.name.required")
+    @Size(min = 3, max = 20, message = "string.size.invalid")
     @JsonProperty("name")
     @ApiModelProperty(required = true)
     @XmlElement
     private String name;
 
+    @NotNull(message = "digitalExchange.url.required")
     @JsonProperty("url")
+    @ApiModelProperty(required = true)
     @XmlElement
     private String url;
 
@@ -44,8 +46,16 @@ public class DigitalExchange {
     private int timeout;
 
     @JsonProperty("active")
-    @XmlElement    
+    @XmlElement
     private boolean active;
+
+    @JsonProperty("key")
+    @XmlElement(name = "key")
+    private String clientKey;
+
+    @JsonProperty("secret")
+    @XmlElement(name = "secret")
+    private String clientSecret;
 
     public String getName() {
         return name;
@@ -77,5 +87,21 @@ public class DigitalExchange {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public String getClientKey() {
+        return clientKey;
+    }
+
+    public void setClientKey(String clientKey) {
+        this.clientKey = clientKey;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
     }
 }

@@ -30,12 +30,12 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @param <R> the type of each DE response
  * @param <C> the type of the combined response
  */
-public abstract class DigitalExchangeCall<R extends RestResponse, C> {
+public abstract class DigitalExchangeCall<R extends RestResponse<?, ?>, C> {
 
     private final HttpMethod method;
     private final ParameterizedTypeReference<R> parameterizedTypeReference;
     private final String[] urlSegments;
-    private HttpEntity entity;
+    private HttpEntity<?> entity;
 
     /**
      * @param method e.g. GET, POST, ...
@@ -63,11 +63,11 @@ public abstract class DigitalExchangeCall<R extends RestResponse, C> {
         return method;
     }
 
-    public HttpEntity getEntity() {
+    public HttpEntity<?> getEntity() {
         return entity;
     }
 
-    public void setEntity(HttpEntity entity) {
+    public void setEntity(HttpEntity<?> entity) {
         this.entity = entity;
     }
 
@@ -83,6 +83,7 @@ public abstract class DigitalExchangeCall<R extends RestResponse, C> {
         return UriComponentsBuilder
                 .fromHttpUrl(digitalExchange.getUrl())
                 .pathSegment(urlSegments)
+                .build(false) // disable encoding: it will be done by RestTemplate
                 .toUriString();
     }
 

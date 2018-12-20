@@ -81,6 +81,8 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDA
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesManagerTest;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeOAuth2RestTemplateFactoryTest;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClientTest;
 import org.entando.entando.aps.system.services.entity.*;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
@@ -219,6 +221,8 @@ public class AllTests {
         suite.addTest(new JUnit4TestAdapter(ApiOAuth2TokenManagerTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DigitalExchangesClientTest.class));
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangesManagerTest.class));
+        suite.addTest(new JUnit4TestAdapter(DigitalExchangeOAuth2RestTemplateFactoryTest.class));
 
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());

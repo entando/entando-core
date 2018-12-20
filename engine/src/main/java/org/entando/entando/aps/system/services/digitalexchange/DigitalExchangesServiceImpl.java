@@ -13,127 +13,95 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import javax.xml.bind.DataBindingException;
-import javax.xml.bind.JAXB;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
+import org.entando.entando.aps.system.services.digitalexchange.client.SimpleDigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
-import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchangesConfig;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.entando.entando.web.common.model.RestError;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import static org.entando.entando.web.digitalexchange.DigitalExchangeValidator.*;
 
 @Service
 public class DigitalExchangesServiceImpl implements DigitalExchangesService {
 
     private static final String DIGITAL_EXCHANGE_LABEL = "digitalExchange";
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final ConfigInterface configManager;
+    private final DigitalExchangesManager manager;
+    private final DigitalExchangesClient client;
 
     @Autowired
-    public DigitalExchangesServiceImpl(ConfigInterface configManager) {
-        this.configManager = configManager;
+    public DigitalExchangesServiceImpl(DigitalExchangesManager manager, DigitalExchangesClient client) {
+        this.manager = manager;
+        this.client = client;
     }
 
     @Override
     public List<DigitalExchange> getDigitalExchanges() {
-
-        String digitalExchangesConfig = configManager.getConfigItem(SystemConstants.CONFIG_ITEM_DIGITAL_EXCHANGES);
-
-        if (digitalExchangesConfig == null) {
-            logger.warn("DigitalExchanges configuration not found");
-            return new ArrayList<>();
-        }
-
-        try {
-            DigitalExchangesConfig config = JAXB.unmarshal(new StringReader(digitalExchangesConfig), DigitalExchangesConfig.class);
-            return config.getDigitalExchanges();
-        } catch (DataBindingException ex) {
-            logger.error("Unable to parse DigitalExchanges XML configuration", ex);
-            return new ArrayList<>();
-        }
+        return manager.getDigitalExchanges();
     }
 
     @Override
     public DigitalExchange findByName(String name) {
-        Optional<DigitalExchange> maybeDigitalExchange = getDigitalExchange(getDigitalExchanges(), name);
-        return maybeDigitalExchange.orElseThrow(()
+        return manager.findByName(name).orElseThrow(()
                 -> new RestRourceNotFoundException(ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND, DIGITAL_EXCHANGE_LABEL, name));
     }
 
     @Override
     public DigitalExchange create(DigitalExchange digitalExchange) {
 
-        List<DigitalExchange> digitalExchanges = getDigitalExchanges();
+        manager.findByName(digitalExchange.getName())
+                .ifPresent(de -> {
+                    BeanPropertyBindingResult errors = new BeanPropertyBindingResult(digitalExchange, DIGITAL_EXCHANGE_LABEL);
+                    errors.reject(ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS, null, "digitalExchange.exists");
+                    throw new ValidationConflictException(errors);
+                });
 
-        BeanPropertyBindingResult validationResult = this.validateForCreate(digitalExchanges, digitalExchange);
-        if (validationResult.hasErrors()) {
-            throw new ValidationConflictException(validationResult);
-        }
+        validateURL(digitalExchange);
 
-        digitalExchanges.add(digitalExchange);
-        updateDigitalExchangesConfig(digitalExchanges);
-
-        return digitalExchange;
-    }
-
-    private BeanPropertyBindingResult validateForCreate(List<DigitalExchange> digitalExchanges, DigitalExchange digitalExchange) {
-        BeanPropertyBindingResult errors = new BeanPropertyBindingResult(digitalExchange, DIGITAL_EXCHANGE_LABEL);
-        if (digitalExchanges.stream().anyMatch(m -> m.getName().equals(digitalExchange.getName()))) {
-            errors.reject(ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS, null, "digitalExchange.exists");
-        }
-        return errors;
+        return manager.create(digitalExchange);
     }
 
     @Override
     public DigitalExchange update(DigitalExchange digitalExchange) {
-        List<DigitalExchange> digitalExchanges = getDigitalExchanges();
-        checkIfExists(digitalExchanges, digitalExchange.getName());
-        digitalExchanges.replaceAll(m -> m.getName().equals(digitalExchange.getName()) ? digitalExchange : m);
-        return digitalExchange;
+        findByName(digitalExchange.getName());
+        validateURL(digitalExchange);
+        return manager.update(digitalExchange);
     }
 
     @Override
     public void delete(String digitalExchangeName) {
-        List<DigitalExchange> digitalExchanges = getDigitalExchanges();
-        checkIfExists(digitalExchanges, digitalExchangeName);
-        digitalExchanges.removeIf(m -> m.getName().equals(digitalExchangeName));
-        updateDigitalExchangesConfig(digitalExchanges);
+        findByName(digitalExchangeName);
+        manager.delete(digitalExchangeName);
     }
 
-    private void updateDigitalExchangesConfig(List<DigitalExchange> digitalExchanges) {
-        DigitalExchangesConfig config = new DigitalExchangesConfig();
-        config.setDigitalExchanges(digitalExchanges);
-        StringWriter sw = new StringWriter();
-        JAXB.marshal(config, sw);
-        String configString = sw.toString();
+    @Override
+    public List<RestError> test(String digitalExchangeName) {
+        DigitalExchange digitalExchange = findByName(digitalExchangeName);
 
+        SimpleDigitalExchangeCall<String> call = new SimpleDigitalExchangeCall<>(
+                HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<String>>() {
+        }, "digitalExchange", "exchanges", "test", digitalExchangeName);
+
+        SimpleRestResponse<String> response = client.getSingleResponse(digitalExchange, call);
+
+        return response.getErrors();
+    }
+
+    private void validateURL(DigitalExchange digitalExchange) {
         try {
-            configManager.updateConfigItem(SystemConstants.CONFIG_ITEM_DIGITAL_EXCHANGES, configString);
-        } catch (ApsSystemException ex) {
-            throw new RuntimeException("Error updating DigitalExchanges configuration", ex);
-        }
-    }
-
-    private Optional<DigitalExchange> getDigitalExchange(List<DigitalExchange> digitalExchanges, String digitalExchangeName) {
-        return digitalExchanges.stream().filter(m -> m.getName().equals(digitalExchangeName)).findFirst();
-    }
-
-    private void checkIfExists(List<DigitalExchange> digitalExchanges, String digitalExchangeName) {
-        if (!getDigitalExchange(digitalExchanges, digitalExchangeName).isPresent()) {
-            throw new RestRourceNotFoundException(ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND, DIGITAL_EXCHANGE_LABEL, digitalExchangeName);
+            UriComponentsBuilder.fromHttpUrl(digitalExchange.getUrl());
+        } catch (IllegalArgumentException ex) {
+            BeanPropertyBindingResult errors = new BeanPropertyBindingResult(digitalExchange, DIGITAL_EXCHANGE_LABEL);
+            errors.reject(ERRCODE_DIGITAL_EXCHANGE_INVALID_URL, null, "digitalExchange.url.invalid");
+            throw new ValidationConflictException(errors);
         }
     }
 }

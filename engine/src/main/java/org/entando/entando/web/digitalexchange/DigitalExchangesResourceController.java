@@ -26,9 +26,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import org.entando.entando.web.common.model.RestError;
 
 @RestController
-public class DigitalExchangesResourceController implements DigitalExchangeResource {
+public class DigitalExchangesResourceController implements DigitalExchangesResource {
 
     private final DigitalExchangesService digitalExchangeService;
     private final DigitalExchangeValidator digitalExchangeValidator;
@@ -76,5 +77,16 @@ public class DigitalExchangesResourceController implements DigitalExchangeResour
     public ResponseEntity<SimpleRestResponse<String>> delete(@PathVariable("name") String name) {
         digitalExchangeService.delete(name);
         return ResponseEntity.ok(new SimpleRestResponse<>(name));
+    }
+
+    @Override
+    public ResponseEntity<SimpleRestResponse<String>> test(@PathVariable("name") String name) {
+
+        List<RestError> errors = digitalExchangeService.test(name);
+
+        SimpleRestResponse<String> response = new SimpleRestResponse<>(errors.isEmpty() ? "OK" : "");
+        response.setErrors(errors);
+
+        return ResponseEntity.ok(response);
     }
 }

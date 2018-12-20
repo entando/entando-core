@@ -13,8 +13,9 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesManager;
 import org.springframework.context.MessageSource;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -26,12 +27,12 @@ import static org.mockito.Mockito.when;
 public class DigitalExchangesClientMocker {
 
     private final DigitalExchangesMocker digitalExchangesMocker;
-    private final DigitalExchangesService digitalExchangesService;
+    private final DigitalExchangesManager digitalExchangesManager;
     private final MessageSource messageSource;
 
     public DigitalExchangesClientMocker() {
         digitalExchangesMocker = new DigitalExchangesMocker();
-        digitalExchangesService = mock(DigitalExchangesService.class);
+        digitalExchangesManager = mock(DigitalExchangesManager.class);
         messageSource = mock(MessageSource.class);
     }
 
@@ -40,12 +41,14 @@ public class DigitalExchangesClientMocker {
     }
 
     public DigitalExchangesClient build() {
-        digitalExchangesMocker.initMocks();
+        DigitalExchangeOAuth2RestTemplateFactory restTemplateFactory = digitalExchangesMocker.initMocks();
         when(messageSource.getMessage(any(), any(), any())).thenReturn("Mocked Message");
-        when(digitalExchangesService.getDigitalExchanges()).thenReturn(digitalExchangesMocker.getFakeExchanges());
-        return new DigitalExchangesClientImpl(digitalExchangesService, digitalExchangesMocker.getRestTemplate(), messageSource);
+        when(digitalExchangesManager.getDigitalExchanges()).thenReturn(digitalExchangesMocker.getFakeExchanges());
+        OAuth2RestTemplate restTemplate = restTemplateFactory.createOAuth2RestTemplate(null);
+        when(digitalExchangesManager.getRestTemplate(any())).thenReturn(restTemplate);
+        return new DigitalExchangesClientImpl(digitalExchangesManager, messageSource);
     }
-    
+
     public MessageSource getMessageSource() {
         return messageSource;
     }

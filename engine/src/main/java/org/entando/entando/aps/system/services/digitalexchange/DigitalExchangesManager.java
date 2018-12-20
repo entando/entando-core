@@ -14,20 +14,22 @@
 package org.entando.entando.aps.system.services.digitalexchange;
 
 import java.util.List;
+import com.agiletec.aps.system.common.RefreshableBean;
+import java.util.Optional;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
-import org.entando.entando.web.common.model.RestError;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 
-public interface DigitalExchangesService {
+public interface DigitalExchangesManager extends RefreshableBean {
 
     List<DigitalExchange> getDigitalExchanges();
 
-    DigitalExchange findByName(String name);
-
     DigitalExchange create(DigitalExchange digitalExchange);
+
+    Optional<DigitalExchange> findByName(String digitalExchangeName);
 
     DigitalExchange update(DigitalExchange digitalExchange);
 
     void delete(String digitalExchangeName);
 
-    List<RestError> test(String digitalExchangeName);
+    OAuth2RestTemplate getRestTemplate(String digitalExchangeName);
 }

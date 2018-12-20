@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Api(tags = {"digital-exchange"})
 @RequestMapping(value = "/digitalExchange/exchanges")
-public interface DigitalExchangeResource {
+public interface DigitalExchangesResource {
 
     @ApiOperation(value = "Create a new Digital Exchange configuration")
     @ApiResponses({
@@ -80,4 +80,13 @@ public interface DigitalExchangeResource {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @DeleteMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SimpleRestResponse<String>> delete(@PathVariable("name") String name);
+    
+    @ApiOperation(value = "Test the connection to a Digital Exchange instance")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "OK"),
+        @ApiResponse(code = 404, message = "Not Found")
+    })
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @GetMapping(value = "/test/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SimpleRestResponse<String>> test(@PathVariable("name") String name);
 }

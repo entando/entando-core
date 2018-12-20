@@ -13,9 +13,8 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange;
 
-import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Optional;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,15 +24,26 @@ import org.mockito.MockitoAnnotations;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.digitalexchange.DigitalExchangeValidator;
+import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 
 public class DigitalExchangesServiceTest {
 
+    private static final String DE_1 = "DE 1";
+
     @Mock
-    private ConfigInterface configManager;
+    private DigitalExchangesManager manager;
+
+    @Mock
+    private DigitalExchangesClient client;
 
     @InjectMocks
     private DigitalExchangesServiceImpl service;
@@ -41,39 +51,19 @@ public class DigitalExchangesServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockValidDigitalExchangesConfig();
+        mockManager();
+        mockClient();
     }
 
     @Test
     public void shouldReturnDigitalExchanges() {
-
-        List<DigitalExchange> digitalExchanges = service.getDigitalExchanges();
-
-        assertNotNull(digitalExchanges);
-        assertEquals(1, digitalExchanges.size());
-        assertEquals("DE 1", digitalExchanges.get(0).getName());
-        assertEquals("http://www.entando.com/", digitalExchanges.get(0).getUrl());
-    }
-
-    @Test
-    public void shouldReturnEmptyList() {
-
-        // invalid configuration
-        when(configManager.getConfigItem(SystemConstants.CONFIG_ITEM_DIGITAL_EXCHANGES))
-                .thenReturn("");
-
-        List<DigitalExchange> digitalExchanges = service.getDigitalExchanges();
-        assertNotNull(digitalExchanges);
-        assertTrue(digitalExchanges.isEmpty());
-
-        // Restore valid configuration mocking for other tests
-        mockValidDigitalExchangesConfig();
+        assertThat(service.getDigitalExchanges())
+                .isNotNull().hasSize(1);
     }
 
     @Test
     public void shouldFindDigitalExchange() {
-        DigitalExchange digitalExchange = service.findByName("DE 1");
-        assertNotNull(digitalExchange);
+        assertNotNull(service.findByName(DE_1));
     }
 
     @Test(expected = RestRourceNotFoundException.class)
@@ -83,18 +73,13 @@ public class DigitalExchangesServiceTest {
 
     @Test
     public void shouldAddDigitalExchange() {
-        String newDigitalExchangeName = "DE 2";
-        DigitalExchange digitalExchange = service.create(getDigitalExchange(newDigitalExchangeName));
-        assertNotNull(digitalExchange);
-        assertEquals(newDigitalExchangeName, digitalExchange.getName());
+        service.create(getDigitalExchange("DE 2"));
     }
 
     @Test(expected = ValidationConflictException.class)
     public void shouldFailAddingDigitalExchange() {
         try {
-            String newDigitalExchangeName = "DE 1";
-            DigitalExchange digitalExchange = service.create(getDigitalExchange(newDigitalExchangeName));
-            assertNotNull(digitalExchange);
+            service.create(getDigitalExchange(DE_1));
         } catch (ValidationConflictException ex) {
             assertEquals(1, ex.getBindingResult().getErrorCount());
             assertEquals(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS,
@@ -105,14 +90,7 @@ public class DigitalExchangesServiceTest {
 
     @Test
     public void shouldUpdateDigitalExchange() {
-        String DigitalExchangeName = "DE 1";
-        DigitalExchange digitalExchange = getDigitalExchange(DigitalExchangeName);
-        String url = "http://www.entando.com";
-        digitalExchange.setUrl(url);
-        DigitalExchange updated = service.update(digitalExchange);
-        assertNotNull(updated);
-        assertEquals(digitalExchange.getName(), updated.getName());
-        assertEquals(url, updated.getUrl());
+        service.update(getDigitalExchange(DE_1));
     }
 
     @Test(expected = RestRourceNotFoundException.class)
@@ -122,7 +100,7 @@ public class DigitalExchangesServiceTest {
 
     @Test
     public void shouldDeleteDigitalExchange() {
-        service.delete("DE 1");
+        service.delete(DE_1);
     }
 
     @Test(expected = RestRourceNotFoundException.class)
@@ -130,20 +108,54 @@ public class DigitalExchangesServiceTest {
         service.delete("Inexistent DE");
     }
 
-    private void mockValidDigitalExchangesConfig() {
+    @Test(expected = ValidationConflictException.class)
+    public void shouldFailCreatingDigitalExchangeWithInvalidURL() {
+        try {
+            DigitalExchange digitalExchange = getDigitalExchange("New DE");
+            digitalExchange.setUrl("invalid-url");
+            service.create(digitalExchange);
+        } catch (ValidationConflictException ex) {
+            assertEquals(1, ex.getBindingResult().getErrorCount());
+            assertEquals(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_INVALID_URL,
+                    ex.getBindingResult().getAllErrors().get(0).getCode());
+            throw ex;
+        }
+    }
 
-        when(configManager.getConfigItem(SystemConstants.CONFIG_ITEM_DIGITAL_EXCHANGES))
-                .thenReturn("<digitalExchanges>"
-                        + "  <digitalExchange>"
-                        + "    <name>DE 1</name>"
-                        + "    <url>http://www.entando.com/</url>"
-                        + "  </digitalExchange>"
-                        + "</digitalExchanges>");
+    @Test
+    public void shouldTestInstance() {
+
+        OAuth2RestTemplate restTemplate = new DigitalExchangesMocker()
+                .addDigitalExchange(DE_1, r -> new SimpleRestResponse<>("OK"))
+                .initMocks().createOAuth2RestTemplate(null);
+
+        when(manager.getRestTemplate(any())).thenReturn(restTemplate);
+
+        assertThat(service.test(DE_1)).isEmpty();
+    }
+
+    private void mockManager() {
+
+        DigitalExchange digitalExchange = getDigitalExchange(DE_1);
+
+        when(manager.getDigitalExchanges()).thenReturn(Arrays.asList(digitalExchange));
+
+        when(manager.findByName(any(String.class)))
+                .thenAnswer(invocation -> {
+                    String name = invocation.getArgument(0);
+                    return Optional.ofNullable(DE_1.equals(name) ? digitalExchange : null);
+                });
+    }
+
+    private void mockClient() {
+        when(client.getSingleResponse(any(DigitalExchange.class), any()))
+                .thenReturn(new SimpleRestResponse<>("OK"));
     }
 
     private DigitalExchange getDigitalExchange(String name) {
         DigitalExchange digitalExchange = new DigitalExchange();
         digitalExchange.setName(name);
+        digitalExchange.setUrl("https://de1.entando.com/");
         return digitalExchange;
     }
 }

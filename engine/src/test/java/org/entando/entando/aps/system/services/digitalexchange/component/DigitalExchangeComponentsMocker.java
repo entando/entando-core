@@ -28,7 +28,7 @@ import org.entando.entando.web.digitalexchange.component.DigitalExchangeComponen
 
 public class DigitalExchangeComponentsMocker {
 
-    public static Function<DigitalExchangeMockedRequest, RestResponse> mock(String... names) {
+    public static Function<DigitalExchangeMockedRequest, RestResponse<?, ?>> mock(String... names) {
 
         return request -> {
             Stream<DigitalExchangeComponent> stream
@@ -40,7 +40,7 @@ public class DigitalExchangeComponentsMocker {
         };
     }
 
-    public static Function<DigitalExchangeMockedRequest, RestResponse> mock(DigitalExchangeComponent... components) {
+    public static Function<DigitalExchangeMockedRequest, RestResponse<?, ?>> mock(DigitalExchangeComponent... components) {
         return request -> mock(request, Arrays.stream(components));
     }
 

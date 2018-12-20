@@ -18,7 +18,6 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -144,7 +143,7 @@ public class DigitalExchangesManagerImpl implements DigitalExchangesManager {
 
         try {
             DigitalExchangesConfig config = JAXB.unmarshal(new StringReader(digitalExchangesConfig), DigitalExchangesConfig.class);
-            config.getDigitalExchanges().forEach(exchanges::add);
+            exchanges.addAll(config.getDigitalExchanges());
         } catch (DataBindingException ex) {
             logger.error("Unable to parse DigitalExchanges XML configuration", ex);
         }

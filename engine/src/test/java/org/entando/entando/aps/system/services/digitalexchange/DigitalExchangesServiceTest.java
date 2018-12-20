@@ -27,13 +27,13 @@ import org.entando.entando.web.digitalexchange.DigitalExchangeValidator;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
-import org.springframework.context.MessageSource;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 
 public class DigitalExchangesServiceTest {
 
@@ -43,7 +43,7 @@ public class DigitalExchangesServiceTest {
     private DigitalExchangesManager manager;
 
     @Mock
-    private MessageSource messageSource;
+    private DigitalExchangesClient client;
 
     @InjectMocks
     private DigitalExchangesServiceImpl service;
@@ -52,6 +52,7 @@ public class DigitalExchangesServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockManager();
+        mockClient();
     }
 
     @Test
@@ -129,7 +130,7 @@ public class DigitalExchangesServiceTest {
                 .initMocks().createOAuth2RestTemplate(null);
 
         when(manager.getRestTemplate(any())).thenReturn(restTemplate);
-        
+
         assertThat(service.test(DE_1)).isEmpty();
     }
 
@@ -141,9 +142,14 @@ public class DigitalExchangesServiceTest {
 
         when(manager.findByName(any(String.class)))
                 .thenAnswer(invocation -> {
-                    String name = (String) invocation.getArgument(0);
+                    String name = invocation.getArgument(0);
                     return Optional.ofNullable(DE_1.equals(name) ? digitalExchange : null);
                 });
+    }
+
+    private void mockClient() {
+        when(client.getSingleResponse(any(DigitalExchange.class), any()))
+                .thenReturn(new SimpleRestResponse<>("OK"));
     }
 
     private DigitalExchange getDigitalExchange(String name) {

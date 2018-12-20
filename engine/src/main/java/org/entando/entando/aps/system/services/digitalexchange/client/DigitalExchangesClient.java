@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
+import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.model.RestResponse;
 
 public interface DigitalExchangesClient {
@@ -28,4 +29,8 @@ public interface DigitalExchangesClient {
      * @return a combined response
      */
     <R extends RestResponse<?, ?>, C> C getCombinedResult(DigitalExchangeCall<R, C> call);
+
+    <R extends RestResponse<?, ?>, C> R getSingleResponse(DigitalExchange digitalExchange, DigitalExchangeCall<R, C> call);
+    
+    <R extends RestResponse<?, ?>, C> R getSingleResponse(String digitalExchangeName, DigitalExchangeCall<R, C> call);
 }

@@ -58,7 +58,7 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
                 = digitalExchangesManager.getDigitalExchanges()
                         .stream()
                         .filter(de -> de.isActive())
-                        .map(de -> CompletableFuture.supplyAsync(() -> getResponse(de, call)))
+                        .map(de -> CompletableFuture.supplyAsync(() -> getSingleResponse(de, call)))
                         .toArray(CompletableFuture[]::new);
 
         return CompletableFuture.allOf(futureResults)
@@ -69,8 +69,14 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
                 }).join();
     }
 
-    private <R extends RestResponse<?, ?>, C> R getResponse(DigitalExchange digitalExchange, DigitalExchangeCall<R, C> call) {
+    @Override
+    public <R extends RestResponse<?, ?>, C> R getSingleResponse(DigitalExchange digitalExchange, DigitalExchangeCall<R, C> call) {
         OAuth2RestTemplate restTemplate = digitalExchangesManager.getRestTemplate(digitalExchange.getName());
         return new DigitalExchangeCallExecutor<>(messageSource, digitalExchange, restTemplate, call).getResponse();
+    }
+
+    @Override
+    public <R extends RestResponse<?, ?>, C> R getSingleResponse(String digitalExchangeName, DigitalExchangeCall<R, C> call) {
+        return getSingleResponse(digitalExchangesManager.findByName(digitalExchangeName).get(), call);
     }
 }

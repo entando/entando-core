@@ -36,7 +36,7 @@ public class DigitalExchangeCallExecutor<R extends RestResponse<?, ?>, C> {
     private final OAuth2RestTemplate restTemplate;
     private final DigitalExchangeCall<R, C> call;
 
-    public DigitalExchangeCallExecutor(MessageSource messageSource,
+    protected DigitalExchangeCallExecutor(MessageSource messageSource,
             DigitalExchange digitalExchange, OAuth2RestTemplate restTemplate,
             DigitalExchangeCall<R, C> call) {
         
@@ -46,7 +46,7 @@ public class DigitalExchangeCallExecutor<R extends RestResponse<?, ?>, C> {
         this.call = call;
     }
 
-    public R getResponse() {
+    protected R getResponse() {
 
         String url;
 
@@ -81,7 +81,7 @@ public class DigitalExchangeCallExecutor<R extends RestResponse<?, ?>, C> {
 
         } catch (OAuth2Exception ex) {
 
-            if (ex.getCause() != null && ex.getCause() instanceof ResourceAccessException) { // Server down, unknown host, ...
+            if (ex.getCause() instanceof ResourceAccessException) { // Server down, unknown host, ...
                 return manageResourceAccessException(url, (ResourceAccessException) ex.getCause());
             } else {
                 logger.error("Error calling {}. Exception message: {}", url, ex.getMessage());
@@ -97,7 +97,7 @@ public class DigitalExchangeCallExecutor<R extends RestResponse<?, ?>, C> {
 
     private R manageResourceAccessException(String url, ResourceAccessException ex) {
 
-        if (ex.getCause() != null && ex.getCause() instanceof SocketTimeoutException) {
+        if (ex.getCause() instanceof SocketTimeoutException) {
             logger.error("Timeout calling {}", url);
 
             return getErrorResponse(ERRCODE_DE_TIMEOUT, "digitalExchange.timeout",

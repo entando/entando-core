@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.digitalexchange;
 
 import java.util.List;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
-import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeCallExecutor;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 import org.entando.entando.aps.system.services.digitalexchange.client.SimpleDigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -24,7 +24,6 @@ import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.context.MessageSource;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -36,12 +35,12 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
     private static final String DIGITAL_EXCHANGE_LABEL = "digitalExchange";
 
     private final DigitalExchangesManager manager;
-    private final MessageSource messageSource;
+    private final DigitalExchangesClient client;
 
     @Autowired
-    public DigitalExchangesServiceImpl(DigitalExchangesManager manager, MessageSource messageSource) {
+    public DigitalExchangesServiceImpl(DigitalExchangesManager manager, DigitalExchangesClient client) {
         this.manager = manager;
-        this.messageSource = messageSource;
+        this.client = client;
     }
 
     @Override
@@ -91,9 +90,7 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
                 HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<String>>() {
         }, "digitalExchange", "exchanges", "test", digitalExchangeName);
 
-        SimpleRestResponse<String> response
-                = new DigitalExchangeCallExecutor<>(messageSource, digitalExchange,
-                        manager.getRestTemplate(digitalExchangeName), call).getResponse();
+        SimpleRestResponse<String> response = client.getSingleResponse(digitalExchange, call);
 
         return response.getErrors();
     }

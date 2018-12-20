@@ -63,11 +63,11 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
 
         ResultActions result = createAuthRequest(get(BASE_URL)).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", hasSize(2)));
-        result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", hasSize(2)))
+                .andExpect(jsonPath("$.payload[0]", is("DE 1")));
     }
 
     @Test
@@ -82,18 +82,18 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
             ResultActions result = createAuthRequest(post(BASE_URL))
                     .setContent(digitalExchange).execute();
 
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.metaData").isEmpty());
-            result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.metaData").isEmpty())
+                    .andExpect(jsonPath("$.errors").isEmpty())
+                    .andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
 
             // Read
             result = createAuthRequest(get(BASE_URL + "/{name}", digitalExchangeName)).execute();
 
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.metaData").isEmpty());
-            result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.metaData").isEmpty())
+                    .andExpect(jsonPath("$.errors").isEmpty())
+                    .andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
 
             // Update
             String url = "http://www.entando.com/";
@@ -101,19 +101,19 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
             result = createAuthRequest(put(BASE_URL + "/{name}", digitalExchangeName))
                     .setContent(digitalExchange).execute();
 
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.metaData").isEmpty());
-            result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload.name", is(digitalExchangeName)));
-            result.andExpect(jsonPath("$.payload.url", is(url)));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.metaData").isEmpty())
+                    .andExpect(jsonPath("$.errors").isEmpty())
+                    .andExpect(jsonPath("$.payload.name", is(digitalExchangeName)))
+                    .andExpect(jsonPath("$.payload.url", is(url)));
 
             // Delete
             result = createAuthRequest(delete(BASE_URL + "/{name}", digitalExchangeName)).execute();
 
-            result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.metaData").isEmpty());
-            result.andExpect(jsonPath("$.errors").isEmpty());
-            result.andExpect(jsonPath("$.payload", is(digitalExchangeName)));
+            result.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.metaData").isEmpty())
+                    .andExpect(jsonPath("$.errors").isEmpty())
+                    .andExpect(jsonPath("$.payload", is(digitalExchangeName)));
         } catch (Exception ex) {
             digitalExchangeService.delete(digitalExchangeName);
             throw ex;
@@ -126,10 +126,10 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         ResultActions result = createAuthRequest(post(BASE_URL))
                 .setContent(getDigitalExchange("DE 1")).execute();
 
-        result.andExpect(status().isConflict());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS)));
+        result.andExpect(status().isConflict())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_ALREADY_EXISTS)));
     }
 
     @Test
@@ -137,11 +137,11 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
 
         ResultActions result = createAuthRequest(get(BASE_URL + "/{name}", "Inexistent DE")).execute();
 
-        result.andExpect(status().isNotFound());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
-        result.andExpect(jsonPath("$.payload").isEmpty());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)))
+                .andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
@@ -152,11 +152,11 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", digitalExchange.getName()))
                 .setContent(digitalExchange).execute();
 
-        result.andExpect(status().isNotFound());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
-        result.andExpect(jsonPath("$.payload").isEmpty());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)))
+                .andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
@@ -164,11 +164,11 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
 
         ResultActions result = createAuthRequest(delete(BASE_URL + "/{name}", "Inexistent DE")).execute();
 
-        result.andExpect(status().isNotFound());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)));
-        result.andExpect(jsonPath("$.payload").isEmpty());
+        result.andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_DIGITAL_EXCHANGE_NOT_FOUND)))
+                .andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
@@ -176,10 +176,10 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
 
         ResultActions result = createAuthRequest(get(BASE_URL + "/test/{name}", "DE 1")).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", is("OK")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", is("OK")));
     }
 
     private DigitalExchange getDigitalExchange(String name) {

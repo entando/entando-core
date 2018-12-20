@@ -46,7 +46,7 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	
-        <action name="edit" class="jacmsMultipleResourceAction" method="edit">
+        <!--action name="edit" class="jacmsMultipleResourceAction" method="edit">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
@@ -64,20 +64,25 @@
         <action name="removeCategory*" class="jacmsMultipleResourceAction" method="removeCategory">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
-        </action>
+        </action-->
         
-        <action name="save" class="jacmsMultipleResourceAction" method="save">
+        <action name="save" class="jacmsResourceFileChunksUploadAction" method="save">
             <result type="tiles" name="input">admin.jacms.resource.entry</result>
             <result type="tiles" name="failure">admin.jacms.resource.entry</result>
-            <result type="redirectAction">
-                <param name="actionName">list</param>
-                <param name="resourceTypeCode">${resourceTypeCode}</param>
+            <result type="stream">
+                <param name="contentType">text/html</param>
+                <param name="inputStream">inputStream</param>
             </result>
+
             <!-- <interceptor-ref name="fileUpload"><param name="maximumSize">10485760</param></interceptor-ref> --><!-- maximun Size = 10 Mb -->
             <interceptor-ref name="apsFileUpload" />
-            <interceptor-ref name="entandoValidationStack">
+            <!--interceptor-ref name="entandoValidationStack">
+                <param name="requestAuth.requiredPermission">manageResources</param>
+            </interceptor-ref-->
+            <interceptor-ref name="entandoDefaultStack">
                 <param name="requestAuth.requiredPermission">manageResources</param>
             </interceptor-ref>
+       
         </action>
         
         <!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA RISORSE ######### -->

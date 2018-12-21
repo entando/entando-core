@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.digitalexchange;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.junit.Test;
@@ -27,9 +29,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.client.ResourceAccessException;
 
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.emptyArray;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -53,7 +58,11 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
         @Primary
         public DigitalExchangeOAuth2RestTemplateFactory getRestTemplateFactory() {
             return new DigitalExchangesMocker()
-                    .addDigitalExchange("DE 1", new SimpleRestResponse<>("OK"))
+                    .addDigitalExchange("DE 1", new SimpleRestResponse<>(
+                            ImmutableMap.of("DE 1", new ArrayList<>())))
+                    .addDigitalExchange("DE 2", () -> {
+                        throw new ResourceAccessException("Connection Refused");
+                    })
                     .initMocks();
         }
     }
@@ -67,7 +76,7 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
                 .andExpect(jsonPath("$.metaData").isEmpty())
                 .andExpect(jsonPath("$.errors").isEmpty())
                 .andExpect(jsonPath("$.payload", hasSize(2)))
-                .andExpect(jsonPath("$.payload[0]", is("DE 1")));
+                .andExpect(jsonPath("$.payload[0].name", is("DE 1")));
     }
 
     @Test
@@ -174,12 +183,32 @@ public class DigitalExchangesControllerIntegrationTest extends AbstractControlle
     @Test
     public void shouldTestInstance() throws Exception {
 
+        // working instance
         ResultActions result = createAuthRequest(get(BASE_URL + "/test/{name}", "DE 1")).execute();
 
         result.andExpect(status().isOk())
                 .andExpect(jsonPath("$.metaData").isEmpty())
                 .andExpect(jsonPath("$.errors").isEmpty())
                 .andExpect(jsonPath("$.payload", is("OK")));
+
+        // unreachable instance
+        result = createAuthRequest(get(BASE_URL + "/test/{name}", "DE 2")).execute();
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.payload").isEmpty());
+    }
+
+    public void shouldTestAllInstances() throws Exception {
+
+        ResultActions result = createAuthRequest(get(BASE_URL + "/test")).execute();
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", hasEntry(is("DE 1"), emptyArray())))
+                .andExpect(jsonPath("$.payload", hasEntry(is("DE 2"), hasSize(1))));
     }
 
     private DigitalExchange getDigitalExchange(String name) {

@@ -19,9 +19,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import java.util.List;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.model.RestError;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -61,7 +63,7 @@ public interface DigitalExchangesResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<SimpleRestResponse<List<String>>> list();
+    ResponseEntity<SimpleRestResponse<List<DigitalExchange>>> list();
 
     @ApiOperation(value = "Update a Digital Exchange configuration")
     @ApiResponses({
@@ -80,6 +82,14 @@ public interface DigitalExchangesResource {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @DeleteMapping(value = "/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<SimpleRestResponse<String>> delete(@PathVariable("name") String name);
+    
+    @ApiOperation(value = "Test the connection to all Digital Exchange instances")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "OK")
+    })
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @GetMapping(value = "/test", produces = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<SimpleRestResponse<Map<String, List<RestError>>>> testAll();
     
     @ApiOperation(value = "Test the connection to a Digital Exchange instance")
     @ApiResponses({

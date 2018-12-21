@@ -13,8 +13,10 @@
  */
 package org.entando.entando.web.digitalexchange;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
+import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.AbstractControllerTest;
 import org.junit.Before;
@@ -28,6 +30,7 @@ import org.mockito.Spy;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,7 +38,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesService;
+import static org.hamcrest.Matchers.empty;
 
 public class DigitalExchangesControllerTest extends AbstractControllerTest {
 
@@ -64,6 +67,7 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         when(service.update(any())).thenAnswer(invocation -> invocation.getArgument(0));
         when(service.findByName(any())).thenReturn(getFakeDigitalExchanges().get(0));
         when(service.test(any())).thenReturn(new ArrayList<>());
+        when(service.testAll()).thenReturn(ImmutableMap.of("DE 1", new ArrayList<>()));
     }
 
     @Test
@@ -74,10 +78,10 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         ResultActions result = createAuthRequest(post(BASE_URL))
                 .setContent(getDigitalExchange(name)).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload.name", is(name)));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload.name", is(name)));
     }
 
     @Test
@@ -86,9 +90,9 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         ResultActions result = createAuthRequest(post(BASE_URL))
                 .setContent(getDigitalExchange("")).execute();
 
-        result.andExpect(status().is4xxClientError());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)));
     }
 
     @Test
@@ -99,9 +103,9 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         ResultActions result = createAuthRequest(post(BASE_URL))
                 .setContent(digitalExchange).execute();
 
-        result.andExpect(status().is4xxClientError());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
+        result.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)));
     }
 
     @Test
@@ -109,11 +113,11 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
 
         ResultActions result = createAuthRequest(get(BASE_URL)).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", hasSize(1)));
-        result.andExpect(jsonPath("$.payload[0]", is("DE 1")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", hasSize(1)))
+                .andExpect(jsonPath("$.payload[0].name", is("DE 1")));
     }
 
     @Test
@@ -121,10 +125,10 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
 
         ResultActions result = createAuthRequest(get(BASE_URL + "/{name}", "DE 1")).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload.name", is("DE 1")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload.name", is("DE 1")));
     }
 
     @Test
@@ -138,11 +142,11 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", name))
                 .setContent(digitalExchange).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload.name", is(name)));
-        result.andExpect(jsonPath("$.payload.url", is(url)));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload.name", is(name)))
+                .andExpect(jsonPath("$.payload.url", is(url)));
     }
 
     @Test
@@ -153,11 +157,11 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         ResultActions result = createAuthRequest(put(BASE_URL + "/{name}", "Different Name"))
                 .setContent(digitalExchange).execute();
 
-        result.andExpect(status().is4xxClientError());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_URINAME_MISMATCH)));
-        result.andExpect(jsonPath("$.payload").isEmpty());
+        result.andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(DigitalExchangeValidator.ERRCODE_URINAME_MISMATCH)))
+                .andExpect(jsonPath("$.payload").isEmpty());
     }
 
     @Test
@@ -166,24 +170,35 @@ public class DigitalExchangesControllerTest extends AbstractControllerTest {
         String name = "DE 1";
         ResultActions result = createAuthRequest(delete(BASE_URL + "/{name}", name)).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", is(name)));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", is(name)));
     }
 
     @Test
     public void shouldTestInstance() throws Exception {
-        
+
         String name = "DE 1";
         ResultActions result = createAuthRequest(get(BASE_URL + "/test/{name}", name)).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isEmpty());
-        result.andExpect(jsonPath("$.errors").isEmpty());
-        result.andExpect(jsonPath("$.payload", is("OK")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", is("OK")));
     }
-    
+
+    @Test
+    public void shouldTestAllInstances() throws Exception {
+
+        ResultActions result = createAuthRequest(get(BASE_URL + "/test")).execute();
+
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isEmpty())
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload", hasEntry(is("DE 1"), empty())));
+    }
+
     private List<DigitalExchange> getFakeDigitalExchanges() {
         List<DigitalExchange> digitalExchanges = new ArrayList<>();
         digitalExchanges.add(getDigitalExchange("DE 1"));

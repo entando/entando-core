@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientListWrapper;
 import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.springframework.core.ParameterizedTypeReference;
@@ -36,9 +36,9 @@ public class SimpleDigitalExchangeCall<T> extends DigitalExchangeCall<SimpleRest
     }
 
     @Override
-    protected ResilientListWrapper<T> combineResults(List<SimpleRestResponse<T>> results) {
+    protected ResilientListWrapper<T> combineResults(Map<String, SimpleRestResponse<T>> results) {
         ResilientListWrapper<T> wrapper = new ResilientListWrapper<>();
-        results.forEach(wrapper::addValueFromResponse);
+        results.values().forEach(wrapper::addValueFromResponse);
         return wrapper;
     }
 }

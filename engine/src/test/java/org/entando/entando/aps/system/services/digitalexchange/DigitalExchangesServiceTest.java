@@ -13,8 +13,13 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,19 +30,18 @@ import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.digitalexchange.DigitalExchangeValidator;
 import org.entando.entando.web.common.model.SimpleRestResponse;
-import org.springframework.security.oauth2.client.OAuth2RestTemplate;
-import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesMocker;
+import org.entando.entando.web.common.model.RestError;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 
 public class DigitalExchangesServiceTest {
 
     private static final String DE_1 = "DE 1";
+    private static final String INEXISTENT_DE = "Inexistent DE";
 
     @Mock
     private DigitalExchangesManager manager;
@@ -68,7 +72,7 @@ public class DigitalExchangesServiceTest {
 
     @Test(expected = RestRourceNotFoundException.class)
     public void shouldFindNothing() {
-        service.findByName("Inexistent DE");
+        service.findByName(INEXISTENT_DE);
     }
 
     @Test
@@ -95,7 +99,7 @@ public class DigitalExchangesServiceTest {
 
     @Test(expected = RestRourceNotFoundException.class)
     public void shouldFailUpdatingDigitalExchange() {
-        service.update(getDigitalExchange("Inexistent DE"));
+        service.update(getDigitalExchange(INEXISTENT_DE));
     }
 
     @Test
@@ -105,7 +109,7 @@ public class DigitalExchangesServiceTest {
 
     @Test(expected = RestRourceNotFoundException.class)
     public void shouldFailDeletingDigitalExchange() {
-        service.delete("Inexistent DE");
+        service.delete(INEXISTENT_DE);
     }
 
     @Test(expected = ValidationConflictException.class)
@@ -124,32 +128,34 @@ public class DigitalExchangesServiceTest {
 
     @Test
     public void shouldTestInstance() {
-
-        OAuth2RestTemplate restTemplate = new DigitalExchangesMocker()
-                .addDigitalExchange(DE_1, r -> new SimpleRestResponse<>("OK"))
-                .initMocks().createOAuth2RestTemplate(null);
-
-        when(manager.getRestTemplate(any())).thenReturn(restTemplate);
-
         assertThat(service.test(DE_1)).isEmpty();
+    }
+
+    @Test
+    public void shouldTestAllInstances() {
+        assertThat(service.testAll()).hasSize(1);
     }
 
     private void mockManager() {
 
-        DigitalExchange digitalExchange = getDigitalExchange(DE_1);
+        List<DigitalExchange> exchanges = Arrays.asList(getDigitalExchange(DE_1));
 
-        when(manager.getDigitalExchanges()).thenReturn(Arrays.asList(digitalExchange));
+        when(manager.getDigitalExchanges()).thenReturn(exchanges);
 
         when(manager.findByName(any(String.class)))
                 .thenAnswer(invocation -> {
                     String name = invocation.getArgument(0);
-                    return Optional.ofNullable(DE_1.equals(name) ? digitalExchange : null);
+                    return exchanges.stream().filter(de -> de.getName().equals(name)).findFirst();
                 });
     }
 
     private void mockClient() {
         when(client.getSingleResponse(any(DigitalExchange.class), any()))
-                .thenReturn(new SimpleRestResponse<>("OK"));
+                .thenReturn(new SimpleRestResponse<>(ImmutableMap.of("OK", new ArrayList<>())));
+
+        Map<String, List<RestError>> testAllResult = new HashMap<>();
+        testAllResult.put(DE_1, new ArrayList<>());
+        when(client.getCombinedResult(any())).thenReturn(testAllResult);
     }
 
     private DigitalExchange getDigitalExchange(String name) {

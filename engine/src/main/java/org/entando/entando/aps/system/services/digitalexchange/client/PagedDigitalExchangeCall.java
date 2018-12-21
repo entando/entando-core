@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.digitalexchange.client;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
@@ -84,14 +85,25 @@ public abstract class PagedDigitalExchangeCall<T> extends DigitalExchangeCall<Pa
         return new PagedRestResponse<>(new PagedMetadata<>());
     }
 
+    /**
+     * This method can be overridden in order to manipulate a single response
+     * before combining it.
+     */
+    protected void preprocessResponse(String exchangeName, PagedRestResponse<T> response) {
+    }
+
     @Override
-    public ResilientPagedMetadata<T> combineResults(List<PagedRestResponse<T>> allResults) {
+    public ResilientPagedMetadata<T> combineResults(Map<String, PagedRestResponse<T>> allResults) {
 
         List<T> joinedList = new ArrayList<>();
         int total = 0;
         List<RestError> errors = new ArrayList<>();
 
-        for (PagedRestResponse<T> response : allResults) {
+        for (Map.Entry<String, PagedRestResponse<T>> entry : allResults.entrySet()) {
+            PagedRestResponse<T> response = entry.getValue();
+
+            preprocessResponse(entry.getKey(), response);
+
             if (response.getErrors().isEmpty()) {
                 joinedList.addAll(response.getPayload());
                 total += response.getMetaData().getTotalItems();

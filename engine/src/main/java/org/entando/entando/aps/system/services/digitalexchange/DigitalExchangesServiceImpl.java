@@ -13,8 +13,12 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 import org.entando.entando.aps.system.services.digitalexchange.client.SimpleDigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
@@ -86,13 +90,16 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
     public List<RestError> test(String digitalExchangeName) {
         DigitalExchange digitalExchange = findByName(digitalExchangeName);
 
-        SimpleDigitalExchangeCall<String> call = new SimpleDigitalExchangeCall<>(
-                HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<String>>() {
-        }, "digitalExchange", "exchanges", "test", digitalExchangeName);
+        SimpleDigitalExchangeCall<Map<String, List<RestError>>> call = new SimpleDigitalExchangeCall<>(
+                HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<Map<String, List<RestError>>>>() {
+        }, "digitalExchange", "exchanges", "test");
 
-        SimpleRestResponse<String> response = client.getSingleResponse(digitalExchange, call);
+        return client.getSingleResponse(digitalExchange, call).getErrors();
+    }
 
-        return response.getErrors();
+    @Override
+    public Map<String, List<RestError>> testAll() {
+        return client.getCombinedResult(new TestExchangesCall());
     }
 
     private void validateURL(DigitalExchange digitalExchange) {
@@ -102,6 +109,25 @@ public class DigitalExchangesServiceImpl implements DigitalExchangesService {
             BeanPropertyBindingResult errors = new BeanPropertyBindingResult(digitalExchange, DIGITAL_EXCHANGE_LABEL);
             errors.reject(ERRCODE_DIGITAL_EXCHANGE_INVALID_URL, null, "digitalExchange.url.invalid");
             throw new ValidationConflictException(errors);
+        }
+    }
+
+    private static class TestExchangesCall extends DigitalExchangeCall<SimpleRestResponse<Map<String, List<RestError>>>, Map<String, List<RestError>>> {
+
+        public TestExchangesCall() {
+            super(HttpMethod.GET, new ParameterizedTypeReference<SimpleRestResponse<Map<String, List<RestError>>>>() {
+            }, "digitalExchange", "exchanges", "test");
+        }
+
+        @Override
+        protected SimpleRestResponse<Map<String, List<RestError>>> getEmptyRestResponse() {
+            return new SimpleRestResponse<>(new HashMap<>());
+        }
+
+        @Override
+        protected Map<String, List<RestError>> combineResults(Map<String, SimpleRestResponse<Map<String, List<RestError>>>> results) {
+            return results.entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getErrors()));
         }
     }
 }

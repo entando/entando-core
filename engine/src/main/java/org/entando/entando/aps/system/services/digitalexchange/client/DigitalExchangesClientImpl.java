@@ -14,9 +14,11 @@
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.entando.entando.aps.system.services.digitalexchange.DigitalExchangesManager;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.model.RestResponse;
@@ -47,26 +49,31 @@ public class DigitalExchangesClientImpl implements DigitalExchangesClient {
 
     @Override
     public <R extends RestResponse<?, ?>, C> C getCombinedResult(DigitalExchangeCall<R, C> call) {
-        List<R> allResults = queryAllDigitalExchanges(call);
+        Map<String, R> allResults = queryAllDigitalExchanges(call);
         return call.combineResults(allResults);
     }
 
-    private <R extends RestResponse<?, ?>, C> List<R> queryAllDigitalExchanges(DigitalExchangeCall<R, C> call) {
+    private <R extends RestResponse<?, ?>, C> Map<String, R> queryAllDigitalExchanges(DigitalExchangeCall<R, C> call) {
 
         @SuppressWarnings("unchecked")
-        CompletableFuture<R>[] futureResults
+        CompletableFuture<Pair<String, R>>[] futureResults
                 = digitalExchangesManager.getDigitalExchanges()
                         .stream()
                         .filter(de -> de.isActive())
-                        .map(de -> CompletableFuture.supplyAsync(() -> getSingleResponse(de, call)))
+                        .map(de -> getSingleResponseAsync(de, call))
                         .toArray(CompletableFuture[]::new);
 
         return CompletableFuture.allOf(futureResults)
                 .thenApply(v -> {
                     return Arrays.stream(futureResults)
                             .map(CompletableFuture::join)
-                            .collect(Collectors.toList());
+                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                 }).join();
+    }
+
+    private <R extends RestResponse<?, ?>, C> CompletableFuture<Pair<String, R>> getSingleResponseAsync(DigitalExchange digitalExchange, DigitalExchangeCall<R, C> call) {
+        return CompletableFuture.supplyAsync(()
+                -> ImmutablePair.of(digitalExchange.getName(), getSingleResponse(digitalExchange, call)));
     }
 
     @Override

@@ -14,7 +14,7 @@
 package org.entando.entando.web.digitalexchange;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import javax.validation.Valid;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
@@ -41,11 +41,8 @@ public class DigitalExchangesResourceController implements DigitalExchangesResou
     }
 
     @Override
-    public ResponseEntity<SimpleRestResponse<List<String>>> list() {
-        List<String> digitalExchangeNames = digitalExchangeService.getDigitalExchanges()
-                .stream().map(m -> m.getName())
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new SimpleRestResponse<>(digitalExchangeNames));
+    public ResponseEntity<SimpleRestResponse<List<DigitalExchange>>> list() {
+        return ResponseEntity.ok(new SimpleRestResponse<>(digitalExchangeService.getDigitalExchanges()));
     }
 
     @Override
@@ -77,6 +74,11 @@ public class DigitalExchangesResourceController implements DigitalExchangesResou
     public ResponseEntity<SimpleRestResponse<String>> delete(@PathVariable("name") String name) {
         digitalExchangeService.delete(name);
         return ResponseEntity.ok(new SimpleRestResponse<>(name));
+    }
+
+    @Override
+    public ResponseEntity<SimpleRestResponse<Map<String, List<RestError>>>> testAll() {
+        return ResponseEntity.ok(new SimpleRestResponse<>(digitalExchangeService.testAll()));
     }
 
     @Override

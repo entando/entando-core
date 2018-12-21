@@ -13,7 +13,7 @@
  */
 package org.entando.entando.aps.system.services.digitalexchange.client;
 
-import java.util.List;
+import java.util.Map;
 import org.entando.entando.aps.system.services.digitalexchange.model.DigitalExchange;
 import org.entando.entando.web.common.model.RestResponse;
 import org.springframework.core.ParameterizedTypeReference;
@@ -89,5 +89,5 @@ public abstract class DigitalExchangeCall<R extends RestResponse<?, ?>, C> {
 
     protected abstract R getEmptyRestResponse();
 
-    protected abstract C combineResults(List<R> results);
+    protected abstract C combineResults(Map<String, R> results);
 }

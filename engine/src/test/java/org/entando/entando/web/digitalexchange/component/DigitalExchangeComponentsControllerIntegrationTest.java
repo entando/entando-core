@@ -40,6 +40,8 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
     private static final String LAST_UPDATE_B = "2018-12-01 12:00:00";
     private static final String LAST_UPDATE_D = "2018-10-01 00:00:00";
 
+    private static final String DE_1 = "DE 1";
+    private static final String DE_2 = "DE 2";
     private static final String[] COMPONENTS_1 = new String[]{"A", "C", "E"};
     private static final DigitalExchangeComponent[] COMPONENTS_2 = new DigitalExchangeComponent[]{getComponentB(), getComponentD()};
 
@@ -51,8 +53,8 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
         @Primary
         public DigitalExchangeOAuth2RestTemplateFactory getRestTemplateFactory() {
             return new DigitalExchangesMocker()
-                    .addDigitalExchange("DE 1", DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
-                    .addDigitalExchange("DE 2", DigitalExchangeComponentsMocker.mock(COMPONENTS_2))
+                    .addDigitalExchange(DE_1, DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
+                    .addDigitalExchange(DE_2, DigitalExchangeComponentsMocker.mock(COMPONENTS_2))
                     .initMocks();
         }
     }
@@ -65,17 +67,18 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
                 .param("page", "1")
         ).execute();
 
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.metaData").isNotEmpty());
-        result.andExpect(jsonPath("$.metaData.pageSize", is(3)));
-        result.andExpect(jsonPath("$.metaData.page", is(1)));
-        result.andExpect(jsonPath("$.metaData.totalItems", is(COMPONENTS_1.length + COMPONENTS_2.length)));
-
-        result.andExpect(jsonPath("$.errors").isEmpty());
-
-        result.andExpect(jsonPath("$.payload[0].name", is("A")));
-        result.andExpect(jsonPath("$.payload[1].name", is("B")));
-        result.andExpect(jsonPath("$.payload[2].name", is("C")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.metaData").isNotEmpty())
+                .andExpect(jsonPath("$.metaData.pageSize", is(3)))
+                .andExpect(jsonPath("$.metaData.page", is(1)))
+                .andExpect(jsonPath("$.metaData.totalItems", is(COMPONENTS_1.length + COMPONENTS_2.length)))
+                .andExpect(jsonPath("$.errors").isEmpty())
+                .andExpect(jsonPath("$.payload[0].name", is("A")))
+                .andExpect(jsonPath("$.payload[0].digitalExchange", is(DE_1)))
+                .andExpect(jsonPath("$.payload[1].name", is("B")))
+                .andExpect(jsonPath("$.payload[1].digitalExchange", is(DE_2)))
+                .andExpect(jsonPath("$.payload[2].name", is("C")))
+                .andExpect(jsonPath("$.payload[2].digitalExchange", is(DE_1)));
     }
 
     @Test
@@ -86,10 +89,10 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
                 .param("filters[0].value", LAST_UPDATE_B))
                 .execute();
 
-        result.andExpect(status().isOk());
-
-        result.andExpect(jsonPath("$.payload", hasSize(1)));
-        result.andExpect(jsonPath("$.payload[0].name", is("B")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload", hasSize(1)))
+                .andExpect(jsonPath("$.payload[0].name", is("B")))
+                .andExpect(jsonPath("$.payload[0].digitalExchange", is(DE_2)));
     }
 
     @Test
@@ -100,10 +103,10 @@ public class DigitalExchangeComponentsControllerIntegrationTest extends Abstract
                 .param("filters[0].value", "2018-11-01 00:00:00"))
                 .execute();
 
-        result.andExpect(status().isOk());
-
-        result.andExpect(jsonPath("$.payload", hasSize(1)));
-        result.andExpect(jsonPath("$.payload[0].name", is("D")));
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload", hasSize(1)))
+                .andExpect(jsonPath("$.payload[0].name", is("D")))
+                .andExpect(jsonPath("$.payload[0].digitalExchange", is(DE_2)));
     }
 
     private static DigitalExchangeComponent getComponentB() {

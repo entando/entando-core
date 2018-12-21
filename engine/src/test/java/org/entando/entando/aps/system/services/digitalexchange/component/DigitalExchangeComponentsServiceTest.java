@@ -23,12 +23,14 @@ import org.entando.entando.web.common.model.FilterOperator;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertArrayEquals;
 
 public class DigitalExchangeComponentsServiceTest {
 
+    private static final String DE_1 = "DE 1";
+    private static final String DE_2 = "DE 2";
     private static final String[] COMPONENTS_1 = new String[]{"A", "B", "C", "F", "I", "M", "N", "P"};
     private static final String[] COMPONENTS_2 = new String[]{"D", "E", "G", "H", "L", "O"};
 
@@ -38,8 +40,8 @@ public class DigitalExchangeComponentsServiceTest {
     public void setUp() {
         DigitalExchangesClientMocker clientMocker = new DigitalExchangesClientMocker();
         clientMocker.getDigitalExchangesMocker()
-                .addDigitalExchange("DE 1", DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
-                .addDigitalExchange("DE 2", DigitalExchangeComponentsMocker.mock(COMPONENTS_2));
+                .addDigitalExchange(DE_1, DigitalExchangeComponentsMocker.mock(COMPONENTS_1))
+                .addDigitalExchange(DE_2, DigitalExchangeComponentsMocker.mock(COMPONENTS_2));
 
         DigitalExchangesClient mockedClient = clientMocker.build();
 
@@ -54,27 +56,33 @@ public class DigitalExchangeComponentsServiceTest {
         listRequest.setSort("name");
 
         listRequest.setPage(1);
-        verifyPage(service.getComponents(listRequest), "A", "B", "C");
+        new PageVerifier(service.getComponents(listRequest))
+                .contains(DE_1, "A")
+                .contains(DE_1, "B")
+                .contains(DE_1, "C");
 
         listRequest.setPage(2);
-        verifyPage(service.getComponents(listRequest), "D", "E", "F");
+        new PageVerifier(service.getComponents(listRequest))
+                .contains(DE_2, "D")
+                .contains(DE_2, "E")
+                .contains(DE_1, "F");
 
         listRequest.setPage(3);
-        verifyPage(service.getComponents(listRequest), "G", "H", "I");
+        new PageVerifier(service.getComponents(listRequest))
+                .contains(DE_2, "G")
+                .contains(DE_2, "H")
+                .contains(DE_1, "I");
 
         listRequest.setPage(4);
-        verifyPage(service.getComponents(listRequest), "L", "M", "N");
+        new PageVerifier(service.getComponents(listRequest))
+                .contains(DE_2, "L")
+                .contains(DE_1, "M")
+                .contains(DE_1, "N");
 
         listRequest.setPage(5);
-        verifyPage(service.getComponents(listRequest), "O", "P");
-    }
-
-    private void verifyPage(ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata, String... values) {
-        assertNotNull(pagedMetadata.getBody());
-        assertEquals(values.length, pagedMetadata.getBody().size());
-        assertEquals(COMPONENTS_1.length + COMPONENTS_2.length, pagedMetadata.getTotalItems());
-        assertArrayEquals(pagedMetadata.getBody().stream()
-                .map(c -> c.getName()).toArray(String[]::new), values);
+        new PageVerifier(service.getComponents(listRequest))
+                .contains(DE_2, "O")
+                .contains(DE_1, "P");
     }
 
     @Test
@@ -94,5 +102,23 @@ public class DigitalExchangeComponentsServiceTest {
         assertEquals(1, pagedMetadata.getBody().size());
         assertEquals("M", pagedMetadata.getBody().get(0).getName());
         assertEquals(1, pagedMetadata.getTotalItems());
+    }
+
+    private static class PageVerifier {
+
+        private final ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata;
+        private int index = 0;
+
+        public PageVerifier(ResilientPagedMetadata<DigitalExchangeComponent> pagedMetadata) {
+            this.pagedMetadata = pagedMetadata;
+            assertThat(pagedMetadata.getTotalItems()).isEqualTo(COMPONENTS_1.length + COMPONENTS_2.length);
+        }
+
+        public PageVerifier contains(Object... values) {
+            assertThat(pagedMetadata.getBody().get(index++))
+                    .extracting(DigitalExchangeComponent::getDigitalExchange, DigitalExchangeComponent::getName)
+                    .contains(values);
+            return this;
+        }
     }
 }

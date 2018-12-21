@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.digitalexchange.component;
 
 import java.util.List;
+import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.digitalexchange.client.DigitalExchangesClient;
 import org.entando.entando.aps.system.services.digitalexchange.client.PagedDigitalExchangeCall;
 import org.entando.entando.aps.system.services.digitalexchange.model.ResilientPagedMetadata;
@@ -36,17 +37,26 @@ public class DigitalExchangeComponentsServiceImpl implements DigitalExchangeComp
 
     @Override
     public ResilientPagedMetadata<DigitalExchangeComponent> getComponents(RestListRequest requestList) {
+        return client.getCombinedResult(new ComponentsCall(requestList));
+    }
 
-        ParameterizedTypeReference<PagedRestResponse<DigitalExchangeComponent>> type
-                = new ParameterizedTypeReference<PagedRestResponse<DigitalExchangeComponent>>() {
-        };
+    private static class ComponentsCall extends PagedDigitalExchangeCall<DigitalExchangeComponent> {
 
-        return client.getCombinedResult(new PagedDigitalExchangeCall<DigitalExchangeComponent>(requestList, type, "digitalExchange", "components") {
+        public ComponentsCall(RestListRequest requestList) {
+            super(requestList, new ParameterizedTypeReference<PagedRestResponse<DigitalExchangeComponent>>() {
+            }, "digitalExchange", "components");
+        }
 
-            @Override
-            protected DigitalExchangeComponentListProcessor getRequestListProcessor(RestListRequest request, List<DigitalExchangeComponent> joinedList) {
-                return new DigitalExchangeComponentListProcessor(request, joinedList);
+        @Override
+        protected void preprocessResponse(String exchangeName, PagedRestResponse<DigitalExchangeComponent> response) {
+            if (response.getErrors().isEmpty()) {
+                response.getPayload().forEach(de -> de.setDigitalExchange(exchangeName));
             }
-        });
+        }
+
+        @Override
+        protected RequestListProcessor<DigitalExchangeComponent> getRequestListProcessor(RestListRequest request, List<DigitalExchangeComponent> joinedList) {
+            return new DigitalExchangeComponentListProcessor(request, joinedList);
+        }
     }
 }

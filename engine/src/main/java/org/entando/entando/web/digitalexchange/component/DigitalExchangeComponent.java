@@ -29,6 +29,7 @@ public class DigitalExchangeComponent {
     private String image;
     private double rating;
     private boolean installed;
+    private String digitalExchange;
 
     public String getId() {
         return id;
@@ -100,5 +101,16 @@ public class DigitalExchangeComponent {
 
     public void setInstalled(boolean installed) {
         this.installed = installed;
+    }
+
+    /**
+     * The name of the Digital Exchange providing the component.
+     */
+    public String getDigitalExchange() {
+        return digitalExchange;
+    }
+
+    public void setDigitalExchange(String digitalExchange) {
+        this.digitalExchange = digitalExchange;
     }
 }

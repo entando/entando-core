@@ -79,6 +79,7 @@
     <div class="col-xs-12">
         <s:form id="uploadForm" enctype="multipart/form-data" action="save" cssClass="form-horizontal image-upload-form">
             <s:file name="fileUpload" id="file_input" label="label.file" />
+            <button id="delete_file">Delete File</button>
         </s:form>
 
     </div>
@@ -89,68 +90,91 @@
 
 
 <script>
-  (function() {
-    var action = document.getElementById("uploadForm").action;
-    var uploadId = uuidv4();
-    var fileInput = document.getElementById('file_input');
-    if (fileInput.files.length)
-      processFile();
-    fileInput.addEventListener('change', processFile, false);
-    function processFile(e) {
-      var file = fileInput.files[0];
-      var size = file.size;
-      var sliceSize = 1048576;
-      var start = 0;
-      
-      setTimeout(loop, 1);
-      function loop() {
-        var end = start + sliceSize;
-        if (size - end < 0) {
-          end = size;
+    (function () {
+        var action = document.getElementById("uploadForm").action;
+        var uploadId = uuidv4();
+        var fileInput = document.getElementById('file_input');
+
+        if (fileInput.files.length)
+            processFile();
+        fileInput.addEventListener('change', processFile, false);
+
+        function processFile(e) {
+            var file = fileInput.files[0];
+            var size = file.size;
+            var sliceSize = 1048576;
+            var start = 0;
+
+            setTimeout(loop, 1);
+
+            function loop() {
+                var end = start + sliceSize;
+                if (size - end < 0) {
+                    end = size;
+                }
+                var s = slice(file, start, end);
+                send(s, start, end, size, fileInput.files[0].name);
+                if (end < size) {
+                    start += sliceSize;
+                    setTimeout(loop, 200);
+                }
+            }
         }
-        var s = slice(file, start, end);
-        send(s, start, end, size, fileInput.files[0].name);
-        if (end < size) {
-          start += sliceSize;
-          setTimeout(loop, 200);
+
+        function send(piece, start, end, size, fileName) {
+            var formdata = new FormData();
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', action, true);
+            formdata.append('start', start);
+            formdata.append('end', end);
+            formdata.append('fileUpload', piece);
+            formdata.append('descr', 'Test description for chunks upload');
+            formdata.append('uploadId', uploadId);
+            formdata.append('fileSize', size);
+            formdata.append('fileName', fileName);
+            xhr.send(formdata);
         }
-      }
-    }
-    function send(piece, start, end, size, fileName) {
-      var formdata = new FormData();
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', action, true);
-      formdata.append('start', start);
-      formdata.append('end', end);
-      formdata.append('fileUpload', piece);
-      formdata.append('descr', 'Test description for chunks upload');
-      formdata.append('uploadId', uploadId);
-      formdata.append('fileSize', size);
-      formdata.append('fileName', fileName);
-      xhr.send(formdata);
-    }
-    /**
-     * Formalize file.slice
-     */
-    function slice(file, start, end) {
-      var slice = file.mozSlice ? file.mozSlice :
-        file.webkitSlice ? file.webkitSlice :
-          file.slice ? file.slice : noop;
-      return slice.bind(file)(start, end);
-    }
-    function noop() {
-    }
-    /*
-     * Generating unique IDs for each upload
-     * This function is an attempt to implement RFC-4222 https://www.ietf.org/rfc/rfc4122.txt
-     * It was found in this SO answer: https://stackoverflow.com/a/2117523/2267244
-     *
-     */
-    function uuidv4() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-      });
-    }
-  })();
+
+        /**
+         * Formalize file.slice
+         */
+        function slice(file, start, end) {
+            var slice = file.mozSlice ? file.mozSlice :
+                file.webkitSlice ? file.webkitSlice :
+                    file.slice ? file.slice : noop;
+            return slice.bind(file)(start, end);
+        }
+
+        function noop() {
+        }
+
+
+        var deleteButton = document.getElementById('delete_file');
+        deleteButton.addEventListener('click', deleteFile, false);
+
+        function deleteFile(e) {
+            e.preventDefault();
+            var deleteAction = "stopUploadAndDelete.action";
+            var fileId = '7038df88-4ca7-499c-b1b3-0b8ef06f2fcc';
+            var formdata = new FormData();
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', deleteAction, true);
+            formdata.append('fileID', fileId);
+            xhr.send(formdata);
+        }
+
+
+        /*
+         * Generating unique IDs for each upload
+         * This function is an attempt to implement RFC-4222 https://www.ietf.org/rfc/rfc4122.txt
+         * It was found in this SO answer: https://stackoverflow.com/a/2117523/2267244
+         *
+         */
+        function uuidv4() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    })();
 </script>

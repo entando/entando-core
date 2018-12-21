@@ -91,7 +91,7 @@
 
 <script>
     (function () {
-        var action = document.getElementById("uploadForm").action;
+        var action = "upload.action";
         var uploadId = uuidv4();
         var fileInput = document.getElementById('file_input');
 

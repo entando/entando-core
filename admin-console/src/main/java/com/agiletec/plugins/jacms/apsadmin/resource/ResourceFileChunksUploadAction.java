@@ -1,5 +1,5 @@
 /*
-* Copyright 2015-Present Entando Inc. (http://www.entando.com) All rights reserved.
+* Copyright 2018-Present Entando Inc. (http://www.entando.com) All rights reserved.
 *
 * This library is free software; you can redistribute it and/or modify it under
 * the terms of the GNU Lesser General Public License as published by the Free
@@ -28,6 +28,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     //extends ActionSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceFileChunksUploadAction.class);
+    private String result="";
     private String RESULT_SUCCESS = "SUCCESS";
     private String RESULT_FAILED = "FAILED";
     private String RESULT_VALIDATION_ERROR = "VALIDATION_ERROR";
@@ -71,7 +72,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     }
 
     private Map<String, String> getRefererParameters() {
-
         String referer = getRequest().getHeader("referer");
         logger.debug("getRefererParameters for referer {}", referer);
 
@@ -133,16 +133,19 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             logger.debug("uploadId {}", uploadId);
             logger.debug("fileSize {}", fileSize);
             try {
-                processChunk(fileUpload, uploadId + "_" + fileName, start, end);
+                processChunk(fileUpload, uploadId + ".tmp", start, end);
             } catch (IOException ex) {
+                result = RESULT_FAILED;
                 inputStream = new ByteArrayInputStream(RESULT_FAILED.getBytes());
                 logger.error("Error processing the file chunk {}", ex);
             }
-
-            inputStream = new ByteArrayInputStream(RESULT_SUCCESS.getBytes());
+            result = RESULT_SUCCESS;
         } else {
-            inputStream = new ByteArrayInputStream(RESULT_VALIDATION_ERROR.getBytes());
+            result = RESULT_VALIDATION_ERROR;
         }
+        inputStream = new ByteArrayInputStream(result.getBytes());
+        logger.debug("result {}",result);
+        
         return SUCCESS;
     }
 

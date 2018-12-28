@@ -17,7 +17,7 @@ import java.util.List;
 
 public class PagedRestResponse<T> extends RestResponse<List<T>, PagedMetadata<T>> {
 
-    protected PagedRestResponse() {
+    public PagedRestResponse() {
         super();
     }
     

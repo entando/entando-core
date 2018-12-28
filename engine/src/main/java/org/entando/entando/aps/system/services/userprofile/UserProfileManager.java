@@ -54,8 +54,7 @@ public class UserProfileManager extends ApsEntityManager implements IUserProfile
     public IUserProfile getDefaultProfileType() {
         IUserProfile profileType = (IUserProfile) super.getEntityPrototype(SystemConstants.DEFAULT_PROFILE_TYPE_CODE);
         if (null == profileType) {
-            List<String> entityTypes = new ArrayList<>();
-            entityTypes.addAll(this.getEntityPrototypes().keySet());
+            List<String> entityTypes = new ArrayList<>(this.getEntityPrototypes().keySet());
             if (!entityTypes.isEmpty()) {
                 Collections.sort(entityTypes);
                 profileType = (IUserProfile) super.getEntityPrototype(entityTypes.get(0));

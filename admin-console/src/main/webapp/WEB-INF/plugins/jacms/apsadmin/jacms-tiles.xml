@@ -145,7 +145,7 @@
 	<definition extends="layout.default" name="admin.jacms.resource.entry">
 		<put-attribute name="title" value="title.resourceManagement" />
 		<put-attribute name="extraResources" value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/layouts/assets-more/resource/resource.jsp" />
-		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/entryResourceFileChunks.jsp" />
+		<put-attribute name="body" value="/WEB-INF/plugins/jacms/apsadmin/jsp/resource/entryResource.jsp" />
 	</definition>
 	<definition extends="layout.default" name="admin.jacms.resource.references">
 		<put-attribute name="title" value="title.resourceManagement" />

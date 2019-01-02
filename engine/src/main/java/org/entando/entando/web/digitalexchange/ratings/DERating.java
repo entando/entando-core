@@ -1,9 +1,9 @@
 package org.entando.entando.web.digitalexchange.ratings;
 
-public class DERatingUpdate {
+public class DERating {
 
     private String componentId;
-    private String updaterId;
+    private String reviewerId;
     private int rating;
 
     public String getComponentId() {
@@ -14,12 +14,12 @@ public class DERatingUpdate {
         this.componentId = componentId;
     }
 
-    public String getUpdaterId() {
-        return updaterId;
+    public String getReviewerId() {
+        return reviewerId;
     }
 
-    public void setUpdaterId(String updaterId) {
-        this.updaterId = updaterId;
+    public void setReviewerId(String reviewerId) {
+        this.reviewerId = reviewerId;
     }
 
     public int getRating() {

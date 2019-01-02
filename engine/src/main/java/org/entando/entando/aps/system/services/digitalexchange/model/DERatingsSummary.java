@@ -1,6 +1,8 @@
 package org.entando.entando.aps.system.services.digitalexchange.model;
 
-public class DERatingsInfo {
+import java.util.Objects;
+
+public class DERatingsSummary {
 
     private String componentId;
     private int rating;
@@ -71,14 +73,29 @@ public class DERatingsInfo {
             return this;
         }
 
-        public DERatingsInfo build() {
-            DERatingsInfo deRatingsInfo = new DERatingsInfo();
+        public DERatingsSummary build() {
+            DERatingsSummary deRatingsInfo = new DERatingsSummary();
             deRatingsInfo.setComponentId(componentId);
             deRatingsInfo.setRating(rating);
             deRatingsInfo.setNumberOfInstalls(numberOfInstalls);
             deRatingsInfo.setNumberOfRatings(numberOfRatings);
             return deRatingsInfo;
         }
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DERatingsSummary that = (DERatingsSummary) o;
+        return rating == that.rating &&
+                numberOfInstalls == that.numberOfInstalls &&
+                numberOfRatings == that.numberOfRatings &&
+                Objects.equals(componentId, that.componentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(componentId, rating, numberOfInstalls, numberOfRatings);
     }
 }

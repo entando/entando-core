@@ -2,7 +2,7 @@ package org.entando.entando.web.digitalexchange.ratings;
 
 import com.agiletec.aps.system.services.role.Permission;
 import io.swagger.annotations.*;
-import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsInfo;
+import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.*;
 import org.springframework.http.*;
@@ -18,7 +18,7 @@ public interface DERatingsResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping
-    ResponseEntity<PagedRestResponse<DERatingsInfo>> getAllRatings(RestListRequest restListRequest);
+    ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(RestListRequest restListRequest);
 
 
     @ApiOperation(value = "Get rating for component")
@@ -28,7 +28,8 @@ public interface DERatingsResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping("/{componentId}")
-    ResponseEntity<SimpleRestResponse<DERatingsInfo>> getComponentRating(@PathVariable String componentId);
+    ResponseEntity<SimpleRestResponse<DERatingsSummary>> getComponentRatingSummary(
+            @PathVariable String componentId);
 
 
     @ApiOperation(value = "Add rating for component")
@@ -38,5 +39,5 @@ public interface DERatingsResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @PostMapping
-    ResponseEntity<SimpleRestResponse<DERatingsInfo>> addRating(@RequestBody DERatingUpdate deRatingUpdate);
+    ResponseEntity<SimpleRestResponse<DERatingsSummary>> addRating(@RequestBody DERating deRatingUpdate);
 }

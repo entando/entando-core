@@ -1,6 +1,6 @@
 package org.entando.entando.web.digitalexchange.ratings;
 
-import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsInfo;
+import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.aps.system.services.digitalexchange.ratings.DERatingsService;
 import org.entando.entando.web.common.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +20,14 @@ public class DERatingsController implements DERatingsResource {
     }
 
     @Override
-    public ResponseEntity<PagedRestResponse<DERatingsInfo>> getAllRatings(RestListRequest restListRequest) {
-        return ResponseEntity.ok(ratingsService.getAllRatings());
+    public ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(RestListRequest restListRequest) {
+        return ResponseEntity.ok(ratingsService.getAllRatingsSummaries());
     }
 
     @Override
-    public ResponseEntity<SimpleRestResponse<DERatingsInfo>> getComponentRating(String componentId) {
-        Optional<DERatingsInfo> maybeComponentRatings =
-                ratingsService.getComponentRatings(componentId);
+    public ResponseEntity<SimpleRestResponse<DERatingsSummary>> getComponentRatingSummary(String componentId) {
+        Optional<DERatingsSummary> maybeComponentRatings =
+                ratingsService.getComponentRatingsSummary(componentId);
 
         return maybeComponentRatings
                 .map(rating -> ResponseEntity.ok(new SimpleRestResponse<>(rating)))
@@ -35,9 +35,8 @@ public class DERatingsController implements DERatingsResource {
     }
 
     @Override
-    public ResponseEntity<SimpleRestResponse<DERatingsInfo>> addRating(
-            @RequestBody DERatingUpdate deRatingUpdate) {
-        Optional<DERatingsInfo> maybeComponentRatings =
+    public ResponseEntity<SimpleRestResponse<DERatingsSummary>> addRating(@RequestBody DERating deRatingUpdate) {
+        Optional<DERatingsSummary> maybeComponentRatings =
                 ratingsService.addRating(deRatingUpdate);
 
         return maybeComponentRatings

@@ -1,6 +1,6 @@
 package org.entando.entando.web.digitalexchange.ratings;
 
-import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsInfo;
+import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.aps.system.services.digitalexchange.ratings.DERatingsService;
 import org.entando.entando.web.common.model.*;
 import org.junit.Test;
@@ -28,35 +28,35 @@ public class DERatingsControllerTest {
     @Test
     public void getAllRatings() {
         // Setup
-        ResponseEntity<PagedRestResponse<DERatingsInfo>> expected =
+        ResponseEntity<PagedRestResponse<DERatingsSummary>> expected =
                 createExpectedGetRatingsResponse();
 
         // Record
-        when(service.getAllRatings()).thenReturn(expected.getBody());
+        when(service.getAllRatingsSummaries()).thenReturn(expected.getBody());
 
         // Play
         RestListRequest request = new RestListRequest();
-        ResponseEntity<PagedRestResponse<DERatingsInfo>> ratingsResponse =
+        ResponseEntity<PagedRestResponse<DERatingsSummary>> ratingsResponse =
                 controller.getAllRatings(request);
 
         // Assert
         assertThat(ratingsResponse).isEqualTo(expected);
     }
 
-    private ResponseEntity<PagedRestResponse<DERatingsInfo>> createExpectedGetRatingsResponse() {
-        DERatingsInfo expectedRatingsInfo = createExpectedRatingsInfo();
+    private ResponseEntity<PagedRestResponse<DERatingsSummary>> createExpectedGetRatingsResponse() {
+        DERatingsSummary expectedRatingsInfo = createExpectedRatingsInfo();
 
-        List<DERatingsInfo> expectedRatings =
+        List<DERatingsSummary> expectedRatings =
                 Collections.singletonList(expectedRatingsInfo);
 
-        PagedRestResponse<DERatingsInfo> expectedResponse = new PagedRestResponse<>();
+        PagedRestResponse<DERatingsSummary> expectedResponse = new PagedRestResponse<>();
         expectedResponse.setPayload(expectedRatings);
 
         return ResponseEntity.ok(expectedResponse);
     }
 
-    private DERatingsInfo createExpectedRatingsInfo() {
-        return DERatingsInfo.builder()
+    private DERatingsSummary createExpectedRatingsInfo() {
+        return DERatingsSummary.builder()
                     .componentId("ABC")
                     .numberOfInstalls(10)
                     .numberOfRatings(4)
@@ -67,15 +67,15 @@ public class DERatingsControllerTest {
     @Test
     public void getComponentRatingOK() {
         // Setup
-        DERatingsInfo expectedRatingsInfo = createExpectedRatingsInfo();
+        DERatingsSummary expectedRatingsInfo = createExpectedRatingsInfo();
 
         // Record
-        when(service.getComponentRatings(expectedRatingsInfo.getComponentId()))
+        when(service.getComponentRatingsSummary(expectedRatingsInfo.getComponentId()))
                 .thenReturn(Optional.of(expectedRatingsInfo));
 
         // Play
-        ResponseEntity<SimpleRestResponse<DERatingsInfo>> componentRatingResponse =
-                controller.getComponentRating(expectedRatingsInfo.getComponentId());
+        ResponseEntity<SimpleRestResponse<DERatingsSummary>> componentRatingResponse =
+                controller.getComponentRatingSummary(expectedRatingsInfo.getComponentId());
 
         // Assert
         assertThat(componentRatingResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -90,12 +90,12 @@ public class DERatingsControllerTest {
         String notFoundComponentId = "NOT_FOUND_COMPONENT";
 
         // Record
-        when(service.getComponentRatings(notFoundComponentId))
+        when(service.getComponentRatingsSummary(notFoundComponentId))
                 .thenReturn(Optional.empty());
 
         // Play
-        ResponseEntity<SimpleRestResponse<DERatingsInfo>> componentRatingResponse =
-                controller.getComponentRating(notFoundComponentId);
+        ResponseEntity<SimpleRestResponse<DERatingsSummary>> componentRatingResponse =
+                controller.getComponentRatingSummary(notFoundComponentId);
 
         // Assert
         assertThat(componentRatingResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -104,9 +104,9 @@ public class DERatingsControllerTest {
     @Test
     public void addRatingOK() {
         // Setup
-        DERatingUpdate ratingUpdate = createRatingUpdate();
+        DERating ratingUpdate = createRatingUpdate();
 
-        DERatingsInfo expected = DERatingsInfo.builder()
+        DERatingsSummary expected = DERatingsSummary.builder()
                 .rating(ratingUpdate.getRating())
                 .componentId(ratingUpdate.getComponentId())
                 .build();
@@ -115,7 +115,7 @@ public class DERatingsControllerTest {
         when(service.addRating(ratingUpdate)).thenReturn(Optional.of(expected));
 
         // Play
-        ResponseEntity<SimpleRestResponse<DERatingsInfo>> updateResponse =
+        ResponseEntity<SimpleRestResponse<DERatingsSummary>> updateResponse =
                 controller.addRating(ratingUpdate);
 
         // Assert
@@ -125,10 +125,10 @@ public class DERatingsControllerTest {
         assertThat(updateResponse.getBody().getPayload()).isEqualTo(expected);
     }
 
-    private DERatingUpdate createRatingUpdate() {
-        DERatingUpdate ratingUpdate = new DERatingUpdate();
+    private DERating createRatingUpdate() {
+        DERating ratingUpdate = new DERating();
         ratingUpdate.setComponentId("ABC");
-        ratingUpdate.setUpdaterId("mario");
+        ratingUpdate.setReviewerId("mario");
         ratingUpdate.setRating(50);
         return ratingUpdate;
     }
@@ -136,14 +136,14 @@ public class DERatingsControllerTest {
     @Test
     public void addRatingNotFound() {
         // Setup
-        DERatingUpdate ratingUpdate = new DERatingUpdate();
+        DERating ratingUpdate = new DERating();
         ratingUpdate.setComponentId("DOES NOT EXIST");
 
         // Record
         when(service.addRating(ratingUpdate)).thenReturn(Optional.empty());
 
         // Play
-        ResponseEntity<SimpleRestResponse<DERatingsInfo>> updateResponse =
+        ResponseEntity<SimpleRestResponse<DERatingsSummary>> updateResponse =
                 controller.addRating(ratingUpdate);
 
         // Assert

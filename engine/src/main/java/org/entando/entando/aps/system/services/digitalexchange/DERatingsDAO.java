@@ -6,10 +6,18 @@ import org.entando.entando.web.digitalexchange.ratings.DERating;
 
 import java.util.Optional;
 
-public interface DERatingsDAO {
+public interface DERatingsDAO  {
     PagedRestResponse<DERatingsSummary> getAllRatingsSummaries();
 
     Optional<DERatingsSummary> getComponentRatingsSummary(String componentId);
 
     void saveOrUpdate(DERating deRating);
+
+    void save(DERating rating);
+
+    Optional<DERating> findById(long i);
+
+    void update(DERating rating);
+
+    void delete(long id);
 }

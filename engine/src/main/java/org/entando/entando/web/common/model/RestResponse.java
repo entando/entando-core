@@ -13,8 +13,7 @@
  */
 package org.entando.entando.web.common.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RestResponse<T, M> {
 
@@ -71,5 +70,20 @@ public class RestResponse<T, M> {
     
     public void addError(RestError error) {
         this.errors.add(error);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RestResponse<?, ?> that = (RestResponse<?, ?>) o;
+        return Objects.equals(payload, that.payload) &&
+                Objects.equals(metaData, that.metaData) &&
+                Objects.equals(errors, that.errors);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(payload, metaData, errors);
     }
 }

@@ -98,4 +98,14 @@ public class DERatingsSummary {
     public int hashCode() {
         return Objects.hash(componentId, rating, numberOfInstalls, numberOfRatings);
     }
+
+    @Override
+    public String toString() {
+        return "DERatingsSummary{" +
+                "componentId='" + componentId + '\'' +
+                ", rating=" + rating +
+                ", numberOfInstalls=" + numberOfInstalls +
+                ", numberOfRatings=" + numberOfRatings +
+                '}';
+    }
 }

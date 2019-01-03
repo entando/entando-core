@@ -274,14 +274,21 @@
 
                 <div class="col-sm-4">
                     <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                                 class="btn btn-default" key="label.button-choose-file"/>
-                    </s:if>
-                    <s:else>
-                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                                 class="btn btn-default" key="label.button-choose-files"/>
-                    </s:else>
+                    <%--<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">--%>
+                        <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
+                                 <%--class="btn btn-default" key="label.button-choose-file"/>--%>
+                    <%--</s:if>--%>
+                    <%--<s:else>--%>
+                        <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
+                                 <%--class="btn btn-default" key="label.button-choose-files"/>--%>
+                    <%--</s:else>--%>
+
+                    <s:file name="fileUpload" id="fileUpload_0" label="label.file" />
+                    <button id="delete_file">Delete File</button>
+                    <input type="hidden" name="uploadId" id="fileUploadId_0" value="068fe811-05d4-479e-9e54-44ad06da0beb">
+                    <input type="hidden" name="fileName" id="fileUploadName_0" value="">
+                    <input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_0" value="">'
+
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>

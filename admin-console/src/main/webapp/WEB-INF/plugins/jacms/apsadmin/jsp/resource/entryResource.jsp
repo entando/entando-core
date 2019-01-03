@@ -136,12 +136,12 @@
                 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp"/>
 
                 <s:set var="useAjax" value="true" />
-                    <s:set var="selectedTreeNode" value="selectedNode"/>
-                    <s:set var="currentRoot" value="categoryRoot"/>
+                <s:set var="selectedTreeNode" value="selectedNode"/>
+                <s:set var="currentRoot" value="categoryRoot"/>
                 <s:set var="joinCategoryEndpoint" value="'joinCategory'"/>
                 <s:set var="loadTreeActionName" value="''"/>
-                        <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
-                        <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
+                <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
+                <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
                 <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/categoryTreeTable.jsp" />
 
                 <s:if test="extraGroups.size() != 0">
@@ -174,7 +174,7 @@
                         <ul class="list-inline mt-20">
                             <s:iterator value="categoryCodes" var="categoryCodeVar">
                                 <s:set var="resourceCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
-                                    <li>
+                                <li>
                                         <span class="label label-info">
                                             <span class="icon fa fa-tag"></span>
                                             &#32;
@@ -274,21 +274,20 @@
 
                 <div class="col-sm-4">
                     <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                    <%--<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">--%>
+                        <%--<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">--%>
                         <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
-                                 <%--class="btn btn-default" key="label.button-choose-file"/>--%>
-                    <%--</s:if>--%>
-                    <%--<s:else>--%>
+                        <%--class="btn btn-default" key="label.button-choose-file"/>--%>
+                        <%--</s:if>--%>
+                        <%--<s:else>--%>
                         <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
-                                 <%--class="btn btn-default" key="label.button-choose-files"/>--%>
-                    <%--</s:else>--%>
+                        <%--class="btn btn-default" key="label.button-choose-files"/>--%>
+                        <%--</s:else>--%>
 
                     <s:file name="fileUpload" id="fileUpload_0" label="label.file" />
                     <button id="delete_file">Delete File</button>
-                    <input type="hidden" name="uploadId" id="fileUploadId_0" value="068fe811-05d4-479e-9e54-44ad06da0beb">
-                    <input type="hidden" name="fileName" id="fileUploadName_0" value="">
-                    <input type="hidden" name="fileUploadBase64ImageContentType" id="file_upload_content_type_0" value="">'
-
+                    <input type="hidden" name="uploadId_0" id="fileUploadId_0" value="068fe811-05d4-479e-9e54-44ad06da0beb">
+                    <input type="hidden" name="fileName_0" id="fileUploadName_0" value="">
+                    <input type="hidden" name="fileUploadBase64ImageContentType_0" id="file_upload_content_type_0" value="">
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>

@@ -1,5 +1,6 @@
 package org.entando.entando.web.digitalexchange.ratings;
 
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.aps.system.services.digitalexchange.ratings.DERatingsService;
 import org.entando.entando.web.common.model.*;
@@ -25,7 +26,9 @@ public class DERatingsController implements DERatingsResource {
     }
 
     @Override
-    public ResponseEntity<SimpleRestResponse<DERatingsSummary>> getComponentRatingSummary(String componentId) {
+    public ResponseEntity<SimpleRestResponse<DERatingsSummary>> getComponentRatingSummary(
+            @PathVariable String componentId) {
+
         Optional<DERatingsSummary> maybeComponentRatings =
                 ratingsService.getComponentRatingsSummary(componentId);
 

@@ -6,9 +6,9 @@ import com.j256.ormlite.jdbc.DataSourceConnectionSource;
 import com.j256.ormlite.misc.TransactionManager;
 import com.j256.ormlite.spring.*;
 import com.j256.ormlite.support.ConnectionSource;
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.init.util.ApsDerbyEmbeddedDatabaseType;
 import org.entando.entando.aps.system.services.digitalexchange.*;
-import org.entando.entando.web.digitalexchange.ratings.DERating;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.datasource.embedded.*;
 

@@ -2,9 +2,9 @@ package org.entando.entando.aps.system.services.digitalexchange;
 
 import com.google.common.collect.ImmutableList;
 import org.entando.entando.aps.config.DbTestConfig;
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.digitalexchange.ratings.DERating;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

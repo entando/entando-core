@@ -4,12 +4,10 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jee="http://www.springframework.org/schema/jee"
        xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
-			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd" >
+			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:annotation-config />
 
@@ -54,6 +52,7 @@
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfig</value>
         <value>org.entando.entando.aps.system.init.model.portdb.WidgetConfigDraft</value>
         <value>org.entando.entando.aps.system.init.model.portdb.Uniquekeys</value>
+        <value>org.entando.entando.aps.system.init.model.portdb.DERating</value>
     </util:list>
 
     <util:list id="entandoServTableClasses">

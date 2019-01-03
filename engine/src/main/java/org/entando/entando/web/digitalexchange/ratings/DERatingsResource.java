@@ -2,6 +2,7 @@ package org.entando.entando.web.digitalexchange.ratings;
 
 import com.agiletec.aps.system.services.role.Permission;
 import io.swagger.annotations.*;
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.*;

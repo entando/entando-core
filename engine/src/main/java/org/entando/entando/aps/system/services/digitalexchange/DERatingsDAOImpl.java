@@ -1,9 +1,9 @@
 package org.entando.entando.aps.system.services.digitalexchange;
 
 import com.agiletec.aps.system.common.*;
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.digitalexchange.ratings.DERating;
+import org.entando.entando.web.common.model.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -66,7 +66,8 @@ public class DERatingsDAOImpl extends AbstractDAO implements DERatingsDAO {
             closeDaoResources(res, preparedStatement, conn);
         }
 
-        PagedRestResponse<DERatingsSummary> result = new PagedRestResponse<>();
+        PagedRestResponse<DERatingsSummary> result = new PagedRestResponse<>(
+                new PagedMetadata<>(1, summaries.size(), 1, summaries.size()));
         result.setPayload(summaries);
         return result;
     }

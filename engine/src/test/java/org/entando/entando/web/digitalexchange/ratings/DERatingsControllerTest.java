@@ -1,5 +1,6 @@
 package org.entando.entando.web.digitalexchange.ratings;
 
+import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.aps.system.services.digitalexchange.ratings.DERatingsService;
 import org.entando.entando.web.common.model.*;

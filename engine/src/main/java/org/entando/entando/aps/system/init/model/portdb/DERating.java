@@ -1,4 +1,4 @@
-package org.entando.entando.web.digitalexchange.ratings;
+package org.entando.entando.aps.system.init.model.portdb;
 
 import com.j256.ormlite.field.*;
 import com.j256.ormlite.table.DatabaseTable;

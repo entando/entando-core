@@ -287,7 +287,7 @@
                     <button id="delete_file">Delete File</button>
                     <input type="hidden" name="uploadId_0" id="fileUploadId_0" value="068fe811-05d4-479e-9e54-44ad06da0beb">
                     <input type="hidden" name="fileName_0" id="fileUploadName_0" value="">
-                    <input type="hidden" name="fileUploadBase64ImageContentType_0" id="file_upload_content_type_0" value="">
+                    <input type="hidden" name="fileUploadContentType_0" id="fileUploadContentType_0" value="">
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>

@@ -61,7 +61,7 @@ ready(function () {
                         if (this.status === 200) {
                             alert("Upload finished!");
                             document.getElementById('fileUploadName_0').value = fileInput.files[0].name;
-                            document.getElementById('file_upload_content_type_0').value = fileInput.files[0].type;
+                            document.getElementById('fileUploadContentType_0').value = fileInput.files[0].type;
                             fileInput.value = "";
                         }
 

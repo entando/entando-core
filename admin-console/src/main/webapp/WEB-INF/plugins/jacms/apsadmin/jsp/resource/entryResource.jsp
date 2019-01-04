@@ -233,8 +233,8 @@
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
                 <div class="col-sm-4">
-                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}">
-                        <s:set var="descriptionFieldVar" value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
+                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}"><s:set var="descriptionFieldVar"
+                                                                                    value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
                     <s:else>
                         <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}"/>
                         <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}"/>

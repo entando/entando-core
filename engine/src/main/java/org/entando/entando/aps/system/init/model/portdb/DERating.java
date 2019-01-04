@@ -2,22 +2,34 @@ package org.entando.entando.aps.system.init.model.portdb;
 
 import com.j256.ormlite.field.*;
 import com.j256.ormlite.table.DatabaseTable;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.*;
 import java.util.Objects;
 
 @DatabaseTable
 public class DERating {
 
+    private static final int GENERAL_STRING_MAX_LENGTH = 30;
+
     @DatabaseField(dataType = DataType.LONG, canBeNull = false, id = true)
     private long id;
 
-    @DatabaseField(dataType = DataType.STRING, width = 30, canBeNull = false)
+    @DatabaseField(dataType = DataType.STRING, canBeNull = false,
+            width = GENERAL_STRING_MAX_LENGTH)
+    @NotEmpty
+    @Size(max = GENERAL_STRING_MAX_LENGTH)
     private String componentId;
 
-    @DatabaseField(dataType = DataType.STRING, width = 30, canBeNull = false)
+    @DatabaseField(dataType = DataType.STRING, canBeNull = false,
+            width = GENERAL_STRING_MAX_LENGTH)
+    @NotEmpty
+    @Size(max = GENERAL_STRING_MAX_LENGTH)
     private String reviewerId;
 
     @DatabaseField(dataType = DataType.INTEGER, canBeNull = false)
+    @Min(0)
+    @Max(100)
     private int rating;
 
 

@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.*;
+import org.springframework.validation.BindingResult;
 
 import java.util.*;
 
@@ -21,6 +22,9 @@ public class DERatingsControllerTest {
 
     @Mock
     private DERatingsService service;
+
+    @Mock
+    private BindingResult bindingResult;
 
     @InjectMocks
     private DERatingsController controller;
@@ -117,7 +121,7 @@ public class DERatingsControllerTest {
 
         // Play
         ResponseEntity<SimpleRestResponse<DERatingsSummary>> updateResponse =
-                controller.addRating(ratingUpdate);
+                controller.addRating(ratingUpdate, bindingResult);
 
         // Assert
         assertThat(updateResponse).isNotNull();
@@ -145,7 +149,7 @@ public class DERatingsControllerTest {
 
         // Play
         ResponseEntity<SimpleRestResponse<DERatingsSummary>> updateResponse =
-                controller.addRating(ratingUpdate);
+                controller.addRating(ratingUpdate, bindingResult);
 
         // Assert
         assertThat(updateResponse).isNotNull();

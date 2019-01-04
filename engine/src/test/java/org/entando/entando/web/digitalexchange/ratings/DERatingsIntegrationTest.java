@@ -99,6 +99,26 @@ public class DERatingsIntegrationTest extends AbstractControllerIntegrationTest 
                 .andReturn();
     }
 
+    @Test
+    public void validation() throws Exception {
+        DERating deRating = createDeRating(1, null, -1);
+        dao.delete(deRating.getId());
+
+        mockMvc.perform(
+                post("/digitalExchange/ratings")
+                        .header("Authorization", "Bearer " + accessToken)
+                        .contentType(MediaType.APPLICATION_JSON_UTF8)
+                        .content(jsonMapper.writeValueAsString(deRating))
+                        .accept(MediaType.APPLICATION_JSON_UTF8))
+//                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.errors").isNotEmpty())
+                .andReturn();
+
+        assertThat(dao.findById(deRating.getId())).isNotPresent();
+    }
+
     private DERating createDeRating(int id, String component1, int rating) {
         DERating deRating = new DERating();
         deRating.setId(id);

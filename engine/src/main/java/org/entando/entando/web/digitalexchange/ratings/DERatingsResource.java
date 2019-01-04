@@ -7,7 +7,10 @@ import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSu
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.model.*;
 import org.springframework.http.*;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Api(tags = {"digital-exchange", "ratings"})
 @RequestMapping(value = "/digitalExchange/ratings", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,5 +43,6 @@ public interface DERatingsResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @PostMapping
-    ResponseEntity<SimpleRestResponse<DERatingsSummary>> addRating(@RequestBody DERating deRatingUpdate);
+    ResponseEntity<SimpleRestResponse<DERatingsSummary>> addRating(
+            @Valid @RequestBody DERating deRatingUpdate, BindingResult bindingResult);
 }

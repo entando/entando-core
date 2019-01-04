@@ -283,8 +283,9 @@
                         <%--class="btn btn-default" key="label.button-choose-files"/>--%>
                         <%--</s:else>--%>
 
-                    <s:file name="fileUpload" id="fileUpload_0" label="label.file" />
-                    <button id="delete_file">Delete File</button>
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" />
+              
+                        <button id="delete_file">Delete File</button>
                     
                     
                     

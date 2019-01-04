@@ -25,21 +25,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResourceFileChunksUploadAction extends AbstractResourceAction {
-    //extends ActionSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceFileChunksUploadAction.class);
-    private String result="";
+    private String result = "";
     private String RESULT_SUCCESS = "SUCCESS";
     private String RESULT_FAILED = "FAILED";
     private String RESULT_VALIDATION_ERROR = "VALIDATION_ERROR";
     private String fileUploadContentType;
     private String fileName;
     private File fileUpload;
-
     private Long start;
     private Long end;
     private InputStream inputStream;
-    private String descr;
     private String uploadId;
     private String fileSize;
     boolean valid = true;
@@ -54,19 +51,25 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     public void validate() {
         logger.info("ResourceFileChunksUploadAction validate");
 
-        setResourceTypeCode(getRefererParameters().get("resourceTypeCode"));
+        String resourceTypeCode = getRefererParameters().get("resourceTypeCode");
 
-        if (null != this.getResourceTypeCode()) {
-            ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceTypeCode());
-            if (null != resourcePrototype) {
-                valid = this.checkRightFileType(resourcePrototype, fileName);
+        if (resourceTypeCode.equals("Image") || resourceTypeCode.equals("Attach")) {
+
+            setResourceTypeCode(resourceTypeCode);
+
+            if (null != this.getResourceTypeCode()) {
+                ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceTypeCode());
+                if (null != resourcePrototype) {
+                    valid = this.checkRightFileType(resourcePrototype, fileName);
+                } else {
+                    valid = false;
+                }
             } else {
                 valid = false;
             }
         } else {
             valid = false;
         }
-
         logger.debug("valid {}", valid);
     }
 
@@ -74,7 +77,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         String referer = getRequest().getHeader("referer");
         logger.debug("getRefererParameters for referer {}", referer);
 
-        String refererParameters = referer.substring(referer.indexOf("?")+1);
+        String refererParameters = referer.substring(referer.indexOf("?") + 1);
         logger.debug("refererParameters {}", refererParameters);
 
         String[] params = refererParameters.split("&");
@@ -94,7 +97,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         logger.debug("Check Right File Type {} for filename {}", resourcePrototype.getType(), fileName);
         logger.debug("Allowed File Types length {}", resourcePrototype.getAllowedFileTypes().length);
         logger.debug("Allowed File Types {}", Arrays.toString(resourcePrototype.getAllowedFileTypes()));
-        
+
         if (fileName.length() > 0) {
             String docType = fileName.substring(fileName.lastIndexOf('.') + 1).trim();
             String[] types = resourcePrototype.getAllowedFileTypes();
@@ -128,7 +131,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             logger.debug("fileUpload {}", fileUpload);
             logger.debug("contentType {}", fileUploadContentType);
             logger.debug("filename {}", fileName);
-            logger.debug("descr {}", descr);
             logger.debug("uploadId {}", uploadId);
             logger.debug("fileSize {}", fileSize);
             try {
@@ -143,8 +145,8 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             result = RESULT_VALIDATION_ERROR;
         }
         inputStream = new ByteArrayInputStream(result.getBytes());
-        logger.debug("result {}",result);
-        
+        logger.debug("result {}", result);
+
         return SUCCESS;
     }
 
@@ -250,14 +252,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
 
     public InputStream getInputStream() {
         return inputStream;
-    }
-
-    public String getDescr() {
-        return descr;
-    }
-
-    public void setDescr(String descr) {
-        this.descr = descr;
     }
 
     public String getUploadId() {

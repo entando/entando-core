@@ -46,7 +46,7 @@
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
     	
-        <!--action name="edit" class="jacmsMultipleResourceAction" method="edit">
+        <action name="edit" class="jacmsMultipleResourceAction" method="edit">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
         </action>
@@ -64,9 +64,9 @@
         <action name="removeCategory*" class="jacmsMultipleResourceAction" method="removeCategory">
             <result type="tiles">admin.jacms.resource.entry</result>
             <interceptor-ref name="entandoDefaultStack"><param name="requestAuth.requiredPermission">manageResources</param></interceptor-ref>
-        </action-->
+        </action>
         
-        <action name="upload" class="jacmsResourceFileChunksUploadAction" method="save">
+        <action name="upload" class="jacmsResourceFileChunksUploadAction" method="upload">
             <result type="tiles" name="input">admin.jacms.resource.entry</result>
             <result type="tiles" name="failure">admin.jacms.resource.entry</result>
             <result type="stream">
@@ -98,6 +98,18 @@
                 <param name="requestAuth.requiredPermission">manageResources</param>
             </interceptor-ref>
       
+        </action>
+        
+        <action name="save" class="jacmsMultipleResourceAction" method="save">
+            <result type="tiles" name="input">admin.jacms.resource.entry</result>
+            <result type="tiles" name="failure">admin.jacms.resource.entry</result>
+            <result type="redirectAction">
+                <param name="actionName">list</param>
+                <param name="resourceTypeCode">${resourceTypeCode}</param>
+            </result>
+            <interceptor-ref name="entandoValidationStack">
+                <param name="requestAuth.requiredPermission">manageResources</param>
+            </interceptor-ref>
         </action>
         
         <!-- ######### FINE OPERAZIONI DI AGGIUNTA/MODIFICA RISORSE ######### -->

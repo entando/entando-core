@@ -1,6 +1,6 @@
 // Configure file uploader.
 var sliceSize = 1048576;
-var saveAction = 'save';
+var saveAction = 'upload.action';
 var stopUploadAndDeleteAction = 'stopUploadAndDelete.action';
 
 /*

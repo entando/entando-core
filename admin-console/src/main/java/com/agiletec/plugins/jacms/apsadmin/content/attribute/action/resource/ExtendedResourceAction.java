@@ -93,29 +93,29 @@ public class ExtendedResourceAction extends MultipleResourceAction {
             this.fetchFileDescriptions();
             for (String fileDescription : getFileDescriptions()) {
                 BaseResourceDataBean resourceFile = null;
-                if (this.isImageUpload()) {
+               /* if (this.isImageUpload()) {
                     file = this.createImageTempFile(getBase64Image().get(index), getFileUploadBase64ImageFileName().get(index));
                     deleteTempFile = true;
                 } else {
                     file = getFile(index);
                     deleteTempFile = false;
-                }
+                }*/
                 Map imgMetadata = new HashMap();
                 if (null != file) {
                     logger.debug("file is not null");
                     imgMetadata = super.getImgMetadata(file);
                     resourceFile = new BaseResourceDataBean(file);
-                    if (this.isImageUpload()) {
+                   /* if (this.isImageUpload()) {
                         logger.debug("getFileUploadBase64ImageFileName().get({}): {}", index, getFileUploadBase64ImageFileName().get(index));
                         logger.debug("getFileUploadBase64ImageContentType().get({}): {}", index, getFileUploadBase64ImageContentType().get(index));
                         resourceFile.setFileName(getFileUploadBase64ImageFileName().get(index));
                         resourceFile.setMimeType(getFileUploadBase64ImageContentType().get(index));
                     } else {
-                        logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
+                     */   logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
                         logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
                         resourceFile.setFileName(getFileUploadFileName().get(index));
-                        resourceFile.setMimeType(getFileUploadContentType().get(index));
-                    }
+                        resourceFile.setMimeType(getFileUploadContentTypes().get(index));
+                    //}
                 } else {
                     logger.debug("file is null");
                     resourceFile = new BaseResourceDataBean();

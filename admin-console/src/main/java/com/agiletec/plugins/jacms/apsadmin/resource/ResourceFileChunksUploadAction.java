@@ -62,7 +62,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
                 valid = this.checkRightFileType(resourcePrototype, fileName);
             } else {
                 valid = false;
-
             }
         } else {
             valid = false;
@@ -120,7 +119,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         return isValid;
     }
 
-    public String save() {
+    public String upload() {
         validate();
         if (valid) {
             logger.info("ResourceFileChunksUploadAction Save");

@@ -77,7 +77,7 @@
     <wp:info key="systemParam" paramName="treeStyle_category"/>
 </s:set>
 <s:set var="lockGroupSelect" value="%{resourceId != null}"></s:set>
-<s:form action="save" method="post" enctype="multipart/form-data" cssClass="form-horizontal image-upload-form">
+<s:form action="save" method="post" cssClass="form-horizontal image-upload-form">
     <wpsf:hidden name="fieldCount"/>
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/inc_fullErrors.jsp"/>
     <p class="sr-only">
@@ -233,8 +233,8 @@
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
                 <div class="col-sm-4">
-                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}"><s:set var="descriptionFieldVar"
-                                                                                    value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
+                    <s:if test="%{'' != getFileDescription(#ctr.count - 1)}">
+                        <s:set var="descriptionFieldVar" value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
                     <s:else>
                         <s:set var="paramNameVar" value="%{'descr_' + (#ctr.count - 1)}"/>
                         <s:set var="descriptionFieldVar" value="%{#parameters[#paramNameVar][0]}"/>
@@ -285,9 +285,44 @@
 
                     <s:file name="fileUpload" id="fileUpload_0" label="label.file" />
                     <button id="delete_file">Delete File</button>
-                    <input type="hidden" name="uploadId_0" id="fileUploadId_0" value="068fe811-05d4-479e-9e54-44ad06da0beb">
-                    <input type="hidden" name="fileName_0" id="fileUploadName_0" value="">
-                    <input type="hidden" name="fileUploadBase64ImageContentType_0" id="file_upload_content_type_0" value="">
+                    
+                    
+                    
+                    
+                    
+                    <s:if test="%{'' != getFileUploadId(#ctr.count - 1)}">
+                        <s:set var="uploadIdFieldVar" value="%{getFileUploadId(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVarUploadId" value="%{'fileUploadId_' + (#ctr.count - 1)}"/>
+                        <s:set var="uploadIdFieldVar" value="%{#parameters[#paramNameVarUploadId][0]}"/>
+                    </s:else>
+                    <wpsf:textfield name="fileUploadId_%{#ctr.count - 1}" maxlength="50" id="fileUploadId_%{#ctr.count - 1}"
+                                    cssClass="form-control file-description"
+                                    value="%{#uploadIdFieldVar}"/>
+                    
+                    <s:if test="%{'' != getFileName(#ctr.count - 1)}">
+                        <s:set var="fileNameFieldVar" value="%{getFileName(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVarFileName" value="%{'fileUploadName_' + (#ctr.count - 1)}"/>
+                        <s:set var="fileNameFieldVar" value="%{#parameters[#paramNameVarFileName][0]}"/>
+                    </s:else>
+                    <wpsf:textfield name="fileUploadName_%{#ctr.count - 1}" maxlength="500" id="fileUploadName_%{#ctr.count - 1}"
+                                    cssClass="form-control file-description"
+                                    value="%{#fileNameFieldVar}"/>
+                    
+                    <s:if test="%{'' != getFileContentType(#ctr.count - 1)}">
+                        <s:set var="fileContentTypeFieldVar" value="%{getFileContentType(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVarFileContentType" value="%{'fileUploadContentType_' + (#ctr.count - 1)}"/>
+                        <s:set var="fileContentTypeFieldVar" value="%{#parameters[#paramNameVarFileContentType][0]}"/>
+                    </s:else>
+                    <wpsf:textfield name="fileUploadContentType_%{#ctr.count - 1}" maxlength="250" id="fileUploadContentType_%{#ctr.count - 1}"
+                                    cssClass="form-control file-description"
+                                    value="%{#fileContentTypeFieldVar}"/>
+
+                    
+                    
+                    
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>

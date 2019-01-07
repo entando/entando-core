@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 public class DERatingsController implements DERatingsResource {
@@ -24,8 +24,31 @@ public class DERatingsController implements DERatingsResource {
     }
 
     @Override
-    public ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(RestListRequest restListRequest) {
-        return ResponseEntity.ok(ratingsService.getAllRatingsSummaries());
+    public ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(
+            RestListRequest restListRequest) {
+
+
+        List<DERatingsSummary> summaries;
+        if (restListRequest.getPageSize() == null || restListRequest.getPageSize() == 0) {
+            summaries = ratingsService.getAllRatingsSummaries();
+        } else {
+            summaries = ratingsService.getRatingSummariesPage(
+                    restListRequest.getPage() * (long) restListRequest.getPageSize(),
+                    restListRequest.getPageSize());
+        }
+
+        PagedRestResponse<DERatingsSummary> pagedSummary =
+                createPagedResponse(summaries, restListRequest);
+        return ResponseEntity.ok(pagedSummary);
+    }
+
+    private PagedRestResponse<DERatingsSummary> createPagedResponse(
+            List<DERatingsSummary> summaries, RestListRequest request) {
+
+        PagedRestResponse<DERatingsSummary> pagedSummaries = new PagedRestResponse<>(
+                new PagedMetadata<>(request, summaries.size()));
+        pagedSummaries.setPayload(summaries);
+        return pagedSummaries;
     }
 
     @Override

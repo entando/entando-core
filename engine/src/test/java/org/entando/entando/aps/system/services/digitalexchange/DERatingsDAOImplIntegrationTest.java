@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.entando.entando.aps.config.DbTestConfig;
 import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
-import org.entando.entando.web.common.model.PagedRestResponse;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,7 @@ public class DERatingsDAOImplIntegrationTest {
         dao.delete(basicDeRating().getId());
         dao.delete(basicDeRating().getId() +1);
         dao.delete(basicDeRating().getId() +2);
+        dao.delete(basicDeRating().getId() +3);
     }
 
     @Test
@@ -48,14 +48,36 @@ public class DERatingsDAOImplIntegrationTest {
                 .numberOfInstalls(1)
                 .build();
 
-        PagedRestResponse<DERatingsSummary> expected = new PagedRestResponse<>();
+        DERatingsSummary summary3 = DERatingsSummary.builder()
+                .componentId(ratings.get(3).getComponentId())
+                .rating(ratings.get(3).getRating())
+                .numberOfRatings(1)
+                .numberOfInstalls(1)
+                .build();
+
         List<DERatingsSummary> summaries = ImmutableList.of(
-                summary1, summary2
+                summary1, summary2, summary3
         );
 
-        expected.setPayload(summaries);
+        assertThat(dao.getAllRatingsSummaries()).isEqualTo(summaries);
+    }
 
-        assertThat(dao.getAllRatingsSummaries()).isEqualToComparingFieldByField(expected);
+    @Test
+    public void getRatingsSummariesPaged() {
+        List<DERating> ratings = createDeRatingsList();
+
+        DERatingsSummary summary2 = DERatingsSummary.builder()
+                .componentId(ratings.get(2).getComponentId())
+                .rating(ratings.get(2).getRating())
+                .numberOfRatings(1)
+                .numberOfInstalls(1)
+                .build();
+
+        List<DERatingsSummary> summaries = ImmutableList.of(
+                summary2
+        );
+
+        assertThat(dao.getRatingSummariesPage(1, 1)).isEqualTo(summaries);
     }
 
     private List<DERating> createDeRatingsList() {
@@ -77,6 +99,14 @@ public class DERatingsDAOImplIntegrationTest {
         rating3.setComponentId("test_component2");
         dao.save(rating3);
         ratings.add(rating3);
+
+        DERating rating4 = basicDeRating();
+        rating4.setRating(45);
+        rating4.setId(rating3.getId() +1);
+        rating4.setComponentId("test_component3");
+        dao.save(rating4);
+        ratings.add(rating4);
+
         return ratings;
     }
 

@@ -3,7 +3,6 @@ package org.entando.entando.aps.system.services.digitalexchange;
 import com.agiletec.aps.system.common.*;
 import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
-import org.entando.entando.web.common.model.*;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,6 +28,9 @@ public class DERatingsDAOImpl extends AbstractDAO implements DERatingsDAO {
 
     private static final String FIND_ALL_SUMMARIES = SELECT_SUMMARY + GROUP_SUMMARY;
 
+    private static final String FIND_PAGED_SUMMARIES =
+            FIND_ALL_SUMMARIES + " OFFSET ? ROWS FETCH FIRST ? ROWS ONLY";
+
     private static final String FIND_SUMMARY = SELECT_SUMMARY + "WHERE de.componentId = ? " + GROUP_SUMMARY;
 
     private static final String FIND_BY_ID = "SELECT * FROM derating WHERE id = ?";
@@ -46,7 +48,7 @@ public class DERatingsDAOImpl extends AbstractDAO implements DERatingsDAO {
     }
 
     @Override
-    public PagedRestResponse<DERatingsSummary> getAllRatingsSummaries() {
+    public List<DERatingsSummary> getAllRatingsSummaries() {
         List<DERatingsSummary> summaries = new ArrayList<>();
 
         Connection conn = null;
@@ -66,10 +68,37 @@ public class DERatingsDAOImpl extends AbstractDAO implements DERatingsDAO {
             closeDaoResources(res, preparedStatement, conn);
         }
 
-        PagedRestResponse<DERatingsSummary> result = new PagedRestResponse<>(
-                new PagedMetadata<>(1, summaries.size(), 1, summaries.size()));
-        result.setPayload(summaries);
-        return result;
+        return summaries;
+    }
+
+    @Override
+    public List<DERatingsSummary> getRatingSummariesPage(long offset, long pageSize) {
+        List<DERatingsSummary> summaries = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet res = null;
+        try {
+            conn = getConnection();
+            preparedStatement = conn.prepareStatement(FIND_PAGED_SUMMARIES);
+            preparedStatement.setLong(1, offset);
+            preparedStatement.setLong(2, offset);
+            res = preparedStatement.executeQuery();
+
+            while (res.next()) {
+                summaries.add(loadSummary(preparedStatement.getResultSet()));
+            }
+        } catch (Exception t) {
+            handleError(t, conn, "Error loading rating summaries");
+        } finally{
+            closeDaoResources(res, preparedStatement, conn);
+        }
+
+        return summaries;
+    }
+
+    private boolean isInPage(long index, long offset, long pageSize) {
+        return (index > offset) && (index <= (offset + pageSize));
     }
 
     private DERatingsSummary loadSummary(ResultSet resultSet) throws SQLException {

@@ -3,6 +3,7 @@ package org.entando.entando.web.digitalexchange.ratings;
 import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
 import org.entando.entando.aps.system.services.digitalexchange.ratings.DERatingsService;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 
@@ -31,13 +33,13 @@ public class DERatingsControllerTest {
 
 
     @Test
-    public void getAllRatings() {
+    public void getAllRatingsNoPagination() {
         // Setup
         ResponseEntity<PagedRestResponse<DERatingsSummary>> expected =
                 createExpectedGetRatingsResponse();
 
         // Record
-        when(service.getAllRatingsSummaries()).thenReturn(expected.getBody());
+        when(service.getAllRatingsSummaries()).thenReturn(expected.getBody().getPayload());
 
         // Play
         RestListRequest request = new RestListRequest();
@@ -45,7 +47,15 @@ public class DERatingsControllerTest {
                 controller.getAllRatings(request);
 
         // Assert
-        assertThat(ratingsResponse).isEqualTo(expected);
+        assertThat(ratingsResponse).isNotNull();
+        assertThat(ratingsResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(ratingsResponse.getBody()).isNotNull();
+        assertThat(ratingsResponse.getBody().getMetaData())
+                .isEqualToComparingFieldByField(expected.getBody().getMetaData());
+        assertThat(ratingsResponse.getBody().getPayload())
+                .isEqualTo(expected.getBody().getPayload());
+        assertThat(ratingsResponse.getBody().getErrors())
+                .isEqualTo(expected.getBody().getErrors());
     }
 
     private ResponseEntity<PagedRestResponse<DERatingsSummary>> createExpectedGetRatingsResponse() {
@@ -54,7 +64,9 @@ public class DERatingsControllerTest {
         List<DERatingsSummary> expectedRatings =
                 Collections.singletonList(expectedRatingsInfo);
 
-        PagedRestResponse<DERatingsSummary> expectedResponse = new PagedRestResponse<>();
+        RestListRequest req = new RestListRequest();
+        PagedMetadata<DERatingsSummary> metaData = new PagedMetadata<>(req, expectedRatings.size());
+        PagedRestResponse<DERatingsSummary> expectedResponse = new PagedRestResponse<>(metaData);
         expectedResponse.setPayload(expectedRatings);
 
         return ResponseEntity.ok(expectedResponse);
@@ -154,5 +166,14 @@ public class DERatingsControllerTest {
         // Assert
         assertThat(updateResponse).isNotNull();
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void validationErrorThrowsException() {
+        when(bindingResult.hasErrors()).thenReturn(true);
+
+        DERating deRating = new DERating();
+        assertThatThrownBy(() -> controller.addRating(deRating, bindingResult))
+                .isInstanceOf(ValidationGenericException.class);
     }
 }

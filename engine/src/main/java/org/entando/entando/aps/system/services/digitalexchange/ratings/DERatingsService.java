@@ -2,12 +2,13 @@ package org.entando.entando.aps.system.services.digitalexchange.ratings;
 
 import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
-import org.entando.entando.web.common.model.PagedRestResponse;
 
-import java.util.Optional;
+import java.util.*;
 
 public interface DERatingsService {
-    PagedRestResponse<DERatingsSummary> getAllRatingsSummaries();
+    List<DERatingsSummary> getAllRatingsSummaries();
+
+    List<DERatingsSummary> getRatingSummariesPage(long offset, long pageSize);
 
     Optional<DERatingsSummary> getComponentRatingsSummary(String componentId);
 

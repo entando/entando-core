@@ -22,7 +22,8 @@ public interface DERatingsResource {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping
-    ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(RestListRequest restListRequest);
+    ResponseEntity<PagedRestResponse<DERatingsSummary>> getAllRatings(
+            RestListRequest restListRequest);
 
 
     @ApiOperation(value = "Get rating for component")

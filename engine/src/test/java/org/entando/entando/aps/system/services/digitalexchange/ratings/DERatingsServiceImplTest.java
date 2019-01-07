@@ -3,13 +3,12 @@ package org.entando.entando.aps.system.services.digitalexchange.ratings;
 import org.entando.entando.aps.system.init.model.portdb.DERating;
 import org.entando.entando.aps.system.services.digitalexchange.DERatingsDAO;
 import org.entando.entando.aps.system.services.digitalexchange.model.DERatingsSummary;
-import org.entando.entando.web.common.model.PagedRestResponse;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -29,11 +28,20 @@ public class DERatingsServiceImplTest {
 
     @Test
     public void getAllRatings() {
-        PagedRestResponse<DERatingsSummary> expected = new PagedRestResponse<>();
+        List<DERatingsSummary> expected = Collections.emptyList();
 
         when(dao.getAllRatingsSummaries()).thenReturn(expected);
 
         assertThat(service.getAllRatingsSummaries()).isEqualTo(expected);
+    }
+
+    @Test
+    public void getPagedRatings() {
+        List<DERatingsSummary> expected = Collections.emptyList();
+
+        when(dao.getAllRatingsSummaries()).thenReturn(expected);
+
+        assertThat(service.getRatingSummariesPage(0, 1)).isEqualTo(expected);
     }
 
     @Test

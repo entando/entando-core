@@ -67,6 +67,15 @@
         <property name="validationErrorCodeMapping" ref="validationCodesMapping" />
     </bean>
 
+    <bean id="messageSource"
+          class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="useCodeAsDefaultMessage" value="true" />
+        <property name="basename">
+            <value>rest/messages</value>
+        </property>
+        <property name="fallbackToSystemLocale" value="true" />
+    </bean>
+
     <bean
         class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix">

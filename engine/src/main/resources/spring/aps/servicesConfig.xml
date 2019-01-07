@@ -20,15 +20,6 @@
     <!--  async support -->
     <task:annotation-driven   />
 
-    <bean id="messageSource"
-          class="org.springframework.context.support.ResourceBundleMessageSource">
-        <property name="useCodeAsDefaultMessage" value="true" />
-        <property name="basename">
-            <value>rest/messages</value>
-        </property>
-        <property name="fallbackToSystemLocale" value="true" />
-    </bean>
-
     <!-- === WIDGET VALIDATORS === -->
 
     <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
@@ -181,7 +172,5 @@
     <bean id="FileBrowserService" class="org.entando.entando.aps.system.services.storage.FileBrowserService" >
         <property name="storageManager" ref="StorageManager" />
     </bean>
-    
-    <context:component-scan base-package="org.entando.entando.aps.system.services.digitalexchange" />
 
 </beans>

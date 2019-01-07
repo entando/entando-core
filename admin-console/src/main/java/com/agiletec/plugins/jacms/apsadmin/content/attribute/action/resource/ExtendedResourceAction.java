@@ -90,7 +90,7 @@ public class ExtendedResourceAction extends MultipleResourceAction {
         boolean deleteTempFile = false;
         File file = null;
         try {
-            this.fetchFileDescriptions();
+            this.fetchFileFields();
             for (String fileDescription : getFileDescriptions()) {
                 BaseResourceDataBean resourceFile = null;
                /* if (this.isImageUpload()) {
@@ -100,6 +100,14 @@ public class ExtendedResourceAction extends MultipleResourceAction {
                     file = getFile(index);
                     deleteTempFile = false;
                 }*/
+                String tempDir = System.getProperty("java.io.tmpdir");
+                logger.info(" file {}", tempDir + File.separator + getFileUploadIDs().get(index) + ".tmp");
+
+                if (!getFileUploadIDs().get(index).isEmpty()) {
+                    file = new File(tempDir + File.separator + getFileUploadIDs().get(index) + ".tmp");
+                    deleteTempFile = true;
+                }
+                
                 Map imgMetadata = new HashMap();
                 if (null != file) {
                     logger.debug("file is not null");

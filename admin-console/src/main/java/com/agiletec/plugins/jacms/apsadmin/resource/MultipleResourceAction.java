@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -58,16 +57,13 @@ public class MultipleResourceAction extends ResourceAction {
         savedId.clear();
         if (ApsAdminSystemConstants.EDIT == this.getStrutsAction()) {
             this.fetchFileDescriptions();
-
             addFieldErrors(validateFileDescriptions());
-
         } else {
             this.fetchFileFields();
-
             addFieldErrors(validateFileDescriptions());
             addFieldErrors(validateFileUploadIDs());
             addFieldErrors(validateFileUploaNames());
-            addFieldErrors(validateFileUploadContentType());
+            addFieldErrors(validateFileUploadContentType());            
         }
 
         /*if (null == getFileDescriptions()) {
@@ -178,6 +174,7 @@ public class MultipleResourceAction extends ResourceAction {
         }
     }
      */
+    
     private List<FieldError> validateFileDescriptions() {
         List<FieldError> errors = new ArrayList<>();
         if (fileDescriptions == null) {

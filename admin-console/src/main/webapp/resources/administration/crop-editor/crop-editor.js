@@ -113,23 +113,27 @@ $(document).ready(function () {
                 }
             }
 
-            Store.items["item_" + storeItem.id] = setupHiddenFields(storeItem);
         };
 
         // Setup file for storeItem
         var setupStoreItemFile = function (storeItemId, file) {
             var storeItem = getStoreItem(storeItemId);
-            var reader = new FileReader();
+            storeItem.name = file.name;
+            storeItem.type = file.type;
+            updateStoreItem(storeItem);
 
-            reader.onload = function (e) {
-                storeItem.name = file.name;
-                storeItem.type = file.type;
-                storeItem.imageData = e.target.result;
 
-                updateStoreItem(storeItem);
-            };
-
-            reader.readAsDataURL(file);
+            // var reader = new FileReader();
+            //
+            // reader.onload = function (e) {
+            //     storeItem.name = file.name;
+            //     storeItem.type = file.type;
+            //     storeItem.imageData = e.target.result;
+            //
+            //     updateStoreItem(storeItem);
+            // };
+            //
+            // reader.readAsDataURL(file);
         };
 
         // Add fileUpload form field group to the form.
@@ -156,6 +160,10 @@ $(document).ready(function () {
 
 
             newStoreItem.$fieldGroup = $template.appendTo($fieldsContainer);
+
+            var fileInput = document.getElementById("fileUpload_" + newStoreItem.id);
+            fileInput.addEventListener('change', collectFiles, false);
+
 
             saveNewStoreItem(newStoreItem);
 

@@ -1,6 +1,21 @@
+// TODO - Integrate new upload manager with crop-editor.
+
+
+function ready(callback) {
+    // in case the document is already rendered
+    if (document.readyState != 'loading') callback();
+    // modern browsers
+    else if (document.addEventListener) document.addEventListener('DOMContentLoaded', callback);
+    // IE <= 8
+    else document.attachEvent('onreadystatechange', function () {
+
+            if (document.readyState == 'complete') callback();
+        });
+}
+
 // Configure file uploader.
 var sliceSize = 1048576;
-var saveAction = 'upload.action';
+var saveAction = 'upload';
 var stopUploadAndDeleteAction = 'stopUploadAndDelete.action';
 
 /*
@@ -9,18 +24,52 @@ var stopUploadAndDeleteAction = 'stopUploadAndDelete.action';
 
 var files = [];
 
+var collectFiles = function (e) {
+    console.log(e);
+    var fileInputs = e.target;
+    for (var i = 0; i < fileInputs.files.length; i++) {
+        addFile(fileInputs.files[i]);
+    }
+
+
+    startNextFileUpload();
+};
+
+ready(function () {
+    var fileInput = document.getElementById('fileUpload_0');
+    fileInput.addEventListener('change', collectFiles, false);
+});
+
+
+var addFile = function (fileInput) {
+    console.log(fileInput);
+    var file = {
+        numberOfPieces: Math.ceil(fileInput.size / sliceSize),
+        numberOfUploadedPieces: 0,
+        uploadStatus: 'pending',
+        description: fileInput.name,
+        fileInput: fileInput,
+        size: fileInput.size,
+        name: fileInput.name,
+        uploadId: uuidv4()
+    };
+    files.push(file);
+};
+
+
 var uploadNextFilePiece = function (fileIndex) {
+    var file = files[fileIndex];
     files[fileIndex].uploadStatus = 'in-progress';
-    var piece = getNextPiece();
+    var piece = getNextPiece(fileIndex);
 
     if (piece) {
         var formdata = new FormData();
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', action, true);
-        formdata.append('fileUpload', piece);
-        formdata.append('start', start);
-        formdata.append('end', end);
-        formdata.append('uploadId', uploadId);
+        xhr.open('POST', saveAction, true);
+        formdata.append('fileUpload', piece.slice);
+        formdata.append('start', piece.start);
+        formdata.append('end', piece.end);
+        formdata.append('uploadId', file.uploadId);
         formdata.append('fileSize', file.size);
         formdata.append('fileName', file.name);
         formdata.append('descr', file.description);
@@ -33,6 +82,7 @@ var uploadNextFilePiece = function (fileIndex) {
                     files[fileIndex].numberOfUploadedPieces++;
                 }
 
+                // Retry failed upload
                 uploadNextFilePiece(fileIndex);
             }
         };
@@ -40,15 +90,21 @@ var uploadNextFilePiece = function (fileIndex) {
         xhr.send(formdata);
     } else {
         files[fileIndex].uploadStatus = 'done';
+        console.log('DONE UPLOADING: ' + fileIndex);
         startNextFileUpload();
     }
 };
 
 var getNextPiece = function (fileIndex) {
     var file = files[fileIndex];
+    console.log(file);
+    console.log(fileIndex);
+    console.log("FILE");
     if (file.numberOfUploadedPieces === file.numberOfPieces) {
         return false;
     }
+
+
 
     var start = file.numberOfUploadedPieces * sliceSize;
     var end = start + sliceSize;
@@ -56,12 +112,12 @@ var getNextPiece = function (fileIndex) {
         end = file.size;
     }
 
-    return slice(file.fileInput, start, end);
+    return {slice: slice(file.fileInput, start, end), start: start, end: end};
 };
 
 // Return next pending file or false if there is no more pending files.
 var getNextPendingFileIndex = function () {
-    for (var i = 0; i < files.size; i++) {
+    for (var i = 0; i < files.length; i++) {
         if (files[i].uploadStatus === 'pending') {
             return i;
         }
@@ -70,26 +126,16 @@ var getNextPendingFileIndex = function () {
     return false;
 };
 
-var startNextFileUpload = function (start) {
+var startNextFileUpload = function () {
     var nextPendingFileIndex = getNextPendingFileIndex();
-    if (nextPendingFileIndex) {
+    console.log(nextPendingFileIndex);
+    if (nextPendingFileIndex !== false ) {
         uploadNextFilePiece(nextPendingFileIndex);
     }
+
+    console.log('ALL FILES FINISHED!');
 };
 
-var addFile = function (fileInput, fileDescription) {
-    var file = {
-        numberOfPieces: Math.ceil(fileInput.size / sliceSize),
-        numberOfUploadedPieces: 0,
-        uploadStatus: 'pending',
-        description: fileDescription,
-        fileInput: fileInput,
-        size: fileInput.size,
-        name: fileInput.name,
-        uploadId: uuidv4()
-    };
-    files.push(file);
-};
 
 /**
  * Formalize file.slice

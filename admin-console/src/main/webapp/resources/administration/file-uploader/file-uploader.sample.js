@@ -52,6 +52,7 @@ ready(function () {
             formdata.append('uploadId', uploadId);
             formdata.append('fileSize', size);
             formdata.append('fileName', fileName);
+            formdata.append('resourceTypeCode', document.getElementById('resourceTypeCode').value);
 
             if (isLastSlice) {
                 xhr.onreadystatechange = function () {

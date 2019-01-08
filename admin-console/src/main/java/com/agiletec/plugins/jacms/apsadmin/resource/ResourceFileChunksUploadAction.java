@@ -25,12 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ResourceFileChunksUploadAction extends AbstractResourceAction {
-
     private static final Logger logger = LoggerFactory.getLogger(ResourceFileChunksUploadAction.class);
-    private String result = "";
+    
     private String RESULT_SUCCESS = "SUCCESS";
     private String RESULT_FAILED = "FAILED";
     private String RESULT_VALIDATION_ERROR = "VALIDATION_ERROR";
+
+    private String resultMessage = "";
+    private String resourceTypeCode;
     private String fileUploadContentType;
     private String fileName;
     private File fileUpload;
@@ -39,21 +41,22 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     private InputStream inputStream;
     private String uploadId;
     private String fileSize;
-    boolean valid = true;
-
-    private String resourceTypeCode;
-
+    private boolean valid = true;
+    
+   
     public String newResource() {
         return SUCCESS;
     }
 
     @Override
     public void validate() {
-        logger.info("ResourceFileChunksUploadAction validate");
-
-        String resourceTypeCode = getRefererParameters().get("resourceTypeCode");
-
-        if (resourceTypeCode.equals("Image") || resourceTypeCode.equals("Attach")) {
+        logger.debug("ResourceFileChunksUploadAction validate");
+        logger.debug("resourceTypeCode {}", resourceTypeCode);
+        if (null==resourceTypeCode || null==fileName)
+        {
+            valid = false;
+        }
+        else if (resourceTypeCode.equals("Image") || resourceTypeCode.equals("Attach")) {
 
             setResourceTypeCode(resourceTypeCode);
 
@@ -71,26 +74,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             valid = false;
         }
         logger.debug("valid {}", valid);
-    }
-
-    private Map<String, String> getRefererParameters() {
-        String referer = getRequest().getHeader("referer");
-        logger.debug("getRefererParameters for referer {}", referer);
-
-        String refererParameters = referer.substring(referer.indexOf("?") + 1);
-        logger.debug("refererParameters {}", refererParameters);
-
-        String[] params = refererParameters.split("&");
-        Map<String, String> paramsList = new HashMap<>();
-        logger.debug("params {}", params);
-        for (String param : params) {
-            String[] split = param.split("=");
-            if (split.length > 1) {
-                logger.debug("key {} value {}", split[0], split[1]);
-                paramsList.put(split[0], split[1]);
-            }
-        }
-        return paramsList;
     }
 
     protected boolean checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
@@ -133,19 +116,21 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             logger.debug("filename {}", fileName);
             logger.debug("uploadId {}", uploadId);
             logger.debug("fileSize {}", fileSize);
+            logger.debug("resourceTypeCode {}", resourceTypeCode);
+
             try {
                 processChunk(fileUpload, uploadId + ".tmp", start, end);
             } catch (IOException ex) {
-                result = RESULT_FAILED;
+                resultMessage = RESULT_FAILED;
                 inputStream = new ByteArrayInputStream(RESULT_FAILED.getBytes());
                 logger.error("Error processing the file chunk {}", ex);
             }
-            result = RESULT_SUCCESS;
+            resultMessage = RESULT_SUCCESS;
         } else {
-            result = RESULT_VALIDATION_ERROR;
+            resultMessage = RESULT_VALIDATION_ERROR;
         }
-        inputStream = new ByteArrayInputStream(result.getBytes());
-        logger.debug("result {}", result);
+        inputStream = new ByteArrayInputStream(resultMessage.getBytes());
+        logger.debug("result {}", resultMessage);
 
         return SUCCESS;
     }
@@ -159,10 +144,9 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
 
     }
 
-    protected void appendChunk(File fileChunk, String filename) throws IOException {
-        logger.info("appendChunk");
+    protected void appendChunk(File fileChunk, String filename) throws IOException {        
         String tempDir = System.getProperty("java.io.tmpdir");
-        logger.info("******** file {}", tempDir + File.separator + filename);
+        logger.info("appendChunk to file {}", tempDir + File.separator + filename);
         File file = new File(tempDir + File.separator + filename);
 
         byte[] fileChunkBytes = FileUtils.readFileToByteArray(fileChunk);
@@ -278,4 +262,12 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         this.resourceTypeCode = resourceTypeCode;
     }
 
+    public String getResultMessage() {
+        return resultMessage;
+    }
+
+    public boolean isValid() {
+        return valid;
+    }
+  
 }

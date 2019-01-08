@@ -93,36 +93,25 @@ public class ExtendedResourceAction extends MultipleResourceAction {
             this.fetchFileFields();
             for (String fileDescription : getFileDescriptions()) {
                 BaseResourceDataBean resourceFile = null;
-               /* if (this.isImageUpload()) {
-                    file = this.createImageTempFile(getBase64Image().get(index), getFileUploadBase64ImageFileName().get(index));
-                    deleteTempFile = true;
-                } else {
-                    file = getFile(index);
-                    deleteTempFile = false;
-                }*/
-                String tempDir = System.getProperty("java.io.tmpdir");
-                logger.info(" file {}", tempDir + File.separator + getFileUploadIDs().get(index) + ".tmp");
 
-                if (!getFileUploadIDs().get(index).isEmpty()) {
-                    file = new File(tempDir + File.separator + getFileUploadIDs().get(index) + ".tmp");
-                    deleteTempFile = true;
+                String tempDir = System.getProperty("java.io.tmpdir");
+         
+                if (listContains(getFileUploadIDs(), index)) {
+                    if (null != getFileUploadId(index)) {
+                        logger.info(" file {}", tempDir + File.separator + getFileUploadId(index) + ".tmp");
+                        file = new File(tempDir + File.separator + getFileUploadId(index) + ".tmp");
+                        deleteTempFile = true;
+                    }
                 }
-                
                 Map imgMetadata = new HashMap();
                 if (null != file) {
                     logger.debug("file is not null");
                     imgMetadata = super.getImgMetadata(file);
                     resourceFile = new BaseResourceDataBean(file);
-                   /* if (this.isImageUpload()) {
-                        logger.debug("getFileUploadBase64ImageFileName().get({}): {}", index, getFileUploadBase64ImageFileName().get(index));
-                        logger.debug("getFileUploadBase64ImageContentType().get({}): {}", index, getFileUploadBase64ImageContentType().get(index));
-                        resourceFile.setFileName(getFileUploadBase64ImageFileName().get(index));
-                        resourceFile.setMimeType(getFileUploadBase64ImageContentType().get(index));
-                    } else {
-                     */   logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
-                        logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
-                        resourceFile.setFileName(getFileUploadFileName().get(index));
-                        resourceFile.setMimeType(getFileUploadContentTypes().get(index));
+                    logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
+                    logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
+                    resourceFile.setFileName(getFileUploadFileName().get(index));
+                    resourceFile.setMimeType(getFileUploadContentTypes().get(index));
                     //}
                 } else {
                     logger.debug("file is null");

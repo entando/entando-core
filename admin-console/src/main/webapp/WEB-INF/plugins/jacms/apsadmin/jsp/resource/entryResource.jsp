@@ -82,7 +82,7 @@
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/inc_fullErrors.jsp"/>
     <p class="sr-only">
         <wpsf:hidden name="strutsAction"/>
-        <wpsf:hidden name="resourceTypeCode"/>
+        <wpsf:hidden name="resourceTypeCode" id="resourceTypeCode"/>
         <wpsf:hidden name="contentOnSessionMarker"/>
         <s:if test="strutsAction != 1">
             <wpsf:hidden name="resourceId"/>

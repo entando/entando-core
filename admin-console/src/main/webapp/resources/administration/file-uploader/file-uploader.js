@@ -24,6 +24,7 @@ var uploadNextFilePiece = function (fileIndex) {
         formdata.append('fileSize', file.size);
         formdata.append('fileName', file.name);
         formdata.append('descr', file.description);
+        formdata.append('resourceTypeCode', document.getElementById('resourceTypeCode').value);
 
         xhr.onreadystatechange = function () {
             // Call a function when the state changes.

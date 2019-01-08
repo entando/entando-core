@@ -63,30 +63,8 @@ public class MultipleResourceAction extends ResourceAction {
             addFieldErrors(validateFileDescriptions());
             addFieldErrors(validateFileUploadIDs());
             addFieldErrors(validateFileUploaNames());
-            addFieldErrors(validateFileUploadContentType());            
+            addFieldErrors(validateFileUploadContentType());
         }
-
-        /*if (null == getFileDescriptions()) {
-                this.addFieldError(DESCR_FIELD + 0, getText("error.resource.file.descrEmpty"));
-                logger.error("Add error -> descriptions are empty, null == getFileDescriptions()");
-            }*/
- /*
-            if (this.isImageUpload()) {
-                if (null != this.getFileUploadBase64ImageFileName()) {
-                    ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                    this.checkRightFileType(resourcePrototype, this.getFileUploadBase64ImageFileName().get(0));
-                }
-            } else if (fileUploadBase64ImageFileName != null) {
-                ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                this.checkRightFileType(resourcePrototype, this.getFileUploadFileName().get(0));
-            }
-        } else if (this.isImageUpload()) {
-            validateImages();
-        } else {
-            validateAttachments();
-        }
-         */
-        //    }
     }
 
     private void addFieldErrors(List<FieldError> fieldErrors) {
@@ -96,9 +74,7 @@ public class MultipleResourceAction extends ResourceAction {
             return; // Nothing to do
         }
         for (FieldError fieldError : fieldErrors) {
-            //if (!isMEssageErrorAlreadyAdded(fieldError.errorMessage)) {
-                addFieldError(fieldError.fieldName, fieldError.errorMessage);
-           // }
+            addFieldError(fieldError.fieldName, fieldError.errorMessage);
         }
     }
 
@@ -167,17 +143,21 @@ public class MultipleResourceAction extends ResourceAction {
                 ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
                 this.getFileUploadFileName().forEach(fileName
                         -> checkRightFileType(resourcePrototype, fileName));
-            } else {
+            } else {s
                 this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.genericError"));
                 logger.error("Add error -> genericError");
             }
         }
     }
      */
-    
     private List<FieldError> validateFileDescriptions() {
         List<FieldError> errors = new ArrayList<>();
         if (fileDescriptions == null) {
+            errors.add(new FieldError(FILE_DESCR_FIELD + "0", getText("error.resource.file.descrEmpty")));
+            return errors;
+        }
+
+        if (fileDescriptions.isEmpty()) {
             errors.add(new FieldError(FILE_DESCR_FIELD + "0", getText("error.resource.file.descrEmpty")));
             return errors;
         }
@@ -203,6 +183,11 @@ public class MultipleResourceAction extends ResourceAction {
             return errors;
         }
 
+        if (fileUploadIDs.isEmpty()) {
+            errors.add(new FieldError(FILE_UPLOAD_ID_FIELD + "0", getText("error.resource.filename.uploadError")));
+            return errors;
+        }
+
         for (int i = 0; i < fileUploadIDs.size(); i++) {
             String fileUploadID = fileUploadIDs.get(i);
 
@@ -221,6 +206,11 @@ public class MultipleResourceAction extends ResourceAction {
             return errors;
         }
 
+        if (fileUploadFileNames.isEmpty()) {
+            errors.add(new FieldError(FILE_NAME_FIELD + "0", getText("error.resource.filename.uploadError")));
+            return errors;
+        }
+
         for (int i = 0; i < fileUploadFileNames.size(); i++) {
             String fileUploadFileName = fileUploadFileNames.get(i);
 
@@ -235,6 +225,11 @@ public class MultipleResourceAction extends ResourceAction {
     private List<FieldError> validateFileUploadContentType() {
         List<FieldError> errors = new ArrayList<>();
         if (fileUploadContentTypes == null) {
+            errors.add(new FieldError(FILE_CONTENT_TYPE_FIELD + "0", getText("error.resource.filename.uploadError")));
+            return errors;
+        }
+
+        if (fileUploadContentTypes.isEmpty()) {
             errors.add(new FieldError(FILE_CONTENT_TYPE_FIELD + "0", getText("error.resource.filename.uploadError")));
             return errors;
         }
@@ -317,22 +312,23 @@ public class MultipleResourceAction extends ResourceAction {
                         deleteTempFile = true;
                     } else {*/
                     String tempDir = System.getProperty("java.io.tmpdir");
-                    logger.info(" file {}", tempDir + File.separator + fileUploadIDs.get(index) + ".tmp");
-                    
-                    if (!fileUploadIDs.get(index).isEmpty()){
-                        file = new File(tempDir + File.separator + fileUploadIDs.get(index) + ".tmp");
-                        deleteTempFile = true;
+
+                    if (listContains(fileUploadIDs, index)) {
+                        if (null != getFileUploadId(index)) {
+                            logger.info(" file {}", tempDir + File.separator + getFileUploadId(index) + ".tmp");
+                            file = new File(tempDir + File.separator + getFileUploadId(index) + ".tmp");
+                            deleteTempFile = true;
+                        }
                     }
-                    //}
                     Map imgMetadata = new HashMap();
                     if (null != file) {
                         logger.debug("file is not null");
                         imgMetadata = super.getImgMetadata(file);
                         resourceFile = new BaseResourceDataBean(file);
-                        logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName().get(index));
-                        logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadFileName().get(index));
-                        resourceFile.setFileName(getFileUploadFileName().get(index));
-                        resourceFile.setMimeType(getFileUploadContentTypes().get(index));
+                        logger.debug("getFileUploadFileName().get({}): {}", index, getFileUploadFileName(index));
+                        logger.debug("getFileUploadContentType().get({}): {}", index, getFileUploadContentType(index));
+                        resourceFile.setFileName(getFileUploadFileName(index));
+                        resourceFile.setMimeType(getFileUploadContentType(index));
                     } else {
                         logger.debug("file is null");
                         resourceFile = new BaseResourceDataBean();
@@ -358,7 +354,8 @@ public class MultipleResourceAction extends ResourceAction {
 
                     baseResourceDataBeanList = new ArrayList<BaseResourceDataBean>();
                     baseResourceDataBeanList.add(resourceFile);
-                    String fileUploadName = getFilenameFromListOfNames(index);
+                    //  String fileUploadName = getFilenameFromListOfNames(index);
+                    String fileUploadName = getFileUploadFileName(index);
 
                     try {
                         if (ApsAdminSystemConstants.ADD == this.getStrutsAction()) {
@@ -447,6 +444,10 @@ public class MultipleResourceAction extends ResourceAction {
         return fileUploadFileNames;
     }
 
+    public void setFileUploadFileNames(List<String> fileUploadFileNames) {
+        this.fileUploadFileNames = fileUploadFileNames;
+    }
+
     public List<String> getFileUploadContentTypes() {
         return fileUploadContentTypes;
     }
@@ -457,17 +458,6 @@ public class MultipleResourceAction extends ResourceAction {
 
     public List<String> getFileUploadFileName() {
         return fileUploadFileNames;
-    }
-
-    public String getFileUploadFileName(int i) {
-        if (null != fileUploadFileNames) {
-            return fileUploadFileNames.get(i);
-        }
-        return "";
-    }
-
-    public void setFileUploadFileNames(List<String> fileUploadFileNames) {
-        this.fileUploadFileNames = fileUploadFileNames;
     }
 
     public Map<String, String> getMetadata() {
@@ -497,7 +487,7 @@ public class MultipleResourceAction extends ResourceAction {
     }
 
     protected void fetchFileFields() {
-        logger.debug("***  fetchFileFields ***");
+        logger.debug("fetchFileFields");
         fetchFileDescriptions();
         fetchFileUploadIDs();
         fetchFileUploadContentTypes();
@@ -506,32 +496,26 @@ public class MultipleResourceAction extends ResourceAction {
 
     protected void fetchFileDescriptions() {
         fileDescriptions = fetchFields(FILE_DESCR_FIELD);
-        logger.debug("--- fetchFileDescriptions {}", fileDescriptions);
+        logger.debug("fetchFileDescriptions {}", fileDescriptions);
     }
 
     protected void fetchFileUploadIDs() {
         fileUploadIDs = fetchFields(FILE_UPLOAD_ID_FIELD);
-        logger.debug("--- fetchFileUploadIDs {}", fileUploadIDs);
+        logger.debug("fetchFileUploadIDs {}", fileUploadIDs);
     }
 
     protected void fetchFileUploadContentTypes() {
         fileUploadContentTypes = fetchFields(FILE_CONTENT_TYPE_FIELD);
-        logger.debug("--- fetchFileUploadContentTypes {}", fileUploadContentTypes);
+        logger.debug("fetchFileUploadContentTypes {}", fileUploadContentTypes);
     }
 
     protected void fetchFileUploadFileNames() {
         fileUploadFileNames = fetchFields(FILE_NAME_FIELD);
-        logger.debug("--- fetchFileUploadFileNames {}", fileUploadContentTypes);
+        logger.debug("fetchFileUploadFileNames {}", fileUploadContentTypes);
 
     }
 
-    private String getFilenameFromListOfNames(int i) {
-        return listContains(fileUploadFileNames, i)
-                ? fileUploadFileNames.get(i)
-                : null;
-    }
-
-    private boolean listContains(List list, int i) {
+    protected boolean listContains(List list, int i) {
         return list != null && i <= list.size();
     }
 
@@ -540,7 +524,7 @@ public class MultipleResourceAction extends ResourceAction {
                 && !fileDescriptions.isEmpty()) {
             return fileDescriptions.get(i);
         }
-        return "";
+        return null;
     }
 
     public String getFileUploadId(int i) {
@@ -548,22 +532,22 @@ public class MultipleResourceAction extends ResourceAction {
                 && !fileUploadIDs.isEmpty()) {
             return fileUploadIDs.get(i);
         }
-        return "";
+        return null;
     }
 
-    public String getFileName(int i) {
+    public String getFileUploadFileName(int i) {
         if (null != fileUploadFileNames
                 && !fileUploadFileNames.isEmpty()) {
             return fileUploadFileNames.get(i);
         }
-        return "";
+        return null;
     }
 
-    public String getFileContentType(int i) {
+    public String getFileUploadContentType(int i) {
         if (null != fileUploadContentTypes
                 && !fileUploadContentTypes.isEmpty()) {
             return fileUploadContentTypes.get(i);
         }
-        return "";
+        return null;
     }
 }

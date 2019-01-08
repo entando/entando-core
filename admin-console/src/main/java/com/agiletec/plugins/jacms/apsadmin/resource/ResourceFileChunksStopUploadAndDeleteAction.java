@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
 public class ResourceFileChunksStopUploadAndDeleteAction extends ActionSupport {
     Charset charset = StandardCharsets.UTF_8;
 
-    private static final Logger logger = LoggerFactory.getLogger(ResourceFileChunksUploadAction.class);
-    private String result = "";
+    private static final Logger logger = LoggerFactory.getLogger(ResourceFileChunksStopUploadAndDeleteAction.class);
+    private String resultMessage = "";
 
     private String RESULT_SUCCESS = "SUCCESS";
     private String RESULT_FAILED = "FAILED";
@@ -42,15 +42,15 @@ public class ResourceFileChunksStopUploadAndDeleteAction extends ActionSupport {
         if (file.exists() && !file.isDirectory()) {
             boolean fileDeleted = file.delete();
             if (fileDeleted) {
-                result = RESULT_SUCCESS;
+                resultMessage = RESULT_SUCCESS;
             } else {
-                result = RESULT_FAILED;
+                resultMessage = RESULT_FAILED;
             }
         } else {
-            result= RESULT_FILE_NOT_FOUND;
+            resultMessage= RESULT_FILE_NOT_FOUND;
         }
-        inputStream = new ByteArrayInputStream(result.getBytes());
-        logger.debug("result {}", result);
+        inputStream = new ByteArrayInputStream(resultMessage.getBytes());
+        logger.debug("resultMessage {}", resultMessage);
         return SUCCESS;
     }
 
@@ -64,6 +64,10 @@ public class ResourceFileChunksStopUploadAndDeleteAction extends ActionSupport {
 
     public InputStream getInputStream() {
         return inputStream;
+    }
+
+    public String getResultMessage() {
+        return resultMessage;
     }
 
 }

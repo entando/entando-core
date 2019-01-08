@@ -67,16 +67,22 @@
         </action>
         
         <action name="upload" class="jacmsResourceFileChunksUploadAction" method="upload">
-            <result type="tiles" name="input">admin.jacms.resource.entry</result>
-            <result type="tiles" name="failure">admin.jacms.resource.entry</result>
+            <result type="stream" name="input">                
+                <param name="contentType">plain/text</param>
+                <param name="inputStream">inputStream</param>
+            </result>
+            <result type="stream" name="failure">                
+                <param name="contentType">plain/text</param>
+                <param name="inputStream">inputStream</param>
+            </result>
+       
             <result type="stream">
-                <param name="contentType">text/html</param>
+                <param name="contentType">plain/text</param>
                 <param name="inputStream">inputStream</param>
             </result>
 
-            <!-- <interceptor-ref name="fileUpload"><param name="maximumSize">10485760</param></interceptor-ref> --><!-- maximun Size = 10 Mb -->
             <interceptor-ref name="apsFileUpload" />
-            <interceptor-ref name="entandoDefaultStack">
+            <interceptor-ref name="entandoValidationStack">
                 <param name="requestAuth.requiredPermission">manageResources</param>
             </interceptor-ref>
       
@@ -85,16 +91,21 @@
         
         
         <action name="stopUploadAndDelete" class="jacmsResourceFileChunksStopUploadAndDeleteAction" method="stopUploadAndDelete">
-            <result type="tiles" name="input">admin.jacms.resource.entry</result>
-            <result type="tiles" name="failure">admin.jacms.resource.entry</result>
+            <result type="stream" name="input">                
+                <param name="contentType">plain/text</param>
+                <param name="inputStream">inputStream</param>
+            </result>
+            <result type="stream" name="failure">                
+                <param name="contentType">plain/text</param>
+                <param name="inputStream">inputStream</param>
+            </result>       
             <result type="stream">
-                <param name="contentType">text/html</param>
+                <param name="contentType">plain/text</param>
                 <param name="inputStream">inputStream</param>
             </result>
 
-            <!-- <interceptor-ref name="fileUpload"><param name="maximumSize">10485760</param></interceptor-ref> --><!-- maximun Size = 10 Mb -->
             <interceptor-ref name="apsFileUpload" />
-            <interceptor-ref name="entandoDefaultStack">
+            <interceptor-ref name="entandoValidationStack">
                 <param name="requestAuth.requiredPermission">manageResources</param>
             </interceptor-ref>
       

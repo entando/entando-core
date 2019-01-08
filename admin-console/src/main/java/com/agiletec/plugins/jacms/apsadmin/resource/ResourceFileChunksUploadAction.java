@@ -18,8 +18,6 @@ import static com.opensymphony.xwork2.Action.SUCCESS;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +39,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     private InputStream inputStream;
     private String uploadId;
     private String fileSize;
-    private boolean valid = true;
-    
+    private boolean valid = true;    
    
     public String newResource() {
         return SUCCESS;
@@ -50,8 +47,8 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
 
     @Override
     public void validate() {
-        logger.debug("ResourceFileChunksUploadAction validate");
-        logger.debug("resourceTypeCode {}", resourceTypeCode);
+        logger.info("ResourceFileChunksUploadAction validate");
+        logger.info("resourceTypeCode {}", resourceTypeCode);
         if (null==resourceTypeCode || null==fileName)
         {
             valid = false;
@@ -73,7 +70,7 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         } else {
             valid = false;
         }
-        logger.debug("valid {}", valid);
+        logger.info("valid {}", valid);
     }
 
     protected boolean checkRightFileType(ResourceInterface resourcePrototype, String fileName) {
@@ -106,9 +103,8 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
     }
 
     public String upload() {
-        validate();
         if (valid) {
-            logger.info("ResourceFileChunksUploadAction Save");
+            logger.info("ResourceFileChunksUploadAction Save {}",fileName);
             logger.debug("start {}", start);
             logger.debug("end {}", end);
             logger.debug("fileUpload {}", fileUpload);
@@ -117,7 +113,6 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
             logger.debug("uploadId {}", uploadId);
             logger.debug("fileSize {}", fileSize);
             logger.debug("resourceTypeCode {}", resourceTypeCode);
-
             try {
                 processChunk(fileUpload, uploadId + ".tmp", start, end);
             } catch (IOException ex) {
@@ -150,10 +145,10 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         File file = new File(tempDir + File.separator + filename);
 
         byte[] fileChunkBytes = FileUtils.readFileToByteArray(fileChunk);
-        logger.info("appendChunk bytes {}", fileChunkBytes.length);
+        logger.debug("appendChunk bytes {}", fileChunkBytes.length);
 
         FileUtils.writeByteArrayToFile(file, fileChunkBytes, true);
-        logger.info("appendChunk done");
+        logger.debug("appendChunk done");
 
     }
 
@@ -161,15 +156,15 @@ public class ResourceFileChunksUploadAction extends AbstractResourceAction {
         logger.info("createTempFile");
         String tempDir = System.getProperty("java.io.tmpdir");
 
-        logger.info("******** file {}", tempDir + File.separator + filename);
+        logger.debug("file {}", tempDir + File.separator + filename);
 
         File file = new File(tempDir + File.separator + filename);
-        logger.info("file.exists() {}", file.exists());
-        logger.info("file.isDirectory() {}", file.isDirectory());
+        logger.debug("file.exists() {}", file.exists());
+        logger.debug("file.isDirectory() {}", file.isDirectory());
         if (!file.exists() && !file.isDirectory()) {
             // do something
 
-            logger.info("createTempFile START");
+            logger.debug("createTempFile START");
 
             InputStream inputStream = new FileInputStream(firstChunk);
             OutputStream out = null;

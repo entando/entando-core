@@ -68,8 +68,6 @@ public class MultipleResourceAction extends ResourceAction {
     }
 
     private void addFieldErrors(List<FieldError> fieldErrors) {
-        logger.debug("\n\n-----------------------------------------------------");
-
         if (fieldErrors.isEmpty()) {
             return; // Nothing to do
         }
@@ -78,78 +76,6 @@ public class MultipleResourceAction extends ResourceAction {
         }
     }
 
-    private boolean isMessageErrorAlreadyAdded(String errorMessage) {
-        boolean result = false;
-        Map<String, List<String>> fieldErrors = super.getFieldErrors();
-        for (Map.Entry<String, List<String>> entry : fieldErrors.entrySet()) {
-            logger.debug("key {} value {} ", entry.getKey(), entry.getValue());
-            for (String message : entry.getValue()) {
-                logger.debug("message found {}", message);
-                if (message.equals(errorMessage)) {
-                    logger.debug("message.equals(errorMessage)");
-                    result = true;
-                }
-            }
-        }
-        return result;
-    }
-
-    /*
-    public void validateImages() {
-        logger.debug("MultipleResourceAction validateImages MULTIPLE UPLOAD IMAGES");
-        try {
-            fetchFileDescriptions();
-            for (int i = 0; i < getFileDescriptions().size(); i++) {
-                if (null == getBase64Image(i)) {
-                    this.addFieldError(FILE_UPLOAD_FIELD + i, this.getText("error.resource.file.void"));
-                    logger.error("Add error -> files in base64 string is empty, null == getBase64Image({})", i);
-                }
-            }
-        } catch (Throwable ex) {
-            this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.void"));
-            logger.error("Add error -> files in base64 string is empty. Exception:\n{}", ex);
-        }
-        if (null != getBase64Image()) {
-            addFieldErrorsIfNotEmpty(validateFileDescriptions());
-            if (null != this.getResourceType()) {
-                ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                this.getFileUploadBase64ImageFileName().forEach(imageFileName
-                        -> checkRightFileType(resourcePrototype, imageFileName));
-            } else {
-                this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.genericError"));
-                logger.error("Add error -> genericError");
-            }
-        }
-    }
-     */
- /*
-    public void validateAttachments() {
-        logger.debug("MultipleResourceAction validateAttachments MULTIPLE UPLOAD FILES");
-        try {
-            this.fetchFileDescriptions();
-            for (int i = 0; i < getFileDescriptions().size(); i++) {
-                if (null == getFileUploadInputStream(i)) {
-                    this.addFieldError(FILE_UPLOAD_FIELD + i, this.getText("error.resource.file.void"));
-                    logger.error("Add error -> files is void, null == getFileUploadInputStream({})", i);
-                }
-            }
-        } catch (Throwable ex) {
-            this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.void"));
-            logger.error("Add error -> files is void. Exception:\n{}", ex);
-        }
-        if (null != getFileUpload()) {
-            addFieldErrorsIfNotEmpty(validateFileDescriptions());
-            if (null != this.getResourceType()) {
-                ResourceInterface resourcePrototype = this.getResourceManager().createResourceType(this.getResourceType());
-                this.getFileUploadFileName().forEach(fileName
-                        -> checkRightFileType(resourcePrototype, fileName));
-            } else {s
-                this.addFieldError(FILE_UPLOAD_FIELD, this.getText("error.resource.file.genericError"));
-                logger.error("Add error -> genericError");
-            }
-        }
-    }
-     */
     private List<FieldError> validateFileDescriptions() {
         List<FieldError> errors = new ArrayList<>();
         if (fileDescriptions == null) {
@@ -284,14 +210,6 @@ public class MultipleResourceAction extends ResourceAction {
         return super.removeCategory();
     }
 
-    /*
-    public boolean isImageUpload() {
-        if (null != this.fileUpload) &&  this.fileUpload.contains(NONE){
-            return true;
-        }
-        return false;
-    }
-     */
     @Override
     public String save() {
         logger.debug("Save in multiple resource action for id {}", this.getResourceId());
@@ -307,10 +225,6 @@ public class MultipleResourceAction extends ResourceAction {
                     List<BaseResourceDataBean> baseResourceDataBeanList;
                     BaseResourceDataBean resourceFile = null;
 
-                    /* if (this.isImageUpload()) {
-                        file = createImageTempFile(getBase64Image().get(index), getFileUploadBase64ImageFileName().get(index));
-                        deleteTempFile = true;
-                    } else {*/
                     String tempDir = System.getProperty("java.io.tmpdir");
 
                     if (listContains(fileUploadIDs, index)) {
@@ -354,7 +268,6 @@ public class MultipleResourceAction extends ResourceAction {
 
                     baseResourceDataBeanList = new ArrayList<BaseResourceDataBean>();
                     baseResourceDataBeanList.add(resourceFile);
-                    //  String fileUploadName = getFilenameFromListOfNames(index);
                     String fileUploadName = getFileUploadFileName(index);
 
                     try {

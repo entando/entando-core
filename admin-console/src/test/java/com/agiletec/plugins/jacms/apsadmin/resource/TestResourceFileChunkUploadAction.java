@@ -113,6 +113,6 @@ public class TestResourceFileChunkUploadAction extends ApsAdminBaseTestCase {
         assertEquals(Action.SUCCESS, result);
 
         assertEquals("VALIDATION_ERROR", action.getResultMessage());
-    }  
-
+    }
+    
 }

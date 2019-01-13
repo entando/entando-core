@@ -81,6 +81,13 @@ var uploadNextFilePiece = function (fileIndex) {
                 // Request finished. Do processing here.
                 if (this.status === 200) {
                     files[fileIndex].numberOfUploadedPieces++;
+                    var $progress = $('#progress_' + fileIndex);
+                    var progressValue = Math.ceil(files[fileIndex].numberOfUploadedPieces / files[fileIndex].numberOfPieces * 100);
+                    var $progressBar = $progress.find('.progress-bar');
+                    $progressBar.attr('aria-valuenow', progressValue);
+                    $progressBar.css("width", progressValue + "%");
+                    $progressBar.find('span').text(progressValue + "%");
+
                 }
 
                 // Retry failed upload
@@ -110,7 +117,6 @@ var getNextPiece = function (fileIndex) {
     }
 
 
-
     var start = file.numberOfUploadedPieces * sliceSize;
     var end = start + sliceSize;
     if (file.size - end < 0) {
@@ -134,7 +140,7 @@ var getNextPendingFileIndex = function () {
 var startNextFileUpload = function () {
     var nextPendingFileIndex = getNextPendingFileIndex();
     console.log(nextPendingFileIndex);
-    if (nextPendingFileIndex !== false ) {
+    if (nextPendingFileIndex !== false) {
         uploadNextFilePiece(nextPendingFileIndex);
     }
 

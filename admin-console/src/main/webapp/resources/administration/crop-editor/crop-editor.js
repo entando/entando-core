@@ -156,12 +156,20 @@ $(document).ready(function () {
             $template.find('#newFileUpload_selected').attr("id", "fileUpload_" + newStoreItem.id + "_selected");
             $template.find('#newFileUpload').attr("id", "fileUpload_" + newStoreItem.id);
 
-            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadId_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadId_'+ newStoreItem.id +'" class="form-control">');
-            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadName_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadName_'+ newStoreItem.id +'" class="form-control">');
-            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadContentType_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadContentType_'+ newStoreItem.id +'" class="form-control">');
+
+            var progress = '<div class="progress" id="progress_' + newStoreItem.id + '">\n' +
+                '               <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">\n' +
+                '                   <span>0%</span>\n' +
+                '               </div>\n' +
+                '           </div>';
+
+            $template.find('.fileUpload-right').append(progress);
+
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadId_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadId_' + newStoreItem.id + '" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadName_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadName_' + newStoreItem.id + '" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadContentType_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadContentType_' + newStoreItem.id + '" class="form-control">');
 
             $template.find('#newFileUpload_box').attr("id", "fileUpload_box_" + newStoreItem.id);
-
 
 
             newStoreItem.$fieldGroup = $template.appendTo($fieldsContainer);

@@ -283,7 +283,7 @@
                         <%--class="btn btn-default" key="label.button-choose-files"/>--%>
                         <%--</s:else>--%>
 
-                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" />
+                        <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" multiple="true" />
               
                         <button id="delete_file">Delete File</button>
                     
@@ -297,7 +297,7 @@
                         <s:set var="paramNameVarUploadId" value="%{'fileUploadId_' + (#ctr.count - 1)}"/>
                         <s:set var="uploadIdFieldVar" value="%{#parameters[#paramNameVarUploadId][0]}"/>
                     </s:else>
-                    <wpsf:textfield name="fileUploadId_%{#ctr.count - 1}" maxlength="50" id="fileUploadId_%{#ctr.count - 1}"
+                    <wpsf:hidden name="fileUploadId_%{#ctr.count - 1}" maxlength="50" id="fileUploadId_%{#ctr.count - 1}"
                                     cssClass="form-control file-description"
                                     value="%{#uploadIdFieldVar}"/>
                     
@@ -307,7 +307,7 @@
                         <s:set var="paramNameVarFileName" value="%{'fileUploadName_' + (#ctr.count - 1)}"/>
                         <s:set var="fileNameFieldVar" value="%{#parameters[#paramNameVarFileName][0]}"/>
                     </s:else>
-                    <wpsf:textfield name="fileUploadName_%{#ctr.count - 1}" maxlength="500" id="fileUploadName_%{#ctr.count - 1}"
+                    <wpsf:hidden name="fileUploadName_%{#ctr.count - 1}" maxlength="500" id="fileUploadName_%{#ctr.count - 1}"
                                     cssClass="form-control file-description"
                                     value="%{#fileNameFieldVar}"/>
                     
@@ -317,7 +317,7 @@
                         <s:set var="paramNameVarFileContentType" value="%{'fileUploadContentType_' + (#ctr.count - 1)}"/>
                         <s:set var="fileContentTypeFieldVar" value="%{#parameters[#paramNameVarFileContentType][0]}"/>
                     </s:else>
-                    <wpsf:textfield name="fileUploadContentType_%{#ctr.count - 1}" maxlength="250" id="fileUploadContentType_%{#ctr.count - 1}"
+                    <wpsf:hidden name="fileUploadContentType_%{#ctr.count - 1}" maxlength="250" id="fileUploadContentType_%{#ctr.count - 1}"
                                     cssClass="form-control file-description"
                                     value="%{#fileContentTypeFieldVar}"/>
 

@@ -92,6 +92,10 @@ var uploadNextFilePiece = function (fileIndex) {
     } else {
         files[fileIndex].uploadStatus = 'done';
         console.log('DONE UPLOADING: ' + fileIndex);
+        document.getElementById('fileUploadId_' + fileIndex).value = files[fileIndex].uploadId;
+        document.getElementById('fileUploadName_' + fileIndex).value = files[fileIndex].name;
+        var resourceTypeCode = document.getElementById('resourceTypeCode').value;
+        document.getElementById('fileUploadContentType_' + fileIndex).value = resourceTypeCode;
         startNextFileUpload();
     }
 };

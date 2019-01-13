@@ -156,7 +156,12 @@ $(document).ready(function () {
             $template.find('#newFileUpload_selected').attr("id", "fileUpload_" + newStoreItem.id + "_selected");
             $template.find('#newFileUpload').attr("id", "fileUpload_" + newStoreItem.id);
 
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadId_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadId_'+ newStoreItem.id +'" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadName_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadName_'+ newStoreItem.id +'" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadContentType_'+ newStoreItem.id +'" maxlength="500" value="" id="fileUploadContentType_'+ newStoreItem.id +'" class="form-control">');
+
             $template.find('#newFileUpload_box').attr("id", "fileUpload_box_" + newStoreItem.id);
+
 
 
             newStoreItem.$fieldGroup = $template.appendTo($fieldsContainer);

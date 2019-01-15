@@ -1,28 +1,27 @@
+var Store;
+
+function toDataUrl(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            callback(reader.result);
+        };
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+}
+
 $(document).ready(function () {
     var cropEditorEnabled = ($('.image_cropper_enabled').length === 1);
     var attachmentUploadEnabled = ($('.attachment_upload_enabled').length === 1);
 
     /**
-     * Checking if either crop editor or at least attachmend upload form related functionality should be enabled.
+     * Checking if either crop editor or at least attachment upload form related functionality should be enabled.
      */
     if (cropEditorEnabled || attachmentUploadEnabled) {
-
-        /**
-         * Utility functions.
-         */
-        function toDataUrl(url, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                var reader = new FileReader();
-                reader.onloadend = function () {
-                    callback(reader.result);
-                };
-                reader.readAsDataURL(xhr.response);
-            };
-            xhr.open('GET', url);
-            xhr.responseType = 'blob';
-            xhr.send();
-        }
 
         /**
          * Store - object which stores all store items.
@@ -48,9 +47,18 @@ $(document).ready(function () {
          *
          *
          */
-        var Store = {
+        Store = {
             items: {},
             lastStoreItemId: false
+        };
+
+        var createStoreItem = function(element) {
+            var newStoreItem = {
+                id: getNewStoreItemId(),
+                $fieldGroup: $(element)
+            };
+
+            saveNewStoreItem(newStoreItem);
         };
 
         /**
@@ -63,12 +71,7 @@ $(document).ready(function () {
         // Setting up initial Store items according to file upload input fields rendered initially.
         var setupInitialStoreItems = function () {
             $fieldsContainer.find('.form-group ').each(function (i, element) {
-                var newStoreItem = {
-                    id: getNewStoreItemId(),
-                    $fieldGroup: $(element)
-                };
-
-                saveNewStoreItem(newStoreItem);
+                createStoreItem(element);
             });
         };
 
@@ -113,6 +116,8 @@ $(document).ready(function () {
                 }
             }
 
+            Store.items["item_" + storeItem.id] = setupHiddenFields(storeItem);
+
         };
 
         // Setup file for storeItem
@@ -123,17 +128,17 @@ $(document).ready(function () {
             updateStoreItem(storeItem);
 
 
-            // var reader = new FileReader();
-            //
-            // reader.onload = function (e) {
-            //     storeItem.name = file.name;
-            //     storeItem.type = file.type;
-            //     storeItem.imageData = e.target.result;
-            //
-            //     updateStoreItem(storeItem);
-            // };
-            //
-            // reader.readAsDataURL(file);
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                storeItem.name = file.name;
+                storeItem.type = file.type;
+                storeItem.imageData = e.target.result;
+
+                updateStoreItem(storeItem);
+            };
+
+            reader.readAsDataURL(file);
         };
 
         // Add fileUpload form field group to the form.
@@ -155,6 +160,7 @@ $(document).ready(function () {
 
             $template.find('#newFileUpload_selected').attr("id", "fileUpload_" + newStoreItem.id + "_selected");
             $template.find('#newFileUpload').attr("id", "fileUpload_" + newStoreItem.id);
+
 
 
             var progress = '<div class="progress" id="progress_' + newStoreItem.id + '">\n' +
@@ -529,6 +535,17 @@ $(document).ready(function () {
         // Setting up initial crop-editor.
         setupInitialStoreItems();
         DOMsetupAspectRatioToolbar();
+
+        $('#submit').on('click', function (e) {
+            if($(this).attr('in-progress') === undefined) {
+                e.preventDefault();
+                $(this).attr("in-progress", true);
+                $(this).attr("disabled", "disabled");
+                $(this).prepend("<div class=\"spinner spinner-xs spinner-inline\">")
+                startNextFileUpload();
+            }
+
+        });
 
 
         /**

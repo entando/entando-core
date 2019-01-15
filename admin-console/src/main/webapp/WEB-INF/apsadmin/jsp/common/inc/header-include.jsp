@@ -23,4 +23,4 @@
 <script src="<wp:resourceURL />administration/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
 <script src="<wp:resourceURL />administration/file-uploader/file-uploader.js"></script>
 <script src="<wp:resourceURL />administration/cropper-js/cropper.min.js"></script>
-<script src="<wp:resourceURL />administration/crop-editor/crop-editor.js"></script>
+<%--<script src="<wp:resourceURL />administration/crop-editor/crop-editor.js"></script>--%>

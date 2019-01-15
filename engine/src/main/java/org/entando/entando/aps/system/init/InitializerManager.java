@@ -180,7 +180,7 @@ public class InitializerManager extends AbstractInitializerManager implements II
 
 	//-------------------- REPORT -------- START
 
-	private void saveReport(SystemInstallationReport report) throws BeansException {
+	public void saveReport(SystemInstallationReport report) throws BeansException {
 		if (null == report || report.getReports().isEmpty()) {
 			return;
 		}

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +40,6 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
-import java.util.Iterator;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -61,6 +61,7 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.PageController;
+import org.entando.entando.web.page.model.PagePatchRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -72,6 +73,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.rest.webmvc.json.patch.Patch;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -277,6 +279,24 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestServerError("error in update page", e);
         }
     }
+
+    @Override
+    public PageDto updatePage(String pageCode, PagePatchRequest pagePatchRequest) {
+        IPage oldPage = this.getPageManager().getDraftPage(pageCode);
+        if (null == oldPage) {
+            throw new RestRourceNotFoundException(null, "page", pageCode);
+        }
+
+        //TODO add validation for the pagePatchRequest and other validations
+        PageDto pageDto = this.getDtoBuilder().convert(oldPage);
+        Patch jsonPatch = pagePatchRequest.getPatch();
+        PageDto updatedPageDto = jsonPatch.apply(pageDto, PageDto.class);
+
+        PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
+        return this.updatePage(pageCode, updateRequest);
+
+    }
+
 
     @Override
     public PageDto updatePageStatus(String pageCode, String status) {
@@ -556,6 +576,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return page;
     }
 
+
+
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -791,4 +813,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         PagesStatus raw = this.getPageManager().getPagesStatus();
         return new PagesStatusDto(raw);
     }
+
+
+
 }

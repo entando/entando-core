@@ -21,10 +21,12 @@ import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.page.model.PagePatchRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
+import org.springframework.data.rest.webmvc.json.patch.Patch;
 
 /**
  *
@@ -45,6 +47,8 @@ public interface IPageService {
     public void removePage(String pageName);
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
+
+    public PageDto updatePage(String pageCode, PagePatchRequest pagePatchRequest);
 
     public List<PageDto> getPages(String parentCode);
 

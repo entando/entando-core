@@ -284,16 +284,14 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody PagePatchRequest patch, BindingResult bindingResult) {
-        logger.debug("update page {} with patch-request {}", pageCode, patch);
+    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody PagePatchRequest patchRequest, BindingResult bindingResult) {
+        logger.debug("update page {} with patch-request {}", pageCode, patchRequest);
         String status = IPageService.STATUS_DRAFT;
         Map<String, String> metadata = new HashMap<>();
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new RestResponse<>(new PageDto(), metadata), HttpStatus.UNAUTHORIZED);
         }
-        PageDto page = this.getPageService().getPage(pageCode, status);
-        // Alternative 1: Convert the PagePatchRequest to PageRequest and apply the update method
-        // Alternative 2: Create a method in the pageService to accept a JSONPatch
+        PageDto page = this.getPageService().updatePage(pageCode, patchRequest);
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
     }

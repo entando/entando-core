@@ -15,6 +15,8 @@ package org.entando.entando.web.page;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.transform.Result;
 
@@ -29,6 +31,7 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.page.model.PagePositionRequest;
@@ -41,6 +44,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -229,6 +234,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             newPage.setShowable(false);
             newPage.setCharset("ascii");
             newPage.setMimeType("application/json");
+            newPage.setExtraGroups(Stream.of("administration", "customers").collect(Collectors.toSet()));
             this.pageManager.addPage(newPage);
 
             result = mockMvc
@@ -243,7 +249,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             String payload = "[\n" +
                     "{ \"op\": \"replace\", \"path\": \"/displayedInMenu\", \"value\": true },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
-                    "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" }\n  " +
+                    "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
+                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
+                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] }\n  " +
                 "\n]";
 
             result = mockMvc
@@ -257,6 +265,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.displayedInMenu", is(true)));
             result.andExpect(jsonPath("$.payload.charset", is("utf8")));
             result.andExpect(jsonPath("$.payload.contentType", is("text/html")));
+            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("management", "customers")));
+            result.andExpect(jsonPath("$.payload.titles.en", is("Title English")));
 
         } finally {
             this.pageManager.deletePage(newPageCode);

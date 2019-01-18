@@ -40,16 +40,15 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.zjsonpatch.JsonPatch;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
+import org.entando.entando.aps.system.services.jsonpatch.JsonPatchService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PageSearchDto;
@@ -119,6 +118,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Autowired
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
+
+    private JsonPatchService<PageDto> jsonPatchService = new JsonPatchService<>(PageDto.class);
 
     private ApplicationContext applicationContext;
 
@@ -192,6 +193,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     public void setPageTokenManager(IPageTokenManager pageTokenManager) {
         this.pageTokenManager = pageTokenManager;
+    }
+
+    public JsonPatchService<PageDto> getJsonPatchService() {
+        return jsonPatchService;
     }
 
     @Override
@@ -289,23 +294,18 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
 
-        ObjectMapper mapper = new ObjectMapper();
 
-        //TODO add validation for the pagePatchRequest and other validations
-        PageDto pageDto = this.getDtoBuilder().convert(oldPage);
-        JsonNode jsonPageDto = mapper.convertValue(pageDto, JsonNode.class);
-        JsonNode jsonUpdatedPageDto =  JsonPatch.apply(jsonPatch, jsonPageDto);
-        PageDto updatedPageDto = null;
+
         try {
-            updatedPageDto = mapper.treeToValue(jsonUpdatedPageDto, PageDto.class);
-        } catch (JsonProcessingException e) {
+            PageDto pageDto = this.getDtoBuilder().convert(oldPage);
+            PageDto updatedPageDto = this.getJsonPatchService().applyPatch(jsonPatch, pageDto);
+            PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
+            return this.updatePage(pageCode, updateRequest);
+        } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
-//        Patch jsonPatch = pagePatchRequest.getPatch();
-//        PageDto updatedPageDto = jsonPatch.apply(pageDto, PageDto.class);
 
-        PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
-        return this.updatePage(pageCode, updateRequest);
 
     }
 

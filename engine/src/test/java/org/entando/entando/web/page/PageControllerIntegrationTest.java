@@ -50,6 +50,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
 import org.springframework.test.web.servlet.ResultMatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -252,7 +253,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                     "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
-                    "{ \"op\": \"replace\", \"path\": \"/titles/it\", \"value\": \"Nuovo titolo italiano\" }, \n " +
+//                    "{ \"op\": \"replace\", \"path\": \"/titles/it\", \"value\": \"Nuovo titolo italiano\" }, \n " +
+//                    "{ \"op\": \"add\", \"path\": \"/titles/de\", \"value\": \"Title DE\" }, \n " +
+//                    "{ \"op\": \"remove\", \"path\": \"/titles/it\" },  \n " +
                     "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] }, \n  " +
                     "{ \"op\": \"add\", \"path\": \"/joinGroups\", \"value\": [ \"coach\" ] } \n " +
                 "\n]";
@@ -270,7 +273,10 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.contentType", is("text/html")));
             result.andExpect(jsonPath("$.payload.joinGroups", hasItems("administration", "customers", "coach")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title English")));
-            result.andExpect(jsonPath("$.payload.titles.it", is("Nuovo titolo italiano")));
+//            result.andExpect(jsonPath("$.payload.titles.de", is("Title DE")));
+//            result.andExpect(jsonPath("$.payload.titles.it", is("Nuovo titolo italiano")));
+//            result.andExpect(jsonPath("$.payload.titles", not(hasProperty("it"))));
+
 
         } finally {
             this.pageManager.deletePage(newPageCode);

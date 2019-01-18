@@ -1,7 +1,5 @@
 package org.entando.entando.aps.system.services.jsonpatch.validator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

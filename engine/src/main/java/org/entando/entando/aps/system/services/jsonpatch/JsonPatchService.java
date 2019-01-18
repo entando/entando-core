@@ -7,39 +7,33 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flipkart.zjsonpatch.JsonPatch;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
+import org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter;
+import org.springframework.data.rest.webmvc.json.patch.Patch;
 
 public class JsonPatchService<T> {
 
-    private ObjectMapper mapper;
-    private JavaType type;
+    private Class<T> referenceClass;
+    private JsonPatchPatchConverter converter;
     private JsonPatchValidator validator;
 
-    public JsonPatchService(Class<T> targetClass) {
-        mapper = new ObjectMapper();
-        this.type = mapper.getTypeFactory().constructType(targetClass);
+    public JsonPatchService(Class<T> referenceClass) {
+        this.referenceClass = referenceClass;
+        this.converter = new JsonPatchPatchConverter(new ObjectMapper());
         this.validator = new JsonPatchValidator();
     }
 
-    public ObjectMapper getMapper() {
-        return mapper;
-    }
+    public JsonPatchPatchConverter getConverter() { return converter; }
 
-    public JavaType getType() {
-        return type;
-    }
+    public JsonPatchValidator getValidator() { return validator; }
 
-    public JsonPatchValidator getValidator() {
-        return validator;
-    }
+    public Class<T> getReferenceClass() { return referenceClass; }
 
     public T applyPatch(JsonNode patch, T source) {
 
         this.getValidator().validatePatch(patch);
 
-        JsonNode jsonSource = this.getMapper().convertValue(source, JsonNode.class);
-        JsonNode jsonOutput = JsonPatch.apply(patch, jsonSource);
-
-        return this.getMapper().convertValue(jsonOutput, this.type);
+        Patch springPatch = this.getConverter().convert(patch);
+        return springPatch.apply(source, referenceClass );
 
     }
 

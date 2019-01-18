@@ -347,20 +347,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                     new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
             throw new ValidationGenericException(bindingResult);
         }
-        String parentGroup = parent.getGroup();
-        if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
-                    new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
-            throw new ValidationGenericException(bindingResult);
-        }
-        boolean moved = true;
         int iterations = Math.abs(page.getPosition() - pageRequest.getPosition());
         boolean moveUp = page.getPosition() > pageRequest.getPosition();
         try {
             if (page.getParentCode().equals(parent.getCode())) {
-                while (iterations-- > 0 && (moved = this.getPageManager().movePage(pageCode, moveUp)));
+                while (iterations-- > 0 && this.getPageManager().movePage(pageCode, moveUp));
             } else {
-                moved = this.getPageManager().movePage(page, parent);
+                this.getPageManager().movePage(page, parent);
             }
             page = this.getPageManager().getDraftPage(pageCode);
         } catch (ApsSystemException e) {
@@ -605,10 +598,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             apsTitles.put(lang, values.get(lang));
         }));
         metadata.setTitles(apsTitles);
-        Optional<List<String>> groups = Optional.ofNullable(request.getJoinGroups());
-        groups.ifPresent(values -> values.forEach((group) -> {
-            metadata.addExtraGroup(group);
-        }));
+        if (metadata.getExtraGroups() != null) {
+            List<String> oldGroups = new ArrayList<>(metadata.getExtraGroups());
+            oldGroups.forEach(metadata::removeExtraGroup);
+        }
+        if (request.getJoinGroups() != null) {
+            request.getJoinGroups().forEach(metadata::addExtraGroup);
+        }
         String charset = request.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
 
@@ -708,7 +704,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         List<?> dtoList = utilizer.getPageUtilizer(pageCode);
         List<?> subList = requestList.getSublist(dtoList);
-        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult<>(dtoList.size(), subList);
         PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(requestList, pagedResult);
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;
@@ -748,7 +744,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     private Map<String, Boolean> getReferencesInfo(IPage page) {
-        Map<String, Boolean> references = new HashMap<String, Boolean>();
+        Map<String, Boolean> references = new HashMap<>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(PageUtilizer.class);
             for (String defName : defNames) {

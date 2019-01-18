@@ -44,6 +44,7 @@ import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -284,8 +285,8 @@ public class PageController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
+    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json-patch+json")
+    public ResponseEntity<SimpleRestResponse<PageDto>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
         logger.debug("update page {} with jsonpatch-request {}", pageCode, patchRequest);
 
         this.getPageValidator().validateJsonPatchRequest(pageCode, patchRequest, bindingResult);
@@ -293,14 +294,13 @@ public class PageController {
             throw new ValidationGenericException(bindingResult);
         }
 
-        String status = IPageService.STATUS_DRAFT;
-        Map<String, String> metadata = new HashMap<>();
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse<>(new PageDto(), metadata), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(new SimpleRestResponse<>(new PageDto()), HttpStatus.UNAUTHORIZED);
         }
+
         PageDto page = this.getPageService().updatePage(pageCode, patchRequest);
-        metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
     }
+
 
 }

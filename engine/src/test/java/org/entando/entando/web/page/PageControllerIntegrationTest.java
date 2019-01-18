@@ -41,6 +41,7 @@ import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -259,7 +260,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                     .perform(patch("/pages/{code}", newPageCode)
                              .header("Authorization", "Bearer " + accessToken)
-                             .contentType(MediaType.APPLICATION_JSON_VALUE)
+                             .contentType(RestMediaTypes.JSON_PATCH_JSON)
                              .accept(MediaType.APPLICATION_JSON)
                              .characterEncoding("UTF-8")
                              .content(payload));

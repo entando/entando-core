@@ -16,7 +16,10 @@ package org.entando.entando.web.page.validator;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.flipkart.zjsonpatch.InvalidJsonPatchException;
 import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
@@ -40,12 +43,23 @@ public class PageValidator extends AbstractPaginationValidator {
     @Autowired
     private IPageManager pageManager;
 
+    @Autowired
+    private JsonPatchValidator jsonPatchValidator;
+
     public IPageManager getPageManager() {
         return pageManager;
     }
 
     public void setPageManager(IPageManager pageManager) {
         this.pageManager = pageManager;
+    }
+
+    public JsonPatchValidator getJsonPatchValidator() {
+        return jsonPatchValidator;
+    }
+
+    public void setJsonPatchValidator(JsonPatchValidator jsonPatchValidator) {
+        this.jsonPatchValidator = jsonPatchValidator;
     }
 
     @Override
@@ -107,6 +121,23 @@ public class PageValidator extends AbstractPaginationValidator {
         if (page.isOnline() && !parent.isOnline()) {
             errors.reject(PageController.ERRCODE_STATUS_PAGE_MISMATCH, new String[]{pageCode}, "page.move.status.mismatch");
         }
+    }
+
+    public void validateJsonPatchRequest(String pageCode, JsonNode jsonPatch, Errors errors) {
+        try {
+            jsonPatchValidator.validatePatch(jsonPatch);
+        } catch (InvalidJsonPatchException e) {
+            errors.reject(PageController.ERRCODE_INVALID_PATCH, new String[]{pageCode}, "page.update.patch.invalid");
+        }
+
+        for (JsonNode node : jsonPatch) {
+            String operationPath = node.get("path").asText();
+
+            if (operationPath.equals("/code")) {
+                errors.reject(PageController.ERRCODE_INVALID_PATCH, new String[]{pageCode}, "page.update.patch.invalid.code");
+            }
+        }
+
     }
 
 }

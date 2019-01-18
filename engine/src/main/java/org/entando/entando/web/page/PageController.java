@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -35,7 +36,6 @@ import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.common.model.SimpleRestResponse;
-import org.entando.entando.web.page.model.PagePatchRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -44,6 +44,7 @@ import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -78,6 +79,7 @@ public class PageController {
     public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
     public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "2";
     public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "3";
+    public static final String ERRCODE_INVALID_PATCH = "1";
 
     public static final String ERRCODE_PAGE_WITH_PUBLIC_CHILD = "8";
     public static final String ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT = "9";
@@ -283,17 +285,22 @@ public class PageController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
-    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody PagePatchRequest patchRequest, BindingResult bindingResult) {
-        logger.debug("update page {} with patch-request {}", pageCode, patchRequest);
-        String status = IPageService.STATUS_DRAFT;
-        Map<String, String> metadata = new HashMap<>();
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new RestResponse<>(new PageDto(), metadata), HttpStatus.UNAUTHORIZED);
+    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json-patch+json")
+    public ResponseEntity<SimpleRestResponse<PageDto>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
+        logger.debug("update page {} with jsonpatch-request {}", pageCode, patchRequest);
+
+        this.getPageValidator().validateJsonPatchRequest(pageCode, patchRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
         }
+
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new SimpleRestResponse<>(new PageDto()), HttpStatus.UNAUTHORIZED);
+        }
+
         PageDto page = this.getPageService().updatePage(pageCode, patchRequest);
-        metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
     }
+
 
 }

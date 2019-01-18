@@ -15,18 +15,17 @@ package org.entando.entando.aps.system.services.page;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.page.model.PagePatchRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
-import org.springframework.data.rest.webmvc.json.patch.Patch;
 
 /**
  *
@@ -48,7 +47,7 @@ public interface IPageService {
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
 
-    public PageDto updatePage(String pageCode, PagePatchRequest pagePatchRequest);
+    public PageDto updatePage(String pageCode, JsonNode jsonPatch);
 
     public List<PageDto> getPages(String parentCode);
 

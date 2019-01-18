@@ -41,6 +41,7 @@ import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -250,14 +251,16 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                     "{ \"op\": \"replace\", \"path\": \"/displayedInMenu\", \"value\": true },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
-                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Title IT\" } }, \n " +
-                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] }\n  " +
+                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
+                    "{ \"op\": \"replace\", \"path\": \"/titles/it\", \"value\": \"Nuovo titolo italiano\" }, \n " +
+                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] }, \n  " +
+                    "{ \"op\": \"add\", \"path\": \"/joinGroups\", \"value\": [ \"coach\" ] } \n " +
                 "\n]";
 
             result = mockMvc
                     .perform(patch("/pages/{code}", newPageCode)
                              .header("Authorization", "Bearer " + accessToken)
-                             .contentType(MediaType.APPLICATION_JSON_VALUE)
+                             .contentType(RestMediaTypes.JSON_PATCH_JSON)
                              .accept(MediaType.APPLICATION_JSON)
                              .characterEncoding("UTF-8")
                              .content(payload));
@@ -265,9 +268,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.displayedInMenu", is(true)));
             result.andExpect(jsonPath("$.payload.charset", is("utf8")));
             result.andExpect(jsonPath("$.payload.contentType", is("text/html")));
-            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("management", "customers")));
+            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("administration", "customers", "coach")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title English")));
-            result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
+            result.andExpect(jsonPath("$.payload.titles.it", is("Nuovo titolo italiano")));
 
         } finally {
             this.pageManager.deletePage(newPageCode);

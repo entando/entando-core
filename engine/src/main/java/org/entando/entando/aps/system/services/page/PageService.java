@@ -40,6 +40,10 @@ import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flipkart.zjsonpatch.JsonPatch;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -61,7 +65,6 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.PageController;
-import org.entando.entando.web.page.model.PagePatchRequest;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -73,7 +76,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.rest.webmvc.json.patch.Patch;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -281,16 +283,26 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
-    public PageDto updatePage(String pageCode, PagePatchRequest pagePatchRequest) {
+    public PageDto updatePage(String pageCode, JsonNode jsonPatch) {
         IPage oldPage = this.getPageManager().getDraftPage(pageCode);
         if (null == oldPage) {
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
 
+        ObjectMapper mapper = new ObjectMapper();
+
         //TODO add validation for the pagePatchRequest and other validations
         PageDto pageDto = this.getDtoBuilder().convert(oldPage);
-        Patch jsonPatch = pagePatchRequest.getPatch();
-        PageDto updatedPageDto = jsonPatch.apply(pageDto, PageDto.class);
+        JsonNode jsonPageDto = mapper.convertValue(pageDto, JsonNode.class);
+        JsonNode jsonUpdatedPageDto =  JsonPatch.apply(jsonPatch, jsonPageDto);
+        PageDto updatedPageDto = null;
+        try {
+            updatedPageDto = mapper.treeToValue(jsonUpdatedPageDto, PageDto.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+//        Patch jsonPatch = pagePatchRequest.getPatch();
+//        PageDto updatedPageDto = jsonPatch.apply(pageDto, PageDto.class);
 
         PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
         return this.updatePage(pageCode, updateRequest);

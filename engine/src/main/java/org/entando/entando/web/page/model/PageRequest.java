@@ -17,7 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+//import org.hibernate.validator.constraints.NotBlank;
 
 /**
  *
@@ -25,19 +27,19 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class PageRequest {
 
-    @NotBlank(message = "page.code.NotBlank")
+    @NotNull(message = "page.code.NotBlank")
     private String code;
     private String status;
     private boolean displayedInMenu;
-    @NotBlank(message = "pageModel.code.NotBlank")
+    @NotNull(message = "pageModel.code.NotBlank")
     private String pageModel;
     private String charset;
     private String contentType;
-    @NotBlank(message = "parent.code.NotBlank")
+    @NotNull(message = "parent.code.NotBlank")
     private String parentCode;
     private boolean seo;
     private Map<String, String> titles = new HashMap<>();
-    @NotBlank(message = "group.code.NotBlank")
+    @NotNull(message = "group.code.NotBlank")
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
 

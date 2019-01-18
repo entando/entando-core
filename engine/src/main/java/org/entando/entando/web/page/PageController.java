@@ -78,6 +78,7 @@ public class PageController {
     public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
     public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "2";
     public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "3";
+    public static final String ERRCODE_INVALID_PATCH = "1";
 
     public static final String ERRCODE_PAGE_WITH_PUBLIC_CHILD = "8";
     public static final String ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT = "9";
@@ -285,7 +286,13 @@ public class PageController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
-        logger.debug("update page {} with patch-request {}", pageCode, patchRequest);
+        logger.debug("update page {} with jsonpatch-request {}", pageCode, patchRequest);
+
+        this.getPageValidator().validateJsonPatchRequest(pageCode, patchRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
         String status = IPageService.STATUS_DRAFT;
         Map<String, String> metadata = new HashMap<>();
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {

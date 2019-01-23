@@ -16,13 +16,18 @@ package org.entando.entando.web.pagemodel;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.*;
 import com.agiletec.aps.system.services.user.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.createValidPageModelRequest;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,6 +41,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     private static final String NONEXISTENT_PAGE_MODEL = "nonexistentPageModel";
 
     private String accessToken;
+    private ObjectMapper jsonMapper = new ObjectMapper().setSerializationInclusion(NON_NULL);
+
 
     @Autowired
     private PageModelManager pageModelManager;
@@ -66,8 +73,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     @Test public void
     get_page_model_return_OK() throws Exception {
 
-        ResultActions result = mockMvc
-                .perform(get("/pageModels")
+        ResultActions result = mockMvc.perform(
+                get("/pageModels")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
@@ -75,8 +82,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     @Test public void
     get_page_models_return_OK() throws Exception {
 
-        ResultActions result = mockMvc
-                .perform(get("/pageModels/{code}", "home")
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
                         .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
@@ -84,13 +91,24 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test public void
+    get_page_models_contains_DE_models() throws Exception {
+
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isOk());
+        result.andExpect(jsonPath("$.payload.references.length()", is(2)));
+    }
+
+    @Test public void
     get_page_models_reference_return_OK() throws Exception {
 
-        ResultActions result = mockMvc.perform(get(
-                "/pageModels/{code}/references/{manager}",
-                "home", "PageManager")
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}/references/{manager}", "home", "PageManager")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header("Authorization", "Bearer " + accessToken));
+
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
     }
@@ -100,8 +118,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         // pageModel home always exists because it's created with DB.
         String payload = createPageModelPayload("home");
 
-        ResultActions result = mockMvc
-                .perform(post("/pageModels")
+        ResultActions result = mockMvc.perform(
+                post("/pageModels")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
@@ -113,8 +131,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     add_page_model_return_OK() throws Exception {
         String payload = createPageModelPayload(PAGE_MODEL_CODE);
 
-        ResultActions result = mockMvc
-                .perform(post("/pageModels")
+        ResultActions result = mockMvc.perform(
+                post("/pageModels")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
@@ -122,29 +140,17 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         result.andExpect(status().isOk());
     }
 
-    private String createPageModelPayload(String pageModelCode) {
-        return " {\n"
-                + "    \"code\": \"" + pageModelCode + "\","
-                + "    \"descr\": \"test\",\n"
-                + "    \"configuration\": {\n"
-                + "        \"frames\": [{\n"
-                + "            \"pos\": 0,\n"
-                + "            \"descr\": \"test_frame\",\n"
-                + "            \"mainFrame\": false,\n"
-                + "            \"defaultWidget\": null,\n"
-                + "            \"sketch\": null\n"
-                + "        }]\n"
-                + "    },\n"
-                + "    \"pluginCode\": null,\n"
-                + "    \"template\": \"ciao\"\n"
-                + " }";
+    private String createPageModelPayload(String pageModelCode) throws JsonProcessingException {
+        PageModelRequest pageModelRequest = createValidPageModelRequest();
+        pageModelRequest.setCode(pageModelCode);
+        return jsonMapper.writeValueAsString(pageModelRequest);
     }
 
     @Test public void
     get_nonexistent_page_model_return_not_found() throws Exception {
 
-        ResultActions result = mockMvc
-                .perform(get("/pageModels/{code}", PAGE_MODEL_CODE)
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", PAGE_MODEL_CODE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
@@ -158,8 +164,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         pageModel.setDescription(PAGE_MODEL_CODE);
         pageModelManager.addPageModel(pageModel);
 
-        ResultActions result = mockMvc
-                .perform(delete("/pageModels/{code}", PAGE_MODEL_CODE)
+        ResultActions result = mockMvc.perform(
+                delete("/pageModels/{code}", PAGE_MODEL_CODE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
@@ -168,8 +174,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     @Test public void
     delete_page_model_nonexistent_code_return_OK() throws Exception {
 
-        ResultActions result = mockMvc
-                .perform(delete("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
+        ResultActions result = mockMvc.perform(
+                delete("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());

@@ -56,7 +56,9 @@ public class PageModelController {
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping
-    public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(RestListRequest requestList) {
+    public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(
+            @RequestParam(value = "excludeDe", required = false) boolean excludeDe,
+            RestListRequest requestList) {
         logger.trace("loading page models");
 
         pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
@@ -69,7 +71,8 @@ public class PageModelController {
 
     @ApiOperation("Retrieve page model by code")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK")
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "NotFound")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping(value = "/{code}")
@@ -81,7 +84,7 @@ public class PageModelController {
 
     @ApiOperation("Retrieve page model references")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 200, message = "OK")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping(value = "/{code}/references/{manager}")
@@ -109,7 +112,8 @@ public class PageModelController {
         return ResponseEntity.ok(new SimpleRestResponse<>(pageModel));
     }
 
-    private void validateWithBodyName(@PathVariable String code, @RequestBody @Valid PageModelRequest pageModelRequest, BindingResult bindingResult) {
+    private void validateWithBodyName(String code, PageModelRequest pageModelRequest, BindingResult bindingResult) {
+
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
@@ -123,7 +127,8 @@ public class PageModelController {
     @ApiOperation("Add page model")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 400, message = "Bad Request")
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 409, message = "Conflict")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @PostMapping
@@ -149,7 +154,7 @@ public class PageModelController {
 
     @ApiOperation("Delete page model")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 200, message = "OK")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
     @DeleteMapping(value = "/{code}")

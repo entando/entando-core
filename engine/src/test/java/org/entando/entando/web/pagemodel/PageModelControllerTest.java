@@ -13,9 +13,6 @@
  */
 package org.entando.entando.web.pagemodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -23,23 +20,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.pagemodel.PageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
-import org.entando.entando.web.pagemodel.model.PageModelRequest;
+import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.pagemodel.model.*;
 import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
+import org.junit.*;
+import org.mockito.*;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +48,7 @@ public class PageModelControllerTest extends AbstractControllerTest {
     private PageModelService pageModelService;
 
     @Spy
-    private PageModelValidator pageModelValidator = new PageModelValidator();
+    private PageModelValidator pageModelValidator;
 
     @InjectMocks
     private PageModelController controller;

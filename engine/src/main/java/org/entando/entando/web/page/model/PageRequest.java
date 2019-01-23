@@ -19,7 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
-//import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -27,7 +28,9 @@ import javax.validation.constraints.NotNull;
  */
 public class PageRequest {
 
+    @Size(max = 30, message = "page.code.MaxLength")
     @NotNull(message = "page.code.NotBlank")
+    @Pattern(regexp = "[a-zA-Z0-9_]+", message="page.code.WrongCharacters")
     private String code;
     private String status;
     private boolean displayedInMenu;

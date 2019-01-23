@@ -1,31 +1,50 @@
 package org.entando.entando.aps.system.services.jsonpatch.validator;
 
+import java.util.Iterator;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.flipkart.zjsonpatch.InvalidJsonPatchException;
-import com.flipkart.zjsonpatch.JsonPatch;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.google.common.collect.ImmutableSet;
+import org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter;
+import org.springframework.data.rest.webmvc.json.patch.PatchException;
 
 public class JsonPatchValidator {
 
-    private final Set<String> ENTANDO_SUPPORTED_OPERATIONS = Stream.of("replace", "add", "remove").collect(Collectors.toSet());
+    private final Set<String> ENTANDO_SUPPORTED_OPERATIONS = ImmutableSet.of("replace");
+
+    private final JsonPatchPatchConverter converter;
+
+    public JsonPatchValidator() {
+        this.converter = new JsonPatchPatchConverter(new ObjectMapper());
+    }
+
+    public JsonPatchValidator(JsonPatchPatchConverter converter) {
+        this.converter = converter;
+    }
 
     /**
-     * Validate the provided patch using Entando criteria
-     * @param patch
+     * Validate the provided jsonNode using Entando criteria
+     * @param jsonNode
      */
-    public void validatePatch(JsonNode patch) {
-        JsonPatch.validate(patch);
+    public void validatePatch(JsonNode jsonNode) {
 
-        for (JsonNode jsonNode : patch) {
-            String operation = jsonNode.get("op").asText();
-            if (!ENTANDO_SUPPORTED_OPERATIONS.contains(operation)) {
-                throw new InvalidJsonPatchException("Unsupported JSON patch operation " + operation);
+        // Test if the json node is generically convertible to a Patch
+        this.converter.convert(jsonNode);
+
+        // Check if the operations are supported
+        ArrayNode opNodes = (ArrayNode) jsonNode;
+
+        for (Iterator<JsonNode> elements = opNodes.elements(); elements.hasNext(); ) {
+
+            JsonNode opNode = elements.next();
+
+            String opType = opNode.get("op").textValue();
+            if (!ENTANDO_SUPPORTED_OPERATIONS.contains(opType)) {
+                throw new PatchException("Not supported operation type: " + opType);
             }
         }
-
     }
 
 }

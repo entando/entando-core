@@ -75,6 +75,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.data.rest.webmvc.json.patch.PatchException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -294,18 +295,15 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new RestRourceNotFoundException(null, "page", pageCode);
         }
 
-
-
         try {
             PageDto pageDto = this.getDtoBuilder().convert(oldPage);
             PageDto updatedPageDto = this.getJsonPatchService().applyPatch(jsonPatch, pageDto);
             PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
             return this.updatePage(pageCode, updateRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+        } catch (PatchException e) {
+            logger.error("An error occurred while processing the JSON Patch update", e);
+            throw new RestServerError("error in update page with json patch", e);
         }
-
 
     }
 

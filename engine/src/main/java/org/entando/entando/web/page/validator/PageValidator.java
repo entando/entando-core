@@ -17,7 +17,6 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.flipkart.zjsonpatch.InvalidJsonPatchException;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
@@ -26,6 +25,7 @@ import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.json.patch.PatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -126,8 +126,8 @@ public class PageValidator extends AbstractPaginationValidator {
     public void validateJsonPatchRequest(String pageCode, JsonNode jsonPatch, Errors errors) {
         try {
             jsonPatchValidator.validatePatch(jsonPatch);
-        } catch (InvalidJsonPatchException e) {
-            errors.reject(PageController.ERRCODE_INVALID_PATCH, new String[]{pageCode}, "page.update.patch.invalid");
+        } catch (PatchException e) {
+            errors.reject(PageController.ERRCODE_INVALID_PATCH, new String[]{pageCode}, "page.update.patch.invalid.generic");
         }
 
         for (JsonNode node : jsonPatch) {

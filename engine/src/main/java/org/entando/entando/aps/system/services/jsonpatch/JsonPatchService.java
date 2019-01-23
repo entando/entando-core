@@ -1,25 +1,21 @@
 package org.entando.entando.aps.system.services.jsonpatch;
 
-import java.io.IOException;
-
-import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.flipkart.zjsonpatch.JsonPatch;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter;
 import org.springframework.data.rest.webmvc.json.patch.Patch;
 
 public class JsonPatchService<T> {
 
-    private Class<T> referenceClass;
-    private JsonPatchPatchConverter converter;
-    private JsonPatchValidator validator;
+    private final Class<T> referenceClass;
+    private final JsonPatchPatchConverter converter;
+    private final JsonPatchValidator validator;
 
     public JsonPatchService(Class<T> referenceClass) {
         this.referenceClass = referenceClass;
         this.converter = new JsonPatchPatchConverter(new ObjectMapper());
-        this.validator = new JsonPatchValidator();
+        this.validator = new JsonPatchValidator(this.converter);
     }
 
     public JsonPatchPatchConverter getConverter() { return converter; }

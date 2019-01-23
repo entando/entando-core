@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.transform.Result;
-
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -31,7 +29,6 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.page.model.PagePositionRequest;
@@ -44,15 +41,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertThat;
-import org.springframework.test.web.servlet.ResultMatcher;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -253,11 +248,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                     "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
                     "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
-//                    "{ \"op\": \"replace\", \"path\": \"/titles/it\", \"value\": \"Nuovo titolo italiano\" }, \n " +
-//                    "{ \"op\": \"add\", \"path\": \"/titles/de\", \"value\": \"Title DE\" }, \n " +
-//                    "{ \"op\": \"remove\", \"path\": \"/titles/it\" },  \n " +
-                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] }, \n  " +
-                    "{ \"op\": \"add\", \"path\": \"/joinGroups\", \"value\": [ \"coach\" ] } \n " +
+                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] } \n  " +
                 "\n]";
 
             result = mockMvc
@@ -271,11 +262,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.displayedInMenu", is(true)));
             result.andExpect(jsonPath("$.payload.charset", is("utf8")));
             result.andExpect(jsonPath("$.payload.contentType", is("text/html")));
-            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("administration", "customers", "coach")));
+            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("administration", "customers")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title English")));
-//            result.andExpect(jsonPath("$.payload.titles.de", is("Title DE")));
-//            result.andExpect(jsonPath("$.payload.titles.it", is("Nuovo titolo italiano")));
-//            result.andExpect(jsonPath("$.payload.titles", not(hasProperty("it"))));
 
 
         } finally {

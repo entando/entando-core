@@ -228,7 +228,7 @@
             <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
             <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
             <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
-            <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
+            <div id="<s:text name="%{'formGroup-' + (#ctr.count - 1)}" />" class="form-group <s:property value="#controlGroupErrorClassVar" />">
                 <label class="col-sm-2 control-label" for="descr">
                     <s:text name="label.description"/>
                     <i class="fa fa-asterisk required-icon"></i>
@@ -303,7 +303,7 @@
                     </s:else>
                     <wpsf:hidden name="fileUploadId_%{#ctr.count - 1}" maxlength="50"
                                  id="fileUploadId_%{#ctr.count - 1}"
-                                 cssClass="form-control file-description"
+                                 cssClass="form-control fileUploadId"
                                  value="%{#uploadIdFieldVar}"/>
 
                     <s:if test="%{'' != getFileName(#ctr.count - 1)}">
@@ -314,7 +314,7 @@
                     </s:else>
                     <wpsf:hidden name="fileUploadName_%{#ctr.count - 1}" maxlength="500"
                                  id="fileUploadName_%{#ctr.count - 1}"
-                                 cssClass="form-control file-description"
+                                 cssClass="form-control fileUploadName"
                                  value="%{#fileNameFieldVar}"/>
 
                     <s:if test="%{'' != getFileContentType(#ctr.count - 1)}">
@@ -326,7 +326,7 @@
                     </s:else>
                     <wpsf:hidden name="fileUploadContentType_%{#ctr.count - 1}" maxlength="250"
                                  id="fileUploadContentType_%{#ctr.count - 1}"
-                                 cssClass="form-control file-description"
+                                 cssClass="form-control fileUploadContentType"
                                  value="%{#fileContentTypeFieldVar}"/>
 
 

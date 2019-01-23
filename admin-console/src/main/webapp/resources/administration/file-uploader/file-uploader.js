@@ -24,13 +24,15 @@ var FileUploadManager = function (config) {
     this.prepareFile = function (fileInput) {
         return {
             uploadId: this.generateUploadId(),
+            fileUploadContentType: fileInput.type,
             name: fileInput.name,
             numberOfPieces: Math.ceil(fileInput.size / this.config.sliceSize),
             numberOfUploadedPieces: 0,
             uploadStatus: this.UPLOAD_STATUSES.PENDING,
             description: fileInput.name,
             fileInput: fileInput,
-            size: fileInput.size
+            size: fileInput.size,
+            domElements: {}
         };
     };
 
@@ -44,6 +46,24 @@ var FileUploadManager = function (config) {
     };
 
     this.insertFile = function (file) {
+        var newId = this.files.length;
+        var $formGroup;
+
+        if ($('#formGroup-' + newId).length) {
+            $formGroup = $('#formGroup-' + newId);
+        } else {
+            $formGroup = $(this.generateFormGroupById(newId));
+            $formGroup.appendTo('#fields-container');
+        }
+
+        $formGroup.find('.file-description').val(file.description);
+        // Setup hidden fields
+        $formGroup.find('.fileUploadName').val(file.name);
+        $formGroup.find('.fileUploadId').val(file.uploadId);
+        $formGroup.find('.fileUploadContentType').val(file.fileUploadContentType);
+        console.log($formGroup);
+
+        file.domElements.$formGroup = $formGroup;
         this.files.push(file);
     };
 
@@ -63,7 +83,8 @@ var FileUploadManager = function (config) {
 
     this.getNextPendingFileIndex = function () {
         for (var i = 0; i < this.files.length; i++) {
-            if (this.files[i].uploadStatus === this.UPLOAD_STATUSES.PENDING || this.files[i].uploadStatus === this.UPLOAD_STATUSES.IN_PROGRESS) {
+            if (this.files[i].uploadStatus === this.UPLOAD_STATUSES.PENDING ||
+                this.files[i].uploadStatus === this.UPLOAD_STATUSES.IN_PROGRESS) {
                 return i;
             }
         }
@@ -95,9 +116,7 @@ var FileUploadManager = function (config) {
         };
     };
 
-
-
-    this.prepareFormData = function(piece, file){
+    this.prepareFormData = function (piece, file) {
         var formData = new FormData();
         formData.append('fileUpload', piece.slice);
         formData.append('start', piece.start);
@@ -137,7 +156,7 @@ var FileUploadManager = function (config) {
         xhr.send(formData);
     };
 
-    this.pieceUploadDone = function(fileIndex){
+    this.pieceUploadDone = function (fileIndex) {
         this.updateProgressBar(fileIndex);
     };
 
@@ -149,6 +168,7 @@ var FileUploadManager = function (config) {
         $progressBar.css("width", progressValue + "%");
         $progressBar.find('span').text(progressValue + "%");
     };
+
     this.processNextFileR = function () {
         var nextPendingFileIndex = this.getNextPendingFileIndex();
         if (nextPendingFileIndex !== false) {
@@ -165,8 +185,76 @@ var FileUploadManager = function (config) {
             }
         } else {
             console.log("FINISHED FILES UPLOAD PROCESS");
+            var $submitBtn = $('#submit');
+            $submitBtn.removeAttr('disabled');
+            setTimeout(function () {
+                $('#submit').unbind('click');
+                $('#submit').click();
+            }, 1000);
+
         }
-    }
+    };
+
+    this.generateFormGroupById = function (id) {
+        if ($('#formGroup-' + id).length) {
+            return $('#formGroup-' + id);
+        }
+
+        return $.parseHTML('<div id="formGroup-' + id + '" class="form-group">' +
+            '        <label class="col-sm-2 control-label" for="descr">' +
+            '            Name' +
+            '            <i class="fa fa-asterisk required-icon"></i>' +
+            '        </label>' +
+            '        <div class="col-sm-4 fileUpload-right">' +
+            '            <input type="text" name="descr_' + id + '" maxlength="250" value="" id="descr_' + id + '" class="form-control file-description">' +
+            '        <div class="progress" id="progress_' + id + '">' +
+            '               <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">' +
+            '                   <span>0%</span>' +
+            '               </div>' +
+            '           </div></div>' +
+            '        <div id="fileUpload_box_' + id + '">' +
+            '            <label class="col-sm-1 control-label" for="upload">' +
+            '                File' +
+            '                    <a role="button" tabindex="0" data-toggle="popover" data-trigger="focus" data-html="true" title="" data-placement="top" data-content="Default image file formats are jpg,jpeg,png" data-original-title="" style="position: absolute; right: 8px;">' +
+            '                        <span class="fa fa-info-circle"></span>' +
+            '                    </a>' +
+            '                ' +
+            '            </label>' +
+            '' +
+            '            <div class="col-sm-4">' +
+            '                <label id="fileUpload_label_' + id + '" for="fileUpload_' + id + '" class="btn btn-default">' +
+            '                    Select one or more files' +
+            '                </label>' +
+            '' +
+            '                <input type="file" name="fileUpload" id="fileUpload_' + id + '" class="input-file-button" multiple="true">' +
+            '                <span id="fileUpload_' + id + '_selected" class="file-upload-selected-name">No file chosen</span>' +
+            '            </div>' +
+            '        <input type="hidden" name="fileUploadId_' + id + '" maxlength="500" value="" id="fileUploadId_' + id + '" class="form-control fileUploadId">' +
+            '        <input type="hidden" name="fileUploadName_' + id + '" maxlength="500" value="" id="fileUploadName_' + id + '" class="form-control fileUploadName">' +
+            '        <input type="hidden" name="fileUploadContentType_' + id + '" maxlength="500" value="" id="fileUploadContentType_' + id + '" class="form-control fileUploadContentType"></div>' +
+            '' +
+            '        ' +
+            '' +
+            '            <div class="col-sm-1">' +
+            '                <div class="list-view-pf-actions">' +
+            '                    <div class="dropdown pull-right dropdown-kebab-pf">' +
+            '                        <button class="btn btn-menu-right dropdown-toggle" type="button" id="dropdownKebabRight' + id + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">' +
+            '                            <span class="fa fa-ellipsis-v"></span>' +
+            '                        </button>' +
+            '                        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight2">' +
+            '                            <li>' +
+            '                                <a href="#" class="edit-fields">Edit</a>' +
+            '                            </li>' +
+            '                            <li>' +
+            '                                <a href="#" class="delete-fields">Delete</a>' +
+            '                            </li>' +
+            '                        </ul>' +
+            '                    </div>' +
+            '                </div>' +
+            '            </div>' +
+            '        ' +
+            '    </div>');
+    };
 
 
 };
@@ -183,7 +271,18 @@ jQuery(document).ready(function ($) {
     $('#save').on('change', 'input', function (e) {
         if ('files' in e.target) {
             fileUploadManager.insertFiles(fileUploadManager.prepareFiles(e.target.files));
-            // fileUploadManager.processNextFileR();
+        }
+    });
+
+
+    $('#submit').on('click', function (e) {
+        if ($(this).attr('in-progress') === undefined) {
+            console.log("CLICK");
+            e.preventDefault();
+            $(this).attr("in-progress", true);
+            $(this).attr("disabled", "disabled");
+            $(this).prepend("<div class=\"spinner spinner-xs spinner-inline\">")
+            fileUploadManager.processNextFileR();
         }
     });
 });

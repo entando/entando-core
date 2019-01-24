@@ -14,7 +14,7 @@ public final class PageModelTestUtil {
         // No instance - utility class
     }
 
-    public static PageModelRequest createValidPageModelRequest() {
+    public static PageModelRequest validPageModelRequest() {
         PageModelRequest request = new PageModelRequest();
         request.setCode(PAGE_MODEL_CODE);
         request.setDescr(DESCRIPTION);

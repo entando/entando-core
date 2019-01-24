@@ -13,17 +13,14 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
-import java.util.Collection;
-import java.util.List;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
+import java.util.*;
+
 /**
  * Interface of the page models manager.
- *
- * @author E.Santoboni
  */
 public interface IPageModelManager {
 
@@ -33,21 +30,21 @@ public interface IPageModelManager {
 	 * @param code The code of the Page Model
 	 * @return The required Page Model
 	 */
-	public PageModel getPageModel(String code);
+	PageModel getPageModel(String code);
 
 	/**
 	 * Return the collection of defined Page Models
 	 *
 	 * @return The collection of defined Page Models
 	 */
-	public Collection<PageModel> getPageModels();
+	Collection<PageModel> getPageModels();
 
-	public void addPageModel(PageModel pageModel) throws ApsSystemException;
+	void addPageModel(PageModel pageModel) throws ApsSystemException;
 
-	public void updatePageModel(PageModel pageModel) throws ApsSystemException;
+	void updatePageModel(PageModel pageModel) throws ApsSystemException;
 
-	public void deletePageModel(String code) throws ApsSystemException;
+	void deletePageModel(String code) throws ApsSystemException;
 
-    public SearcherDaoPaginatedResult<PageModel> searchPageModels(List<FieldSearchFilter> filters) throws ApsSystemException;
+    SearcherDaoPaginatedResult<PageModel> searchPageModels(List<FieldSearchFilter> filters) throws ApsSystemException;
 
 }

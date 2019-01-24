@@ -27,7 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.createValidPageModelRequest;
+import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -141,7 +141,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     private String createPageModelPayload(String pageModelCode) throws JsonProcessingException {
-        PageModelRequest pageModelRequest = createValidPageModelRequest();
+        PageModelRequest pageModelRequest = validPageModelRequest();
         pageModelRequest.setCode(pageModelCode);
         return jsonMapper.writeValueAsString(pageModelRequest);
     }

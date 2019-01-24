@@ -191,7 +191,7 @@ public class DatabaseManager extends AbstractInitializerManager
         }
     }
 
-    private void initComponentDatabases(Component componentConfiguration, SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
+    public void initComponentDatabases(Component componentConfiguration, SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
         String logPrefix = "|   ";
         System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: SCHEMA\n" + logPrefix);
         ComponentInstallationReport componentReport = report.getComponentReport(componentConfiguration.getCode(), true);
@@ -327,7 +327,7 @@ public class DatabaseManager extends AbstractInitializerManager
         }
     }
 
-    private void initComponentDefaultResources(Component componentConfiguration,
+    public void initComponentDefaultResources(Component componentConfiguration,
             SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
         String logPrefix = "|   ";
         System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: DATA\n" + logPrefix);

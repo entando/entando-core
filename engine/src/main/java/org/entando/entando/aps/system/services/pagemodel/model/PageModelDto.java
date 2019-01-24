@@ -1,10 +1,9 @@
 package org.entando.entando.aps.system.services.pagemodel.model;
 
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.Map;
 
 public class PageModelDto {
 
@@ -18,6 +17,7 @@ public class PageModelDto {
     private int mainFrame = NO_MAIN_FRAME;
     private String pluginCode;
     private String template;
+    private String digitalExchange;
 
     /**
      * The references grouped by service name.
@@ -98,5 +98,11 @@ public class PageModelDto {
     }
 
 
+    public String getDigitalExchange() {
+        return digitalExchange;
+    }
 
+    public void setDigitalExchange(String digitalExchange) {
+        this.digitalExchange = digitalExchange;
+    }
 }

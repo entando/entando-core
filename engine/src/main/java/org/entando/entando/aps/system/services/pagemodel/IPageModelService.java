@@ -1,15 +1,22 @@
 package org.entando.entando.aps.system.services.pagemodel;
 
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 
 public interface IPageModelService {
 
     String BEAN_NAME = "PageModelService";
 
-    PagedMetadata<PageModelDto> getPageModels(RestListRequest restRequest);
+    /**
+     * Retrieves only local page models, excludes Digital Exchange page models
+     */
+    PagedMetadata<PageModelDto> getLocalPageModels(RestListRequest restRequest);
+
+    /**
+     * Retrieves all page models including Digital Exchange page models
+     */
+    PagedMetadata<PageModelDto> getAllPageModels(RestListRequest restRequest);
 
     PageModelDto getPageModel(String code);
 

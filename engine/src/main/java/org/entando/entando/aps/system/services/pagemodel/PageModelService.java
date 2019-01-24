@@ -42,7 +42,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     }
 
     @Override
-    public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq) {
+    public PagedMetadata<PageModelDto> getLocalPageModels(RestListRequest restListReq) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
@@ -66,6 +66,11 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             logger.error("error in search pageModels", t);
             throw new RestServerError("error in search pageModels", t);
         }
+    }
+
+    @Override
+    public PagedMetadata<PageModelDto> getAllPageModels(RestListRequest restRequest) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     @Override

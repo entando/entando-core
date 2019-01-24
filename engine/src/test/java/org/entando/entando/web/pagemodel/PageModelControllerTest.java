@@ -19,7 +19,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import org.entando.entando.aps.system.services.pagemodel.PageModelService;
-import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
+import org.entando.entando.aps.system.services.pagemodel.model.*;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.pagemodel.model.*;
@@ -30,6 +30,8 @@ import org.mockito.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.*;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,9 +44,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PageModelControllerTest extends AbstractControllerTest {
 
+    private static final String EXCHANGE_NAME = "Leonardo's Exchange";
+    private static final String PAGE_MODEL_CODE = "TEST_PM";
+    private static final String DE_PAGE_MODEL_CODE = "TEST_PM_DE";
+
     private MockMvc mockMvc;
     private String accessToken;
     private ObjectMapper jsonMapper;
+    private PageModelDtoBuilder dtoBuilder;
 
     @Mock
     private PageModelService pageModelService;
@@ -66,34 +73,87 @@ public class PageModelControllerTest extends AbstractControllerTest {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         accessToken = mockOAuthInterceptor(user);
         jsonMapper = new ObjectMapper();
+        dtoBuilder = new PageModelDtoBuilder();
     }
 
     @Test public void
-    get_page_model_return_ok() throws Exception {
+    get_page_models_excluding_de_return_ok() throws Exception {
 
-        when(pageModelService.getPageModels(any(RestListRequest.class))).thenReturn(pagedMetadata());
+        when(pageModelService.getLocalPageModels(any(RestListRequest.class))).thenReturn(nonDePagedMetadata());
 
         mockMvc.perform(
                 get("/pageModels")
+                        .param("excludeDe", "true")
                         .header("Authorization", "Bearer " + accessToken))
-               .andExpect(status().isOk());
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.metaData.totalItems", is(1)))
+               .andExpect(jsonPath("$.payload[0].code", is(PAGE_MODEL_CODE)));
 
         RestListRequest restListReq = new RestListRequest();
 
-        verify(pageModelService, times(1)).getPageModels(restListReq);
+        verify(pageModelService, times(1)).getLocalPageModels(restListReq);
     }
 
-    private PagedMetadata<PageModelDto> pagedMetadata() {
+    @Test public void
+    get_all_page_models_return_ok() throws Exception {
 
+        when(pageModelService.getAllPageModels(any(RestListRequest.class))).thenReturn(completePagedMetadata());
+
+        ResultActions result = mockMvc.perform(
+                get("/pageModels")
+                        .header("Authorization", "Bearer " + accessToken))
+                                      .andDo(print())
+                                      .andExpect(status().isOk())
+                                      .andExpect(jsonPath("$.metaData.totalItems", is(2)))
+                                      .andExpect(jsonPath("$.payload[0].digitalExchange").doesNotExist())
+                                      .andExpect(jsonPath("$.payload[1].digitalExchange", is(EXCHANGE_NAME)));
+
+        RestListRequest restListReq = new RestListRequest();
+
+        verify(pageModelService, times(1)).getAllPageModels(restListReq);
+    }
+
+    private PagedMetadata<PageModelDto> completePagedMetadata() {
+        return createPagedMetadata(ImmutableList.of(localPageModel(), dePageModel()));
+    }
+
+    private PagedMetadata<PageModelDto> nonDePagedMetadata() {
+        return createPagedMetadata(ImmutableList.of(localPageModel()));
+    }
+
+    private PagedMetadata<PageModelDto> createPagedMetadata(List<PageModel> pageModels) {
         SearcherDaoPaginatedResult<PageModel> paginatedResult =
-                new SearcherDaoPaginatedResult<>(1, ImmutableList.of(new PageModel()));
+                new SearcherDaoPaginatedResult<>(pageModels);
 
-        PagedMetadata<PageModelDto> metadata =
-                new PagedMetadata<>(new RestListRequest(), paginatedResult);
+        PagedMetadata<PageModelDto> metadata = new PagedMetadata<>(new RestListRequest(), paginatedResult);
 
-        metadata.setBody(ImmutableList.of(new PageModelDto()));
+        metadata.setBody(bodyFrom(pageModels));
 
         return metadata;
+    }
+
+    private List<PageModelDto> bodyFrom(List<PageModel> pageModels) {
+        List<PageModelDto> pageModelDtos = new ArrayList<>();
+
+        for (PageModel pageModel : pageModels) {
+            pageModelDtos.add(dtoBuilder.convert(pageModel));
+        }
+
+        return pageModelDtos;
+    }
+
+    private PageModel localPageModel() {
+        PageModel pageModel = new PageModel();
+        pageModel.setCode(PAGE_MODEL_CODE);
+        return pageModel;
+    }
+
+    private PageModel dePageModel() {
+        PageModel pageModel = new PageModel();
+        pageModel.setDigitalExchange(EXCHANGE_NAME);
+        pageModel.setCode(DE_PAGE_MODEL_CODE);
+        return pageModel;
     }
 
     @Test public void
@@ -236,6 +296,7 @@ public class PageModelControllerTest extends AbstractControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+
         verify(pageModelService, times(1)).addPageModel(any());
     }
 

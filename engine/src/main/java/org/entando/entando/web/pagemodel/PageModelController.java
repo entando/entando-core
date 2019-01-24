@@ -62,7 +62,10 @@ public class PageModelController {
         logger.trace("loading page models");
 
         pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
-        PagedMetadata<PageModelDto> result = pageModelService.getPageModels(requestList);
+        PagedMetadata<PageModelDto> result = excludeDe ?
+                pageModelService.getLocalPageModels(requestList) :
+                pageModelService.getAllPageModels(requestList) ;
+
         pageModelValidator.validateRestListResult(requestList, result);
 
         return ResponseEntity.ok(new PagedRestResponse<>(result));

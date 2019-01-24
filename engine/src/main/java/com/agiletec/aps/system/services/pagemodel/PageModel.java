@@ -39,6 +39,7 @@ public class PageModel implements Serializable {
 	private int mainFrame = -1;
 	private String pluginCode;
 	private String template;
+	private String digitalExchange;
 
 	/**
 	 * Return the code of page model.
@@ -243,24 +244,13 @@ public class PageModel implements Serializable {
 		this.template = template;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		PageModel pageModel = (PageModel) o;
-		return mainFrame == pageModel.mainFrame &&
-			   Objects.equals(code, pageModel.code) &&
-			   Objects.equals(description, pageModel.description) &&
-			   Arrays.equals(configuration, pageModel.configuration) &&
-			   Objects.equals(pluginCode, pageModel.pluginCode) &&
-			   Objects.equals(template, pageModel.template);
+	@XmlTransient
+	public String getDigitalExchange() {
+		return digitalExchange;
 	}
 
-	@Override
-	public int hashCode() {
-		int result = Objects.hash(code, description, mainFrame, pluginCode, template);
-		result = 31 * result + Arrays.hashCode(configuration);
-		return result;
+	public void setDigitalExchange(String digitalExchange) {
+		this.digitalExchange = digitalExchange;
 	}
 
 	@Override
@@ -272,6 +262,28 @@ public class PageModel implements Serializable {
 				.append("mainFrame", mainFrame)
 				.append("pluginCode", pluginCode)
 				.append("template", template)
+				.append("digitalExchange", digitalExchange)
 				.toString();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PageModel pageModel = (PageModel) o;
+		return mainFrame == pageModel.mainFrame &&
+			   Objects.equals(code, pageModel.code) &&
+			   Objects.equals(description, pageModel.description) &&
+			   Arrays.equals(configuration, pageModel.configuration) &&
+			   Objects.equals(pluginCode, pageModel.pluginCode) &&
+			   Objects.equals(template, pageModel.template) &&
+			   Objects.equals(digitalExchange, pageModel.digitalExchange);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(code, description, mainFrame, pluginCode, template, digitalExchange);
+		result = 31 * result + Arrays.hashCode(configuration);
+		return result;
 	}
 }

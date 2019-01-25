@@ -169,8 +169,8 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
         for (JsonNode node : jsonPatch) {
             String operationPath = node.get("path").asText();
 
-            if (operationPath.equals("/code")) {
-                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"code"}, "jsonPatch.field.protected");
+            if (operationPath.equals("/modelId")) {
+                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"modelId"}, "jsonPatch.field.protected");
             }
         }
 

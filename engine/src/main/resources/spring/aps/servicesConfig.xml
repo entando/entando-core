@@ -177,4 +177,12 @@
           class="org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator">
     </bean>
 
+   <bean name="DefaultObjectMapper"
+         class="com.fasterxml.jackson.databind.ObjectMapper" />
+
+    <bean id="JsonPatchPatchConverter"
+        class="org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter">
+        <constructor-arg ref="DefaultObjectMapper"/>
+    </bean>
+
 </beans>

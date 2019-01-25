@@ -222,7 +222,7 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(status().isBadRequest());
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_URINAME_MISMATCH)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_URINAME_MISMATCH)));
 
     }
 
@@ -265,7 +265,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isConflict());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_PAGE_ALREADY_EXISTS)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_PAGE_ALREADY_EXISTS)));
     }
 
     @Test
@@ -282,7 +282,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_ONLINE_PAGE)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_ONLINE_PAGE)));
     }
 
     @Test
@@ -303,7 +303,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_PAGE_HAS_CHILDREN)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_PAGE_HAS_CHILDREN)));
     }
 
     @Test
@@ -361,7 +361,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_GROUP_MISMATCH)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_GROUP_MISMATCH)));
     }
 
     @Test
@@ -396,7 +396,7 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
-        result.andExpect(jsonPath("$.errors[0].code", is(PageController.ERRCODE_STATUS_PAGE_MISMATCH)));
+        result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_STATUS_PAGE_MISMATCH)));
     }
 
     private List<PageDto> createMetadataList(String json) throws IOException, JsonParseException, JsonMappingException {

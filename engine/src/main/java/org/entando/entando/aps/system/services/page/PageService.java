@@ -41,7 +41,6 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
@@ -63,11 +62,11 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
+import org.entando.entando.web.page.validator.PageValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -75,7 +74,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.data.rest.webmvc.json.patch.PatchException;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
@@ -196,10 +194,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         this.pageTokenManager = pageTokenManager;
     }
 
-    public JsonPatchService<PageDto> getJsonPatchService() {
-        return jsonPatchService;
-    }
-
     @Override
     public List<PageDto> getPages(String parentCode) {
         List<PageDto> res = new ArrayList<>();
@@ -219,7 +213,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             DataBinder binder = new DataBinder(pageCode);
             BindingResult bindingResult = binder.getBindingResult();
             String errorCode = status.equals(STATUS_DRAFT) ? ERRCODE_PAGE_NOT_FOUND : ERRCODE_PAGE_ONLY_DRAFT;
-            bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.NotFound");
+            bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.notFound");
             throw new RestRourceNotFoundException(bindingResult);
         }
         String token = this.getPageTokenManager().encrypt(pageCode);
@@ -265,14 +259,14 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         this.validateRequest(pageRequest);
         if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
-                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
+            bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
+                                 new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
-                    new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
+            bindingResult.reject(PageValidator.ERRCODE_GROUP_MISMATCH,
+                                 new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         try {
@@ -289,24 +283,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
-    public PageDto updatePage(String pageCode, JsonNode jsonPatch) {
-        IPage oldPage = this.getPageManager().getDraftPage(pageCode);
-        if (null == oldPage) {
-            throw new RestRourceNotFoundException(null, "page", pageCode);
-        }
-
-        try {
-            PageDto pageDto = this.getDtoBuilder().convert(oldPage);
-            PageDto updatedPageDto = this.getJsonPatchService().applyPatch(jsonPatch, pageDto);
-            PageRequest updateRequest = new PageDtoToPageRequestConverter().convert(updatedPageDto);
-            return this.updatePage(pageCode, updateRequest);
-        } catch (PatchException e) {
-            logger.error("An error occurred while processing the JSON Patch update", e);
-            throw new RestServerError("error in update page with json patch", e);
-        }
-
+    public PageDto getPatchedPage(String pageCode, JsonNode patch) {
+        PageDto pageDto = this.getPage(pageCode, STATUS_DRAFT);
+        return this.jsonPatchService.applyPatch(patch, pageDto);
     }
-
 
     @Override
     public PageDto updatePageStatus(String pageCode, String status) {
@@ -323,8 +303,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             if (status.equals(STATUS_ONLINE)) {
                 IPage publicParent = this.getPageManager().getOnlinePage(currentPage.getParentCode());
                 if (null == publicParent) {
-                    bindingResult.reject(PageController.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT,
-                            new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
+                    bindingResult.reject(PageValidator.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT,
+                                         new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
                     throw new ValidationGenericException(bindingResult);
                 }
                 this.getPageManager().setPageOnline(pageCode);
@@ -334,8 +314,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 for (String childCode : childCodes) {
                     IPage publicChild = this.getPageManager().getOnlinePage(childCode);
                     if (null != publicChild) {
-                        bindingResult.reject(PageController.ERRCODE_PAGE_WITH_PUBLIC_CHILD,
-                                new String[]{pageCode}, "page.status.publicChild");
+                        bindingResult.reject(PageValidator.ERRCODE_PAGE_WITH_PUBLIC_CHILD,
+                                             new String[]{pageCode}, "page.status.publicChild");
                         throw new ValidationGenericException(bindingResult);
                     }
                 }
@@ -346,7 +326,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                         PageServiceUtilizer serviceUtilizer = iter.next();
                         List utilizer = serviceUtilizer.getPageUtilizer(pageCode);
                         if (null != utilizer && utilizer.size() > 0) {
-                            bindingResult.reject(PageController.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
+                            bindingResult.reject(PageValidator.ERRCODE_REFERENCED_ONLINE_PAGE, new String[]{pageCode}, "page.status.invalid.online.ref");
                             throw new ValidationGenericException(bindingResult);
                         }
                     }
@@ -367,20 +347,20 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public PageDto movePage(String pageCode, PagePositionRequest pageRequest) {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
         if (pageCode.equals(pageRequest.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT, new String[]{pageCode}, "page.movement.parent.invalid.1");
+            bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT, new String[]{pageCode}, "page.movement.parent.invalid.1");
             throw new ValidationGenericException(bindingResult);
         }
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
         IPage page = this.getPageManager().getDraftPage(pageCode);
         if (parent.isChildOf(pageCode)) {
-            bindingResult.reject(PageController.ERRCODE_INVALID_PARENT,
-                    new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
+            bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
+                                 new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
             throw new ValidationGenericException(bindingResult);
         }
         String parentGroup = parent.getGroup();
         if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageController.ERRCODE_GROUP_MISMATCH,
-                    new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
+            bindingResult.reject(PageValidator.ERRCODE_GROUP_MISMATCH,
+                                 new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
             throw new ValidationGenericException(bindingResult);
         }
         boolean moved = true;

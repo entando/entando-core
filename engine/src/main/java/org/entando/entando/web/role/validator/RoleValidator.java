@@ -13,22 +13,24 @@
  */
 package org.entando.entando.web.role.validator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.role.model.RoleDto;
+import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.role.model.RoleRequest;
+import org.springframework.data.rest.webmvc.json.patch.PatchException;
 import org.springframework.validation.Errors;
 
 public class RoleValidator extends AbstractPaginationValidator {
 
+    public static final String ERRCODE_INVALID_PATCH = "1";
     public static final String ERRCODE_ROLE_NOT_FOUND = "1";
     public static final String ERRCODE_ROLE_ALREADY_EXISTS = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
     public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
     public static final String ERRCODE_ROLE_REFERENCES = "5";
+
+    private JsonPatchValidator jsonPatchValidator;
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -44,6 +46,23 @@ public class RoleValidator extends AbstractPaginationValidator {
         if (!StringUtils.equals(roleCode, roleRequest.getCode())) {
             errors.rejectValue("name", ERRCODE_URINAME_MISMATCH, new String[]{roleCode, roleRequest.getName()}, "role.code.mismatch");
         }
+    }
+
+    public void validateJsonPatch(JsonNode jsonPatch, Errors errors) {
+        try {
+            jsonPatchValidator.validatePatch(jsonPatch);
+        } catch (PatchException e) {
+            errors.reject(ERRCODE_INVALID_PATCH, "jsonPatch.invalid");
+        }
+
+        for (JsonNode node : jsonPatch) {
+            String operationPath = node.get("path").asText();
+
+            if (operationPath.equals("/code")) {
+                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"code"}, "jsonPatch.invalid");
+            }
+        }
+
     }
 
 }

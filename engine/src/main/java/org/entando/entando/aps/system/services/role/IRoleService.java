@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.role;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
@@ -33,6 +34,8 @@ public interface IRoleService {
     public void removeRole(String roleCode);
 
     public RoleDto getRole(String roleCode);
+
+    public RoleDto getPatchedRole(String roleCode, JsonNode jsonPatch);
 
     public PagedMetadata<UserDto> getRoleReferences(String roleCode, RestListRequest requestList);
 

@@ -1,10 +1,12 @@
-package org.entando.entando.aps.system.services.page;
+package org.entando.entando.web.page;
 
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PageRequest;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Service;
 
-public class PageDtoToPageRequestConverter implements Converter<PageDto, PageRequest> {
+@Service
+public class PageDtoToRequestConverter implements Converter<PageDto, PageRequest> {
 
     @Override
     public PageRequest convert(PageDto source) {

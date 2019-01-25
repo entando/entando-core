@@ -47,7 +47,7 @@ public interface IPageService {
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
 
-    public PageDto updatePage(String pageCode, JsonNode jsonPatch);
+    public PageDto getPatchedPage(String pageCode, JsonNode patch);
 
     public List<PageDto> getPages(String parentCode);
 

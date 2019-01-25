@@ -13,17 +13,24 @@
  */
 package org.entando.entando.web.role;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.role.IRoleService;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.role.model.RoleRequest;
 import org.entando.entando.web.role.validator.RoleValidator;
 import org.slf4j.Logger;
@@ -33,14 +40,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/roles")
@@ -50,6 +54,9 @@ public class RoleController {
 
     @Autowired
     private IRoleService roleService;
+
+    @Autowired
+    private RoleDtotoRoleRequestConverter roleDtotoRoleRequestConverter;
 
     private RoleValidator roleValidator = new RoleValidator();
 
@@ -110,6 +117,23 @@ public class RoleController {
         RoleDto role = this.getRoleService().updateRole(roleRequest);
         return new ResponseEntity<>(new SimpleRestResponse<>(role), HttpStatus.OK);
     }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{roleCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes="application/json-patch+json")
+    public ResponseEntity<SimpleRestResponse<RoleDto>> updateRole(@PathVariable String roleCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
+        logger.debug("update role {} with jsonpatch-request {}", roleCode, patchRequest);
+
+        this.getRoleValidator().validateJsonPatch(patchRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        RoleDto patchedRoleDto = this.getRoleService().getPatchedRole(roleCode, patchRequest);
+        RoleRequest patchedRoleRequest = this.roleDtotoRoleRequestConverter.convert(patchedRoleDto);
+
+        return this.updateRole(roleCode, patchedRoleRequest, bindingResult);
+    }
+
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

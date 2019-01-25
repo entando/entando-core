@@ -68,23 +68,11 @@ public class PageController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_ONLINE_PAGE = "1";
-    public static final String ERRCODE_PAGE_HAS_CHILDREN = "2";
-    public static final String ERRCODE_GROUP_MISMATCH = "2";
-    public static final String ERRCODE_INVALID_PARENT = "3";
-    public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
-    public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
-    public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "2";
-    public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "3";
-    public static final String ERRCODE_INVALID_PATCH = "1";
-
-    public static final String ERRCODE_PAGE_WITH_PUBLIC_CHILD = "8";
-    public static final String ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT = "9";
-
     @Autowired
     private IPageService pageService;
+
+    @Autowired
+    private PageDtoToRequestConverter pageDtoToRequestConverter;
 
     @Autowired
     private PageValidator pageValidator;
@@ -285,20 +273,18 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json-patch+json")
-    public ResponseEntity<SimpleRestResponse<PageDto>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
         logger.debug("update page {} with jsonpatch-request {}", pageCode, patchRequest);
 
-        this.getPageValidator().validateJsonPatchRequest(pageCode, patchRequest, bindingResult);
+        this.getPageValidator().validateJsonPatchRequest(patchRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
 
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new SimpleRestResponse<>(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
+        PageDto updatedPageDto = this.getPageService().getPatchedPage(pageCode, patchRequest);
+        PageRequest pageRequest = this.pageDtoToRequestConverter.convert(updatedPageDto);
 
-        PageDto page = this.getPageService().updatePage(pageCode, patchRequest);
-        return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
+        return this.updatePage(user, pageCode, pageRequest, bindingResult);
     }
 
 

@@ -33,7 +33,7 @@ public class JsonPatchValidator {
         // Test if the json node is generically convertible to a Patch
         this.converter.convert(jsonNode);
 
-        // Check if the operations are supported
+        // Check if the operations are supported, can't access Spring PatchOperations as they are protected
         ArrayNode opNodes = (ArrayNode) jsonNode;
 
         for (Iterator<JsonNode> elements = opNodes.elements(); elements.hasNext(); ) {

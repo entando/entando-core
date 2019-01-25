@@ -26,14 +26,15 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationService;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.jsonpatch.JsonPatchService;
 import org.entando.entando.aps.system.services.role.model.PermissionDto;
 import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -58,6 +59,7 @@ public class RoleService implements IRoleService {
     private RoleDtoBuilder dtoBuilder;
     private IDtoBuilder<Permission, PermissionDto> permissionDtoBuilder;
     private IAuthorizationService authorizationService;
+    private JsonPatchService<RoleDto> jsonPatchService = new JsonPatchService<>(RoleDto.class);
 
     protected IRoleManager getRoleManager() {
         return roleManager;
@@ -243,6 +245,12 @@ public class RoleService implements IRoleService {
         }
         RoleDto dto = this.getDtoBuilder().toDto(role, this.getRoleManager().getPermissionsCodes());
         return dto;
+    }
+
+    @Override
+    public RoleDto getPatchedRole(String roleCode, JsonNode jsonPatch) {
+        RoleDto currentDto = this.getRole(roleCode);
+        return this.jsonPatchService.applyPatch(jsonPatch, currentDto);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

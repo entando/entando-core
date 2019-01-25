@@ -170,7 +170,7 @@ public class DataObjectModelController {
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes="application/json-patch+json")
     public ResponseEntity<SimpleRestResponse<DataModelDto>> patchDataObjectModel(@PathVariable Long dataModelId,
                                                                                  @RequestBody JsonNode jsonPatch,
                                                                                  BindingResult bindingResult) throws JsonProcessingException {

@@ -29,8 +29,11 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
@@ -243,13 +246,20 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title EN")));
 
-            String payload = "[\n" +
-                    "{ \"op\": \"replace\", \"path\": \"/displayedInMenu\", \"value\": true },\n  " +
-                    "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
-                    "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
-                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
-                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] } \n  " +
-                "\n]";
+//            String payload = "[\n" +
+//                    "{ \"op\": \"replace\", \"path\": \"/displayedInMenu\", \"value\": true },\n  " +
+//                    "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
+//                    "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
+//                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
+//                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] } \n  " +
+//                "\n]";
+            String payload = new JsonPatchBuilder()
+                    .withReplace("/displayedInMenu", true)
+                    .withReplace("/charset", "utf8")
+                    .withReplace("/contentType", "text/html")
+                    .withReplace("/titles", ImmutableMap.of("en", "Title English", "it", "Titolo Italiano"))
+                    .withReplace("/joinGroups", ImmutableList.of("management", "customer"))
+                    .getJsonPatchAsString();
 
             result = mockMvc
                     .perform(patch("/pages/{code}", newPageCode)

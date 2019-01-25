@@ -19,16 +19,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -170,6 +175,40 @@ public class DataObjectModelControllerIntegrationTest extends AbstractController
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
+
+            //patch
+            payload = new JsonPatchBuilder()
+                    .withReplace("/descr", "")
+                    .withReplace("/stylesheet", "body { font-size: 10px; }")
+                    .getJsonPatchAsString();
+
+            result = mockMvc.perform(
+                    patch("/dataModels/{modelId}", String.valueOf(id))
+                            .content(payload)
+                            .contentType(RestMediaTypes.JSON_PATCH_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.descr", is("")));
+            result.andExpect(jsonPath("$.payload.stylesheet", is ("body { font-size: 10px; }")));
+
+            //invalid patch
+
+            payload = new JsonPatchBuilder()
+                    .withReplace("/modelId", "anything")
+                    .getJsonPatchAsString();
+
+            result = mockMvc.perform(
+                    patch("/dataModels/{modelId}", String.valueOf(id))
+                            .content(payload)
+                            .contentType(RestMediaTypes.JSON_PATCH_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0]", allOf(
+                    hasEntry("code", "1"),
+                    hasEntry("message", "The field 'modelId' can not be updated via JSON patch")
+            )));
 
             //delete
             result = mockMvc.perform(

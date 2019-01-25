@@ -58,15 +58,8 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
     @Autowired
     private IDataObjectManager dataObjectManager;
 
+    @Autowired
     private JsonPatchValidator jsonPatchValidator;
-
-    public JsonPatchValidator getJsonPatchValidator() {
-        return jsonPatchValidator;
-    }
-
-    public void setJsonPatchValidator(JsonPatchValidator jsonPatchValidator) {
-        this.jsonPatchValidator = jsonPatchValidator;
-    }
 
     @Override
     public boolean supports(Class<?> paramClass) {

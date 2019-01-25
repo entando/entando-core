@@ -173,10 +173,6 @@
         <property name="storageManager" ref="StorageManager" />
     </bean>
 
-    <bean id="JsonPatchValidator"
-          class="org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator">
-    </bean>
-
    <bean name="DefaultObjectMapper"
          class="com.fasterxml.jackson.databind.ObjectMapper" />
 
@@ -185,4 +181,7 @@
         <constructor-arg ref="DefaultObjectMapper"/>
     </bean>
 
+    <bean id="JsonPatchValidator"
+          class="org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator">
+    </bean>
 </beans>

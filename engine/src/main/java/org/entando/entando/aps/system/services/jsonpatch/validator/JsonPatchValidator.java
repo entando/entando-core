@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.ImmutableSet;
 import org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter;
 import org.springframework.data.rest.webmvc.json.patch.PatchException;
+import org.springframework.stereotype.Service;
 
+@Service
 public class JsonPatchValidator {
 
     private final Set<String> ENTANDO_SUPPORTED_OPERATIONS = ImmutableSet.of("replace");

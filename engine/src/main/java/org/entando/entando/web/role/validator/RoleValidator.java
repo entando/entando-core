@@ -18,9 +18,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.role.model.RoleRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.json.patch.PatchException;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
+@Component
 public class RoleValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_INVALID_PATCH = "1";
@@ -30,6 +33,7 @@ public class RoleValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_PERMISSON_NOT_FOUND = "4";
     public static final String ERRCODE_ROLE_REFERENCES = "5";
 
+    @Autowired
     private JsonPatchValidator jsonPatchValidator;
 
     @Override
@@ -59,7 +63,7 @@ public class RoleValidator extends AbstractPaginationValidator {
             String operationPath = node.get("path").asText();
 
             if (operationPath.equals("/code")) {
-                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"code"}, "jsonPatch.invalid");
+                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"code"}, "jsonPatch.field.protected");
             }
         }
 

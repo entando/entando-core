@@ -58,7 +58,8 @@ public class RoleController {
     @Autowired
     private RoleDtotoRoleRequestConverter roleDtotoRoleRequestConverter;
 
-    private RoleValidator roleValidator = new RoleValidator();
+    @Autowired
+    private RoleValidator roleValidator;
 
     public IRoleService getRoleService() {
         return roleService;

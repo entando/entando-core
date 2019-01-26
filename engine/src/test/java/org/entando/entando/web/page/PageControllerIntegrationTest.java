@@ -258,7 +258,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
                     .withReplace("/charset", "utf8")
                     .withReplace("/contentType", "text/html")
                     .withReplace("/titles", ImmutableMap.of("en", "Title English", "it", "Titolo Italiano"))
-                    .withReplace("/joinGroups", ImmutableList.of("management", "customer"))
+                    .withReplace("/joinGroups", ImmutableList.of("management", "customers"))
                     .getJsonPatchAsString();
 
             result = mockMvc

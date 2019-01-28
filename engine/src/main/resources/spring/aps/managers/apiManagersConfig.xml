@@ -53,7 +53,7 @@
         <property name="consumerDAO">
             <bean class="org.entando.entando.aps.system.services.oauth2.OAuthConsumerDAO">
                 <property name="dataSource" ref="servDataSource"/>
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${servDataSourceClassName}</value></property>
             </bean>
         </property>
         <property name="accessTokenValiditySeconds"><value>${oauth2.accessToken.validitySeconds}</value></property>

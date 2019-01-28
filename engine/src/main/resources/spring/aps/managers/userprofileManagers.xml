@@ -31,7 +31,7 @@
             <bean class="org.entando.entando.aps.system.services.userprofile.UserProfileSearcherDAO">
                 <property name="dataSource" ref="servDataSource" />
                 <property name="dataSourceClassName">
-                    <jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" />
+                    <value>${servDataSourceClassName}</value>
                 </property>
             </bean>
         </property>

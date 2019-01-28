@@ -105,16 +105,16 @@
                     <value>${file.upload.maxSize}</value>
                 </entry>
                 <entry key="configVersion">
-                    <jee:jndi-lookup jndi-name="java:comp/env/configVersion" />
+                    <value>${configVersion}</value>
                 </entry>
                 <entry key="applicationBaseURL">
-                    <jee:jndi-lookup jndi-name="java:comp/env/applicationBaseURL" />
+                    <value>${applicationBaseURL}</value>
                 </entry>
                 <entry key="resourceRootURL">
-                    <jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" />
+                    <value>${resourceRootURL}</value>
                 </entry>
                 <entry key="resourceDiskRootFolder">
-                    <jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" />
+                    <value>${resourceDiskRootFolder}</value>
                 </entry>
             </map>
         </property>

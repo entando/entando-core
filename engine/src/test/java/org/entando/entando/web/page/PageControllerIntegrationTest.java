@@ -246,13 +246,6 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title EN")));
 
-//            String payload = "[\n" +
-//                    "{ \"op\": \"replace\", \"path\": \"/displayedInMenu\", \"value\": true },\n  " +
-//                    "{ \"op\": \"replace\", \"path\": \"/charset\", \"value\": \"utf8\" },\n  " +
-//                    "{ \"op\": \"replace\", \"path\": \"/contentType\", \"value\": \"text/html\" },\n  " +
-//                    "{ \"op\": \"replace\", \"path\": \"/titles\", \"value\": { \"en\": \"Title English\", \"it\": \"Titolo Italiano\" } }, \n " +
-//                    "{ \"op\": \"replace\", \"path\": \"/joinGroups\", \"value\": [\"management\", \"customers\"] } \n  " +
-//                "\n]";
             String payload = new JsonPatchBuilder()
                     .withReplace("/displayedInMenu", true)
                     .withReplace("/charset", "utf8")

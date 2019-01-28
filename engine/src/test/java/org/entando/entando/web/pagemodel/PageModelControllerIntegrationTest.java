@@ -71,7 +71,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
 
     @Test public void
-    get_page_model_return_OK() throws Exception {
+    get_all_page_models_return_OK() throws Exception {
 
         ResultActions result = mockMvc.perform(
                 get("/pageModels")
@@ -80,7 +80,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test public void
-    get_page_models_return_OK() throws Exception {
+    get_page_model_return_OK() throws Exception {
 
         ResultActions result = mockMvc.perform(
                 get("/pageModels/{code}", "home")
@@ -88,17 +88,6 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(1)));
-    }
-
-    @Test public void
-    get_page_models_contains_DE_models() throws Exception {
-
-        ResultActions result = mockMvc.perform(
-                get("/pageModels/{code}", "home")
-                        .header("Authorization", "Bearer " + accessToken));
-
-        result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload.references.length()", is(2)));
     }
 
     @Test public void

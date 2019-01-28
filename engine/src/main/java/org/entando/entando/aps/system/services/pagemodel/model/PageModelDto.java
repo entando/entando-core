@@ -2,8 +2,9 @@ package org.entando.entando.aps.system.services.pagemodel.model;
 
 import com.fasterxml.jackson.annotation.*;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import java.util.Map;
+import java.util.*;
 
 public class PageModelDto {
 
@@ -104,5 +105,39 @@ public class PageModelDto {
 
     public void setDigitalExchange(String digitalExchange) {
         this.digitalExchange = digitalExchange;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PageModelDto that = (PageModelDto) o;
+        return mainFrame == that.mainFrame &&
+               Objects.equals(code, that.code) &&
+               Objects.equals(descr, that.descr) &&
+               Objects.equals(configuration, that.configuration) &&
+               Objects.equals(pluginCode, that.pluginCode) &&
+               Objects.equals(template, that.template) &&
+               Objects.equals(digitalExchange, that.digitalExchange) &&
+               Objects.equals(references, that.references);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(code, descr, configuration, mainFrame, pluginCode, template, digitalExchange, references);
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("code", code)
+                .append("descr", descr)
+                .append("configuration", configuration)
+                .append("mainFrame", mainFrame)
+                .append("pluginCode", pluginCode)
+                .append("template", template)
+                .append("digitalExchange", digitalExchange)
+                .append("references", references)
+                .toString();
     }
 }

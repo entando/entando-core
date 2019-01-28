@@ -93,7 +93,7 @@
             <bean class="org.entando.entando.aps.system.services.dataobjectsearchengine.SearchEngineDAOFactory"
                   init-method="init">
                 <property name="indexDiskRootFolder">
-                    <jee:jndi-lookup jndi-name="java:comp/env/indexDiskRootFolder" />
+                    <value>${indexDiskRootFolder}</value>
                 </property>
                 <property name="configManager" ref="BaseConfigManager"/>
                 <property name="langManager" ref="LangManager" />

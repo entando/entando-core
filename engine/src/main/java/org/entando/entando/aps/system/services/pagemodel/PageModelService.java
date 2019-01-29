@@ -26,6 +26,8 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     private final IPageModelManager pageModelManager;
 
+    private DigitalExchangePageModelService dePageModelService;
+
     private final IDtoBuilder<PageModel, PageModelDto> dtoBuilder;
 
     private ApplicationContext applicationContext;
@@ -34,6 +36,15 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     public PageModelService(IPageModelManager pageModelManager, IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
         this.pageModelManager = pageModelManager;
         this.dtoBuilder = dtoBuilder;
+    }
+
+    public DigitalExchangePageModelService getDePageModelService() {
+        return dePageModelService;
+    }
+
+    @Autowired(required = false)
+    public void setDePageModelService(DigitalExchangePageModelService dePageModelService) {
+        this.dePageModelService = dePageModelService;
     }
 
     @Override
@@ -46,8 +57,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
-            filters
-                   .stream()
+            filters.stream()
                    .filter(i -> i.getKey() != null)
                    .forEach(i -> i.setKey(PageModelDto.getEntityFieldName(i.getKey())));
 
@@ -70,7 +80,20 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     @Override
     public PagedMetadata<PageModelDto> getAllPageModels(RestListRequest restRequest) {
-        throw new UnsupportedOperationException("Not implemented");
+        PagedMetadata<PageModelDto> pageModels = getLocalPageModels(restRequest);
+        if (dePageModelService == null) {
+            return pageModels;
+        }
+
+        return createAllPageModelsPagedMetadata(restRequest, pageModels);
+    }
+
+    private PagedMetadata<PageModelDto> createAllPageModelsPagedMetadata(
+            RestListRequest restRequest, PagedMetadata<PageModelDto> pageModels) {
+
+        List<PageModelDto> allPageModels = new ArrayList<>(pageModels.getBody());
+        allPageModels.addAll(dePageModelService.getDePageModels());
+        return new PagedMetadata<>(restRequest, allPageModels, allPageModels.size());
     }
 
     @Override

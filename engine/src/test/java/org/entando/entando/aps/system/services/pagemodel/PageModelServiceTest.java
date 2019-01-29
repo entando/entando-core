@@ -23,11 +23,15 @@ public class PageModelServiceTest {
 
     private static final int DEFAULT_MAIN_FRAME = -1;
     private static final String PAGE_MODEL_CODE = "TEST_PM_CODE";
+    private static final String DE_PAGE_MODEL_CODE = "TEST_DE_PM_CODE";
 
     private static final RestListRequest EMPTY_REQUEST = new RestListRequest();
+    private static final String EXCHANGE = "Leonardo's Exchange";
 
 
     @Mock IPageModelManager pageModelManager;
+    @Mock DigitalExchangePageModelService dePageModelService;
+
     private PageModelDtoBuilder dtoBuilder;
     private PageModelService pageModelService;
 
@@ -61,14 +65,49 @@ public class PageModelServiceTest {
 
         PagedMetadata<PageModelDto> result = pageModelService.getLocalPageModels(EMPTY_REQUEST);
 
-        PagedMetadata<PageModelDto> expected = oneResultPagedMetadata();
+        PagedMetadata<PageModelDto> expected = localResultPagedMetadata();
         assertThat(result).isEqualTo(expected);
     }
 
-    private PagedMetadata<PageModelDto> oneResultPagedMetadata() {
+    @Test public void
+    get_all_page_models_without_de_service_configured_returns_local_page_models() throws ApsSystemException {
+        when(pageModelManager.searchPageModels(any())).thenReturn(pageModels());
+
+        PagedMetadata<PageModelDto> result = pageModelService.getAllPageModels(EMPTY_REQUEST);
+
+        PagedMetadata<PageModelDto> expected = localResultPagedMetadata();
+        assertThat(result).isEqualTo(expected);
+    }
+
+    @Test public void
+    get_all_page_models_with_de_service_configured_returns_de_and_page_models() throws ApsSystemException {
+        pageModelService.setDePageModelService(dePageModelService);
+
+        when(pageModelManager.searchPageModels(any())).thenReturn(pageModels());
+        when(dePageModelService.getDePageModels()).thenReturn(dePageModels());
+
+        PagedMetadata<PageModelDto> result = pageModelService.getAllPageModels(EMPTY_REQUEST);
+
+        PagedMetadata<PageModelDto> expected = completeResultPagedMetadata();
+        assertThat(result).isEqualTo(expected);
+    }
+
+    private List<PageModelDto> dePageModels() {
+        return asList(dtoBuilder.convert(dePageModel()));
+    }
+
+    private PagedMetadata<PageModelDto> localResultPagedMetadata() {
         RestListRequest request = new RestListRequest();
 
         return new PagedMetadata<>(request, asList(dtoBuilder.convert(localPageModel())), 1);
+    }
+
+    private PagedMetadata<PageModelDto> completeResultPagedMetadata() {
+        RestListRequest request = new RestListRequest();
+
+        return new PagedMetadata<>(request,
+                asList(dtoBuilder.convert(localPageModel()), dtoBuilder.convert(dePageModel())),
+                2);
     }
 
     private static SearcherDaoPaginatedResult<PageModel> pageModels() {
@@ -79,6 +118,13 @@ public class PageModelServiceTest {
         PageModel localPageModel = new PageModel();
         localPageModel.setCode(PAGE_MODEL_CODE);
         return localPageModel;
+    }
+
+    private PageModel dePageModel() {
+        PageModel pageModel = new PageModel();
+        pageModel.setCode(DE_PAGE_MODEL_CODE);
+        pageModel.setDigitalExchange(EXCHANGE);
+        return pageModel;
     }
 
     private static PageModel pageModelFrom(PageModelRequest pageModelRequest) {

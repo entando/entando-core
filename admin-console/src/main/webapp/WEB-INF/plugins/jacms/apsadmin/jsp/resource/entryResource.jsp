@@ -210,6 +210,14 @@
                     </button>
                 </div>
             </div>
+            <div class="col-sm-5 col-sm-offset-2">
+
+                <label id="newFileUpload_label" for="newFileUpload-multiple" class="btn btn-default">
+                    <s:text name="label.button-choose-files"/>
+                </label>
+                <s:file name="fileUpload" id="newFileUpload-multiple" cssClass="input-file-button" label="label.file"
+                        multiple="true"/>
+            </div>
         </div>
     </s:if>
 
@@ -228,7 +236,8 @@
             <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
             <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
             <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
-            <div id="<s:text name="%{'formGroup-' + (#ctr.count - 1)}" />" class="form-group <s:property value="#controlGroupErrorClassVar" />">
+            <div id="<s:text name="%{'formGroup-' + (#ctr.count - 1)}" />"
+                 class="form-group form-group--file <s:property value="#controlGroupErrorClassVar" />" data-file-id="0">
                 <label class="col-sm-2 control-label" for="descr">
                     <s:text name="label.description"/>
                     <i class="fa fa-asterisk required-icon"></i>
@@ -253,7 +262,8 @@
                     </s:if>
 
                     <div class="progress" id="progress_0">
-                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;">
                             <span>0%</span>
                         </div>
                     </div>
@@ -712,9 +722,9 @@
     <div class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
-                <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
+                <input id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
                     <s:text name="cropEditor.label.done"/>
-                </button>
+                </input>
             </div>
         </div>
     </div>
@@ -810,21 +820,10 @@
 
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
-                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                        <s:text name="label.button-choose-file"/>
-                    </s:if>
-                    <s:else>
-                        <s:text name="label.button-choose-files"/>
-                    </s:else>
+                    <s:text name="label.button-choose-file"/>
                 </label>
 
-                <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"/>
-                </s:if>
-                <s:else>
-                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
-                            multiple="true"/>
-                </s:else>
+                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"/>
                 <span id="newFileUpload_selected" class="file-upload-selected-name"><s:text
                         name="label.no-file-selected"/></span>
             </div>

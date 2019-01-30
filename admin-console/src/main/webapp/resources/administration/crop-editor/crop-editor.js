@@ -536,17 +536,6 @@ $(document).ready(function () {
         setupInitialStoreItems();
         DOMsetupAspectRatioToolbar();
 
-        $('#submit').on('click', function (e) {
-            if($(this).attr('in-progress') === undefined) {
-                e.preventDefault();
-                $(this).attr("in-progress", true);
-                $(this).attr("disabled", "disabled");
-                $(this).prepend("<div class=\"spinner spinner-xs spinner-inline\">")
-                startNextFileUpload();
-            }
-
-        });
-
 
         /**
          * Handling single image edit form.

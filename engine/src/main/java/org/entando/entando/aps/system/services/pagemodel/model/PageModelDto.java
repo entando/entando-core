@@ -18,8 +18,7 @@ public class PageModelDto {
     private int mainFrame = NO_MAIN_FRAME;
     private String pluginCode;
     private String template;
-    private String digitalExchange;
-
+    
     /**
      * The references grouped by service name.
      * <p>
@@ -27,6 +26,19 @@ public class PageModelDto {
      */
     @JsonInclude(Include.NON_NULL)
     private Map<String, Boolean> references;
+
+    public PageModelDto() {
+    }
+    
+    public PageModelDto(PageModelDto other) {
+        this.code = other.code;
+        this.descr = other.descr;
+        this.configuration = other.configuration;
+        this.mainFrame = other.mainFrame;
+        this.pluginCode = other.pluginCode;
+        this.template = other.template;
+        this.references = other.references;
+    }
 
     public String getCode() {
         return code;
@@ -98,15 +110,6 @@ public class PageModelDto {
         this.configuration = configuration;
     }
 
-
-    public String getDigitalExchange() {
-        return digitalExchange;
-    }
-
-    public void setDigitalExchange(String digitalExchange) {
-        this.digitalExchange = digitalExchange;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,13 +121,12 @@ public class PageModelDto {
                Objects.equals(configuration, that.configuration) &&
                Objects.equals(pluginCode, that.pluginCode) &&
                Objects.equals(template, that.template) &&
-               Objects.equals(digitalExchange, that.digitalExchange) &&
                Objects.equals(references, that.references);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, descr, configuration, mainFrame, pluginCode, template, digitalExchange, references);
+        return Objects.hash(code, descr, configuration, mainFrame, pluginCode, template, references);
     }
 
     @Override
@@ -136,7 +138,6 @@ public class PageModelDto {
                 .append("mainFrame", mainFrame)
                 .append("pluginCode", pluginCode)
                 .append("template", template)
-                .append("digitalExchange", digitalExchange)
                 .append("references", references)
                 .toString();
     }

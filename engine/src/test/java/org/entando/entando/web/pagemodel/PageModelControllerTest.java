@@ -44,11 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PageModelControllerTest extends AbstractControllerTest {
 
-    private static final String EXCHANGE_NAME = "Leonardo's Exchange";
     private static final String PAGE_MODEL_CODE = "TEST_PM";
-    private static final String DE_PAGE_MODEL_CODE = "TEST_PM_DE";
 
-    private MockMvc mockMvc;
     private String accessToken;
     private ObjectMapper jsonMapper;
     private PageModelDtoBuilder dtoBuilder;
@@ -77,49 +74,24 @@ public class PageModelControllerTest extends AbstractControllerTest {
     }
 
     @Test public void
-    get_page_models_excluding_de_return_ok() throws Exception {
-
-        when(pageModelService.getLocalPageModels(any(RestListRequest.class))).thenReturn(nonDePagedMetadata());
-
-        mockMvc.perform(
-                get("/pageModels")
-                        .param("excludeDe", "true")
-                        .header("Authorization", "Bearer " + accessToken))
-               .andDo(print())
-               .andExpect(status().isOk())
-               .andExpect(jsonPath("$.metaData.totalItems", is(1)))
-               .andExpect(jsonPath("$.payload[0].code", is(PAGE_MODEL_CODE)));
-
-        RestListRequest restListReq = new RestListRequest();
-
-        verify(pageModelService, times(1)).getLocalPageModels(restListReq);
-    }
-
-    @Test public void
     get_all_page_models_return_ok() throws Exception {
 
-        when(pageModelService.getAllPageModels(any(RestListRequest.class))).thenReturn(completePagedMetadata());
+        when(pageModelService.getPageModels(any(RestListRequest.class), any())).thenReturn(pagedMetadata());
 
         ResultActions result = mockMvc.perform(
                 get("/pageModels")
                         .header("Authorization", "Bearer " + accessToken))
                                       .andDo(print())
                                       .andExpect(status().isOk())
-                                      .andExpect(jsonPath("$.metaData.totalItems", is(2)))
-                                      .andExpect(jsonPath("$.payload[0].digitalExchange").doesNotExist())
-                                      .andExpect(jsonPath("$.payload[1].digitalExchange", is(EXCHANGE_NAME)));
+                                      .andExpect(jsonPath("$.metaData.totalItems", is(1)));
 
         RestListRequest restListReq = new RestListRequest();
 
-        verify(pageModelService, times(1)).getAllPageModels(restListReq);
+        verify(pageModelService, times(1)).getPageModels(eq(restListReq), any());
     }
 
-    private PagedMetadata<PageModelDto> completePagedMetadata() {
-        return createPagedMetadata(ImmutableList.of(localPageModel(), dePageModel()));
-    }
-
-    private PagedMetadata<PageModelDto> nonDePagedMetadata() {
-        return createPagedMetadata(ImmutableList.of(localPageModel()));
+    private PagedMetadata<PageModelDto> pagedMetadata() {
+        return createPagedMetadata(ImmutableList.of(pageModel()));
     }
 
     private PagedMetadata<PageModelDto> createPagedMetadata(List<PageModel> pageModels) {
@@ -143,16 +115,9 @@ public class PageModelControllerTest extends AbstractControllerTest {
         return pageModelDtos;
     }
 
-    private PageModel localPageModel() {
+    private PageModel pageModel() {
         PageModel pageModel = new PageModel();
         pageModel.setCode(PAGE_MODEL_CODE);
-        return pageModel;
-    }
-
-    private PageModel dePageModel() {
-        PageModel pageModel = new PageModel();
-        pageModel.setDigitalExchange(EXCHANGE_NAME);
-        pageModel.setCode(DE_PAGE_MODEL_CODE);
         return pageModel;
     }
 

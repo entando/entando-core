@@ -37,7 +37,6 @@ public class Frame implements Serializable {
 	private JAXBDefaultWidget jaxbDefaultWidget;
 	private FrameSketch sketch;
 
-	@XmlTransient
 	private transient IWidgetTypeManager widgetTypeManager;
 
 	@XmlElement(name = "code", required = true)
@@ -135,6 +134,9 @@ public class Frame implements Serializable {
 		private String code;
 		private Properties properties;
 
+                public JAXBDefaultWidget() {
+                }
+                
 		public JAXBDefaultWidget(Widget defaultWidget) {
 			if (defaultWidget == null) {
 				return;

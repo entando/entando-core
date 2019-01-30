@@ -57,14 +57,11 @@ public class PageModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @GetMapping
     public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(
-            @RequestParam(value = "excludeDe", required = false) boolean excludeDe,
-            RestListRequest requestList) {
+            RestListRequest requestList, @RequestParam Map<String, String> requestParams) {
         logger.trace("loading page models");
 
         pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
-        PagedMetadata<PageModelDto> result = excludeDe ?
-                pageModelService.getLocalPageModels(requestList) :
-                pageModelService.getAllPageModels(requestList) ;
+        PagedMetadata<PageModelDto> result = pageModelService.getPageModels(requestList, requestParams);
 
         pageModelValidator.validateRestListResult(requestList, result);
 

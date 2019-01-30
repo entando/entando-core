@@ -139,7 +139,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     get_nonexistent_page_model_return_not_found() throws Exception {
 
         ResultActions result = mockMvc.perform(
-                get("/pageModels/{code}", PAGE_MODEL_CODE)
+                get("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());

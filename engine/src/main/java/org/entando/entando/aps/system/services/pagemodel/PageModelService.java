@@ -26,8 +26,6 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     private final IPageModelManager pageModelManager;
 
-    private DigitalExchangePageModelService dePageModelService;
-
     private final IDtoBuilder<PageModel, PageModelDto> dtoBuilder;
 
     private ApplicationContext applicationContext;
@@ -38,22 +36,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         this.dtoBuilder = dtoBuilder;
     }
 
-    public DigitalExchangePageModelService getDePageModelService() {
-        return dePageModelService;
-    }
-
-    @Autowired(required = false)
-    public void setDePageModelService(DigitalExchangePageModelService dePageModelService) {
-        this.dePageModelService = dePageModelService;
-    }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public PagedMetadata<PageModelDto> getLocalPageModels(RestListRequest restListReq) {
+    public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq, Map<String, String> requestParams) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
             List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
@@ -76,24 +65,6 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             logger.error("error in search pageModels", t);
             throw new RestServerError("error in search pageModels", t);
         }
-    }
-
-    @Override
-    public PagedMetadata<PageModelDto> getAllPageModels(RestListRequest restRequest) {
-        PagedMetadata<PageModelDto> pageModels = getLocalPageModels(restRequest);
-        if (dePageModelService == null) {
-            return pageModels;
-        }
-
-        return createAllPageModelsPagedMetadata(restRequest, pageModels);
-    }
-
-    private PagedMetadata<PageModelDto> createAllPageModelsPagedMetadata(
-            RestListRequest restRequest, PagedMetadata<PageModelDto> pageModels) {
-
-        List<PageModelDto> allPageModels = new ArrayList<>(pageModels.getBody());
-        allPageModels.addAll(dePageModelService.getDePageModels());
-        return new PagedMetadata<>(restRequest, allPageModels, allPageModels.size());
     }
 
     @Override

@@ -39,7 +39,6 @@ public class PageModel implements Serializable {
 	private int mainFrame = -1;
 	private String pluginCode;
 	private String template;
-	private String digitalExchange;
 
 	/**
 	 * Return the code of page model.
@@ -244,15 +243,6 @@ public class PageModel implements Serializable {
 		this.template = template;
 	}
 
-	@XmlTransient
-	public String getDigitalExchange() {
-		return digitalExchange;
-	}
-
-	public void setDigitalExchange(String digitalExchange) {
-		this.digitalExchange = digitalExchange;
-	}
-
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this)
@@ -262,7 +252,6 @@ public class PageModel implements Serializable {
 				.append("mainFrame", mainFrame)
 				.append("pluginCode", pluginCode)
 				.append("template", template)
-				.append("digitalExchange", digitalExchange)
 				.toString();
 	}
 
@@ -276,13 +265,12 @@ public class PageModel implements Serializable {
 			   Objects.equals(description, pageModel.description) &&
 			   Arrays.equals(configuration, pageModel.configuration) &&
 			   Objects.equals(pluginCode, pageModel.pluginCode) &&
-			   Objects.equals(template, pageModel.template) &&
-			   Objects.equals(digitalExchange, pageModel.digitalExchange);
+			   Objects.equals(template, pageModel.template);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(code, description, mainFrame, pluginCode, template, digitalExchange);
+		int result = Objects.hash(code, description, mainFrame, pluginCode, template);
 		result = 31 * result + Arrays.hashCode(configuration);
 		return result;
 	}

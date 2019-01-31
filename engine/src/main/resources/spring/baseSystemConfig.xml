@@ -13,9 +13,9 @@
 
     <context:annotation-config />
 
-    <jee:jndi-lookup id="portDataSource" jndi-name="java:comp/env/jdbc/portDataSource"/>
+    <jee:jndi-lookup id="portDataSource" jndi-name="${portdb.jndi:java:comp/env/jdbc/portDataSource}"/>
 
-    <jee:jndi-lookup id="servDataSource" jndi-name="java:comp/env/jdbc/servDataSource"/>
+    <jee:jndi-lookup id="servDataSource" jndi-name="${servdb.jndi:java:comp/env/jdbc/servDataSource}"/>
 
     <bean id="ApsSystemUtils" class="com.agiletec.aps.system.ApsSystemUtils" init-method="init" >
         <property name="systemParams">

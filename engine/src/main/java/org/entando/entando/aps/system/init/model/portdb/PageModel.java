@@ -13,48 +13,42 @@
  */
 package org.entando.entando.aps.system.init.model.portdb;
 
-import com.j256.ormlite.field.DataType;
-import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.*;
 import com.j256.ormlite.table.DatabaseTable;
 
-/**
- * @author E.Santoboni
- */
 @DatabaseTable(tableName = PageModel.TABLE_NAME)
 public class PageModel {
-	
-	public PageModel() {}
-	
-	@DatabaseField(columnName = "code", 
+
+	public static final String TABLE_NAME = "pagemodels";
+
+
+	@DatabaseField(columnName = "code",
 			dataType = DataType.STRING, 
 			width = 40, 
 			canBeNull = false, id = true)
-	private String _code;
+	private String code;
 	
 	@DatabaseField(columnName = "descr", 
 			dataType = DataType.STRING, 
 			width = 50, 
 			canBeNull = false)
-	private String _description;
+	private String description;
 	
 	@DatabaseField(columnName = "frames", 
 			dataType = DataType.LONG_STRING, 
 			canBeNull = true)
-	private String _frame;
+	private String frame;
 	
 	@DatabaseField(columnName = "plugincode", 
 			dataType = DataType.STRING, 
 			width = 30, 
 			canBeNull = true)
-	private String _pluginCode;
+	private String pluginCode;
 	
 	@DatabaseField(columnName = "templategui", 
 			dataType = DataType.LONG_STRING, 
 			canBeNull = true)
-	private String _templateGui;
-	
-	public static final String TABLE_NAME = "pagemodels";
-	
+	private String templateGui;
 }
 /*
 CREATE TABLE pagemodels

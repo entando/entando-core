@@ -1,66 +1,116 @@
 package org.entando.entando.aps.system.services.pagemodel;
 
-import java.io.IOException;
-
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder;
-import org.entando.entando.web.pagemodel.model.PageModelRequest;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
+import com.agiletec.aps.system.services.pagemodel.*;
+import org.entando.entando.aps.system.services.pagemodel.model.*;
+import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.pagemodel.model.*;
+import org.junit.*;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
+import static org.mockito.Mockito.*;
+
+@RunWith(MockitoJUnitRunner.class)
 public class PageModelServiceTest {
 
-    @Mock
-    private IPageModelManager pageModelManager;
+    private static final int DEFAULT_MAIN_FRAME = -1;
+    private static final String PAGE_MODEL_CODE = "TEST_PM_CODE";
 
-    //@Mock
-    private PageModelDtoBuilder dtoBuilder = new PageModelDtoBuilder();
+    private static final RestListRequest EMPTY_REQUEST = new RestListRequest();
 
-    @InjectMocks
+
+    @Mock IPageModelManager pageModelManager;
+
+    private PageModelDtoBuilder dtoBuilder;
     private PageModelService pageModelService;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        pageModelService.setDtoBuilder(dtoBuilder);
+        dtoBuilder = new PageModelDtoBuilder();
+        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
     }
 
-    @Test
-    public void test_add_page_model() throws ApsSystemException, JsonParseException, JsonMappingException, IOException {
+    @Test public void
+    add_page_model_calls_page_model_manager() throws Exception {
 
-        String payload = " {\n" +
-                         "            \"code\": \"test\",\n" +
-                         "            \"descr\": \"test\",\n" +
-                         "            \"configuration\": {\n" +
-                         "                \"frames\": [\n" +
-                         "                    {\n" +
-                         "                        \"pos\": 0,\n" +
-                         "                        \"descr\": \"test_frame\",\n" +
-                         "                        \"mainFrame\": false,\n" +
-                         "                        \"defaultWidget\": null,\n" +
-                         "                        \"sketch\": null\n" +
-                         "                    }\n" +
-                         "                ]\n" +
-                         "            },\n" +
-                         "            \"pluginCode\": null,\n" +
-                         "            \"template\": \"hello world\"\n" +
-                         "        }";
+        PageModelRequest pageModelRequest = validPageModelRequest();
+        PageModel pageModel = pageModelFrom(pageModelRequest);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        PageModelRequest pageModelRequest = objectMapper.readValue(payload, PageModelRequest.class);
+        PageModelDto result = pageModelService.addPageModel(pageModelRequest);
 
-        this.pageModelService.addPageModel(pageModelRequest);
+        verify(pageModelManager, times(1)).addPageModel(pageModel);
 
-        Mockito.verify(pageModelManager, Mockito.times(1)).addPageModel(Mockito.any());
-
+        assertThat(result).isNotNull();
+        assertThat(result.getCode()).isEqualTo(pageModelRequest.getCode());
+        assertThat(result.getDescr()).isEqualTo(pageModelRequest.getDescr());
+        assertThat(result.getPluginCode()).isEqualTo(pageModelRequest.getPluginCode());
+        assertThat(result.getMainFrame()).isEqualTo(DEFAULT_MAIN_FRAME);
+        assertThat(result.getTemplate()).isEqualTo(pageModelRequest.getTemplate());
     }
 
+    @Test public void
+    get_page_models_returns_page_models() throws ApsSystemException {
+        when(pageModelManager.searchPageModels(any())).thenReturn(pageModels());
+
+        PagedMetadata<PageModelDto> result = pageModelService.getPageModels(EMPTY_REQUEST, null);
+
+        PagedMetadata<PageModelDto> expected = resultPagedMetadata();
+        assertThat(result).isEqualTo(expected);
+    }
+
+    private PagedMetadata<PageModelDto> resultPagedMetadata() {
+        RestListRequest request = new RestListRequest();
+
+        return new PagedMetadata<>(request, asList(dtoBuilder.convert(pageModel())), 1);
+    }
+
+    private static SearcherDaoPaginatedResult<PageModel> pageModels() {
+        return new SearcherDaoPaginatedResult<>(asList(pageModel()));
+    }
+
+    private static PageModel pageModel() {
+        PageModel localPageModel = new PageModel();
+        localPageModel.setCode(PAGE_MODEL_CODE);
+        return localPageModel;
+    }
+
+    private static PageModel pageModelFrom(PageModelRequest pageModelRequest) {
+        Frame[] frames = framesFrom(pageModelRequest.getConfiguration());
+
+        PageModel pageModel = new PageModel();
+        pageModel.setCode(pageModelRequest.getCode());
+        pageModel.setDescription(pageModelRequest.getDescr());
+        pageModel.setConfiguration(frames);
+
+        return pageModel;
+    }
+
+    private static Frame[] framesFrom(PageModelConfigurationRequest configuration) {
+        List<PageModelFrameReq> requestFrames = configuration.getFrames();
+
+        if (requestFrames == null) {
+            return new Frame[]{};
+        }
+
+        Frame[] frames = new Frame[requestFrames.size()];
+        for (int i = 0; i < requestFrames.size(); i++) {
+            frames[i] = frameFrom(requestFrames.get(i));
+        }
+
+        return frames;
+    }
+
+    private static Frame frameFrom(PageModelFrameReq request) {
+        Frame frame = new Frame();
+        frame.setDescription(request.getDescr());
+        return frame;
+    }
 }

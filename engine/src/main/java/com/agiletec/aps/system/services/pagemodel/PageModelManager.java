@@ -13,41 +13,31 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import com.agiletec.aps.system.common.AbstractService;
-import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.*;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.cache.IPageModelManagerCacheWrapper;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
+
+import java.util.*;
+import java.util.regex.*;
 
 /**
  * The manager of the page models.
- *
- * @author M.Diana - E.Santoboni
  */
 public class PageModelManager extends AbstractService implements IPageModelManager, GuiFragmentUtilizer {
 
-    private static final Logger _logger = LoggerFactory.getLogger(PageModelManager.class);
-
-    private IPageModelDAO _pageModelDao;
-
-    private IPageModelManagerCacheWrapper _cacheWrapper;
+    private static final Logger logger = LoggerFactory.getLogger(PageModelManager.class);
+    private IPageModelDAO pageModelDao;
+    private IPageModelManagerCacheWrapper cacheWrapper;
 
     @Override
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getPageModelDAO());
-        _logger.debug("{} ready. initialized", this.getClass().getName());
+        logger.debug("{} ready. initialized", this.getClass().getName());
     }
 
     /**
@@ -75,7 +65,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
     @Override
     public void addPageModel(PageModel pageModel) throws ApsSystemException {
         if (null == pageModel) {
-            _logger.debug("Null page model can be add");
+            logger.debug("Null page model can be add");
             return;
         }
         try {
@@ -83,7 +73,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().addPageModel(pageModel);
             this.notifyPageModelChangedEvent(pageModel, PageModelChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error adding page models", t);
+            logger.error("Error adding page models", t);
             throw new ApsSystemException("Error adding page models", t);
         }
     }
@@ -91,13 +81,13 @@ public class PageModelManager extends AbstractService implements IPageModelManag
     @Override
     public void updatePageModel(PageModel pageModel) throws ApsSystemException {
         if (null == pageModel) {
-            _logger.debug("Null page model can be update");
+            logger.debug("Null page model can be update");
             return;
         }
         try {
             PageModel pageModelToUpdate = this.getCacheWrapper().getPageModel(pageModel.getCode());
             if (null == pageModelToUpdate) {
-                _logger.debug("Page model {} does not exist", pageModel.getCode());
+                logger.debug("Page model {} does not exist", pageModel.getCode());
                 return;
             }
             this.getPageModelDAO().updateModel(pageModel);
@@ -111,7 +101,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().updatePageModel(pageModelToUpdate);
             this.notifyPageModelChangedEvent(pageModelToUpdate, PageModelChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error updating page model {}", pageModel.getCode(), t);
+            logger.error("Error updating page model {}", pageModel.getCode(), t);
             throw new ApsSystemException("Error updating page model " + pageModel.getCode(), t);
         }
     }
@@ -124,7 +114,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().deletePageModel(code);
             this.notifyPageModelChangedEvent(model, PageModelChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-            _logger.error("Error deleting page models", t);
+            logger.error("Error deleting page models", t);
             throw new ApsSystemException("Error deleting page models", t);
         }
     }
@@ -138,11 +128,9 @@ public class PageModelManager extends AbstractService implements IPageModelManag
 
     @Override
     public List getGuiFragmentUtilizers(String guiFragmentCode) throws ApsSystemException {
-        List<PageModel> utilizers = new ArrayList<PageModel>();
+        List<PageModel> utilizers = new ArrayList<>();
         try {
-            Iterator<PageModel> it = this.getPageModels().iterator();
-            while (it.hasNext()) {
-                PageModel pModel = it.next();
+            for (PageModel pModel : this.getPageModels()) {
                 String template = pModel.getTemplate();
                 if (StringUtils.isNotBlank(template)) {
                     Pattern pattern = Pattern.compile("<@wp\\.fragment.*code=\"" + guiFragmentCode + "\".*/>", Pattern.MULTILINE);
@@ -153,26 +141,26 @@ public class PageModelManager extends AbstractService implements IPageModelManag
                 }
             }
         } catch (Throwable t) {
-            _logger.error("Error extracting utilizers", t);
+            logger.error("Error extracting utilizers", t);
             throw new ApsSystemException("Error extracting utilizers", t);
         }
         return utilizers;
     }
 
     protected IPageModelManagerCacheWrapper getCacheWrapper() {
-        return _cacheWrapper;
+        return cacheWrapper;
     }
 
     public void setCacheWrapper(IPageModelManagerCacheWrapper cacheWrapper) {
-        this._cacheWrapper = cacheWrapper;
+        this.cacheWrapper = cacheWrapper;
     }
 
     protected IPageModelDAO getPageModelDAO() {
-        return _pageModelDao;
+        return pageModelDao;
     }
 
     public void setPageModelDAO(IPageModelDAO pageModelDAO) {
-        this._pageModelDao = pageModelDAO;
+        this.pageModelDao = pageModelDAO;
     }
 
     @Override
@@ -181,7 +169,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
         try {
             FieldSearchFilter[] filters = null;
             if (null != filtersList) {
-                filters = filtersList.toArray(new FieldSearchFilter[filtersList.size()]);
+                filters = filtersList.toArray(new FieldSearchFilter[0]);
             }
             List<PageModel> pageModels = new ArrayList<>();
             int count = this.getPageModelDAO().count(filters);
@@ -190,13 +178,11 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             for (String code : pageModelCodes) {
                 pageModels.add(this.getPageModel(code));
             }
-            pagedResult = new SearcherDaoPaginatedResult<PageModel>(count, pageModels);
+            pagedResult = new SearcherDaoPaginatedResult<>(count, pageModels);
         } catch (Throwable t) {
-            _logger.error("Error searching groups", t);
+            logger.error("Error searching groups", t);
             throw new ApsSystemException("Error searching groups", t);
         }
         return pagedResult;
-
     }
-
 }

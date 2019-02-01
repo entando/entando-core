@@ -433,10 +433,8 @@ public class DatabaseManager extends AbstractInitializerManager
                     }
                 }
 
-
-                report.setStatus(SystemInstallationReport.Status.UNINSTALLED);
+                report.removeComponentReport(componentConfiguration.getCode());
                 report.setUpdated();
-
                 System.out.println(logPrefix + "\n" + logPrefix + "Uninstall complete\n" + logPrefix);
                 logger.debug(logPrefix + "\n" + logPrefix + "Uninstall complete\n" + logPrefix);
             } catch (Throwable t) {

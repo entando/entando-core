@@ -1,85 +1,60 @@
 package org.entando.entando.aps.system.services.pagemodel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.Frame;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
-import org.entando.entando.aps.system.exception.RestServerError;
+import com.agiletec.aps.system.services.pagemodel.*;
+import org.entando.entando.aps.system.exception.*;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
-import org.entando.entando.web.pagemodel.model.PageModelRequest;
+import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.pagemodel.model.*;
 import org.entando.entando.web.pagemodel.validator.PageModelValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.slf4j.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.*;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
+
+import java.util.*;
 
 @Service
 public class PageModelService implements IPageModelService, ApplicationContextAware {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private IPageModelManager pageModelManager;
+    private final IPageModelManager pageModelManager;
 
-    private IDtoBuilder<PageModel, PageModelDto> dtoBuilder;
+    private final IDtoBuilder<PageModel, PageModelDto> dtoBuilder;
 
     private ApplicationContext applicationContext;
 
-    protected IPageModelManager getPageModelManager() {
-        return pageModelManager;
-    }
-
-    public void setPageModelManager(IPageModelManager pageModelManager) {
+    @Autowired
+    public PageModelService(IPageModelManager pageModelManager, IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
         this.pageModelManager = pageModelManager;
-    }
-
-    public IDtoBuilder<PageModel, PageModelDto> getDtoBuilder() {
-        return dtoBuilder;
-    }
-
-    public void setDtoBuilder(IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
     }
 
-
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq) {
+    public PagedMetadata<PageModelDto> getPageModels(RestListRequest restListReq, Map<String, String> requestParams) {
         try {
             //transforms the filters by overriding the key specified in the request with the correct one known by the dto
-            List<FieldSearchFilter> filters = new ArrayList<FieldSearchFilter>(restListReq.buildFieldSearchFilters());
-            filters
-                   .stream()
+            List<FieldSearchFilter> filters = new ArrayList<>(restListReq.buildFieldSearchFilters());
+            filters.stream()
                    .filter(i -> i.getKey() != null)
                    .forEach(i -> i.setKey(PageModelDto.getEntityFieldName(i.getKey())));
 
-            SearcherDaoPaginatedResult<PageModel> pageModels = this.getPageModelManager().searchPageModels(filters);
+            SearcherDaoPaginatedResult<PageModel> pageModels = pageModelManager.searchPageModels(filters);
 
             List<PageModelDto> dtoList = null;
             if (null != pageModels) {
-                dtoList = this.getDtoBuilder().convert(pageModels.getList());
+                dtoList = dtoBuilder.convert(pageModels.getList());
             }
 
             PagedMetadata<PageModelDto> pagedMetadata = new PagedMetadata<>(restListReq, pageModels);
@@ -94,12 +69,12 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     @Override
     public PageModelDto getPageModel(String code) {
-        PageModel pageModel = this.getPageModelManager().getPageModel(code);
+        PageModel pageModel = pageModelManager.getPageModel(code);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", code);
             throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", code);
         }
-        PageModelDto dto = this.getDtoBuilder().convert(pageModel);
+        PageModelDto dto = dtoBuilder.convert(pageModel);
         dto.setReferences(this.getReferencesInfo(pageModel));
         return dto;
     }
@@ -112,8 +87,8 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
                 throw new ValidationConflictException(validationResult);
             }
             PageModel pageModel = this.createPageModel(pageModelRequest);
-            this.getPageModelManager().addPageModel(pageModel);
-            return this.getDtoBuilder().convert(pageModel);
+            pageModelManager.addPageModel(pageModel);
+            return dtoBuilder.convert(pageModel);
         } catch (ApsSystemException e) {
             logger.error("Error in add pageModel", e);
             throw new RestServerError("error in add pageModel", e);
@@ -123,13 +98,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     @Override
     public PageModelDto updatePageModel(PageModelRequest pageModelRequest) {
         try {
-            PageModel pageModel = this.getPageModelManager().getPageModel(pageModelRequest.getCode());
+            PageModel pageModel = pageModelManager.getPageModel(pageModelRequest.getCode());
             if (null == pageModel) {
                 throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelRequest.getCode());
             }
             this.copyProperties(pageModelRequest, pageModel);
-            this.getPageModelManager().updatePageModel(pageModel);
-            return this.getDtoBuilder().convert(pageModel);
+            pageModelManager.updatePageModel(pageModel);
+            return dtoBuilder.convert(pageModel);
         } catch (ApsSystemException e) {
             logger.error("Error in update pageModel {}", pageModelRequest.getCode(), e);
             throw new RestServerError("error in update pageMdel", e);
@@ -139,7 +114,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     @Override
     public void removePageModel(String code) {
         try {
-            PageModel pageModel = this.getPageModelManager().getPageModel(code);
+            PageModel pageModel = pageModelManager.getPageModel(code);
             if (null == pageModel) {
                 return;
             }
@@ -147,7 +122,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             if (validationResult.hasErrors()) {
                 throw new ValidationConflictException(validationResult);
             }
-            this.getPageModelManager().deletePageModel(code);
+            pageModelManager.deletePageModel(code);
 
         } catch (ApsSystemException e) {
             logger.error("Error in delete pagemodel {}", code, e);
@@ -157,7 +132,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     @Override
     public PagedMetadata<?> getPageModelReferences(String pageModelCode, String managerName, RestListRequest restRequest) {
-        PageModel pageModel = this.getPageModelManager().getPageModel(pageModelCode);
+        PageModel pageModel = pageModelManager.getPageModel(pageModelCode);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", pageModelCode);
             throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelCode);
@@ -170,7 +145,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         }
         List<?> dtoList = utilizer.getPageModelUtilizer(pageModelCode);
         List<?> subList = restRequest.getSublist(dtoList);
-        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult<>(dtoList.size(), subList);
         PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(restRequest, pagedResult);
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;
@@ -197,12 +172,10 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         if (null == frameRequestList || frameRequestList.isEmpty()) {
             return destConfiguration;
         }
-        List<Frame> frames = frameRequestList.stream()
-                                             .map(p -> createFrame(p))
-                                             .collect(Collectors.toList());
 
-        destConfiguration = frames.toArray(new Frame[frames.size()]);
-        return destConfiguration;
+        return frameRequestList.stream()
+                               .map(this::createFrame)
+                               .toArray(Frame[]::new);
     }
 
     protected Frame createFrame(PageModelFrameReq pageModelFrameReq) {
@@ -216,7 +189,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     protected BeanPropertyBindingResult validateAdd(PageModelRequest pageModelRequest) {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageModelRequest, "pageModel");
-        PageModel pageModel = this.getPageModelManager().getPageModel(pageModelRequest.getCode());
+        PageModel pageModel = pageModelManager.getPageModel(pageModelRequest.getCode());
         if (null == pageModel) {
             return bindingResult;
         }
@@ -237,7 +210,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     @SuppressWarnings("unchecked")
     public Map<String, List<Object>> getReferencingObjects(PageModel pageModel) throws ApsSystemException {
-        Map<String, List<Object>> references = new HashMap<String, List<Object>>();
+        Map<String, List<Object>> references = new HashMap<>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(PageModelUtilizer.class);
 
@@ -265,13 +238,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     }
 
     public Map<String, Boolean> getReferencesInfo(PageModel pageModel) {
-        Map<String, Boolean> references = new HashMap<String, Boolean>();
+        Map<String, Boolean> references = new HashMap<>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(PageModelUtilizer.class);
-            for (int i = 0; i < defNames.length; i++) {
+            for (String defName : defNames) {
                 Object service = null;
                 try {
-                    service = applicationContext.getBean(defNames[i]);
+                    service = applicationContext.getBean(defName);
                 } catch (Throwable t) {
                     logger.error("error in hasReferencingObjects", t);
                     service = null;
@@ -299,10 +272,6 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         Optional<PageModelServiceUtilizer> defName = beans.values().stream()
                                                           .filter(service -> service.getManagerName().equals(managerName))
                                                           .findFirst();
-        if (defName.isPresent()) {
-            return defName.get();
-        }
-        return null;
+        return defName.orElse(null);
     }
-
 }

@@ -107,8 +107,8 @@
     </bean>
 
     <bean id="PageModelService" class="org.entando.entando.aps.system.services.pagemodel.PageModelService" >
-        <property name="dtoBuilder" ref="PageModelDtoBuilder" />
-        <property name="pageModelManager" ref="PageModelManager" />
+        <constructor-arg name="pageModelManager" ref="PageModelManager"/>
+        <constructor-arg name="dtoBuilder" ref="PageModelDtoBuilder"/>
     </bean>
 
     <bean id="DataObjectModelService" class="org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelService" >

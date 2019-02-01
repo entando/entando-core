@@ -30,6 +30,12 @@ public class SearcherDaoPaginatedResult<T> {
         this.list = list;
     }
 
+    public SearcherDaoPaginatedResult(List<T> list) {
+        super();
+        this.count = list == null ? 0 : list.size();
+        this.list = list;
+    }
+
     public Integer getCount() {
         return count;
     }

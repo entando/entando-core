@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
+import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.slf4j.LoggerFactory;
@@ -113,9 +114,12 @@ public class PageValidator extends AbstractPaginationValidator {
     public void validateGroups(String pageCode, PagePositionRequest pageRequest, Errors errors) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
         IPage page = this.getPageManager().getDraftPage(pageCode);
-        if (!parent.getGroup().equals(Group.FREE_GROUP_NAME) 
-                && (!page.getGroup().equals(Group.FREE_GROUP_NAME) && !page.getGroup().equals(parent.getGroup()))) {
-            errors.reject(ERRCODE_GROUP_MISMATCH, new String[]{pageCode}, "page.move.group.mismatch");
+        if (!parent.getGroup().equals(Group.FREE_GROUP_NAME) && !page.getGroup().equals(parent.getGroup())) {
+            if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
+                errors.reject(ERRCODE_GROUP_MISMATCH, new String[]{}, "page.move.freeUnderReserved.notAllowed");
+            } else {
+                errors.reject(ERRCODE_GROUP_MISMATCH, new String[]{}, "page.move.group.mismatch");
+            }
         }
     }
 

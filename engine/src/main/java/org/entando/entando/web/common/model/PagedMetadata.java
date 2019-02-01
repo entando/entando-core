@@ -13,18 +13,14 @@
  */
 package org.entando.entando.web.common.model;
 
-import java.util.List;
-
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.stream.*;
 
 public class PagedMetadata<T> {
 
@@ -251,4 +247,43 @@ public class PagedMetadata<T> {
         return fields;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PagedMetadata<?> that = (PagedMetadata<?>) o;
+        return page == that.page &&
+               pageSize == that.pageSize &&
+               lastPage == that.lastPage &&
+               totalItems == that.totalItems &&
+               actualSize == that.actualSize &&
+               Objects.equals(sort, that.sort) &&
+               Objects.equals(direction, that.direction) &&
+               Arrays.equals(filters, that.filters) &&
+               Objects.equals(additionalParams, that.additionalParams) &&
+               Objects.equals(body, that.body);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(page, pageSize, lastPage, totalItems, sort, direction, additionalParams, actualSize, body);
+        result = 31 * result + Arrays.hashCode(filters);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("page", page)
+                .append("pageSize", pageSize)
+                .append("lastPage", lastPage)
+                .append("totalItems", totalItems)
+                .append("sort", sort)
+                .append("direction", direction)
+                .append("filters", filters)
+                .append("additionalParams", additionalParams)
+                .append("actualSize", actualSize)
+                .append("body", body)
+                .toString();
+    }
 }

@@ -328,6 +328,80 @@ public class PageControllerTest extends AbstractControllerTest {
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is("NotBlank")));
     }
+    
+    @Test
+    public void shouldValidateMovePageNameMismatch() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PagePositionRequest request = new PagePositionRequest();
+        request.setCode("WRONG");
+        request.setParentCode("new_parent_page");
+        request.setPosition(1);
+        
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(new Page());
+        
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_URINAME_MISMATCH)));
+    }
+
+    @Test
+    public void shouldValidateMovePageInvalidPosition() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PagePositionRequest request = new PagePositionRequest();
+        request.setCode("page_to_move");
+        request.setParentCode("new_parent_page");
+        request.setPosition(0);
+        
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(new Page());
+        
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_CHANGE_POSITION_INVALID_REQUEST)));
+    }
+
+    @Test
+    public void shouldValidateMovePageMissingParent() throws ApsSystemException, Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PagePositionRequest request = new PagePositionRequest();
+        request.setCode("page_to_move");
+        request.setParentCode("new_parent_page");
+        request.setPosition(0);
+
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_CHANGE_POSITION_INVALID_REQUEST)));
+    }
 
     @Test
     public void shouldValidateMovePageGroupMismatch() throws ApsSystemException, Exception {
@@ -362,6 +436,41 @@ public class PageControllerTest extends AbstractControllerTest {
         String response = result.andReturn().getResponse().getContentAsString();
         result.andExpect(jsonPath("$.errors", hasSize(1)));
         result.andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_GROUP_MISMATCH)));
+    }
+    
+    @Test
+    public void shouldValidateMoveFreePageUnderReservedPage() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        PagePositionRequest request = new PagePositionRequest();
+        request.setCode("page_to_move");
+        request.setParentCode("new_parent_page");
+        request.setPosition(1);
+
+        Page pageToMove = new Page();
+        pageToMove.setCode("page_to_move");
+        pageToMove.setParentCode("old_parent_page");
+        pageToMove.setGroup("free");
+
+        Page newParent = new Page();
+        newParent.setCode("new_parent_page");
+        newParent.setGroup("reserved");
+
+        when(authorizationService.isAuth(any(UserDetails.class), any(String.class))).thenReturn(true);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("page_to_move")).thenReturn(pageToMove);
+        when(this.controller.getPageValidator().getPageManager().getDraftPage("new_parent_page")).thenReturn(newParent);
+
+        ResultActions result = mockMvc.perform(
+                put("/pages/{pageCode}/position", "page_to_move")
+                        .sessionAttr("user", user)
+                        .content(convertObjectToJsonBytes(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+
+        result.andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors", hasSize(1)))
+                .andExpect(jsonPath("$.errors[0].code", is(PageValidator.ERRCODE_GROUP_MISMATCH)));
     }
 
     @Test

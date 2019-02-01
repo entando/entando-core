@@ -260,13 +260,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
             bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
-                                 new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
+                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
             bindingResult.reject(PageValidator.ERRCODE_GROUP_MISMATCH,
-                                 new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
+                    new String[]{oldPage.getGroup(), pageRequest.getOwnerGroup()}, "page.update.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
         try {
@@ -304,7 +304,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 IPage publicParent = this.getPageManager().getOnlinePage(currentPage.getParentCode());
                 if (null == publicParent) {
                     bindingResult.reject(PageValidator.ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT,
-                                         new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
+                            new String[]{pageCode, currentPage.getParentCode()}, "page.status.parent.unpublished");
                     throw new ValidationGenericException(bindingResult);
                 }
                 this.getPageManager().setPageOnline(pageCode);
@@ -315,7 +315,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                     IPage publicChild = this.getPageManager().getOnlinePage(childCode);
                     if (null != publicChild) {
                         bindingResult.reject(PageValidator.ERRCODE_PAGE_WITH_PUBLIC_CHILD,
-                                             new String[]{pageCode}, "page.status.publicChild");
+                                new String[]{pageCode}, "page.status.publicChild");
                         throw new ValidationGenericException(bindingResult);
                     }
                 }
@@ -354,23 +354,16 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         IPage page = this.getPageManager().getDraftPage(pageCode);
         if (parent.isChildOf(pageCode)) {
             bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
-                                 new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
+                    new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
             throw new ValidationGenericException(bindingResult);
         }
-        String parentGroup = parent.getGroup();
-        if (!parentGroup.equals(Group.FREE_GROUP_NAME) && parentGroup.equals(page.getParentCode())) {
-            bindingResult.reject(PageValidator.ERRCODE_GROUP_MISMATCH,
-                                 new String[]{pageCode, pageRequest.getParentCode()}, "page.movement.parent.invalid.3");
-            throw new ValidationGenericException(bindingResult);
-        }
-        boolean moved = true;
         int iterations = Math.abs(page.getPosition() - pageRequest.getPosition());
         boolean moveUp = page.getPosition() > pageRequest.getPosition();
         try {
             if (page.getParentCode().equals(parent.getCode())) {
-                while (iterations-- > 0 && (moved = this.getPageManager().movePage(pageCode, moveUp)));
+                while (iterations-- > 0 && this.getPageManager().movePage(pageCode, moveUp));
             } else {
-                moved = this.getPageManager().movePage(page, parent);
+                this.getPageManager().movePage(page, parent);
             }
             page = this.getPageManager().getDraftPage(pageCode);
         } catch (ApsSystemException e) {
@@ -566,8 +559,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return page;
     }
 
-
-
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
         page.setCode(pageRequest.getCode());
@@ -617,10 +608,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             apsTitles.put(lang, values.get(lang));
         }));
         metadata.setTitles(apsTitles);
-        Optional<List<String>> groups = Optional.ofNullable(request.getJoinGroups());
-        groups.ifPresent(values -> values.forEach((group) -> {
-            metadata.addExtraGroup(group);
-        }));
+        if (metadata.getExtraGroups() != null) {
+            List<String> oldGroups = new ArrayList<>(metadata.getExtraGroups());
+            oldGroups.forEach(metadata::removeExtraGroup);
+        }
+        if (request.getJoinGroups() != null) {
+            request.getJoinGroups().forEach(metadata::addExtraGroup);
+        }
         String charset = request.getCharset();
         metadata.setCharset(StringUtils.isNotBlank(charset) ? charset : null);
 
@@ -720,7 +714,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         List<?> dtoList = utilizer.getPageUtilizer(pageCode);
         List<?> subList = requestList.getSublist(dtoList);
-        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        SearcherDaoPaginatedResult<?> pagedResult = new SearcherDaoPaginatedResult<>(dtoList.size(), subList);
         PagedMetadata<Object> pagedMetadata = new PagedMetadata<>(requestList, pagedResult);
         pagedMetadata.setBody((List<Object>) subList);
         return pagedMetadata;
@@ -760,7 +754,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     private Map<String, Boolean> getReferencesInfo(IPage page) {
-        Map<String, Boolean> references = new HashMap<String, Boolean>();
+        Map<String, Boolean> references = new HashMap<>();
         try {
             String[] defNames = applicationContext.getBeanNamesForType(PageUtilizer.class);
             for (String defName : defNames) {
@@ -803,7 +797,4 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         PagesStatus raw = this.getPageManager().getPagesStatus();
         return new PagesStatusDto(raw);
     }
-
-
-
 }

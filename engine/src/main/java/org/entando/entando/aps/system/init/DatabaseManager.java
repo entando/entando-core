@@ -25,10 +25,15 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.agiletec.aps.util.DateConverter;
+import com.agiletec.aps.util.FileTextReader;
 import org.apache.commons.beanutils.BeanComparator;
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.ComponentEnvironment;
 import org.entando.entando.aps.system.init.model.ComponentInstallationReport;
+import org.entando.entando.aps.system.init.model.ComponentUninstallerInfo;
 import org.entando.entando.aps.system.init.model.DataInstallationReport;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 import org.entando.entando.aps.system.init.model.DataSourceInstallationReport;
@@ -41,11 +46,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import com.agiletec.aps.util.DateConverter;
-import com.agiletec.aps.util.FileTextReader;
 
 /**
  * @author E.Santoboni
@@ -388,6 +388,56 @@ public class DatabaseManager extends AbstractInitializerManager
         } catch (Throwable t) {
             logger.error("Error restoring default resources of component {}", componentConfiguration.getCode(), t);
             throw new ApsSystemException("Error restoring default resources of component " + componentConfiguration.getCode(), t);
+        }
+    }
+
+    public void uninstallComponentResources(Component componentConfiguration,
+                                            SystemInstallationReport report) throws ApsSystemException {
+        String logPrefix = "|   ";
+        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: DATA\n" + logPrefix);
+        ComponentInstallationReport componentReport = report.getComponentReport(componentConfiguration.getCode(), false);
+        if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+
+            logger.debug(logPrefix + "( ok ) Already uninstalled\n" + logPrefix);
+            System.out.println(logPrefix + "( ok ) Already uninstalled\n" + logPrefix);
+            return;
+
+        } else if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
+
+            DataInstallationReport dataReport = componentReport.getDataReport();
+            try {
+                System.out.println(logPrefix + "Starting uninstall\n" + logPrefix);
+                ComponentUninstallerInfo uninstallInfo = componentConfiguration.getUninstallerInfo();
+
+                // Remove sqlResources
+                String[] dataSourceNames = this.extractBeanNames(DataSource.class);
+                for (String dataSourceName : dataSourceNames) {
+
+                    DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
+                    SystemInstallationReport.Status dataStatus = dataReport.getDatabaseStatus().get(dataSourceName);
+                    if (SystemInstallationReport.isSafeStatus(dataStatus)) {
+                        // We can proceed with removing the stuff
+                        Resource sqlResource = uninstallInfo.getSqlResources(dataSourceName);
+                        String script = (null != sqlResource) ? this.readFile(sqlResource) : null;
+                        if (null != script && script.trim().length() > 0) {
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.INCOMPLETE);
+                            TableDataUtils.valueDatabase(script, dataSourceName, dataSource, dataReport);
+                            System.out.println("|   ( ok )  " + dataSourceName);
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.UNINSTALLED);
+                            report.setUpdated();
+                        } else {
+                            System.out.println(logPrefix + "( !! )  skipping " + dataSourceName + ": not available");
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.NOT_AVAILABLE);
+                            report.setUpdated();
+                        }
+                    }
+                }
+                System.out.println(logPrefix + "\n" + logPrefix + "Uninstall complete\n" + logPrefix);
+                logger.debug(logPrefix + "\n" + logPrefix + "Uninstall complete\n" + logPrefix);
+            } catch (Throwable t) {
+                logger.error("Error removing component {}", componentConfiguration.getCode(), t);
+                throw new ApsSystemException("Error removing component " + componentConfiguration.getCode(), t);
+            }
         }
     }
 

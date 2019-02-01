@@ -24,6 +24,7 @@ import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
+import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileService;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
@@ -68,7 +69,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
+        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }

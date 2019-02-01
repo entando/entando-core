@@ -578,10 +578,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }));
         page.setTitles(apsTitles);
         page.setGroup(pageRequest.getOwnerGroup());
-        Optional<List<String>> groups = Optional.ofNullable(pageRequest.getJoinGroups());
-        groups.ifPresent(values -> values.forEach((group) -> {
-            page.addExtraGroup(group);
-        }));
+        if (page.getExtraGroups() != null) {
+            List<String> oldGroups = new ArrayList<>(page.getExtraGroups());
+            oldGroups.forEach(page::removeExtraGroup);
+        }
+        if (pageRequest.getJoinGroups() != null) {
+            pageRequest.getJoinGroups().forEach(page::addExtraGroup);
+        }
         page.setParentCode(pageRequest.getParentCode());
         PageMetadata metadata = oldPage.getMetadata();
         if (metadata == null) {

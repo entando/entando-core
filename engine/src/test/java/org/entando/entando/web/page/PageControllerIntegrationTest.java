@@ -265,7 +265,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.displayedInMenu", is(true)));
             result.andExpect(jsonPath("$.payload.charset", is("utf8")));
             result.andExpect(jsonPath("$.payload.contentType", is("text/html")));
-            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("administration", "customers")));
+            result.andExpect(jsonPath("$.payload.joinGroups", hasItems("management", "customers")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title English")));
 
 

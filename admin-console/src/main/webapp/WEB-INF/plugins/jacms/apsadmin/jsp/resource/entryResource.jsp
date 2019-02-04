@@ -203,20 +203,25 @@
 
     <s:if test="%{ (getStrutsAction() == 1 and !isOnEditContent()) or (getStrutsAction() == 1 and isContentListAttribute() and isOnEditContent())}">
         <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <div class="file-upload-region">
+                    Drag your files here or
+                    <label id="newFileUpload_label" for="newFileUpload-multiple" class="btn-link">
+                        <%--<s:text name="label.button-choose-files"/>--%>
+                        browse
+                    </label>
+                    to upload
+                    <s:file name="fileUpload" id="newFileUpload-multiple" cssClass="input-file-button" label="label.file"
+                            multiple="true"/>
+                </div>
+            </div>
+
             <div class="col-sm-5 col-sm-offset-2">
                 <div id="add-resource-button">
                     <button type="button" id="add-fields"><span class="fa fa-plus-square-o"></span>
                         <s:text name="label.add-fileinput"/>
                     </button>
                 </div>
-            </div>
-            <div class="col-sm-5 col-sm-offset-2">
-
-                <label id="newFileUpload_label" for="newFileUpload-multiple" class="btn btn-default">
-                    <s:text name="label.button-choose-files"/>
-                </label>
-                <s:file name="fileUpload" id="newFileUpload-multiple" cssClass="input-file-button" label="label.file"
-                        multiple="true"/>
             </div>
         </div>
     </s:if>
@@ -290,7 +295,7 @@
                 </label>
 
                 <div class="col-sm-4">
-                    <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
+                    <%--<s:set var="fieldIdVar" value="%{#ctr.count -1}"/>--%>
                         <%--<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">--%>
                         <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
                         <%--class="btn btn-default" key="label.button-choose-file"/>--%>
@@ -300,9 +305,16 @@
                         <%--class="btn btn-default" key="label.button-choose-files"/>--%>
                         <%--</s:else>--%>
 
-                    <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" multiple="true"/>
+                    <%--<s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" multiple="true"/>--%>
 
-                    <button id="delete_file">Delete File</button>
+                    <%--<label id="newFileUpload_label" for="newFileUpload_%{#ctr.count -1}" class="btn btn-default">--%>
+                        <%--<s:text name="label.button-choose-file"/>--%>
+                    <%--</label>--%>
+
+                    <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                    class="btn btn-default" key="label.button-choose-file"/>
+
+                    <s:file name="fileUpload" id="newFileUpload_%{#ctr.count -1}" cssClass="input-file-button" label="label.file"/>
 
 
                     <s:if test="%{'' != getFileUploadId(#ctr.count - 1)}">
@@ -347,10 +359,6 @@
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
                                 label="label.file" multiple="true"/>
                     </s:else>
-
-                    <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
-                        <s:text name="label.no-file-selected"/>
-                    </span>
 
                     <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">

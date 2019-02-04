@@ -279,11 +279,10 @@ var FileUploadManager = function (config) {
             '' +
             '            <div class="col-sm-4">' +
             '                <label id="fileUpload_label_' + id + '" for="fileUpload_' + id + '" class="btn btn-default">' +
-            '                    Choose file' +
+            '                    Select a file' +
             '                </label>' +
             '' +
             '                <input type="file" name="fileUpload" id="fileUpload_' + id + '" class="input-file-button" >' +
-            '                <span id="fileUpload_' + id + '_selected" class="file-upload-selected-name">No file chosen</span>' +
             '            </div>' +
             '        <input type="hidden" name="fileUploadId_' + id + '" maxlength="500" value="" id="fileUploadId_' + id + '" class="form-control fileUploadId">' +
             '        <input type="hidden" name="fileUploadName_' + id + '" maxlength="500" value="" id="fileUploadName_' + id + '" class="form-control fileUploadName">' +
@@ -467,7 +466,6 @@ jQuery(document).ready(function ($) {
                     newFile.imageData = imageData;
 
 
-
                     var newFileId = fileUploadManager.insertFile(newFile);
                     var tabResult = addTab(newFileId);
                     fileUploadManager.files[newFileId].domElements.$tabNavigationItem = tabResult.$tabNavigationItem;
@@ -605,6 +603,50 @@ jQuery(document).ready(function ($) {
 
         fileUploadManager.files[fileId] = file;
     };
+
+
+    $(document).on({
+        'dragover dragenter': function (e) {
+            $('.file-upload-region').addClass('file-upload-region--dragging');
+            e.preventDefault();
+            e.stopPropagation();
+        },
+        'drop': function (e) {
+            $('.file-upload-region').removeClass('file-upload-region--dragging');
+            e.preventDefault();
+            e.stopPropagation();
+            var dataTransfer = e.originalEvent.dataTransfer;
+            if (dataTransfer && dataTransfer.files.length) {
+                e.preventDefault();
+                e.stopPropagation();
+                var files = [];
+                for (var i = 0; i < dataTransfer.files.length; i++) {
+                    files.push(dataTransfer.files[i]);
+                }
+
+                if (files.length > 0) {
+                    if (files.length > 0) {
+                        console.log(files.length);
+                        console.log("INSERT");
+                        fileUploadManager.insertFiles(fileUploadManager.prepareFiles(files));
+
+                        if (cropEditorEnabled) {
+                            for (var i = 0; i < fileUploadManager.files.length; i++) {
+                                var fileInput = fileUploadManager.files[i].fileInput;
+                                readAsDataUrl(i, fileInput, function (fileIndex, imageData) {
+                                    fileUploadManager.files[fileIndex].imageData = imageData;
+                                    var tabResult = addTab(fileIndex);
+                                    fileUploadManager.files[fileIndex].domElements.$tabNavigationItem = tabResult.$tabNavigationItem;
+                                    fileUploadManager.files[fileIndex].domElements.$tabPane = tabResult.$tabPane;
+                                })
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    });
 
 
 });

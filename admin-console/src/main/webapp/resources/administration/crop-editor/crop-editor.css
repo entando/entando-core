@@ -343,3 +343,22 @@
     margin-top: 2px;
     margin-bottom: 0px;
 }
+
+.file-upload-region {
+    margin: 0 0 15px 0;
+    padding: 45px;
+    text-align: center;
+    background-color: #fafafa;
+    font-size: 16px;
+    border: solid 1px #d3d3d3;
+}
+
+.file-upload-region--dragging {
+    border: solid 1px #128dcf;
+    background: #e1f5ff;;
+}
+
+.file-upload-region label {
+    font-weight: bolder;
+    cursor: pointer;
+}

@@ -19,11 +19,12 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.times;
 
 public class DatabaseManagerTest {
-
-    private Component component;
 
     @Mock
     private IInitializerManagerCacheWrapper cacheWrapper;
@@ -32,7 +33,7 @@ public class DatabaseManagerTest {
     private ListableBeanFactory beanFactory;
 
     @InjectMocks
-    private DatabaseManager databaseManager = null;
+    private DatabaseManager databaseManager;
 
     @Before
     public void setUp() throws Exception {
@@ -41,14 +42,16 @@ public class DatabaseManagerTest {
 
     @Test
     public void should_uninstall_component() throws ApsSystemException, IOException {
-        component = ComponentUtils.getEntandoComponent("test_component");
+        Component component = ComponentUtils.getEntandoComponent("test_component");
 
         when(beanFactory.getBeanNamesForType(DataSource.class)).thenReturn(new String[]{"portDataSource", "servDataSource"});
 
-        SystemInstallationReport systemInstallationReport = createMockReport();
+        SystemInstallationReport systemInstallationReport = spy(createMockReport());
         databaseManager.uninstallComponentResources(component, systemInstallationReport);
-        assertThat(systemInstallationReport.getComponentReport("test_component", false), is(nullValue()));
+        verify(systemInstallationReport, times(1)).removeComponentReport("test_component");
+
     }
+
 
     private SystemInstallationReport createMockReport() {
         return new SystemInstallationReport(

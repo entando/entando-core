@@ -54,6 +54,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
+import org.entando.entando.aps.system.init.DatabaseManagerTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
 import org.entando.entando.aps.system.services.actionlog.TestActionLogDAO;
@@ -81,7 +82,7 @@ import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelDA
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerIntegrationTest;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModelManagerTest;
 import org.entando.entando.aps.system.services.dataobjectsearchengine.TestSearchEngineManager;
-import org.entando.entando.aps.system.services.entity.*;
+import org.entando.entando.aps.system.services.entity.AbstractEntityTypeServiceTest;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentManagerIntegrationTest;
 import org.entando.entando.aps.system.services.i18n.TestApiI18nLabelInterface;
 import org.entando.entando.aps.system.services.oauth2.ApiOAuth2TokenManagerTest;
@@ -108,6 +109,7 @@ public class AllTests {
         
         //
         suite.addTest(new JUnit4TestAdapter(InitializerManagerTest.class));
+        suite.addTest(new JUnit4TestAdapter(DatabaseManagerTest.class));
         //
         suite.addTestSuite(TestEntityManager.class);
         //

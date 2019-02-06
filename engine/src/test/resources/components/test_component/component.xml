@@ -1,0 +1,33 @@
+<component>
+    <code>test_component</code>
+    <description>Test components</description>
+    <artifact>
+        <artifactId>${project.artifactId}</artifactId>
+        <groupId>${project.groupId}</groupId>
+        <version>${project.version}</version>
+    </artifact>
+    <installation>
+        <environment code="production">
+            <defaultSqlResources>
+                <datasource name="portDataSource"/>
+                <datasource name="servDataSource"/>
+            </defaultSqlResources>
+        </environment>
+        <environment code="test">
+            <defaultSqlResources>
+                <datasource name="portDataSource"/>
+                <datasource name="servDataSource"/>
+            </defaultSqlResources>
+        </environment>
+    </installation>
+    <uninstallation>
+        <sqlResources>
+            <datasource name="portDataSource">
+            </datasource>
+            <datasource name="servDataSource">
+            </datasource>
+        </sqlResources>
+        <resources>
+        </resources>
+    </uninstallation>
+</component>

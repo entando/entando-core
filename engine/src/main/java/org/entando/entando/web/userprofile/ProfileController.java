@@ -17,7 +17,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
@@ -87,7 +87,7 @@ public class ProfileController {
                 IUserProfile userProfile = createNewEmptyUserProfile(username);
                 dto = new EntityDto(userProfile);
             } else {
-                throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Profile", username);
+                throw new ResourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Profile", username);
             }
         } else {
             dto = this.getUserProfileService().getUserProfile(username);

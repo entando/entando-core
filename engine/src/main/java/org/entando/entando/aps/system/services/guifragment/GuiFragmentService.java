@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Arrays;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
@@ -96,7 +96,7 @@ public class GuiFragmentService implements IGuiFragmentService {
         }
         if (null == fragment) {
             logger.warn("no fragment found with code {}", code);
-            throw new RestRourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
+            throw new ResourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
         }
         return this.getDtoBuilder().convert(fragment);
     }
@@ -119,12 +119,12 @@ public class GuiFragmentService implements IGuiFragmentService {
         try {
             GuiFragment fragment = this.getGuiFragmentManager().getGuiFragment(code);
             if (null == fragment) {
-                throw new RestRourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
+                throw new ResourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", code);
             }
             fragment.setGui(guiFragmentRequest.getGuiCode());
             this.getGuiFragmentManager().updateGuiFragment(fragment);
             return this.getDtoBuilder().convert(fragment);
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw e;
         } catch (ApsSystemException e) {
             logger.error("Error updating fragment {}", code, e);

@@ -16,7 +16,7 @@ package org.entando.entando.aps.system.services.entity;
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import java.util.List;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.EntityManagerDto;
 import org.entando.entando.aps.system.services.entity.model.EntityTypeShortDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -68,12 +68,12 @@ public class EntityManagerServiceIntegrationTest extends BaseTestCase {
     }
 
     @Test
-    public void testGetNotExistingManager() throws RestRourceNotFoundException {
+    public void testGetNotExistingManager() throws ResourceNotFoundException {
         try {
             this.entityManagerService.getEntityManager("customManagerName");
             fail();
         } catch (Exception e) {
-            assertTrue(e instanceof RestRourceNotFoundException);
+            assertTrue(e instanceof ResourceNotFoundException);
         }
     }
 

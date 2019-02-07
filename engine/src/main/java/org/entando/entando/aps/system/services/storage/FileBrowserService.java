@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.storage;
 
 import com.agiletec.aps.util.FileTextReader;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -204,9 +204,9 @@ public class FileBrowserService implements IFileBrowserService {
             boolean exists = this.getStorageManager().exists(currentPath, protectedFolder);
             if (!exists) {
                 logger.warn("no resource found for path {} - type {}", currentPath, protectedFolder);
-                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, objectName, currentPath);
+                throw new ResourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, objectName, currentPath);
             }
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
             logger.error("Error checking resource {} , protected {} ", currentPath, protectedFolder, e);

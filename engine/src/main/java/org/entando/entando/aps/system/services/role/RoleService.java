@@ -26,7 +26,7 @@ import com.agiletec.aps.system.services.authorization.IAuthorizationService;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -176,7 +176,7 @@ public class RoleService implements IRoleService {
 
             if (null == role) {
                 logger.warn("no role found with code {}", roleRequest.getCode());
-                throw new RestRourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleRequest.getCode());
+                throw new ResourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleRequest.getCode());
             }
 
             role.setDescription(roleRequest.getName());
@@ -239,7 +239,7 @@ public class RoleService implements IRoleService {
         Role role = this.getRoleManager().getRole(roleCode);
         if (null == role) {
             logger.warn("no role found with code {}", roleCode);
-            throw new RestRourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleCode);
+            throw new ResourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleCode);
         }
         RoleDto dto = this.getDtoBuilder().toDto(role, this.getRoleManager().getPermissionsCodes());
         return dto;
@@ -251,7 +251,7 @@ public class RoleService implements IRoleService {
         Role role = this.getRoleManager().getRole(roleCode);
         if (null == role) {
             logger.warn("no role found with code {}", roleCode);
-            throw new RestRourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleCode);
+            throw new ResourceNotFoundException(RoleValidator.ERRCODE_ROLE_NOT_FOUND, "role", roleCode);
         }
         List<UserDto> dtoList = this.getAuthorizationService().getRoleUtilizer(roleCode);
         List<UserDto> subList = restRequest.getSublist(dtoList);

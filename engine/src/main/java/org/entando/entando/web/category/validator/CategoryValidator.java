@@ -16,7 +16,7 @@ package org.entando.entando.web.category.validator;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +59,12 @@ public class CategoryValidator implements Validator {
         Category category = this.getCategoryManager().getCategory(request.getCode());
         if (null == category) {
             bindingResult.reject(ERRCODE_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.notexists");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         }
         Category parent = this.getCategoryManager().getCategory(request.getParentCode());
         if (null == parent) {
             bindingResult.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         } else if (!parent.getCode().equals(category.getParentCode())) {
             bindingResult.reject(ERRCODE_PARENT_CATEGORY_CANNOT_BE_CHANGED, new String[]{}, "category.parent.cannotBeChanged");
         }
@@ -77,7 +77,7 @@ public class CategoryValidator implements Validator {
         }
         if (null == this.getCategoryManager().getCategory(request.getParentCode())) {
             bindingResult.reject(ERRCODE_PARENT_CATEGORY_NOT_FOUND, new String[]{request.getCode()}, "category.parent.notexists");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         }
     }
 

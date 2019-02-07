@@ -16,7 +16,7 @@ package org.entando.entando.web.guifragment;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
@@ -115,7 +115,7 @@ public class GuiFragmentController {
         int result = this.getGuiFragmentValidator().validateBody(fragmentCode, guiFragmentRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", fragmentCode);
+                throw new ResourceNotFoundException(GuiFragmentValidator.ERRCODE_FRAGMENT_DOES_NOT_EXISTS, "fragment", fragmentCode);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }

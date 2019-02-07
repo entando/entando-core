@@ -17,7 +17,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataTypeDto;
 import org.entando.entando.aps.system.services.entity.model.AttributeTypeDto;
@@ -93,7 +93,7 @@ public class DataTypeController {
     public ResponseEntity<SimpleRestResponse<DataTypeDto>> getDataType(@PathVariable String dataTypeCode) throws JsonProcessingException {
         logger.debug("Requested data type -> {}", dataTypeCode);
         if (!this.getDataTypeValidator().existType(dataTypeCode)) {
-            throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Data Type", dataTypeCode);
+            throw new ResourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Data Type", dataTypeCode);
         }
         DataTypeDto dto = this.getDataObjectService().getDataType(dataTypeCode);
         logger.debug("Main Response -> {}", dto);
@@ -131,7 +131,7 @@ public class DataTypeController {
         int result = this.getDataTypeValidator().validateBodyName(dataTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
             if (result == 404) {
-                throw new RestRourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "data type", dataTypeCode);
+                throw new ResourceNotFoundException(DataTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "data type", dataTypeCode);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }

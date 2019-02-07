@@ -36,8 +36,9 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  * @param <I>
+ * @param <T>
  */
-public abstract class AbstractEntityService<I extends IApsEntity> {
+public abstract class AbstractEntityService<I extends IApsEntity, T extends EntityDto> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -46,14 +47,16 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
 
     private ICategoryManager categoryManager;
 
-    protected EntityDto getEntity(String entityManagerCode, String id) {
+    protected abstract T buildEntityDto(I entity);
+
+    protected T getEntity(String entityManagerCode, String id) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             I entity = (I) entityManager.getEntity(id);
             if (null == entity) {
                 throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Entity", id);
             }
-            return new EntityDto(entity);
+            return this.buildEntityDto(entity);
         } catch (RestRourceNotFoundException rnf) {
             throw rnf;
         } catch (Exception e) {
@@ -62,7 +65,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         }
     }
 
-    protected EntityDto addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+    protected T addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             String id = request.getId();
@@ -77,7 +80,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {
                 this.addEntity(entityManager, entity);
-                return new EntityDto(entity);
+                return this.buildEntityDto(entity);
             }
         } catch (ValidationConflictException vce) {
             throw vce;
@@ -90,7 +93,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
 
     protected abstract void addEntity(IEntityManager entityManager, I entityToAdd);
 
-    protected synchronized EntityDto updateEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+    protected synchronized T updateEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             String id = request.getId();
@@ -111,7 +114,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {
                 this.updateEntity(entityManager, entity);
-                return new EntityDto(entity);
+                return this.buildEntityDto(entity);
             }
         } catch (Exception e) {
             logger.error("Error updating entity", e);

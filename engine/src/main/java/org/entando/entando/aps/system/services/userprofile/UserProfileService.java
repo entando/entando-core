@@ -24,7 +24,7 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  */
-public class UserProfileService extends AbstractEntityService<IUserProfile> implements IUserProfileService {
+public class UserProfileService extends AbstractEntityService<IUserProfile, EntityDto> implements IUserProfileService {
 
     @Override
     public EntityDto getUserProfile(String username) {
@@ -59,6 +59,11 @@ public class UserProfileService extends AbstractEntityService<IUserProfile> impl
             logger.error("Error updating profile", e);
             throw new RestServerError("error updating profile", e);
         }
+    }
+
+    @Override
+    protected EntityDto buildEntityDto(IUserProfile entity) {
+        return new EntityDto(entity);
     }
 
 }

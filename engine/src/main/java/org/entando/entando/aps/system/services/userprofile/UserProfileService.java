@@ -37,9 +37,10 @@ public class UserProfileService extends AbstractEntityService<IUserProfile, Enti
     }
 
     @Override
-    protected void addEntity(IEntityManager entityManager, IUserProfile entityToAdd) {
+    protected IUserProfile addEntity(IEntityManager entityManager, IUserProfile entityToAdd) {
         try {
             ((IUserProfileManager) entityManager).addProfile(entityToAdd.getUsername(), entityToAdd);
+            return entityToAdd;
         } catch (Exception e) {
             logger.error("Error adding profile", e);
             throw new RestServerError("error adding profile", e);
@@ -52,9 +53,10 @@ public class UserProfileService extends AbstractEntityService<IUserProfile, Enti
     }
 
     @Override
-    protected void updateEntity(IEntityManager entityManager, IUserProfile entityToUpdate) {
+    protected IUserProfile updateEntity(IEntityManager entityManager, IUserProfile entityToUpdate) {
         try {
             ((IUserProfileManager) entityManager).updateProfile(entityToUpdate.getUsername(), entityToUpdate);
+            return entityToUpdate;
         } catch (Exception e) {
             logger.error("Error updating profile", e);
             throw new RestServerError("error updating profile", e);

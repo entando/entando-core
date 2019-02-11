@@ -79,7 +79,16 @@ public class Filter {
     @JsonIgnore
     @SuppressWarnings("rawtypes")
     public FieldSearchFilter getFieldSearchFilter() {
-        FieldSearchFilter filter = new FieldSearchFilter(StringEscapeUtils.escapeSql(this.getAttributeName()), StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);
+        FieldSearchFilter filter = null;
+        String escapedKey = StringEscapeUtils.escapeSql(this.getAttributeName());
+        String escapedValue = StringEscapeUtils.escapeSql(this.getValue());
+        if (FilterOperator.GREATER.getValue().equalsIgnoreCase(this.getOperator())) {
+            filter = new FieldSearchFilter(escapedKey, escapedValue, null);
+        } else if (FilterOperator.LOWER.getValue().equalsIgnoreCase(this.getOperator())) {
+            filter = new FieldSearchFilter(escapedKey, null, escapedValue);
+        } else {
+            filter = new FieldSearchFilter(escapedKey, escapedValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()));
+        }
         return filter;
     }
 

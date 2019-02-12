@@ -104,7 +104,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         this.dtoBuilder = dtoBuilder;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public PagedMetadata<WidgetDto> getWidgets(RestListRequest restListReq) {
         try {
@@ -113,7 +112,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             List<WidgetDto> resultList = new WidgetTypeListProcessor(restListReq, dtoList)
                     .filterAndSort().toList();
             List<WidgetDto> sublist = restListReq.getSublist(resultList);
-            SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult(resultList.size(), sublist);
+            SearcherDaoPaginatedResult<WidgetDto> paginatedResult = new SearcherDaoPaginatedResult<>(resultList.size(), sublist);
             PagedMetadata<WidgetDto> pagedMetadata = new PagedMetadata<>(restListReq, paginatedResult);
             pagedMetadata.setBody(sublist);
             return pagedMetadata;

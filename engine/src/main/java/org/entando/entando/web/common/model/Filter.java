@@ -17,6 +17,9 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class Filter {
@@ -88,6 +91,13 @@ public class Filter {
     public EntitySearchFilter getEntitySearchFilter() {
         EntitySearchFilter filter = new EntitySearchFilter(StringEscapeUtils.escapeSql(this.getEntityAttr()), true, StringEscapeUtils.escapeSql(this.getValue()), true, LikeOptionType.COMPLETE);
         return filter;
+    }
+
+    public List<String> getFilterValues() {
+        if (value != null && !value.isEmpty()) {
+            return Arrays.asList(value.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));
+        }
+        return Collections.emptyList();
     }
 
     @Override

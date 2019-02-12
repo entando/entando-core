@@ -36,8 +36,8 @@ public class LanguageRequestListProcessor extends RequestListProcessor<LanguageD
 
     @Override
     protected Function<Filter, Predicate<LanguageDto>> getPredicates() {
-        return (filter) -> {
-            switch (filter.getValue()) {
+        return filter -> {
+            switch (filter.getAttribute()) {
                 case CODE:
                     return p -> FilterUtils.filterString(filter, p::getCode);
                 case DESCRIPTION:
@@ -46,8 +46,9 @@ public class LanguageRequestListProcessor extends RequestListProcessor<LanguageD
                     return p -> FilterUtils.filterBoolean(filter, p::isDefaultLang);
                 case ACTIVE:
                     return p -> FilterUtils.filterBoolean(filter, p::isActive);
+                default:
+                    return null;
             }
-            return null;
         };
     }
 

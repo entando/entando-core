@@ -4,7 +4,10 @@ import com.agiletec.aps.system.SystemConstants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.comparators.TransformingComparator;
 import org.entando.entando.web.common.model.Filter;
@@ -30,38 +33,59 @@ public class FilterUtils {
 
     public static boolean filterString(Filter filter, Supplier<String> supplier) {
 
+        FilterOperator operator = getFilterOperator(filter);
         String value = supplier.get();
-        String filterValue = filter.getValue();
 
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value.equals(filterValue);
-            case NOT_EQUAL:
-                return !value.equals(filterValue);
-            case LIKE:
-                return value.toLowerCase().contains(filterValue.toLowerCase());
-            case GREATER:
-                return value.compareTo(filterValue) >= 0;
-            case LOWER:
-                return value.compareTo(filterValue) <= 0;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        boolean result = false;
+
+        for (String filterValue : filter.getFilterValues()) {
+            switch (operator) {
+                case EQUAL:
+                    result |= value.equals(filterValue);
+                    break;
+                case NOT_EQUAL:
+                    result |= !value.equals(filterValue);
+                    break;
+                case LIKE:
+                    result |= value.toLowerCase().contains(filterValue.toLowerCase());
+                    break;
+                case GREATER:
+                    result |= value.compareTo(filterValue) >= 0;
+                    break;
+                case LOWER:
+                    result |= value.compareTo(filterValue) <= 0;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
         }
+
+        return result;
     }
 
     public static boolean filterBoolean(Filter filter, Supplier<Boolean> supplier) {
 
+        FilterOperator operator = getFilterOperator(filter);
         boolean value = supplier.get();
-        boolean filterValue = Boolean.parseBoolean(filter.getValue().toLowerCase());
 
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value == filterValue;
-            case NOT_EQUAL:
-                return value != filterValue;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        boolean result = false;
+
+        for (boolean filterValue : getTypedValues(filter, v -> Boolean.parseBoolean(v.toLowerCase()))) {
+
+            switch (operator) {
+                case EQUAL:
+                case LIKE:
+                    result |= value == filterValue;
+                    break;
+                case NOT_EQUAL:
+                    result |= value != filterValue;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
         }
+
+        return result;
     }
 
     public static boolean filterInt(Filter filter, Supplier<Integer> supplier) {
@@ -78,33 +102,53 @@ public class FilterUtils {
 
     public static boolean filterDate(Filter filter, Supplier<Date> supplier) {
         SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
-        double filterValue;
-        try {
-            filterValue = sdf.parse(filter.getValue()).getTime();
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
-        }
-        return filterNumber(filter, filterValue, supplier.get().getTime());
+
+        List<Double> filterValues = getTypedValues(filter, value -> {
+            try {
+                return (double) sdf.parse(value).getTime();
+            } catch (ParseException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        return filterNumber(filter, filterValues, supplier.get().getTime());
     }
 
     private static boolean filterNumber(Filter filter, double value) {
-        return filterNumber(filter, Double.parseDouble(filter.getValue()), value);
+        return filterNumber(filter, getTypedValues(filter, Double::parseDouble), value);
     }
 
-    private static boolean filterNumber(Filter filter, double filterValue, double value) {
+    private static boolean filterNumber(Filter filter, List<Double> filterValues, double value) {
 
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value == filterValue;
-            case NOT_EQUAL:
-                return value != filterValue;
-            case GREATER:
-                return value >= filterValue;
-            case LOWER:
-                return value <= filterValue;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        FilterOperator operator = getFilterOperator(filter);
+
+        boolean result = false;
+
+        for (double filterValue : filterValues) {
+            switch (operator) {
+                case EQUAL:
+                case LIKE:
+                    result |= value == filterValue;
+                    break;
+                case NOT_EQUAL:
+                    result |= value != filterValue;
+                    break;
+                case GREATER:
+                    result |= value >= filterValue;
+                    break;
+                case LOWER:
+                    result |= value <= filterValue;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
         }
+
+        return result;
+    }
+
+    private static <T> List<T> getTypedValues(Filter filter, Function<String, T> converter) {
+        return filter.getFilterValues().stream().map(converter::apply).collect(Collectors.toList());
     }
 
     private static FilterOperator getFilterOperator(Filter filter) {

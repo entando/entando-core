@@ -37,7 +37,7 @@ public class WidgetTypeListProcessor extends RequestListProcessor<WidgetDto> {
 
     @Override
     protected Function<Filter, Predicate<WidgetDto>> getPredicates() {
-        return (filter) -> {
+        return filter -> {
             switch (filter.getAttribute()) {
                 case CODE:
                     return p -> FilterUtils.filterString(filter, p::getCode);
@@ -49,8 +49,9 @@ public class WidgetTypeListProcessor extends RequestListProcessor<WidgetDto> {
                     return p -> FilterUtils.filterString(filter, p::getGroup);
                 case PLUGIN_CODE:
                     return p -> FilterUtils.filterString(filter, p::getPluginCode);
+                default:
+                    return null;
             }
-            return null;
         };
     }
 

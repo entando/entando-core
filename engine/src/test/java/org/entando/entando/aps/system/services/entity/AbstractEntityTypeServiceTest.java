@@ -85,6 +85,21 @@ public class AbstractEntityTypeServiceTest {
         checkResult(requestList, new EntityTypeShortDto(user2));
     }
 
+    @Test
+    public void getShortEntityTypesFilterWorksWithOrCondition() {
+        UserProfile user2 = createUserProfile("user2");
+        UserProfile user1 = createUserProfile("USER1");
+        mockUserEntities(user1, user2);
+
+        RestListRequest requestList = new RestListRequest();
+        Filter filter = new Filter();
+        filter.setAttribute("id");
+        filter.setValue("user1,user2");
+        requestList.addFilter(filter);
+
+        checkResult(requestList, new EntityTypeShortDto(user1), new EntityTypeShortDto(user2));
+    }
+
     private UserProfile createUserProfile(String userId) {
         when(entityDom.clone()).thenReturn(entityDom);
 

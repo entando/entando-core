@@ -27,14 +27,15 @@ public class RestEntityListRequest extends RestListRequest {
     @Override
     public List<EntitySearchFilter> buildEntitySearchFilters() {
         List<EntitySearchFilter> entitySearchFilters = new ArrayList<>();
-        EntitySearchFilter sortFilter = this.buildSortFilter();
-        if (null != sortFilter) {
-            entitySearchFilters.add(sortFilter);
-        }
         if (null != this.getFilters()) {
             Arrays.stream(this.getFilters())
                     .filter(filter -> ((filter.getAttribute() != null || filter.getEntityAttr() != null)))
                     .forEach(i -> entitySearchFilters.add(i.getEntitySearchFilter()));
+        }
+        boolean hasOrderFilter = entitySearchFilters.stream().anyMatch(t -> null != t.getOrder());
+        EntitySearchFilter sortFilter = this.buildSortFilter();
+        if (!hasOrderFilter && null != sortFilter) {
+            entitySearchFilters.add(sortFilter);
         }
         return entitySearchFilters;
     }

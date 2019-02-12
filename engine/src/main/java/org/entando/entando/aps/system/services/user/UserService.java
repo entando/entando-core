@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
@@ -309,10 +309,10 @@ public class UserService implements IUserService {
         try {
             UserDetails user = this.getUserManager().getUser(username);
             if (user == null) {
-                throw new RestRourceNotFoundException(ERRCODE_USER_NOT_FOUND, "user", username);
+                throw new ResourceNotFoundException(ERRCODE_USER_NOT_FOUND, "user", username);
             }
             return user;
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw e;
         } catch (ApsSystemException e) {
             logger.error("Error in loading user {}", username, e);

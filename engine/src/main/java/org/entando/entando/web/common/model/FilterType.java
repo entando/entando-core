@@ -11,18 +11,32 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package org.entando.entando.aps.system.exception;
+package org.entando.entando.web.common.model;
 
-public class RestServerError extends RuntimeException {
+public enum FilterType {
 
-    private Exception exception;
+    STRING("string"),
+    DATE("date"),
+    BOOLEAN("boolean"),
+    NUMBER("number");
 
-    public RestServerError(String message, Exception ex) {
-        super(message);
-        this.exception = ex;
+    private final String value;
+
+    private FilterType(String value) {
+        this.value = value;
     }
 
-    public RestServerError(String message, Throwable t) {
-        super(message, t);
+    public String getValue() {
+        return value;
     }
+
+    public static FilterOperator parse(String op) {
+        for (FilterOperator value : FilterOperator.values()) {
+            if (value.getValue().equals(op)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException(op + " is not a supported filter type");
+    }
+
 }

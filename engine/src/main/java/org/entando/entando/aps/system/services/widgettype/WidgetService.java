@@ -27,7 +27,7 @@ import com.agiletec.aps.util.ApsProperties;
 import java.util.Arrays;
 import javax.servlet.ServletContext;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
@@ -128,7 +128,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetType widgetType = this.getWidgetManager().getWidgetType(widgetCode);
         if (null == widgetType) {
             logger.warn("no widget type found with code {}", widgetCode);
-            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
+            throw new ResourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_NOT_FOUND, "widget type", widgetCode);
         }
         WidgetDto widgetDto = dtoBuilder.convert(widgetType);
         try {
@@ -198,7 +198,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest) {
         WidgetType type = this.getWidgetManager().getWidgetType(widgetCode);
         if (type == null) {
-            throw new RestRourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
+            throw new ResourceNotFoundException(WidgetValidator.ERRCODE_WIDGET_DOES_NOT_EXISTS, "widget", widgetCode);
         }
         WidgetDto widgetDto = null;
         try {

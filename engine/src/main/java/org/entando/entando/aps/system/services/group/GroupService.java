@@ -19,7 +19,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
@@ -100,7 +100,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
             logger.warn("no group found with code {}", groupCode);
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
+            throw new ResourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
         }
         GroupDto dto = this.getDtoBuilder().convert(group);
         dto.setReferences(this.getReferencesInfo(group));
@@ -112,13 +112,13 @@ public class GroupService implements IGroupService, ApplicationContextAware {
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
             logger.warn("no group found with code {}", groupCode);
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
+            throw new ResourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
         }
         GroupServiceUtilizer<?> utilizer = this.getGroupServiceUtilizer(managerName);
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
 
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_REFERENCES, "reference", managerName);
+            throw new ResourceNotFoundException(GroupValidator.ERRCODE_GROUP_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getGroupUtilizer(groupCode);
         List<?> subList = restRequest.getSublist(dtoList);
@@ -136,7 +136,7 @@ public class GroupService implements IGroupService, ApplicationContextAware {
     public GroupDto updateGroup(String groupCode, String descr) {
         Group group = this.getGroupManager().getGroup(groupCode);
         if (null == group) {
-            throw new RestRourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
+            throw new ResourceNotFoundException(GroupValidator.ERRCODE_GROUP_NOT_FOUND, "group", groupCode);
         }
         group.setDescription(descr);
         try {

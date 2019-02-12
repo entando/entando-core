@@ -26,7 +26,7 @@ import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -110,7 +110,7 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
+                throw new ResourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             return this.getDtoBuilder().convert(code, labelGroup);
         } catch (ApsSystemException t) {
@@ -126,7 +126,7 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
+                throw new ResourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             BeanPropertyBindingResult validationResult = this.validateUpdateLabelGroup(labelRequest);
             if (validationResult.hasErrors()) {

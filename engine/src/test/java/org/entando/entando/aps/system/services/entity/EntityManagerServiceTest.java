@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.entity;
 
 import java.util.ArrayList;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -33,8 +33,8 @@ public class EntityManagerServiceTest {
         entityManagerService.setEntityManagers(new ArrayList<>());
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
-    public void testGetNotExistingManager() throws RestRourceNotFoundException {
+    @Test(expected = ResourceNotFoundException.class)
+    public void testGetNotExistingManager() throws ResourceNotFoundException {
         this.entityManagerService.getEntityManager("customCode");
         fail();
     }

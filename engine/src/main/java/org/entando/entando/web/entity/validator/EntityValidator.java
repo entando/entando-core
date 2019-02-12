@@ -15,7 +15,7 @@ package org.entando.entando.web.entity.validator;
 
 import com.agiletec.aps.system.common.entity.IEntityManager;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -63,7 +63,7 @@ public abstract class EntityValidator extends AbstractPaginationValidator implem
         }
         if (!this.existEntity(id)) {
             bindingResult.reject(ERRCODE_ENTITY_DOES_NOT_EXIST, new String[]{id}, "entity.notExists");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         }
     }
 

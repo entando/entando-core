@@ -19,7 +19,7 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
@@ -86,7 +86,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             addedPage = null;
             addedPage = pageService.getPage("pagina_13", "draft");
             fail("RestRourceNotFoundException not thrown");
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             assertNull(addedPage);
         }
     }

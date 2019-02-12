@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.comparators.TransformingComparator;
@@ -31,14 +30,16 @@ public class FilterUtils {
         return new TransformingComparator(caseInsensitiveTransformer);
     }
 
-    public static boolean filterString(Filter filter, Supplier<String> supplier) {
+    public static boolean filterString(Filter filter, String value) {
 
         FilterOperator operator = getFilterOperator(filter);
-        String value = supplier.get();
+        if (value == null) {
+            return false;
+        }
 
         boolean result = false;
 
-        for (String filterValue : filter.getFilterValues()) {
+        for (String filterValue : filter.getAllowedValues()) {
             switch (operator) {
                 case EQUAL:
                     result |= value.equals(filterValue);
@@ -63,14 +64,13 @@ public class FilterUtils {
         return result;
     }
 
-    public static boolean filterBoolean(Filter filter, Supplier<Boolean> supplier) {
+    public static boolean filterBoolean(Filter filter, boolean value) {
 
         FilterOperator operator = getFilterOperator(filter);
-        boolean value = supplier.get();
 
         boolean result = false;
 
-        for (boolean filterValue : getTypedValues(filter, v -> Boolean.parseBoolean(v.toLowerCase()))) {
+        for (boolean filterValue : getTypedAllowedValues(filter, v -> Boolean.parseBoolean(v.toLowerCase()))) {
 
             switch (operator) {
                 case EQUAL:
@@ -88,37 +88,33 @@ public class FilterUtils {
         return result;
     }
 
-    public static boolean filterInt(Filter filter, Supplier<Integer> supplier) {
-        return filterNumber(filter, supplier.get().doubleValue());
+    public static boolean filterInt(Filter filter, Integer value) {
+        return filterDouble(filter, value.doubleValue());
     }
 
-    public static boolean filterDouble(Filter filter, Supplier<Double> supplier) {
-        return filterNumber(filter, supplier.get());
+    public static boolean filterLong(Filter filter, Long value) {
+        return filterDouble(filter, value.doubleValue());
     }
 
-    public static boolean filterLong(Filter filter, Supplier<Long> supplier) {
-        return filterNumber(filter, supplier.get().doubleValue());
-    }
-
-    public static boolean filterDate(Filter filter, Supplier<Date> supplier) {
+    public static boolean filterDate(Filter filter, Date value) {
         SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
 
-        List<Double> filterValues = getTypedValues(filter, value -> {
+        List<Double> filterValues = getTypedAllowedValues(filter, v -> {
             try {
-                return (double) sdf.parse(value).getTime();
+                return (double) sdf.parse(v).getTime();
             } catch (ParseException ex) {
                 throw new RuntimeException(ex);
             }
         });
 
-        return filterNumber(filter, filterValues, supplier.get().getTime());
+        return filterDouble(filter, filterValues, value.getTime());
     }
 
-    private static boolean filterNumber(Filter filter, double value) {
-        return filterNumber(filter, getTypedValues(filter, Double::parseDouble), value);
+    public static boolean filterDouble(Filter filter, double value) {
+        return filterDouble(filter, getTypedAllowedValues(filter, Double::parseDouble), value);
     }
 
-    private static boolean filterNumber(Filter filter, List<Double> filterValues, double value) {
+    private static boolean filterDouble(Filter filter, List<Double> filterValues, double value) {
 
         FilterOperator operator = getFilterOperator(filter);
 
@@ -147,8 +143,11 @@ public class FilterUtils {
         return result;
     }
 
-    private static <T> List<T> getTypedValues(Filter filter, Function<String, T> converter) {
-        return filter.getFilterValues().stream().map(converter::apply).collect(Collectors.toList());
+    /**
+     * Handles the conversion from String to the desired type.
+     */
+    private static <T> List<T> getTypedAllowedValues(Filter filter, Function<String, T> converter) {
+        return filter.getAllowedValues().stream().map(converter::apply).collect(Collectors.toList());
     }
 
     private static FilterOperator getFilterOperator(Filter filter) {

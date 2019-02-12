@@ -122,20 +122,20 @@ public class FilterUtilsTest {
         assertTrue(filterDate(day, FilterOperator.LOWER, nextDayString));
     }
 
-    private boolean filterString(String value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterString(getFilter(operator, filterValue), () -> value);
+    private boolean filterString(String valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterString(getFilter(operator, filterValue), valueToFilter);
     }
 
-    private boolean filterInt(int value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterInt(getFilter(operator, filterValue), () -> value);
+    private boolean filterInt(int valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterInt(getFilter(operator, filterValue), valueToFilter);
     }
 
-    private boolean filterBoolean(boolean value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterBoolean(getFilter(operator, filterValue), () -> value);
+    private boolean filterBoolean(boolean valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterBoolean(getFilter(operator, filterValue), valueToFilter);
     }
 
-    private boolean filterDate(Date value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterDate(getFilter(operator, filterValue), () -> value);
+    private boolean filterDate(Date valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterDate(getFilter(operator, filterValue), valueToFilter);
     }
 
     private Filter getFilter(FilterOperator operator, String value) {

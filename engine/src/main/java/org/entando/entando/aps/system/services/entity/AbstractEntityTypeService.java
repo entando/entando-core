@@ -354,7 +354,7 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
                 if (null == value) {
                     continue;
                 }
-                return FilterUtils.filterString(filter, () -> value);
+                return FilterUtils.filterString(filter, value);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             logger.error("error filtering bean " + bean.getClass().getName(), e);

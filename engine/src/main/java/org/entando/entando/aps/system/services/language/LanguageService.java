@@ -8,7 +8,7 @@ import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.language.utils.LanguageRequestListProcessor;
@@ -76,7 +76,7 @@ public class LanguageService implements ILanguageService {
             Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
             if (null == lang) {
                 logger.warn("no lang found with code {}", code);
-                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+                throw new ResourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
             }
             return this.getLanguageDtoBuilder().convert(lang);
         } catch (ApsSystemException ex) {
@@ -98,7 +98,7 @@ public class LanguageService implements ILanguageService {
             Lang sysLang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
             if (null == sysLang) {
                 logger.warn("no lang found with code {}", code);
-                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+                throw new ResourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
             }
             //idempotent
             Lang lang = this.getLangManager().getLang(code);
@@ -120,7 +120,7 @@ public class LanguageService implements ILanguageService {
             Lang lang = this.getLangManager().getAssignableLangs().stream().filter(i -> i.getCode().equals(code)).findFirst().orElse(null);
             if (null == lang) {
                 logger.warn("no lang found with code {}", code);
-                throw new RestRourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
+                throw new ResourceNotFoundException(LanguageValidator.ERRCODE_LANGUAGE_DOES_NOT_EXISTS, "language", code);
             }
             //idempotent
             if (null == this.getLangManager().getLang(code)) {

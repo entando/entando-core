@@ -22,7 +22,7 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import java.util.List;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.entity.model.EntityDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -36,8 +36,9 @@ import org.springframework.validation.BindingResult;
 /**
  * @author E.Santoboni
  * @param <I>
+ * @param <T>
  */
-public abstract class AbstractEntityService<I extends IApsEntity> {
+public abstract class AbstractEntityService<I extends IApsEntity, T extends EntityDto> {
 
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -46,23 +47,25 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
 
     private ICategoryManager categoryManager;
 
-    protected EntityDto getEntity(String entityManagerCode, String id) {
+    protected abstract T buildEntityDto(I entity);
+
+    protected T getEntity(String entityManagerCode, String id) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             I entity = (I) entityManager.getEntity(id);
             if (null == entity) {
-                throw new RestRourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Entity", id);
+                throw new ResourceNotFoundException(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST, "Entity", id);
             }
-            return new EntityDto(entity);
-        } catch (RestRourceNotFoundException rnf) {
+            return this.buildEntityDto(entity);
+        } catch (ResourceNotFoundException rnf) {
             throw rnf;
         } catch (Exception e) {
-            logger.error("Error updating entity", e);
-            throw new RestServerError("error updating entity", e);
+            logger.error("Error extracting entity", e);
+            throw new RestServerError("error extracting entity", e);
         }
     }
 
-    protected EntityDto addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+    protected T addEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             String id = request.getId();
@@ -76,8 +79,8 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
             request.fillEntity(entity, this.getCategoryManager(), bindingResult);
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {
-                this.addEntity(entityManager, entity);
-                return new EntityDto(entity);
+                I newEntity = (I) this.addEntity(entityManager, entity);
+                return this.buildEntityDto(newEntity);
             }
         } catch (ValidationConflictException vce) {
             throw vce;
@@ -88,9 +91,9 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         return null;
     }
 
-    protected abstract void addEntity(IEntityManager entityManager, I entityToAdd);
+    protected abstract I addEntity(IEntityManager entityManager, I entityToAdd);
 
-    protected synchronized EntityDto updateEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
+    protected synchronized T updateEntity(String entityManagerCode, EntityDto request, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             String id = request.getId();
@@ -98,7 +101,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
             if (null == oldEntity) {
                 bindingResult.reject(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST,
                         new String[]{id}, "entity.notExists");
-                throw new RestRourceNotFoundException(bindingResult);
+                throw new ResourceNotFoundException(bindingResult);
             }
             String typeCode = request.getTypeCode();
             if (!oldEntity.getTypeCode().equals(typeCode)) {
@@ -110,8 +113,8 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
             request.fillEntity(entity, this.getCategoryManager(), bindingResult);
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {
-                this.updateEntity(entityManager, entity);
-                return new EntityDto(entity);
+                I updatedEntity = (I) this.updateEntity(entityManager, entity);
+                return this.buildEntityDto(updatedEntity);
             }
         } catch (Exception e) {
             logger.error("Error updating entity", e);
@@ -120,7 +123,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         return null;
     }
 
-    protected abstract void updateEntity(IEntityManager entityManager, I entityToUpdate);
+    protected abstract I updateEntity(IEntityManager entityManager, I entityToUpdate);
 
     protected void scanEntity(I currentEntity, BindingResult bindingResult) {
         List<AttributeInterface> attributes = currentEntity.getAttributeList();
@@ -187,7 +190,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         I entityType = (I) entityManager.getEntityPrototype(entityTypeCode);
         if (null == entityType) {
             logger.warn("no type found with code {}", entityTypeCode);
-            throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
+            throw new ResourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Type Code", entityTypeCode);
         }
         return (I) entityType.getEntityPrototype();
     }
@@ -203,7 +206,7 @@ public abstract class AbstractEntityService<I extends IApsEntity> {
         }
         if (null == entityManager) {
             logger.warn("no entity manager found with code {}", entityManagerCode);
-            throw new RestRourceNotFoundException("entityManagerCode", entityManagerCode);
+            throw new ResourceNotFoundException("entityManagerCode", entityManagerCode);
         }
         return entityManager;
     }

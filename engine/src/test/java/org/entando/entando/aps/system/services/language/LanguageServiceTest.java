@@ -16,7 +16,7 @@ package org.entando.entando.aps.system.services.language;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.google.common.collect.ImmutableList;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.FilterOperator;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -167,7 +167,7 @@ public class LanguageServiceTest {
         assertThat(result.getBody().get(1).getCode()).isEqualTo("it");
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void shouldFailDisabilingUnexistingLang() {
         languageService.disableLang("xx");
     }

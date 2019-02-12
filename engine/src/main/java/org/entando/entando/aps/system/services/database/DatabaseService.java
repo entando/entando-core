@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.database;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.util.FileTextReader;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.IDatabaseManager;
@@ -79,10 +79,10 @@ public class DatabaseService implements IDatabaseService {
             DataSourceDumpReport report = this.getDatabaseManager().getBackupReport(reportCode);
             if (null == report) {
                 logger.warn("no dump found with code {}", reportCode);
-                throw new RestRourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
+                throw new ResourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
             }
             dtos = new DumpReportDto(report, this.getComponentManager());
-        } catch (RestRourceNotFoundException r) {
+        } catch (ResourceNotFoundException r) {
             throw r;
         } catch (Throwable t) {
             logger.error("error extracting database report {}", reportCode, t);
@@ -130,10 +130,10 @@ public class DatabaseService implements IDatabaseService {
             DataSourceDumpReport report = this.getDatabaseManager().getBackupReport(reportCode);
             if (null == report) {
                 logger.warn("no dump found with code {}", reportCode);
-                throw new RestRourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
+                throw new ResourceNotFoundException(DatabaseValidator.ERRCODE_NO_DUMP_FOUND, "reportCode", reportCode);
             }
             this.getDatabaseManager().dropAndRestoreBackup(reportCode);
-        } catch (RestRourceNotFoundException r) {
+        } catch (ResourceNotFoundException r) {
             throw r;
         } catch (Throwable t) {
             logger.error("error starting restore", t);
@@ -151,12 +151,12 @@ public class DatabaseService implements IDatabaseService {
                 logger.warn("no dump found with code {}, dataSource {}, table {}", reportCode, dataSource, tableName);
                 BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(tableName, "tableName");
                 bindingResult.reject(DatabaseValidator.ERRCODE_NO_TABLE_DUMP_FOUND, new Object[]{reportCode, dataSource, tableName}, "database.dump.table.notFound");
-                throw new RestRourceNotFoundException("code - dataSource - table",
+                throw new ResourceNotFoundException("code - dataSource - table",
                         "'" + reportCode + "' - '" + dataSource + "' - '" + tableName + "'");
             }
             tempFile = FileTextReader.createTempFile(new Random().nextInt(100) + reportCode + "_" + dataSource + "_" + tableName, stream);
             bytes = FileTextReader.fileToByteArray(tempFile);
-        } catch (RestRourceNotFoundException r) {
+        } catch (ResourceNotFoundException r) {
             throw r;
         } catch (Throwable t) {
             logger.error("error extracting database dump with code {}, dataSource {}, table {}", reportCode, dataSource, tableName, t);

@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.database;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.io.ByteArrayInputStream;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.IDatabaseManager;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
@@ -42,7 +42,7 @@ public class DatabaseServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void getInvalidReport() throws Throwable {
         when(databaseManager.getBackupReport(ArgumentMatchers.anyString())).thenReturn(null);
         this.databaseService.getDumpReportDto("reportCode");
@@ -65,7 +65,7 @@ public class DatabaseServiceTest {
         Assert.assertNotNull(base64);
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void getInValidTableDump_1() throws Throwable {
         when(databaseManager.getTableDump(ArgumentMatchers.anyString(), ArgumentMatchers.anyString(), ArgumentMatchers.anyString())).thenReturn(null);
         this.databaseService.getTableDump("reportCode", "dataSourcePort", "categories");

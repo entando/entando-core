@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.category;
 
 import com.agiletec.aps.system.services.category.ICategoryManager;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -37,13 +37,13 @@ public class CategoryServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void getTreeWithInvalidParent() {
         when(categoryManager.getCategory(ArgumentMatchers.anyString())).thenReturn(null);
         this.categoryService.getTree("some_code");
     }
 
-    @Test(expected = RestRourceNotFoundException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void getInvalidCategory() {
         when(categoryManager.getCategory(ArgumentMatchers.anyString())).thenReturn(null);
         this.categoryService.getTree("some_code");

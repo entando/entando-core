@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.IDtoBuilder;
@@ -63,7 +63,7 @@ public class CategoryService implements ICategoryService {
         List<CategoryDto> res = new ArrayList<>();
         Category parent = this.getCategoryManager().getCategory(parentCode);
         if (null == parent) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "category", parentCode);
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "category", parentCode);
         }
         Optional.ofNullable(parent.getChildrenCodes()).ifPresent(children -> Arrays.asList(children).forEach(childCode -> {
             Category child = this.getCategoryManager().getCategory(childCode);
@@ -78,7 +78,7 @@ public class CategoryService implements ICategoryService {
     public CategoryDto getCategory(String categoryCode) {
         Category category = this.getCategoryManager().getCategory(categoryCode);
         if (null == category) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
         }
         CategoryDto dto = null;
         try {
@@ -99,12 +99,12 @@ public class CategoryService implements ICategoryService {
         Category group = this.getCategoryManager().getCategory(categoryCode);
         if (null == group) {
             logger.warn("no category found with code {}", categoryCode);
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryCode);
         }
         CategoryServiceUtilizer<?> utilizer = this.getCategoryServiceUtilizer(managerName);
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES, "reference", managerName);
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getCategoryUtilizer(categoryCode);
         List<?> subList = restListRequest.getSublist(dtoList);
@@ -128,7 +128,7 @@ public class CategoryService implements ICategoryService {
     public CategoryDto addCategory(CategoryDto categoryDto) {
         Category parentCategory = this.getCategoryManager().getCategory(categoryDto.getParentCode());
         if (null == parentCategory) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
         }
         Category category = this.getCategoryManager().getCategory(categoryDto.getCode());
         if (null != category) {
@@ -155,11 +155,11 @@ public class CategoryService implements ICategoryService {
     public CategoryDto updateCategory(CategoryDto categoryDto) {
         Category parentCategory = this.getCategoryManager().getCategory(categoryDto.getParentCode());
         if (null == parentCategory) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_PARENT_CATEGORY_NOT_FOUND, "parent category", categoryDto.getParentCode());
         }
         Category category = this.getCategoryManager().getCategory(categoryDto.getCode());
         if (null == category) {
-            throw new RestRourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryDto.getCode());
+            throw new ResourceNotFoundException(CategoryValidator.ERRCODE_CATEGORY_NOT_FOUND, "category", categoryDto.getCode());
         }
         CategoryDto dto = null;
         try {

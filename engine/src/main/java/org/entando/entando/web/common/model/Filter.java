@@ -140,6 +140,9 @@ public class Filter {
     }
 
     protected Object extractFilterValue() {
+        if (StringUtils.isBlank(this.getValue())) {
+            return null;
+        }
         String escapedValue = StringEscapeUtils.escapeSql(this.getValue());
         Object objectValue = escapedValue;
         if (FilterType.DATE.getValue().equalsIgnoreCase(this.getType())) {

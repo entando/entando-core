@@ -151,6 +151,7 @@ public class Filter {
         return objectValue;
     }
 
+    @JsonIgnore
     public List<String> getAllowedValues() {
         if (value != null && !value.isEmpty()) {
             return Arrays.asList(value.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));

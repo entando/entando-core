@@ -21,6 +21,9 @@ import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -146,6 +149,13 @@ public class Filter {
             objectValue = new BigDecimal(numberInt);
         }
         return objectValue;
+    }
+
+    public List<String> getAllowedValues() {
+        if (value != null && !value.isEmpty()) {
+            return Arrays.asList(value.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));
+        }
+        return Collections.emptyList();
     }
 
     @Override

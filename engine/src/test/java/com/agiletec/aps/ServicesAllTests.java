@@ -27,6 +27,7 @@ import org.entando.entando.aps.system.services.group.GroupServiceIntegrationTest
 import org.entando.entando.aps.system.services.group.GroupServiceTest;
 import org.entando.entando.web.common.RestListRequestTest;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentServiceTest;
+import org.entando.entando.aps.system.services.language.LanguageServiceTest;
 import org.entando.entando.aps.system.services.page.PageAuthorizationServiceIntegrationTest;
 import org.entando.entando.aps.system.services.page.PageServiceIntegrationTest;
 import org.entando.entando.aps.system.services.page.PageServiceTest;
@@ -36,6 +37,7 @@ import org.entando.entando.aps.system.services.pagemodel.PageModelDtoTest;
 import org.entando.entando.aps.system.services.pagemodel.PageModelServiceTest;
 import org.entando.entando.aps.system.services.pagesettings.PageSettingsServiceIntegrationTest;
 import org.entando.entando.aps.system.services.user.UserServiceIntegrationTest;
+import org.entando.entando.aps.system.services.widgettype.WidgetServiceTest;
 import org.entando.entando.web.common.EntandoMessageCodesResolverTest;
 import org.entando.entando.web.common.PagedMetadataTest;
 
@@ -65,6 +67,8 @@ public class ServicesAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(EntandoMessageCodesResolverTest.class));
         suite.addTest(new JUnit4TestAdapter(PageDtoBuilderTest.class));
         suite.addTest(new JUnit4TestAdapter(PageServiceTest.class));
+        suite.addTest(new JUnit4TestAdapter(LanguageServiceTest.class));
+        suite.addTest(new JUnit4TestAdapter(WidgetServiceTest.class));
         return suite;
     }
 

@@ -83,7 +83,7 @@ public class BaseTestCase extends TestCase {
     protected void tearDown() throws Exception {
         this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
         super.tearDown();
-        this.getConfigUtils().closeDataSources(this.getApplicationContext());
+        //this.getConfigUtils().closeDataSources(this.getApplicationContext());
         this.getConfigUtils().destroyContext(this.getApplicationContext());
         Set<Thread> setOfThread = Thread.getAllStackTraces().keySet();
         //Iterate over set to find yours

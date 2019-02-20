@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import javax.servlet.ServletContext;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
@@ -124,7 +124,7 @@ public class ConfigTestUtils {
             ds.setUrl(url);
             ds.setUsername(username);
             ds.setPassword(password);
-            ds.setMaxActive(8);
+            ds.setMaxTotal(12);
             ds.setMaxIdle(4);
             ds.setDriverClassName(className);
             builder.bind("java:comp/env/jdbc/" + beanName, ds);

@@ -129,7 +129,10 @@ public class ApsAdminBaseTestCase extends TestCase {
     protected void tearDown() throws Exception {
         this.waitThreads(SystemConstants.ENTANDO_THREAD_NAME_PREFIX);
         super.tearDown();
-        this.getConfigUtils().closeDataSources(this.getApplicationContext());
+        // This should not be called after each test method, because the
+        // applicationContext used in this class is a static instance.
+        // dbcp-commons 1.4+ doesn't allow reusing a closed DataSource.
+        //this.getConfigUtils().closeDataSources(this.getApplicationContext());
     }
 
     protected void waitNotifyingThread() throws InterruptedException {

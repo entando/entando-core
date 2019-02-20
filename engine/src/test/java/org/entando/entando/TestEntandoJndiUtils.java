@@ -13,7 +13,7 @@
  */
 package org.entando.entando;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
@@ -104,7 +104,7 @@ public class TestEntandoJndiUtils {
             ds.setUrl(url);
             ds.setUsername(username);
             ds.setPassword(password);
-            ds.setMaxActive(8);
+            ds.setMaxTotal(12);
             ds.setMaxIdle(4);
             ds.setDriverClassName(className);
             builder.bind("java:comp/env/jdbc/" + beanName, ds);

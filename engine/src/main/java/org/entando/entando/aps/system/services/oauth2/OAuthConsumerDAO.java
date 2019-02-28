@@ -24,6 +24,9 @@ import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.slf4j.Logger;
@@ -35,7 +38,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsumerDAO {
 
-    private static final Logger _logger = LoggerFactory.getLogger(OAuthConsumerDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(OAuthConsumerDAO.class);
 
     private static final String SELECT_CONSUMER
             = "SELECT consumerkey, consumersecret, name, description, callbackurl,scope, authorizedgranttypes, expirationdate, issueddate "
@@ -61,7 +64,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             = "DELETE FROM api_oauth_tokens WHERE clientid = ? ";
 
     @Override
-    public List<String> getConsumerKeys(FieldSearchFilter[] filters) {
+    public List<String> getConsumerKeys(FieldSearchFilter<?>[] filters) {
         return super.searchId(filters);
     }
 
@@ -78,19 +81,10 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             stat.setString(1, clientId);
             res = stat.executeQuery();
             if (res.next()) {
-                consumer = new ConsumerRecordVO();
-                consumer.setKey(res.getString("consumerkey"));
-                consumer.setSecret(res.getString("consumersecret"));
-                consumer.setCallbackUrl(res.getString("callbackurl"));
-                consumer.setName(res.getString("name"));
-                consumer.setDescription(res.getString("description"));
-                consumer.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
-                consumer.setScope(res.getString("scope"));
-                consumer.setExpirationDate(res.getTimestamp("expirationdate"));
-                consumer.setIssuedDate(res.getTimestamp("issueddate"));
+                consumer = consumerFromResultSet(res);
             }
         } catch (SQLException | ApsSystemException t) {
-            _logger.error("Error while loading consumer by clientid {}", clientId, t);
+            logger.error("Error while loading consumer by clientid {}", clientId, t);
             throw new RuntimeException("Error while loading consumer by key " + clientId, t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -99,7 +93,61 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
     }
 
     @Override
-    public void addConsumer(ConsumerRecordVO consumer) {
+    public List<ConsumerRecordVO> getConsumers(FieldSearchFilter<?>[] filters) {
+        List<ConsumerRecordVO> consumers = new ArrayList<>();
+
+        List<String> keys = getConsumerKeys(filters);
+
+        if (!keys.isEmpty()) {
+
+            String query = SELECT_CONSUMER;
+            if (keys.size() > 1) {
+                for (int i = 1; i < keys.size(); i++) {
+                    query += " OR consumerkey = ?";
+                }
+            }
+
+            try (Connection conn = getConnection();
+                    PreparedStatement stat = conn.prepareStatement(query)) {
+                int i = 0;
+                for (String key : keys) {
+                    stat.setString(++i, key);
+                }
+                try (ResultSet rs = stat.executeQuery()) {
+                    while (rs.next()) {
+                        consumers.add(consumerFromResultSet(rs));
+                    }
+                }
+            } catch (SQLException | ApsSystemException ex) {
+                logger.error("Error while loading consumers", ex);
+                throw new RuntimeException("Error while loading consumers", ex);
+            }
+        }
+
+        // keeps the order of the keys collection
+        return keys.stream()
+                .map(key -> consumers.stream()
+                .filter(c -> key.equals(c.getKey()))
+                .findFirst().get())
+                .collect(Collectors.toList());
+    }
+
+    private ConsumerRecordVO consumerFromResultSet(ResultSet res) throws SQLException {
+        ConsumerRecordVO consumer = new ConsumerRecordVO();
+        consumer.setKey(res.getString("consumerkey"));
+        consumer.setSecret(res.getString("consumersecret"));
+        consumer.setCallbackUrl(res.getString("callbackurl"));
+        consumer.setName(res.getString("name"));
+        consumer.setDescription(res.getString("description"));
+        consumer.setAuthorizedGrantTypes(res.getString("authorizedgranttypes"));
+        consumer.setScope(res.getString("scope"));
+        consumer.setExpirationDate(res.getTimestamp("expirationdate"));
+        consumer.setIssuedDate(res.getTimestamp("issueddate"));
+        return consumer;
+    }
+
+    @Override
+    public ConsumerRecordVO addConsumer(ConsumerRecordVO consumer) {
         Connection conn = null;
         PreparedStatement stat = null;
         int index = 1;
@@ -108,20 +156,21 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(ADD_CONSUMER);
             stat.setString(index++, consumer.getKey());
-            index = this.fillStatement(consumer, index, true, stat);
+            this.fillStatement(consumer, index, true, stat);
             stat.executeUpdate();
             conn.commit();
         } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
-            _logger.error("Error while adding a consumer", t);
+            logger.error("Error while adding a consumer", t);
             throw new RuntimeException("Error while adding a consumer", t);
         } finally {
             closeDaoResources(null, stat, conn);
         }
+        return consumer;
     }
 
     @Override
-    public void updateConsumer(ConsumerRecordVO consumer) {
+    public ConsumerRecordVO updateConsumer(ConsumerRecordVO consumer) {
         Connection conn = null;
         PreparedStatement stat = null;
         int index = 1;
@@ -136,11 +185,12 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             conn.commit();
         } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
-            _logger.error("Error while updating a consumer", t);
+            logger.error("Error while updating a consumer", t);
             throw new RuntimeException("Error while updating a consumer", t);
         } finally {
             closeDaoResources(null, stat, conn);
         }
+        return consumer;
     }
 
     private int fillStatement(ConsumerRecordVO consumer, int index, boolean add, PreparedStatement stat) throws SQLException {
@@ -160,7 +210,9 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             stat.setNull(idx++, Types.TIMESTAMP);
         }
         if (add) {
-            stat.setTimestamp(idx++, new Timestamp(System.currentTimeMillis()));
+            long currentTime = System.currentTimeMillis();
+            consumer.setIssuedDate(new Date(currentTime));
+            stat.setTimestamp(idx++, new Timestamp(currentTime));
         }
         return idx;
     }
@@ -176,7 +228,7 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             conn.commit();
         } catch (SQLException | ApsSystemException t) {
             this.executeRollback(conn);
-            _logger.error("Error while deleting consumer '{}' and its tokens", clientId, t);
+            logger.error("Error while deleting consumer '{}' and its tokens", clientId, t);
             throw new RuntimeException("Error while deleting a consumer and its tokens", t);
         } finally {
             this.closeConnection(conn);

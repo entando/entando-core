@@ -22,11 +22,13 @@ public interface IOAuthConsumerDAO {
 
     ConsumerRecordVO getConsumer(String clientId);
 
-    List<String> getConsumerKeys(FieldSearchFilter[] filters);
+    List<String> getConsumerKeys(FieldSearchFilter<?>[] filters);
+    
+    List<ConsumerRecordVO> getConsumers(FieldSearchFilter<?>[] filters);
 
-    void addConsumer(ConsumerRecordVO consumer);
+    ConsumerRecordVO addConsumer(ConsumerRecordVO consumer);
 
-    void updateConsumer(ConsumerRecordVO consumer);
+    ConsumerRecordVO updateConsumer(ConsumerRecordVO consumer);
 
     void deleteConsumer(String clientId);
 }

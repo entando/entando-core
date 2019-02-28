@@ -17,6 +17,8 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.activitystream.ActivityStreamControllerIntegrationTest;
 import org.entando.entando.web.activitystream.StreamInterceptorIntegrationTest;
 import org.entando.entando.web.category.CategoryControllerIntegrationTest;
@@ -66,7 +68,7 @@ public class ControllersAllTests extends TestCase {
 
     public static Test suite() {
         TestSuite suite = new TestSuite(ControllersAllTests.class.getName());
-        
+
         suite.addTest(new JUnit4TestAdapter(GroupControllerUnitTest.class));
         suite.addTest(new JUnit4TestAdapter(GroupControllerIntegrationTest.class));
 
@@ -130,7 +132,10 @@ public class ControllersAllTests extends TestCase {
         suite.addTest(new JUnit4TestAdapter(StreamInterceptorIntegrationTest.class));
 
         suite.addTest(new JUnit4TestAdapter(DashboardControllerIntegrationTest.class));
-        
+
+        suite.addTest(new JUnit4TestAdapter(AbstractControllerTest.class));
+        suite.addTest(new JUnit4TestAdapter(AbstractControllerIntegrationTest.class));
+
         return suite;
     }
 

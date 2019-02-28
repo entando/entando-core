@@ -173,4 +173,8 @@
         <property name="storageManager" ref="StorageManager" />
     </bean>
 
+    <bean id="ApiConsumerService" class="org.entando.entando.aps.system.services.oauth2.ApiConsumerServiceImpl">
+        <constructor-arg ref="OAuthConsumerManager" />
+    </bean>
+
 </beans>

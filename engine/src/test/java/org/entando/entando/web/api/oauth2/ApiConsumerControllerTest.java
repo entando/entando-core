@@ -13,6 +13,9 @@
  */
 package org.entando.entando.web.api.oauth2;
 
+import com.agiletec.aps.system.services.user.UserDetails;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.oauth2.ApiConsumerServiceImpl;
@@ -21,10 +24,12 @@ import org.entando.entando.aps.system.services.oauth2.model.ApiConsumer;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.api.oauth2.validator.ApiConsumerValidator;
+import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -32,6 +37,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,6 +56,9 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
 
     private ApiConsumerResourceController controller;
 
+    private final ObjectMapper jsonMapper = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    private String accessToken;
+
     @Before
     public void setUp() throws Exception {
 
@@ -60,17 +69,21 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
                 .addInterceptors(entandoOauth2Interceptor)
                 .setHandlerExceptionResolvers(createHandlerExceptionResolver())
                 .build();
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin().build();
+        accessToken = mockOAuthInterceptor(user);
     }
 
     @Test
     public void testNotFound() throws Exception {
 
-        ResultActions result = createAuthRequest(get(BASE_URL + "/valid_key")).execute();
+        ResultActions result = authRequest(get(BASE_URL + "/valid_key"));
         result.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors", hasSize(1)));
 
-        result = createAuthRequest(put(BASE_URL + "/valid_key"))
-                .setContent(getValidPayload()).execute();
+        result = authRequest(put(BASE_URL + "/valid_key")
+                .content(jsonMapper.writeValueAsString(getValidPayload())));
         result.andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.errors", hasSize(1)));
     }
@@ -80,8 +93,8 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
 
         when(consumerManager.getConsumerRecord("valid_key")).thenReturn(new ConsumerRecordVO());
 
-        ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(getValidPayload()).execute();
+        ResultActions result = authRequest(post(BASE_URL)
+                .content(jsonMapper.writeValueAsString(getValidPayload())));
 
         result.andExpect(status().isConflict())
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -93,8 +106,8 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
 
         ApiConsumer apiConsumer = getValidPayload();
 
-        ResultActions result = createAuthRequest(put(BASE_URL + "/different_key"))
-                .setContent(apiConsumer).execute();
+        ResultActions result = authRequest(put(BASE_URL + "/different_key")
+                .content(jsonMapper.writeValueAsString(apiConsumer)));
 
         result.andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.errors", hasSize(1)))
@@ -129,8 +142,8 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
 
         consumer.accept(apiConsumer);
 
-        ResultActions result = createAuthRequest(post(BASE_URL))
-                .setContent(apiConsumer).execute();
+        ResultActions result = authRequest(post(BASE_URL)
+                .content(jsonMapper.writeValueAsString(apiConsumer)));
 
         result.andExpect(status().is4xxClientError())
                 .andExpect(jsonPath("$.errors", hasSize(1)));
@@ -146,5 +159,12 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
         apiConsumer.setSecret("secret");
         apiConsumer.setDescription("description");
         return apiConsumer;
+    }
+
+    private ResultActions authRequest(MockHttpServletRequestBuilder requestBuilder) throws Exception {
+        return mockMvc.perform(requestBuilder
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(APPLICATION_JSON_UTF8)
+                .accept(APPLICATION_JSON_UTF8));
     }
 }

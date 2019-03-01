@@ -17,10 +17,10 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.entando.entando.web.AbstractControllerIntegrationTest;
-import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.activitystream.ActivityStreamControllerIntegrationTest;
 import org.entando.entando.web.activitystream.StreamInterceptorIntegrationTest;
+import org.entando.entando.web.api.oauth2.ApiConsumerControllerIntegrationTest;
+import org.entando.entando.web.api.oauth2.ApiConsumerControllerTest;
 import org.entando.entando.web.category.CategoryControllerIntegrationTest;
 import org.entando.entando.web.category.CategoryControllerTest;
 import org.entando.entando.web.dashboard.DashboardControllerIntegrationTest;
@@ -133,8 +133,8 @@ public class ControllersAllTests extends TestCase {
 
         suite.addTest(new JUnit4TestAdapter(DashboardControllerIntegrationTest.class));
 
-        suite.addTest(new JUnit4TestAdapter(AbstractControllerTest.class));
-        suite.addTest(new JUnit4TestAdapter(AbstractControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(ApiConsumerControllerIntegrationTest.class));
+        suite.addTest(new JUnit4TestAdapter(ApiConsumerControllerTest.class));
 
         return suite;
     }

@@ -93,9 +93,9 @@ public class OAuthConsumerManager extends AbstractOAuthManager implements IOAuth
     }
 
     @Override
-    public void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
+    public ConsumerRecordVO addConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
         try {
-            this.getConsumerDAO().addConsumer(consumer);
+            return this.getConsumerDAO().addConsumer(consumer);
         } catch (Throwable t) {
             logger.error("Error adding consumer", t);
             throw new ApsSystemException("Error adding consumer", t);
@@ -103,9 +103,9 @@ public class OAuthConsumerManager extends AbstractOAuthManager implements IOAuth
     }
 
     @Override
-    public void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
+    public ConsumerRecordVO updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException {
         try {
-            this.getConsumerDAO().updateConsumer(consumer);
+            return this.getConsumerDAO().updateConsumer(consumer);
         } catch (Throwable t) {
             logger.error("Error updating consumer", t);
             throw new ApsSystemException("Error updating consumer", t);
@@ -123,7 +123,7 @@ public class OAuthConsumerManager extends AbstractOAuthManager implements IOAuth
     }
 
     @Override
-    public List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException {
+    public List<String> getConsumerKeys(FieldSearchFilter<?>[] filters) throws ApsSystemException {
         List<String> consumerKeys = null;
         try {
             consumerKeys = this.getConsumerDAO().getConsumerKeys(filters);
@@ -142,4 +142,13 @@ public class OAuthConsumerManager extends AbstractOAuthManager implements IOAuth
         this.consumerDAO = consumerDAO;
     }
 
+    @Override
+    public List<ConsumerRecordVO> getConsumers(FieldSearchFilter<?>[] filters) throws ApsSystemException {
+        try {
+            return consumerDAO.getConsumers(filters);
+        } catch (Throwable t) {
+            logger.error("Error retrieving consumers", t);
+            throw new ApsSystemException("Error retrieving consumers", t);
+        }
+    }
 }

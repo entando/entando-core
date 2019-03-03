@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -140,24 +141,36 @@ public class Filter {
     }
 
     protected Object extractFilterValue() {
-        if (StringUtils.isBlank(this.getValue())) {
+        if (StringUtils.isBlank(value)) {
             return null;
         }
-        String escapedValue = StringEscapeUtils.escapeSql(this.getValue());
-        Object objectValue = escapedValue;
-        if (FilterType.DATE.getValue().equalsIgnoreCase(this.getType())) {
-            objectValue = DateConverter.parseDate(escapedValue, SystemConstants.API_DATE_FORMAT);
-        } else if (FilterType.NUMBER.getValue().equalsIgnoreCase(this.getType())) {
-            Integer numberInt = Integer.parseInt(escapedValue);
-            objectValue = new BigDecimal(numberInt);
+        List<String> escapedValues = getAllowedValues();
+        if (escapedValues.isEmpty()) {
+            return null;
         }
-        return objectValue;
+
+        List<Object> objectValues = escapedValues.stream()
+                .map(escapedValue -> {
+                    if (FilterType.DATE.getValue().equalsIgnoreCase(type)) {
+                        return DateConverter.parseDate(escapedValue, SystemConstants.API_DATE_FORMAT);
+                    } else if (FilterType.NUMBER.getValue().equalsIgnoreCase(type)) {
+                        Integer numberInt = Integer.parseInt(escapedValue);
+                        return new BigDecimal(numberInt);
+                    }
+                    return escapedValue;
+                }).collect(Collectors.toList());
+
+        if (objectValues.size() == 1) {
+            return objectValues.get(0);
+        }
+        return objectValues;
     }
 
     @JsonIgnore
     public List<String> getAllowedValues() {
-        if (value != null && !value.isEmpty()) {
-            return Arrays.asList(value.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));
+        String escapedValue;
+        if (value != null && !(escapedValue = StringEscapeUtils.escapeSql(value)).isEmpty()) {
+            return Arrays.asList(escapedValue.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));
         }
         return Collections.emptyList();
     }

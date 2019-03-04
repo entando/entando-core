@@ -296,7 +296,10 @@
                                                     </button>
                                                     <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight3">
                                                         <li>
-                                                            <a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="%{#resourceid}" /></s:url>"
+                                                            <a href="<s:url action="edit" namespace="/do/jacms/Resource">
+                                                                   <s:param name="resourceId" value="%{#resourceid}" />
+                                                                   <s:param name="resourceTypeCode" value="%{#resource.type}" />
+                                                               </s:url>"
                                                                title="<s:text name="label.edit" />: <s:property value="#resource.descr" /> ">
                                                                 <span><s:text name="label.edit"/></span>
                                                             </a>
@@ -484,7 +487,10 @@
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight4">
                                                 <li>
-                                                    <a href="<s:url action="edit" namespace="/do/jacms/Resource"><s:param name="resourceId" value="%{#resourceid}" /></s:url>"
+                                                    <a href="<s:url action="edit" namespace="/do/jacms/Resource">
+                                                           <s:param name="resourceId" value="%{#resourceid}" />
+                                                           <s:param name="resourceTypeCode" value="%{#resource.type}" />
+                                                       </s:url>"
                                                        title="<s:text name="label.edit" />: <s:property value="#resource.descr" /> ">
                                                         <span><s:text name="label.edit"/></span>
                                                     </a>

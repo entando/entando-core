@@ -1,28 +1,27 @@
+var Store;
+
+function toDataUrl(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            callback(reader.result);
+        };
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+}
+
 $(document).ready(function () {
     var cropEditorEnabled = ($('.image_cropper_enabled').length === 1);
     var attachmentUploadEnabled = ($('.attachment_upload_enabled').length === 1);
 
     /**
-     * Checking if either crop editor or at least attachmend upload form related functionality should be enabled.
+     * Checking if either crop editor or at least attachment upload form related functionality should be enabled.
      */
     if (cropEditorEnabled || attachmentUploadEnabled) {
-
-        /**
-         * Utility functions.
-         */
-        function toDataUrl(url, callback) {
-            var xhr = new XMLHttpRequest();
-            xhr.onload = function () {
-                var reader = new FileReader();
-                reader.onloadend = function () {
-                    callback(reader.result);
-                };
-                reader.readAsDataURL(xhr.response);
-            };
-            xhr.open('GET', url);
-            xhr.responseType = 'blob';
-            xhr.send();
-        }
 
         /**
          * Store - object which stores all store items.
@@ -48,9 +47,18 @@ $(document).ready(function () {
          *
          *
          */
-        var Store = {
+        Store = {
             items: {},
             lastStoreItemId: false
+        };
+
+        var createStoreItem = function(element) {
+            var newStoreItem = {
+                id: getNewStoreItemId(),
+                $fieldGroup: $(element)
+            };
+
+            saveNewStoreItem(newStoreItem);
         };
 
         /**
@@ -63,12 +71,7 @@ $(document).ready(function () {
         // Setting up initial Store items according to file upload input fields rendered initially.
         var setupInitialStoreItems = function () {
             $fieldsContainer.find('.form-group ').each(function (i, element) {
-                var newStoreItem = {
-                    id: getNewStoreItemId(),
-                    $fieldGroup: $(element)
-                };
-
-                saveNewStoreItem(newStoreItem);
+                createStoreItem(element);
             });
         };
 
@@ -114,11 +117,17 @@ $(document).ready(function () {
             }
 
             Store.items["item_" + storeItem.id] = setupHiddenFields(storeItem);
+
         };
 
         // Setup file for storeItem
         var setupStoreItemFile = function (storeItemId, file) {
             var storeItem = getStoreItem(storeItemId);
+            storeItem.name = file.name;
+            storeItem.type = file.type;
+            updateStoreItem(storeItem);
+
+
             var reader = new FileReader();
 
             reader.onload = function (e) {
@@ -152,10 +161,28 @@ $(document).ready(function () {
             $template.find('#newFileUpload_selected').attr("id", "fileUpload_" + newStoreItem.id + "_selected");
             $template.find('#newFileUpload').attr("id", "fileUpload_" + newStoreItem.id);
 
+
+
+            var progress = '<div class="progress" id="progress_' + newStoreItem.id + '">\n' +
+                '               <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">\n' +
+                '                   <span>0%</span>\n' +
+                '               </div>\n' +
+                '           </div>';
+
+            $template.find('.fileUpload-right').append(progress);
+
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadId_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadId_' + newStoreItem.id + '" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadName_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadName_' + newStoreItem.id + '" class="form-control">');
+            $template.find('#newFileUpload_box').append('<input type="hidden" name="fileUploadContentType_' + newStoreItem.id + '" maxlength="500" value="" id="fileUploadContentType_' + newStoreItem.id + '" class="form-control">');
+
             $template.find('#newFileUpload_box').attr("id", "fileUpload_box_" + newStoreItem.id);
 
 
             newStoreItem.$fieldGroup = $template.appendTo($fieldsContainer);
+
+            var fileInput = document.getElementById("fileUpload_" + newStoreItem.id);
+            fileInput.addEventListener('change', collectFiles, false);
+
 
             saveNewStoreItem(newStoreItem);
 

@@ -182,7 +182,10 @@
         
         <p class="sr-only">
             <wpsf:hidden name="contentOnSessionMarker" />
+            <wpsf:hidden name="resourceTypeCode" id="resourceTypeCode"/>
+
         </p>
+
         <p class="sr-only" id="quickmenu"><s:text name="title.quickMenu" /></p>
 
         <s:if test="%{null != content.mainGroup && content.mainGroup != ''}">

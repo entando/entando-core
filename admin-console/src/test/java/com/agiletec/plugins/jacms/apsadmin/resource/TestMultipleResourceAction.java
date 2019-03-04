@@ -88,7 +88,7 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         assertEquals(Action.INPUT, result);
         ActionSupport action = this.getAction();
         Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
-        assertEquals(2, actionFieldErrors.size());
+        assertEquals(6, actionFieldErrors.size());
         assertEquals(1, actionFieldErrors.get("resourceTypeCode").size());
         assertEquals(1, actionFieldErrors.get("mainGroup").size());
     }
@@ -101,12 +101,15 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         this.addParameter("resourceTypeCode", "Image");
         this.addParameter("mainGroup", "test");
         this.addParameter("descr_0", "test");
+        
         String result = this.executeAction();
         ActionSupport action = this.getAction();
-        Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
+        Map<String, List<String>> actionFieldErrors = action.getFieldErrors();      
         assertEquals(Action.INPUT, result);
-        assertEquals(1, actionFieldErrors.size());
-        assertEquals(1, actionFieldErrors.get("fileUpload_0").size());
+        assertEquals(3, actionFieldErrors.size());
+        assertEquals(1, actionFieldErrors.get("fileUploadId_0").size());
+        assertEquals(1, actionFieldErrors.get("fileUploadContentType_0").size());
+        assertEquals(1, actionFieldErrors.get("fileUploadName_0").size());
     }
 
     public void testSaveNewResource_2() throws Throwable {
@@ -123,7 +126,7 @@ public class TestMultipleResourceAction extends ApsAdminBaseTestCase {
         assertEquals(Action.INPUT, result);
         ActionSupport action = this.getAction();
         Map<String, List<String>> actionFieldErrors = action.getFieldErrors();
-        assertEquals(2, actionFieldErrors.size());
+        assertEquals(5, actionFieldErrors.size());
         assertEquals(1, actionFieldErrors.get("resourceTypeCode").size());
 
     }

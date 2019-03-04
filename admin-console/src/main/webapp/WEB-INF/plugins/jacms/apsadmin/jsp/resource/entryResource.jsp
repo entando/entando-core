@@ -77,12 +77,12 @@
     <wp:info key="systemParam" paramName="treeStyle_category"/>
 </s:set>
 <s:set var="lockGroupSelect" value="%{resourceId != null}"></s:set>
-<s:form action="save" method="post" enctype="multipart/form-data" cssClass="form-horizontal image-upload-form">
+<s:form action="save" method="post" cssClass="form-horizontal image-upload-form">
     <wpsf:hidden name="fieldCount"/>
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/inc_fullErrors.jsp"/>
     <p class="sr-only">
         <wpsf:hidden name="strutsAction"/>
-        <wpsf:hidden name="resourceTypeCode"/>
+        <wpsf:hidden name="resourceTypeCode" id="resourceTypeCode"/>
         <wpsf:hidden name="contentOnSessionMarker"/>
         <s:if test="strutsAction != 1">
             <wpsf:hidden name="resourceId"/>
@@ -135,14 +135,14 @@
                 <script src="<wp:resourceURL />administration/js/entando-typeahead-tree.js"></script>
                 <s:include value="/WEB-INF/apsadmin/jsp/common/layouts/assets-more/category/categoryTree-extra.jsp"/>
 
-                <s:set var="useAjax" value="true" />
-                    <s:set var="selectedTreeNode" value="selectedNode"/>
-                    <s:set var="currentRoot" value="categoryRoot"/>
+                <s:set var="useAjax" value="true"/>
+                <s:set var="selectedTreeNode" value="selectedNode"/>
+                <s:set var="currentRoot" value="categoryRoot"/>
                 <s:set var="joinCategoryEndpoint" value="'joinCategory'"/>
                 <s:set var="loadTreeActionName" value="''"/>
-                        <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
-                        <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
-                <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/categoryTreeTable.jsp" />
+                <s:set var="openTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
+                <s:set var="closeTreeActionName" value="'openCloseCategoryTreeNodeOnEntryResource'"/>
+                <s:include value="/WEB-INF/plugins/jacms/apsadmin/jsp/common/categoryTreeTable.jsp"/>
 
                 <s:if test="extraGroups.size() != 0">
                     <s:iterator value="extraGroups" var="groupName">
@@ -174,7 +174,7 @@
                         <ul class="list-inline mt-20">
                             <s:iterator value="categoryCodes" var="categoryCodeVar">
                                 <s:set var="resourceCategory" value="%{getCategory(#categoryCodeVar)}"></s:set>
-                                    <li>
+                                <li>
                                         <span class="label label-info">
                                             <span class="icon fa fa-tag"></span>
                                             &#32;
@@ -183,7 +183,8 @@
                                         </abbr>
                                         &#32;
                                         <button type="button" class="btn btn-link"
-                                                onclick="categoriesAjax.removeCategory('removeCategory', '<s:property value="#resourceCategory.code"/>')"
+                                                onclick="categoriesAjax.removeCategory('removeCategory', '<s:property
+                                                        value="#resourceCategory.code"/>')"
                                                 title="<s:property value="%{getText('label.remove') + ' ' + #resourceCategory.defaultFullTitle}" />">
                                             <span class="pficon pficon-close white"></span>
                                             <span class="sr-only">x</span>
@@ -202,6 +203,19 @@
 
     <s:if test="%{ (getStrutsAction() == 1 and !isOnEditContent()) or (getStrutsAction() == 1 and isContentListAttribute() and isOnEditContent())}">
         <div class="form-group">
+            <div class="col-md-10 col-md-offset-2">
+                <div class="file-upload-region">
+                    Drag your files here or
+                    <label id="newFileUpload_label" for="newFileUpload-multiple" class="btn-link">
+                        <%--<s:text name="label.button-choose-files"/>--%>
+                        browse
+                    </label>
+                    to upload
+                    <s:file name="fileUpload" id="newFileUpload-multiple" cssClass="input-file-button" label="label.file"
+                            multiple="true"/>
+                </div>
+            </div>
+
             <div class="col-sm-5 col-sm-offset-2">
                 <div id="add-resource-button">
                     <button type="button" id="add-fields"><span class="fa fa-plus-square-o"></span>
@@ -227,12 +241,13 @@
             <s:set var="fieldErrorsVar" value="%{fieldErrors['descr_' + (#ctr.count - 1)]}"/>
             <s:set var="fieldHasFieldErrorVar" value="#fieldErrorsVar != null && !#fieldErrorsVar.isEmpty()"/>
             <s:set var="controlGroupErrorClassVar" value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}"/>
-            <div class="form-group <s:property value="#controlGroupErrorClassVar" />">
+            <div id="<s:text name="%{'formGroup-' + (#ctr.count - 1)}" />"
+                 class="form-group form-group--file <s:property value="#controlGroupErrorClassVar" />" data-file-id="0">
                 <label class="col-sm-2 control-label" for="descr">
                     <s:text name="label.description"/>
                     <i class="fa fa-asterisk required-icon"></i>
                 </label>
-                <div class="col-sm-4">
+                <div class="col-sm-4 fileUpload-right">
                     <s:if test="%{'' != getFileDescription(#ctr.count - 1)}"><s:set var="descriptionFieldVar"
                                                                                     value="%{getFileDescription(#ctr.count - 1)}"/></s:if>
                     <s:else>
@@ -250,6 +265,13 @@
                     </s:iterator>
                 </span>
                     </s:if>
+
+                    <div class="progress" id="progress_0">
+                        <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                             aria-valuemax="100" style="width: 0%;">
+                            <span>0%</span>
+                        </div>
+                    </div>
                 </div>
 
                 <label class="col-sm-1 control-label" for="upload">
@@ -273,27 +295,70 @@
                 </label>
 
                 <div class="col-sm-4">
-                    <s:set var="fieldIdVar" value="%{#ctr.count -1}"/>
-                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                                 class="btn btn-default" key="label.button-choose-file"/>
-                    </s:if>
+                    <%--<s:set var="fieldIdVar" value="%{#ctr.count -1}"/>--%>
+                        <%--<s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">--%>
+                        <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
+                        <%--class="btn btn-default" key="label.button-choose-file"/>--%>
+                        <%--</s:if>--%>
+                        <%--<s:else>--%>
+                        <%--<s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"--%>
+                        <%--class="btn btn-default" key="label.button-choose-files"/>--%>
+                        <%--</s:else>--%>
+
+                    <%--<s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" label="label.file" multiple="true"/>--%>
+
+                    <%--<label id="newFileUpload_label" for="newFileUpload_%{#ctr.count -1}" class="btn btn-default">--%>
+                        <%--<s:text name="label.button-choose-file"/>--%>
+                    <%--</label>--%>
+
+                    <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
+                    class="btn btn-default" key="label.button-choose-file"/>
+
+                    <s:file name="fileUpload" id="newFileUpload_%{#ctr.count -1}" cssClass="input-file-button" label="label.file"/>
+
+
+                    <s:if test="%{'' != getFileUploadId(#ctr.count - 1)}">
+                        <s:set var="uploadIdFieldVar" value="%{getFileUploadId(#ctr.count - 1)}"/></s:if>
                     <s:else>
-                        <s:label id="fileUpload_%{#ctr.count -1}_label" for="fileUpload_%{#ctr.count -1}"
-                                 class="btn btn-default" key="label.button-choose-files"/>
+                        <s:set var="paramNameVarUploadId" value="%{'fileUploadId_' + (#ctr.count - 1)}"/>
+                        <s:set var="uploadIdFieldVar" value="%{#parameters[#paramNameVarUploadId][0]}"/>
                     </s:else>
+                    <wpsf:hidden name="fileUploadId_%{#ctr.count - 1}" maxlength="50"
+                                 id="fileUploadId_%{#ctr.count - 1}"
+                                 cssClass="form-control fileUploadId"
+                                 value="%{#uploadIdFieldVar}"/>
+
+                    <s:if test="%{'' != getFileName(#ctr.count - 1)}">
+                        <s:set var="fileNameFieldVar" value="%{getFileName(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVarFileName" value="%{'fileUploadName_' + (#ctr.count - 1)}"/>
+                        <s:set var="fileNameFieldVar" value="%{#parameters[#paramNameVarFileName][0]}"/>
+                    </s:else>
+                    <wpsf:hidden name="fileUploadName_%{#ctr.count - 1}" maxlength="500"
+                                 id="fileUploadName_%{#ctr.count - 1}"
+                                 cssClass="form-control fileUploadName"
+                                 value="%{#fileNameFieldVar}"/>
+
+                    <s:if test="%{'' != getFileContentType(#ctr.count - 1)}">
+                        <s:set var="fileContentTypeFieldVar" value="%{getFileContentType(#ctr.count - 1)}"/></s:if>
+                    <s:else>
+                        <s:set var="paramNameVarFileContentType"
+                               value="%{'fileUploadContentType_' + (#ctr.count - 1)}"/>
+                        <s:set var="fileContentTypeFieldVar" value="%{#parameters[#paramNameVarFileContentType][0]}"/>
+                    </s:else>
+                    <wpsf:hidden name="fileUploadContentType_%{#ctr.count - 1}" maxlength="250"
+                                 id="fileUploadContentType_%{#ctr.count - 1}"
+                                 cssClass="form-control fileUploadContentType"
+                                 value="%{#fileContentTypeFieldVar}"/>
+
 
                     <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"/>
                     </s:if>
                     <s:else>
                         <s:file name="fileUpload" id="fileUpload_%{#ctr.count -1}" cssClass="input-file-button"
-                                label="label.file"  multiple="true"/>
+                                label="label.file" multiple="true"/>
                     </s:else>
-
-                    <span id="fileUpload_<s:property value="#fieldIdVar" />_selected">
-                        <s:text name="label.no-file-selected"/>
-                    </span>
 
                     <s:if test="#hasFieldErrorVar">
                     <span class="help-block text-danger">
@@ -665,9 +730,9 @@
     <div class="form-horizontal">
         <div class="form-group">
             <div class="col-sm-12 margin-small-vertical">
-                <button id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
+                <input id="submit" type="submit" value="Submit" class="btn btn-primary pull-right">
                     <s:text name="cropEditor.label.done"/>
-                </button>
+                </input>
             </div>
         </div>
     </div>
@@ -739,7 +804,7 @@
             <s:text name="label.description"/>
             <i class="fa fa-asterisk required-icon"></i>
         </label>
-        <div class="col-sm-4">
+        <div class="col-sm-4 fileUpload-right">
             <wpsf:textfield name="descr" maxlength="250" id="newDescr" cssClass="form-control file-description"/>
         </div>
         <div id="newFileUpload_box">
@@ -763,22 +828,12 @@
 
             <div class="col-sm-4">
                 <label id="newFileUpload_label" for="newFileUpload" class="btn btn-default">
-                    <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                        <s:text name="label.button-choose-file"/>
-                    </s:if>
-                    <s:else>
-                        <s:text name="label.button-choose-files"/>
-                    </s:else>
+                    <s:text name="label.button-choose-file"/>
                 </label>
 
-                <s:if test="%{(getStrutsAction() == 2) or (isOnEditContent() && !isContentListAttribute())}">
-                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file" />
-                </s:if>
-                <s:else>
-                    <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"
-                            multiple="true"/>
-                </s:else>
-                <span id="newFileUpload_selected" class="file-upload-selected-name"><s:text name="label.no-file-selected"/></span>
+                <s:file name="fileUpload" id="newFileUpload" cssClass="input-file-button" label="label.file"/>
+                <span id="newFileUpload_selected" class="file-upload-selected-name"><s:text
+                        name="label.no-file-selected"/></span>
             </div>
         </div>
 

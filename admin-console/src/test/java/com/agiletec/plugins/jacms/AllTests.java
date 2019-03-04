@@ -54,6 +54,7 @@ import com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.listviewer.TestT
 import com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer.TestContentFinderViewerAction;
 import com.agiletec.plugins.jacms.apsadmin.portal.specialwidget.viewer.TestContentViewerWidgetAction;
 import com.agiletec.plugins.jacms.apsadmin.resource.TestMultipleResourceAction;
+import com.agiletec.plugins.jacms.apsadmin.resource.TestResourceFileChunkUploadAction;
 import com.agiletec.plugins.jacms.apsadmin.resource.TestResourceFinderAction;
 import com.agiletec.plugins.jacms.apsadmin.system.entity.TestJacmsEntityAttributeConfigAction;
 import com.agiletec.plugins.jacms.apsadmin.system.entity.TestJacmsEntityManagersAction;
@@ -111,7 +112,10 @@ public class AllTests {
 		//Resource
 		suite.addTestSuite(TestMultipleResourceAction.class);
 		suite.addTestSuite(TestResourceFinderAction.class);
-
+                
+                //File Chunks Upload
+                suite.addTestSuite(TestResourceFileChunkUploadAction.class);
+            
 		//Entity
 		suite.addTestSuite(TestJacmsEntityAttributeConfigAction.class);
 		suite.addTestSuite(TestJacmsEntityTypeConfigAction.class);

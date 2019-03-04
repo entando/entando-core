@@ -73,7 +73,7 @@ public class LanguageServiceTest {
         RestListRequest requestList = new RestListRequest();
         Filter filter = new Filter();
         filter.setAttribute("code");
-        filter.setValue("en,it");
+        filter.setAllowedValues(new String[]{"en", "it"});
         requestList.addFilter(filter);
 
         PagedMetadata<LanguageDto> result = languageService.getLanguages(requestList);

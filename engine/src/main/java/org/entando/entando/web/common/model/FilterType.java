@@ -13,12 +13,38 @@
  */
 package org.entando.entando.web.common.model;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.util.DateConverter;
+import java.math.BigDecimal;
+import java.util.Date;
+
 public enum FilterType {
 
-    STRING("string"),
-    DATE("date"),
-    BOOLEAN("boolean"),
-    NUMBER("number");
+    STRING("string") {
+        @Override
+        public Object parseFilterValue(String value) {
+            return value;
+        }
+    },
+    DATE("date") {
+        @Override
+        public Date parseFilterValue(String value) {
+            return DateConverter.parseDate(value, SystemConstants.API_DATE_FORMAT);
+        }
+    },
+    BOOLEAN("boolean") {
+        @Override
+        public Boolean parseFilterValue(String value) {
+            return Boolean.parseBoolean(value.toLowerCase());
+        }
+    },
+    NUMBER("number") {
+        @Override
+        public BigDecimal parseFilterValue(String value) {
+            Double numberInt = Double.parseDouble(value);
+            return new BigDecimal(numberInt);
+        }
+    };
 
     private final String value;
 
@@ -30,13 +56,14 @@ public enum FilterType {
         return value;
     }
 
-    public static FilterOperator parse(String op) {
-        for (FilterOperator value : FilterOperator.values()) {
-            if (value.getValue().equals(op)) {
+    public static FilterType parse(String type) {
+        for (FilterType value : FilterType.values()) {
+            if (value.getValue().equals(type)) {
                 return value;
             }
         }
-        throw new IllegalArgumentException(op + " is not a supported filter type");
+        throw new IllegalArgumentException(type + " is not a supported filter type");
     }
 
+    public abstract Object parseFilterValue(String value);
 }

@@ -13,14 +13,13 @@
  */
 package org.entando.entando.web.common.model;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 public class Filter {
@@ -135,21 +134,23 @@ public class Filter {
     }
 
     protected Object extractFilterValue() {
+
+        FilterType filterType = FilterType.STRING;
+        if (type != null) {
+            filterType = FilterType.parse(type.toLowerCase());
+        }
+
         if (allowedValues != null && allowedValues.length > 0) {
-            return allowedValues;
+            return Arrays.stream(allowedValues)
+                    .map(filterType::parseFilterValue)
+                    .collect(Collectors.toList());
         }
 
         if (StringUtils.isBlank(value)) {
             return null;
         }
 
-        if (FilterType.DATE.getValue().equalsIgnoreCase(type)) {
-            return DateConverter.parseDate(value, SystemConstants.API_DATE_FORMAT);
-        } else if (FilterType.NUMBER.getValue().equalsIgnoreCase(type)) {
-            Integer numberInt = Integer.parseInt(value);
-            return new BigDecimal(numberInt);
-        }
-        return value;
+        return filterType.parseFilterValue(value);
     }
 
     public String[] getAllowedValues() {

@@ -13,19 +13,13 @@
  */
 package org.entando.entando.web.common.model;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.FieldSearchFilter.LikeOptionType;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class Filter {
@@ -38,6 +32,7 @@ public class Filter {
     private String type;
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String order;
+    private String[] allowedValues;
 
     public String getAttribute() {
         return attribute;
@@ -106,17 +101,15 @@ public class Filter {
     }
 
     @JsonIgnore
-    @SuppressWarnings("rawtypes")
-    public FieldSearchFilter getFieldSearchFilter() {
-        FieldSearchFilter filter = null;
-        String escapedKey = StringEscapeUtils.escapeSql(this.getAttributeName());
+    public FieldSearchFilter<?> getFieldSearchFilter() {
+        FieldSearchFilter<?> filter;
         Object objectValue = this.extractFilterValue();
         if (FilterOperator.GREATER.getValue().equalsIgnoreCase(this.getOperator())) {
-            filter = new FieldSearchFilter(escapedKey, objectValue, null);
+            filter = new FieldSearchFilter<>(attribute, objectValue, null);
         } else if (FilterOperator.LOWER.getValue().equalsIgnoreCase(this.getOperator())) {
-            filter = new FieldSearchFilter(escapedKey, null, objectValue);
+            filter = new FieldSearchFilter<>(attribute, null, objectValue);
         } else {
-            filter = new FieldSearchFilter(escapedKey, objectValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()));
+            filter = new FieldSearchFilter<>(attribute, objectValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()));
         }
         filter.setOrder(this.getOrder());
         return filter;
@@ -125,54 +118,47 @@ public class Filter {
     @JsonIgnore
     @SuppressWarnings("rawtypes")
     public EntitySearchFilter getEntitySearchFilter() {
-        EntitySearchFilter filter = null;
+        EntitySearchFilter filter;
         boolean isAttributeFilter = (StringUtils.isBlank(this.getAttributeName()));
-        String escapedKey = (isAttributeFilter) ? StringEscapeUtils.escapeSql(this.getEntityAttr()) : StringEscapeUtils.escapeSql(this.getAttributeName());
+        String key = isAttributeFilter ? this.getEntityAttr() : this.getAttributeName();
         Object objectValue = this.extractFilterValue();
         if (FilterOperator.GREATER.getValue().equalsIgnoreCase(this.getOperator())) {
-            filter = new EntitySearchFilter(escapedKey, isAttributeFilter, objectValue, null);
+            filter = new EntitySearchFilter(key, isAttributeFilter, objectValue, null);
         } else if (FilterOperator.LOWER.getValue().equalsIgnoreCase(this.getOperator())) {
-            filter = new EntitySearchFilter(escapedKey, isAttributeFilter, null, objectValue);
+            filter = new EntitySearchFilter(key, isAttributeFilter, null, objectValue);
         } else {
-            filter = new EntitySearchFilter(escapedKey, isAttributeFilter, objectValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()), LikeOptionType.COMPLETE);
+            filter = new EntitySearchFilter(key, isAttributeFilter, objectValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()), LikeOptionType.COMPLETE);
         }
         filter.setOrder(this.getOrder());
         return filter;
     }
 
     protected Object extractFilterValue() {
+
+        FilterType filterType = FilterType.STRING;
+        if (type != null) {
+            filterType = FilterType.parse(type.toLowerCase());
+        }
+
+        if (allowedValues != null && allowedValues.length > 0) {
+            return Arrays.stream(allowedValues)
+                    .map(filterType::parseFilterValue)
+                    .collect(Collectors.toList());
+        }
+
         if (StringUtils.isBlank(value)) {
             return null;
         }
-        List<String> escapedValues = getAllowedValues();
-        if (escapedValues.isEmpty()) {
-            return null;
-        }
 
-        List<Object> objectValues = escapedValues.stream()
-                .map(escapedValue -> {
-                    if (FilterType.DATE.getValue().equalsIgnoreCase(type)) {
-                        return DateConverter.parseDate(escapedValue, SystemConstants.API_DATE_FORMAT);
-                    } else if (FilterType.NUMBER.getValue().equalsIgnoreCase(type)) {
-                        Integer numberInt = Integer.parseInt(escapedValue);
-                        return new BigDecimal(numberInt);
-                    }
-                    return escapedValue;
-                }).collect(Collectors.toList());
-
-        if (objectValues.size() == 1) {
-            return objectValues.get(0);
-        }
-        return objectValues;
+        return filterType.parseFilterValue(value);
     }
 
-    @JsonIgnore
-    public List<String> getAllowedValues() {
-        String escapedValue;
-        if (value != null && !(escapedValue = StringEscapeUtils.escapeSql(value)).isEmpty()) {
-            return Arrays.asList(escapedValue.split(EntitySearchFilter.ALLOWED_VALUES_SEPARATOR));
-        }
-        return Collections.emptyList();
+    public String[] getAllowedValues() {
+        return allowedValues;
+    }
+
+    public void setAllowedValues(String[] allowedValues) {
+        this.allowedValues = allowedValues;
     }
 
     @Override
@@ -231,7 +217,7 @@ public class Filter {
 
     @Override
     public String toString() {
-        return "Filter{" + "attribute=" + attribute + ", operator=" + operator + ", value=" + value + '}';
+        return "Filter{" + "attribute=" + attribute + ", operator=" + operator + ", value=" + value + ", allowedValues=[" + String.join(",", allowedValues) + "]}";
     }
 
 }

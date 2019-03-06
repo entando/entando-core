@@ -60,7 +60,8 @@ public abstract class RequestListProcessor<T> {
                 String filterValue = filter.getValue();
 
                 if (filterAttribute != null && !filterAttribute.isEmpty()
-                        && filterValue != null && !filterValue.isEmpty()) {
+                        && ((filterValue != null && !filterValue.isEmpty())
+                        || (filter.getAllowedValues() != null && filter.getAllowedValues().length > 0))) {
 
                     Predicate<T> p = predicatesProvider.apply(filter);
                     if (null != p) {

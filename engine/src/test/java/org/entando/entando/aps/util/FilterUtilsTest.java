@@ -65,35 +65,35 @@ public class FilterUtilsTest {
 
     @Test
     public void shouldFilterStrings() {
-        assertTrue(filterString("a", FilterOperator.EQUAL, "a,b"));
-        assertFalse(filterString("a", FilterOperator.EQUAL, "A,B"));
+        assertTrue(filterString("a", FilterOperator.EQUAL, new String[]{"a", "b"}));
+        assertFalse(filterString("a", FilterOperator.EQUAL, new String[]{"A", "B"}));
 
-        assertTrue(filterString("a", FilterOperator.NOT_EQUAL, "b,c"));
+        assertTrue(filterString("a", FilterOperator.NOT_EQUAL, new String[]{"b", "c"}));
         assertFalse(filterString("a", FilterOperator.NOT_EQUAL, "a"));
 
-        assertTrue(filterString("-A-", FilterOperator.LIKE, "a,b"));
-        assertFalse(filterString("-A-", FilterOperator.LIKE, "b,c"));
+        assertTrue(filterString("-A-", FilterOperator.LIKE, new String[]{"a", "b"}));
+        assertFalse(filterString("-A-", FilterOperator.LIKE, new String[]{"b", "c"}));
 
-        assertTrue(filterString("c", FilterOperator.GREATER, "a,b"));
-        assertFalse(filterString("a", FilterOperator.GREATER, "b,c"));
+        assertTrue(filterString("c", FilterOperator.GREATER, new String[]{"a", "b"}));
+        assertFalse(filterString("a", FilterOperator.GREATER, new String[]{"b", "c"}));
 
-        assertTrue(filterString("a", FilterOperator.LOWER, "b,c"));
-        assertFalse(filterString("c", FilterOperator.LOWER, "a,b"));
+        assertTrue(filterString("a", FilterOperator.LOWER, new String[]{"b", "c"}));
+        assertFalse(filterString("c", FilterOperator.LOWER, new String[]{"a", "b"}));
     }
 
     @Test
     public void shouldFilterNumbers() {
-        assertTrue(filterInt(1, FilterOperator.EQUAL, "1,2"));
-        assertFalse(filterInt(1, FilterOperator.EQUAL, "2,3"));
+        assertTrue(filterInt(1, FilterOperator.EQUAL, new String[]{"1", "2"}));
+        assertFalse(filterInt(1, FilterOperator.EQUAL, new String[]{"2", "3"}));
 
-        assertTrue(filterInt(1, FilterOperator.NOT_EQUAL, "2,3"));
+        assertTrue(filterInt(1, FilterOperator.NOT_EQUAL, new String[]{"2", "3"}));
         assertFalse(filterInt(1, FilterOperator.NOT_EQUAL, "1"));
 
-        assertTrue(filterInt(2, FilterOperator.GREATER, "1,3"));
-        assertFalse(filterInt(1, FilterOperator.GREATER, "2,3"));
+        assertTrue(filterInt(2, FilterOperator.GREATER, new String[]{"1", "3"}));
+        assertFalse(filterInt(1, FilterOperator.GREATER, new String[]{"2", "3"}));
 
-        assertTrue(filterInt(1, FilterOperator.LOWER, "2,3"));
-        assertFalse(filterInt(3, FilterOperator.LOWER, "1,2"));
+        assertTrue(filterInt(1, FilterOperator.LOWER, new String[]{"2", "3"}));
+        assertFalse(filterInt(3, FilterOperator.LOWER, new String[]{"1", "2"}));
     }
 
     @Test
@@ -126,8 +126,16 @@ public class FilterUtilsTest {
         return FilterUtils.filterString(getFilter(operator, filterValue), valueToFilter);
     }
 
+    private boolean filterString(String valueToFilter, FilterOperator operator, String[] allowedValues) {
+        return FilterUtils.filterString(getFilter(operator, allowedValues), valueToFilter);
+    }
+
     private boolean filterInt(int valueToFilter, FilterOperator operator, String filterValue) {
         return FilterUtils.filterInt(getFilter(operator, filterValue), valueToFilter);
+    }
+
+    private boolean filterInt(int valueToFilter, FilterOperator operator, String[] allowedValues) {
+        return FilterUtils.filterInt(getFilter(operator, allowedValues), valueToFilter);
     }
 
     private boolean filterBoolean(boolean valueToFilter, FilterOperator operator, String filterValue) {
@@ -142,6 +150,13 @@ public class FilterUtilsTest {
         Filter filter = new Filter();
         filter.setOperator(operator.getValue());
         filter.setValue(value);
+        return filter;
+    }
+
+    private Filter getFilter(FilterOperator operator, String[] allowedValues) {
+        Filter filter = new Filter();
+        filter.setOperator(operator.getValue());
+        filter.setAllowedValues(allowedValues);
         return filter;
     }
 }

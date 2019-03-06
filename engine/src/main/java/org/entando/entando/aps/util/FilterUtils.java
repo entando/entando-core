@@ -3,6 +3,8 @@ package org.entando.entando.aps.util;
 import com.agiletec.aps.system.SystemConstants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -39,7 +41,7 @@ public class FilterUtils {
 
         boolean result = false;
 
-        for (String filterValue : filter.getAllowedValues()) {
+        for (String filterValue : getFilterValues(filter)) {
             switch (operator) {
                 case EQUAL:
                     result |= value.equals(filterValue);
@@ -147,7 +149,7 @@ public class FilterUtils {
      * Handles the conversion from String to the desired type.
      */
     private static <T> List<T> getTypedAllowedValues(Filter filter, Function<String, T> converter) {
-        return filter.getAllowedValues().stream().map(converter::apply).collect(Collectors.toList());
+        return getFilterValues(filter).stream().map(converter::apply).collect(Collectors.toList());
     }
 
     private static FilterOperator getFilterOperator(Filter filter) {
@@ -156,5 +158,16 @@ public class FilterUtils {
 
     private static String getUnsupportedOperatorMessage(Filter filter) {
         return "Operator '" + filter.getOperator() + "' is not supported";
+    }
+    
+    private static List<String> getFilterValues(Filter filter) {
+        if (filter.getAllowedValues() == null || filter.getAllowedValues().length == 0) {
+            List<String> values = new ArrayList<>();
+            if (filter.getValue() != null) {
+                values.add(filter.getValue());
+            }
+            return values;
+        }
+        return Arrays.asList(filter.getAllowedValues());
     }
 }

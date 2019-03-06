@@ -94,7 +94,7 @@ public class AbstractEntityTypeServiceTest {
         RestListRequest requestList = new RestListRequest();
         Filter filter = new Filter();
         filter.setAttribute("id");
-        filter.setValue("user1,user2");
+        filter.setAllowedValues(new String[]{"user1", "user2"});
         requestList.addFilter(filter);
 
         checkResult(requestList, new EntityTypeShortDto(user1), new EntityTypeShortDto(user2));

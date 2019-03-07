@@ -321,7 +321,7 @@ public class AuthenticationProviderManagerIntegrationTest extends BaseTestCase {
     }
 
     private void addUserForTest(String username, String password) throws Throwable {
-        MockUser user = new MockUser();
+        User user = new User();
         user.setUsername(username);
         user.setPassword(password);
         Authorization auth = new Authorization(this.groupManager.getGroup(Group.FREE_GROUP_NAME),

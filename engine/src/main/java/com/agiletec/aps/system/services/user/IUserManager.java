@@ -130,8 +130,4 @@ public interface IUserManager {
      */
     public UserDetails getGuestUser();
 
-    public String encrypt(String text) throws ApsSystemException;
-
-    public boolean isArgon2Encrypted(String encrypted);
-
 }

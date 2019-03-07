@@ -23,47 +23,42 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
-import com.agiletec.aps.util.BlowfishApsEncrypter;
-import com.agiletec.aps.util.DefaultApsEncrypter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.aps.util.crypto.LegacyPasswordEncryptor;
 
 /**
  * Servizio di gestione degli utenti.
  *
  * @author M.Diana - E.Santoboni
  */
-public class UserManager extends AbstractService implements IUserManager/*, GroupUtilizer*/ {
+public class UserManager extends AbstractService implements IUserManager {
 
-    private static final Logger _logger = LoggerFactory.getLogger(UserManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserManager.class);
 
+    private IUserDAO userDao;
+    private ConfigInterface configManager;
+    
     @Override
     public void init() throws Exception {
-        UserDetails admin = this.getUser("admin");
-        if (admin != null && !this.isArgon2Encrypted(admin.getPassword())) {
-            this.changeUserPasswordInArgon2(admin);
-        }
-        if (this.getUserDAO().getEncrypter() instanceof Argon2Encrypter
-                && !this.getConfigManager().isArgon2()) {
+        if (!this.getConfigManager().areLegacyPasswordsUpdated()) {
             List<UserDetails> users = this.getUserDAO().loadUsers();
             for (UserDetails user : users) {
-                this.changeUserPasswordInArgon2(user);
+                updateLegacyPassword(user);
             }
             Map<String, String> newParam = new HashMap<>();
-            newParam.put("argon2", "true");
+            newParam.put(ConfigInterface.LEGACY_PASSWORDS_UPDATED, "true");
             String oldParam = this.getConfigManager().getConfigItem(SystemConstants.CONFIG_ITEM_PARAMS);
             String newXmlParams = null;
             try {
                 newXmlParams = SystemParamsUtils.getNewXmlParams(oldParam, newParam);
             } catch (Throwable ex) {
-                java.util.logging.Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("Error updating XML param", ex);
             }
             this.getConfigManager().updateConfigItem(SystemConstants.CONFIG_ITEM_PARAMS, newXmlParams);
         }
-        _logger.debug("{} ready", this.getClass().getName());
+        logger.debug("{} ready", this.getClass().getName());
     }
 
     @Override
@@ -77,7 +72,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             usernames = this.getUserDAO().searchUsernames(text);
         } catch (Throwable t) {
-            _logger.error("Error searching usernames by text '{}'", text, t);
+            logger.error("Error searching usernames by text '{}'", text, t);
             throw new ApsSystemException("Error loading the username list", t);
         }
         return usernames;
@@ -103,7 +98,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
                 this.setUserCredentialCheckParams(users.get(i));
             }
         } catch (Throwable t) {
-            _logger.error("Error searching users by text '{}'", text, t);
+            logger.error("Error searching users by text '{}'", text, t);
             throw new ApsSystemException("Error loading the user list", t);
         }
         return users;
@@ -120,7 +115,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().deleteUser(user);
         } catch (Throwable t) {
-            _logger.error("Error deleting user '{}'", user, t);
+            logger.error("Error deleting user '{}'", user, t);
             throw new ApsSystemException("Error deleting a user", t);
         }
     }
@@ -130,7 +125,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().deleteUser(username);
         } catch (Throwable t) {
-            _logger.error("Error deleting user '{}'", username, t);
+            logger.error("Error deleting user '{}'", username, t);
             throw new ApsSystemException("Error deleting a user", t);
         }
     }
@@ -146,7 +141,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().updateUser(user);
         } catch (Throwable t) {
-            _logger.error("Error updating user '{}'", user, t);
+            logger.error("Error updating user '{}'", user, t);
             throw new ApsSystemException("Error updating the User", t);
         }
     }
@@ -156,7 +151,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().changePassword(username, password);
         } catch (Throwable t) {
-            _logger.error("Error on change password for user '{}'", username, t);
+            logger.error("Error on change password for user '{}'", username, t);
             throw new ApsSystemException("Error updating the password of the User" + username, t);
         }
     }
@@ -169,7 +164,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().updateLastAccess(user.getUsername());
         } catch (Throwable t) {
-            _logger.error("Error on update last access for user '{}'", user, t);
+            logger.error("Error on update last access for user '{}'", user, t);
             throw new ApsSystemException("Error while refreshing the last access date of the User " + user.getUsername(), t);
         }
     }
@@ -185,7 +180,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             this.getUserDAO().addUser(user);
         } catch (Throwable t) {
-            _logger.error("Error on add user '{}'", user, t);
+            logger.error("Error on add user '{}'", user, t);
             throw new ApsSystemException("Error adding a new user ", t);
         }
     }
@@ -205,7 +200,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             user = this.getUserDAO().loadUser(username);
         } catch (Throwable t) {
-            _logger.error("Error loading user by username '{}'", username, t);
+            logger.error("Error loading user by username '{}'", username, t);
             throw new ApsSystemException("Error loading user", t);
         }
         this.setUserCredentialCheckParams(user);
@@ -228,7 +223,7 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         try {
             user = this.getUserDAO().loadUser(username, password);
         } catch (Throwable t) {
-            _logger.error("Error loading user by username and password. username: '{}'", username, t);
+            logger.error("Error loading user by username and password. username: '{}'", username, t);
             throw new ApsSystemException("Error loading user", t);
         }
         this.setUserCredentialCheckParams(user);
@@ -272,30 +267,31 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         return value;
     }
 
-    private void changeUserPasswordInArgon2(UserDetails user) throws ApsSystemException {
+    private void updateLegacyPassword(UserDetails user) throws ApsSystemException {
         String pwd = user.getPassword();
-        if (!this.isArgon2Encrypted(pwd)) {
+        if (!isBCryptEncoded(pwd) && !isArgon2Encoded(pwd)) {
             try {
-                pwd = DefaultApsEncrypter.decrypt(pwd);
+                pwd = new LegacyPasswordEncryptor().decrypt(pwd);
             } catch (Exception e) {
-                _logger.warn("Plain text password for user {}", user.getUsername());
+                logger.warn("Plain text password for user {}", user.getUsername());
                 pwd = user.getPassword();
             }
             this.changePassword(user.getUsername(), pwd);
         }
     }
 
-    @Override
-    public boolean isArgon2Encrypted(String encrypted) {
-        if (StringUtils.isBlank(encrypted)) {
+    private boolean isArgon2Encoded(String encoded) {
+        if (StringUtils.isBlank(encoded)) {
             return false;
         }
-        if (encrypted.contains("$argon2") && encrypted.contains("$v=")
-                && encrypted.contains("$m=") && encrypted.contains(",t=")
-                && encrypted.contains(",p=")) {
-            return true;
+        return encoded.startsWith("$argon2");
+    }
+
+    private boolean isBCryptEncoded(String encoded) {
+        if (StringUtils.isBlank(encoded)) {
+            return false;
         }
-        return false;
+        return encoded.startsWith("{bcrypt}");
     }
 
     /**
@@ -313,55 +309,19 @@ public class UserManager extends AbstractService implements IUserManager/*, Grou
         return user;
     }
 
-    /*
-	@Override
-	public List<UserDetails> getGroupUtilizers(String groupName) throws ApsSystemException {
-		List<String> usernames = null;
-		List<UserDetails> utilizers = new ArrayList<UserDetails>();
-		try {
-			usernames = this.getUserDAO().loadUsernamesForGroup(groupName);
-			if (usernames != null) {
-				for (int i=0; i<usernames.size(); i++) {
-					String username = usernames.get(i);
-					UserDetails user = this.getUser(username);
-					if (null != user) {
-						utilizers.add(user);
-					} else {
-						_logger.info("Searching for the references of the group '{}' - The username '{}'referenced does not correspond to any valid user. Deleting reference!", groupName, username);
-						this.getUserDAO().deleteUser(username);
-					}
-				}
-			}
-		} catch (Throwable t) {
-			_logger.error("Error while loading the members of the group: '{}'", groupName,  t);
-			throw new ApsSystemException("Error while loading the members of the group "+ groupName, t);
-		}
-		return utilizers;
-	}
-     */
     protected ConfigInterface getConfigManager() {
-        return _configManager;
+        return configManager;
     }
 
     public void setConfigManager(ConfigInterface configManager) {
-        this._configManager = configManager;
+        this.configManager = configManager;
     }
 
     protected IUserDAO getUserDAO() {
-        return _userDao;
+        return userDao;
     }
 
     public void setUserDAO(IUserDAO userDao) {
-        this._userDao = userDao;
+        this.userDao = userDao;
     }
-
-    private IUserDAO _userDao;
-
-    private ConfigInterface _configManager;
-
-    @Override
-    public String encrypt(String pwd) throws ApsSystemException {
-        return this.getUserDAO().getEncrypter().encrypt(pwd);
-    }
-
 }

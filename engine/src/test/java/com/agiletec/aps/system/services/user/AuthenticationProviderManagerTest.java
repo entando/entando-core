@@ -297,7 +297,7 @@ public class AuthenticationProviderManagerTest {
     }
 
     private UserDetails createMockUser(String username, boolean enabled, boolean accoutExpired, boolean credentialExpired) {
-        MockUser user = new MockUser();
+        User user = new User();
         user.setUsername(username);
         user.setDisabled(!enabled);
         user.setCheckCredentials(true);

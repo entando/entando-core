@@ -16,6 +16,8 @@
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
+    <context:component-scan base-package="org.entando.entando.aps.util.crypto" />
+    
     <cache:annotation-driven cache-manager="springCacheManager" />
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
@@ -172,11 +174,9 @@
         </property>
     </bean>
 
-    <bean id="Argon2" class="org.entando.entando.aps.util.argon2.Argon2Encrypter"/>
-
     <bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
         <property name="dataSource" ref="servDataSource" />
-        <property name="encrypter" ref="Argon2" />
+        <property name="passwordEncoder" ref="compatiblePasswordEncoder" />
     </bean>
 
     <bean id="UserManager" class="com.agiletec.aps.system.services.user.UserManager"

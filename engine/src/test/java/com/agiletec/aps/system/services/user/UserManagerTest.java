@@ -14,19 +14,24 @@
 package com.agiletec.aps.system.services.user;
 
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
-import com.agiletec.aps.util.DefaultApsEncrypter;
 import java.util.ArrayList;
 import java.util.List;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.aps.util.crypto.Argon2PasswordEncoder;
+import org.entando.entando.aps.util.crypto.CompatiblePasswordEncoder;
+import org.entando.entando.aps.util.crypto.LegacyPasswordEncryptor;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserManagerTest {
 
@@ -41,7 +46,7 @@ public class UserManagerTest {
 
     private List<UserDetails> users = new ArrayList<>();
 
-    private String params = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+    private final String params = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<Params>\n"
             + "	<Param name=\"urlStyle\">classic</Param>\n"
             + "	<Param name=\"hypertextEditor\">none</Param>\n"
@@ -78,17 +83,19 @@ public class UserManagerTest {
             + "	</ExtraParams>\n"
             + "</Params>\n";
 
+    private final PasswordEncoder passwordEncoder = getCompatiblePasswordEncoder();
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(userDao.getEncrypter()).thenReturn(new Argon2Encrypter());
-        Mockito.doNothing().when(configManager).updateConfigItem(Mockito.anyString(), Mockito.anyString());
-        Mockito.when(configManager.getConfigItem(Mockito.anyString())).thenReturn(params);
+        when(userDao.getPasswordEncoder()).thenReturn(passwordEncoder);
+        doNothing().when(configManager).updateConfigItem(anyString(), anyString());
+        when(configManager.getConfigItem(Mockito.anyString())).thenReturn(params);
     }
 
     @Test
-    public void testUserManagerInitWithArgon2_OnlyAdmin() throws Exception {
-        when(configManager.isArgon2()).thenReturn(true);
+    public void testUserManagerInitWithBCrypt_OnlyAdmin() throws Exception {
+        when(configManager.areLegacyPasswordsUpdated()).thenReturn(true);
         this.emptyUsers();
         this.mockAdminPlainText();
         this.prepareInit();
@@ -96,13 +103,12 @@ public class UserManagerTest {
         Mockito.when(userDao.loadUser("admin")).thenReturn(this.getMockUser("admin"));
         UserDetails admin = userManager.getUser("admin");
         assertNotNull(admin);
-        boolean res = this.userManager.isArgon2Encrypted(admin.getPassword());
-        assertTrue(res);
+        assertBCrypt(admin.getPassword());
     }
 
     @Test
-    public void testUserManagerInitWithArgon2_AdminNull() throws Exception {
-        when(configManager.isArgon2()).thenReturn(true);
+    public void testUserManagerInitWithBCrypt_AdminNull() throws Exception {
+        when(configManager.areLegacyPasswordsUpdated()).thenReturn(true);
         this.emptyUsers();
         this.prepareInit();
         userManager.init();
@@ -112,8 +118,8 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testUserManagerInitPortingToArgon2PlainTextPasswords() throws Exception {
-        when(configManager.isArgon2()).thenReturn(false);
+    public void testUserManagerInitPortingToBCryptPlainTextPasswords() throws Exception {
+        when(configManager.areLegacyPasswordsUpdated()).thenReturn(false);
         this.emptyUsers();
         this.mockAdminPlainText();
         this.mockUsersPlainText();
@@ -125,19 +131,14 @@ public class UserManagerTest {
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
         assertEquals(6, usersList.size());
-        boolean res = true;
         for (UserDetails user : usersList) {
-            res = this.userManager.isArgon2Encrypted(user.getPassword());
-            if (!res) {
-                break;
-            }
+            assertBCrypt(user.getPassword());
         }
-        assertTrue(res);
     }
 
     @Test
-    public void testUserManagerInitPortingToArgon2OldEncryptionPasswords() throws Exception {
-        when(configManager.isArgon2()).thenReturn(false);
+    public void testUserManagerInitPortingToBCryptOldEncryptionPasswords() throws Exception {
+        when(configManager.areLegacyPasswordsUpdated()).thenReturn(false);
         this.emptyUsers();
         this.mockAdminOldEncryption();
         this.mockUsersOldEncryption();
@@ -149,19 +150,14 @@ public class UserManagerTest {
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
         assertEquals(6, usersList.size());
-        boolean res = true;
         for (UserDetails user : usersList) {
-            res = this.userManager.isArgon2Encrypted(user.getPassword());
-            if (!res) {
-                break;
-            }
+            assertBCrypt(user.getPassword());
         }
-        assertTrue(res);
     }
 
     @Test
-    public void testUserManagerInitPortingToArgon2OldEncryptionAndPlainTextPasswords() throws Exception {
-        when(configManager.isArgon2()).thenReturn(false);
+    public void testUserManagerInitPortingToBCryptOldEncryptionAndPlainTextPasswords() throws Exception {
+        when(configManager.areLegacyPasswordsUpdated()).thenReturn(false);
         this.emptyUsers();
         this.mockAdminPlainText();
         this.mockUsersMixed();
@@ -173,14 +169,9 @@ public class UserManagerTest {
         List<UserDetails> usersList = this.userManager.getUsers();
         assertNotNull(usersList);
         assertEquals(6, usersList.size());
-        boolean res = true;
         for (UserDetails user : usersList) {
-            res = this.userManager.isArgon2Encrypted(user.getPassword());
-            if (!res) {
-                break;
-            }
+            assertBCrypt(user.getPassword());
         }
-        assertTrue(res);
     }
 
     private void mockAdminPlainText() {
@@ -193,7 +184,7 @@ public class UserManagerTest {
     private void mockAdminOldEncryption() throws Exception {
         User user = new User();
         user.setUsername("admin");
-        user.setPassword(DefaultApsEncrypter.encryptString("adminadmin"));
+        user.setPassword(new LegacyPasswordEncryptor().encrypt("adminadmin"));
         users.add(user);
     }
 
@@ -221,7 +212,7 @@ public class UserManagerTest {
     private UserDetails mockUserOldEncryption(String username, String password) throws Exception {
         User user = new User();
         user.setUsername(username);
-        user.setPassword(DefaultApsEncrypter.encryptString(password));
+        user.setPassword(new LegacyPasswordEncryptor().encrypt(password));
         return user;
     }
 
@@ -256,7 +247,7 @@ public class UserManagerTest {
             if (user.getUsername().equals(username)) {
                 User cur = new User();
                 cur.setUsername(username);
-                cur.setPassword(Argon2Encrypter.encryptString(password));
+                cur.setPassword(passwordEncoder.encode(password));
                 user = cur;
             }
             users.add(user);
@@ -279,4 +270,12 @@ public class UserManagerTest {
         }
     }
 
+    private void assertBCrypt(String password) {
+        assertTrue(CompatiblePasswordEncoder.isBCrypt(password));
+    }
+
+    private CompatiblePasswordEncoder getCompatiblePasswordEncoder() {
+        return new CompatiblePasswordEncoder(new BCryptPasswordEncoder(),
+                new Argon2PasswordEncoder(), new LegacyPasswordEncryptor());
+    }
 }

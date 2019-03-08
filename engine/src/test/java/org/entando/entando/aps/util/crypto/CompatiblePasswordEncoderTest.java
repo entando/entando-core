@@ -14,14 +14,16 @@
 package org.entando.entando.aps.util.crypto;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.entando.entando.TestEntandoJndiUtils;
+import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
-import org.entando.entando.TestEntandoJndiUtils;
-import org.junit.BeforeClass;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -32,28 +34,44 @@ import org.junit.BeforeClass;
     "classpath*:spring/web/**.xml"
 })
 @WebAppConfiguration(value = "")
-public class BlowfishEncryptorTest {
+public class CompatiblePasswordEncoderTest {
 
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
     }
 
+    private static final String SECRET = "my secret";
+
     @Autowired
-    private BlowfishEncryptor encryptor;
+    private BCryptPasswordEncoder bcryptEncoder;
+
+    @Autowired
+    private Argon2PasswordEncoder argon2Encoder;
+
+    @Autowired
+    private LegacyPasswordEncryptor legacyEncryptor;
+
+    @Autowired
+    private CompatiblePasswordEncoder passwordEncoder;
 
     @Test
-    public void testEncryptAndDecrypt() throws Exception {
+    public void testLegacy() {
+        testMatches(legacyEncryptor.encrypt(SECRET));
+    }
 
-        String secret = "my secret";
+    @Test
+    public void testBCrypt() {
+        testMatches("{bcrypt}" + bcryptEncoder.encode(SECRET));
+    }
 
-        String encrypted = encryptor.encrypt(secret);
+    @Test
+    public void testArgon2() throws Exception {
+        testMatches(argon2Encoder.encode(SECRET));
+    }
 
-        assertThat(encrypted).isNotNull()
-                .isNotEqualTo(secret);
-
-        String decrypted = encryptor.decrypt(encrypted);
-
-        assertThat(decrypted).isEqualTo(secret);
+    private void testMatches(String encodedPwd) {
+        assertThat(encodedPwd).isNotEqualTo(SECRET);
+        assertTrue(passwordEncoder.matches(SECRET, encodedPwd));
     }
 }

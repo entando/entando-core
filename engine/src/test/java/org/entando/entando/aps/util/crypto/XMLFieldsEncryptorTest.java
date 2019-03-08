@@ -17,10 +17,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.runners.JUnit4;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(JUnit4.class)
 public class XMLFieldsEncryptorTest {
 
     @XmlRootElement(name = "root")
@@ -41,8 +41,7 @@ public class XMLFieldsEncryptorTest {
     @Test
     public void testFieldEncryption() {
 
-        BlowfishEncryptor encryptor = new BlowfishEncryptor();
-        encryptor.setKey("key");
+        BlowfishEncryptor encryptor = new BlowfishEncryptor("test-key");
 
         XMLFieldsEncryptor<JaxbClass> xmlFieldsEncryptor
                 = new XMLFieldsEncryptor<>(encryptor, JaxbClass.class);

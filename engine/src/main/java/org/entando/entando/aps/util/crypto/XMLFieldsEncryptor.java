@@ -22,6 +22,13 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 
+/**
+ * This class can be used to encrypt/decrypt some field during JAXB
+ * marshalling/unmarshalling. Fields need to be annotated in this way:
+ * <code>@XmlJavaTypeAdapter(EncryptorAdapter.class)</code> Note that the
+ * EncryptorAdapter doesn't work with default JAXB Marshaller because it needs
+ * to receive the TextEncryptor in the constructor.
+ */
 public class XMLFieldsEncryptor<T> {
 
     private final EncryptorAdapter encryptorAdapter;
@@ -41,6 +48,7 @@ public class XMLFieldsEncryptor<T> {
             StringWriter sw = new StringWriter();
             Marshaller marshaller = ctx.createMarshaller();
             marshaller.setAdapter(encryptorAdapter);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(object, sw);
             return sw.toString();
         } catch (JAXBException ex) {

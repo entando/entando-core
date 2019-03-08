@@ -29,6 +29,7 @@ public interface ConfigInterface {
     public static final String ALGO_ITERATIONS_PARAM_NAME = "algo.argon2.iterations";
     public static final String ALGO_MEMORY_PARAM_NAME = "algo.argon2.memory";
     public static final String ALGO_PARALLELISM_PARAM_NAME = "algo.argon2.parallelism";
+    public static final String ALGO_BLOWFISH_KEY = "algo.blowfish.key";
     public static final String LEGACY_PASSWORDS_UPDATED = "legacyPasswordsUpdated";
 
     /**

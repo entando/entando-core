@@ -17,12 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class CryptoBeansConfig {
 
-    @Value("{algo.blowfish.key}")
+    @Value("${algo.blowfish.key}")
     private String blowfishKey;
 
     @Bean
@@ -32,10 +33,9 @@ public class CryptoBeansConfig {
     }
 
     @Bean
+    @Lazy
     public BlowfishEncryptor getBlowfishEncryptor() {
-        BlowfishEncryptor encryptor = new BlowfishEncryptor();
-        encryptor.setKey(blowfishKey);
-        return encryptor;
+        return new BlowfishEncryptor(blowfishKey);
     }
 
     @Bean

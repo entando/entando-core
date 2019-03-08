@@ -16,6 +16,10 @@ package org.entando.entando.aps.util.crypto;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
 
+/**
+ * Encrypts/decrypts values during JAXB serialization/deserialization.
+ * See also XMLFieldsEncryptor.
+ */
 public class EncryptorAdapter extends XmlAdapter<String, String> {
 
     private final TextEncryptor encryptor;

@@ -170,6 +170,11 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
             throw new RuntimeException("Memory size must be greater than 8xparallelism - value '" + memory + "'");
         }
         System.getProperties().setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
+        
+        String blowfishKey = mainProps.getProperty(ALGO_BLOWFISH_KEY);
+        if (StringUtils.isNotEmpty(blowfishKey)) {
+            System.getProperties().setProperty(ALGO_BLOWFISH_KEY, blowfishKey);
+        }
     }
 
     @Override

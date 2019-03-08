@@ -19,7 +19,7 @@
         <connection>scm:git:git@github.com:entando/entando-core.git</connection>
         <developerConnection>scm:git:git@github.com:entando/entando-core.git</developerConnection>
         <url>https://github.com/entando/entando-core</url>
-        <tag>v5.0.3</tag>
+        <tag>v5.0.4</tag>
     </scm>
     <organization>
         <name>Entando Inc.</name>

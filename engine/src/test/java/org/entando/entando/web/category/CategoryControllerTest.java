@@ -62,6 +62,26 @@ public class CategoryControllerTest extends AbstractControllerTest {
                         .param("parentCode", "home")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+
+        result = mockMvc
+                .perform(get("/categories")
+                        .param("parentCode", "home"));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetCategory() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/categories/{code}", "home")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+
+        result = mockMvc
+                .perform(get("/categories/{code}", "home")
+                        .param("parentCode", "home"));
+        result.andExpect(status().isUnauthorized());
     }
 
 }

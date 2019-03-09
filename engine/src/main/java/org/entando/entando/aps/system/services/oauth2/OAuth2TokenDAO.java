@@ -190,6 +190,12 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             stat.executeUpdate();
             conn.commit();
         } catch (Exception t) {
+            //On certain systems with MySQL, racing conditions emerge on login that causes an attempt at inserting a duplicate token.
+            //Following the logic above, if the token already exists it is not an error condition
+            if (null != this.getAccessToken(accessToken.getValue(), conn)) {
+                logger.debug("storeAccessToken: Stored Token already exists");
+                return;
+            }
             this.executeRollback(conn);
             logger.error("Error while adding an access token", t);
             throw new RuntimeException("Error while adding an access token", t);

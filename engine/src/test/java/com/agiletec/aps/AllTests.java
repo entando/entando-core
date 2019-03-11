@@ -100,7 +100,6 @@ import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeI
 import org.entando.entando.aps.util.FilterUtilsTest;
 import org.entando.entando.aps.util.crypto.BlowfishEncryptorTest;
 import org.entando.entando.aps.util.crypto.CompatiblePasswordEncoderTest;
-import org.entando.entando.aps.util.crypto.XMLFieldsEncryptorTest;
 import org.entando.entando.web.common.IgnoreJacksonWriteOnlyAccessTest;
 
 /**
@@ -232,7 +231,6 @@ public class AllTests {
         
         suite.addTest(new JUnit4TestAdapter(BlowfishEncryptorTest.class));
         suite.addTest(new JUnit4TestAdapter(CompatiblePasswordEncoderTest.class));
-        suite.addTest(new JUnit4TestAdapter(XMLFieldsEncryptorTest.class));
         suite.addTest(new JUnit4TestAdapter(IgnoreJacksonWriteOnlyAccessTest.class));
 
         return suite;

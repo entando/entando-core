@@ -32,7 +32,7 @@ public class CryptoBeansConfig {
         return new Argon2PasswordEncoder();
     }
 
-    @Bean
+    @Bean(name = "blowfishEncryptor")
     @Lazy
     public BlowfishEncryptor getBlowfishEncryptor() {
         return new BlowfishEncryptor(blowfishKey);

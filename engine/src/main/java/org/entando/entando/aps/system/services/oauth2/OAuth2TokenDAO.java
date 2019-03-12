@@ -15,9 +15,12 @@ package org.entando.entando.aps.system.services.oauth2;
 
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -190,9 +193,15 @@ public class OAuth2TokenDAO extends AbstractSearcherDAO implements IOAuth2TokenD
             stat.executeUpdate();
             conn.commit();
         } catch (Exception t) {
-            //On certain systems with MySQL, racing conditions emerge on login that causes an attempt at inserting a duplicate token.
+            CharArrayWriter stackTraceWriter = new CharArrayWriter();
+            t.printStackTrace(new PrintWriter(stackTraceWriter));
+            String stackTrace = stackTraceWriter.toString().toLowerCase();
+            //Generic mechanism to identify duplicate key exceptions
+            boolean isDuplicateKeyContraintVioloation = stackTrace.contains("constraint") && stackTrace.contains("violation") && stackTrace.contains("duplicate") && stackTrace.contains("key");
+            if(isDuplicateKeyContraintVioloation && null != this.getAccessToken(accessToken.getValue(), conn)){
+                logger.debug("Duplicate Key exception occurred",t);
+            //On certain systems, racing conditions emerge on login that causes an attempt at inserting a duplicate token.
             //Following the logic above, if the token already exists it is not an error condition
-            if (null != this.getAccessToken(accessToken.getValue(), conn)) {
                 logger.debug("storeAccessToken: Stored Token already exists");
                 return;
             }

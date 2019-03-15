@@ -23,8 +23,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @Configuration
 public class CryptoBeansConfig {
 
-    @Value("${algo.blowfish.key}")
-    private String blowfishKey;
+    @Value("${algo.default.key}")
+    private String defaultKey;
 
     @Bean
     @DependsOn("BaseConfigManager")
@@ -32,10 +32,10 @@ public class CryptoBeansConfig {
         return new Argon2PasswordEncoder();
     }
 
-    @Bean(name = "blowfishEncryptor")
+    @Bean(name = "defaultTextEncryptor")
     @Lazy
-    public BlowfishEncryptor getBlowfishEncryptor() {
-        return new BlowfishEncryptor(blowfishKey);
+    public DefaultTextEncryptor getDefaultTextEncryptor() {
+        return new DefaultTextEncryptor(defaultKey);
     }
 
     @Bean

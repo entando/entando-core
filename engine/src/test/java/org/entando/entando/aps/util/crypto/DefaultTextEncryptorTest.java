@@ -32,7 +32,7 @@ import org.junit.BeforeClass;
     "classpath*:spring/web/**.xml"
 })
 @WebAppConfiguration(value = "")
-public class BlowfishEncryptorTest {
+public class DefaultTextEncryptorTest {
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -40,7 +40,7 @@ public class BlowfishEncryptorTest {
     }
 
     @Autowired
-    private BlowfishEncryptor encryptor;
+    private DefaultTextEncryptor encryptor;
 
     @Test
     public void testEncryptAndDecrypt() throws Exception {

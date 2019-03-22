@@ -16,10 +16,13 @@ package com.agiletec.aps.system;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.AsyncAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.DefaultRolloverStrategy;
+import org.apache.logging.log4j.core.appender.rolling.SizeBasedTriggeringPolicy;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +66,12 @@ public class ApsSystemUtils {
         if (StringUtils.isBlank(conversionPattern)) {
             conversionPattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p -  %c - %m%n"; //default conversionPattern
         }
-        PatternLayout layout = new PatternLayout(conversionPattern);
+
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = loggerContext.getConfiguration();
+        //LoggerConfig rootLoggerConfig = configuration.getLoggerConfig("");
+
+        PatternLayout layout = PatternLayout.createDefaultLayout(configuration);
         String maxFileSize = (String) this.systemParams.get(INIT_PROP_LOG_FILE_SIZE);
         if (StringUtils.isBlank(maxFileSize)) {
             maxFileSize = "1MB"; //default size
@@ -77,7 +85,36 @@ public class ApsSystemUtils {
         if (StringUtils.isBlank(log4jLevelString)) {
             log4jLevelString = "INFO"; //default level
         }
-        RollingFileAppender fileAppender = (RollingFileAppender) LogManager.getRootLogger().getAppender(appenderName);
+
+        /*
+        RolloverStrategy strategy = new RolloverStrategy() {
+            @Override
+            public RolloverDescription rollover(RollingFileManager rfm) throws SecurityException {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+        }
+         */
+        //ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
+        SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(maxFileSize);
+        DefaultRolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
+                .withMax(String.valueOf(maxBackupIndex)).build();
+        RollingFileAppender fileAppender = RollingFileAppender.newBuilder()
+                .withName(appenderName)
+                //.setConfiguration(configuration)
+                .withLayout(layout)
+                .withFileName(filename)
+                .withPolicy(policy)
+                .withStrategy(strategy)
+                .build();
+        fileAppender.start();
+        LoggerContext lc = (LoggerContext) LogManager.getContext(false);
+        lc.getConfiguration().addAppender(fileAppender);
+        lc.getRootLogger().addAppender(lc.getConfiguration().getAppender(fileAppender.getName()));
+        lc.updateLoggers();
+
+        //appender.setHandler(handler);
+        /*
+        //FileAppender fileAppender = (FileAppender) LogManager.getRootLogger().getAppender(appenderName);
         if (null == fileAppender) {
             fileAppender = new RollingFileAppender();
             fileAppender.setName(appenderName);
@@ -88,13 +125,21 @@ public class ApsSystemUtils {
         fileAppender.setMaxFileSize(maxFileSize);
         fileAppender.setFile(filename);
         fileAppender.activateOptions();
-        AsyncAppender async = (AsyncAppender) LogManager.getRootLogger().getAppender("async");
+         */
+ /*
+        org.apache.log4j.Logger logbackLogger
+                = (org.apache.log4j.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        logbackLogger.addAppender(fileAppender);
+         */
+ /*
+        AsyncAppender async = (AsyncAppender) LogManager.getRootLogger();//.getAppender("async");
         if (null == async) {
             async = new AsyncAppender();
             async.setName("async");
             LogManager.getRootLogger().addAppender(async);
         }
         async.addAppender(fileAppender);
+         */
     }
 
     /**

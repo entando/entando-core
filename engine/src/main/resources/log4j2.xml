@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout
+                pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.struts2" additivity="false" level="WARN">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.springframework" additivity="false" level="WARN">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Root level="debug" additivity="false">
+            <AppenderRef ref="console" />
+        </Root>
+    </Loggers>
+</Configuration>

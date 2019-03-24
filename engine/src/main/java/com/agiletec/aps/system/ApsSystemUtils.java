@@ -83,8 +83,10 @@ public class ApsSystemUtils {
         if (StringUtils.isBlank(log4jLevelString)) {
             log4jLevelString = "INFO"; //default level
         }
+        Configurator.setRootLevel(Level.getLevel(log4jLevelString));
         LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
         loggerContext.getRootLogger().setLevel(Level.getLevel(log4jLevelString));
+        Configurator.setAllLevels(loggerContext.getRootLogger().getName(), Level.getLevel(log4jLevelString));
         Configuration configuration = loggerContext.getConfiguration();
         RollingFileAppender fileAppender = (RollingFileAppender) configuration.getAppender(appenderName);
         if (null == fileAppender) {

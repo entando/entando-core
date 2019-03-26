@@ -46,8 +46,8 @@ public class LabelServiceTest {
         lang.setCode("EN");
     }
 
-    @Test public void
-    get_label_groups_filtering_equal() {
+    @Test
+    public void testGetLabelGroupsFilteringEqual() {
         RestListRequest request = new RestListRequest();
         Filter filter = new Filter("value", "some_value", FilterOperator.EQUAL.getValue());
 
@@ -73,8 +73,8 @@ public class LabelServiceTest {
         assertThat(labelGroups.getBody()).hasSize(0);
     }
 
-    @Test public void
-    get_label_groups_filtering_like() {
+    @Test
+    public void testGetLabelGroupsFilteringLike() {
         RestListRequest request = new RestListRequest();
         Filter filter = new Filter("value", "some_value", FilterOperator.LIKE.getValue());
 
@@ -103,14 +103,14 @@ public class LabelServiceTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void get_label_group_not_found() throws ApsSystemException {
+    public void testGetLabelGroupNotFound() throws ApsSystemException {
         when(i18nManager.getLabelGroup(eq("not_found"))).thenReturn(null);
         labelService.getLabelGroup("not_found");
         verify(i18nManager, times(1)).getLabelGroup(eq("not_found"));
     }
 
-    @Test public void
-    get_label_group() throws ApsSystemException {
+    @Test
+    public void testGetLabelGroup() throws ApsSystemException {
         when(i18nManager.getLabelGroup(eq("lab"))).thenReturn(create(singletonMap("EN", "some_value")));
         final LabelDto label = labelService.getLabelGroup("lab");
         assertThat(label.getKey()).isEqualTo("lab");
@@ -120,7 +120,7 @@ public class LabelServiceTest {
     }
 
     @Test(expected = RestServerError.class)
-    public void add_label_group_error() throws ApsSystemException {
+    public void testAddLabelGroupError() throws ApsSystemException {
         when(langManager.getDefaultLang()).thenReturn(lang);
         when(langManager.getAssignableLangs()).thenReturn(singletonList(lang));
         when(langManager.getLangs()).thenReturn(singletonList(lang));
@@ -132,7 +132,7 @@ public class LabelServiceTest {
     }
 
     @Test(expected = ValidationConflictException.class)
-    public void add_label_group_no_assignable_lang() throws ApsSystemException {
+    public void testAddLabelGroupNotAssignableLang() throws ApsSystemException {
         when(langManager.getDefaultLang()).thenReturn(lang);
         when(langManager.getAssignableLangs()).thenReturn(Collections.emptyList());
         when(langManager.getLangs()).thenReturn(singletonList(lang));
@@ -141,8 +141,8 @@ public class LabelServiceTest {
         labelService.addLabelGroup(label);
     }
 
-    @Test public void
-    add_label_group() throws ApsSystemException {
+    @Test
+    public void testAddLabelGroup() throws ApsSystemException {
         when(langManager.getDefaultLang()).thenReturn(lang);
         when(langManager.getAssignableLangs()).thenReturn(singletonList(lang));
         when(langManager.getLangs()).thenReturn(singletonList(lang));
@@ -160,8 +160,8 @@ public class LabelServiceTest {
         assertThat(labelResult.getTitles()).containsOnly(entry("EN", "some_value"));
     }
 
-    @Test public void
-    update_label_group() throws ApsSystemException {
+    @Test
+    public void testUpdateLabelGroup() throws ApsSystemException {
         when(langManager.getDefaultLang()).thenReturn(lang);
         when(langManager.getAssignableLangs()).thenReturn(singletonList(lang));
         when(langManager.getLangs()).thenReturn(singletonList(lang));

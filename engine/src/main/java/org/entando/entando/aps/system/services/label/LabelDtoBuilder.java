@@ -13,9 +13,10 @@
  */
 package org.entando.entando.aps.system.services.label;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.services.DtoBuilder;
@@ -42,29 +43,22 @@ public class LabelDtoBuilder extends DtoBuilder<ApsProperties, LabelDto> {
     }
 
     public LabelDto convert(String key, ApsProperties entity) {
-        LabelDto dto = null;
-        if (null != entity) {
-            dto = toDto(key, entity);
-        }
-        return dto;
+        return Optional.ofNullable(entity)
+                .map(e -> toDto(key, e))
+                .orElse(null);
     }
 
     public List<LabelDto> convert(Map<String, ApsProperties> list) {
-        if (null == list) {
-            return null;
-        }
-        List<LabelDto> dtoList = new ArrayList<>();
-        list.entrySet().stream().forEach(e -> dtoList.add(toDto(e.getKey(), e.getValue())));
-        return dtoList;
+        return Optional.ofNullable(list)
+                .map(l -> l.entrySet().stream()
+                        .map(e -> toDto(e.getKey(), e.getValue()))
+                        .collect(Collectors.toList()))
+                .orElse(null);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected LabelDto toDto(String key, ApsProperties src) {
-        LabelDto labelDto = new LabelDto();
-        labelDto.setKey(key);
-        Map<String, String> languages = (Map) src;
-        labelDto.setTitles(languages);
-        return labelDto;
+    protected LabelDto toDto(final String key, final ApsProperties src) {
+        return new LabelDto(key, (Map) src);
     }
 
 }

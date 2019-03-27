@@ -47,7 +47,7 @@ public class ActivityStreamService implements IActivityStreamService {
     private static final String KEY_FILTER_UPDATE = "updatedAt";
     private static final String KEY_FILTER_USERNAME = "username";
     private static final String KEY_FILTER_NS = "namespace";
-    private static final String KEY_FILTER_ACTIONNAME = "actionname";
+    private static final String KEY_FILTER_ACTIONNAME = "actionName";
     private static final String KEY_FILTER_PARAMS = "params";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());

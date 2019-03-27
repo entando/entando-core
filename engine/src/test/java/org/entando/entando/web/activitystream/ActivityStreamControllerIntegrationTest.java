@@ -50,6 +50,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -246,6 +247,37 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             result.andExpect(jsonPath("$.metaData.lastPage", is(actualSize)));
             result.andExpect(jsonPath("$.metaData.totalItems", is(actualSize)));
 
+        } finally {
+            this.destroyLogs(pageCode1, pageCode2);
+        }
+    }
+
+    @Test
+    public void testFilter() throws Exception {
+        String pageCode1 = "draft_page_100";
+        String pageCode2 = "draft_page_200";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            Integer startSize = this.extractCurrentSize(accessToken);
+            this.initTestObjects(accessToken, pageCode1, pageCode2);
+
+            //assert record is present
+            Integer actualSize = this.extractCurrentSize(accessToken);
+            Assert.assertEquals(2, (actualSize - startSize));
+            mockMvc.perform(get("/activityStream")
+                    .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload", Matchers.hasSize(actualSize)));
+
+            mockMvc.perform(get("/activityStream")
+                    .param("filters[0].attribute", "actionName")
+                    .param("filters[0].operator", "eq")
+                    .param("filters[0].value", "asdas")
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         } finally {
             this.destroyLogs(pageCode1, pageCode2);
         }

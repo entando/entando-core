@@ -43,7 +43,7 @@ public class ApsSystemUtils {
 
     public static final String INIT_PROP_LOG_NAME = "logName";
 
-    public static final String INIT_PROP_LOG_FILE_PREFIX = "logFilePrefix";
+    public static final String INIT_PROP_LOG_FILE_PATTERN = "logFileRotatePattern";
 
     public static final String INIT_PROP_LOG_LEVEL = "logLevel";
 
@@ -77,7 +77,8 @@ public class ApsSystemUtils {
             long mega = new Long(maxFileSize) / KILOBYTE;
             maxFileSize = mega + "KB";
         }
-        String filename = (String) this.systemParams.get(INIT_PROP_LOG_FILE_PREFIX);
+        String filePattern = (String) this.systemParams.get(INIT_PROP_LOG_FILE_PATTERN);
+        String filename = (String) this.systemParams.get(INIT_PROP_LOG_NAME);
         int maxBackupIndex = Integer.parseInt((String) this.systemParams.get(INIT_PROP_LOG_FILES_COUNT));
         String log4jLevelString = (String) this.systemParams.get(INIT_PROP_LOG_LEVEL);
         if (StringUtils.isBlank(log4jLevelString)) {
@@ -93,13 +94,13 @@ public class ApsSystemUtils {
             SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(maxFileSize);
             PatternLayout layout = PatternLayout.newBuilder().withPattern(conversionPattern).build();
             DefaultRolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
-                    .withMax(String.valueOf(maxBackupIndex)).withConfig(configuration).build();
+                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex)).build();
             fileAppender = RollingFileAppender.newBuilder()
                     .withName(appenderName)
                     .setConfiguration(configuration)
                     .withLayout(layout)
                     .withFileName(filename)
-                    .withFilePattern(filename)
+                    .withFilePattern(filePattern)
                     .withPolicy(policy)
                     .withStrategy(strategy)
                     .build();

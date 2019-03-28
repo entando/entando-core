@@ -21,8 +21,8 @@
         <property name="systemParams">
             <map>
                 <entry key="logActiveFileOutput"><value>${logActiveFileOutput}</value></entry>
-                <entry key="logName"  ><value>${logName}</value></entry>
-                <entry key="logFilePrefix"><value>${logFilePrefix}</value></entry>
+                <entry key="logName"><value>${logName}</value></entry>
+                <entry key="logFileRotatePattern"><value>${logFileRotatePattern}</value></entry>
                 <entry key="logLevel"><value>${logLevel}</value></entry>
                 <entry key="logFileSize"><value>${logFileSize}</value></entry>
                 <entry key="logFilesCount"><value>${logFilesCount}</value></entry>

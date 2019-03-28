@@ -33,16 +33,13 @@
     <div class="col-md-6 v-align ">
         <div class="center1">
             <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg"/>
-            <p class="ux_brand"><strong>THE LEADING DXP PLATFORM</strong></p>
+            <p class="ux_brand"><strong>THE LEADING PLATFORM</strong></p>
             <p class="ux_brand_subtitle"> FOR CLOUD NATIVE APPLICATIONS</p>
             <div class="spacer-login"></div>
             <div class="entando-intro">
-                Entando is the lightest, open source Digital Experience Platform (DXP) for
-                modern applications. Entando harmonizes customer experience across the
-                omnichannel applying the techniques of modern software practices to
-                enterprise applications. Learn quickly, develop easily, deploy rapidly.
+                Entando is the lightest open source Digital Transformation Platform for Modern Applications. We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
             </div>
-            <div class="copyright-entando">Copyright 2017 <span class="entando-sm-write">Entando</span></div>
+            <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
         </div>
     </div>
 

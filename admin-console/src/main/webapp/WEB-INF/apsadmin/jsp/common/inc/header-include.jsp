@@ -6,10 +6,7 @@
 <link rel="stylesheet" href="<wp:resourceURL />administration/patternfly/css/patternfly-additions.min.css">
 <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css">
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/settingsPage.css"/>
-<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/bootstrap.vertical-tabs.min.css"/>
-<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/cropper-js/cropper.min.css"/>
-<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/cropper-js/cropper.min.css"/>
-<link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/crop-editor/crop-editor.css"/>
+
 
 
 <!--JS inclusions-->
@@ -21,6 +18,3 @@
 <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 <script src="<wp:resourceURL />administration/js/bootstrap-switch.min.js"></script>
 <script src="<wp:resourceURL />administration/js/bootstrap-datepicker/bootstrap-datepicker.js"></script>
-<script src="<wp:resourceURL />administration/file-uploader/file-uploader.js"></script>
-<script src="<wp:resourceURL />administration/cropper-js/cropper.min.js"></script>
-<%--<script src="<wp:resourceURL />administration/crop-editor/crop-editor.js"></script>--%>

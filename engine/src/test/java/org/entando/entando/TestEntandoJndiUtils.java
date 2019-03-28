@@ -52,7 +52,7 @@ public class TestEntandoJndiUtils {
 
     private static void buildContextProperties(SimpleNamingContextBuilder builder, Properties testConfig) {
         builder.bind("java:comp/env/logName", testConfig.getProperty("logName"));
-        builder.bind("java:comp/env/logFilePrefix", testConfig.getProperty("logFilePrefix"));
+        builder.bind("java:comp/env/logFileRotatePattern", testConfig.getProperty("logFileRotatePattern"));
         builder.bind("java:comp/env/logLevel", testConfig.getProperty("logLevel"));
         builder.bind("java:comp/env/logFileSize", testConfig.getProperty("logFileSize"));
         builder.bind("java:comp/env/logFilesCount", testConfig.getProperty("logFilesCount"));

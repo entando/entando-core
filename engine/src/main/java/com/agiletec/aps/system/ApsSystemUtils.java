@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,10 @@ import org.apache.logging.log4j.core.appender.AsyncAppender;
 import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.rolling.DefaultRolloverStrategy;
 import org.apache.logging.log4j.core.appender.rolling.SizeBasedTriggeringPolicy;
+import org.apache.logging.log4j.core.appender.rolling.action.Action;
+import org.apache.logging.log4j.core.appender.rolling.action.DeleteAction;
+import org.apache.logging.log4j.core.appender.rolling.action.IfAccumulatedFileCount;
+import org.apache.logging.log4j.core.appender.rolling.action.PathCondition;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -31,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Classe di utilita'. E' la classe detentrice del log di sistema.
+ * Utility class for system logger
  *
  * @author E.Santoboni
  */
@@ -55,11 +60,6 @@ public class ApsSystemUtils {
 
     private Map<String, Object> systemParams;
 
-    /**
-     * Inizializzazione della classe di utilita'.
-     *
-     * @throws Exception
-     */
     public void init() throws Exception {
         String active = (String) this.systemParams.get(INIT_PROP_LOG_ACTIVE_FILE_OUTPUT);
         if (StringUtils.isEmpty(active) || !active.equalsIgnoreCase("true")) {
@@ -91,10 +91,16 @@ public class ApsSystemUtils {
         Configuration configuration = loggerContext.getConfiguration();
         RollingFileAppender fileAppender = (RollingFileAppender) configuration.getAppender(appenderName);
         if (null == fileAppender) {
+            PathCondition[] pathConditions = new PathCondition[1];
+            pathConditions[0] = IfAccumulatedFileCount.createFileCountCondition(maxBackupIndex);
+            String basePath = filePattern.substring(0, filePattern.lastIndexOf(File.separator));
+            DeleteAction deleteAction = DeleteAction.createDeleteAction(basePath, true, 1, false, null, pathConditions, null, configuration);
+            Action[] actions = new Action[1];
+            actions[0] = deleteAction;
             SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(maxFileSize);
             PatternLayout layout = PatternLayout.newBuilder().withPattern(conversionPattern).build();
             DefaultRolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
-                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex)).build();
+                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex)).withCustomActions(actions).build();
             fileAppender = RollingFileAppender.newBuilder()
                     .withName(appenderName)
                     .setConfiguration(configuration)
@@ -121,25 +127,17 @@ public class ApsSystemUtils {
         loggerContext.updateLoggers();
     }
 
-    /**
-     * Restituisce il logger di sistema.
-     *
-     * @return Il logger
-     */
     public static Logger getLogger() {
         return logger;
     }
 
     /**
-     * Traccia una eccezione sul logger del contesto. Se il livello di soglia
-     * del logger e' superiore a FINER, viene emesso solo un breve messaggio di
-     * livello SEVERE, altrimenti viene tracciato anche lo stack trace della
-     * eccezione (con il livello FINER).
+     * Draw an exception on the context logger. 
      *
-     * @param t L'eccezione da tracciare
-     * @param caller La classe chiamante, in cui si e' verificato l'errore.
-     * @param methodName Il metodo in cui si e' verificato l'errore.
-     * @param message Testo da includere nel tracciamento.
+     * @param t The exception to trace
+     * @param caller The caller class
+     * @param methodName The method in which the error occurred.
+     * @param message The message to include
      */
     public static void logThrowable(Throwable t, Object caller,
             String methodName, String message) {
@@ -151,24 +149,16 @@ public class ApsSystemUtils {
     }
 
     /**
-     * Traccia una eccezione sul logger del contesto. Se il livello di soglia
-     * del logger e' superiore a FINER, viene emesso solo un breve messaggio di
-     * livello SEVERE, altrimenti viene tracciato anche lo stack trace della
-     * eccezione (con il livello FINER).
+     * Draw an exception on the context logger. 
      *
-     * @param t L'eccezione da tracciare
-     * @param caller La classe chiamante, in cui si e' verificato l'errore.
-     * @param methodName Il metodo in cui si e' verificato l'errore.
+     * @param t The exception to trace
+     * @param caller The caller class
+     * @param methodName The method in which the error occurred.
      */
     public static void logThrowable(Throwable t, Object caller, String methodName) {
         logThrowable(t, caller, methodName, "Exception");
     }
 
-    /**
-     * Setta la mappa dei parametri di inizializzazione.
-     *
-     * @param systemParams I parametri di inizializzazione.
-     */
     public void setSystemParams(Map<String, Object> systemParams) {
         this.systemParams = systemParams;
     }

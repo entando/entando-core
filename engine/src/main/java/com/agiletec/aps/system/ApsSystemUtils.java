@@ -91,16 +91,14 @@ public class ApsSystemUtils {
         Configuration configuration = loggerContext.getConfiguration();
         RollingFileAppender fileAppender = (RollingFileAppender) configuration.getAppender(appenderName);
         if (null == fileAppender) {
-            PathCondition[] pathConditions = new PathCondition[1];
-            pathConditions[0] = IfAccumulatedFileCount.createFileCountCondition(maxBackupIndex);
+            PathCondition[] pathConditions = new PathCondition[]{IfAccumulatedFileCount.createFileCountCondition(maxBackupIndex)};
             String basePath = filePattern.substring(0, filePattern.lastIndexOf(File.separator));
             DeleteAction deleteAction = DeleteAction.createDeleteAction(basePath, true, 1, false, null, pathConditions, null, configuration);
-            Action[] actions = new Action[1];
-            actions[0] = deleteAction;
             SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(maxFileSize);
             PatternLayout layout = PatternLayout.newBuilder().withPattern(conversionPattern).build();
             DefaultRolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
-                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex)).withCustomActions(actions).build();
+                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex))
+                    .withCustomActions(new Action[]{deleteAction}).build();
             fileAppender = RollingFileAppender.newBuilder()
                     .withName(appenderName)
                     .setConfiguration(configuration)
@@ -132,7 +130,7 @@ public class ApsSystemUtils {
     }
 
     /**
-     * Draw an exception on the context logger. 
+     * Draw an exception on the context logger.
      *
      * @param t The exception to trace
      * @param caller The caller class
@@ -149,7 +147,7 @@ public class ApsSystemUtils {
     }
 
     /**
-     * Draw an exception on the context logger. 
+     * Draw an exception on the context logger.
      *
      * @param t The exception to trace
      * @param caller The caller class

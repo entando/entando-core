@@ -4,11 +4,11 @@
     <parent>
         <artifactId>entando-core</artifactId>
         <groupId>org.entando.entando</groupId>
-        <version>5.1.0-SNAPSHOT</version>
+        <version>5.1.0</version>
     </parent>
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-portal-ui</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
+    <version>5.1.0</version>
     <packaging>war</packaging>
     <name>Entando Core: Portal UI</name>
     <description>Entando Portal UI: an agile, modern and user-centric open source Portal platform.</description>
@@ -232,12 +232,12 @@
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-engine</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -247,18 +247,18 @@
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-admin-console</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
         </dependency>
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-admin-console</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.entando.entando</groupId>
             <artifactId>entando-admin-console</artifactId>
-            <version>5.1.0-SNAPSHOT</version>
+            <version>5.1.0</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>

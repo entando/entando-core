@@ -31,4 +31,5 @@ local.properties
 .idea
 *.iml
 .idea/
-/target/
+target/
+overlays/

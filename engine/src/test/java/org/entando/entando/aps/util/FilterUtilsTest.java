@@ -65,27 +65,44 @@ public class FilterUtilsTest {
 
     @Test
     public void shouldFilterStrings() {
-        assertTrue(filterString("a", FilterOperator.EQUAL, "a"));
-        assertFalse(filterString("a", FilterOperator.EQUAL, "A"));
-        assertTrue(filterString("a", FilterOperator.NOT_EQUAL, "b"));
-        assertTrue(filterString("-A-", FilterOperator.LIKE, "a"));
-        assertTrue(filterString("b", FilterOperator.GREATER, "a"));
-        assertTrue(filterString("a", FilterOperator.LOWER, "b"));
+        assertTrue(filterString("a", FilterOperator.EQUAL, new String[]{"a", "b"}));
+        assertFalse(filterString("a", FilterOperator.EQUAL, new String[]{"A", "B"}));
+
+        assertTrue(filterString("a", FilterOperator.NOT_EQUAL, new String[]{"b", "c"}));
+        assertFalse(filterString("a", FilterOperator.NOT_EQUAL, "a"));
+
+        assertTrue(filterString("-A-", FilterOperator.LIKE, new String[]{"a", "b"}));
+        assertFalse(filterString("-A-", FilterOperator.LIKE, new String[]{"b", "c"}));
+
+        assertTrue(filterString("c", FilterOperator.GREATER, new String[]{"a", "b"}));
+        assertFalse(filterString("a", FilterOperator.GREATER, new String[]{"b", "c"}));
+
+        assertTrue(filterString("a", FilterOperator.LOWER, new String[]{"b", "c"}));
+        assertFalse(filterString("c", FilterOperator.LOWER, new String[]{"a", "b"}));
     }
 
     @Test
     public void shouldFilterNumbers() {
-        assertTrue(filterInt(1, FilterOperator.EQUAL, 1));
-        assertFalse(filterInt(1, FilterOperator.NOT_EQUAL, 1));
-        assertTrue(filterInt(2, FilterOperator.GREATER, 1));
-        assertTrue(filterInt(1, FilterOperator.LOWER, 2));
+        assertTrue(filterInt(1, FilterOperator.EQUAL, new String[]{"1", "2"}));
+        assertFalse(filterInt(1, FilterOperator.EQUAL, new String[]{"2", "3"}));
+
+        assertTrue(filterInt(1, FilterOperator.NOT_EQUAL, new String[]{"2", "3"}));
+        assertFalse(filterInt(1, FilterOperator.NOT_EQUAL, "1"));
+
+        assertTrue(filterInt(2, FilterOperator.GREATER, new String[]{"1", "3"}));
+        assertFalse(filterInt(1, FilterOperator.GREATER, new String[]{"2", "3"}));
+
+        assertTrue(filterInt(1, FilterOperator.LOWER, new String[]{"2", "3"}));
+        assertFalse(filterInt(3, FilterOperator.LOWER, new String[]{"1", "2"}));
     }
 
     @Test
     public void shouldFilterBooleans() {
-        assertTrue(filterBoolean(true, FilterOperator.EQUAL, true));
-        assertTrue(filterBoolean(false, FilterOperator.EQUAL, false));
-        assertTrue(filterBoolean(true, FilterOperator.NOT_EQUAL, false));
+        assertTrue(filterBoolean(true, FilterOperator.EQUAL, "true"));
+        assertTrue(filterBoolean(false, FilterOperator.EQUAL, "false"));
+
+        assertTrue(filterBoolean(true, FilterOperator.NOT_EQUAL, "false"));
+        assertFalse(filterBoolean(true, FilterOperator.NOT_EQUAL, "true"));
     }
 
     @Test
@@ -105,26 +122,41 @@ public class FilterUtilsTest {
         assertTrue(filterDate(day, FilterOperator.LOWER, nextDayString));
     }
 
-    private boolean filterString(String value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterString(getFilter(operator, filterValue), () -> value);
+    private boolean filterString(String valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterString(getFilter(operator, filterValue), valueToFilter);
     }
 
-    private boolean filterInt(int value, FilterOperator operator, int filterValue) {
-        return FilterUtils.filterInt(getFilter(operator, String.valueOf(filterValue)), () -> value);
+    private boolean filterString(String valueToFilter, FilterOperator operator, String[] allowedValues) {
+        return FilterUtils.filterString(getFilter(operator, allowedValues), valueToFilter);
     }
 
-    private boolean filterBoolean(boolean value, FilterOperator operator, boolean filterValue) {
-        return FilterUtils.filterBoolean(getFilter(operator, String.valueOf(filterValue)), () -> value);
+    private boolean filterInt(int valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterInt(getFilter(operator, filterValue), valueToFilter);
     }
 
-    private boolean filterDate(Date value, FilterOperator operator, String filterValue) {
-        return FilterUtils.filterDate(getFilter(operator, filterValue), () -> value);
+    private boolean filterInt(int valueToFilter, FilterOperator operator, String[] allowedValues) {
+        return FilterUtils.filterInt(getFilter(operator, allowedValues), valueToFilter);
+    }
+
+    private boolean filterBoolean(boolean valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterBoolean(getFilter(operator, filterValue), valueToFilter);
+    }
+
+    private boolean filterDate(Date valueToFilter, FilterOperator operator, String filterValue) {
+        return FilterUtils.filterDate(getFilter(operator, filterValue), valueToFilter);
     }
 
     private Filter getFilter(FilterOperator operator, String value) {
         Filter filter = new Filter();
         filter.setOperator(operator.getValue());
         filter.setValue(value);
+        return filter;
+    }
+
+    private Filter getFilter(FilterOperator operator, String[] allowedValues) {
+        Filter filter = new Filter();
+        filter.setOperator(operator.getValue());
+        filter.setAllowedValues(allowedValues);
         return filter;
     }
 }

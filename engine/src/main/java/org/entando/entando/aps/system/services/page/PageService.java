@@ -43,7 +43,7 @@ import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
@@ -213,8 +213,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             DataBinder binder = new DataBinder(pageCode);
             BindingResult bindingResult = binder.getBindingResult();
             String errorCode = status.equals(STATUS_DRAFT) ? ERRCODE_PAGE_NOT_FOUND : ERRCODE_PAGE_ONLY_DRAFT;
-            bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.notFound");
-            throw new RestRourceNotFoundException(bindingResult);
+            bindingResult.reject(errorCode, new String[]{pageCode, status}, "page.NotFound");
+            throw new ResourceNotFoundException(bindingResult);
         }
         String token = this.getPageTokenManager().encrypt(pageCode);
         PageDto pageDto = this.getDtoBuilder().convert(page);
@@ -254,7 +254,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public PageDto updatePage(String pageCode, PageRequest pageRequest) {
         IPage oldPage = this.getPageManager().getDraftPage(pageCode);
         if (null == oldPage) {
-            throw new RestRourceNotFoundException(null, "page", pageCode);
+            throw new ResourceNotFoundException(null, "page", pageCode);
         }
         this.validateRequest(pageRequest);
         if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
@@ -293,7 +293,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         IPage currentPage = this.getPageManager().getDraftPage(pageCode);
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageCode, "page");
         if (null == currentPage) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         if (status.equals(STATUS_DRAFT) && null == this.getPageManager().getOnlinePage(pageCode)) {
             return this.getDtoBuilder().convert(currentPage);
@@ -377,7 +377,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public PageConfigurationDto getPageConfiguration(String pageCode, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         PageConfigurationDto pageConfigurationDto = new PageConfigurationDto(page, status);
         return pageConfigurationDto;
@@ -388,7 +388,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage pageD = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == pageD) {
-                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+                throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             IPage pageO = this.loadPage(pageCode, STATUS_ONLINE);
             if (null == pageO) {
@@ -412,10 +412,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public WidgetConfigurationDto getWidgetConfiguration(String pageCode, int frameId, String status) {
         IPage page = this.loadPage(pageCode, status);
         if (null == page) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         if (frameId > page.getWidgets().length) {
-            throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+            throw new ResourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
         }
         Widget widget = page.getWidgets()[frameId];
         if (null == widget) {
@@ -429,13 +429,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
-                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+                throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             if (frameId > page.getWidgets().length) {
-                throw new RestRourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
+                throw new ResourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
             }
             if (null == this.getWidgetType(widgetReq.getCode())) {
-                throw new RestRourceNotFoundException(ERRCODE_WIDGET_INVALID, "widget", String.valueOf(widgetReq.getCode()));
+                throw new ResourceNotFoundException(ERRCODE_WIDGET_INVALID, "widget", String.valueOf(widgetReq.getCode()));
             }
             BeanPropertyBindingResult validation = this.getWidgetValidatorFactory().get(widgetReq.getCode()).validate(widgetReq, page);
             if (null != validation && validation.hasErrors()) {
@@ -480,7 +480,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
-                throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+                throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
             PageModel pageModel = page.getModel();
             Widget[] defaultWidgets = pageModel.getDefaultWidget();
@@ -647,17 +647,17 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     private void validateRequest(PageRequest request) {
         if (this.getPageModelManager().getPageModel(request.getPageModel()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", request.getPageModel());
+            throw new ResourceNotFoundException(ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", request.getPageModel());
         }
         if (this.getPageManager().getDraftPage(request.getParentCode()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_PARENT_NOT_FOUND, "parent", request.getParentCode());
+            throw new ResourceNotFoundException(ERRCODE_PARENT_NOT_FOUND, "parent", request.getParentCode());
         }
         if (this.getGroupManager().getGroup(request.getOwnerGroup()) == null) {
-            throw new RestRourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "group", request.getOwnerGroup());
+            throw new ResourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "group", request.getOwnerGroup());
         }
         Optional.ofNullable(request.getJoinGroups()).ifPresent(groups -> groups.forEach(group -> {
             if (this.getGroupManager().getGroup(group) == null) {
-                throw new RestRourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "joingroup", group);
+                throw new ResourceNotFoundException(ERRCODE_GROUP_NOT_FOUND, "joingroup", group);
             }
         }));
     }
@@ -708,12 +708,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         IPage page = this.getPageManager().getDraftPage(pageCode);
         if (null == page) {
             logger.warn("no page found with code {}", pageCode);
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+            throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
         }
         PageServiceUtilizer<?> utilizer = this.getPageServiceUtilizer(managerName);
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
-            throw new RestRourceNotFoundException(ERRCODE_PAGE_REFERENCES, "reference", managerName);
+            throw new ResourceNotFoundException(ERRCODE_PAGE_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getPageUtilizer(pageCode);
         List<?> subList = requestList.getSublist(dtoList);

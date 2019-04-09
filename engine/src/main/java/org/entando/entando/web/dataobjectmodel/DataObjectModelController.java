@@ -23,6 +23,7 @@ import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
@@ -102,7 +103,7 @@ public class DataObjectModelController {
         int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST, "dataObjectModel", dataModelId);
+                throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST, "dataObjectModel", dataModelId);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }
@@ -128,7 +129,7 @@ public class DataObjectModelController {
         int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, false, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
             } else {
                 throw new ValidationGenericException(bindingResult);
             }
@@ -155,9 +156,9 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             if (404 == result) {
                 if (1 == bindingResult.getFieldErrorCount("type")) {
-                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                    throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
                 } else {
-                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
+                    throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
                 }
             } else {
                 throw new ValidationGenericException(bindingResult);

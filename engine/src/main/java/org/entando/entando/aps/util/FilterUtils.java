@@ -3,8 +3,12 @@ package org.entando.entando.aps.util;
 import com.agiletec.aps.system.SystemConstants;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.function.Supplier;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.comparators.TransformingComparator;
 import org.entando.entando.web.common.model.Filter;
@@ -28,83 +32,124 @@ public class FilterUtils {
         return new TransformingComparator(caseInsensitiveTransformer);
     }
 
-    public static boolean filterString(Filter filter, Supplier<String> supplier) {
+    public static boolean filterString(Filter filter, String value) {
 
-        String value = supplier.get();
-        String filterValue = filter.getValue();
-
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value.equals(filterValue);
-            case NOT_EQUAL:
-                return !value.equals(filterValue);
-            case LIKE:
-                return value.toLowerCase().contains(filterValue.toLowerCase());
-            case GREATER:
-                return value.compareTo(filterValue) >= 0;
-            case LOWER:
-                return value.compareTo(filterValue) <= 0;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        FilterOperator operator = getFilterOperator(filter);
+        if (value == null) {
+            return false;
         }
-    }
 
-    public static boolean filterBoolean(Filter filter, Supplier<Boolean> supplier) {
+        boolean result = false;
 
-        boolean value = supplier.get();
-        boolean filterValue = Boolean.parseBoolean(filter.getValue().toLowerCase());
-
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value == filterValue;
-            case NOT_EQUAL:
-                return value != filterValue;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        for (String filterValue : getFilterValues(filter)) {
+            switch (operator) {
+                case EQUAL:
+                    result |= value.equals(filterValue);
+                    break;
+                case NOT_EQUAL:
+                    result |= !value.equals(filterValue);
+                    break;
+                case LIKE:
+                    result |= value.toLowerCase().contains(filterValue.toLowerCase());
+                    break;
+                case GREATER:
+                    result |= value.compareTo(filterValue) >= 0;
+                    break;
+                case LOWER:
+                    result |= value.compareTo(filterValue) <= 0;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
         }
+
+        return result;
     }
 
-    public static boolean filterInt(Filter filter, Supplier<Integer> supplier) {
-        return filterNumber(filter, supplier.get().doubleValue());
+    public static boolean filterBoolean(Filter filter, boolean value) {
+
+        FilterOperator operator = getFilterOperator(filter);
+
+        boolean result = false;
+
+        for (boolean filterValue : getTypedAllowedValues(filter, v -> Boolean.parseBoolean(v.toLowerCase()))) {
+
+            switch (operator) {
+                case EQUAL:
+                case LIKE:
+                    result |= value == filterValue;
+                    break;
+                case NOT_EQUAL:
+                    result |= value != filterValue;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
+        }
+
+        return result;
     }
 
-    public static boolean filterDouble(Filter filter, Supplier<Double> supplier) {
-        return filterNumber(filter, supplier.get());
+    public static boolean filterInt(Filter filter, Integer value) {
+        return filterDouble(filter, value.doubleValue());
     }
 
-    public static boolean filterLong(Filter filter, Supplier<Long> supplier) {
-        return filterNumber(filter, supplier.get().doubleValue());
+    public static boolean filterLong(Filter filter, Long value) {
+        return filterDouble(filter, value.doubleValue());
     }
 
-    public static boolean filterDate(Filter filter, Supplier<Date> supplier) {
+    public static boolean filterDate(Filter filter, Date value) {
         SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
-        double filterValue;
-        try {
-            filterValue = sdf.parse(filter.getValue()).getTime();
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
-        }
-        return filterNumber(filter, filterValue, supplier.get().getTime());
+
+        List<Double> filterValues = getTypedAllowedValues(filter, v -> {
+            try {
+                return (double) sdf.parse(v).getTime();
+            } catch (ParseException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        return filterDouble(filter, filterValues, value.getTime());
     }
 
-    private static boolean filterNumber(Filter filter, double value) {
-        return filterNumber(filter, Double.parseDouble(filter.getValue()), value);
+    public static boolean filterDouble(Filter filter, double value) {
+        return filterDouble(filter, getTypedAllowedValues(filter, Double::parseDouble), value);
     }
 
-    private static boolean filterNumber(Filter filter, double filterValue, double value) {
+    private static boolean filterDouble(Filter filter, List<Double> filterValues, double value) {
 
-        switch (getFilterOperator(filter)) {
-            case EQUAL:
-                return value == filterValue;
-            case NOT_EQUAL:
-                return value != filterValue;
-            case GREATER:
-                return value >= filterValue;
-            case LOWER:
-                return value <= filterValue;
-            default:
-                throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+        FilterOperator operator = getFilterOperator(filter);
+
+        boolean result = false;
+
+        for (double filterValue : filterValues) {
+            switch (operator) {
+                case EQUAL:
+                case LIKE:
+                    result |= value == filterValue;
+                    break;
+                case NOT_EQUAL:
+                    result |= value != filterValue;
+                    break;
+                case GREATER:
+                    result |= value >= filterValue;
+                    break;
+                case LOWER:
+                    result |= value <= filterValue;
+                    break;
+                default:
+                    throw new UnsupportedOperationException(getUnsupportedOperatorMessage(filter));
+            }
         }
+
+        return result;
+    }
+
+    /**
+     * Handles the conversion from String to the desired type.
+     */
+    private static <T> List<T> getTypedAllowedValues(Filter filter, Function<String, T> converter) {
+        return getFilterValues(filter).stream().map(converter::apply).collect(Collectors.toList());
     }
 
     private static FilterOperator getFilterOperator(Filter filter) {
@@ -113,5 +158,16 @@ public class FilterUtils {
 
     private static String getUnsupportedOperatorMessage(Filter filter) {
         return "Operator '" + filter.getOperator() + "' is not supported";
+    }
+    
+    private static List<String> getFilterValues(Filter filter) {
+        if (filter.getAllowedValues() == null || filter.getAllowedValues().length == 0) {
+            List<String> values = new ArrayList<>();
+            if (filter.getValue() != null) {
+                values.add(filter.getValue());
+            }
+            return values;
+        }
+        return Arrays.asList(filter.getAllowedValues());
     }
 }

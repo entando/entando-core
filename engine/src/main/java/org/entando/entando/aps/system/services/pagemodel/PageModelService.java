@@ -72,7 +72,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         PageModel pageModel = pageModelManager.getPageModel(code);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", code);
-            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", code);
+            throw new ResourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", code);
         }
         PageModelDto dto = dtoBuilder.convert(pageModel);
         dto.setReferences(this.getReferencesInfo(pageModel));
@@ -100,7 +100,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             PageModel pageModel = pageModelManager.getPageModel(pageModelRequest.getCode());
             if (null == pageModel) {
-                throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelRequest.getCode());
+                throw new ResourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelRequest.getCode());
             }
             this.copyProperties(pageModelRequest, pageModel);
             pageModelManager.updatePageModel(pageModel);
@@ -135,13 +135,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         PageModel pageModel = pageModelManager.getPageModel(pageModelCode);
         if (null == pageModel) {
             logger.warn("no pageModel found with code {}", pageModelCode);
-            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelCode);
+            throw new ResourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_NOT_FOUND, "pageModel", pageModelCode);
         }
         PageModelServiceUtilizer<?> utilizer = this.getPageModelServiceUtilizer(managerName);
         if (null == utilizer) {
             logger.warn("no references found for {}", managerName);
 
-            throw new RestRourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_REFERENCES, "reference", managerName);
+            throw new ResourceNotFoundException(PageModelValidator.ERRCODE_PAGEMODEL_REFERENCES, "reference", managerName);
         }
         List<?> dtoList = utilizer.getPageModelUtilizer(pageModelCode);
         List<?> subList = restRequest.getSublist(dtoList);

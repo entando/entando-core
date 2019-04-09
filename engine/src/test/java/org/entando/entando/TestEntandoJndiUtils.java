@@ -13,7 +13,7 @@
  */
 package org.entando.entando;
 
-import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.jndi.SimpleNamingContextBuilder;
@@ -52,7 +52,7 @@ public class TestEntandoJndiUtils {
 
     private static void buildContextProperties(SimpleNamingContextBuilder builder, Properties testConfig) {
         builder.bind("java:comp/env/logName", testConfig.getProperty("logName"));
-        builder.bind("java:comp/env/logFilePrefix", testConfig.getProperty("logFilePrefix"));
+        builder.bind("java:comp/env/logFileRotatePattern", testConfig.getProperty("logFileRotatePattern"));
         builder.bind("java:comp/env/logLevel", testConfig.getProperty("logLevel"));
         builder.bind("java:comp/env/logFileSize", testConfig.getProperty("logFileSize"));
         builder.bind("java:comp/env/logFilesCount", testConfig.getProperty("logFilesCount"));
@@ -104,7 +104,7 @@ public class TestEntandoJndiUtils {
             ds.setUrl(url);
             ds.setUsername(username);
             ds.setPassword(password);
-            ds.setMaxActive(8);
+            ds.setMaxTotal(12);
             ds.setMaxIdle(4);
             ds.setDriverClassName(className);
             builder.bind("java:comp/env/jdbc/" + beanName, ds);

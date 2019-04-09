@@ -13,19 +13,19 @@
 
     <context:annotation-config />
 
-    <jee:jndi-lookup id="portDataSource" jndi-name="java:comp/env/jdbc/portDataSource"/>
+    <jee:jndi-lookup id="portDataSource" jndi-name="${portdb.jndi:java:comp/env/jdbc/portDataSource}"/>
 
-    <jee:jndi-lookup id="servDataSource" jndi-name="java:comp/env/jdbc/servDataSource"/>
+    <jee:jndi-lookup id="servDataSource" jndi-name="${servdb.jndi:java:comp/env/jdbc/servDataSource}"/>
 
     <bean id="ApsSystemUtils" class="com.agiletec.aps.system.ApsSystemUtils" init-method="init" >
         <property name="systemParams">
             <map>
-                <entry key="logActiveFileOutput"><jee:jndi-lookup jndi-name="java:comp/env/logActiveFileOutput" /></entry>
-                <entry key="logName"><jee:jndi-lookup jndi-name="java:comp/env/logName" /></entry>
-                <entry key="logFilePrefix"><jee:jndi-lookup jndi-name="java:comp/env/logFilePrefix" /></entry>
-                <entry key="logLevel"><jee:jndi-lookup jndi-name="java:comp/env/logLevel" /></entry>
-                <entry key="logFileSize"><jee:jndi-lookup jndi-name="java:comp/env/logFileSize" /></entry>
-                <entry key="logFilesCount"><jee:jndi-lookup jndi-name="java:comp/env/logFilesCount" /></entry>
+                <entry key="logActiveFileOutput"><value>${logActiveFileOutput}</value></entry>
+                <entry key="logName"><value>${logName}</value></entry>
+                <entry key="logFileRotatePattern"><value>${logFileRotatePattern}</value></entry>
+                <entry key="logLevel"><value>${logLevel}</value></entry>
+                <entry key="logFileSize"><value>${logFileSize}</value></entry>
+                <entry key="logFilesCount"><value>${logFilesCount}</value></entry>
             </map>
         </property>
     </bean>
@@ -84,16 +84,16 @@
     <bean id="StorageManager" class="org.entando.entando.aps.system.services.storage.LocalStorageManager"
           init-method="init" >
         <property name="baseURL" >
-            <jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" />
+            <value>${resourceRootURL}</value>
         </property>
         <property name="baseDiskRoot" >
-            <jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" />
+            <value>${resourceDiskRootFolder}</value>
         </property>
         <property name="protectedBaseDiskRoot" >
-            <jee:jndi-lookup jndi-name="java:comp/env/protectedResourceDiskRootFolder" />
+            <value>${protectedResourceDiskRootFolder}</value>
         </property>
         <property name="protectedBaseURL" >
-            <jee:jndi-lookup jndi-name="java:comp/env/protectedResourceRootURL" />
+            <value>${protectedResourceRootURL}</value>
         </property>
     </bean>
 
@@ -172,7 +172,7 @@
     <bean id="abstractInitializerManager" class="org.entando.entando.aps.system.init.AbstractInitializerManager"
           abstract="true" init-method="init">
         <property name="configVersion">
-            <jee:jndi-lookup jndi-name="java:comp/env/configVersion" />
+            <value>${configVersion}</value>
         </property>
         <property name="environment">
             <value>${db.environment}</value>

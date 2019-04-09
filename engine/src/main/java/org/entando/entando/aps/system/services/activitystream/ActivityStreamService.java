@@ -21,7 +21,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
@@ -47,7 +47,7 @@ public class ActivityStreamService implements IActivityStreamService {
     private static final String KEY_FILTER_UPDATE = "updatedAt";
     private static final String KEY_FILTER_USERNAME = "username";
     private static final String KEY_FILTER_NS = "namespace";
-    private static final String KEY_FILTER_ACTIONNAME = "actionname";
+    private static final String KEY_FILTER_ACTIONNAME = "actionName";
     private static final String KEY_FILTER_PARAMS = "params";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -115,7 +115,7 @@ public class ActivityStreamService implements IActivityStreamService {
         try {
             if (null == this.getActionLogManager().getActionRecord(recordId)) {
                 logger.warn("no record found with id {}", recordId);
-                throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
+                throw new ResourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
             }
             this.getSocialActivityStreamManager().editActionLikeRecord(recordId, userDetails.getUsername(), true);
             ActionLogRecordDto dto = getFullDto(recordId);
@@ -144,7 +144,7 @@ public class ActivityStreamService implements IActivityStreamService {
             int recordId = commentRequest.getRecordId();
             if (null == this.getActionLogManager().getActionRecord(recordId)) {
                 logger.warn("no record found with id {}", recordId);
-                throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
+                throw new ResourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
             }
             this.getSocialActivityStreamManager().addActionCommentRecord(attribute.getUsername(), commentRequest.getComment(), recordId);
             ActionLogRecordDto dto = this.getDtoBuilder().toDto(this.getActionLogManager().getActionRecord(recordId),
@@ -162,7 +162,7 @@ public class ActivityStreamService implements IActivityStreamService {
         try {
             if (null == this.getActionLogManager().getActionRecord(recordId)) {
                 logger.warn("no record found with id {}", recordId);
-                throw new RestRourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
+                throw new ResourceNotFoundException(ActivityStreamValidator.ERRCODE_RECORD_NOT_FOUND, "actionLogRecord", String.valueOf(recordId));
             }
 
             this.getSocialActivityStreamManager().deleteActionCommentRecord(commentId, recordId);

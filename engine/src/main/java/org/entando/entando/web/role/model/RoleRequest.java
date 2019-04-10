@@ -16,18 +16,17 @@ package org.entando.entando.web.role.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.NotBlank;
 
 public class RoleRequest {
 
     @Size(max = 20, message = "string.size.invalid")
-    @NotBlank(message = "role.code.notBlank")
+    @NotNull(message = "role.code.notBlank")
     private String code;
 
     @Size(max = 50, message = "string.size.invalid")
-    @NotBlank(message = "role.name.notBlank")
+    @NotNull(message = "role.name.notBlank")
     private String name;
 
     private Map<String, Boolean> permissions = new HashMap<>();

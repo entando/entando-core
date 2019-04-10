@@ -29,13 +29,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class CORSFilter extends OncePerRequestFilter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    
+    public static final String ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         logger.trace("Sending Header....");
         // CORS "pre-flight" request
         response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.addHeader("Access-Control-Allow-Methods", ALLOWED_METHODS);
         response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.addHeader("Access-Control-Max-Age", "3600");
 

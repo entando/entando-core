@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -30,6 +31,7 @@ import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.dictionary.DataModelDictionaryProvider;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
+import org.entando.entando.aps.system.services.jsonpatch.JsonPatchService;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -44,6 +46,9 @@ import org.springframework.validation.BeanPropertyBindingResult;
 public class DataObjectModelService implements IDataObjectModelService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+//    @Autowired
+//    JsonPatchPatchConverter jsonPatchPatchConverter;
 
     @Autowired
     private IDataObjectModelManager dataObjectModelManager;
@@ -60,6 +65,8 @@ public class DataObjectModelService implements IDataObjectModelService {
     protected IDataObjectModelManager getDataObjectModelManager() {
         return dataObjectModelManager;
     }
+
+    private JsonPatchService<DataModelDto> jsonPatchService = new JsonPatchService<>(DataModelDto.class);
 
     public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
         this.dataObjectModelManager = dataObjectModelManager;
@@ -158,6 +165,12 @@ public class DataObjectModelService implements IDataObjectModelService {
             logger.error("Error updating DataObjectModel {}", code, e);
             throw new RestServerError("error in update DataObjectModel", e);
         }
+    }
+
+    @Override
+    public DataModelDto getPatchedDataObjectModel(Long dataModelId, JsonNode jsonPatch) {
+        DataModelDto dataModelDto = this.getDataObjectModel(dataModelId);
+        return this.jsonPatchService.applyPatch(jsonPatch, dataModelDto);
     }
 
     @Override

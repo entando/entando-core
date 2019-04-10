@@ -17,7 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -25,19 +28,21 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class PageRequest {
 
-    @NotBlank(message = "page.code.NotBlank")
+    @Size(max = 30, message = "string.size.invalid")
+    @NotNull(message = "page.code.notBlank")
+    @Pattern(regexp = "[a-zA-Z0-9_]+", message="page.code.wrongCharacters")
     private String code;
     private String status;
     private boolean displayedInMenu;
-    @NotBlank(message = "pageModel.code.NotBlank")
+    @NotNull(message = "page.pageModel.notBlank")
     private String pageModel;
     private String charset;
     private String contentType;
-    @NotBlank(message = "parent.code.NotBlank")
+    @NotNull(message = "page.parent.notBlank")
     private String parentCode;
     private boolean seo;
     private Map<String, String> titles = new HashMap<>();
-    @NotBlank(message = "group.code.NotBlank")
+    @NotNull(message = "page.group.notBlank")
     private String ownerGroup;
     private List<String> joinGroups = new ArrayList<>();
 

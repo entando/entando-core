@@ -14,13 +14,16 @@
 package org.entando.entando.web.dataobjectmodel.validator;
 
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.DataObjectModel;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelManager;
+import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.json.patch.PatchException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 
@@ -44,6 +47,9 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_URINAME_INVALID = "3";
     public static final String ERRCODE_DATAOBJECTMODEL_REFERENCES = "4";
 
+    //PATCH
+    public static final String ERRCODE_INVALID_PATCH = "1";
+
     public static final String ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND = "6";
 
     @Autowired
@@ -51,6 +57,9 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
 
     @Autowired
     private IDataObjectManager dataObjectManager;
+
+    @Autowired
+    private JsonPatchValidator jsonPatchValidator;
 
     @Override
     public boolean supports(Class<?> paramClass) {
@@ -141,6 +150,23 @@ public class DataObjectModelValidator extends AbstractPaginationValidator {
             throw new RuntimeException("Error extracting model", e);
         }
         return 0;
+    }
+
+    public void validateDataObjectModelJsonPatch(JsonNode jsonPatch, Errors errors) {
+        try {
+            jsonPatchValidator.validatePatch(jsonPatch);
+        } catch (PatchException e) {
+            errors.reject(ERRCODE_INVALID_PATCH, "jsonPatch.invalid");
+        }
+
+        for (JsonNode node : jsonPatch) {
+            String operationPath = node.get("path").asText();
+
+            if (operationPath.equals("/modelId")) {
+                errors.reject(ERRCODE_INVALID_PATCH, new String[]{"modelId"}, "jsonPatch.field.protected");
+            }
+        }
+
     }
 
     @Override

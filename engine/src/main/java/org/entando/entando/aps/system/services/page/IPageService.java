@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.page;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
@@ -45,6 +46,8 @@ public interface IPageService {
     public void removePage(String pageName);
 
     public PageDto updatePage(String pageCode, PageRequest pageRequest);
+
+    public PageDto getPatchedPage(String pageCode, JsonNode patch);
 
     public List<PageDto> getPages(String parentCode);
 

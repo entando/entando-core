@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -28,6 +29,8 @@ public interface IDataObjectModelService {
     public DataModelDto addDataObjectModel(DataObjectModelRequest dataObjectModelRequest);
 
     public DataModelDto updateDataObjectModel(DataObjectModelRequest dataObjectModelRequest);
+
+    public DataModelDto getPatchedDataObjectModel(Long dataModelId, JsonNode jsonPatch);
 
     public void removeDataObjectModel(Long dataModelId);
 

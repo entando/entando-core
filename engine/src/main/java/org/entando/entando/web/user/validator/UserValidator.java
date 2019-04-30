@@ -17,10 +17,8 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.user.*;
-import com.agiletec.aps.util.IApsEncrypter;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.*;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
 import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.*;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
@@ -32,11 +30,9 @@ import org.springframework.validation.*;
 
 import java.util.*;
 import java.util.regex.*;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-/**
- *
- * @author paddeo
- */
 @Component
 public class UserValidator extends AbstractPaginationValidator {
 
@@ -61,6 +57,10 @@ public class UserValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_SELF_UPDATE = "6";
 
     public static final String ERRCODE_DELETE_ADMIN = "7";
+    
+    @Autowired
+    @Qualifier("compatiblePasswordEncoder")
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     IUserManager userManager;
@@ -70,9 +70,6 @@ public class UserValidator extends AbstractPaginationValidator {
 
     @Autowired
     IRoleManager roleManager;
-
-    @Autowired
-    private IApsEncrypter encrypter;
 
     public IUserManager getUserManager() {
         return userManager;
@@ -98,12 +95,12 @@ public class UserValidator extends AbstractPaginationValidator {
         this.roleManager = roleManager;
     }
 
-    public IApsEncrypter getEncrypter() {
-        return encrypter;
+    public PasswordEncoder getPasswordEncoder() {
+        return passwordEncoder;
     }
 
-    public void setEncrypter(IApsEncrypter encrypter) {
-        this.encrypter = encrypter;
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -213,19 +210,7 @@ public class UserValidator extends AbstractPaginationValidator {
 
     private boolean verifyPassword(String username, String password) {
         UserDetails user = this.extractUser(username);
-        if (this.getEncrypter() instanceof Argon2Encrypter) {
-            Argon2Encrypter encrypter = (Argon2Encrypter) this.getEncrypter();
-            return encrypter.verify(user.getPassword(), password);
-        } else {
-            String encrypdedPassword = null;
-            try {
-                encrypdedPassword = this.getEncrypter().encrypt(password);
-            } catch (ApsSystemException e) {
-                logger.error("Error encrypting password", e);
-                throw new RestServerError("Error encrypting passwor", e);
-            }
-            return user.getPassword().equals(encrypdedPassword);
-        }
+        return passwordEncoder.matches(password, user.getPassword());
     }
 
     private UserDetails extractUser(String username) {

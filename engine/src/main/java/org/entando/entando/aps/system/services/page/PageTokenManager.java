@@ -32,9 +32,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import java.util.Base64;
 
 public class PageTokenManager extends AbstractService implements IPageTokenManager {
 
@@ -132,14 +130,12 @@ public class PageTokenManager extends AbstractService implements IPageTokenManag
 		return this.getPassword().toCharArray();
 	}
 
-	@SuppressWarnings("restriction")
 	protected static byte[] base64Decode(String property) throws IOException {
-		return new BASE64Decoder().decodeBuffer(property);
+		return Base64.getDecoder().decode(property);
 	}
 
-	@SuppressWarnings("restriction")
 	protected static String base64Encode(byte[] bytes) {
-		return new BASE64Encoder().encode(bytes);
+		return Base64.getEncoder().encodeToString(bytes);
 	}
 
 }

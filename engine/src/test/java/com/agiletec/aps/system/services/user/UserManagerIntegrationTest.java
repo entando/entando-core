@@ -17,58 +17,40 @@ import java.util.List;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
+import org.entando.entando.aps.util.crypto.CompatiblePasswordEncoder;
 
-/**
- * @version 1.0
- * @author M.Casari
- */
 public class UserManagerIntegrationTest extends BaseTestCase {
 
+    private IUserManager userManager = null;
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.init();
     }
 
     public void testGetUsers() throws Throwable {
-        List<UserDetails> users = this._userManager.getUsers();
+        List<UserDetails> users = this.userManager.getUsers();
         assertTrue(users.size() >= 8);
     }
 
-    public void testAdminUserPasswordIsArgon2() throws Throwable {
+    public void testAdminUserPasswordIsBCrypt() throws Throwable {
         UserDetails admin = this.getUser("admin");
         assertNotNull(admin);
-        boolean res = this._userManager.isArgon2Encrypted(admin.getPassword());
-        assertTrue(res);
+        assertTrue(CompatiblePasswordEncoder.isBCrypt(admin.getPassword()));
     }
 
     public void testAllUsersPasswordsIsArgon2() throws Throwable {
-        List<UserDetails> users = this._userManager.getUsers();
-        boolean res = true;
-        for (UserDetails user : users) {
-            res = this._userManager.isArgon2Encrypted(user.getPassword());
-            if (!res) {
-                break;
-            }
+        for (UserDetails user : userManager.getUsers()) {
+            assertTrue(CompatiblePasswordEncoder.isBCrypt(user.getPassword()));
         }
-        assertTrue(res);
     }
 
-    //TODO FARE TEST PER OPERAZIONI SPECIALI SU UTENTE (VERIFICA DATE ACCESSI E CAMBIO PASSWORD)
     private void init() throws Exception {
         try {
-            this._userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
+            this.userManager = (IUserManager) this.getService(SystemConstants.USER_MANAGER);
         } catch (Throwable e) {
             throw new Exception(e);
         }
     }
-
-    protected MockUser createUserForTest(String username) {
-        MockUser user = new MockUser();
-        user.setUsername(username);
-        user.setPassword("temp");
-        return user;
-    }
-
-    private IUserManager _userManager = null;
-
 }

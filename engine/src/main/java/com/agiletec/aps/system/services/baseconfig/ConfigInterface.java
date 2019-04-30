@@ -29,6 +29,8 @@ public interface ConfigInterface {
     public static final String ALGO_ITERATIONS_PARAM_NAME = "algo.argon2.iterations";
     public static final String ALGO_MEMORY_PARAM_NAME = "algo.argon2.memory";
     public static final String ALGO_PARALLELISM_PARAM_NAME = "algo.argon2.parallelism";
+    public static final String ALGO_DEFAULT_KEY = "algo.default.key";
+    public static final String LEGACY_PASSWORDS_UPDATED = "legacyPasswordsUpdated";
 
     /**
      * Restituisce una voce di configurazione. La voce è un elemento di testo
@@ -63,6 +65,6 @@ public interface ConfigInterface {
 
     public void updateParams(Map<String, String> params) throws ApsSystemException;
 
-    public boolean isArgon2();
+    public boolean areLegacyPasswordsUpdated();
 
 }

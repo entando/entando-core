@@ -53,10 +53,13 @@ public class ApiConsumerServiceImpl implements ApiConsumerService {
 
     @Override
     public ApiConsumer update(ApiConsumer consumer) throws ApsSystemException {
-        if (consumerManager.getConsumerRecord(consumer.getKey()) == null) {
+        ConsumerRecordVO record = consumerManager.getConsumerRecord(consumer.getKey());
+        if (record == null) {
             throw new ResourceNotFoundException(ApiConsumer.class.getName(), consumer.getKey());
         }
-        return new ApiConsumer(consumerManager.updateConsumer(consumer.toConsumerRecordVO()));
+        ConsumerRecordVO updatedRecord = consumer.toConsumerRecordVO();
+        updatedRecord.setIssuedDate(record.getIssuedDate());
+        return new ApiConsumer(consumerManager.updateConsumer(updatedRecord));
     }
 
     @Override

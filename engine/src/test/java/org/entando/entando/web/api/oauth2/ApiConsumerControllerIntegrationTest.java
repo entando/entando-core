@@ -81,7 +81,7 @@ public class ApiConsumerControllerIntegrationTest extends AbstractControllerInte
                     .andExpect(jsonPath("$.payload.key", is(CONSUMER_KEY_3)))
                     .andExpect(jsonPath("$.payload.name", is(consumer.getName())))
                     .andExpect(jsonPath("$.payload.description", is(consumer.getDescription())))
-                    .andExpect(jsonPath("$.payload.secret").isEmpty())
+                    .andExpect(jsonPath("$.payload.secret").doesNotExist())
                     .andExpect(jsonPath("$.payload.issuedDate").isNotEmpty())
                     .andExpect(jsonPath("$.payload.expirationDate", is(EXPIRATION_DATE)))
                     .andExpect(jsonPath("$.payload.scope", is(consumer.getScope())))
@@ -99,7 +99,7 @@ public class ApiConsumerControllerIntegrationTest extends AbstractControllerInte
                     .andExpect(jsonPath("$.payload.key", is(CONSUMER_KEY_3)))
                     .andExpect(jsonPath("$.payload.name", is(consumer.getName())))
                     .andExpect(jsonPath("$.payload.description", is(consumer.getDescription())))
-                    .andExpect(jsonPath("$.payload.secret").isEmpty())
+                    .andExpect(jsonPath("$.payload.secret").doesNotExist())
                     .andExpect(jsonPath("$.payload.issuedDate").isNotEmpty())
                     .andExpect(jsonPath("$.payload.expirationDate", is(EXPIRATION_DATE)))
                     .andExpect(jsonPath("$.payload.scope", is(consumer.getScope())))
@@ -116,6 +116,7 @@ public class ApiConsumerControllerIntegrationTest extends AbstractControllerInte
 
             result.andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload.key", is(CONSUMER_KEY_3)))
+                    .andExpect(jsonPath("$.payload.issuedDate").isNotEmpty())
                     .andExpect(jsonPath("$.payload.name", is(updatedName)));
 
             assertThat(consumerManager.getConsumerRecord(CONSUMER_KEY_3).getName()).isEqualTo(updatedName);

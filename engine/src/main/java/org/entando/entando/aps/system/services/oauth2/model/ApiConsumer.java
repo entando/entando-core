@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.oauth2.model;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class ApiConsumer {
 
     @Size(max = 100, message = "string.size.invalid")
     @Pattern(regexp = "([a-zA-Z0-9_\\.])+", message = "string.notAlphanumeric")
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String secret;
 
     @NotBlank(message = "string.notBlank")

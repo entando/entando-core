@@ -13,9 +13,13 @@
  */
 package org.entando.entando.aps.util.crypto;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.encrypt.BytesEncryptor;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -27,10 +31,27 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
  * generating also the required salt.
  */
 public class DefaultTextEncryptor implements TextEncryptor {
+    
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTextEncryptor.class);
 
     private final String key;
 
     public DefaultTextEncryptor(String key) {
+        
+        // hack for JCE Unlimited Strength	
+        try {
+            Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
+            field.setAccessible(true);
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(null, false);
+        } catch (ReflectiveOperationException ex) {
+            logger.warn("Error while forcing unlimited JceSecurity", ex);
+        }
+        
         if (StringUtils.isEmpty(key)) {
             throw new IllegalStateException("Empty key provided to DefaultTextEncryptor");
         }

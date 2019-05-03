@@ -18,21 +18,21 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+/**
+ * Password encoder that keeps the compatibility with the legacy password
+ * implementation.
+ */
 @Component
 public class CompatiblePasswordEncoder implements PasswordEncoder {
 
     private static final String BCRYPT_PREFIX = "{bcrypt}";
-    private static final String ARGON2_PREFIX = "$argon2";
 
     private final BCryptPasswordEncoder bcryptEncoder;
-    private final Argon2PasswordEncoder argon2Encoder;
     private final LegacyPasswordEncryptor legacyEncryptor;
 
     @Autowired
-    public CompatiblePasswordEncoder(BCryptPasswordEncoder bcryptEncoder,
-            Argon2PasswordEncoder argon2Encoder, LegacyPasswordEncryptor legacyEncryptor) {
+    public CompatiblePasswordEncoder(BCryptPasswordEncoder bcryptEncoder, LegacyPasswordEncryptor legacyEncryptor) {
         this.bcryptEncoder = bcryptEncoder;
-        this.argon2Encoder = argon2Encoder;
         this.legacyEncryptor = legacyEncryptor;
     }
 
@@ -46,8 +46,6 @@ public class CompatiblePasswordEncoder implements PasswordEncoder {
         if (isBCrypt(encodedPassword)) {
             String encodedWithoutPrefix = encodedPassword.substring(BCRYPT_PREFIX.length());
             return bcryptEncoder.matches(password, encodedWithoutPrefix);
-        } else if (isArgon2(encodedPassword)) {
-            return argon2Encoder.matches(password, encodedPassword);
         } else {
             return encodedPassword.equals(legacyEncryptor.encrypt(password.toString()));
         }
@@ -55,9 +53,5 @@ public class CompatiblePasswordEncoder implements PasswordEncoder {
 
     public static boolean isBCrypt(String encodedPassword) {
         return encodedPassword.startsWith(BCRYPT_PREFIX);
-    }
-
-    public static boolean isArgon2(String encodedPassword) {
-        return encodedPassword.startsWith(ARGON2_PREFIX);
     }
 }

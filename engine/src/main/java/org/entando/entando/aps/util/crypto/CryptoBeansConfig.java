@@ -16,7 +16,6 @@ package org.entando.entando.aps.util.crypto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -25,12 +24,6 @@ public class CryptoBeansConfig {
 
     @Value("${algo.default.key}")
     private String defaultKey;
-
-    @Bean
-    @DependsOn("BaseConfigManager")
-    public Argon2PasswordEncoder getArgon2PasswordEncoder() {
-        return new Argon2PasswordEncoder();
-    }
 
     @Bean(name = "defaultTextEncryptor")
     @Lazy

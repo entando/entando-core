@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+
 import static junit.framework.TestCase.assertTrue;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,9 +48,6 @@ public class CompatiblePasswordEncoderTest {
     private BCryptPasswordEncoder bcryptEncoder;
 
     @Autowired
-    private Argon2PasswordEncoder argon2Encoder;
-
-    @Autowired
     private LegacyPasswordEncryptor legacyEncryptor;
 
     @Autowired
@@ -63,11 +61,6 @@ public class CompatiblePasswordEncoderTest {
     @Test
     public void testBCrypt() {
         testMatches("{bcrypt}" + bcryptEncoder.encode(SECRET));
-    }
-
-    @Test
-    public void testArgon2() throws Exception {
-        testMatches(argon2Encoder.encode(SECRET));
     }
 
     private void testMatches(String encodedPwd) {

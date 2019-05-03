@@ -270,14 +270,6 @@
             <version>7.2.0</version>
             <type>jar</type>
         </dependency>
-
-        <dependency>
-            <groupId>de.mkammerer</groupId>
-            <artifactId>argon2-jvm</artifactId>
-            <version>2.2</version>
-            <type>jar</type>
-        </dependency>
-		
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path-assert</artifactId>

@@ -24,7 +24,6 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.cache.IConfigManagerCacheWrapper;
-import de.mkammerer.argon2.Argon2Factory;
 import java.util.HashMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -131,46 +130,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
     }
 
     protected void checkSecurityConfiguration(Properties mainProps) {
-        String algoType = null;
-        try {
-            algoType = Argon2Factory.Argon2Types.valueOf(mainProps.getProperty(ALGO_TYPE_PARAM_NAME)).name();
-        } catch (Exception e) {
-            String defaultAlgoType = Argon2Factory.Argon2Types.ARGON2i.name();
-            logger.error("Invalid value for Argon2 hashType '{}'; the default value is '{}'", algoType, defaultAlgoType, e);
-            throw new RuntimeException("Invalid value for Argon2 hashType '" + algoType + "'; the default value is '" + defaultAlgoType + "'", e);
-        }
-        System.getProperties().setProperty(ALGO_TYPE_PARAM_NAME, algoType);
-
-        Integer hashLength = Integer.valueOf(mainProps.getProperty(ALGO_HASH_LENGTH_PARAM_NAME));
-        if (hashLength < 4) {
-            throw new RuntimeException("Hash length must be greater than 4 - value '" + hashLength + "'");
-        }
-        System.getProperties().setProperty(ALGO_HASH_LENGTH_PARAM_NAME, String.valueOf(hashLength));
-
-        Integer saltLength = Integer.valueOf(mainProps.getProperty(ALGO_SALT_LENGTH_PARAM_NAME));
-        if (saltLength < 8) {
-            throw new RuntimeException("Salt length must be greater than 8 - value '" + saltLength + "'");
-        }
-        System.getProperties().setProperty(ALGO_SALT_LENGTH_PARAM_NAME, String.valueOf(saltLength));
-
-        Integer iterations = Integer.valueOf(mainProps.getProperty(ALGO_ITERATIONS_PARAM_NAME));
-        if (iterations < 1) {
-            throw new RuntimeException("Iterations number must be greater than 1 - value '" + iterations + "'");
-        }
-        System.getProperties().setProperty(ALGO_ITERATIONS_PARAM_NAME, String.valueOf(iterations));
-
-        Integer parallelism = Integer.valueOf(mainProps.getProperty(ALGO_PARALLELISM_PARAM_NAME));
-        if (parallelism < 1) {
-            throw new RuntimeException("Parallelism number must be greater than 1 - value '" + parallelism + "'");
-        }
-        System.getProperties().setProperty(ALGO_PARALLELISM_PARAM_NAME, String.valueOf(parallelism));
-
-        Integer memory = Integer.valueOf(mainProps.getProperty(ALGO_MEMORY_PARAM_NAME));
-        if (memory < (8 * parallelism)) {
-            throw new RuntimeException("Memory size must be greater than 8xparallelism - value '" + memory + "'");
-        }
-        System.getProperties().setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
-
         String defaultEncryptionKey = mainProps.getProperty(ALGO_DEFAULT_KEY);
         if (StringUtils.isNotEmpty(defaultEncryptionKey)) {
             System.getProperties().setProperty(ALGO_DEFAULT_KEY, defaultEncryptionKey);

@@ -40,7 +40,7 @@ public class UserManagerIntegrationTest extends BaseTestCase {
         assertTrue(CompatiblePasswordEncoder.isBCrypt(admin.getPassword()));
     }
 
-    public void testAllUsersPasswordsIsArgon2() throws Throwable {
+    public void testAllUsersPasswordsIsBCrypt() throws Throwable {
         for (UserDetails user : userManager.getUsers()) {
             assertTrue(CompatiblePasswordEncoder.isBCrypt(user.getPassword()));
         }

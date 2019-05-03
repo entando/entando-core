@@ -1798,7 +1798,6 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
   <Param name="useJsessionId">false</Param>
 	<Param name="gravatarIntegrationEnabled">false</Param>
         <Param name="editEmptyFragmentEnabled">false</Param>
-        <Param name="argon2">true</Param>
 	<SpecialPages>
 		<Param name="notFoundPageCode">notfound</Param>
 		<Param name="homePageCode">homepage</Param>

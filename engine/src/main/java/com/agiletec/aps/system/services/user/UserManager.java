@@ -269,7 +269,7 @@ public class UserManager extends AbstractService implements IUserManager {
 
     private void updateLegacyPassword(UserDetails user) throws ApsSystemException {
         String pwd = user.getPassword();
-        if (!isBCryptEncoded(pwd) && !isArgon2Encoded(pwd)) {
+        if (!isBCryptEncoded(pwd)) {
             try {
                 pwd = new LegacyPasswordEncryptor().decrypt(pwd);
             } catch (Exception e) {
@@ -278,13 +278,6 @@ public class UserManager extends AbstractService implements IUserManager {
             }
             this.changePassword(user.getUsername(), pwd);
         }
-    }
-
-    private boolean isArgon2Encoded(String encoded) {
-        if (StringUtils.isBlank(encoded)) {
-            return false;
-        }
-        return encoded.startsWith("$argon2");
     }
 
     private boolean isBCryptEncoded(String encoded) {

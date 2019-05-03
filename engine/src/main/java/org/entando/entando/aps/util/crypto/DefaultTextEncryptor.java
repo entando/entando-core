@@ -31,13 +31,13 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
  * generating also the required salt.
  */
 public class DefaultTextEncryptor implements TextEncryptor {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(DefaultTextEncryptor.class);
 
     private final String key;
 
     public DefaultTextEncryptor(String key) {
-        
+
         // hack for JCE Unlimited Strength	
         try {
             Field field = Class.forName("javax.crypto.JceSecurity").getDeclaredField("isRestricted");
@@ -51,7 +51,7 @@ public class DefaultTextEncryptor implements TextEncryptor {
         } catch (ReflectiveOperationException ex) {
             logger.warn("Error while forcing unlimited JceSecurity", ex);
         }
-        
+
         if (StringUtils.isEmpty(key)) {
             throw new IllegalStateException("Empty key provided to DefaultTextEncryptor");
         }
@@ -65,14 +65,19 @@ public class DefaultTextEncryptor implements TextEncryptor {
     @Override
     public String encrypt(String plainText) {
 
-        // default StringKeyGenerator returns a 8 bytes hex-encoded string
-        String salt = KeyGenerators.string().generateKey();
+        try {
+            // default StringKeyGenerator returns a 8 bytes hex-encoded string
+            String salt = KeyGenerators.string().generateKey();
 
-        BytesEncryptor encryptor = Encryptors.standard(key, salt);
-        byte[] encrypted = encryptor.encrypt(plainText.getBytes());
+            BytesEncryptor encryptor = Encryptors.standard(key, salt);
+            byte[] encrypted = encryptor.encrypt(plainText.getBytes());
 
-        byte[] saltAndSecret = ArrayUtils.addAll(Hex.decode(salt), encrypted);
-        return Base64.getEncoder().encodeToString(saltAndSecret);
+            byte[] saltAndSecret = ArrayUtils.addAll(Hex.decode(salt), encrypted);
+            return Base64.getEncoder().encodeToString(saltAndSecret);
+        } catch (Throwable t) {
+            logger.warn("Unable to encrypt data", t);
+        }
+        return null;
     }
 
     /**
@@ -82,13 +87,18 @@ public class DefaultTextEncryptor implements TextEncryptor {
     @Override
     public String decrypt(String base64Data) {
 
-        byte[] bytes = Base64.getDecoder().decode(base64Data);
-        byte[] saltBytes = ArrayUtils.subarray(bytes, 0, 8);
-        byte[] encryptedBytes = ArrayUtils.subarray(bytes, 8, bytes.length);
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64Data);
+            byte[] saltBytes = ArrayUtils.subarray(bytes, 0, 8);
+            byte[] encryptedBytes = ArrayUtils.subarray(bytes, 8, bytes.length);
 
-        String salt = new String(Hex.encode(saltBytes));
-        BytesEncryptor encryptor = Encryptors.standard(key, salt);
+            String salt = new String(Hex.encode(saltBytes));
+            BytesEncryptor encryptor = Encryptors.standard(key, salt);
 
-        return new String(encryptor.decrypt(encryptedBytes));
+            return new String(encryptor.decrypt(encryptedBytes));
+        } catch (Throwable t) {
+            logger.warn("Unable to decrypt data: '" + base64Data + "'", t);
+        }
+        return base64Data;
     }
 }

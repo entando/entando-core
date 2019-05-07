@@ -23,8 +23,6 @@ import java.util.Map;
  */
 public interface ConfigInterface {
 
-    // Default key used for symmetric encryption
-    public static final String ALGO_DEFAULT_KEY = "algo.default.key";
     public static final String LEGACY_PASSWORDS_UPDATED = "legacyPasswordsUpdated";
 
     /**

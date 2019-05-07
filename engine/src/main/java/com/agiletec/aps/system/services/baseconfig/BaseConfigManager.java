@@ -48,8 +48,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
     private Map<String, String> systemParams;
 
-    private String securityConfigPath = null;
-
     private IConfigManagerCacheWrapper cacheWrapper;
 
     private boolean legacyPasswordsUpdated = false;
@@ -64,8 +62,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         this.getCacheWrapper().initCache(this.getConfigDAO(), version);
         legacyPasswordsUpdated = (this.getParam(LEGACY_PASSWORDS_UPDATED) != null
                 && this.getParam(LEGACY_PASSWORDS_UPDATED).equalsIgnoreCase("true"));
-        Properties props = this.extractSecurityConfiguration();
-        this.checkSecurityConfiguration(props);
         logger.debug("{} ready. Initialized", this.getClass().getName());
     }
 
@@ -118,24 +114,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         }
     }
 
-    protected Properties extractSecurityConfiguration() throws IOException {
-        Properties props = new Properties();
-        try (InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath())) {
-            if (null == is) {
-                throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
-            }
-            props.load(is);
-        }
-        return props;
-    }
-
-    protected void checkSecurityConfiguration(Properties mainProps) {
-        String defaultEncryptionKey = mainProps.getProperty(ALGO_DEFAULT_KEY);
-        if (StringUtils.isNotEmpty(defaultEncryptionKey)) {
-            System.getProperties().setProperty(ALGO_DEFAULT_KEY, defaultEncryptionKey);
-        }
-    }
-
     @Override
     public void updateParam(String name, String value) throws ApsSystemException {
         if (StringUtils.isEmpty(name) || StringUtils.isEmpty(value)) {
@@ -185,14 +163,6 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
     public void setSystemParams(Map<String, String> systemParams) {
         this.systemParams = systemParams;
-    }
-
-    protected String getSecurityConfigPath() {
-        return securityConfigPath;
-    }
-
-    public void setSecurityConfigPath(String securityConfigPath) {
-        this.securityConfigPath = securityConfigPath;
     }
 
     protected IConfigManagerCacheWrapper getCacheWrapper() {

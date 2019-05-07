@@ -51,8 +51,7 @@ public class LocalStorageManagerIntegrationTest extends BaseTestCase {
         assertEquals(3, filenames.length);
         for (int i = 0; i < filenames.length; i++) {
             String filename = filenames[i];
-            assertTrue(filename.equals("contextTestParams.properties") || filename.equals("systemParams.properties")
-                    || filename.equals("security.properties"));
+            assertTrue(filename.equals("contextTestParams.properties") || filename.equals("systemParams.properties"));
         }
     }
 

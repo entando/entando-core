@@ -8,7 +8,7 @@
     <context:property-placeholder 
    			ignore-resource-not-found="true" 
    			local-override="true"   
-   			location="file:target/test/conf/systemParams.properties,file:target/test/conf/security.properties" />
+   			location="file:target/test/conf/systemParams.properties" />
 
 
 </beans>

@@ -98,7 +98,6 @@ import org.entando.entando.aps.system.services.userprofile.UserProfileManagerTes
 import org.entando.entando.aps.system.services.userprofile.UserProfileTypeServiceTest;
 import org.entando.entando.aps.system.services.widgettype.api.TestApiWidgetTypeInterface;
 import org.entando.entando.aps.util.FilterUtilsTest;
-import org.entando.entando.aps.util.crypto.DefaultTextEncryptorTest;
 import org.entando.entando.aps.util.crypto.CompatiblePasswordEncoderTest;
 import org.entando.entando.web.common.IgnoreJacksonWriteOnlyAccessTest;
 
@@ -229,7 +228,6 @@ public class AllTests {
         suite.addTest(new JUnit4TestAdapter(FilterUtilsTest.class));
         suite.addTest(new JUnit4TestAdapter(AbstractEntityTypeServiceTest.class));
         
-        suite.addTest(new JUnit4TestAdapter(DefaultTextEncryptorTest.class));
         suite.addTest(new JUnit4TestAdapter(CompatiblePasswordEncoderTest.class));
         suite.addTest(new JUnit4TestAdapter(IgnoreJacksonWriteOnlyAccessTest.class));
 

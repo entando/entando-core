@@ -48,7 +48,7 @@ public class LocalStorageManagerIntegrationTest extends BaseTestCase {
         assertEquals(1, filenames.length);
         assertEquals("entando_logo.jpg", filenames[0]);
         filenames = this._localStorageManager.listFile("conf" + File.separator, false);
-        assertEquals(3, filenames.length);
+        assertEquals(2, filenames.length);
         for (int i = 0; i < filenames.length; i++) {
             String filename = filenames[i];
             assertTrue(filename.equals("contextTestParams.properties") || filename.equals("systemParams.properties"));
@@ -89,7 +89,7 @@ public class LocalStorageManagerIntegrationTest extends BaseTestCase {
 
     public void testListAttributes_2() throws Throwable {
         BasicFileAttributeView[] fileAttributes = this._localStorageManager.listAttributes("conf" + File.separator, false);
-        assertEquals(3, fileAttributes.length);
+        assertEquals(2, fileAttributes.length);
         int dirCounter = 0;
         int fileCounter = 0;
         for (int i = 0; i < fileAttributes.length; i++) {
@@ -101,7 +101,7 @@ public class LocalStorageManagerIntegrationTest extends BaseTestCase {
             }
         }
         assertEquals(0, dirCounter);
-        assertEquals(3, fileCounter);
+        assertEquals(2, fileCounter);
     }
 
     public void testSaveEditDeleteFile() throws Throwable {

@@ -88,7 +88,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
         assertEquals(Action.SUCCESS, result);
         FileBrowserAction action = (FileBrowserAction) super.getAction();
         BasicFileAttributeView[] fileAttributes = action.getFilesAttributes();
-        assertEquals(3, fileAttributes.length);
+        assertEquals(2, fileAttributes.length);
         int dirCounter = 0;
         int fileCounter = 0;
         for (BasicFileAttributeView bfav : fileAttributes) {
@@ -99,7 +99,7 @@ public class TestFileBrowserAction extends ApsAdminBaseTestCase {
             }
         }
         assertEquals(0, dirCounter);
-        assertEquals(3, fileCounter);
+        assertEquals(2, fileCounter);
     }
 
     public void testValidateAddTextFile() throws Throwable {

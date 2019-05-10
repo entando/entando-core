@@ -13,7 +13,7 @@ public class NoOpWidgetConfigurationProcessor implements WidgetConfigurationProc
     }
 
     @Override
-    public Object buildConfiguration(WidgetConfigurationRequest widget) {
+    public Object buildConfiguration(WidgetConfigurationRequest widget, Map<String, Object> parameters) {
         if (null == widget.getConfig()) {
             return null;
         }

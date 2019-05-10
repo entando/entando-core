@@ -3,6 +3,8 @@ package org.entando.entando.aps.system.services.widgettype.validators;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 
+import java.util.Map;
+
 /**
  * Interface to be implemented by components that performs widget configuration processing
  * 
@@ -24,7 +26,7 @@ public interface WidgetConfigurationProcessor {
      * @param widget
      * @return
      */
-    public Object buildConfiguration(WidgetConfigurationRequest widget);
+    //public Object buildConfiguration(WidgetConfigurationRequest widget);
 
     /**
      * Process the configuration as provided by the service layer and and transforms it as the web layer expects
@@ -33,4 +35,5 @@ public interface WidgetConfigurationProcessor {
      */
     public ApsProperties extractConfiguration(ApsProperties widgetProperties);
 
+    public  Object buildConfiguration(WidgetConfigurationRequest widgetReq, Map<String, Object> parameters);
 }

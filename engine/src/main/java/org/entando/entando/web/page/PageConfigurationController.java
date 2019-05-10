@@ -14,6 +14,7 @@
 package org.entando.entando.web.page;
 
 import com.agiletec.aps.system.services.role.Permission;
+import com.agiletec.aps.util.ApsProperties;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
@@ -38,6 +39,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 
 @RestController
 public class PageConfigurationController {
@@ -46,6 +48,9 @@ public class PageConfigurationController {
 
     @Autowired
     private IPageService pageService;
+
+    @Autowired
+    private WidgetProcessorFactory widgetProcessorFactory;
 
     protected IPageService getPageService() {
         return pageService;
@@ -72,7 +77,21 @@ public class PageConfigurationController {
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse<>(pageConfiguration.getWidgets(), metadata), HttpStatus.OK);
+        WidgetConfigurationDto[] widgets = pageConfiguration.getWidgets();
+        logger.info("widgets list  {}", widgets);
+
+        for (int i=0; i < widgets.length; i++){
+            logger.debug("extracting widget configuration {}",i);
+            WidgetConfigurationDto widget = widgets[i];
+            if (null != widget){
+                ApsProperties outProperties = this.getWidgetProcessorFactory().get(widget.getCode()).extractConfiguration(widget.getConfig());
+                widget.setConfig(outProperties);
+                logger.debug("widgets configuration set to {}", outProperties);
+            }
+            widgets[i] = widget;
+            i++;
+        }
+        return new ResponseEntity<>(new RestResponse(widgets, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -160,4 +179,11 @@ public class PageConfigurationController {
         }
     }
 
+    public WidgetProcessorFactory getWidgetProcessorFactory() {
+        return widgetProcessorFactory;
+    }
+
+    public void setWidgetProcessorFactory(WidgetProcessorFactory widgetProcessorFactory) {
+        this.widgetProcessorFactory = widgetProcessorFactory;
+    }
 }

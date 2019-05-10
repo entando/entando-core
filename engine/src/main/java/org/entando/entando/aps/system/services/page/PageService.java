@@ -427,6 +427,11 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @Override
     public WidgetConfigurationDto updateWidgetConfiguration(String pageCode, int frameId, WidgetConfigurationRequest widgetReq) {
         try {
+            Map<String,Object> parameters = new HashMap<>();
+            parameters.put("pageCode",pageCode);
+            parameters.put("frameId", frameId);
+
+            
             IPage page = this.loadPage(pageCode, STATUS_DRAFT);
             if (null == page) {
                 throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
@@ -441,7 +446,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             if (null != validation && validation.hasErrors()) {
                 throw new ValidationConflictException(validation);
             }
-            ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfiguration(widgetReq);
+            ApsProperties properties = (ApsProperties) this.getWidgetProcessorFactory().get(widgetReq.getCode()).buildConfiguration(widgetReq, parameters);
             WidgetType widgetType = this.getWidgetType(widgetReq.getCode());
             Widget widget = new Widget();
             widget.setType(widgetType);
@@ -449,6 +454,9 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             this.getPageManager().joinWidget(pageCode, widget, frameId);
 
             ApsProperties outProperties = this.getWidgetProcessorFactory().get(widgetReq.getCode()).extractConfiguration(widget.getConfig());
+            logger.info("extractConfiguration from WidgetProcessorFactory {}", outProperties);
+
+            
             return new WidgetConfigurationDto(widget.getType().getCode(), outProperties);
         } catch (ApsSystemException e) {
             logger.error("Error in update widget configuration {}", pageCode, e);

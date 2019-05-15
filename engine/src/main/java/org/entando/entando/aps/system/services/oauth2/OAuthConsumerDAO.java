@@ -210,9 +210,9 @@ public class OAuthConsumerDAO extends AbstractSearcherDAO implements IOAuthConsu
             stat.setNull(idx++, Types.TIMESTAMP);
         }
         if (add) {
-            long currentTime = System.currentTimeMillis();
-            consumer.setIssuedDate(new Date(currentTime));
-            stat.setTimestamp(idx++, new Timestamp(currentTime));
+            Date now = new Date();
+            consumer.setIssuedDate(now);
+            stat.setTimestamp(idx++, new Timestamp(now.getTime()));
         }
         return idx;
     }

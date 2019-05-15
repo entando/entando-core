@@ -82,7 +82,7 @@
     <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
         <label class="col-sm-2 control-label" for="secret"><s:text name="label.secret" /></label>
         <div class="col-sm-10">
-            <wpsf:textfield name="secret" id="secret" cssClass="form-control" />
+            <wpsf:password name="secret" id="secret" cssClass="form-control" placeholder="********" />
             <s:if test="#currentFieldHasFieldErrorVar">
                 <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
             </s:if>

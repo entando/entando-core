@@ -14,7 +14,7 @@
 package org.entando.entando.aps.system.services.oauth2.model;
 
 import com.agiletec.aps.system.SystemConstants;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,11 +50,10 @@ public class ApiConsumer {
     private String callbackUrl;
     private String scope;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SystemConstants.API_DATE_FORMAT)
-    private Date issuedDate;
+    private String issuedDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = SystemConstants.API_DATE_FORMAT)
-    private Date expirationDate;
+    @NotBlank(message = "string.notBlank")
+    private String expirationDate;
 
     private List<String> authorizedGrantTypes;
 
@@ -71,8 +70,8 @@ public class ApiConsumer {
         description = vo.getDescription();
         callbackUrl = vo.getCallbackUrl();
         scope = vo.getScope();
-        expirationDate = vo.getExpirationDate();
-        issuedDate = vo.getIssuedDate();
+        expirationDate = formatDate(vo.getExpirationDate());
+        issuedDate = formatDate(vo.getIssuedDate());
 
         if (!StringUtils.isEmpty(vo.getAuthorizedGrantTypes())) {
             authorizedGrantTypes = Arrays.asList(vo.getAuthorizedGrantTypes().split(","));
@@ -127,19 +126,19 @@ public class ApiConsumer {
         this.scope = scope;
     }
 
-    public Date getExpirationDate() {
+    public String getExpirationDate() {
         return expirationDate;
     }
 
-    public void setExpirationDate(Date expirationDate) {
+    public void setExpirationDate(String expirationDate) {
         this.expirationDate = expirationDate;
     }
 
-    public Date getIssuedDate() {
+    public String getIssuedDate() {
         return issuedDate;
     }
 
-    public void setIssuedDate(Date issuedDate) {
+    public void setIssuedDate(String issuedDate) {
         this.issuedDate = issuedDate;
     }
 
@@ -161,13 +160,21 @@ public class ApiConsumer {
         vo.setDescription(description);
         vo.setCallbackUrl(callbackUrl);
         vo.setScope(scope);
-        vo.setExpirationDate(expirationDate);
-        vo.setIssuedDate(issuedDate);
+        vo.setExpirationDate(getDate(expirationDate));
+        vo.setIssuedDate(getDate(issuedDate));
 
         if (authorizedGrantTypes != null) {
             vo.setAuthorizedGrantTypes(String.join(",", authorizedGrantTypes));
         }
 
         return vo;
+    }
+
+    private Date getDate(String formattedDate) {
+        return DateConverter.parseDate(formattedDate, SystemConstants.API_DATE_FORMAT);
+    }
+
+    private String formatDate(Date date) {
+        return DateConverter.getFormattedDate(date, SystemConstants.API_DATE_FORMAT);
     }
 }

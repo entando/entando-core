@@ -15,13 +15,11 @@ package org.entando.entando.web.api.oauth2;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.TimeZone;
 import org.entando.entando.aps.system.services.oauth2.OAuthConsumerManager;
 import org.entando.entando.aps.system.services.oauth2.model.ApiConsumer;
 import org.entando.entando.aps.system.services.oauth2.model.ConsumerRecordVO;
@@ -208,7 +206,7 @@ public class ApiConsumerControllerIntegrationTest extends AbstractControllerInte
         consumer.setName("Consumer 1");
         consumer.setDescription("descr");
         consumer.setSecret("secret");
-        consumer.setExpirationDate(getDate(EXPIRATION_DATE));
+        consumer.setExpirationDate(EXPIRATION_DATE);
         consumer.setAuthorizedGrantTypes(Arrays.asList("authorization_code", "implicit"));
         consumer.setScope("scope");
         consumer.setCallbackUrl("http://entando.org");
@@ -254,13 +252,7 @@ public class ApiConsumerControllerIntegrationTest extends AbstractControllerInte
     }
 
     private Date getDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
-        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-        try {
-            return sdf.parse(date);
-        } catch (ParseException ex) {
-            throw new RuntimeException(ex);
-        }
+        return DateConverter.parseDate(date, SystemConstants.API_DATE_FORMAT);
     }
 
     private ResultActions authRequest(MockHttpServletRequestBuilder requestBuilder) throws Exception {

@@ -82,7 +82,12 @@
     <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
         <label class="col-sm-2 control-label" for="secret"><s:text name="label.secret" /></label>
         <div class="col-sm-10">
-            <wpsf:password name="secret" id="secret" cssClass="form-control" placeholder="********" />
+            <s:if test="strutsAction == 1">
+                <wpsf:password name="secret" id="secret" cssClass="form-control" />
+            </s:if>
+            <s:if test="strutsAction == 2">
+                <wpsf:password name="secret" id="secret" cssClass="form-control" placeholder="********" />
+            </s:if>
             <s:if test="#currentFieldHasFieldErrorVar">
                 <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
             </s:if>
@@ -155,7 +160,7 @@
     <div class="form-group">
         <label class="col-sm-2 control-label"><s:text name="label.issuedDate" /></label>
         <div class="col-sm-10">
-            <s:date name="issuedDate" format="dd/mm/yyyy HH:mm" />
+            <s:date name="issuedDate" format="dd/MM/yyyy HH:mm" />
         </div>
     </div>
         </s:if>

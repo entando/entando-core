@@ -31,6 +31,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -252,6 +253,33 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             this.widgetTypeManager.deleteWidgetType(newCode);
             Assert.assertNull(this.widgetTypeManager.getWidgetType(newCode));
         }
+    }
+
+    @Test
+    public void testAddDefaultUI() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String newCode = "test_new_type_3";
+        Assert.assertNull(this.widgetTypeManager.getWidgetType(newCode));
+        try {
+            WidgetRequest request = new WidgetRequest();
+            request.setCode(newCode);
+            request.setGroup(Group.FREE_GROUP_NAME);
+            Map<String, String> titles = new HashMap<>();
+            titles.put("it", "Titolo ITA 3");
+            titles.put("en", "Title EN 3");
+            request.setTitles(titles);
+            request.setCustomUi("<h1>This is a test</h1>");
+            request.setGroup(Group.FREE_GROUP_NAME);
+            this.executeWidgetPost(request, accessToken, status().isOk())
+                    .andExpect(jsonPath("$.payload.guiFragments[0].defaultUi").value(is("<h1>This is a test</h1>")));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.widgetTypeManager.deleteWidgetType(newCode);
+            Assert.assertNull(this.widgetTypeManager.getWidgetType(newCode));
+        }
+
     }
     
     @Test

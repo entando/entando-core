@@ -291,6 +291,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         guiFragment.setCode(code);
         guiFragment.setPluginCode(widgetType.getPluginCode());
         guiFragment.setGui(widgetRequest.getCustomUi());
+        guiFragment.setDefaultGui(widgetRequest.getCustomUi());
         guiFragment.setWidgetTypeCode(widgetType.getCode());
         this.getGuiFragmentManager().addGuiFragment(guiFragment);
     }

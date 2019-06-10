@@ -33,7 +33,7 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
 
     private static final Logger logger = LoggerFactory.getLogger(GuiFragmentDAO.class);
 
-    private static final String ADD_GUIFRAGMENT = "INSERT INTO guifragment (code, widgettypecode, plugincode, gui, locked ) VALUES (? , ? , ? , ? , ?)";
+    private static final String ADD_GUIFRAGMENT = "INSERT INTO guifragment (code, widgettypecode, plugincode, gui, defaultgui, locked ) VALUES (? , ? , ? , ? , ? , ?)";
 
     private static final String UPDATE_GUIFRAGMENT = "UPDATE guifragment SET widgettypecode = ?, plugincode = ? , gui = ? WHERE code = ? ";
 
@@ -102,6 +102,7 @@ public class GuiFragmentDAO extends AbstractSearcherDAO implements IGuiFragmentD
                 stat.setNull(index++, Types.VARCHAR);
             }
             stat.setString(index++, guiFragment.getGui());
+            stat.setString(index++, guiFragment.getDefaultGui());
             stat.setInt(index++, 0);
             stat.executeUpdate();
         } catch (Throwable t) {

@@ -13,19 +13,14 @@
  */
 package com.agiletec.aps.system.common;
 
-import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.Date;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Utility Class for searching operation on db. This class presents utility
@@ -51,12 +46,18 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             conn = this.getConnection();
             stat = this.buildStatement(filters, false, false, conn);
             result = stat.executeQuery();
-            while (result.next()) {
-                String id = result.getString(this.getMasterTableIdFieldName());
+            limitedResultConsume(filters, result, (resultSet) -> {
+                String id = resultSet.getString(this.getMasterTableIdFieldName());
                 if (!idList.contains(id)) {
                     idList.add(id);
                 }
-            }
+            });
+//            while (result.next()) {
+//                String id = result.getString(this.getMasterTableIdFieldName());
+//                if (!idList.contains(id)) {
+//                    idList.add(id);
+//                }
+//            }
         } catch (Throwable t) {
             logger.error("Error while loading the list of IDs", t);
             throw new RuntimeException("Error while loading the list of IDs", t);
@@ -236,7 +237,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (!isCount) {
             boolean ordered = appendOrderQueryBlocks(filters, query, false);
-            this.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
         }
 
         return query.toString();
@@ -296,22 +296,25 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
     }
 
     //TODO REMOVE VARS per prepared statement
-    protected void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
-        try {
-            if (null == filters || filters.length == 0) {
-                logger.warn("no filters");
-                return;
-            }
-            for (FieldSearchFilter filter : filters) {
-                if (filter.getOffset() != null && filter.getLimit() != null) {
-                    query.append(QueryLimitResolver.createLimitBlock(filter, this.getDataSource(), this.getDataSourceClassName()));
-                    break;
-                }
-            }
-        } catch (Throwable t) {
-            throw new RuntimeException("error building limit query", t);
-        }
-    }
+    // This is commented due to issuses in limiting query on Oracle11c.
+    // Limit and offset are done using the limitedResultConsume on the complete result set
+    // Temporary solution - not efficient on large datasets
+//    protected void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
+//        try {
+//            if (null == filters || filters.length == 0) {
+//                logger.warn("no filters");
+//                return;
+//            }
+//            for (FieldSearchFilter filter : filters) {
+//                if (filter.getOffset() != null && filter.getLimit() != null) {
+//                    query.append(QueryLimitResolver.createLimitBlock(filter, this.getDataSource(), this.getDataSourceClassName()));
+//                    break;
+//                }
+//            }
+//        } catch (Throwable t) {
+//            throw new RuntimeException("error building limit query", t);
+//        }
+//    }
 
     protected boolean appendMetadataFieldFilterQueryBlocks(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
         if (filters == null) {
@@ -464,5 +467,50 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
     public void setDataSourceClassName(String dataSourceClassName) {
         this.dataSourceClassName = dataSourceClassName;
     }
-    
+
+    protected void limitedResultConsume(FieldSearchFilter[] filters, ResultSet resultSet, ThrowingConsumer<ResultSet, SQLException> consumer) throws Exception {
+        int offset = getOffset(filters);
+        int limit = getLimit(filters);
+        int resultNumber = 0;
+        int resultIndex = -1;
+        while (resultSet.next()) {
+            resultIndex++;
+            if (resultNumber >= limit) {
+                break;
+            }
+            if (resultIndex < offset)  {
+                continue;
+            }
+            consumer.accept(resultSet);
+            resultNumber++;
+        }
+
+    }
+
+    protected int getOffset(FieldSearchFilter[] filters) {
+        int offset = 0;
+        if (null == filters || filters.length == 0) {
+            return offset;
+        }
+
+        OptionalInt minOffset = Stream.of(filters)
+                .filter(filter -> filter.getOffset() != null)
+                .mapToInt(FieldSearchFilter::getOffset).findFirst();
+
+        return minOffset.orElse(offset);
+    }
+
+    protected int getLimit(FieldSearchFilter[] filters) {
+        int limit = Integer.MAX_VALUE;
+        if (null == filters || filters.length == 0) {
+            return limit;
+        }
+
+        OptionalInt minLimit = Stream.of(filters)
+                .filter(filter -> filter.getLimit() != null)
+                .mapToInt(FieldSearchFilter::getLimit).findFirst();
+
+        return minLimit.orElse(limit);
+
+    }
 }

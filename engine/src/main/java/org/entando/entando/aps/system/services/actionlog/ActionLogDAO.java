@@ -153,9 +153,12 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             List<String> groupCodes = (null != userGroupCodes && userGroupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroupCodes;
             stat = this.buildStatement(filters, groupCodes, conn);
             result = stat.executeQuery();
-            while (result.next()) {
-                idList.add(result.getInt(1));
-            }
+            limitedResultConsume(filters, result, (resultSet -> {
+                idList.add(resultSet.getInt(1));
+            }));
+//            while (result.next()) {
+//                idList.add(result.getInt(1));
+//            }
         } catch (Throwable t) {
             logger.error("Error loading actionlogger records", t);
             throw new RuntimeException("Error loading actionlogger records", t);
@@ -198,9 +201,12 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             List<String> groupCodes = (null != userGroupCodes && userGroupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroupCodes;
             stat = this.buildStatement(filters, groupCodes, conn);
             result = stat.executeQuery();
-            while (result.next()) {
-                idList.add(result.getInt(1));
-            }
+            limitedResultConsume(filters, result, resultSet -> {
+                idList.add(resultSet.getInt(1));
+            });
+//            while (result.next()) {
+//                idList.add(result.getInt(1));
+//            }
         } catch (Throwable t) {
             logger.error("Error loading activity stream records", t);
             throw new RuntimeException("Error loading activity stream records", t);
@@ -242,7 +248,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             query.append(") ");
         }
         boolean ordered = appendOrderQueryBlocks(filters, query, false);
-        super.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
         return query.toString();
     }
 
@@ -489,12 +494,18 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             groupCodes.add(groupName);
             stat = this.buildStatement(filters, groupCodes, conn);
             result = stat.executeQuery();
-            while (result.next()) {
-                Integer id = result.getInt(1);
+            limitedResultConsume(filters, result, (resultSet -> {
+                Integer id = resultSet.getInt(1);
                 if (!idList.contains(id)) {
                     idList.add(id);
                 }
-            }
+            }));
+//            while (result.next()) {
+//                Integer id = result.getInt(1);
+//                if (!idList.contains(id)) {
+//                    idList.add(id);
+//                }
+//            }
             if (idList.size() > maxActivitySizeByGroup) {
                 for (int i = maxActivitySizeByGroup; i < idList.size(); i++) {
                     Integer id = idList.get(i);

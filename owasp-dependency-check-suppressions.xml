@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+    <suppress>
+        <notes><![CDATA[ file name: spring-security-core-5.1.5.RELEASE.jar - false positive from this discussion https://github.com/jeremylong/DependencyCheck/issues/1827]]></notes>
+        <gav regex="true">org\.springframework\.security:spring.*</gav>
+        <cve>CVE-2018-1258</cve>
+        <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+        <cpe>cpe:/a:vmware:springsource_spring_framework</cpe>
+        <cpe>cpe:/a:springsource:spring_framework</cpe>
+        <cpe>cpe:/a:mod_security:mod_security</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[ file name: tiles-ognl-3.0.8.jar - Removed dependency on problematic ognl and added newer version of the libraries]]></notes>
+        <gav regex="true">^org\.apache\.tiles:tiles-ognl:.*$</gav>
+        <cpe>cpe:/a:apache:tiles</cpe>
+        <cpe>cpe:/a:ognl_project:ognl</cpe>
+    </suppress>
+
+</suppressions>
+

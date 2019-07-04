@@ -137,7 +137,7 @@
                         <plugin>
                             <groupId>org.owasp</groupId>
                             <artifactId>dependency-check-maven</artifactId>
-                            <version>4.0.2</version>
+                            <version>5.0.0</version>
                             <executions>
                                 <execution>
                                     <goals>
@@ -146,8 +146,12 @@
                                 </execution>
                             </executions>
                             <configuration>
+                                <suppressionFiles>
+                                    <suppressionFile>owasp-dependency-check-suppressions.xml</suppressionFile>
+                                </suppressionFiles>
                                 <autoUpdate>true</autoUpdate>
-                                <format>XML</format>
+                                <format>ALL</format>
+                                <skipProvided>true</skipProvided>
                             </configuration>
                         </plugin>
                         <!-- end maven dependency-check plugin -->
@@ -168,7 +172,7 @@
         </snapshotRepository>
     </distributionManagement>
     <properties>
-		
+
         <!--
         <test.database.driver>org.postgresql.Driver</test.database.driver>
         <test.database.hostname>localhost</test.database.hostname>
@@ -194,15 +198,14 @@
         <test.database.password>agile</test.database.password>
         <test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
         <test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
-		
-        <spring.version>5.0.8.RELEASE</spring.version>
-        <springsecurity.version>5.0.7.RELEASE</springsecurity.version>
-        <springsecurityoauth2.version>2.3.3.RELEASE</springsecurityoauth2.version>
+
+        <spring.version>5.1.8.RELEASE</spring.version>
+        <springsecurity.version>5.1.5.RELEASE</springsecurity.version>
+        <springsecurityoauth2.version>2.3.6.RELEASE</springsecurityoauth2.version>
         <struts2.version>2.5.17</struts2.version>
         <cxf.version>3.1.16</cxf.version>
-        <jackson.version>2.9.5</jackson.version>
-		
-        <hibernate-validator-version>5.3.0.Final</hibernate-validator-version>
+        <jackson.version>2.9.9</jackson.version>
+        <hibernate-validator-version>6.0.17.Final</hibernate-validator-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -298,7 +301,7 @@
         </plugins>
     </build>
     <dependencies>
-        
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -393,7 +396,7 @@
         <dependency>
             <groupId>org.apache.taglibs</groupId>
             <artifactId>taglibs-standard-impl</artifactId>
-            <version>1.2.3</version>
+            <version>1.2.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -403,7 +406,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
@@ -460,7 +463,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
@@ -564,9 +567,19 @@
                     <groupId>org.springframework.security</groupId>
                     <artifactId>spring-security-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.jackson</groupId>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-        
+
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+            <version>1.4.01</version>
+        </dependency>
+
         <dependency>
             <groupId>oro</groupId>
             <artifactId>oro</artifactId>
@@ -574,7 +587,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.struts</groupId>
             <artifactId>struts2-core</artifactId>
@@ -618,18 +631,48 @@
                     <groupId>org.apache.tiles</groupId>
                     <artifactId>tiles-core</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.tiles</groupId>
+                    <artifactId>tiles-ognl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tiles</groupId>
+            <artifactId>tiles-ognl</artifactId>
+            <version>3.0.8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tiles</groupId>
+                    <artifactId>tiles-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-core</artifactId>
-            <version>3.0.7</version>
+            <version>3.0.8</version>
             <type>jar</type>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <groupId>commons-digester</groupId>
                     <artifactId>commons-digester</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.0.21</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -651,7 +694,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
@@ -675,7 +718,7 @@
         <dependency>
             <groupId>org.apache.tiles</groupId>
             <artifactId>tiles-api</artifactId>
-            <version>3.0.7</version>
+            <version>3.0.8</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -711,9 +754,13 @@
         </dependency>
         <dependency>
             <groupId>javax.el</groupId>
-            <artifactId>el-api</artifactId>
-            <version>2.2</version>
-            <scope>test</scope>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>2.2.4</version>
         </dependency>
         <dependency>
             <groupId>org.im4java</groupId>
@@ -755,14 +802,14 @@
             <version>10.9.1.0</version>
             <scope>test</scope>
         </dependency>
-		
+
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
             <version>2.2</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-frontend-jaxws</artifactId>
@@ -784,19 +831,19 @@
             <artifactId>cxf-rt-rs-extension-providers</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.1</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>20180130</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -824,7 +871,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
+
         <dependency>
             <groupId>com.j256.ormlite</groupId>
             <artifactId>ormlite-core</artifactId>
@@ -898,7 +945,7 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-        
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>

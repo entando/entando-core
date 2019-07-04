@@ -150,7 +150,7 @@
                                     <suppressionFile>owasp-dependency-check-suppressions.xml</suppressionFile>
                                 </suppressionFiles>
                                 <autoUpdate>true</autoUpdate>
-                                <format>HTML</format>
+                                <format>ALL</format>
                                 <skipProvided>true</skipProvided>
                             </configuration>
                         </plugin>

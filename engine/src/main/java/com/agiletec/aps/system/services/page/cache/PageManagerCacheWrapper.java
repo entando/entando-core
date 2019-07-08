@@ -20,6 +20,7 @@ import com.agiletec.aps.system.services.page.IPageDAO;
 import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageRecord;
 import com.agiletec.aps.system.services.page.PagesStatus;
+import com.agiletec.aps.system.services.page.Widget;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private static final Logger _logger = LoggerFactory.getLogger(PageManagerCacheWrapper.class);
 
+    private List<String> localObject = new ArrayList<>();
+
     @Override
     public void initCache(IPageDAO pageDao) throws ApsSystemException {
         PagesStatus status = new PagesStatus();
@@ -44,6 +47,10 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         try {
             Cache cache = this.getCache();
             this.releaseCachedObjects(cache);
+            for (String key : this.localObject) {
+                cache.evict(key);
+            }
+            this.localObject.clear();
             List<PageRecord> pageRecordList = pageDao.loadPageRecords();
             Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
             Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
@@ -169,6 +176,71 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 status.setLastUpdate(currentDate);
             }
         }
+    }
+
+    @Override
+    public List<String> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+        return this.getWidgetUtilizers(widgetTypeCode, false);
+    }
+
+    @Override
+    public List<String> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException {
+        return this.getWidgetUtilizers(widgetTypeCode, true);
+    }
+
+    private List<String> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
+        if (null == widgetTypeCode) {
+            return null;
+        }
+        Cache cache = super.getCache();
+        String key = this.getWidgetUtilizerCacheName(widgetTypeCode, draft);
+        List<String> pageCodes = this.get(cache, key, List.class);
+        if (null == pageCodes) {
+            Map<String, List> utilizersMap = new HashMap<>();
+            try {
+                IPage root = (draft) ? this.getDraftRoot() : this.getOnlineRoot();
+                this.getWidgetUtilizers(root, utilizersMap, draft);
+            } catch (Throwable t) {
+                String message = "Error during searching draft page utilizers";
+                _logger.error(message, t);
+                throw new ApsSystemException(message, t);
+            }
+            utilizersMap.keySet().stream().forEach(cacheKey -> {
+                cache.put(cacheKey, utilizersMap.get(cacheKey));
+                this.localObject.add(cacheKey);
+            });
+            pageCodes = utilizersMap.get(key);
+        }
+        if (null == pageCodes) {
+            pageCodes = new ArrayList<>();
+        }
+        return pageCodes;
+    }
+
+    private void getWidgetUtilizers(IPage page, Map<String, List> utilizersMap, boolean draft) {
+        Widget[] widgets = page.getWidgets();
+        for (Widget widget : widgets) {
+            if (null != widget && null != widget.getType()) {
+                String cacheCode = this.getWidgetUtilizerCacheName(widget.getType().getCode(), draft);
+                List<String> widgetUtilizers = utilizersMap.get(cacheCode);
+                if (null == widgetUtilizers) {
+                    widgetUtilizers = new ArrayList<>();
+                    utilizersMap.put(cacheCode, widgetUtilizers);
+                }
+                widgetUtilizers.add(page.getCode());
+            }
+        }
+        String[] childrenCodes = page.getChildrenCodes();
+        for (String childrenCode : childrenCodes) {
+            IPage child = (draft) ? this.getDraftPage(childrenCode) : this.getOnlinePage(childrenCode);
+            if (null != child) {
+                this.getWidgetUtilizers(child, utilizersMap, draft);
+            }
+        }
+    }
+
+    private String getWidgetUtilizerCacheName(String widgetTypeCode, boolean draft) {
+        return ((draft) ? DRAFT_WIDGET_UTILIZER_CACHE_NAME_PREFIX : ONLINE_WIDGET_UTILIZER_CACHE_NAME_PREFIX) + widgetTypeCode;
     }
 
     @Override

@@ -15,6 +15,19 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <id>e.santoboni</id>
+            <name>Eugenio Santoboni</name>
+            <email>e.santoboni@entando.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:entando/entando-core.git</connection>
+        <developerConnection>scm:git:git@github.com:entando/entando-core.git</developerConnection>
+        <url>https://github.com/entando/entando-core</url>
+        <tag>v5.2.0</tag>
+    </scm>
     <organization>
         <name>Entando Inc.</name>
         <url>http://www.entando.com/</url>

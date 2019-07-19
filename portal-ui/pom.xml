@@ -159,8 +159,8 @@
                         <phase>deploy</phase>
                         <configuration>
                             <file>${project.build.directory}/${project.build.finalName}.jar</file>
-                            <url>${maven-repository-url-release}</url>
-                            <repositoryId>nexus-release</repositoryId>
+                            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                            <repositoryId>nexus-snapshot</repositoryId>
                             <generatePom>false</generatePom>
                             <pomFile>pom.xml</pomFile>
                             <packaging>jar</packaging>

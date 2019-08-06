@@ -61,7 +61,7 @@ public class UserProfileAttributeRole implements ExtendedColumnDefinition {
             profileTableName = "`" + UserProfile.TABLE_NAME + "`";
         }
         return new String[]{"ALTER TABLE " + tableName + " "
-            + "ADD CONSTRAINT " + TABLE_NAME + "_fkey FOREIGN KEY (username) "
+            + "ADD CONSTRAINT authusprofroles_fkey FOREIGN KEY (username) "
             + "REFERENCES " + profileTableName + " (username)"};
     }
 

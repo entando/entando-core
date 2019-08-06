@@ -21,58 +21,59 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * 
+ *
  * @author spuddu
  *
  */
 @DatabaseTable(tableName = WidgetConfigDraft.TABLE_NAME)
 public class WidgetConfigDraft implements ExtendedColumnDefinition {
-	
-	public WidgetConfigDraft() {}
-	
-	@DatabaseField(foreign=true, columnName = "pagecode", 
-			width = 30, 
-			canBeNull = false)
-	private Page _page;
-	
-	@DatabaseField(columnName = "framepos", 
-			dataType = DataType.INTEGER, 
-			canBeNull = false)
-	private int _framePos;
-	
-	@DatabaseField(foreign=true, columnName = "widgetcode", 
-			width = 40, 
-			canBeNull = false)
-	private WidgetCatalog _widget;
-	
-	@DatabaseField(columnName = "config", 
-			dataType = DataType.LONG_STRING)
-	private String _config;
-	
-	@Override
-	public String[] extensions(IDatabaseManager.DatabaseType type) {
-		String tableName = TABLE_NAME;
-		String pageTableName = Page.TABLE_NAME;
-		String widgetCatalogTableName = WidgetCatalog.TABLE_NAME;
-		if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
-			tableName = "`" + tableName + "`";
-			pageTableName = "`" + pageTableName + "`";
-			widgetCatalogTableName = "`" + widgetCatalogTableName + "`";
-		}
-		String[] queries = new String[3];
-		queries[0] = "ALTER TABLE " + TABLE_NAME + " ADD CONSTRAINT " + 
-				TABLE_NAME + "_pkey PRIMARY KEY(pagecode , framepos)";
-		queries[1] = "ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_pagecode_fkey FOREIGN KEY (pagecode) "
-				+ "REFERENCES " + pageTableName + " (code)";
-		queries[2] = "ALTER TABLE " + tableName + " " 
-				+ "ADD CONSTRAINT " + TABLE_NAME + "_widgetcode_fkey FOREIGN KEY (widgetcode) "
-				+ "REFERENCES " + widgetCatalogTableName + " (code)";
-		return queries;
-	}
-	
-	public static final String TABLE_NAME = "widgetconfig_draft";
-	
+
+    public WidgetConfigDraft() {
+    }
+
+    @DatabaseField(foreign = true, columnName = "pagecode",
+            width = 30,
+            canBeNull = false)
+    private Page _page;
+
+    @DatabaseField(columnName = "framepos",
+            dataType = DataType.INTEGER,
+            canBeNull = false)
+    private int _framePos;
+
+    @DatabaseField(foreign = true, columnName = "widgetcode",
+            width = 40,
+            canBeNull = false)
+    private WidgetCatalog _widget;
+
+    @DatabaseField(columnName = "config",
+            dataType = DataType.LONG_STRING)
+    private String _config;
+
+    @Override
+    public String[] extensions(IDatabaseManager.DatabaseType type) {
+        String tableName = TABLE_NAME;
+        String pageTableName = Page.TABLE_NAME;
+        String widgetCatalogTableName = WidgetCatalog.TABLE_NAME;
+        if (IDatabaseManager.DatabaseType.MYSQL.equals(type)) {
+            tableName = "`" + tableName + "`";
+            pageTableName = "`" + pageTableName + "`";
+            widgetCatalogTableName = "`" + widgetCatalogTableName + "`";
+        }
+        String[] queries = new String[3];
+        queries[0] = "ALTER TABLE " + TABLE_NAME + " ADD CONSTRAINT "
+                + TABLE_NAME + "_pkey PRIMARY KEY(pagecode , framepos)";
+        queries[1] = "ALTER TABLE " + tableName + " "
+                + "ADD CONSTRAINT " + TABLE_NAME + "_pc_fkey FOREIGN KEY (pagecode) "
+                + "REFERENCES " + pageTableName + " (code)";
+        queries[2] = "ALTER TABLE " + tableName + " "
+                + "ADD CONSTRAINT " + TABLE_NAME + "_wc_fkey FOREIGN KEY (widgetcode) "
+                + "REFERENCES " + widgetCatalogTableName + " (code)";
+        return queries;
+    }
+
+    public static final String TABLE_NAME = "widgetconfig_draft";
+
 }
 /*
 CREATE TABLE widgetconfig_draft

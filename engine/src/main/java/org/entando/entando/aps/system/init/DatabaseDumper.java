@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.init;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.DateConverter;
+import com.j256.ormlite.table.TableInfo;
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 import org.entando.entando.aps.system.init.model.SystemInstallationReport;
@@ -91,7 +92,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
                         tableClass = Class.forName(tableClassName);
                     }
                     String tableName = TableFactory.getTableName(tableClass);
-                    this.dumpTableData(tableName, dataSourceName, dataSource, report, backupSubFolder);
+                    TableInfo tableInfo = this.extractTableInfo(dataSourceName, dataSource, tableClass);
+                    this.dumpTableData(tableName, dataSourceName, dataSource, report, backupSubFolder, tableInfo);
                 }
             }
         } catch (BeansException | ClassNotFoundException | ApsSystemException t) {
@@ -100,8 +102,18 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
         }
     }
 
+    private TableInfo extractTableInfo(String dataSourceName, DataSource dataSource, Class tableClass) {
+        try {
+            TableFactory tableFactory = new TableFactory(dataSourceName, dataSource, super.getType(dataSource));
+            return tableFactory.getTableInfo(tableClass);
+        } catch (Exception e) {
+            _logger.error("Error extracting table info - {}", e.getMessage());
+        }
+        return null;
+    }
+
     protected void dumpTableData(String tableName, String dataSourceName,
-            DataSource dataSource, DataSourceDumpReport report, String backupSubFolder) throws ApsSystemException {
+            DataSource dataSource, DataSourceDumpReport report, String backupSubFolder, TableInfo tableInfo) throws ApsSystemException {
         String filename = tableName + ".sql";
         File tempFile = null;
         FileWriter fileWriter = null;
@@ -110,7 +122,7 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
             tempFile = this.createEmptyTempFile(filename);
             fileWriter = new FileWriter(tempFile.getAbsolutePath());
             bufferWriter = new BufferedWriter(fileWriter);
-            TableDumpReport tableDumpReport = TableDataUtils.dumpTable(bufferWriter, dataSource, tableName);
+            TableDumpReport tableDumpReport = TableDataUtils.dumpTable(bufferWriter, dataSource, tableName, tableInfo);
             report.addTableReport(dataSourceName, tableDumpReport);
         } catch (IOException t) {
             _logger.error("Error dumping table '{}' - datasource '{}'", tableName, dataSourceName, t);
@@ -154,8 +166,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
             }
             if (null != tempFile) {
                 boolean deleted = tempFile.delete();
-                if(!deleted) {
-                    _logger.warn("Failed to delete temp file {} ",tempFile.getAbsolutePath());
+                if (!deleted) {
+                    _logger.warn("Failed to delete temp file {} ", tempFile.getAbsolutePath());
                 }
             }
         }
@@ -167,8 +179,8 @@ public class DatabaseDumper extends AbstractDatabaseUtils {
             String filePath = tempDir + File.separator + filename;
             File file = new File(filePath);
             boolean created = file.createNewFile();
-            if(!created) {
-                _logger.warn("Failed to create a temp file {} ",created);
+            if (!created) {
+                _logger.warn("Failed to create a temp file {} ", created);
             }
             return file;
         } catch (Throwable t) {

@@ -61,8 +61,10 @@ public abstract class AbstractPageMetadata implements ExtendedColumnDefinition {
             pageTableName = "`" + pageTableName + "`";
         }
         return new String[]{
-            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_code_fk FOREIGN KEY (code) " + "REFERENCES " + pageTableName + " (code) ",
-            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT " + this.getTableName() + "_modelcode_fk FOREIGN KEY (modelcode) " + "REFERENCES " + PageModel.TABLE_NAME + " (code)"};
+            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT "
+            + this.getTableName() + "_cd_fk FOREIGN KEY (code) " + "REFERENCES " + pageTableName + " (code) ",
+            "ALTER TABLE " + tableName + " " + "ADD CONSTRAINT "
+            + this.getTableName() + "_mc_fk FOREIGN KEY (modelcode) " + "REFERENCES " + PageModel.TABLE_NAME + " (code)"};
     }
 
 }

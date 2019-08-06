@@ -15,6 +15,8 @@ package org.entando.entando.aps.system.init.util;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.DateConverter;
+import com.j256.ormlite.field.FieldType;
+import com.j256.ormlite.table.TableInfo;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -45,9 +47,9 @@ import org.slf4j.LoggerFactory;
  * @author E.Santoboni
  */
 public class TableDataUtils {
-    
+
     private static final Logger _logger = LoggerFactory.getLogger(TableDataUtils.class);
-    
+
     public static void valueDatabase(String script, String databaseName,
             DataSource dataSource, DataInstallationReport schemaReport) throws ApsSystemException {
         try {
@@ -71,7 +73,7 @@ public class TableDataUtils {
             throw new ApsSystemException("Error executing script into db " + databaseName, t);
         }
     }
-    
+
     public static void executeQueries(DataSource dataSource, String[] queries, boolean traceException) throws ApsSystemException {
         if (null == queries || queries.length == 0) {
             return;
@@ -119,8 +121,42 @@ public class TableDataUtils {
             }
         }
     }
-    
+
     public static TableDumpReport dumpTable(BufferedWriter br, DataSource dataSource, String tableName) throws ApsSystemException {
+        return dumpTable(br, dataSource, tableName, null);
+    }
+
+    private static boolean isTypeAutoincrement(String tableName, TableInfo tableInfo, String columnName) {
+        if (null == tableInfo) {
+            if ("id".equalsIgnoreCase(columnName)) { // fix for jboss env
+                return true;
+            }
+            return false;
+        }
+        FieldType type = getFieldType(tableName, tableInfo, columnName);
+        return (null != type) ? type.isGeneratedId() : false;
+    }
+
+    private static FieldType getFieldType(String tableName, TableInfo tableInfo, String columnName) {
+        try {
+            if (null == tableInfo) {
+                return null;
+            }
+            FieldType[] types = tableInfo.getFieldTypes();
+            for (int i = 0; i < types.length; i++) {
+                FieldType type = types[i];
+                if (type.getColumnName().equalsIgnoreCase(columnName)) {
+                    return type;
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            _logger.error("Error extracting info from table {}", tableName, e);
+        }
+        return null;
+    }
+
+    public static TableDumpReport dumpTable(BufferedWriter br, DataSource dataSource, String tableName, TableInfo tableInfo) throws ApsSystemException {
         TableDumpReport report = new TableDumpReport(tableName);
         StringBuilder scriptPrefix = new StringBuilder("INSERT INTO ").append(tableName).append(" (");
         Connection conn = null;
@@ -135,22 +171,29 @@ public class TableDataUtils {
             res = stat.executeQuery(query);
             ResultSetMetaData metaData = res.getMetaData();
             int columnCount = metaData.getColumnCount();
+            List<Integer> columnToExclude = new ArrayList<>();
             int[] types = new int[columnCount];
+            int indexColumnHeader = 0;
             for (int i = 0; i < columnCount; i++) {
                 int indexColumn = i + 1;
-                if (metaData.isAutoIncrement(indexColumn)) {
+                String columnName = metaData.getColumnName(indexColumn).toLowerCase();
+                if (metaData.isAutoIncrement(indexColumn)
+                        || isTypeAutoincrement(tableName, tableInfo, columnName)) {
+                    columnToExclude.add(i);
                     continue;
                 }
-                scriptPrefix.append(metaData.getColumnName(indexColumn).toLowerCase()).append(",");
+                scriptPrefix.append(columnName).append(",");
                 types[i] = metaData.getColumnType(indexColumn);
+                indexColumnHeader++;
             }
             scriptPrefix.deleteCharAt(scriptPrefix.lastIndexOf(","));
             scriptPrefix.append(") VALUES (");
             int rows = 0;
             while (res.next()) {
                 StringBuilder newRecord = new StringBuilder(scriptPrefix);
+                int indexColumn = 0;
                 for (int i = 0; i < columnCount; i++) {
-                    if (metaData.isAutoIncrement(i + 1)) {
+                    if (columnToExclude.contains(i)) {
                         continue;
                     }
                     Object value = getColumnValue(res, i, types);
@@ -166,6 +209,7 @@ public class TableDataUtils {
                         }
                     }
                     newRecord.append(",");
+                    indexColumn++;
                 }
                 newRecord.deleteCharAt(newRecord.lastIndexOf(","));
                 newRecord.append(");\n");
@@ -203,7 +247,7 @@ public class TableDataUtils {
         report.setRequiredTime(time);
         return report;
     }
-    
+
     private static Object getColumnValue(ResultSet res, int columnIndex, int[] columnTypes) throws SQLException {
         int type = columnTypes[columnIndex];
         int resIndex = columnIndex + 1;
@@ -323,7 +367,7 @@ public class TableDataUtils {
         }
         //return null;
     }
-    
+
     protected static String getClobAsString(Clob clob) {
         if (null == clob) {
             return null;
@@ -340,14 +384,14 @@ public class TableDataUtils {
         }
         return strOut.toString().trim();
     }
-    
+
     private static String getDateAsString(Date date) {
         if (null == date) {
             return null;
         }
         return DateConverter.getFormattedDate(date, "yyyy-MM-dd HH:mm:ss");
     }
-    
+
     private static String getTimeAsString(Time time) {
         if (null == time) {
             return null;
@@ -355,7 +399,7 @@ public class TableDataUtils {
         Date date = new Date(time.getTime());
         return getDateAsString(date);
     }
-    
+
     private static String getTimestampAsString(Timestamp time) {
         if (null == time) {
             return null;
@@ -363,7 +407,7 @@ public class TableDataUtils {
         Date date = new Date(time.getTime());
         return getDateAsString(date);
     }
-    
+
     private static boolean isDataNeedsQuotes(int type) {
         switch (type) {
             case Types.BIGINT:
@@ -392,5 +436,5 @@ public class TableDataUtils {
                 return true;
         }
     }
-    
+
 }

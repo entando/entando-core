@@ -10,8 +10,6 @@
             http://www.springframework.org/schema/mvc  http://www.springframework.org/schema/mvc/spring-mvc.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <context:property-placeholder location="WEB-INF/conf/systemParams.properties" />
-
     <!-- scans for annotated classes -->
     <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
     <context:annotation-config />
@@ -31,13 +29,6 @@
     </mvc:annotation-driven>
 
     <mvc:resources mapping="/resources/**" location="/resources/" />
-
-    <bean id="multipartResolver"
-          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-        <property name="maxUploadSize">
-            <value>${file.upload.maxSize}</value>
-        </property>
-    </bean>
 
     <util:map id="validationCodesMapping" map-class="java.util.HashMap">
         <entry key="NotNull">

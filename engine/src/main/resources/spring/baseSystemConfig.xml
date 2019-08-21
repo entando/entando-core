@@ -241,4 +241,11 @@
 
     <bean class="org.entando.entando.aps.system.init.SystemPostProcessor" />
 
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize">
+            <value>${file.upload.maxSize}</value>
+        </property>
+    </bean>
+
 </beans>

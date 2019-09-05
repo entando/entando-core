@@ -59,7 +59,7 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorRestResponse processRuntimeExceptionException(RuntimeException ex) {
-        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        logger.warn("Processing unhandled exception", ex);
         RestError error = new RestError(RestErrorCodes.INTERNAL_ERROR, this.resolveLocalizedErrorMessage("GENERIC_ERROR", new Object[]{ex.getMessage()}));
         return new ErrorRestResponse(error);
     }

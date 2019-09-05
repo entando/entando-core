@@ -92,20 +92,29 @@ public class I18nManagerCacheWrapperTest {
     
     @Test
     public void getLabelsGroup() throws Exception {
-        ApsProperties properties = this.cacheWrapper.getLabelGroup(I18nManagerCacheWrapper.I18N_CACHE_NAME_PREFIX + TEST_KEY);
+        ApsProperties properties = this.cacheWrapper.getLabelGroup(TEST_KEY);
         Assert.assertNotNull(properties);
         Assert.assertEquals("ciao", properties.get("it"));
     }
-
+    
+    @Test
+    public void update() {
+        cacheWrapper.updateLabelGroup(TEST_KEY, I18nManagerTest.createLabel("si", "yes"));
+        ApsProperties properties = this.cacheWrapper.getLabelGroup(TEST_KEY);
+        Assert.assertNotNull(properties);
+        Assert.assertEquals("yes", properties.get("en"));
+    }
+    
     @Test(expected = CacheItemNotFoundException.class)
-    public void should_raise_exception_on_update_invalid_entry() {
+    public void updateInvalidEntry() {
         cacheWrapper.updateLabelGroup("THIS_DO_NOT_EXISTS", I18nManagerTest.createLabel("si", "yes"));
     }
-
+    
     @Test
-    public void should_update_existing_entry() {
-        cacheWrapper.updateLabelGroup(TEST_KEY, I18nManagerTest.createLabel("ciao", "Hello world!"));
-        assertEquals("Hello world!", cacheWrapper.getLabelGroups().get(TEST_KEY).get("en"));
+    public void delete() {
+        cacheWrapper.removeLabelGroup(TEST_KEY);
+        ApsProperties properties = this.cacheWrapper.getLabelGroup(TEST_KEY);
+        Assert.assertNull(properties);
     }
 
 }

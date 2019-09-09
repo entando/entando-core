@@ -13,7 +13,10 @@
  */
 package org.entando.entando.web.api.oauth2.validator;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.util.DateConverter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
@@ -31,6 +34,7 @@ public class ApiConsumerValidator extends AbstractPaginationValidator {
 
     public static final String ERRCODE_INVALID_GRANT_TYPE = "2";
     public static final String ERRCODE_URINAME_MISMATCH = "3";
+    public static final String ERRCODE_INVALID_DATE = "4";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -41,13 +45,28 @@ public class ApiConsumerValidator extends AbstractPaginationValidator {
     public void validate(Object target, Errors errors) {
         if (target instanceof ApiConsumer) {
             ApiConsumer consumer = (ApiConsumer) target;
+            validateGrantTypes(consumer.getAuthorizedGrantTypes(), errors);
+            validateDate(consumer.getIssuedDate(), "issuedDate", errors);
+            validateDate(consumer.getExpirationDate(), "expirationDate", errors);
+        }
+    }
 
-            List<String> validGrantTypes = Arrays.asList(IOAuthConsumerManager.GRANT_TYPES);
+    private void validateGrantTypes(List<String> grantTypes, Errors errors) {
 
-            for (String grantType : consumer.getAuthorizedGrantTypes()) {
-                if (!validGrantTypes.contains(grantType)) {
-                    errors.reject(ERRCODE_INVALID_GRANT_TYPE, new String[]{grantType}, "api.consumer.grantType.invalid");
-                }
+        List<String> validGrantTypes = Arrays.asList(IOAuthConsumerManager.GRANT_TYPES);
+
+        for (String grantType : grantTypes) {
+            if (!validGrantTypes.contains(grantType)) {
+                errors.reject(ERRCODE_INVALID_GRANT_TYPE, new String[]{grantType}, "api.consumer.grantType.invalid");
+            }
+        }
+    }
+
+    private void validateDate(String date, String fieldName, Errors errors) {
+        if (date != null) {
+            Date parsedDate = DateConverter.parseDate(date, SystemConstants.API_DATE_FORMAT);
+            if (parsedDate == null) {
+                errors.rejectValue(fieldName, ERRCODE_INVALID_DATE, new String[]{date}, "api.consumer.date.invalid");
             }
         }
     }

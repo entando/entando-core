@@ -134,6 +134,12 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
 
         testValidationErrorPost(c -> c.getAuthorizedGrantTypes().add("invalid_grant"))
                 .andExpect(jsonPath("$.errors[0].code", is("2")));
+        
+        testValidationErrorPost(c -> c.setExpirationDate("invalid-date"))
+                .andExpect(jsonPath("$.errors[0].code", is("4")));
+
+        testValidationErrorPost(c -> c.setIssuedDate("invalid-date"))
+                .andExpect(jsonPath("$.errors[0].code", is("4")));
     }
 
     private ResultActions testValidationErrorPost(Consumer<ApiConsumer> consumer) throws Exception {
@@ -158,6 +164,7 @@ public class ApiConsumerControllerTest extends AbstractControllerTest {
         apiConsumer.setName("name");
         apiConsumer.setSecret("secret");
         apiConsumer.setDescription("description");
+        apiConsumer.setExpirationDate("2020-01-01 00:00:00");
         return apiConsumer;
     }
 

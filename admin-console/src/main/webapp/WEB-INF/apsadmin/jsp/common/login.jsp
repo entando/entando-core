@@ -17,7 +17,8 @@
     <link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen"/>
     <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css"/>
     <!--JS inclusions-->
-    <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
+    <script src="<wp:resourceURL />administration/js/jquery-3.4.1.min.js"></script>
+    <script src="<wp:resourceURL />administration/js/jquery-migrate-3.0.1.min.js"></script>
     <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 </head>
 

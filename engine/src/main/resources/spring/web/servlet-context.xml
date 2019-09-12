@@ -65,9 +65,7 @@
     <bean id="messageSource"
           class="org.springframework.context.support.ResourceBundleMessageSource">
         <property name="useCodeAsDefaultMessage" value="true" />
-        <property name="basename">
-            <value>rest/messages</value>
-        </property>
+        <property name="basename" value="rest/messages" />
         <property name="fallbackToSystemLocale" value="true" />
     </bean>
 

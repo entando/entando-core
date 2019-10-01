@@ -58,7 +58,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             if (method.hasMethodAnnotation(RequestMapping.class)) {
                 UserDetails user = this.extractOAuthParameters(request);
                 RestAccessControl rqm = method.getMethodAnnotation(RestAccessControl.class);
-                if (null == rqm || null == user) {
+                if (null == rqm) {
                     return true;
                 }
 
@@ -102,6 +102,10 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
     }
 
     protected void checkAuthorization(UserDetails user, String permission, HttpServletRequest request) throws ApsSystemException {
+        if (null == user) {
+            throw new EntandoTokenException("no access token found", request, null);
+        }
+
         logger.debug("User {} requesting resource that requires {} permission ", user.getUsername(), permission);
         if (StringUtils.isNotBlank(permission)) {
             if (!this.getAuthorizationManager().isAuthOnPermission(user, permission)) {

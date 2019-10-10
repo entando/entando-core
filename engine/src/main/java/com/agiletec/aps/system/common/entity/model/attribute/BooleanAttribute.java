@@ -78,7 +78,7 @@ public class BooleanAttribute extends AbstractAttribute {
 
     @Override
     public boolean isSearchableOptionSupported() {
-        return true;
+        return false;
     }
 
     @Override

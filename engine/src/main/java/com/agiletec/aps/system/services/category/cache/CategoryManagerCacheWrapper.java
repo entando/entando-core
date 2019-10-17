@@ -81,7 +81,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 			if (cat != root) {
 				parent.addChildCode(cat.getCode());
 			}
-			cat.setParent(parent);
+			cat.setParentCode(parent.getCode());
 		}
 		if (root == null) {
 			throw new ApsSystemException("Error found in the category tree: undefined root");

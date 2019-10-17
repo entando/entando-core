@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -38,36 +39,6 @@ public class Page extends TreeNode implements IPage, Serializable {
     @Override
     protected void setPosition(int position) {
         super.setPosition(position);
-    }
-
-    @Override
-    public IPage getParent() {
-        return (IPage) super.getParent();
-    }
-
-    /**
-     * WARING: this method is reserved to the page manager service only. Return
-     * the code of the father of this page. This methods exists only to simplify
-     * the loading of the pages structure, it cannot be used in any other
-     * circumstance.
-     *
-     * @return the code of the higher level page
-     */
-    @Override
-    public String getParentCode() {
-        return _parentCode;
-    }
-
-    /**
-     * WARING: this method is reserved to the page manager service only. Set the
-     * code of the father of this page. This methods exists only to simplify the
-     * loading of the pages structure, it cannot be used in any other
-     * circumstance.
-     *
-     * @param parentCode the code of the higher level page
-     */
-    public void setParentCode(String parentCode) {
-        this._parentCode = parentCode;
     }
 
     /**
@@ -285,7 +256,7 @@ public class Page extends TreeNode implements IPage, Serializable {
     }
 
     @Override
-    protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
+    protected String getFullTitle(String langCode, String separator, boolean shortTitle, ITreeNodeManager treeNodeManager) {
         String title = this.getTitles().getProperty(langCode);
         if (null == title) {
             title = this.getCode();
@@ -293,8 +264,8 @@ public class Page extends TreeNode implements IPage, Serializable {
         if (this.isRoot()) {
             return title;
         }
-        ITreeNode parent = this.getParent();
-        while (parent != null && parent.getParent() != null) {
+        ITreeNode parent = treeNodeManager.getNode(this.getParentCode());
+        while (parent != null && parent.getParentCode() != null) {
             String parentTitle = "..";
             if (!shortTitle) {
                 parentTitle = parent.getTitles().getProperty(langCode);
@@ -306,7 +277,7 @@ public class Page extends TreeNode implements IPage, Serializable {
             if (parent.isRoot()) {
                 return title;
             }
-            parent = parent.getParent();
+            parent = treeNodeManager.getNode(parent.getParentCode());
         }
         return title;
     }

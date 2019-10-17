@@ -47,7 +47,7 @@ public class TestCategoryManager extends BaseTestCase {
             Category extractedCat = _categoryManager.getCategory(cat.getCode());
             assertNotNull(extractedCat);
             assertEquals(cat.getTitle(), extractedCat.getTitle());
-            assertEquals(cat.getDefaultFullTitle(), extractedCat.getDefaultFullTitle());
+            assertEquals(cat.getDefaultFullTitle(this._categoryManager), extractedCat.getDefaultFullTitle(this._categoryManager));
             assertEquals(cat.getParentCode(), cat.getParentCode());
         } catch (Throwable t) {
             throw t;
@@ -90,7 +90,6 @@ public class TestCategoryManager extends BaseTestCase {
         cat.setDefaultLang("it");
         cat.setCode("tempCode");
         Category parent = _categoryManager.getCategory("cat1");
-        cat.setParent(parent);
         cat.setParentCode(parent.getCode());
         ApsProperties titles = new ApsProperties();
         titles.put("it", "Titolo in Italiano");

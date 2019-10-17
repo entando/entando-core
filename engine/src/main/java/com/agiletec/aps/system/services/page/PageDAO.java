@@ -225,7 +225,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
     }
 
     protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-        String parentCode = page.getParent().getCode();
+        String parentCode = page.getParentCode();
         // a new page is always inserted in the last position,
         // to avoid changes of the position of the "sister" pages.
         int position = this.getLastPosition(parentCode, conn) + 1;

@@ -67,7 +67,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			} else if (this.getInfo().equals(OWNER_INFO)) {
 				this.extractPageOwner(page, reqCtx);
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
-				this.extractIsChildOfTarget(page);
+				this.extractIsChildOfTarget(page, pageManager);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
 				boolean hasChild = (page.getChildrenCodes() != null && page.getChildrenCodes().length > 0);
 				this._value = new Boolean(hasChild).toString();
@@ -82,9 +82,9 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 		return EVAL_PAGE;
 	}
 
-	protected void extractIsChildOfTarget(IPage page) {
+	protected void extractIsChildOfTarget(IPage page, IPageManager pageManager) {
 		if (null != this.getTargetPage()) {
-			boolean isChild = (page.getCode().equals(this.getTargetPage()) || page.isChildOf(this.getTargetPage()));
+			boolean isChild = (page.getCode().equals(this.getTargetPage()) || page.isChildOf(this.getTargetPage(), pageManager));
 			this._value = new Boolean(isChild).toString();
 		}
 	}

@@ -36,6 +36,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.util.EntityAttributeIterator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.DateConverter;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecordVO;
@@ -48,6 +49,8 @@ import org.entando.entando.aps.system.services.dataobject.model.DataObjectRecord
 public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 
     private static final Logger _logger = LoggerFactory.getLogger(DataObjectDAO.class);
+    
+    private ICategoryManager categoryManager;
 
     @Override
     protected String getLoadEntityRecordQuery() {
@@ -417,7 +420,7 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
 
     private void addCategoryCode(Category category, Set<String> codes) {
         codes.add(category.getCode());
-        Category parentCategory = (Category) category.getParent();
+        Category parentCategory = this.getCategoryManager().getCategory(category.getParentCode());
         if (null != parentCategory && !parentCategory.getCode().equals(parentCategory.getParentCode())) {
             this.addCategoryCode(parentCategory, codes);
         }
@@ -691,4 +694,12 @@ public class DataObjectDAO extends AbstractEntityDAO implements IDataObjectDAO {
         return dataids;
     }
 
+    public ICategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
+    public void setCategoryManager(ICategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
+    }
+    
 }

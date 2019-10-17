@@ -199,7 +199,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
             if (null == currentPage) {
                 throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
             }
-            IPage parent = currentPage.getParent();
+            IPage parent = this.getDraftPage(currentPage.getParentCode());
             String[] sisterPageCodes = parent.getChildrenCodes();
             for (int i = 0; i < sisterPageCodes.length; i++) {
                 String sisterPageCode = sisterPageCodes[i];

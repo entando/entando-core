@@ -53,7 +53,7 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
                                                                 true, pageCode, null, null, false, null, null);
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, null);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, null);
         try {
             pageManager.addPage(pageToAdd);
             WidgetConfigurationDto widgetConfigurationDto = this.pageService.getWidgetConfiguration(pageToAdd.getCode(), 0, IPageService.STATUS_DRAFT);
@@ -79,7 +79,7 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
                                                                 true, pageCode, null, null, false, null, null);
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, null);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, null);
         try {
             pageManager.addPage(pageToAdd);
             WidgetConfigurationDto widgetConfigurationDto = this.pageService.getWidgetConfiguration(pageToAdd.getCode(), 0, IPageService.STATUS_DRAFT);

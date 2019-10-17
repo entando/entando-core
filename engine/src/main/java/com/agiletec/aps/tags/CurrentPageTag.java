@@ -26,6 +26,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 
 /**
@@ -47,6 +48,7 @@ public class CurrentPageTag extends PageInfoTag {
 		Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
 		try {
 			IPage page = (IPage) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
+                        IPageManager pageManager = (IPageManager) ApsWebApplicationUtils.getBean(SystemConstants.PAGE_MANAGER, this.pageContext);
 			if (this.getParam() == null || this.getParam().equals(TITLE_INFO)) {
 				this.extractPageTitle(page, currentLang, reqCtx);
 			} else if (this.getParam().equals(CODE_INFO)) {
@@ -54,7 +56,7 @@ public class CurrentPageTag extends PageInfoTag {
 			} else if (this.getParam().equals(OWNER_INFO)) {
 				this.extractPageOwner(page, reqCtx);
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
-				this.extractIsChildOfTarget(page);
+				this.extractIsChildOfTarget(page, pageManager);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
 				boolean hasChild = (page.getChildrenCodes() != null && page.getChildrenCodes().length > 0);
 				this.setValue(new Boolean(hasChild).toString());

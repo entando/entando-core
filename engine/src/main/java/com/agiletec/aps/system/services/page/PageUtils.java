@@ -24,11 +24,12 @@ public class PageUtils {
 	 * concatenation of the code of the page starting from the root to the given
 	 * page.
 	 *
+     * @param manager
 	 * @param page The page whose path must be found.
 	 * @param separator The separator of the page codes
 	 * @return The full path of the page
 	 */
-	public static StringBuffer getFullPath(IPage page, String separator) {
+	public static StringBuffer getFullPath(IPageManager manager, IPage page, String separator) {
 		if (page.isRoot()) {
 			return new StringBuffer(page.getCode());
 		}
@@ -36,7 +37,8 @@ public class PageUtils {
 		StringBuffer buffer = new StringBuffer();
 		buffer.insert(0, temp.getCode());
 		while (!temp.getCode().equals(temp.getParentCode())) {
-			temp = temp.getParent();
+                    boolean isOnlineInstance = temp.isOnlineInstance();
+			temp = (isOnlineInstance) ? manager.getOnlinePage(temp.getParentCode()) : manager.getDraftPage(temp.getParentCode());
 			if (temp.getMetadata().isShowable()) {
 				buffer.insert(0, temp.getCode() + separator);
 			}

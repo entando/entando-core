@@ -154,7 +154,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
         Page parent = (Page) pagesMap.get(page.getParentCode());
-        ((Page) page).setParent(parent);
+        page.setParentCode(parent.getCode());
         if (!page.getCode().equals(root.getCode())) {
             parent.addChildCode(page.getCode());
         }

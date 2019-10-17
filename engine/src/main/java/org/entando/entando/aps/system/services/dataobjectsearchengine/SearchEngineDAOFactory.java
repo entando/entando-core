@@ -16,6 +16,7 @@ package org.entando.entando.aps.system.services.dataobjectsearchengine;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
             Class indexerClass = Class.forName(this.getIndexerClassName());
             indexerDao = (IIndexerDAO) indexerClass.newInstance();
             indexerDao.setLangManager(this.getLangManager());
+            indexerDao.setCategoryManager(this.getCategoryManager());
             indexerDao.init(this.getDirectory(subDir));
         } catch (Throwable t) {
             _logger.error("Error getting indexer", t);
@@ -70,6 +72,7 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
         try {
             Class searcherClass = Class.forName(this.getSearcherClassName());
             searcherDao = (ISearcherDAO) searcherClass.newInstance();
+            searcherDao.setCategoryManager(this.getCategoryManager());
             searcherDao.init(this.getDirectory(subDir));
         } catch (Throwable t) {
             _logger.error("Error creating new searcher", t);
@@ -170,6 +173,14 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
         this._langManager = langManager;
     }
 
+    public ICategoryManager getCategoryManager() {
+        return categoryManager;
+    }
+
+    public void setCategoryManager(ICategoryManager categoryManager) {
+        this.categoryManager = categoryManager;
+    }
+
     private String _indexerClassName;
     private String _searcherClassName;
 
@@ -178,5 +189,6 @@ public class SearchEngineDAOFactory implements ISearchEngineDAOFactory {
 
     private ConfigInterface _configManager;
     private ILangManager _langManager;
+    private ICategoryManager categoryManager;
 
 }

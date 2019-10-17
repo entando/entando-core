@@ -78,19 +78,6 @@ public interface IPage extends ITreeNode, Serializable {
     @Deprecated
     public void removeExtraGroup(String groupName);
 
-    /**
-     * WARNING: this method is reserved to the page manager service only. Return
-     * the code of the father of this page. This methods exists only to simplify
-     * the loading of the pages structure, it cannot be used in any other
-     * circumstance.
-     *
-     * @return the code of the higher level page
-     */
-    public String getParentCode();
-
-    @Override
-    public IPage getParent();
-
     public PageMetadata getMetadata();
 
     public boolean isOnline();

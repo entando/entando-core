@@ -123,9 +123,9 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 					}
 				}
 			}
-			if (null != nodeToClose.getParent()
-					&& this.checkNode(nodeToClose.getParent().getCode(), groupCodes)) {
-				checkedTargetNodes.add(nodeToClose.getParent().getCode());
+			if (null != nodeToClose.getParentCode()
+					&& this.checkNode(nodeToClose.getParentCode(), groupCodes)) {
+				checkedTargetNodes.add(nodeToClose.getParentCode());
 			}
 		} catch (Throwable t) {
 			_logger.error("Error check target nodes on closing tree", t);

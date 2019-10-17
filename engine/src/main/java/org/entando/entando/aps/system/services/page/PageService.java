@@ -352,7 +352,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
         IPage page = this.getPageManager().getDraftPage(pageCode);
-        if (parent.isChildOf(pageCode)) {
+        if (parent.isChildOf(pageCode, this.getPageManager())) {
             bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
                     new String[]{pageRequest.getParentCode(), pageCode}, "page.movement.parent.invalid.2");
             throw new ValidationGenericException(bindingResult);
@@ -551,7 +551,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         page.setParentCode(pageRequest.getParentCode());
         if (pageRequest.getParentCode() != null) {
             IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
-            page.setParent(parent);
+            page.setParentCode(parent.getCode());
         }
         PageMetadata metadata = new PageMetadata();
         this.valueMetadataFromRequest(metadata, pageRequest);

@@ -118,11 +118,10 @@ public class PageTestUtil {
 		return pages.get(code);
 	}
 
-	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata metadata, Widget[] widgets) {
+	public static Page createPage(String code, String parentPageCode, String groupName, PageMetadata metadata, Widget[] widgets) {
 		Page page = new Page();
 		page.setCode(code);
-		page.setParent(parentPage);
-		page.setParentCode(parentPage.getCode());
+		page.setParentCode(parentPageCode);
 		//page.setPosition(parentPage.getChildrenCodes().length + 1);
 		page.setMetadata(metadata);
 		page.setGroup(groupName);

@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.category.model;
 
 import com.agiletec.aps.system.services.category.Category;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,14 +47,14 @@ public class CategoryDto {
     public CategoryDto() {
     }
 
-    public CategoryDto(Category page) {
+    public CategoryDto(Category page, ICategoryManager categoryManager) {
         this.setCode(page.getCode());
         this.setParentCode(page.getParentCode());
         Optional<ApsProperties> apsTitles = Optional.ofNullable(page.getTitles());
         apsTitles.ifPresent(values -> values.keySet().forEach((lang)
                 -> {
             this.getTitles().put((String) lang, (String) values.get(lang));
-            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang));
+            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang, categoryManager));
         }
         ));
         Optional.ofNullable(page.getChildrenCodes()).

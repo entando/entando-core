@@ -109,7 +109,7 @@ public class TestPageManager extends BaseTestCase {
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage("temp", parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage("temp", parentPage.getCode(), "free", metadata, widgets);
         _pageManager.addPage(pageToAdd);
 
         IPage addedPage = _pageManager.getDraftPage("temp");
@@ -119,7 +119,7 @@ public class TestPageManager extends BaseTestCase {
         assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 
         parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParent(parentPage);
+        pageToAdd.setParentCode(parentPage.getCode());
         pageToAdd.setCode("temp1");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp1");
@@ -129,7 +129,7 @@ public class TestPageManager extends BaseTestCase {
         assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
 
         parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParent(parentPage);
+        pageToAdd.setParentCode(parentPage.getCode());
         pageToAdd.setCode("temp2");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp2");
@@ -140,7 +140,7 @@ public class TestPageManager extends BaseTestCase {
 
     private void checkUpdatePage() throws Exception {
         Page dbPage = (Page) _pageManager.getDraftPage("temp");
-        Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParent(), "free", dbPage.getMetadata().clone(), PageTestUtil
+        Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParentCode(), "free", dbPage.getMetadata().clone(), PageTestUtil
                 .copyArray(dbPage.getWidgets()));
         pageToUpdate.setPosition(dbPage.getPosition());
         PageMetadata onlineMetadata = pageToUpdate.getMetadata();
@@ -199,10 +199,13 @@ public class TestPageManager extends BaseTestCase {
 
         _pageManager.movePage("temp2", true);
         IPage movedTemp1 = _pageManager.getDraftPage("temp1");
+        //IPage movedTemp1Parent = _pageManager.getDraftPage(movedTemp1.getParentCode());
         IPage movedTemp2 = _pageManager.getDraftPage("temp2");
+        IPage movedTemp2Parent = _pageManager.getDraftPage(movedTemp2.getParentCode());
         assertEquals(firstPos, movedTemp2.getPosition());
         assertEquals(firstPos + 1, movedTemp1.getPosition());
-        String[] pages = movedTemp2.getParent().getChildrenCodes();
+        
+        String[] pages = movedTemp2Parent.getChildrenCodes();
         assertEquals(pages[pages.length - 2], "temp2");
         assertEquals(pages[pages.length - 1], "temp1");
 
@@ -211,7 +214,7 @@ public class TestPageManager extends BaseTestCase {
         movedTemp2 = _pageManager.getDraftPage("temp2");
         assertEquals(firstPos + 1, movedTemp2.getPosition());
         assertEquals(firstPos, movedTemp1.getPosition());
-        pages = movedTemp2.getParent().getChildrenCodes();
+        pages = movedTemp2Parent.getChildrenCodes();
         assertEquals(pages[pages.length - 2], "temp1");
         assertEquals(pages[pages.length - 1], "temp2");
     }
@@ -429,7 +432,7 @@ public class TestPageManager extends BaseTestCase {
             PageModel pageModel = parentPage.getMetadata().getModel();
             PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
             PageMetadata draftMeta = metadata;
-            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage, "free", draftMeta, null);
+            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage.getCode(), "free", draftMeta, null);
             _pageManager.addPage(pageToAdd);
             PagesStatus newStatus = this._pageManager.getPagesStatus();
             assertEquals(newStatus.getOnline(), status.getOnline());

@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -62,7 +63,7 @@ public class PageDto {
     public PageDto() {
     }
 
-    public PageDto(IPage page) {
+    public PageDto(IPage page, IPageManager pageManager) {
         this.setCode(page.getCode());
         this.setStatus(getPageStatus(page));
         this.setDisplayedInMenu(page.isShowable());
@@ -87,7 +88,7 @@ public class PageDto {
         apsTitles.ifPresent(values -> values.keySet().forEach(lang
                 -> {
             this.getTitles().put((String) lang, (String) values.get(lang));
-            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang));
+            this.getFullTitles().put((String) lang, (String) page.getFullTitle((String) lang, pageManager));
         }
         ));
         this.setOwnerGroup(page.getGroup());
@@ -104,7 +105,7 @@ public class PageDto {
             SimpleDateFormat sdf = new SimpleDateFormat(SystemConstants.API_DATE_FORMAT);
             this.setLastModified(sdf.format(page.getMetadata().getUpdatedAt()));
         }
-        this.setFullPath(page.getPath());
+        this.setFullPath(page.getPath(pageManager));
     }
 
     public String getCode() {

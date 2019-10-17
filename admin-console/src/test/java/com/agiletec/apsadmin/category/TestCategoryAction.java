@@ -167,7 +167,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
             Category category = this._categoryManager.getCategory(categoryCode);
             assertNotNull(category);
             assertEquals("Titolo categoria In Italiano", category.getTitles().getProperty("it"));
-            assertEquals(this._categoryManager.getRoot().getCode(), category.getParent().getCode());
+            assertEquals(this._categoryManager.getRoot().getCode(), category.getParentCode());
         } catch (Throwable t) {
             throw t;
         } finally {
@@ -190,7 +190,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
             Category category = this._categoryManager.getCategory(expectedCategoryCode);
             assertNotNull(category);
             assertEquals("Titolo Italiano", category.getTitles().getProperty("it"));
-            assertEquals(this._categoryManager.getRoot().getCode(), category.getParent().getCode());
+            assertEquals(this._categoryManager.getRoot().getCode(), category.getParentCode());
         } catch (Throwable t) {
             throw t;
         } finally {

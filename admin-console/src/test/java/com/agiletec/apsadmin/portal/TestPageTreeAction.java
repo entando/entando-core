@@ -535,7 +535,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         IPage root = this._pageManager.getDraftRoot();
         Page testPage = new Page();
         testPage.setCode(pageCode);
-        testPage.setParent(root);
         testPage.setParentCode(root.getCode());
         PageMetadata draft = new PageMetadata();
         draft.setTitle("en", pageCode);

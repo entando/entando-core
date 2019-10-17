@@ -78,29 +78,24 @@ public class CategoryAction extends AbstractTreeAction {
 				_logger.warn("category {} is null", startCategoryCode);
 				return result;
 			}
-
-			//XXX FIX JS
 			this.setCategoryCodeToken(super.getParameter("categoryCodeToken"));
-
 			List<Category> searchResult = this.getCategoryManager().searchCategories(this.getCategoryCodeToken());
 			if (null == searchResult || searchResult.isEmpty()) {
 				return result;
 			}
-
 			BeanComparator comparator = new BeanComparator("code");
 			Collections.sort(result, comparator);
-
 			int maxIndex = 30;
 			String maxParam = super.getParameter("max");
 			if (StringUtils.isNotBlank(maxParam) && StringUtils.isNumeric(maxParam)) {
 				maxIndex = new Integer(maxParam).intValue();
 			}
-
 			Iterator<Category> it = searchResult.iterator();
 			while (result.size() < maxIndex && it.hasNext()) {
 				ITreeNode candidate = it.next();
-				if (!candidate.isChildOf(nodeToMove.getCode()) && !candidate.getCode().equals(nodeToMove.getParentCode())) {
-					result.add(new TreeNodeWrapper(candidate, this.getCurrentLang().getCode()));
+				if (!candidate.isChildOf(nodeToMove.getCode(), this.getCategoryManager()) && !candidate.getCode().equals(nodeToMove.getParentCode())) {
+					ITreeNode parent = this.getCategoryManager().getNode(candidate.getParentCode());
+                    result.add(new TreeNodeWrapper(candidate, parent, this.getCurrentLang().getCode(), this.getCategoryManager()));
 				}
 			}
 		} catch (Throwable t) {
@@ -217,7 +212,7 @@ public class CategoryAction extends AbstractTreeAction {
 			}
 			Category currentCategory = this.getCategory(selectedNode);
 			this.getCategoryManager().deleteCategory(selectedNode);
-			this.setSelectedNode(currentCategory.getParent().getCode());
+			this.setSelectedNode(currentCategory.getParentCode());
 		} catch (Throwable t) {
 			_logger.error("error in delete", t);
 			return FAILURE;
@@ -365,7 +360,7 @@ public class CategoryAction extends AbstractTreeAction {
 			_logger.debug("trying to move a node under it's own parent..");
 			return "categoryTree";
 		}
-		if (parent.isChildOf(selectedNode)) {
+		if (parent.isChildOf(selectedNode, this.getCategoryManager())) {
 			List<String> args = new ArrayList<String>();
 			args.add(parent.getCode());
 			args.add(selectedNode);
@@ -448,14 +443,14 @@ public class CategoryAction extends AbstractTreeAction {
 		if (null == category) {
 			return null;
 		}
-		List<Category> categories = new ArrayList<Category>();
+		List<Category> categories = new ArrayList<>();
 		this.getSubBreadCrumbsTargets(categories, category);
 		return categories;
 	}
 
 	private void getSubBreadCrumbsTargets(List<Category> categories, Category current) {
 		categories.add(0, current);
-		Category parent = current.getParent();
+		Category parent = this.getCategoryManager().getCategory(current.getParentCode());
 		if (parent != null && !parent.getCode().equals(current.getCode())) {
 			this.getSubBreadCrumbsTargets(categories, parent);
 		}

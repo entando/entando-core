@@ -791,7 +791,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART1");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         this._pageManager.addPage(pageToAdd);
     }
 

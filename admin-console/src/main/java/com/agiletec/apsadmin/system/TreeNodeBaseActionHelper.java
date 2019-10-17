@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
@@ -118,7 +119,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 				while (iter.hasNext()) {
 					String code = (String) iter.next();
 					if (null != code && this.checkNode(code, groupCodes)
-							&& !code.equals(nodeToCloseCode) && !this.getTreeNode(code).isChildOf(nodeToCloseCode)) {
+							&& !code.equals(nodeToCloseCode) && !this.getTreeNode(code).isChildOf(nodeToCloseCode, this.getTreeNodeManager())) {
 						checkedTargetNodes.add(code);
 					}
 				}
@@ -183,8 +184,8 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 
 	protected void buildCheckNodes(ITreeNode treeNode, Set<String> nodesToShow, Collection<String> groupCodes) {
 		nodesToShow.add(treeNode.getCode());
-		ITreeNode parent = treeNode.getParent();
-		if (parent != null && parent.getParent() != null
+		ITreeNode parent = this.getTreeNodeManager().getNode(treeNode.getParentCode());
+		if (parent != null && parent.getParentCode() != null
 				&& !parent.getCode().equals(treeNode.getCode())) {
 			this.buildCheckNodes(parent, nodesToShow, groupCodes);
 		}
@@ -235,8 +236,11 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	}
 
 	protected TreeNodeWrapper buildWrapper(ITreeNode treeNode) {
-		return new TreeNodeWrapper(treeNode);
+        ITreeNode parent = this.getTreeNodeManager().getNode(treeNode.getParentCode());
+		return new TreeNodeWrapper(treeNode, parent);
 	}
+    
+    protected abstract ITreeNodeManager getTreeNodeManager();
 
 	/**
 	 * Return the root node of the managed tree.

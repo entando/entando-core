@@ -55,7 +55,7 @@ public class TestPageConfigAction extends ApsAdminBaseTestCase {
             PageModel pageModel = parentPage.getMetadata().getModel();
             PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
                     true, "pagina temporanea", null, null, false, null, null);
-            Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, pageModel.getDefaultWidget());
+            Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, pageModel.getDefaultWidget());
             this._pageManager.addPage(pageToAdd);
             IPage addedPage = this._pageManager.getDraftPage(pageCode);
             assertNotNull(addedPage);

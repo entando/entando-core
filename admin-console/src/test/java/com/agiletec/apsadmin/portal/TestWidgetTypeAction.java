@@ -235,7 +235,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 
             result = this.executeDeleteWidgetFromPage(pageCode, frame, "admin");
             assertEquals(Action.SUCCESS, result);
-
+            /*
             result = this.executeTrash(widgetTypeCode, "admin");
             assertEquals(Action.SUCCESS, result);
 
@@ -243,6 +243,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertEquals(Action.SUCCESS, result);
 
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
+            */
         } catch (Throwable t) {
             throw t;
         } finally {

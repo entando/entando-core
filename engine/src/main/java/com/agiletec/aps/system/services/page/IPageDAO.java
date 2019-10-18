@@ -29,6 +29,8 @@ public interface IPageDAO {
 	 */
 	public List<PageRecord> loadPageRecords();
 
+	public PageRecord getPageRecordByCode(String pageCode);
+
 	/**
 	 * Insert a new page.
 	 *

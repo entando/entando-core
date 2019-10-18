@@ -13,18 +13,11 @@
  */
 package com.agiletec.aps.system.services.page;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.sql.Types;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
+import com.agiletec.aps.system.common.AbstractDAO;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.init.model.portdb.PageMetadataDraft;
 import org.entando.entando.aps.system.init.model.portdb.PageMetadataOnline;
 import org.entando.entando.aps.system.init.model.portdb.WidgetConfig;
@@ -34,11 +27,11 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.agiletec.aps.system.common.AbstractDAO;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.util.ApsProperties;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Data Access Object for the 'page' objects
@@ -71,6 +64,33 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
         return pages;
     }
 
+    @Override
+    public PageRecord getPageRecordByCode(String pageCode) {
+
+        Connection conn = null;
+        PageRecord result;
+        try {
+            conn = this.getConnection();
+            result = this.getPageRecordByCode(conn, pageCode);
+
+            //it isn't entirely clear that this needs to happen here. However, the list call does this and references
+            //widget config so adding it for the sake of consistency and to avoid untested side effects. Can't see where the widget config
+            //is ultimately connected to the pages but it gets fetched.
+            List<PageRecord> records = new ArrayList<>();
+            records.add(result);
+            this.readPageWidgets(records, true, conn);
+            this.readPageWidgets(records, false, conn);
+
+        } catch (Throwable t) {
+            _logger.error("Error loading pages", t);
+            throw new RuntimeException("Error loading pages", t);
+        } finally {
+            closeConnection(conn);
+        }
+        return result;
+
+    }
+
     private List<PageRecord> createPageRecordList(Connection conn) {
         List<PageRecord> pages = new ArrayList<>();
         Statement stat = null;
@@ -98,6 +118,42 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             closeDaoResources(res, stat);
         }
         return pages;
+    }
+
+
+    private PageRecord getPageRecordByCode(Connection conn, String pageCode){
+
+        PageRecord result = new PageRecord();
+
+        PreparedStatement stat = null;
+        ResultSet res = null;
+        try {
+            stat = conn.prepareStatement(PAGE_RECORD_BY_CODE);
+            stat.setString(1, pageCode);
+
+            res = stat.executeQuery();
+
+            while (res.next()) {
+                String code = res.getString(3);
+                result = this.createPageRecord(code, res);
+
+                int numFramesOnline = this.getWidgetArrayLength(result.getMetadataOnline());
+                if (numFramesOnline >= 0) {
+                    result.setWidgetsOnline(new Widget[numFramesOnline]);
+                }
+                int numFramesDraft = this.getWidgetArrayLength(result.getMetadataDraft());
+                if (numFramesDraft >= 0) {
+                    result.setWidgetsDraft(new Widget[numFramesDraft]);
+                }
+            }
+        } catch (Throwable t) {
+            _logger.error("Error loading page record by code", t);
+            throw new RuntimeException("Error loading page record by code", t);
+        } finally {
+            closeDaoResources(res, stat);
+        }
+        return result;
+
     }
 
     private void readPageWidgets(List<PageRecord> pages, boolean online, Connection conn) {
@@ -824,11 +880,20 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
 
     // attenzione: l'ordinamento deve rispettare prima l'ordine delle pagine
     // figlie nelle pagine madri, e poi l'ordine dei widget nella pagina.
-    private static final String ALL_PAGES = "SELECT p.parentcode, p.pos, p.code, "
+
+
+    private static final String ALL_PAGES_ORDER_BY = "ORDER BY p.parentcode, p.pos, p.code";
+
+    private static final String ALL_PAGES_BASE = "SELECT p.parentcode, p.pos, p.code, "
             + "onl.groupcode, onl.titles, onl.modelcode, onl.showinmenu, onl.extraconfig, onl.updatedat, "
             + "drf.groupcode, drf.titles, drf.modelcode, drf.showinmenu, drf.extraconfig, drf.updatedat FROM pages p LEFT JOIN "
             + PageMetadataOnline.TABLE_NAME + " onl ON p.code = onl.code LEFT JOIN " + PageMetadataDraft.TABLE_NAME
-            + " drf ON p.code = drf.code ORDER BY p.parentcode, p.pos, p.code ";
+            + " drf ON p.code = drf.code ";
+
+
+    private static final String ALL_PAGES = ALL_PAGES_BASE + ALL_PAGES_ORDER_BY;
+
+    private static final String PAGE_RECORD_BY_CODE = ALL_PAGES_BASE + " WHERE p.code = ? "+ALL_PAGES_ORDER_BY;
 
     private static final String ALL_WIDGETS_START = "SELECT w.pagecode, w.framepos, w.widgetcode, w.config " + "FROM pages p JOIN ";
     private static final String ALL_WIDGETS_END = " w ON p.code = w.pagecode " + "ORDER BY p.parentcode, p.pos, p.code, w.framepos ";

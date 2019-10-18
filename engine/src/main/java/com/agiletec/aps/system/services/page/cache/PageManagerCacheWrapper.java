@@ -15,19 +15,12 @@ package com.agiletec.aps.system.services.page.cache;
 
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageDAO;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageRecord;
-import com.agiletec.aps.system.services.page.PagesStatus;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.agiletec.aps.system.services.page.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+
+import java.util.*;
 
 /**
  * @author E.Santoboni
@@ -170,6 +163,17 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             }
         }
     }
+
+    public void addPageToCache(IPage page) {
+
+        //This is labeled draft but it is "all" pages. See logic in the initCache method
+        this.getCache().put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+
+        if(page.isOnlineInstance()) {
+            this.getCache().put(ONLINE_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        }
+    }
+
 
     @Override
     protected String getCacheName() {

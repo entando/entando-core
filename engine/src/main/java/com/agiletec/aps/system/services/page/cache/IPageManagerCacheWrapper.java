@@ -47,4 +47,5 @@ public interface IPageManagerCacheWrapper {
 
 	public void deleteOnlinePage(String pageCode);
 
+	public void addPageToCache(IPage page);
 }

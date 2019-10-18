@@ -190,7 +190,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private List<String> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
         if (null == widgetTypeCode) {
-            return null;
+            return new ArrayList<>();
         }
         Cache cache = super.getCache();
         String key = this.getWidgetUtilizerCacheName(widgetTypeCode, draft);

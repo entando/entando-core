@@ -212,8 +212,9 @@ public class TestPageManager extends BaseTestCase {
         _pageManager.movePage("temp2", false);
         movedTemp1 = _pageManager.getDraftPage("temp1");
         movedTemp2 = _pageManager.getDraftPage("temp2");
-        assertEquals(firstPos + 1, movedTemp2.getPosition());
         assertEquals(firstPos, movedTemp1.getPosition());
+        assertEquals(firstPos + 1, movedTemp2.getPosition());
+        movedTemp2Parent = _pageManager.getDraftPage(movedTemp2.getParentCode());
         pages = movedTemp2Parent.getChildrenCodes();
         assertEquals(pages[pages.length - 2], "temp1");
         assertEquals(pages[pages.length - 1], "temp2");

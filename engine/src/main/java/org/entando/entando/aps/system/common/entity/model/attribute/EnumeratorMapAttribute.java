@@ -182,6 +182,11 @@ public class EnumeratorMapAttribute extends EnumeratorAttribute {
         this._mapItems = mapItems;
     }
 
+    @Override
+    public boolean isSearchableOptionSupported() {
+        return true;
+    }
+
     private SelectItem[] _mapItems;
     private final String DEFAULT_KEY_VALUE_SEPARATOR = "=";
 

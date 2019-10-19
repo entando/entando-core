@@ -56,54 +56,62 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
         if (handler instanceof HandlerMethod) {
             HandlerMethod method = (HandlerMethod) handler;
             if (method.hasMethodAnnotation(RequestMapping.class)) {
+                UserDetails user = this.extractOAuthParameters(request);
                 RestAccessControl rqm = method.getMethodAnnotation(RestAccessControl.class);
                 if (null == rqm) {
                     return true;
                 }
-                String permission = rqm.permission();
-                this.extractOAuthParameters(request, permission);
+
+                this.checkAuthorization(user, rqm.permission(), request);
             }
         }
         return true;
     }
 
-    protected void extractOAuthParameters(HttpServletRequest request, String permission) {
+    protected UserDetails extractOAuthParameters(HttpServletRequest request) {
         try {
-            logger.debug("Permission required: {}", permission);
+            request.getSession().setAttribute("user", null); //Clear previous session
+
             String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
             if (StringUtils.isBlank(accessToken)) {
-                logger.warn("no access token found");
-                throw new EntandoTokenException("no access token found", request, null);
+                return null;
             }
+
             final OAuth2AccessToken token = this.getoAuth2TokenManager().readAccessToken(accessToken);
             this.validateToken(request, accessToken, token);
-            String username = null;
+            String username;
             if (token instanceof OAuth2AccessTokenImpl) {
                 username = ((OAuth2AccessTokenImpl) token).getLocalUser();
             } else {
                 Authentication auth = new EntandoBearerTokenExtractor().extract(request);
                 username = auth.getPrincipal().toString();
             }
-            this.checkAuthorization(username, permission, request);
+
+            UserDetails user = this.getAuthenticationProviderManager().getUser(username);
+            if (user == null) {
+                logger.warn("User {} not found ", username);
+                return null;
+            }
+
+            request.getSession().setAttribute("user", user);
+            return user;
         } catch (ApsSystemException ex) {
             logger.error("System exception {}", ex.getMessage());
             throw new EntandoTokenException("error parsing OAuth parameters", request, "guest");
         }
     }
 
-    protected void checkAuthorization(String username, String permission, HttpServletRequest request) throws ApsSystemException {
-        UserDetails user = this.getAuthenticationProviderManager().getUser(username);
-        if (user != null) {
-            request.getSession().setAttribute("user", user);
-            logger.debug("User {} requesting resource that requires {} permission ", username, permission);
-            if (StringUtils.isNotBlank(permission)) {
-                if (!this.getAuthorizationManager().isAuthOnPermission(user, permission)) {
-                    logger.warn("User {} is missing the required permission {}", username, permission);
-                    throw new EntandoAuthorizationException(null, request, username);
-                }
+    protected void checkAuthorization(UserDetails user, String permission, HttpServletRequest request) throws ApsSystemException {
+        if (null == user) {
+            throw new EntandoTokenException("no access token found", request, null);
+        }
+
+        logger.debug("User {} requesting resource that requires {} permission ", user.getUsername(), permission);
+        if (StringUtils.isNotBlank(permission)) {
+            if (!this.getAuthorizationManager().isAuthOnPermission(user, permission)) {
+                logger.warn("User {} is missing the required permission {}", user.getUsername(), permission);
+                throw new EntandoAuthorizationException(null, request, user.getUsername());
             }
-        } else {
-            logger.info("User {} not found ", username);
         }
     }
 

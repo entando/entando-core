@@ -18,7 +18,6 @@ import java.util.List;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
@@ -56,8 +55,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IWidgetTypeManager widgetManager;
 
     private IPageManager pageManager;
-
-    private ICategoryManager categoryManager;
 
     private IGuiFragmentManager guiFragmentManager;
 
@@ -97,14 +94,6 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     public void setGuiFragmentManager(IGuiFragmentManager guiFragmentManager) {
         this.guiFragmentManager = guiFragmentManager;
-    }
-
-    public ICategoryManager getCategoryManager() {
-        return categoryManager;
-    }
-
-    public void setCategoryManager(ICategoryManager categoryManager) {
-        this.categoryManager = categoryManager;
     }
 
     protected IDtoBuilder<WidgetType, WidgetDto> getDtoBuilder() {
@@ -174,7 +163,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         details.setFrameIndex(index);
         details.setFrame(page.getModel().getFrames()[index]);
         details.setPageCode(page.getCode());
-        details.setPageFullPath(page.getPath(this.getCategoryManager()));
+        details.setPageFullPath(page.getPath(this.getPageManager()));
         return details;
     }
 

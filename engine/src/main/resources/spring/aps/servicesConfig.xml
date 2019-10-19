@@ -100,7 +100,6 @@
         <property name="pageManager" ref="PageManager" />
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
         <property name="groupManager" ref="GroupManager" />
-        <property name="categoryManager" ref="CategoryManager" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

@@ -254,7 +254,7 @@ public class Page extends TreeNode implements IPage, Serializable {
     protected void setChanged(boolean changed) {
         this.changed = changed;
     }
-
+    /*
     @Override
     protected String getFullTitle(String langCode, String separator, boolean shortTitle, ITreeNodeManager treeNodeManager) {
         String title = this.getTitles().getProperty(langCode);
@@ -264,7 +264,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         if (this.isRoot()) {
             return title;
         }
-        ITreeNode parent = treeNodeManager.getNode(this.getParentCode());
+        ITreeNode parent = this.getParent(this, treeNodeManager);
         while (parent != null && parent.getParentCode() != null) {
             String parentTitle = "..";
             if (!shortTitle) {
@@ -277,9 +277,16 @@ public class Page extends TreeNode implements IPage, Serializable {
             if (parent.isRoot()) {
                 return title;
             }
-            parent = treeNodeManager.getNode(parent.getParentCode());
+            parent = this.getParent(parent, treeNodeManager);
         }
         return title;
+    }
+    */
+    @Override
+    protected ITreeNode getParent(ITreeNode node, ITreeNodeManager treeNodeManager) {
+        return (this.isOnlineInstance()) ? 
+                ((IPageManager) treeNodeManager).getOnlinePage(node.getParentCode()) :
+                ((IPageManager) treeNodeManager).getDraftPage(node.getParentCode());
     }
 
     @Override

@@ -169,7 +169,7 @@ public class TreeNode implements ITreeNode, Serializable {
         if (this.isRoot()) {
             return title;
         }
-        ITreeNode parent = treeNodeManager.getNode(this.getParentCode());
+        ITreeNode parent = this.getParent(this, treeNodeManager);
         while (parent != null && parent.getParentCode() != null) {
             String parentTitle = "..";
             if (!shortTitle) {
@@ -182,7 +182,7 @@ public class TreeNode implements ITreeNode, Serializable {
             if (parent.isRoot()) {
                 return title;
             }
-            parent = treeNodeManager.getNode(parent.getParentCode());
+            parent = this.getParent(parent, treeNodeManager);
         }
         return title;
     }
@@ -251,7 +251,7 @@ public class TreeNode implements ITreeNode, Serializable {
         if (this.isRoot()) {
             return pathArray;
         }
-        ITreeNode parent = treeNodeManager.getNode(this.getParentCode());
+        ITreeNode parent = this.getParent(this, treeNodeManager);
         while (parent != null) {
             if (parent.isRoot() && !addRoot) {
                 return pathArray;
@@ -260,7 +260,7 @@ public class TreeNode implements ITreeNode, Serializable {
             if (parent.isRoot()) {
                 return pathArray;
             }
-            parent = treeNodeManager.getNode(parent.getParentCode());
+            parent = this.getParent(parent, treeNodeManager);
         }
         return pathArray;
     }
@@ -280,17 +280,21 @@ public class TreeNode implements ITreeNode, Serializable {
         return this.isChildOf(this, nodeCode, treeNodeManager);
     }
 
-    private boolean isChildOf(ITreeNode node, String nodeCode, ITreeNodeManager treeNodeManager) {
+    protected boolean isChildOf(ITreeNode node, String nodeCode, ITreeNodeManager treeNodeManager) {
         if (node.getCode().equals(nodeCode)) {
             return true;
         } else {
-            ITreeNode parent = treeNodeManager.getNode(node.getParentCode());
+            ITreeNode parent = this.getParent(node, treeNodeManager);
             if (parent != null && !parent.getCode().equals(node.getCode())) {
                 return this.isChildOf(parent, nodeCode, treeNodeManager);
             } else {
                 return false;
             }
         }
+    }
+    
+    protected ITreeNode getParent(ITreeNode node, ITreeNodeManager treeNodeManager) {
+        return treeNodeManager.getNode(node.getParentCode());
     }
 
     @Override

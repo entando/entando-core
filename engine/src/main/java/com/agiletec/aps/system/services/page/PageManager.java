@@ -347,6 +347,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
             _logger.error("Error removing the widget from the page '{}' in the frame {}", pageCode, pos, t);
             throw new ApsSystemException(message, t);
         }
+        this.initCache();
     }
 
     /**
@@ -391,6 +392,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
             _logger.error("Error during the assignation of a widget to the frame {} in the page code {}", pos, pageCode, t);
             throw new ApsSystemException(message, t);
         }
+        this.initCache();
     }
 
     /**
@@ -445,7 +447,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
     @Override
     public List<IPage> searchOnlinePages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
-        List<IPage> searchResult = new ArrayList<IPage>();
+        List<IPage> searchResult = new ArrayList<>();
         try {
             if (null == allowedGroups || allowedGroups.isEmpty()) {
                 return searchResult;
@@ -462,7 +464,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
     @Override
     public List<IPage> searchPages(String pageCodeToken, List<String> allowedGroups) throws ApsSystemException {
-        List<IPage> searchResult = new ArrayList<IPage>();
+        List<IPage> searchResult = new ArrayList<>();
         try {
             if (null == allowedGroups || allowedGroups.isEmpty()) {
                 return searchResult;

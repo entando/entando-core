@@ -12,7 +12,7 @@
 
 <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
-<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}"
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parentCode}"
     class="treeRow tree_node_flag ${liClassName}" >
     <td class="treegrid-node pointer">
         <s:if test="!#currentRoot.open && !#currentRoot.empty">

@@ -12,7 +12,7 @@
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
-    <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage' && #isHidden}">collapsed childrenNodes</s:if><s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode"> active</s:if>" >
+    <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parentCode" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage' && #isHidden}">collapsed childrenNodes</s:if><s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode"> active</s:if>" >
         <td class="treegrid-node pointer">
          
         <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />" 

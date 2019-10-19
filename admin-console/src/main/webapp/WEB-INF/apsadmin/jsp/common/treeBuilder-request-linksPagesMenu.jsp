@@ -9,7 +9,7 @@
 <s:else>
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parentCode" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if>" >
         <td class="treegrid-node pointer word-wrap text-overflow">
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>

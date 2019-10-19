@@ -9,7 +9,7 @@
 <s:else>
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode">active</s:if>" >
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parentCode" />" class="treeRow <s:if test="#selectedTreeNode != null && #currentRoot.code == #selectedTreeNode">active</s:if>" >
         <td class="treegrid-node pointer">
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'entryEdit'" /></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'entryEdit'" /></s:if>
@@ -28,7 +28,7 @@
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
             <wpsa:actionParam action="%{#openTreeActionName}" var="actionName" >
                 <wpsa:actionSubParam name="treeNodeActionMarkerCode" value="'close'" />
-                <s:if test="%{#currentRoot.code != 'homepage'}"><wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.parent.code}" /></s:if>
+                <s:if test="%{#currentRoot.code != 'homepage'}"><wpsa:actionSubParam name="%{#inputFieldName}" value="%{#currentRoot.parentCode}" /></s:if>
                 <s:else><wpsa:actionSubParam name="%{#inputFieldName}" value="home" /></s:else>
             </wpsa:actionParam>
             <wpsf:submit cssClass="treeOpenCloseJS btn btn-link btn-xs" action="%{#actionName}" type="button" value="%{getText('label.close')}" title="%{getText('label.close')}">

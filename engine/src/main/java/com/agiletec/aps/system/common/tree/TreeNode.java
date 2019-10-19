@@ -210,15 +210,7 @@ public class TreeNode implements ITreeNode, Serializable {
     @Override
     public String getPath(String separator, boolean addRoot, ITreeNodeManager treeNodeManager) {
         String[] pathArray = this.getPathArray(addRoot, treeNodeManager);
-        StringBuilder path = new StringBuilder();
-        for (int i = 0; i < pathArray.length; i++) {
-            String code = pathArray[i];
-            if (i > 0) {
-                path.append(separator);
-            }
-            path.append(code);
-        }
-        return path.toString();
+        return String.join(separator, pathArray);
     }
 
     /**

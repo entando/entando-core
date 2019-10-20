@@ -40,7 +40,7 @@ public class TestPageManager extends BaseTestCase {
         super.setUp();
         this.init();
     }
-    /*
+    
     public void testGetPage_1() throws Throwable {
         IPage root = _pageManager.getDraftRoot();
         assertNotNull(root);
@@ -424,7 +424,7 @@ public class TestPageManager extends BaseTestCase {
         assertEquals(1, pageUtilizers3.size());
         assertEquals("pagina_1", pageUtilizers3.get(0).getCode());
     }
-*/
+    
     public void testPageStatus() throws ApsSystemException {
         String testCode = "testcode";
         PagesStatus status = this._pageManager.getPagesStatus();

@@ -82,6 +82,27 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			try {
 				this.getPageDAO().deletePage(page);
 				this.getCacheWrapper().deleteDraftPage(pageCode);
+
+				//Read pack the peer pages of this page. The DAO call for delete shifts them around
+				//from a position perspective so we need to re-cache the peers. There is an optimization here that is skipped.
+				//We could only read back pages deeper in the tree but for now not worth it
+
+				if(page.getParent()!=null) {
+					String[] codes = page.getParent().getChildrenCodes();
+					for (String code : codes) {
+
+						//Don't re-cache the deleted page
+						if (code.equals(page.getCode())) {
+							continue;
+						}
+						PageRecord peerPage = this.getPageDAO().getPageRecordByCode(code);
+						IPage peerDraft = peerPage.createDraftPage();
+						IPage peerOnline = peerPage.createOnlinePage();
+
+						this.getCacheWrapper().addPageToCache(peerDraft);
+						this.getCacheWrapper().addPageToCache(peerOnline);
+					}
+				}
 			} catch (Throwable t) {
 				_logger.error("Error detected while deleting page {}", pageCode, t);
 				throw new ApsSystemException("Error detected while deleting a page", t);
@@ -103,12 +124,30 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getPageDAO().addPage(page);
 
 			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(page.getCode());
+			PageRecord parentRecord = this.getPageDAO().getPageRecordByCode(page.getParentCode());
 
 			IPage pageD = pageRecord.createDraftPage();
 			IPage pageO = pageRecord.createOnlinePage();
 
+			IPage parentD = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
+			IPage parentO = this.getCacheWrapper().getOnlinePage(pageO.getParentCode());
+
+			if(!Arrays.asList(parentD.getChildrenCodes()).contains(pageD.getCode())) {
+				((Page) parentD).addChildCode(pageD.getCode());
+			}
+
+			if(!Arrays.asList(parentO.getChildrenCodes()).contains(pageO.getCode())) {
+				((Page) parentO).addChildCode(pageO.getCode());
+			}
+
+			((Page)pageD).setParent(parentD);
+			((Page)pageO).setParent(parentO);
+
 			this.getCacheWrapper().addPageToCache(pageD);
 			this.getCacheWrapper().addPageToCache(pageO);
+			this.getCacheWrapper().addPageToCache(parentD);
+			this.getCacheWrapper().addPageToCache(parentO);
+
 		} catch (Throwable t) {
 			_logger.error("Error adding a page", t);
 			throw new ApsSystemException("Error adding a page", t);
@@ -227,7 +266,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		List<IPage> updatedPages = new ArrayList<>();
 		try {
 			IPage currentPage = this.getDraftPage(pageCode);
-			updatedPages.add(currentPage);
 
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
@@ -256,6 +294,13 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 					}
 				}
 			}
+
+			//Read the page back from the database to get the corrected position
+			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(currentPage.getCode());
+			IPage pageDraft = pageRecord.createDraftPage();
+
+			((Page)pageDraft).setParent(currentPage.getParent());
+			updatedPages.add(pageDraft);
 
 			for(IPage updatedPage : updatedPages){
 				this.getCacheWrapper().addPageToCache(updatedPage);
@@ -700,6 +745,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		boolean resultOperation = false;
 		_logger.debug("start move page " + currentPage + "under " + newParent);
 		try {
+
+			IPage currentParent =  currentPage.getParent();
 			this.getPageDAO().movePage(currentPage, newParent);
 
 			//Must read the record back
@@ -707,6 +754,26 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			this.getCacheWrapper().addPageToCache(record.createDraftPage());
 			this.getCacheWrapper().addPageToCache(record.createOnlinePage());
 
+			if(!Arrays.asList(newParent.getChildrenCodes()).contains(currentPage.getCode())) {
+				((Page)newParent).addChildCode(currentPage.getCode());
+			}
+
+			//Must read back position of peers to be re-cached since the prior page could have been earlier
+			//in the tree
+			String[] codes = currentParent.getChildrenCodes();
+			for (String code : codes) {
+
+				//Don't re-cache the deleted page
+				if (code.equals(currentPage.getCode())) {
+					continue;
+				}
+				PageRecord peerPage = this.getPageDAO().getPageRecordByCode(code);
+				IPage peerDraft = peerPage.createDraftPage();
+				IPage peerOnline = peerPage.createOnlinePage();
+
+				this.getCacheWrapper().addPageToCache(peerDraft);
+				this.getCacheWrapper().addPageToCache(peerOnline);
+			}
 			resultOperation = true;
 		} catch (Throwable t) {
 			ApsSystemUtils.logThrowable(t, this, "movePage");

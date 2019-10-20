@@ -16,15 +16,16 @@ package org.entando.entando.aps.system.services.page;
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.page.IPageManager;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -190,7 +191,41 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         } finally {
             pageService.removePage(newPageCode);
         }
+
     }
+
+    @Test
+    public void testAddRemoveAdd(){
+        String newPageCode = "pagina_13";
+        String newPageCodeTwo = "pagina_55";
+        try {
+            PageDto pageToClone = pageService.getPage("pagina_11", "draft");
+            assertNotNull(pageToClone);
+            PageRequest pageRequest = this.createRequestFromDto(pageToClone);
+            pageRequest.setCode(newPageCode);
+            PageDto addedPage = pageService.addPage(pageRequest);
+            assertNotNull(addedPage);
+            assertEquals("pagina_1", addedPage.getParentCode());
+            assertEquals(3, addedPage.getPosition());
+
+            pageService.removePage(newPageCode);
+
+            PageRequest requetsTwo = this.createRequestFromDto(pageToClone);
+            requetsTwo.setCode(newPageCodeTwo);
+            PageDto addedPageTwo = pageService.addPage(requetsTwo);
+
+            assertEquals("pagina_1", addedPageTwo.getParentCode());
+            assertEquals(3, addedPageTwo.getPosition());
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+
+            pageService.removePage(newPageCode);
+            pageService.removePage(newPageCodeTwo);
+        }
+    }
+
 
     @Test
     public void testChangeNode() {

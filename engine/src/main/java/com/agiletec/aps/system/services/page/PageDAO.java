@@ -76,10 +76,10 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             //it isn't entirely clear that this needs to happen here. However, the list call does this and references
             //widget config so adding it for the sake of consistency and to avoid untested side effects. Can't see where the widget config
             //is ultimately connected to the pages but it gets fetched.
-            List<PageRecord> records = new ArrayList<>();
-            records.add(result);
-            this.readPageWidgets(records, true, conn);
-            this.readPageWidgets(records, false, conn);
+//            List<PageRecord> records = new ArrayList<>();
+//            records.add(result);
+//            this.readPageWidgets(records, true, conn);
+//            this.readPageWidgets(records, false, conn);
 
         } catch (Throwable t) {
             _logger.error("Error loading pages", t);
@@ -119,7 +119,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
         }
         return pages;
     }
-
 
     private PageRecord getPageRecordByCode(Connection conn, String pageCode){
 
@@ -172,6 +171,10 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
                     currentPage = pagesIter.next();
                     currentWidgetNum = this.getWidgetArrayLength(online ? currentPage.getMetadataOnline() : currentPage.getMetadataDraft());
                     currentWidgets = online ? currentPage.getWidgetsOnline() : currentPage.getWidgetsDraft();
+
+                    if(pages.size() == 1){
+                        break;
+                    }
                 }
                 this.readWidget(currentPage, currentWidgetNum, currentWidgets, 2, res);
             }

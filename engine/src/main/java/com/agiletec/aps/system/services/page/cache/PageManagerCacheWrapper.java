@@ -166,11 +166,10 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     public void addPageToCache(IPage page) {
 
-        //This is labeled draft but it is "all" pages. See logic in the initCache method
-        this.getCache().put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
-
         if(page.isOnlineInstance()) {
             this.getCache().put(ONLINE_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        } else {
+            this.getCache().put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
         }
     }
 

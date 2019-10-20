@@ -53,7 +53,7 @@ public class PageMetadata implements Cloneable, Serializable {
     private Date updatedAt;
 
     @Override
-    public PageMetadata clone() throws CloneNotSupportedException {
+    public PageMetadata clone() {
         PageMetadata copy = null;
         try {
             copy = this.getClass().newInstance();

@@ -40,7 +40,7 @@ public class TestPageManager extends BaseTestCase {
         super.setUp();
         this.init();
     }
-
+    /*
     public void testGetPage_1() throws Throwable {
         IPage root = _pageManager.getDraftRoot();
         assertNotNull(root);
@@ -424,37 +424,52 @@ public class TestPageManager extends BaseTestCase {
         assertEquals(1, pageUtilizers3.size());
         assertEquals("pagina_1", pageUtilizers3.get(0).getCode());
     }
-
+*/
     public void testPageStatus() throws ApsSystemException {
         String testCode = "testcode";
+        PagesStatus status = this._pageManager.getPagesStatus();
         try {
-            PagesStatus status = this._pageManager.getPagesStatus();
             IPage parentPage = _pageManager.getDraftRoot();
             PageModel pageModel = parentPage.getMetadata().getModel();
-            PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
-            PageMetadata draftMeta = metadata;
-            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage.getCode(), "free", draftMeta, null);
+            PageMetadata draftMeta = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
+            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage.getCode(), "free", draftMeta, new Widget[pageModel.getFrames().length]);
             _pageManager.addPage(pageToAdd);
             PagesStatus newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline());
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished() + 1);
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished() + 1, newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
             this._pageManager.setPageOnline(testCode);
             newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline() + 1);
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline() + 1, newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
             IPage test = this._pageManager.getDraftPage(testCode);
             test.getMetadata().setTitle("it", "modxxxx");
+            
             this._pageManager.updatePage(test);
-            test = this._pageManager.getDraftPage(testCode);
             newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline());
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges() + 1);
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges() + 1, newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
+            this._pageManager.setPageOffline(testCode);
+            newStatus = this._pageManager.getPagesStatus();
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished() + 1, newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
+            this._pageManager.deletePage(testCode);
+            newStatus = this._pageManager.getPagesStatus();
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal(), newStatus.getTotal());
         } finally {
             this._pageManager.deletePage(testCode);
         }

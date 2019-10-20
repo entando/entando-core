@@ -13,9 +13,14 @@
  */
 package com.agiletec.aps.system.common.tree;
 
+import com.agiletec.aps.system.common.entity.model.attribute.AbstractAttribute;
+import com.agiletec.aps.system.common.entity.parse.attribute.AttributeHandlerInterface;
+import com.agiletec.aps.system.services.page.PageDAO;
 import java.io.Serializable;
 
 import com.agiletec.aps.util.ApsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A node of a tree. The node is the basic information a tree and contains all
@@ -24,6 +29,28 @@ import com.agiletec.aps.util.ApsProperties;
  * @author E.Santoboni
  */
 public class TreeNode implements ITreeNode, Serializable {
+    
+    private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
+    
+    @Override
+    public ITreeNode clone() {
+        TreeNode clone = null;
+        try {
+            Class treeNodeClass = Class.forName(this.getClass().getName());
+            clone = (TreeNode) treeNodeClass.newInstance();
+            clone.setChildrenCodes(this.getChildrenCodes());
+            clone.setCode(this.getCode());
+            clone.setGroup(this.getGroup());
+            clone.setParentCode(this.getParentCode());
+            clone.setPosition(this.getPosition());
+            clone.setTitles(this.getTitles().clone());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException t) {
+            String message = "Error detected while creating tree node";
+            logger.error(message, t);
+            throw new RuntimeException(message, t);
+        }
+        return clone;
+    }
 
     @Override
     public String getCode() {
@@ -98,7 +125,7 @@ public class TreeNode implements ITreeNode, Serializable {
         return _position;
     }
 
-    protected void setPosition(int position) {
+    public void setPosition(int position) {
         this._position = position;
     }
 

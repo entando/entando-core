@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.Serializable;
 
 /**
@@ -30,16 +31,29 @@ import java.io.Serializable;
  * @author M.Diana - E.Santoboni
  */
 public class Page extends TreeNode implements IPage, Serializable {
-
-    /**
-     * Set the position of the page with regard to its sisters
-     *
-     * @param position the position of the page.
-     */
+    
     @Override
-    protected void setPosition(int position) {
-        super.setPosition(position);
+    public IPage clone() {
+        Page clone = (Page) super.clone();
+        clone.setChanged(this.isChanged());
+        clone.setOnline(this.isOnline());
+        clone.setOnlineInstance(this.isOnlineInstance());
+        if (null != this.getMetadata()) {
+            clone.setMetadata(this.getMetadata().clone());
+        }
+        if (null != this.getWidgets()) {
+            Widget[] clonedWidgets = new Widget[this.getWidgets().length];
+            for (int i = 0; i < this.getWidgets().length; i++) {
+                Widget widgetToClone = this.getWidgets()[i];
+                if (null != widgetToClone) {
+                    clonedWidgets[i] = widgetToClone.clone();
+                }
+            }
+            clone.setWidgets(clonedWidgets);
+        }
+        return clone;
     }
+    
 
     /**
      * Return the related model of page
@@ -233,7 +247,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return this.online;
     }
 
-    protected void setOnline(boolean online) {
+    public void setOnline(boolean online) {
         this.online = online;
     }
 
@@ -251,7 +265,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return this.changed;
     }
 
-    protected void setChanged(boolean changed) {
+    public void setChanged(boolean changed) {
         this.changed = changed;
     }
     /*
@@ -317,7 +331,6 @@ public class Page extends TreeNode implements IPage, Serializable {
     /**
      * The code of the higher level page
      */
-    private String _parentCode;
     private PageMetadata _metadata = new PageMetadata();
     private Widget[] widgets;
     private boolean online;

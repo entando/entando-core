@@ -122,9 +122,11 @@ public class PageTestUtil {
 		Page page = new Page();
 		page.setCode(code);
 		page.setParentCode(parentPageCode);
-		//page.setPosition(parentPage.getChildrenCodes().length + 1);
 		page.setMetadata(metadata);
 		page.setGroup(groupName);
+        if (null == widgets) {
+            widgets = new Widget[0];
+        }
 		page.setWidgets(widgets);
 		return page;
 	}

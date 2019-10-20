@@ -26,6 +26,8 @@ import com.agiletec.aps.util.ApsProperties;
  * @author E.Santoboni
  */
 public interface IPage extends ITreeNode, Serializable {
+    
+    public IPage clone();
 
     /**
      * Returns a properties with the titles of the page, where the keys are the

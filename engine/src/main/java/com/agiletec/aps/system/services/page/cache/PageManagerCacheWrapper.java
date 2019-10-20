@@ -18,14 +18,20 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageDAO;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageRecord;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.page.Widget;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import jdk.nashorn.internal.runtime.regexp.joni.EncodingHelper;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -37,7 +43,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private static final Logger _logger = LoggerFactory.getLogger(PageManagerCacheWrapper.class);
 
-    private List<String> localObject = new ArrayList<>();
+    private List<String> localObject = new CopyOnWriteArrayList<>();
 
     @Override
     public void initCache(IPageDAO pageDao) throws ApsSystemException {
@@ -45,15 +51,9 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         IPage newDraftRoot = null;
         IPage newOnLineRoot = null;
         try {
-            Cache cache = this.getCache();
-            this.releaseCachedObjects(cache);
-            for (String key : this.localObject) {
-                cache.evict(key);
-            }
-            this.localObject.clear();
             List<PageRecord> pageRecordList = pageDao.loadPageRecords();
-            Map<String, IPage> newFullMap = new HashMap<String, IPage>(pageRecordList.size());
-            Map<String, IPage> newOnlineMap = new HashMap<String, IPage>();
+            Map<String, IPage> newFullMap = new HashMap<>(pageRecordList.size());
+            Map<String, IPage> newOnlineMap = new HashMap<>();
             List<IPage> pageListO = new ArrayList<>();
             List<IPage> pageListD = new ArrayList<>();
             for (int i = 0; i < pageRecordList.size(); i++) {
@@ -81,6 +81,11 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             if (newDraftRoot == null) {
                 throw new ApsSystemException("Error in the page tree: root page undefined");
             }
+            Cache cache = this.getCache();
+            //this.releaseCachedObjects(cache);
+            this.cleanLocalCache(cache);
+            List<String> pageCodes = pageListD.stream().map(p -> p.getCode()).collect(Collectors.toList());
+            cache.put(PAGE_CODES_CACHE_NAME, pageCodes);
             this.insertObjectsOnCache(cache, status, newDraftRoot, newOnLineRoot, pageListD, pageListO);
         } catch (ApsSystemException e) {
             throw e;
@@ -88,6 +93,15 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             _logger.error("Error while building the tree of pages", t);
             throw new ApsSystemException("Error while building the tree of pages", t);
         }
+    }
+
+    private void cleanLocalCache(Cache cache) {
+        for (String key : this.localObject) {
+            if (null != key) {
+                cache.evict(key);
+            }
+        }
+        this.localObject.clear();
     }
 
     protected void releaseCachedObjects(Cache cache) {
@@ -118,38 +132,230 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     }
 
     @Override
-    public PagesStatus getPagesStatus() {
-        return this.get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);
+    public void deleteDraftPage(String pageCode) {
+        Cache cache = this.getCache();
+        IPage page = this.getDraftPage(pageCode);
+        if (null == page) {
+            return;
+        }
+        IPage parent = this.getDraftPage(page.getParentCode());
+        if (null != parent.getChildrenCodes()) {
+            List<String> childrenCodes = new ArrayList<>(Arrays.asList(parent.getChildrenCodes()));
+            int index = -1;
+            for (int i = 0; i < childrenCodes.size(); i++) {
+                String childCode = childrenCodes.get(i);
+                if (childCode.equals(pageCode)) {
+                    index = i;
+                }
+                if (index > 0 && i > index) {
+                    this.upgradePositionForSisterDeletion(cache, childCode, true);
+                }
+            }
+            boolean executedRemove = childrenCodes.remove(pageCode);
+            if (executedRemove) {
+                ((Page) parent).setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
+                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+            }
+        }
+        List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            codes.remove(pageCode);
+            cache.put(PAGE_CODES_CACHE_NAME, codes);
+        }
+        cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
+        cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
+        this.cleanLocalCache(cache);
+        PagesStatus status = this.getPagesStatus();
+        status.setLastUpdate(new Date());
+        status.setUnpublished(status.getUnpublished() - 1);
+        cache.put(PAGE_STATUS_CACHE_NAME, status);
+    }
+
+    private void upgradePositionForSisterDeletion(Cache cache, String code, boolean online) {
+        IPage page = (online) ? this.getOnlinePage(code) : this.getDraftPage(code);
+        if (null == page) {
+            return;
+        }
+        ((Page) page).setPosition(page.getPosition() - 1);
+        if (online) {
+            cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        } else {
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        }
+    }
+    
+    @Override
+    public void addDraftPage(IPage page) {
+        //TODO or verify: check position
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
+        codes.add(page.getCode());
+        cache.put(PAGE_CODES_CACHE_NAME, codes);
+        IPage parent = this.getDraftPage(page.getParentCode());
+        String[] childCodes = parent.getChildrenCodes();
+        childCodes = ArrayUtils.add(childCodes, page.getCode());
+        ((Page) parent).setChildrenCodes(childCodes);
+        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        this.cleanLocalCache(cache);
+        PagesStatus status = this.getPagesStatus();
+        status.setLastUpdate(new Date());
+        status.setUnpublished(status.getUnpublished()+1);
+        cache.put(PAGE_STATUS_CACHE_NAME, status);
     }
 
     @Override
+    public void updateDraftPage(IPage page) {
+        IPage onlinepage = this.getOnlinePage(page.getCode());
+        PageMetadata onlineMeta = (null != onlinepage) ? onlinepage.getMetadata() : null;
+        Widget[] widgetsOnline = (null != onlinepage) ? onlinepage.getWidgets() : new Widget[0];
+        ((Page) page).setOnline(null != onlineMeta);
+        boolean isChanged = (null != onlinepage) && this.isChanged(page.getMetadata(), onlineMeta, page.getWidgets(), widgetsOnline);
+        ((Page) page).setChanged(isChanged);
+        Cache cache = this.getCache();
+        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        this.cleanLocalCache(cache);
+        if (isChanged) {
+            PagesStatus status = this.getPagesStatus();
+            status.setLastUpdate(new Date());
+            status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
+            status.setOnline(status.getOnline()-1);
+            cache.put(PAGE_STATUS_CACHE_NAME, status);
+        }
+    }
+
+    @Override
+    public void setPageOnline(String pageCode) {
+        Cache cache = this.getCache();
+        IPage page = this.getDraftPage(pageCode);
+        if (null != page) {
+            IPage onlinepage = this.getOnlinePage(page.getCode());
+            boolean alreadyOnline = null != onlinepage;
+            boolean changed = (alreadyOnline 
+                    && this.isChanged(page.getMetadata(), onlinepage.getMetadata(), page.getWidgets(), onlinepage.getWidgets()));
+            ((Page) page).setOnline(true);
+            ((Page) page).setChanged(false);
+            IPage newOnlinePage = page.clone();
+            cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + newOnlinePage.getCode(), newOnlinePage);
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+            if (!alreadyOnline || changed) {
+                PagesStatus status = this.getPagesStatus();
+                status.setLastUpdate(new Date());
+                if (!alreadyOnline) {
+                    status.setOnline(status.getOnline()+1);
+                    status.setUnpublished(status.getUnpublished()-1);
+                } else if (changed) {
+                    status.setOnlineWithChanges(status.getOnlineWithChanges()+1);
+                    status.setOnline(status.getOnline()-1);
+                }
+                cache.put(PAGE_STATUS_CACHE_NAME, status);
+            }
+        }
+        this.cleanLocalCache(cache);
+    }
+
+    @Override
+    public void setPageOffline(String pageCode) {
+        Cache cache = this.getCache();
+        IPage page = this.getDraftPage(pageCode);
+        IPage onlinepage = this.getOnlinePage(pageCode);
+        if (null != onlinepage) {
+            cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
+            PagesStatus status = this.getPagesStatus();
+            status.setLastUpdate(new Date());
+            if (page.isChanged()) {
+                status.setOnlineWithChanges(status.getOnlineWithChanges()-1);
+            } else {
+                status.setOnline(status.getOnline()-1);
+            }
+            status.setUnpublished(status.getUnpublished()+1);
+            cache.put(PAGE_STATUS_CACHE_NAME, status);
+        }
+        if (null != page) {
+            ((Page) page).setOnline(false);
+            ((Page) page).setChanged(false);
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        }
+        this.cleanLocalCache(cache);
+    }
+
+    protected boolean isChanged(PageMetadata draftMeta, PageMetadata onlineMeta, Widget[] widgetsDraft, Widget[] widgetsOnline) {
+        boolean changed = false;
+        if (onlineMeta != null) {
+            if (draftMeta != null) {
+                boolean widgetEquals = true;
+                widgetsDraft = (null == widgetsDraft) ? new Widget[0] : widgetsDraft;
+                widgetsOnline = (null == widgetsOnline) ? new Widget[0] : widgetsOnline;
+                for (int i = 0; i < widgetsDraft.length; i++) {
+                    Widget widgetDraft = widgetsDraft[i];
+                    if (widgetsOnline.length < i) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    Widget widgetOnline = widgetsOnline[i];
+                    if (null == widgetOnline && null == widgetDraft) {
+                        continue;
+                    }
+                    if ((null != widgetOnline && null == widgetDraft) || (null == widgetOnline && null != widgetDraft)) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    if (!widgetOnline.getType().getCode().equals(widgetDraft.getType().getCode())) {
+                        widgetEquals = false;
+                    }
+                    if (null == widgetOnline.getConfig() && null == widgetDraft.getConfig()) {
+                        continue;
+                    }
+                    if ((null != widgetOnline.getConfig() && null == widgetDraft.getConfig())
+                            || (null == widgetOnline.getConfig() && null != widgetDraft.getConfig())) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    if (!widgetOnline.getConfig().equals(widgetDraft.getConfig())) {
+                        widgetEquals = false;
+                        break;
+                    }
+                }
+                boolean metaEquals = onlineMeta.hasEqualConfiguration(draftMeta);
+                return !(widgetEquals && metaEquals);
+            } else {
+                changed = true;
+            }
+        }
+        return changed;
+    }
+
+    @Override
+    public PagesStatus getPagesStatus() {
+        return this.get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);
+    }
+    
+    @Override
     public IPage getOnlinePage(String pageCode) {
-        return this.get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
+        IPage page = this.get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
+        if (null != page) {
+            return page.clone();
+        }
+        return null;
     }
 
     @Override
     public IPage getDraftPage(String pageCode) {
-        return this.get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
-    }
-
-    @Override
-    public void deleteOnlinePage(String pageCode) {
-        this.getCache().evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
-    }
-
-    @Override
-    public void deleteDraftPage(String pageCode) {
-        this.getCache().evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
+        IPage page = this.get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
+        if (null != page) {
+            return page.clone();
+        }
+        return null;
     }
 
     @Override
     public IPage getOnlineRoot() {
-        return this.get(ONLINE_ROOT_CACHE_NAME, IPage.class);
+        return this.get(ONLINE_ROOT_CACHE_NAME, IPage.class).clone();
     }
 
     @Override
     public IPage getDraftRoot() {
-        return this.get(DRAFT_ROOT_CACHE_NAME, IPage.class);
+        return this.get(DRAFT_ROOT_CACHE_NAME, IPage.class).clone();
     }
 
     protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
@@ -190,7 +396,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private List<String> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
         if (null == widgetTypeCode) {
-            return new ArrayList<>();
+            return null;
         }
         Cache cache = super.getCache();
         String key = this.getWidgetUtilizerCacheName(widgetTypeCode, draft);

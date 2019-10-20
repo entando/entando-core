@@ -24,6 +24,18 @@ import com.agiletec.aps.util.ApsProperties;
  * @author M.Diana - E.Santoboni
  */
 public class Widget implements Serializable {
+    
+    @Override
+    public Widget clone() {
+        Widget clone = new Widget();
+        if (null != this.getConfig()) {
+            clone.setConfig(this.getConfig().clone());
+        }
+        if (null != this.getType()) {
+            clone.setType(this.getType().clone());
+        }
+        return clone;
+    }
 
 	/**
 	 * Return the configuration of the widget

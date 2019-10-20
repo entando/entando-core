@@ -46,13 +46,18 @@ public interface IPageManagerCacheWrapper {
     public IPage getOnlineRoot();
 
     public IPage getDraftRoot();
-
-    public void deleteDraftPage(String pageCode);
-
-    public void deleteOnlinePage(String pageCode);
-
+    
     public List<String> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 
     public List<String> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
-
+    
+    public void deleteDraftPage(String pageCode);
+    
+    public void addDraftPage(IPage page);
+    
+    public void updateDraftPage(IPage page);
+    
+    public void setPageOnline(String pageCode);
+    
+    public void setPageOffline(String pageCode);
 }

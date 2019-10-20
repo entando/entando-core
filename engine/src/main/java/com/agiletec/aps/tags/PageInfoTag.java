@@ -57,6 +57,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			IPage page = pageManager.getOnlinePage(this.getPageCode());
 			if (null == page) {
 				_logger.error("Required info for null page : inserted code '{}'", this.getPageCode());
+                return EVAL_PAGE;
 			}
 			if (this.getInfo() == null || this.getInfo().equals(CODE_INFO)) {
 				this.setValue(page.getCode());

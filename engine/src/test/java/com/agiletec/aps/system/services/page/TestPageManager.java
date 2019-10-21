@@ -103,39 +103,42 @@ public class TestPageManager extends BaseTestCase {
 
     private void checkAddPage() throws Throwable {
         IPage parentPage = _pageManager.getDraftPage("service");
+        String parentForNewPage = parentPage.getParentCode();
         PageModel pageModel = parentPage.getMetadata().getModel();
         PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel,
                 true, "pagina temporanea", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage("temp", parentPage.getCode(), "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage("temp", parentForNewPage, "free", metadata, widgets);
         _pageManager.addPage(pageToAdd);
 
         IPage addedPage = _pageManager.getDraftPage("temp");
-        assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
         PageTestUtil.comparePages(pageToAdd, addedPage, false);
         PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
-
-        parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParentCode(parentPage.getCode());
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(8, addedPage.getPosition());
+        
+        pageToAdd = (Page) pageToAdd.clone();
         pageToAdd.setCode("temp1");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp1");
-        assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
         PageTestUtil.comparePages(pageToAdd, addedPage, false);
         PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(9, addedPage.getPosition());
 
-        parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParentCode(parentPage.getCode());
+        pageToAdd = (Page) pageToAdd.clone();
         pageToAdd.setCode("temp2");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp2");
         assertNotNull(_pageManager.getDraftPage(addedPage.getCode()));
         assertNotNull(pageToAdd.getMetadata());
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(10, addedPage.getPosition());
     }
 
     private void checkUpdatePage() throws Exception {
@@ -149,11 +152,12 @@ public class TestPageManager extends BaseTestCase {
 
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
-        pageToUpdate.getWidgets()[2] = widgetToAdd;
+        pageToUpdate.getWidgets()[0] = widgetToAdd;
         _pageManager.setPageOnline(pageToUpdate.getCode());
 
         IPage updatedPage = _pageManager.getOnlinePage(dbPage.getCode());
         pageToUpdate = (Page) _pageManager.getOnlinePage(pageToUpdate.getCode());
+        
         assertNotNull(updatedPage);
         PageTestUtil.comparePages(pageToUpdate, updatedPage, false);
         PageTestUtil.comparePageMetadata(pageToUpdate.getMetadata(), updatedPage.getMetadata(), 0);
@@ -185,10 +189,11 @@ public class TestPageManager extends BaseTestCase {
     }
 
     private void movePage() throws Exception {
-        int firstPos = 7;
+        int firstPos = 8;
         assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());
         assertEquals(firstPos + 1, _pageManager.getDraftPage("temp1").getPosition());
         assertEquals(firstPos + 2, _pageManager.getDraftPage("temp2").getPosition());
+        
         _pageManager.deletePage("temp");
         assertNull(_pageManager.getDraftPage("temp"));
 
@@ -199,7 +204,6 @@ public class TestPageManager extends BaseTestCase {
 
         _pageManager.movePage("temp2", true);
         IPage movedTemp1 = _pageManager.getDraftPage("temp1");
-        //IPage movedTemp1Parent = _pageManager.getDraftPage(movedTemp1.getParentCode());
         IPage movedTemp2 = _pageManager.getDraftPage("temp2");
         IPage movedTemp2Parent = _pageManager.getDraftPage(movedTemp2.getParentCode());
         assertEquals(firstPos, movedTemp2.getPosition());

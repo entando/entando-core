@@ -287,7 +287,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         for (String pageCode : pageCodes) {
             PageModel pageModel = this.pageModelManager.getPageModel("internal");
             Page mockPage = createPage(pageCode, pageModel);
-            mockPage.setWidgets(new Widget[mockPage.getWidgets().length]);
+            mockPage.setWidgets(new Widget[pageModel.getFrames().length]);
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));

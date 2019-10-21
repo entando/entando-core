@@ -246,8 +246,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
      */
     private void moveUpDown(String pageDown, String pageUp) throws ApsSystemException {
         try {
-            System.out.println("********************************************+");
-            System.out.println("ENTRATO - UP -> " + pageUp + " - DOWN -> " + pageDown);
             IPage draftToMoveDown = this.getDraftPage(pageDown);
             IPage draftToMoveUp = this.getDraftPage(pageUp);
             if (null != draftToMoveDown && null != draftToMoveUp 

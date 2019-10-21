@@ -98,7 +98,8 @@ public class PageTestUtil {
 		} else {
 			assertEquals(expected.length, actual.length);
 			for (int i = 0; i < expected.length; i++) {
-				assertEquals(expected[i], actual[i]);
+				assertEquals(expected[i].getConfig(), actual[i].getConfig());
+				assertEquals(expected[i].getType().getCode(), actual[i].getType().getCode());
 			}
 		}
 	}

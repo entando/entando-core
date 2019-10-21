@@ -149,26 +149,21 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 }
                 if (index > 0 && i > index) {
                     this.upgradePositionForSisterDeletion(cache, childCode, true);
+                    this.upgradePositionForSisterDeletion(cache, childCode, false);
                 }
             }
             boolean executedRemove = childrenCodes.remove(pageCode);
             if (executedRemove) {
                 ((Page) parent).setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
-                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+                cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
             }
-            if (index > 0 && index<childrenCodes.size()-2) {
-                for (int i = index; i < childrenCodes.size(); i++) {
-                    String code = childrenCodes.get(i);
-                    IPage sister = this.getDraftPage(code);
-                    if (null != sister) {
-                        sister.setPosition(sister.getPosition()-1);
-                        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + sister.getCode(), sister);
-                    }
-                    IPage onlineSister = this.getOnlinePage(code);
-                    if (null != onlineSister) {
-                        onlineSister.setPosition(onlineSister.getPosition()-1);
-                        cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineSister.getCode(), onlineSister);
-                    }
+            IPage parentOnLine = this.getOnlinePage(page.getParentCode());
+            if (null != parentOnLine) {
+                List<String> onlineChildrenCodes = new ArrayList<>(Arrays.asList(parentOnLine.getChildrenCodes()));
+                boolean executedRemoveOnOnLine = onlineChildrenCodes.remove(pageCode);
+                if (executedRemoveOnOnLine) {
+                    ((Page) parentOnLine).setChildrenCodes(onlineChildrenCodes.toArray(new String[childrenCodes.size()]));
+                    cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parentOnLine.getCode(), parentOnLine);
                 }
             }
         }
@@ -465,7 +460,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private List<String> getWidgetUtilizers(String widgetTypeCode, boolean draft) throws ApsSystemException {
         if (null == widgetTypeCode) {
-            return null;
+            return new ArrayList<>();
         }
         Cache cache = super.getCache();
         String key = this.getWidgetUtilizerCacheName(widgetTypeCode, draft);

@@ -96,15 +96,15 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 					this.getCacheWrapper().addPageToCache(parentOnline);
 				}
 
-
-
 				//Read pack the peer pages of this page. The DAO call for delete shifts them around
 				//from a position perspective so we need to re-cache the peers. There is an optimization here that is skipped.
 				//We could only read back pages deeper in the tree but for now not worth it
-
 				if(page.getParent()!=null) {
 					String[] codes = page.getParent().getChildrenCodes();
 					for (String code : codes) {
+
+						IPage currentPageDraft = this.getDraftPage(code);
+						IPage currentPageOnline = this.getOnlinePage(code);
 
 						//Don't re-cache the deleted page
 						if (code.equals(page.getCode())) {
@@ -116,8 +116,14 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 						((Page)peerDraft).setParent(parentPageDraft);
 						((Page)peerOnline).setParent(parentOnline);
 
+						//Copy the children codes from the cached instance over to this
+						((Page)peerDraft).setChildrenCodes(currentPageDraft.getChildrenCodes());
 						this.getCacheWrapper().addPageToCache(peerDraft);
-						this.getCacheWrapper().addPageToCache(peerOnline);
+
+						if(peerOnline!=null && currentPageOnline!=null){
+							((Page)peerOnline).setChildrenCodes(currentPageOnline.getChildrenCodes());
+							this.getCacheWrapper().addPageToCache(peerOnline);
+						}
 					}
 				}
 			} catch (Throwable t) {

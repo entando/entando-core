@@ -124,11 +124,29 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     @Override
     public void deleteOnlinePage(String pageCode) {
+        IPage page = this.getDraftPage(pageCode);
+        if(page.isOnline()) {
+            PagesStatus currentStatus = this.getPagesStatus();
+            currentStatus.setOnline(currentStatus.getOnline() - 1);
+            this.getCache().put(PAGE_STATUS_CACHE_NAME, currentStatus);
+        }
+
         this.getCache().evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
     }
 
     @Override
     public void deleteDraftPage(String pageCode) {
+
+        IPage page = this.getDraftPage(pageCode);
+        if(!page.isOnline()) {
+            PagesStatus currentStatus = this.getPagesStatus();
+            currentStatus.setUnpublished(currentStatus.getUnpublished() - 1);
+            this.getCache().put(PAGE_STATUS_CACHE_NAME, currentStatus);
+        }else if(page.isOnline() && page.isChanged()) {
+            PagesStatus currentStatus = this.getPagesStatus();
+            currentStatus.setOnlineWithChanges(currentStatus.getOnlineWithChanges() -1 );
+            this.getCache().put(PAGE_STATUS_CACHE_NAME, currentStatus);
+        }
         this.getCache().evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
     }
 
@@ -172,6 +190,16 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
         if(page.isOnlineInstance()) {
             if(page.isOnline()) {
+
+//                IPage currentPage = this.getOnlinePage(page.getCode());
+//
+//                String currentStatus = "";
+//                if(currentPage!=null) {
+//                    currentStatus = getCurrentPageStatus(currentPage);
+//                }
+//
+//                String newStatus = getCurrentPageStatus(page);
+//                updatePageStatusForSinglePageChange(currentStatus, newStatus);
 
                 if(page.getCode().equals(page.getParentCode())){
                     this.getCache().put(ONLINE_ROOT_CACHE_NAME, page);

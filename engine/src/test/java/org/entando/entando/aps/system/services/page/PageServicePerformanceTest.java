@@ -55,7 +55,7 @@ public class PageServicePerformanceTest extends BaseTestCase {
 
         long start = System.currentTimeMillis();
         List<Long> addTimes = new ArrayList<>();
-        for(int i = 0; i<1000; i++) {
+        for(int i = 0; i<3000; i++) {
 
             long pageStart = System.currentTimeMillis();
             PageDto pageToClone = pageService.getPage("pagina_11", "draft");

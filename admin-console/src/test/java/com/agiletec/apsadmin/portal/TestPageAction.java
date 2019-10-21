@@ -786,7 +786,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
     private void addPage(String pageCode) throws ApsSystemException {
         IPage parentPage = _pageManager.getOnlinePage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null,
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel, true, "pagina temporanea", null, null, false, null,
                 null);
         ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART1");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);

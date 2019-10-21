@@ -51,7 +51,7 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         String pageCode = "temp001";
         IPage parentPage = pageManager.getDraftRoot();
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel,
                                                                 true, pageCode, null, null, false, null, null);
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, null);
         try {
@@ -77,7 +77,7 @@ public class PageServiceWidgetIntegrationTest extends BaseTestCase {
         String pageCode = "temp001";
         IPage parentPage = pageManager.getDraftRoot();
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel,
                                                                 true, pageCode, null, null, false, null, null);
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, null);
         try {

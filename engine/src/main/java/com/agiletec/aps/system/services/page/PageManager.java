@@ -100,6 +100,22 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
     @Override
     public void addPage(IPage page) throws ApsSystemException {
         try {
+            IPage parent = this.getDraftPage(page.getParentCode());
+            if (null == parent) {
+                _logger.error("Add page {} - Invalid parent {}", page.getCode(), page.getParentCode());
+                return;
+            }
+            String[] childrenCodes = parent.getChildrenCodes();
+            int lastPosition = (null != childrenCodes) ? childrenCodes.length : 0;
+            if (null != childrenCodes && childrenCodes.length > 0) {
+                IPage lastParentChild = this.getDraftPage(childrenCodes[childrenCodes.length-1]);
+                if (null == lastParentChild) {
+                    _logger.error("Parent page {} - Invalid last child {}", page.getParentCode(), childrenCodes[childrenCodes.length-1]);
+                } else {
+                    lastPosition = (lastParentChild.getPosition() > lastPosition) ? lastParentChild.getPosition() : lastPosition;
+                }
+            }
+            page.setPosition(lastPosition+1);
             this.getPageDAO().addPage(page);
             this.getCacheWrapper().addDraftPage(page);
         } catch (Throwable t) {
@@ -230,7 +246,18 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
      */
     private void moveUpDown(String pageDown, String pageUp) throws ApsSystemException {
         try {
-            this.getPageDAO().updatePosition(pageDown, pageUp);
+            System.out.println("********************************************+");
+            System.out.println("ENTRATO - UP -> " + pageUp + " - DOWN -> " + pageDown);
+            IPage draftToMoveDown = this.getDraftPage(pageDown);
+            IPage draftToMoveUp = this.getDraftPage(pageUp);
+            if (null != draftToMoveDown && null != draftToMoveUp 
+                    && draftToMoveDown.getParentCode().equals(draftToMoveUp.getParentCode())) {
+                this.getCacheWrapper().moveUpDown(pageDown, pageUp);
+                this.getPageDAO().updatePosition(pageDown, pageUp);
+            } else {
+                System.out.println("Movement impossible - page to move up {"+pageUp+"} - page to move down " + pageDown);
+                _logger.error("Movement impossible - page to move up {} - page to move down {}", pageUp, pageDown);
+            }
         } catch (Throwable t) {
             _logger.error("Error while moving a page", t);
             throw new ApsSystemException("Error while moving a page", t);

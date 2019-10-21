@@ -57,6 +57,8 @@ public interface IPageManagerCacheWrapper {
     
     public void updateDraftPage(IPage page);
     
+    public void moveUpDown(String pageDown, String pageUp);
+    
     public void setPageOnline(String pageCode);
     
     public void setPageOffline(String pageCode);

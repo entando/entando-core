@@ -342,7 +342,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         if (null == pageModel) {
             pageModel = parentPage.getMetadata().getModel();
         }
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel, true, pageCode + "_title", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("modelId", "default", "contentId", "EVN24");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this.widgetTypeManager);
         Widget[] widgets = {widgetToAdd};

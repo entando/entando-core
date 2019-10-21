@@ -22,7 +22,6 @@ import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
-import com.sun.swing.internal.plaf.metal.resources.metal;
 import java.io.Serializable;
 
 /**

@@ -592,6 +592,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
         this.valueMetadataFromRequest(metadata, pageRequest);
         page.setMetadata(metadata);
+        page.setPosition(oldPage.getPosition());
         return page;
     }
 

@@ -125,17 +125,19 @@ public class PageTestUtil {
 		page.setMetadata(metadata);
 		page.setGroup(groupName);
         if (null == widgets) {
-            widgets = new Widget[0];
+            if (null != metadata && null != metadata.getModel()) {
+                widgets = new Widget[metadata.getModel().getFrames().length];
+            } else {
+                widgets = new Widget[0];
+            }
         }
 		page.setWidgets(widgets);
 		return page;
 	}
 
-	public static PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, String mimeType,
+	public static PageMetadata createPageMetadata(PageModel pageModel, boolean showable, String defaultTitle, String mimeType,
 			String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
 		PageMetadata metadata = new PageMetadata();
-		PageModel pageModel = new PageModel();
-		pageModel.setCode(pageModelCode);
 		metadata.setModel(pageModel);
 
 		metadata.setShowable(showable);

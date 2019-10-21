@@ -61,7 +61,9 @@ public interface ITreeNode extends Serializable {
      * @return The position of the node compared to the brothers nodes.
      */
     public int getPosition();
-
+    
+    public void setPosition(int position);
+    
     /**
      * Return the group code this node belongs to
      *

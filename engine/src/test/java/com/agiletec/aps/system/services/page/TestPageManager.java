@@ -104,7 +104,7 @@ public class TestPageManager extends BaseTestCase {
     private void checkAddPage() throws Throwable {
         IPage parentPage = _pageManager.getDraftPage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel,
                 true, "pagina temporanea", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
@@ -431,7 +431,7 @@ public class TestPageManager extends BaseTestCase {
         try {
             IPage parentPage = _pageManager.getDraftRoot();
             PageModel pageModel = parentPage.getMetadata().getModel();
-            PageMetadata draftMeta = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
+            PageMetadata draftMeta = PageTestUtil.createPageMetadata(pageModel, true, "pagina temporanea", null, null, false, null, null);
             Page pageToAdd = PageTestUtil.createPage(testCode, parentPage.getCode(), "free", draftMeta, new Widget[pageModel.getFrames().length]);
             _pageManager.addPage(pageToAdd);
             PagesStatus newStatus = this._pageManager.getPagesStatus();

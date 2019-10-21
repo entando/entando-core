@@ -24,13 +24,13 @@ import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.page.Widget;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
-import jdk.nashorn.internal.runtime.regexp.joni.EncodingHelper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,6 +156,21 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 ((Page) parent).setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
                 cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
             }
+            if (index > 0 && index<childrenCodes.size()-2) {
+                for (int i = index; i < childrenCodes.size(); i++) {
+                    String code = childrenCodes.get(i);
+                    IPage sister = this.getDraftPage(code);
+                    if (null != sister) {
+                        sister.setPosition(sister.getPosition()-1);
+                        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + sister.getCode(), sister);
+                    }
+                    IPage onlineSister = this.getOnlinePage(code);
+                    if (null != onlineSister) {
+                        onlineSister.setPosition(onlineSister.getPosition()-1);
+                        cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineSister.getCode(), onlineSister);
+                    }
+                }
+            }
         }
         List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
         if (null != codes) {
@@ -186,7 +201,6 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     
     @Override
     public void addDraftPage(IPage page) {
-        //TODO or verify: check position
         Cache cache = this.getCache();
         List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
         codes.add(page.getCode());
@@ -203,7 +217,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         status.setUnpublished(status.getUnpublished()+1);
         cache.put(PAGE_STATUS_CACHE_NAME, status);
     }
-
+    
     @Override
     public void updateDraftPage(IPage page) {
         IPage onlinepage = this.getOnlinePage(page.getCode());
@@ -324,7 +338,62 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         }
         return changed;
     }
+    
+    @Override
+    public void moveUpDown(String pageDown, String pageUp) {
+        IPage draftToMoveUp = this.getDraftPage(pageUp);
+        IPage draftToMoveDown = this.getDraftPage(pageDown);
+        if (null != draftToMoveDown && null != draftToMoveUp
+                && draftToMoveDown.getParentCode().equals(draftToMoveUp.getParentCode())) {
+            Cache cache = this.getCache();
+            draftToMoveUp.setPosition(draftToMoveUp.getPosition()-1);
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftToMoveUp.getCode(), draftToMoveUp);
+            draftToMoveDown.setPosition(draftToMoveDown.getPosition()+1);
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftToMoveDown.getCode(), draftToMoveDown);
+            IPage onlineToMoveUp = this.getOnlinePage(pageUp);
+            if (null != onlineToMoveUp) {
+                onlineToMoveUp.setPosition(draftToMoveUp.getPosition());
+                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + draftToMoveUp.getCode(), draftToMoveUp);
+            }
+            IPage onlineToMoveDown = this.getOnlinePage(pageDown);
+            if (null != onlineToMoveDown) {
+                onlineToMoveDown.setPosition(draftToMoveUp.getPosition());
+                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineToMoveDown.getCode(), onlineToMoveDown);
+            }
+            if (draftToMoveUp.getPosition()<draftToMoveDown.getPosition()) {
+                this.switchSister(draftToMoveUp.getParentCode(), pageUp, pageDown);
+            }
+        } else {
+            _logger.error("Movement impossible - page to move up {} - page to move down {}", pageUp, pageDown);
+        }
+    }
 
+    private void switchSister(String parentCode, String pageUp, String pageDown) {
+        Cache cache = this.getCache();
+        IPage onlineParent = this.getOnlinePage(parentCode);
+        if (null != onlineParent) {
+            List<String> children = new ArrayList(Arrays.asList(onlineParent.getChildrenCodes()));
+            int pos1 = children.indexOf(pageUp);
+            int pos2 = children.indexOf(pageDown);
+            if (pos1 > 0 && pos2 > 0) {
+                Collections.swap(children, pos1, pos2);
+                ((Page) onlineParent).setChildrenCodes(children.toArray(new String[children.size()]));
+                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineParent.getCode(), onlineParent);
+            }
+        }
+        IPage draftParent = this.getDraftPage(parentCode);
+        if (null != draftParent) {
+            List<String> children = new ArrayList(Arrays.asList(draftParent.getChildrenCodes()));
+            int pos1 = children.indexOf(pageUp);
+            int pos2 = children.indexOf(pageDown);
+            if (pos1 > 0 && pos2 > 0) {
+                Collections.swap(children, pos1, pos2);
+                ((Page) draftParent).setChildrenCodes(children.toArray(new String[children.size()]));
+                cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftParent.getCode(), draftParent);
+            }
+        }
+    }
+    
     @Override
     public PagesStatus getPagesStatus() {
         return this.get(PAGE_STATUS_CACHE_NAME, PagesStatus.class);

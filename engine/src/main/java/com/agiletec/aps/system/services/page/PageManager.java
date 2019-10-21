@@ -30,10 +30,8 @@ import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedObserve
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * This is the page manager service class. Pages are held in a tree-like
@@ -83,6 +81,23 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				this.getPageDAO().deletePage(page);
 				this.getCacheWrapper().deleteDraftPage(pageCode);
 
+				IPage parentPageDraft = this.getCacheWrapper().getDraftPage(page.getParentCode());
+				IPage parentOnline = this.getCacheWrapper().getOnlinePage(page.getParentCode());
+
+				ArrayList<String> children = new ArrayList<>(Arrays.asList(parentPageDraft.getChildrenCodes()));
+				children.remove(pageCode);
+				((Page) parentPageDraft).setChildrenCodes(children.toArray(new String[children.size()]));
+				this.getCacheWrapper().addPageToCache(parentPageDraft);
+
+				if(parentOnline!=null) {
+					List<String> childrenOnline = new ArrayList<>(Arrays.asList(parentOnline.getChildrenCodes()));
+					childrenOnline.remove(pageCode);
+					((Page) parentOnline).setChildrenCodes(childrenOnline.toArray(new String[childrenOnline.size()]));
+					this.getCacheWrapper().addPageToCache(parentOnline);
+				}
+
+
+
 				//Read pack the peer pages of this page. The DAO call for delete shifts them around
 				//from a position perspective so we need to re-cache the peers. There is an optimization here that is skipped.
 				//We could only read back pages deeper in the tree but for now not worth it
@@ -98,6 +113,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 						PageRecord peerPage = this.getPageDAO().getPageRecordByCode(code);
 						IPage peerDraft = peerPage.createDraftPage();
 						IPage peerOnline = peerPage.createOnlinePage();
+						((Page)peerDraft).setParent(parentPageDraft);
+						((Page)peerOnline).setParent(parentOnline);
 
 						this.getCacheWrapper().addPageToCache(peerDraft);
 						this.getCacheWrapper().addPageToCache(peerOnline);
@@ -122,31 +139,19 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void addPage(IPage page) throws ApsSystemException {
 		try {
 			this.getPageDAO().addPage(page);
-
 			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(page.getCode());
-			PageRecord parentRecord = this.getPageDAO().getPageRecordByCode(page.getParentCode());
 
 			IPage pageD = pageRecord.createDraftPage();
-			IPage pageO = pageRecord.createOnlinePage();
-
 			IPage parentD = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
-			IPage parentO = this.getCacheWrapper().getOnlinePage(pageO.getParentCode());
 
 			if(!Arrays.asList(parentD.getChildrenCodes()).contains(pageD.getCode())) {
 				((Page) parentD).addChildCode(pageD.getCode());
 			}
 
-			if(!Arrays.asList(parentO.getChildrenCodes()).contains(pageO.getCode())) {
-				((Page) parentO).addChildCode(pageO.getCode());
-			}
-
 			((Page)pageD).setParent(parentD);
-			((Page)pageO).setParent(parentO);
 
 			this.getCacheWrapper().addPageToCache(pageD);
-			this.getCacheWrapper().addPageToCache(pageO);
 			this.getCacheWrapper().addPageToCache(parentD);
-			this.getCacheWrapper().addPageToCache(parentO);
 
 		} catch (Throwable t) {
 			_logger.error("Error adding a page", t);
@@ -172,6 +177,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage pageD = pageRecord.createDraftPage();
 			IPage pageO = pageRecord.createOnlinePage();
 
+			((Page)pageD).setParent(page.getParent());
+			((Page)pageO).setParent(page.getParent());
+
 			this.getCacheWrapper().addPageToCache(pageD);
 			this.getCacheWrapper().addPageToCache(pageO);
 
@@ -191,6 +199,11 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 			IPage pageD = pageRecord.createDraftPage();
 			IPage pageO = pageRecord.createOnlinePage();
 
+			IPage parent = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
+
+			((Page)pageD).setParent(parent);
+			((Page)pageO).setParent(parent);
+
 			this.getCacheWrapper().addPageToCache(pageD);
 			this.getCacheWrapper().addPageToCache(pageO);
 
@@ -209,6 +222,10 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(pageCode);
 			IPage pageD = pageRecord.createDraftPage();
+
+			IPage parent = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
+
+			((Page)pageD).setParent(parent);
 
 			this.getCacheWrapper().deleteOnlinePage(pageCode);
 			this.getCacheWrapper().addPageToCache(pageD);
@@ -261,9 +278,18 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 */
 	@Override
 	public boolean movePage(String pageCode, boolean moveUp) throws ApsSystemException {
+
+		//TODO This needs to be completely rebuilt.
+		// This makes a single move and then updates everything in place. If a page
+		// moves more than one spot this is executed for every spot and because of the way the page updating works the entire peer
+		// tree has to get built every time.
+		//
+		// Page locations can be calculated and updated once and set in a single transaction.
+		// Not tackling now due to lack of tests and brutal side effects
+		//
+
 		boolean resultOperation = true;
 
-		List<IPage> updatedPages = new ArrayList<>();
 		try {
 			IPage currentPage = this.getDraftPage(pageCode);
 
@@ -281,30 +307,42 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 						String pageDown = sisterPageCodes[i - 1];
 						this.moveUpDown(pageDown, currentPage.getCode());
 
-						PageRecord record = this.getPageDAO().getPageRecordByCode(pageDown);
-						updatedPages.add(record.createDraftPage());
-						updatedPages.add(record.createOnlinePage());
 					} else {
 						String pageUp = sisterPageCodes[i + 1];
 						this.moveUpDown(currentPage.getCode(), pageUp);
 
-						PageRecord record = this.getPageDAO().getPageRecordByCode(pageUp);
-						updatedPages.add(record.createDraftPage());
-						updatedPages.add(record.createOnlinePage());
 					}
 				}
 			}
 
-			//Read the page back from the database to get the corrected position
-			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(currentPage.getCode());
-			IPage pageDraft = pageRecord.createDraftPage();
+			//Read back the children of the parent with updated position (brutal) and then add them all back to cache
+			String[] childCodes = parent.getChildrenCodes();
+			List<PageRecord> updatedPages = new ArrayList<>();
+			for(String code : childCodes) {
+				PageRecord record = this.getPageDAO().getPageRecordByCode(code);
+				updatedPages.add(record);
 
-			((Page)pageDraft).setParent(currentPage.getParent());
-			updatedPages.add(pageDraft);
+				IPage pageDraft = record.createDraftPage();
+				IPage pageOnline = record.createOnlinePage();
 
-			for(IPage updatedPage : updatedPages){
-				this.getCacheWrapper().addPageToCache(updatedPage);
+				((Page)pageDraft).setParent(parent);
+				((Page)pageOnline).setParent(parent);
+
+				this.getCacheWrapper().addPageToCache(pageDraft);
+				this.getCacheWrapper().addPageToCache(pageOnline);
+
 			}
+
+			//Sort the children pages by code and then re-create the childCodes list which is ordered.
+			updatedPages.sort(Comparator.comparing(PageRecord::getPosition));
+			List<String> codes = updatedPages.stream()
+					.map(PageRecord::getCode)
+					.collect(Collectors.toList());
+
+			String[] updatedCodes = new String[codes.size()];
+			((Page)parent).setChildrenCodes(codes.toArray(updatedCodes));
+			this.getCacheWrapper().addPageToCache(parent);
+
 		} catch (Throwable t) {
 			_logger.error("Error while moving  page {}", pageCode, t);
 			throw new ApsSystemException("Error while moving a page", t);
@@ -318,6 +356,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 		boolean resultOperation = true;
 		try {
 			IPage currentPage = this.getDraftPage(pageCode);
+
 			if (null == currentPage) {
 				throw new ApsSystemException("The page '" + pageCode + "' does not exist!");
 			}
@@ -333,9 +372,16 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				this.getPageDAO().updateWidgetPosition(pageCode, frameToMove, destFrame);
 			}
 
+			IPage currentParent = currentPage.getParent();
 			PageRecord record = this.getPageDAO().getPageRecordByCode(pageCode);
-			this.getCacheWrapper().addPageToCache(record.createDraftPage());
-			this.getCacheWrapper().addPageToCache(record.createOnlinePage());
+
+			IPage pageDraft = record.createDraftPage();
+			IPage pageOnline = record.createOnlinePage();
+			((Page)pageDraft).setParent(currentParent);
+			((Page)pageOnline).setParent(currentParent);
+
+			this.getCacheWrapper().addPageToCache(pageDraft);
+			this.getCacheWrapper().addPageToCache(pageOnline);
 
 			this.notifyPageChangedEvent(currentPage, PageChangedEvent.EDIT_FRAME_OPERATION_CODE, frameToMove, destFrame, PageChangedEvent.EVENT_TYPE_MOVE_WIDGET);
 		} catch (Throwable t) {
@@ -751,8 +797,13 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 
 			//Must read the record back
 			PageRecord record = this.getPageDAO().getPageRecordByCode(currentPage.getCode());
-			this.getCacheWrapper().addPageToCache(record.createDraftPage());
-			this.getCacheWrapper().addPageToCache(record.createOnlinePage());
+			IPage pageDraft = record.createDraftPage();
+			IPage pageOnline = record.createOnlinePage();
+
+			((Page)pageDraft).setParent(currentParent);
+			((Page)pageOnline).setParent(currentParent);
+			this.getCacheWrapper().addPageToCache(pageDraft);
+			this.getCacheWrapper().addPageToCache(pageOnline);
 
 			if(!Arrays.asList(newParent.getChildrenCodes()).contains(currentPage.getCode())) {
 				((Page)newParent).addChildCode(currentPage.getCode());
@@ -770,6 +821,9 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 				PageRecord peerPage = this.getPageDAO().getPageRecordByCode(code);
 				IPage peerDraft = peerPage.createDraftPage();
 				IPage peerOnline = peerPage.createOnlinePage();
+
+				((Page)peerDraft).setParent(currentParent);
+				((Page)peerOnline).setParent(currentParent);
 
 				this.getCacheWrapper().addPageToCache(peerDraft);
 				this.getCacheWrapper().addPageToCache(peerOnline);
@@ -823,5 +877,5 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageDAO(IPageDAO pageDao) {
 		this._pageDao = pageDao;
 	}
-	
+
 }

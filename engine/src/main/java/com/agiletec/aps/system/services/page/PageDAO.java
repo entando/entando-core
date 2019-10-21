@@ -76,10 +76,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             //it isn't entirely clear that this needs to happen here. However, the list call does this and references
             //widget config so adding it for the sake of consistency and to avoid untested side effects. Can't see where the widget config
             //is ultimately connected to the pages but it gets fetched.
-//            List<PageRecord> records = new ArrayList<>();
-//            records.add(result);
-//            this.readPageWidgets(records, true, conn);
-//            this.readPageWidgets(records, false, conn);
+            this.readPageWidgets(result, true, conn);
+            this.readPageWidgets(result, false, conn);
 
         } catch (Throwable t) {
             _logger.error("Error loading pages", t);
@@ -171,10 +169,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
                     currentPage = pagesIter.next();
                     currentWidgetNum = this.getWidgetArrayLength(online ? currentPage.getMetadataOnline() : currentPage.getMetadataDraft());
                     currentWidgets = online ? currentPage.getWidgetsOnline() : currentPage.getWidgetsDraft();
-
-                    if(pages.size() == 1){
-                        break;
-                    }
                 }
                 this.readWidget(currentPage, currentWidgetNum, currentWidgets, 2, res);
             }
@@ -185,6 +179,36 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             closeDaoResources(res, stat);
         }
     }
+
+    //TODO This is pretty much a copy of the one above it but there isn't a clear break where a given entity is processed.
+    //Trying this rather than bigger refactor to cleanup iteration in overloaded method
+    private void readPageWidgets(PageRecord currentPage, boolean online, Connection conn) {
+        PreparedStatement stat = null;
+        ResultSet res = null;
+        try {
+            stat = conn.prepareStatement(online ? ALL_WIDGETS_FOR_PAGE_ONLINE: ALL_WIDGETS_FOR_PAGE_DRAFT);
+            stat.setString(1, currentPage.getCode());
+            res = stat.executeQuery();
+            int currentWidgetNum = 0;
+            Widget[] currentWidgets = null;
+
+            while (res.next()) {
+                String code = res.getString(1);
+                currentWidgetNum = this.getWidgetArrayLength(online ? currentPage.getMetadataOnline() : currentPage.getMetadataDraft());
+                currentWidgets = online ? currentPage.getWidgetsOnline() : currentPage.getWidgetsDraft();
+                this.readWidget(currentPage, currentWidgetNum, currentWidgets, 2, res);
+            }
+
+
+
+        } catch (Throwable t) {
+            _logger.error("Error loading page widgets - online/draft: {}", online, t);
+            throw new RuntimeException("Error loading page widgets - online/draft: " + online, t);
+        } finally {
+            closeDaoResources(res, stat);
+        }
+    }
+
 
     protected int getWidgetArrayLength(PageMetadata metadata) {
         int numFrames = -1;
@@ -899,10 +923,16 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
     private static final String PAGE_RECORD_BY_CODE = ALL_PAGES_BASE + " WHERE p.code = ? "+ALL_PAGES_ORDER_BY;
 
     private static final String ALL_WIDGETS_START = "SELECT w.pagecode, w.framepos, w.widgetcode, w.config " + "FROM pages p JOIN ";
-    private static final String ALL_WIDGETS_END = " w ON p.code = w.pagecode " + "ORDER BY p.parentcode, p.pos, p.code, w.framepos ";
+    private static final String ALL_WIDGETS_END = " w ON p.code = w.pagecode ";
 
-    private static final String ALL_WIDGETS_ONLINE = ALL_WIDGETS_START + WidgetConfig.TABLE_NAME + ALL_WIDGETS_END;
-    private static final String ALL_WIDGETS_DRAFT = ALL_WIDGETS_START + WidgetConfigDraft.TABLE_NAME + ALL_WIDGETS_END;
+    private static final String ALL_WIDGETS_ORDER = "ORDER BY p.parentcode, p.pos, p.code, w.framepos ";
+
+    private static final String ALL_WIDGETS_ONLINE = ALL_WIDGETS_START + WidgetConfig.TABLE_NAME + ALL_WIDGETS_END + ALL_WIDGETS_ORDER;
+    private static final String ALL_WIDGETS_DRAFT = ALL_WIDGETS_START + WidgetConfigDraft.TABLE_NAME + ALL_WIDGETS_END + ALL_WIDGETS_ORDER;
+
+    private static final String ALL_WIDGETS_FOR_PAGE_ONLINE =  ALL_WIDGETS_START + WidgetConfig.TABLE_NAME + ALL_WIDGETS_END + " where w.pagecode = ? "+ALL_WIDGETS_ORDER;
+    private static final String ALL_WIDGETS_FOR_PAGE_DRAFT =  ALL_WIDGETS_START + WidgetConfigDraft.TABLE_NAME + ALL_WIDGETS_END + " where w.pagecode = ? "+ALL_WIDGETS_ORDER;
+
 
     private static final String ADD_PAGE = "INSERT INTO pages(code, parentcode, pos) VALUES ( ? , ? , ? )";
 

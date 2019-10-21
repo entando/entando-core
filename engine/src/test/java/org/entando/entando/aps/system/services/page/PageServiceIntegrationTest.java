@@ -186,6 +186,13 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             assertNotNull(addedPage);
             assertEquals("pagina_1", addedPage.getParentCode());
             assertEquals(1, addedPage.getPosition());
+
+            pageService.removePage(newPageCode);
+
+            PageDto secondPage = pageService.getPage("pagina_12", "draft");
+            assertEquals(2, secondPage.getPosition());
+
+
         } catch (Exception e) {
             throw e;
         } finally {

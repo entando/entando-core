@@ -13,21 +13,6 @@
  */
 package org.entando.entando.aps.system.services.widgettype.api;
 
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-
-import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.api.model.ApiException;
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
@@ -35,6 +20,19 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
+import org.apache.commons.lang3.StringUtils;
+import org.entando.entando.aps.system.services.api.model.ApiException;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * @author E.Santoboni
@@ -305,7 +303,9 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
             assertNull(this._guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode));
         } catch (ApiException ae) {
+
             if (expectedSuccess) {
+                ae.printStackTrace();
                 fail();
             }
         } catch (Throwable t) {

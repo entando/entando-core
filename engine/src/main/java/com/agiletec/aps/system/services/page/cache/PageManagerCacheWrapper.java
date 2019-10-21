@@ -167,8 +167,18 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     public void addPageToCache(IPage page) {
 
         if(page.isOnlineInstance()) {
-            this.getCache().put(ONLINE_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+            if(page.isOnline()) {
+
+                if(page.getCode().equals(page.getParentCode())){
+                    this.getCache().put(ONLINE_ROOT_CACHE_NAME, page);
+                }
+                this.getCache().put(ONLINE_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+            }
         } else {
+
+            if(page.getCode().equals(page.getParentCode())){
+                this.getCache().put(DRAFT_ROOT_CACHE_NAME, page);
+            }
             this.getCache().put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
         }
     }

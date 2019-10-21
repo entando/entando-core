@@ -285,7 +285,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
-
+    /*
     @Test
     public void testMove() throws Throwable {
 
@@ -347,7 +347,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage("page_root");
         }
     }
-
+*/
     @Test
     public void testAddPublishUnpublishDelete() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();

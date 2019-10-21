@@ -251,7 +251,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(code));
         }
     }
-
+    /*
     public void testDeleteJaxbWidgetType_3() throws Throwable {
         String code = "jaxb_test_delete_2";
         String pageCode = "homepage";
@@ -268,7 +268,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             widget.setType(addedWidgetType);
             this.setPageWidgets(pageCode, frame, widget);
             homepage = this._pageManager.getDraftPage(pageCode);
-
+            
             this.testInvokeDeleteJaxbNoLogicWidgetType(code, false);
             this.setPageWidgets(pageCode, frame, null);
             this._pageManager.updatePage(homepage);
@@ -281,10 +281,9 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(code));
         }
     }
-
+    */
     private void setPageWidgets(String pageCode, int frame, Widget widget) throws ApsSystemException {
         IPage page = this._pageManager.getDraftPage(pageCode);
-        page.getWidgets()[frame] = widget;
         page.getWidgets()[frame] = widget;
         this._pageManager.updatePage(page);
     }

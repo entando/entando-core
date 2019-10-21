@@ -172,12 +172,21 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             codes.remove(pageCode);
             cache.put(PAGE_CODES_CACHE_NAME, codes);
         }
+        boolean isPublic = page.isOnline();
+        boolean isChanged = page.isChanged();
         cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
         cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
         this.cleanLocalCache(cache);
         PagesStatus status = this.getPagesStatus();
         status.setLastUpdate(new Date());
-        status.setUnpublished(status.getUnpublished() - 1);
+        
+        if (isPublic && isChanged) {
+            status.setOnlineWithChanges(status.getOnlineWithChanges() - 1);
+        } else if (isPublic && !isChanged) {
+            status.setOnline(status.getOnline() - 1);
+        } else {
+            status.setUnpublished(status.getUnpublished() - 1);
+        }
         cache.put(PAGE_STATUS_CACHE_NAME, status);
     }
 

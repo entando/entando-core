@@ -16,7 +16,18 @@ package com.agiletec.aps.system.services.page;
 import java.io.Serializable;
 import java.util.Date;
 
-public class PagesStatus implements Serializable {
+public class PagesStatus implements Serializable, Cloneable {
+
+
+    public PagesStatus clone(){
+        PagesStatus clonedStatus = new PagesStatus();
+        clonedStatus.setOnline(this.online);
+        clonedStatus.setOnlineWithChanges(this.onlineWithChanges);
+        clonedStatus.setUnpublished(this.unpublished);
+        clonedStatus.setLastUpdate(this.lastUpdate);
+
+        return clonedStatus;
+    }
 
     public int getTotal() {
         return this.getOnline() + this.getOnlineWithChanges() + this.getUnpublished();

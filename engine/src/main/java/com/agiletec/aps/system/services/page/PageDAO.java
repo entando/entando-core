@@ -73,9 +73,6 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             conn = this.getConnection();
             result = this.getPageRecordByCode(conn, pageCode);
 
-            //it isn't entirely clear that this needs to happen here. However, the list call does this and references
-            //widget config so adding it for the sake of consistency and to avoid untested side effects. Can't see where the widget config
-            //is ultimately connected to the pages but it gets fetched.
             this.readPageWidgets(result, true, conn);
             this.readPageWidgets(result, false, conn);
 

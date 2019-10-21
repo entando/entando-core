@@ -193,11 +193,15 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	@Override
 	public void setPageOnline(String pageCode) throws ApsSystemException {
 		try {
+			String[] children = this.getDraftPage(pageCode).getChildrenCodes();
 			this.getPageDAO().setPageOnline(pageCode);
 			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(pageCode);
 
 			IPage pageD = pageRecord.createDraftPage();
 			IPage pageO = pageRecord.createOnlinePage();
+
+			((Page)pageD).setChildrenCodes(children);
+			((Page)pageO).setChildrenCodes(children);
 
 			IPage parent = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
 
@@ -218,13 +222,16 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	@Override
 	public void setPageOffline(String pageCode) throws ApsSystemException {
 		try {
+
+			String[] children = this.getDraftPage(pageCode).getChildrenCodes();
 			this.getPageDAO().setPageOffline(pageCode);
 
 			PageRecord pageRecord = this.getPageDAO().getPageRecordByCode(pageCode);
 			IPage pageD = pageRecord.createDraftPage();
 
-			IPage parent = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
+			((Page)pageD).setChildrenCodes(children);
 
+			IPage parent = this.getCacheWrapper().getDraftPage(pageD.getParentCode());
 			((Page)pageD).setParent(parent);
 
 			this.getCacheWrapper().deleteOnlinePage(pageCode);
@@ -877,5 +884,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	public void setPageDAO(IPageDAO pageDao) {
 		this._pageDao = pageDao;
 	}
+
+
+
 
 }

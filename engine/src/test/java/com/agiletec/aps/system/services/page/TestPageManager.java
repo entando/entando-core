@@ -13,15 +13,6 @@
  */
 package com.agiletec.aps.system.services.page;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.sql.DataSource;
-
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.aps.system.services.widgettype.WidgetType;
-
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.services.mock.MockWidgetsDAO;
 import com.agiletec.aps.system.SystemConstants;
@@ -29,6 +20,13 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.util.ApsProperties;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.aps.system.services.widgettype.WidgetType;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author M.Diana, E.Mezzano
@@ -424,7 +422,8 @@ public class TestPageManager extends BaseTestCase {
     public void testPageStatus() throws ApsSystemException {
         String testCode = "testcode";
         try {
-            PagesStatus status = this._pageManager.getPagesStatus();
+            PagesStatus status = this._pageManager.getPagesStatus().clone();
+
             IPage parentPage = _pageManager.getDraftRoot();
             PageModel pageModel = parentPage.getMetadata().getModel();
             PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
@@ -432,7 +431,7 @@ public class TestPageManager extends BaseTestCase {
             Page pageToAdd = PageTestUtil.createPage(testCode, parentPage, "free", draftMeta, null);
             _pageManager.addPage(pageToAdd);
             PagesStatus newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline());
+            assertEquals(newStatus.getOnline(),status.getOnline());
             assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
             assertEquals(newStatus.getUnpublished(), status.getUnpublished() + 1);
             assertEquals(newStatus.getTotal(), status.getTotal() + 1);

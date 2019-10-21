@@ -29,6 +29,10 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private static final Logger _logger = LoggerFactory.getLogger(PageManagerCacheWrapper.class);
 
+    private static final String ONLINE_WITH_CHANGES = "ONLINE_WITH_CHANGES";
+    private static final String ONLINE = "ONLINE";
+    private static final String UNPUBLISHED = "UNPUBLISHED";
+
     @Override
     public void initCache(IPageDAO pageDao) throws ApsSystemException {
         PagesStatus status = new PagesStatus();
@@ -176,6 +180,16 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             }
         } else {
 
+            IPage currentPage = this.getDraftPage(page.getCode());
+
+            String currentStatus = "";
+            if(currentPage!=null) {
+                currentStatus = getCurrentPageStatus(currentPage);
+            }
+
+            String newStatus = getCurrentPageStatus(page);
+            updatePageStatusForSinglePageChange(currentStatus, newStatus);
+
             if(page.getCode().equals(page.getParentCode())){
                 this.getCache().put(DRAFT_ROOT_CACHE_NAME, page);
             }
@@ -183,10 +197,51 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         }
     }
 
-
     @Override
     protected String getCacheName() {
         return PAGE_MANAGER_CACHE_NAME;
     }
 
+    private void updatePageStatusForSinglePageChange(String oldStatus, String newStatus){
+
+        if(oldStatus.equals(newStatus)){
+            return;
+        }
+
+        PagesStatus status = this.getPagesStatus();
+        if(oldStatus.equals(ONLINE_WITH_CHANGES)){
+            status.setOnlineWithChanges(status.getOnlineWithChanges() - 1);
+        }else if(oldStatus.equals(ONLINE)){
+            status.setOnline(status.getOnline() - 1);
+        }else if(oldStatus.equals(UNPUBLISHED)){
+            status.setUnpublished(status.getUnpublished() - 1 );
+        }
+
+        if(newStatus.equals(ONLINE_WITH_CHANGES)){
+            status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
+        }else if(newStatus.equals(ONLINE)){
+            status.setOnline(status.getOnline() + 1);
+        }else if(newStatus.equals(UNPUBLISHED)){
+            status.setUnpublished(status.getUnpublished() + 1 );
+        }
+
+        this.getCache().put(PAGE_STATUS_CACHE_NAME, status);
+    }
+
+    private String getCurrentPageStatus(IPage pageD) {
+        Date currentDate = pageD.getMetadata().getUpdatedAt();
+        String result = "";
+
+        if (pageD.isOnline()) {
+            if (pageD.isChanged()) {
+                result = ONLINE_WITH_CHANGES;
+            } else {
+                result = ONLINE;
+            }
+        } else {
+            result = UNPUBLISHED;
+        }
+
+        return result;
+    }
 }

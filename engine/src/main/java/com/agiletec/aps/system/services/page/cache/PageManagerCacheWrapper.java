@@ -379,7 +379,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             List<String> children = new ArrayList(Arrays.asList(onlineParent.getChildrenCodes()));
             int pos1 = children.indexOf(pageUp);
             int pos2 = children.indexOf(pageDown);
-            if (pos1 > 0 && pos2 > 0) {
+            if (pos1 >= 0 && pos2 >= 0) {
                 Collections.swap(children, pos1, pos2);
                 ((Page) onlineParent).setChildrenCodes(children.toArray(new String[children.size()]));
                 cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineParent.getCode(), onlineParent);
@@ -390,7 +390,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             List<String> children = new ArrayList(Arrays.asList(draftParent.getChildrenCodes()));
             int pos1 = children.indexOf(pageUp);
             int pos2 = children.indexOf(pageDown);
-            if (pos1 > 0 && pos2 > 0) {
+            if (pos1 >= 0 && pos2 >= 0) {
                 Collections.swap(children, pos1, pos2);
                 ((Page) draftParent).setChildrenCodes(children.toArray(new String[children.size()]));
                 cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftParent.getCode(), draftParent);

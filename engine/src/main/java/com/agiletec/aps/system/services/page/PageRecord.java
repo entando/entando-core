@@ -55,6 +55,10 @@ public class PageRecord {
                 }
                 for (int i = 0; i < this.getWidgetsDraft().length; i++) {
                     Widget widgetDraft = this.getWidgetsDraft()[i];
+                    if (this.getWidgetsOnline().length < i) {
+                        widgetEquals = false;
+                        break;
+                    }
                     Widget widgetOnline = this.getWidgetsOnline()[i];
                     if (null == widgetOnline && null == widgetDraft) {
                         continue;

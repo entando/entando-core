@@ -386,6 +386,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
+            super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_LIKES, id);
+            super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_COMMENTS, id);
             super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_RELATIONS, id);
             super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD, id);
             conn.commit();
@@ -521,6 +523,12 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
     private static final String DELETE_LOG_RECORD_RELATIONS
             = "DELETE from actionlogrelations where recordid = ?";
+
+    private static final String DELETE_LOG_RECORD_LIKES
+            = "DELETE from actionloglikerecords where recordid = ?";
+
+    private static final String DELETE_LOG_RECORD_COMMENTS
+            = "DELETE from actionlogcommentrecords where recordid = ?";
 
     private final String ADD_LOG_RECORD_RELATION
             = "INSERT INTO actionlogrelations (recordid, refgroup) VALUES ( ? , ? )";

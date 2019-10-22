@@ -130,6 +130,13 @@ public class PageFinderAction extends AbstractPortalAction {
         }
         return allowedGroups;
     }
+    
+    public String getFullTitle(IPage page, String langCode) {
+        if (null != page) {
+            return page.getFullTitle(langCode, this.getPageManager());
+        }
+        return "undefined";
+    }
 
     /**
      * Set the token to be searched among the pages

@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.category;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.util.ApsProperties;
@@ -29,6 +30,14 @@ import java.util.Set;
  * @author E.Santoboni
  */
 public class Category extends TreeNode implements Comparable, Serializable {
+    
+    @Override
+    public Category clone() {
+        Category clone = (Category) super.clone();
+        clone.setDefaultLang(this._defaultLang);
+        clone.setRenderingLang(this._renderingLang);
+        return clone;
+    }
 
     /**
      * Restituisce l'insieme ordinato delle categorie di livello inferiore.
@@ -162,11 +171,6 @@ public class Category extends TreeNode implements Comparable, Serializable {
     public void setDefaultLang(String langCode) {
         this._defaultLang = langCode;
     }
-
-    /**
-     * Il codice della categoria di livello superiore
-     */
-    private String _parentCode;
 
     private String _renderingLang;
     private String _defaultLang;

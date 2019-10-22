@@ -20,10 +20,13 @@ import com.agiletec.aps.system.services.category.ICategoryDAO;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -39,14 +42,14 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException {
 		List<Category> categories = null;
 		try {
-			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			categories = categoryDAO.loadCategories(langManager);
 			if (categories.isEmpty()) {
 				Category root = this.createRoot(langManager);
 				categoryDAO.addCategory(root);
 				categories.add(root);
 			}
+            Cache cache = this.getCache();
+			//this.releaseCachedObjects(cache);
 			this.initCache(cache, categories);
 		} catch (Throwable t) {
 			logger.error("Error loading the category tree", t);
@@ -111,17 +114,65 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 
 	@Override
 	public Category getCategory(String code) {
-		return this.get(CATEGORY_CACHE_NAME_PREFIX + code, Category.class);
+        Category category = this.get(CATEGORY_CACHE_NAME_PREFIX + code, Category.class);
+		if (null != category) {
+            return category.clone();
+        }
+        return null;
 	}
+
+    @Override
+    public void addCategory(Category category) {
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
+        if (null != codes && !codes.contains(category.getCode())) {
+            codes.add(category.getCode());
+            cache.put(CATEGORY_CODES_CACHE_NAME, codes);
+        }
+        Category parent = this.getCategory(category.getParentCode());
+        String[] childCodes = parent.getChildrenCodes();
+        childCodes = ArrayUtils.add(childCodes, category.getCode());
+        parent.setChildrenCodes(childCodes);
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+    }
+
+    @Override
+    public void updateCategory(Category category) {
+        this.getCache().put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+    }
 
 	@Override
 	public void deleteCategory(String code) {
-		this.getCache().evict(CATEGORY_CACHE_NAME_PREFIX + code);
+        Cache cache = this.getCache();
+        Category category = this.getCategory(code);
+        if (null == category) {
+            return;
+        }
+        Category parent = this.getCategory(category.getParentCode());
+        if (null != parent.getChildrenCodes()) {
+            List<String> childrenCodes = new ArrayList<>(Arrays.asList(parent.getChildrenCodes()));
+            boolean executedRemove = childrenCodes.remove(code);
+            if (executedRemove) {
+                parent.setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
+                cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+            }
+        }
+        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            codes.remove(code);
+            cache.put(CATEGORY_CODES_CACHE_NAME, codes);
+        }
+        cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
 	}
 
 	@Override
 	public Category getRoot() {
-		return this.get(CATEGORY_ROOT_CACHE_NAME, Category.class);
+        Category category = this.get(CATEGORY_ROOT_CACHE_NAME, Category.class);
+		if (null != category) {
+            return category.clone();
+        }
+        return null;
 	}
 
 	@Override

@@ -156,6 +156,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             if (executedRemove) {
                 ((Page) parent).setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
                 cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+                this.checkRootModification(parent, false, cache);
             }
             IPage parentOnLine = this.getOnlinePage(page.getParentCode());
             if (null != parentOnLine) {
@@ -163,7 +164,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 boolean executedRemoveOnOnLine = onlineChildrenCodes.remove(pageCode);
                 if (executedRemoveOnOnLine) {
                     ((Page) parentOnLine).setChildrenCodes(onlineChildrenCodes.toArray(new String[childrenCodes.size()]));
-                    cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parentOnLine.getCode(), parentOnLine);
+                    cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parentOnLine.getCode(), parentOnLine);
+                    this.checkRootModification(parentOnLine, true, cache);
                 }
             }
         }
@@ -215,6 +217,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         ((Page) parent).setChildrenCodes(childCodes);
         cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
         cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        this.checkRootModification(page, false, cache);
+        this.checkRootModification(parent, false, cache);
         this.cleanLocalCache(cache);
         PagesStatus status = this.getPagesStatus();
         status.setLastUpdate(new Date());
@@ -232,6 +236,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         ((Page) page).setChanged(isChanged);
         Cache cache = this.getCache();
         cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+        this.checkRootModification(page, false, cache);
         this.cleanLocalCache(cache);
         if (isChanged) {
             PagesStatus status = this.getPagesStatus();
@@ -255,7 +260,9 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             ((Page) page).setChanged(false);
             IPage newOnlinePage = page.clone();
             cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + newOnlinePage.getCode(), newOnlinePage);
+            this.checkRootModification(newOnlinePage, true, cache);
             cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
+            this.checkRootModification(page, false, cache);
             if (!alreadyOnline || changed) {
                 PagesStatus status = this.getPagesStatus();
                 status.setLastUpdate(new Date());
@@ -384,6 +391,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 ((Page) onlineParent).setChildrenCodes(children.toArray(new String[children.size()]));
                 cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineParent.getCode(), onlineParent);
             }
+            this.checkRootModification(onlineParent, true, cache);
         }
         IPage draftParent = this.getDraftPage(parentCode);
         if (null != draftParent) {
@@ -394,6 +402,17 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 Collections.swap(children, pos1, pos2);
                 ((Page) draftParent).setChildrenCodes(children.toArray(new String[children.size()]));
                 cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftParent.getCode(), draftParent);
+            }
+            this.checkRootModification(draftParent, false, cache);
+        }
+    }
+    
+    private void checkRootModification(IPage page, boolean online, Cache cache) {
+        if (page.isRoot()) {
+            if (!online) {
+                cache.put(DRAFT_ROOT_CACHE_NAME, page);
+            } else {
+                cache.put(ONLINE_ROOT_CACHE_NAME, page);
             }
         }
     }

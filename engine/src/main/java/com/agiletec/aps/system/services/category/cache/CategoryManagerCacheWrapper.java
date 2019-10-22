@@ -13,12 +13,16 @@
  */
 package com.agiletec.aps.system.services.category.cache;
 
+import static com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper.DRAFT_ROOT_CACHE_NAME;
+import static com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper.ONLINE_ROOT_CACHE_NAME;
+
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryDAO;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -134,12 +138,15 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
         childCodes = ArrayUtils.add(childCodes, category.getCode());
         parent.setChildrenCodes(childCodes);
         cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        this.checkRootModification(parent, cache);
         cache.put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
     }
 
     @Override
     public void updateCategory(Category category) {
-        this.getCache().put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+        Cache cache = this.getCache();
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+        this.checkRootModification(category, cache);
     }
 
 	@Override
@@ -156,6 +163,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
             if (executedRemove) {
                 parent.setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
                 cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+                this.checkRootModification(parent, cache);
             }
         }
         List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
@@ -165,6 +173,12 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
         }
         cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
 	}
+    
+    private void checkRootModification(Category category, Cache cache) {
+        if (category.isRoot()) {
+            cache.put(CATEGORY_ROOT_CACHE_NAME, category);
+        }
+    }
 
 	@Override
 	public Category getRoot() {

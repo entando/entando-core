@@ -213,9 +213,12 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         cache.put(PAGE_CODES_CACHE_NAME, codes);
         IPage parent = this.getDraftPage(page.getParentCode());
         String[] childCodes = parent.getChildrenCodes();
-        childCodes = ArrayUtils.add(childCodes, page.getCode());
-        ((Page) parent).setChildrenCodes(childCodes);
-        cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        boolean containsChild = Arrays.stream(childCodes).anyMatch(page.getCode()::equals);
+        if (!containsChild) {
+            childCodes = ArrayUtils.add(childCodes, page.getCode());
+            ((Page) parent).setChildrenCodes(childCodes);
+            cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        }
         cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
         this.checkRootModification(page, false, cache);
         this.checkRootModification(parent, false, cache);
@@ -425,29 +428,32 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     @Override
     public IPage getOnlinePage(String pageCode) {
         IPage page = this.get(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
-        if (null != page) {
-            return page.clone();
-        }
-        return null;
+        return this.returnClone(page);
     }
 
     @Override
     public IPage getDraftPage(String pageCode) {
         IPage page = this.get(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode, IPage.class);
-        if (null != page) {
-            return page.clone();
-        }
-        return null;
+        return this.returnClone(page);
     }
 
     @Override
     public IPage getOnlineRoot() {
-        return this.get(ONLINE_ROOT_CACHE_NAME, IPage.class).clone();
+        IPage page = this.get(ONLINE_ROOT_CACHE_NAME, IPage.class).clone();
+        return this.returnClone(page);
     }
 
     @Override
     public IPage getDraftRoot() {
-        return this.get(DRAFT_ROOT_CACHE_NAME, IPage.class).clone();
+        IPage page = this.get(DRAFT_ROOT_CACHE_NAME, IPage.class).clone();
+        return this.returnClone(page);
+    }
+    
+    private IPage returnClone(IPage page) {
+        if (null != page) {
+            return page.clone();
+        }
+        return null;
     }
 
     protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {

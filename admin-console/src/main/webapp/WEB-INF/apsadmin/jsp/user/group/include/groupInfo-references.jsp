@@ -57,7 +57,7 @@
                                         </wp:ifauthorized>
                                         <tr>
                                             <td>
-                                                <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                <s:property value="%{getFullTitle(#currentPageVar, currentLang.code)}" />
                                             </td>
                                             <td class=" text-center table-view-pf-actions">
                                                 <s:if
@@ -70,18 +70,18 @@
                                                         </button>
                                                         <ul class="dropdown-menu dropdown-menu-right">
                                                             <li>
-                                                                <a title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />"
+                                                                <a title="<s:text name="note.goToSomewhere" />:&#32;<s:property value="%{getFullTitle(#currentPageVar, currentLang.code)}" />"
                                                                    href="<s:url namespace="/do/Page" action="viewTree"><s:param name="selectedNode" value="#currentPageVar.code" /></s:url>">
                                                                        <span>
-                                                                       <s:text name="note.goToSomewhere" />: <s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                                       <s:text name="note.goToSomewhere" />: <s:property value="%{getFullTitle(#currentPageVar, currentLang.code)}" />
                                                                    </span>
                                                                 </a>
                                                             </li>
                                                             <li>
-                                                                <a title="<s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />"
+                                                                <a title="<s:text name="title.configPage" />:&#32;<s:property value="%{getFullTitle(#currentPageVar, currentLang.code)}" />"
                                                                    href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#currentPageVar.code" /></s:url>">
                                                                        <span>
-                                                                       <s:text name="title.configPage" />:&#32;<s:property value="%{#currentPageVar.getFullTitle(currentLang.code)}" />
+                                                                       <s:text name="title.configPage" />:&#32;<s:property value="%{getFullTitle(#currentPageVar, currentLang.code)}" />
                                                                    </span>
                                                                 </a>
                                                             </li>

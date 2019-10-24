@@ -267,34 +267,7 @@ public class Page extends TreeNode implements IPage, Serializable {
     public void setChanged(boolean changed) {
         this.changed = changed;
     }
-    /*
-    @Override
-    protected String getFullTitle(String langCode, String separator, boolean shortTitle, ITreeNodeManager treeNodeManager) {
-        String title = this.getTitles().getProperty(langCode);
-        if (null == title) {
-            title = this.getCode();
-        }
-        if (this.isRoot()) {
-            return title;
-        }
-        ITreeNode parent = this.getParent(this, treeNodeManager);
-        while (parent != null && parent.getParentCode() != null) {
-            String parentTitle = "..";
-            if (!shortTitle) {
-                parentTitle = parent.getTitles().getProperty(langCode);
-                if (null == parentTitle) {
-                    parentTitle = parent.getCode();
-                }
-            }
-            title = parentTitle + separator + title;
-            if (parent.isRoot()) {
-                return title;
-            }
-            parent = this.getParent(parent, treeNodeManager);
-        }
-        return title;
-    }
-    */
+    
     @Override
     protected ITreeNode getParent(ITreeNode node, ITreeNodeManager treeNodeManager) {
         return (this.isOnlineInstance()) ? 

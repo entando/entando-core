@@ -533,6 +533,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         page.setShowable(pageRequest.isDisplayedInMenu());
         PageModel model = this.getPageModelManager().getPageModel(pageRequest.getPageModel());
         page.setModel(model);
+        page.setWidgets(new Widget[model.getFrames().length]);
         page.setCharset(pageRequest.getCharset());
         page.setMimeType(pageRequest.getContentType());
         page.setParentCode(pageRequest.getParentCode());
@@ -553,7 +554,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode());
             page.setParentCode(parent.getCode());
         }
-        PageMetadata metadata = new PageMetadata();
+        PageMetadata metadata = page.getMetadata();
         this.valueMetadataFromRequest(metadata, pageRequest);
         page.setMetadata(metadata);
         return page;
@@ -563,9 +564,10 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         Page page = new Page();
         page.setCode(pageRequest.getCode());
         page.setShowable(pageRequest.isDisplayedInMenu());
-        if (oldPage.getModel().getCode().equals(pageRequest.getPageModel())) {
+        if (!oldPage.getModel().getCode().equals(pageRequest.getPageModel())) {
             PageModel model = this.getPageModelManager().getPageModel(pageRequest.getPageModel());
             page.setModel(model);
+            page.setWidgets(new Widget[model.getFrames().length]);
         }
         page.setCharset(pageRequest.getCharset());
         page.setMimeType(pageRequest.getContentType());
@@ -597,12 +599,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     private void valueMetadataFromRequest(PageMetadata metadata, PageRequest request) {
-        if (metadata.getModel() == null || !metadata.getModel().getCode().equals(request.getPageModel())) {
-            // Ho cambiato modello e allora cancello tutte le showlets
-            // Precedenti
-            PageModel model = this.getPageModelManager().getPageModel(request.getPageModel());
-            metadata.setModel(model);
-        }
         metadata.setGroup(request.getOwnerGroup());
         metadata.setShowable(request.isDisplayedInMenu());
         metadata.setUseExtraTitles(request.isSeo());

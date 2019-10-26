@@ -210,6 +210,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         Cache cache = this.getCache();
         List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
         codes.add(page.getCode());
+        ((Page) page).setChildrenCodes(new String[0]);
         cache.put(PAGE_CODES_CACHE_NAME, codes);
         IPage parent = this.getDraftPage(page.getParentCode());
         String[] childCodes = parent.getChildrenCodes();

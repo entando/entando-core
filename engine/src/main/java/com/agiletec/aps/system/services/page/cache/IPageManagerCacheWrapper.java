@@ -30,7 +30,8 @@ public interface IPageManagerCacheWrapper {
     public static final String ONLINE_ROOT_CACHE_NAME = "PageManager_onLineRoot";
     public static final String DRAFT_ROOT_CACHE_NAME = "PageManager_draftRoot";
     public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
-    public static final String PAGE_CODES_CACHE_NAME = "PageManager_codes";
+    public static final String DRAFT_PAGE_CODES_CACHE_NAME = "PageManager_draftCodes";
+    public static final String ONLINE_PAGE_CODES_CACHE_NAME = "PageManager_onlineCodes";
 
     public static final String ONLINE_WIDGET_UTILIZER_CACHE_NAME_PREFIX = "PageManager_onlineUtilizer_";
     public static final String DRAFT_WIDGET_UTILIZER_CACHE_NAME_PREFIX = "PageManager_draftUtilizer_";

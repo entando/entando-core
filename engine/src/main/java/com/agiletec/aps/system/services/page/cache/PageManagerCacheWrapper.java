@@ -84,8 +84,10 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             Cache cache = this.getCache();
             //this.releaseCachedObjects(cache);
             this.cleanLocalCache(cache);
-            List<String> pageCodes = pageListD.stream().map(p -> p.getCode()).collect(Collectors.toList());
-            cache.put(PAGE_CODES_CACHE_NAME, pageCodes);
+            List<String> draftPageCodes = pageListD.stream().map(p -> p.getCode()).collect(Collectors.toList());
+            cache.put(DRAFT_PAGE_CODES_CACHE_NAME, draftPageCodes);
+            List<String> onlinePageCodes = pageListO.stream().map(p -> p.getCode()).collect(Collectors.toList());
+            cache.put(ONLINE_PAGE_CODES_CACHE_NAME, onlinePageCodes);
             this.insertObjectsOnCache(cache, status, newDraftRoot, newOnLineRoot, pageListD, pageListO);
         } catch (ApsSystemException e) {
             throw e;
@@ -105,14 +107,15 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     }
 
     protected void releaseCachedObjects(Cache cache) {
-        List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
+        List<String> codes = (List<String>) this.get(cache, DRAFT_PAGE_CODES_CACHE_NAME, List.class);
         if (null != codes) {
             for (int i = 0; i < codes.size(); i++) {
                 String code = codes.get(i);
                 cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
                 cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
             }
-            cache.evict(PAGE_CODES_CACHE_NAME);
+            cache.evict(DRAFT_PAGE_CODES_CACHE_NAME);
+            cache.evict(ONLINE_PAGE_CODES_CACHE_NAME);
         }
     }
 
@@ -169,11 +172,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 }
             }
         }
-        List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
-        if (null != codes) {
-            codes.remove(pageCode);
-            cache.put(PAGE_CODES_CACHE_NAME, codes);
-        }
+        this.removeCodeFromCachedList(cache, DRAFT_PAGE_CODES_CACHE_NAME, pageCode);
+        this.removeCodeFromCachedList(cache, ONLINE_PAGE_CODES_CACHE_NAME, pageCode);
         boolean isPublic = page.isOnline();
         boolean isChanged = page.isChanged();
         cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + pageCode);
@@ -181,7 +181,6 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         this.cleanLocalCache(cache);
         PagesStatus status = this.getPagesStatus();
         status.setLastUpdate(new Date());
-        
         if (isPublic && isChanged) {
             status.setOnlineWithChanges(status.getOnlineWithChanges() - 1);
         } else if (isPublic && !isChanged) {
@@ -208,10 +207,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     @Override
     public void addDraftPage(IPage page) {
         Cache cache = this.getCache();
-        List<String> codes = (List<String>) this.get(cache, PAGE_CODES_CACHE_NAME, List.class);
-        codes.add(page.getCode());
+        this.addCodeFromCachedList(cache, DRAFT_PAGE_CODES_CACHE_NAME, page.getCode());
         ((Page) page).setChildrenCodes(new String[0]);
-        cache.put(PAGE_CODES_CACHE_NAME, codes);
         IPage parent = this.getDraftPage(page.getParentCode());
         String[] childCodes = parent.getChildrenCodes();
         boolean containsChild = Arrays.stream(childCodes).anyMatch(page.getCode()::equals);
@@ -256,6 +253,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         Cache cache = this.getCache();
         IPage page = this.getDraftPage(pageCode);
         if (null != page) {
+            this.addCodeFromCachedList(cache, ONLINE_PAGE_CODES_CACHE_NAME, page.getCode());
             IPage onlinepage = this.getOnlinePage(page.getCode());
             boolean alreadyOnline = null != onlinepage;
             boolean changed = (alreadyOnline 
@@ -263,6 +261,11 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             ((Page) page).setOnline(true);
             ((Page) page).setChanged(false);
             IPage newOnlinePage = page.clone();
+            List<String> onlineCodes = (List<String>) this.get(cache, ONLINE_PAGE_CODES_CACHE_NAME, List.class);
+            List<String> onLineCodes = Arrays.asList(newOnlinePage.getChildrenCodes())
+                    .stream().filter(code -> null != this.getOnlinePage(code) && onlineCodes.contains(code))
+                    .collect(Collectors.toList());
+            ((Page) newOnlinePage).setChildrenCodes(onLineCodes.toArray(new String[onLineCodes.size()]));
             cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + newOnlinePage.getCode(), newOnlinePage);
             this.checkRootModification(newOnlinePage, true, cache);
             cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
@@ -287,18 +290,29 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     public void setPageOffline(String pageCode) {
         Cache cache = this.getCache();
         IPage page = this.getDraftPage(pageCode);
+        this.removeCodeFromCachedList(cache, ONLINE_PAGE_CODES_CACHE_NAME, pageCode);
         IPage onlinepage = this.getOnlinePage(pageCode);
         if (null != onlinepage) {
             cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + pageCode);
             PagesStatus status = this.getPagesStatus();
             status.setLastUpdate(new Date());
             if (page.isChanged()) {
-                status.setOnlineWithChanges(status.getOnlineWithChanges()-1);
+                status.setOnlineWithChanges(status.getOnlineWithChanges() - 1);
             } else {
-                status.setOnline(status.getOnline()-1);
+                status.setOnline(status.getOnline() - 1);
             }
-            status.setUnpublished(status.getUnpublished()+1);
+            status.setUnpublished(status.getUnpublished() + 1);
             cache.put(PAGE_STATUS_CACHE_NAME, status);
+            IPage parentOnLine = this.getOnlinePage(onlinepage.getParentCode());
+            if (null != parentOnLine) {
+                List<String> onlineChildrenCodes = new ArrayList<>(Arrays.asList(parentOnLine.getChildrenCodes()));
+                boolean executedRemoveOnOnLine = onlineChildrenCodes.remove(pageCode);
+                if (executedRemoveOnOnLine) {
+                    ((Page) parentOnLine).setChildrenCodes(onlineChildrenCodes.toArray(new String[onlineChildrenCodes.size()]));
+                    cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parentOnLine.getCode(), parentOnLine);
+                    this.checkRootModification(parentOnLine, true, cache);
+                }
+            }
         }
         if (null != page) {
             ((Page) page).setOnline(false);
@@ -352,6 +366,22 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             }
         }
         return changed;
+    }
+    
+    private void addCodeFromCachedList(Cache cache, String listKey, String codeToAdd) {
+        List<String> codes = (List<String>) this.get(cache, listKey, List.class);
+        if (null != codes && !codes.contains(codeToAdd)) {
+            codes.add(codeToAdd);
+            cache.put(listKey, codes);
+        }
+    }
+    
+    private void removeCodeFromCachedList(Cache cache, String listKey, String codeToRemove) {
+        List<String> codes = (List<String>) this.get(cache, listKey, List.class);
+        if (null != codes) {
+            codes.remove(codeToRemove);
+            cache.put(listKey, codes);
+        }
     }
     
     @Override
@@ -458,10 +488,15 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     }
 
     protected void buildTreeHierarchy(IPage root, Map<String, IPage> pagesMap, IPage page) {
-        Page parent = (Page) pagesMap.get(page.getParentCode());
-        page.setParentCode(parent.getCode());
-        if (!page.getCode().equals(root.getCode())) {
-            parent.addChildCode(page.getCode());
+        try {
+            Page parent = (Page) pagesMap.get(page.getParentCode());
+            page.setParentCode(parent.getCode());
+            if (!page.getCode().equals(root.getCode())) {
+                parent.addChildCode(page.getCode());
+            }
+        } catch (Exception e) {
+            _logger.error("Error extracting parent of page {} - parent {}", page.getCode(), page.getParentCode(), e);
+            throw e;
         }
     }
 

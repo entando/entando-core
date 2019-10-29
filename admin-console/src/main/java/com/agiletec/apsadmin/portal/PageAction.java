@@ -523,7 +523,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             page.setWidgets(widgets);
             this.getPageManager().updatePage(page);
         } catch (Throwable t) {
-            logger.error("Error setting default widget to page {}", page.getCode(), t);
+            logger.error("Error setting default widget to page {}", this.getPageCode(), t);
             return FAILURE;
         }
         return SUCCESS;

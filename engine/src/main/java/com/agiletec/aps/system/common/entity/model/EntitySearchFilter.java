@@ -44,6 +44,10 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 	private static final Logger _logger = LoggerFactory.getLogger(EntitySearchFilter.class);
 	
 	protected EntitySearchFilter() {}
+    
+    public EntitySearchFilter(Integer limit, Integer offset) {
+        super(limit, offset);
+    }
 	
 	/**
 	 * Filter constructor.
@@ -73,10 +77,10 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 	 * This option can be used to filter by the value of a string attribute (or metadata). It can be
 	 * used only with string and with not null values.
 	 */
-	public EntitySearchFilter(String key, boolean isAttributeFilter, Object value, boolean useLikeOption) {
+	public EntitySearchFilter(String key, boolean isAttributeFilter, T value, boolean useLikeOption) {
 		this(key, isAttributeFilter);
 		if (null != value && value instanceof Collection && ((Collection) value).size() > 0) {
-			List<Object> allowedValues = new ArrayList<>();
+			List<T> allowedValues = new ArrayList<>();
 			allowedValues.addAll((Collection) value);
 			this.setAllowedValues(allowedValues);
 			if (allowedValues.get(0) instanceof String) {
@@ -90,7 +94,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		}
 	}
 	
-	public EntitySearchFilter(String key, boolean isAttributeFilter, Object value, boolean useLikeOption, LikeOptionType likeOptionType) {
+	public EntitySearchFilter(String key, boolean isAttributeFilter, T value, boolean useLikeOption, LikeOptionType likeOptionType) {
 		this(key, isAttributeFilter, value, useLikeOption);
 		if (this.isLikeOption()) {
 			this.setLikeOptionType(likeOptionType);
@@ -110,7 +114,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 	 * @param end The ending value of the interval. It can be an object of type 
 	 * "String", "Date", "BigDecimal", "Boolean" o null.
 	 */
-	public EntitySearchFilter(String key, boolean isAttributeFilter, Object start, Object end) {
+	public EntitySearchFilter(String key, boolean isAttributeFilter, T start, T end) {
 		this(key, isAttributeFilter);
 		if (start != null && end != null && !start.getClass().equals(end.getClass())) {
 			throw new RuntimeException("Error: 'start' and 'end' types have to be equals");
@@ -153,7 +157,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		return filter;
 	}
 	
-	public static <T> EntitySearchFilter createRoleFilter(String roleName, Object value, boolean useLikeOption) {
+	public static <T> EntitySearchFilter createRoleFilter(String roleName, T value, boolean useLikeOption) {
 		EntitySearchFilter filter = new EntitySearchFilter();
 		filter.setAttributeFilter(true);
 		filter.setRoleName(roleName);
@@ -173,7 +177,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		return filter;
 	}
 	
-	public static <T> EntitySearchFilter createRoleFilter(String roleName, Object value, boolean useLikeOption, LikeOptionType likeOptionType) {
+	public static <T> EntitySearchFilter createRoleFilter(String roleName, T value, boolean useLikeOption, LikeOptionType likeOptionType) {
 		EntitySearchFilter filter = EntitySearchFilter.createRoleFilter(roleName, value, useLikeOption);
 		if (filter.isLikeOption()) {
 			filter.setLikeOptionType(likeOptionType);
@@ -181,7 +185,7 @@ public class EntitySearchFilter<T> extends FieldSearchFilter implements Serializ
 		return filter;
 	}
 	
-	public static EntitySearchFilter createRoleFilter(String roleName, Object start, Object end) {
+	public static <T> EntitySearchFilter createRoleFilter(String roleName, T start, T end) {
 		EntitySearchFilter filter = new EntitySearchFilter();
 		filter.setAttributeFilter(true);
 		filter.setRoleName(roleName);

@@ -242,7 +242,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             query.append(") ");
         }
         boolean ordered = appendOrderQueryBlocks(filters, query, false);
-        super.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
+        super.appendLimitQueryBlock(filters, query);
         return query.toString();
     }
 

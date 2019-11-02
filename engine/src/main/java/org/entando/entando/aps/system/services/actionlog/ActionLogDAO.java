@@ -226,7 +226,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
     }
 
     protected String createQueryString(FieldSearchFilter[] filters, Collection<String> groupCodes) {
-        StringBuffer query = this.createBaseQueryBlock(filters, false);
+        StringBuffer query = this.createBaseQueryBlock(filters, false, false);
         this.appendJoinTableRefQueryBlock(query, groupCodes);
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (null != groupCodes && !groupCodes.isEmpty()) {

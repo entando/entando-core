@@ -133,7 +133,7 @@ public abstract class AbstractDataObjectSearcherDAO extends AbstractEntitySearch
 
     protected String createQueryString(EntitySearchFilter[] filters,
             String[] categories, boolean orClauseCategoryFilter, Collection<String> groupsForSelect, boolean selectAll) {
-        StringBuffer query = this.createBaseQueryBlock(filters, selectAll);
+        StringBuffer query = this.createBaseQueryBlock(filters, false, selectAll);
         boolean hasAppendWhereClause = this.appendFullAttributeFilterQueryBlocks(filters, query, false);
         hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, hasAppendWhereClause);
         if (null != groupsForSelect && !groupsForSelect.isEmpty()) {

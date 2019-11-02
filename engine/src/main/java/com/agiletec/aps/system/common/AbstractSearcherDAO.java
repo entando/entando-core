@@ -230,21 +230,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         return query.toString();
     }
 
-    /**
-     * Create the 'base block' of the query with the eventual references to the
-     * support table.
-     *
-     * @param filters The filters defined.
-     * @param selectAll When true, this will insert all the fields in the master
-     * table in the select of the master query. When true we select all the
-     * available fields; when false only the field addressed by the filter is
-     * selected.
-     * @return The base block of the query.
-     */
-    protected StringBuffer createBaseQueryBlock(FieldSearchFilter[] filters, boolean selectAll) {
-        return this.createBaseQueryBlock(filters, false, selectAll);
-    }
-
     protected StringBuffer createBaseQueryBlock(FieldSearchFilter[] filters, boolean isCount, boolean selectAll) {
         StringBuffer query = null;
         if (isCount) {

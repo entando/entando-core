@@ -26,7 +26,6 @@ import com.agiletec.aps.system.services.i18n.I18nManagerIntegrationTest;
 import com.agiletec.aps.system.services.i18n.I18nManagerTest;
 import com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapperTest;
 import com.agiletec.aps.system.services.keygenerator.KeyGeneratorManagerIntegrationTest;
-import com.agiletec.aps.system.services.keygenerator.KeyGeneratorManagerTest;
 import com.agiletec.aps.system.services.keygenerator.TestKeyGeneratorDAO;
 import com.agiletec.aps.system.services.lang.LangManagerIntegrationTest;
 import com.agiletec.aps.system.services.lang.LangManagerTest;
@@ -139,7 +138,6 @@ public class AllTests {
         //
         suite.addTestSuite(TestKeyGeneratorDAO.class);
         suite.addTestSuite(KeyGeneratorManagerIntegrationTest.class);
-        suite.addTest(new JUnit4TestAdapter(KeyGeneratorManagerTest.class));
         //
         suite.addTestSuite(LangManagerIntegrationTest.class);
         suite.addTest(new JUnit4TestAdapter(LangManagerTest.class));

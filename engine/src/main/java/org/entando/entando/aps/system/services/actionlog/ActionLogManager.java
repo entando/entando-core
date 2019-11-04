@@ -22,11 +22,11 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
+import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
@@ -41,9 +41,14 @@ import org.springframework.cache.annotation.Cacheable;
 /**
  * @author E.Santoboni - S.Puddu
  */
-public class ActionLogManager extends AbstractService implements IActionLogManager/*, ProfileChangedObserver*/ {
+public class ActionLogManager extends AbstractService implements IActionLogManager {
 
     private static final Logger _logger = LoggerFactory.getLogger(ActionLogManager.class);
+
+    private ManagerConfiguration _managerConfiguration;
+
+    private IActionLogDAO _actionLogDAO;
+    private IKeyGeneratorManager _keyGeneratorManager;
 
     @Override
     public void init() throws Exception {
@@ -105,7 +110,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 
     @Override
     public List<Integer> getActionRecords(IActionLogRecordSearchBean searchBean) throws ApsSystemException {
-        List<Integer> records = new ArrayList<Integer>();
+        List<Integer> records = new ArrayList<>();
         try {
             records = this.getActionLogDAO().getActionRecords(searchBean);
         } catch (Throwable t) {
@@ -125,7 +130,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
             for (Integer recordId : recordsIs) {
                 actionLogRecords.add(this.getActionRecord(recordId));
             }
-            pagedResult = new SearcherDaoPaginatedResult<ActionLogRecord>(count, actionLogRecords);
+            pagedResult = new SearcherDaoPaginatedResult<>(count, actionLogRecords);
         } catch (Throwable t) {
             _logger.error("Error searching ActionLogRecord", t);
             throw new ApsSystemException("Error searching ActionLogRecord", t);
@@ -171,8 +176,7 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 
     @Override
     public List<Integer> getActivityStream(IActivityStreamSearchBean activityStreamSearchBean) {
-        List<Integer> recordIds = null;
-        recordIds = this.getActionLogDAO().getActionRecords(activityStreamSearchBean);
+        List<Integer> recordIds = this.getActionLogDAO().getActionRecords(activityStreamSearchBean);
         ManagerConfiguration config = this.getManagerConfiguration();
         if (null != config && null != recordIds && recordIds.size() > config.getMaxActivitySizeByGroup()) {
             recordIds = recordIds.subList(0, config.getMaxActivitySizeByGroup());
@@ -188,17 +192,12 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
 
     @Override
     public Date lastUpdateDate(UserDetails loggedUser) throws ApsSystemException {
-        List<Integer> actionRecordIds = null;
         Date lastUpdate = new Date();
         try {
             ActivityStreamSeachBean searchBean = new ActivityStreamSeachBean();
             searchBean.setUserGroupCodes(this.extractUserGroupCodes(loggedUser));
             searchBean.setEndUpdate(lastUpdate);
-            actionRecordIds = this.getActionRecords(searchBean);
-            if (null != actionRecordIds && actionRecordIds.size() > 0) {
-                ActionLogRecord actionRecord = this.getActionRecord(actionRecordIds.get(0));
-                lastUpdate = actionRecord.getUpdateDate();
-            }
+            lastUpdate = this.getActionLogDAO().getLastUpdate(searchBean);
         } catch (Throwable t) {
             _logger.error("Error on loading updated activities", t);
             throw new ApsSystemException("Error on loading updated activities", t);
@@ -207,15 +206,11 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
     }
 
     private List<String> extractUserGroupCodes(UserDetails loggedUser) {
-        List<String> codes = new ArrayList<String>();
-        List<Authorization> auths = (null != loggedUser) ? loggedUser.getAuthorizations() : null;
-        if (null != auths) {
-            for (int i = 0; i < auths.size(); i++) {
-                Authorization auth = auths.get(i);
-                if (null != auth && null != auth.getGroup()) {
-                    codes.add(auth.getGroup().getName());
-                }
-            }
+        List<String> codes = new ArrayList<>();
+        if (null != loggedUser && null != loggedUser.getAuthorizations()) {
+            codes = loggedUser.getAuthorizations().stream()
+                    .filter(auth -> (null != auth && null != auth.getGroup()))
+                    .map(a -> a.getGroup().getName()).collect(Collectors.toList());
         }
         if (!codes.contains(Group.FREE_GROUP_NAME)) {
             codes.add(Group.FREE_GROUP_NAME);
@@ -258,10 +253,5 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
     public void setKeyGeneratorManager(IKeyGeneratorManager keyGeneratorManager) {
         this._keyGeneratorManager = keyGeneratorManager;
     }
-
-    private ManagerConfiguration _managerConfiguration;
-
-    private IActionLogDAO _actionLogDAO;
-    private IKeyGeneratorManager _keyGeneratorManager;
 
 }

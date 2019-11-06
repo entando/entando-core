@@ -378,6 +378,19 @@ public abstract class AbstractEntityTypeService<I extends IApsEntity, O extends 
         return new EntityTypeAttributeFullDto(attribute, entityManager.getAttributeRoles());
     }
 
+    protected List<EntityTypeAttributeFullDto> getEntityAttributes(String entityManagerCode, String entityTypeCode) {
+        IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
+        IApsEntity entityType = entityManager.getEntityPrototype(entityTypeCode);
+        if (null == entityType) {
+            logger.warn(NO_TYPE_FOUND_WITH_CODE, entityTypeCode);
+            throw new ResourceNotFoundException(ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, TYPE_CODE, entityTypeCode);
+        }
+
+        return entityType.getAttributeList().stream()
+                .map(a -> new EntityTypeAttributeFullDto(a, entityManager.getAttributeRoles()))
+                .collect(Collectors.toList());
+    }
+
     protected EntityTypeAttributeFullDto addEntityAttribute(String entityManagerCode,
             String entityTypeCode, EntityTypeAttributeFullDto bodyRequest, BindingResult bindingResult) {
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);

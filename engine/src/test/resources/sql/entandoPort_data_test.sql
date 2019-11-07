@@ -70,6 +70,13 @@ INSERT INTO categories (catcode, parentcode, titles) VALUES ('resCat1', 'Image',
 </properties>
 
 ');
+INSERT INTO categories (catcode, parentcode, titles) VALUES ('resCat3', 'Image', '<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+<property key="en">Images Resource Category 3</property>
+<property key="it">Categoria Risorse Immagine 3</property>
+</properties>
+
+');
 INSERT INTO categories (catcode, parentcode, titles) VALUES ('general_cat3', 'general', '<?xml version="1.0" encoding="UTF-8"?>
 <properties>
 <property key="en">Category 3</property>

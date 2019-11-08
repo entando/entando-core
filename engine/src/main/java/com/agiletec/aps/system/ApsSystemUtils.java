@@ -13,18 +13,30 @@
  */
 package com.agiletec.aps.system;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.AsyncAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.AsyncAppender;
+import org.apache.logging.log4j.core.appender.RollingFileAppender;
+import org.apache.logging.log4j.core.appender.rolling.DefaultRolloverStrategy;
+import org.apache.logging.log4j.core.appender.rolling.SizeBasedTriggeringPolicy;
+import org.apache.logging.log4j.core.appender.rolling.action.Action;
+import org.apache.logging.log4j.core.appender.rolling.action.DeleteAction;
+import org.apache.logging.log4j.core.appender.rolling.action.IfAccumulatedFileCount;
+import org.apache.logging.log4j.core.appender.rolling.action.PathCondition;
+import org.apache.logging.log4j.core.config.AppenderRef;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Classe di utilità. E' la classe detentrice del log di sistema.
+ * Utility class for system logger
  *
  * @author E.Santoboni
  */
@@ -36,7 +48,7 @@ public class ApsSystemUtils {
 
     public static final String INIT_PROP_LOG_NAME = "logName";
 
-    public static final String INIT_PROP_LOG_FILE_PREFIX = "logFilePrefix";
+    public static final String INIT_PROP_LOG_FILE_PATTERN = "logFileRotatePattern";
 
     public static final String INIT_PROP_LOG_LEVEL = "logLevel";
 
@@ -48,11 +60,6 @@ public class ApsSystemUtils {
 
     private Map<String, Object> systemParams;
 
-    /**
-     * Inizializzazione della classe di utilità.
-     *
-     * @throws Exception
-     */
     public void init() throws Exception {
         String active = (String) this.systemParams.get(INIT_PROP_LOG_ACTIVE_FILE_OUTPUT);
         if (StringUtils.isEmpty(active) || !active.equalsIgnoreCase("true")) {
@@ -61,9 +68,8 @@ public class ApsSystemUtils {
         String appenderName = "ENTANDO";
         String conversionPattern = (String) this.systemParams.get("log4jConversionPattern");
         if (StringUtils.isBlank(conversionPattern)) {
-            conversionPattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p -  %c - %m%n"; //default conversionPattern
+            conversionPattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} - %-5p -  %c - %m%n";
         }
-        PatternLayout layout = new PatternLayout(conversionPattern);
         String maxFileSize = (String) this.systemParams.get(INIT_PROP_LOG_FILE_SIZE);
         if (StringUtils.isBlank(maxFileSize)) {
             maxFileSize = "1MB"; //default size
@@ -71,51 +77,65 @@ public class ApsSystemUtils {
             long mega = new Long(maxFileSize) / KILOBYTE;
             maxFileSize = mega + "KB";
         }
-        String filename = (String) this.systemParams.get(INIT_PROP_LOG_FILE_PREFIX);
+        String filePattern = (String) this.systemParams.get(INIT_PROP_LOG_FILE_PATTERN);
+        String filename = (String) this.systemParams.get(INIT_PROP_LOG_NAME);
         int maxBackupIndex = Integer.parseInt((String) this.systemParams.get(INIT_PROP_LOG_FILES_COUNT));
         String log4jLevelString = (String) this.systemParams.get(INIT_PROP_LOG_LEVEL);
         if (StringUtils.isBlank(log4jLevelString)) {
             log4jLevelString = "INFO"; //default level
         }
-        RollingFileAppender fileAppender = (RollingFileAppender) LogManager.getRootLogger().getAppender(appenderName);
+        Configurator.setRootLevel(Level.getLevel(log4jLevelString));
+        LoggerContext loggerContext = (LoggerContext) LogManager.getContext(false);
+        loggerContext.getRootLogger().setLevel(Level.getLevel(log4jLevelString));
+        Configurator.setAllLevels(loggerContext.getRootLogger().getName(), Level.getLevel(log4jLevelString));
+        Configuration configuration = loggerContext.getConfiguration();
+        RollingFileAppender fileAppender = (RollingFileAppender) configuration.getAppender(appenderName);
         if (null == fileAppender) {
-            fileAppender = new RollingFileAppender();
-            fileAppender.setName(appenderName);
+            PathCondition[] pathConditions = new PathCondition[]{IfAccumulatedFileCount.createFileCountCondition(maxBackupIndex)};
+            String basePath = filePattern.substring(0, filePattern.lastIndexOf(File.separator));
+            DeleteAction deleteAction = DeleteAction.createDeleteAction(basePath, true, 1, false, null, pathConditions, null, configuration);
+            SizeBasedTriggeringPolicy policy = SizeBasedTriggeringPolicy.createPolicy(maxFileSize);
+            PatternLayout layout = PatternLayout.newBuilder().withPattern(conversionPattern).build();
+            DefaultRolloverStrategy strategy = DefaultRolloverStrategy.newBuilder()
+                    .withConfig(configuration).withMax(String.valueOf(maxBackupIndex))
+                    .withCustomActions(new Action[]{deleteAction}).build();
+            fileAppender = RollingFileAppender.newBuilder()
+                    .withName(appenderName)
+                    .setConfiguration(configuration)
+                    .withLayout(layout)
+                    .withFileName(filename)
+                    .withFilePattern(filePattern)
+                    .withPolicy(policy)
+                    .withStrategy(strategy)
+                    .build();
+            configuration.addAppender(fileAppender);
+            Configurator.setLevel(appenderName, Level.getLevel(log4jLevelString));
+            fileAppender.start();
         }
-        fileAppender.setMaxBackupIndex(maxBackupIndex);
-        fileAppender.setThreshold(org.apache.log4j.Level.toLevel(log4jLevelString));
-        fileAppender.setLayout(layout);
-        fileAppender.setMaxFileSize(maxFileSize);
-        fileAppender.setFile(filename);
-        fileAppender.activateOptions();
-        AsyncAppender async = (AsyncAppender) LogManager.getRootLogger().getAppender("async");
+        AsyncAppender async = (AsyncAppender) loggerContext.getRootLogger().getAppenders().get("async");
         if (null == async) {
-            async = new AsyncAppender();
-            async.setName("async");
-            LogManager.getRootLogger().addAppender(async);
+            AppenderRef ref = AppenderRef.createAppenderRef(appenderName, Level.getLevel(log4jLevelString), null);
+            async = AsyncAppender.newBuilder().setName("async")
+                    .setConfiguration(configuration)
+                    .setAppenderRefs(new AppenderRef[]{ref}).build();
+            configuration.addAppender(async);
+            loggerContext.getRootLogger().addAppender(async);
+            async.start();
         }
-        async.addAppender(fileAppender);
+        loggerContext.updateLoggers();
     }
 
-    /**
-     * Restituisce il logger di sistema.
-     *
-     * @return Il logger
-     */
     public static Logger getLogger() {
         return logger;
     }
 
     /**
-     * Traccia una eccezione sul logger del contesto. Se il livello di soglia
-     * del logger è superiore a FINER, viene emesso solo un breve messaggio di
-     * livello SEVERE, altrimenti viene tracciato anche lo stack trace della
-     * eccezione (con il livello FINER).
+     * Draw an exception on the context logger.
      *
-     * @param t L'eccezione da tracciare
-     * @param caller La classe chiamante, in cui si è verificato l'errore.
-     * @param methodName Il metodo in cui si è verificato l'errore.
-     * @param message Testo da includere nel tracciamento.
+     * @param t The exception to trace
+     * @param caller The caller class
+     * @param methodName The method in which the error occurred.
+     * @param message The message to include
      */
     public static void logThrowable(Throwable t, Object caller,
             String methodName, String message) {
@@ -127,24 +147,16 @@ public class ApsSystemUtils {
     }
 
     /**
-     * Traccia una eccezione sul logger del contesto. Se il livello di soglia
-     * del logger è superiore a FINER, viene emesso solo un breve messaggio di
-     * livello SEVERE, altrimenti viene tracciato anche lo stack trace della
-     * eccezione (con il livello FINER).
+     * Draw an exception on the context logger.
      *
-     * @param t L'eccezione da tracciare
-     * @param caller La classe chiamante, in cui si è verificato l'errore.
-     * @param methodName Il metodo in cui si è verificato l'errore.
+     * @param t The exception to trace
+     * @param caller The caller class
+     * @param methodName The method in which the error occurred.
      */
     public static void logThrowable(Throwable t, Object caller, String methodName) {
         logThrowable(t, caller, methodName, "Exception");
     }
 
-    /**
-     * Setta la mappa dei parametri di inizializzazione.
-     *
-     * @param systemParams I parametri di inizializzazione.
-     */
     public void setSystemParams(Map<String, Object> systemParams) {
         this.systemParams = systemParams;
     }

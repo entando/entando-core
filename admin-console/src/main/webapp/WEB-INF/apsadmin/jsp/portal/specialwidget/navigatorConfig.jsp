@@ -115,7 +115,7 @@
                                                 <s:elseif test="#expression.specId == 4"><s:text name="widget.configNavigator.parentFromRoot" />: <s:property value="specAbsLevel" /></s:elseif>
                                                 <s:elseif test="#expression.specId == 5"><s:text name="widget.configNavigator.specifiedPage" />:
                                                     <s:set var="specPageVar" value="%{getPage(specCode)}" ></s:set>
-                                                    <s:property value="#specPageVar.getFullTitle(currentLang.code)" /><s:if test="!#specPageVar.showable"> [i]</s:if>
+                                                    <s:property value="%{getFullTitle(#specPageVar, currentLang.code)}" /><s:if test="!#specPageVar.showable"> [i]</s:if>
                                                     <s:if test="null == #specPageVar" ><s:text name="note.noPageSet" /></s:if>
                                                 </s:elseif>
                                                 <s:else>ERROR</s:else>
@@ -223,7 +223,7 @@
                                     <s:text name="widget.configNavigator.specifiedPage" /></label>&#32;
                                 <select name="specCode" class="form-control">
                                     <s:iterator var="page" value="pages">
-                                        <option value="<s:property value="#page.code"/>"><s:property value="#page.getShortFullTitle(currentLang.code)"/><s:if test="!#page.showable"> [i]</s:if></option>
+                                        <option value="<s:property value="#page.code"/>"><s:property value="%{getShortFullTitle(#page, currentLang.code)}"/><s:if test="!#page.showable"> [i]</s:if></option>
                                     </s:iterator>
                                 </select>
                             </div>

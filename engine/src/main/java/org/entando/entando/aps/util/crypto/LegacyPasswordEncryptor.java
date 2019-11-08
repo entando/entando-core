@@ -11,57 +11,51 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-package com.agiletec.aps.util;
+package org.entando.entando.aps.util.crypto;
 
 import java.security.Key;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
-
-import org.apache.commons.codec.binary.Base64;
-
-import com.agiletec.aps.system.exception.ApsSystemException;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.stereotype.Component;
 
 /**
- * Default Encrypter Engine.
- *
- * @author M.Minnai
+ * Legacy Encryptor Engine (kept for retro-compatibility with old passwords).
  */
-public class DefaultApsEncrypter implements IApsEncrypter {
+@Component
+@Deprecated
+public class LegacyPasswordEncryptor implements TextEncryptor {
 
-    public static String decrypt(String source) {
-        try {
-            Key key = getKey();
-            Cipher desCipher = Cipher.getInstance(TRIPLE_DES);
-            byte[] dec = Base64.decodeBase64(source.getBytes());
-            desCipher.init(Cipher.DECRYPT_MODE, key);
-            byte[] cleartext = desCipher.doFinal(dec);
-            // Return the clear text
-            return new String(cleartext);
-        } catch (Throwable t) {
-            throw new RuntimeException("Error decrypting string", t);
-        }
-    }
-
-    public static String encryptString(String plainText) throws ApsSystemException {
-        String encryptedString = null;
+    @Override
+    public String encrypt(String plainText) {
         try {
             Key key = getKey();
             Cipher desCipher = Cipher.getInstance(TRIPLE_DES);
             desCipher.init(Cipher.ENCRYPT_MODE, key);
             byte[] cleartext = plainText.getBytes();
             byte[] ciphertext = desCipher.doFinal(cleartext);
-            encryptedString = new String(Base64.encodeBase64(ciphertext));
+            return new String(Base64.getEncoder().encode(ciphertext));
         } catch (Throwable t) {
-            throw new ApsSystemException("Error detcted while encoding a string", t);
+            throw new CryptoException("Error detected while encoding a string", t);
         }
-        return encryptedString;
     }
 
-    public String encrypt(String text) throws ApsSystemException {
-        return DefaultApsEncrypter.encryptString(text);
+    @Override
+    public String decrypt(String source) {
+        try {
+            Key key = getKey();
+            Cipher desCipher = Cipher.getInstance(TRIPLE_DES);
+            byte[] dec = Base64.getDecoder().decode(source.getBytes());
+            desCipher.init(Cipher.DECRYPT_MODE, key);
+            byte[] cleartext = desCipher.doFinal(dec);
+            // Return the clear text
+            return new String(cleartext);
+        } catch (Throwable t) {
+            throw new CryptoException("Error decrypting string", t);
+        }
     }
 
     public static Key getKey() {
@@ -69,22 +63,14 @@ public class DefaultApsEncrypter implements IApsEncrypter {
             byte[] bytes = KEY_STRING.getBytes();
             DESedeKeySpec pass = new DESedeKeySpec(bytes);
             SecretKeyFactory skf = SecretKeyFactory.getInstance(TRIPLE_DES_KEY_SPEC);
-            SecretKey s = skf.generateSecret(pass);
-            return s;
+            return skf.generateSecret(pass);
         } catch (Throwable t) {
-            throw new RuntimeException("Error creating key", t);
+            throw new CryptoException("Error creating key", t);
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-
-        System.out.println("Default:" + DefaultApsEncrypter.encryptString("pacopaco"));
-
     }
 
     public static final String TRIPLE_DES_KEY_SPEC = "DESede";
     public static final String TRIPLE_DES = "DESede/ECB/PKCS5Padding";
     private static final String KEY_STRING
             = "21-199-217-127-162-182-251-137-227-56-131-242-191-224-21-97-146-158-152-21-124-70-127-91";
-
 }

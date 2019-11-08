@@ -9,12 +9,12 @@
 <s:else>
 	<s:set var="dateAttributeValue" value="#attribute.failedDateString" />
 </s:else>
-	<wpsf:textfield 
-		useTabindexAutoIncrement="true" 
-		id="%{attribute_id}" 
-		name="%{#attributeTracer.getFormFieldName(#attribute)}" 
+	<wpsf:textfield
+		useTabindexAutoIncrement="true"
+		id="%{attribute_id}"
+		name="%{#attributeTracer.getFormFieldName(#attribute)}"
 		value="%{#dateAttributeValue}"
-		maxlength="10" 
+		maxlength="10"
 		cssClass="text userprofile-date" />
 		&#32;
 
@@ -58,6 +58,6 @@
 		});
 	</c:set>
 	<wp:headInfo type="JS" info="entando-misc-html5-essentials/modernizr-2.5.3-full.js" />
-	<wp:headInfo type="JS_EXT" info="http://code.jquery.com/ui/1.10.3/jquery-ui.min.js" />
-	<wp:headInfo type="CSS_EXT" info="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.min.css" />
+	<wp:headInfo type="JS_EXT" info="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" />
+	<wp:headInfo type="CSS_EXT" info="http://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.min.css" />
 	<wp:headInfo type="JS_RAW" info="${js_for_datepicker}" />

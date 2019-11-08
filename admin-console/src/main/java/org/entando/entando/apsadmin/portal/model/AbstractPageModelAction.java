@@ -13,15 +13,13 @@
  */
 package org.entando.entando.apsadmin.portal.model;
 
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.pagemodel.*;
 import com.agiletec.apsadmin.system.BaseAction;
 
-/**
- * @author E.Santoboni
- */
 public abstract class AbstractPageModelAction extends BaseAction {
-	
+
+	private IPageModelManager pageModelManager;
+
 	protected PageModel getPageModel(String code) {
 		PageModel pageModel = this.getPageModelManager().getPageModel(code);
 		if (null != pageModel) {
@@ -31,12 +29,10 @@ public abstract class AbstractPageModelAction extends BaseAction {
 	}
 	
 	protected IPageModelManager getPageModelManager() {
-		return _pageModelManager;
+		return pageModelManager;
 	}
 	public void setPageModelManager(IPageModelManager pageModelManager) {
-		this._pageModelManager = pageModelManager;
+		this.pageModelManager = pageModelManager;
 	}
-	
-	private IPageModelManager _pageModelManager;
 	
 }

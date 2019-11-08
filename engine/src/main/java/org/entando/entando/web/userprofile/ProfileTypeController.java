@@ -17,7 +17,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.entity.model.*;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfileTypeDto;
@@ -81,7 +81,7 @@ public class ProfileTypeController {
     public ResponseEntity<SimpleRestResponse<UserProfileTypeDto>> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> {}", profileTypeCode);
         if (!this.getProfileTypeValidator().existType(profileTypeCode)) {
-            throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
+            throw new ResourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "Profile Type", profileTypeCode);
         }
         UserProfileTypeDto dto = this.getUserProfileTypeService().getUserProfileType(profileTypeCode);
         logger.debug("Main Response -> {}", dto);
@@ -119,7 +119,7 @@ public class ProfileTypeController {
         int result = this.getProfileTypeValidator().validateBodyName(profileTypeCode, request, bindingResult);
         if (bindingResult.hasErrors()) {
             if (result == 404) {
-                throw new RestRourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "profile type", profileTypeCode);
+                throw new ResourceNotFoundException(AbstractEntityTypeValidator.ERRCODE_ENTITY_TYPE_DOES_NOT_EXIST, "profile type", profileTypeCode);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }

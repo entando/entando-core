@@ -26,9 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.AbstractDAO;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.IApsEncrypter;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Data Access Object per gli oggetti Utente.
@@ -37,7 +35,9 @@ import org.entando.entando.aps.util.argon2.Argon2Encrypter;
  */
 public class UserDAO extends AbstractDAO implements IUserDAO {
 
-    private static final Logger _logger = LoggerFactory.getLogger(UserDAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
+
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<String> loadUsernames() {
@@ -50,7 +50,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             text = null;
         }
         Connection conn = null;
-        List<String> usernames = new ArrayList<String>();
+        List<String> usernames = new ArrayList<>();
         PreparedStatement stat = null;
         ResultSet res = null;
         try {
@@ -66,7 +66,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
                 usernames.add(res.getString(1));
             }
         } catch (Throwable t) {
-            _logger.error("Error loading the usernames list", t);
+            logger.error("Error loading the usernames list", t);
             throw new RuntimeException("Error loading the usernames list", t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -99,7 +99,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             res = stat.executeQuery();
             users = this.loadUsers(res);
         } catch (Throwable t) {
-            _logger.error("Error while searching users  by '{}' ", text, t);
+            logger.error("Error while searching users  by '{}' ", text, t);
             throw new RuntimeException("Error while searching users", t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -108,11 +108,10 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
     }
 
     protected List<UserDetails> loadUsers(ResultSet result) throws SQLException {
-        List<UserDetails> users = new ArrayList<UserDetails>();
-        User user = null;
+        List<UserDetails> users = new ArrayList<>();
         while (result.next()) {
             String userName = result.getString(1);
-            user = new User();
+            User user = new User();
             user.setUsername(userName);
             user.setPassword(result.getString(2));
             user.setCreationDate(result.getDate(3));
@@ -136,47 +135,16 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
      */
     @Override
     public UserDetails loadUser(String username, String password) {
-        UserDetails user = null;
         try {
-            if (this.getEncrypter() instanceof Argon2Encrypter) {
-                Argon2Encrypter encrypter = (Argon2Encrypter) this.getEncrypter();
-                user = this.loadUser(username);
-                if (user != null && !encrypter.verify(user.getPassword(), password)) {
-                    user = null;
-                }
-            } else {
-                String encrypdedPassword = this.getEncryptedPassword(password);
-                user = this.executeLoadingUser(username, encrypdedPassword);
+            UserDetails user = this.loadUser(username);
+            if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+                return user;
             }
-//            if (null != user && user instanceof AbstractUser) {
-//                ((AbstractUser) user).setPassword(password);
-//            }
         } catch (Throwable t) {
-            _logger.error("Error while loading the user {} ", username, t);
+            logger.error("Error while loading the user {} ", username, t);
             throw new RuntimeException("Error while loading the user " + username, t);
         }
-        return user;
-    }
-
-    private UserDetails executeLoadingUser(String username, String password) {
-        Connection conn = null;
-        UserDetails user = null;
-        PreparedStatement stat = null;
-        ResultSet res = null;
-        try {
-            conn = this.getConnection();
-            stat = conn.prepareStatement(LOAD_USER);
-            stat.setString(1, username);
-            stat.setString(2, password);
-            res = stat.executeQuery();
-            user = this.createUserFromRecord(res);
-        } catch (Throwable t) {
-            _logger.error("Error while loading the user '{}'", username, t);
-            throw new RuntimeException("Error while loading the user " + username, t);
-        } finally {
-            closeDaoResources(res, stat, conn);
-        }
-        return user;
+        return null;
     }
 
     /**
@@ -200,7 +168,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             res = stat.executeQuery();
             user = this.createUserFromRecord(res);
         } catch (Throwable t) {
-            _logger.error("Error while loading the user {}", username, t);
+            logger.error("Error while loading the user {}", username, t);
             throw new RuntimeException("Error while loading the user " + username, t);
         } finally {
             closeDaoResources(res, stat, conn);
@@ -238,7 +206,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error while deleting the user {}", username, t);
+            logger.error("Error while deleting the user {}", username, t);
             throw new RuntimeException("Error while deleting the user " + username, t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -259,8 +227,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(ADD_USER);
             stat.setString(1, user.getUsername());
-            String encrypdedPassword = this.getEncryptedPassword(user.getPassword());
-            stat.setString(2, encrypdedPassword);
+            String encodedPassword = passwordEncoder.encode(user.getPassword());
+            stat.setString(2, encodedPassword);
             stat.setDate(3, new java.sql.Date(new java.util.Date().getTime()));
             if (!user.isDisabled()) {
                 stat.setInt(4, 1);
@@ -271,7 +239,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error while adding a new user {}", user, t);
+            logger.error("Error while adding a new user {}", user, t);
             throw new RuntimeException("Error while adding a new user", t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -317,7 +285,7 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error while updating the user {}", user.getUsername(), t);
+            logger.error("Error while updating the user {}", user.getUsername(), t);
             throw new RuntimeException("Error while adding a new user", t);
         } finally {
             closeDaoResources(null, stat, conn);
@@ -332,17 +300,16 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn = this.getConnection();
             conn.setAutoCommit(false);
             stat = conn.prepareStatement(CHANGE_PASSWORD);
-            String encrypdedPassword = this.getEncryptedPassword(password);
-            stat.setString(1, encrypdedPassword);
+            String encodedPassowrd = passwordEncoder.encode(password);
+            stat.setString(1, encodedPassowrd);
             stat.setDate(2, new java.sql.Date(new Date().getTime()));
             stat.setString(3, username);
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error updating the password for the user {}", username, t);
+            logger.error("Error updating the password for the user {}", username, t);
             throw new RuntimeException("Error updating the password for the user " + username, t);
-            //processDaoException(t, "Error updating the password for the user " + username, "changePassword");
         } finally {
             closeDaoResources(null, stat, conn);
         }
@@ -362,9 +329,8 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
-            _logger.error("Error updating the last access for the user {}", username, t);
+            logger.error("Error updating the last access for the user {}", username, t);
             throw new RuntimeException("Error updating the last access for the user " + username, t);
-
         } finally {
             closeDaoResources(null, stat, conn);
         }
@@ -395,24 +361,14 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
         return user;
     }
 
-    protected String getEncryptedPassword(String password) throws ApsSystemException {
-        String encrypted = password;
-        if (null != this.getEncrypter()) {
-            encrypted = this.getEncrypter().encrypt(password);
-        }
-        return encrypted;
-    }
-
     @Override
-    public IApsEncrypter getEncrypter() {
-        return _encrypter;
+    public PasswordEncoder getPasswordEncoder() {
+        return passwordEncoder;
     }
 
-    public void setEncrypter(IApsEncrypter encrypter) {
-        this._encrypter = encrypter;
+    public void setPasswordEncoder(PasswordEncoder encoder) {
+        this.passwordEncoder = encoder;
     }
-
-    private IApsEncrypter _encrypter;
 
     private final String PREFIX_LOAD_USERNAMES
             = "SELECT authusers.username FROM authusers ";
@@ -432,9 +388,6 @@ public class UserDAO extends AbstractDAO implements IUserDAO {
 
     private final String SEARCH_USERS_BY_TEXT
             = PREFIX_LOAD_USERS + " WHERE authusers.username LIKE ? ORDER BY authusers.username";
-
-    private final String LOAD_USER
-            = PREFIX_LOAD_USERS + "WHERE authusers.username = ? AND authusers.passwd = ? ";
 
     private final String LOAD_USER_FROM_USERNAME
             = PREFIX_LOAD_USERS + "WHERE authusers.username = ? ";

@@ -14,7 +14,7 @@
 package org.entando.entando.web.common.validator;
 
 import com.agiletec.aps.system.SystemConstants;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -62,7 +62,7 @@ public abstract class AbstractPaginationValidator implements Validator {
             bindingResult.reject(ERRCODE_PAGE_SIZE_INVALID, new Object[]{}, "pagination.page.size.invalid");
         } else if (listRequest.getPage() > 1 && listRequest.getPageSize() == 0) {
             bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         }
         if (null == type) {
             return;
@@ -113,7 +113,7 @@ public abstract class AbstractPaginationValidator implements Validator {
         if (listRequest.getPage() > 1 && (null == result.getBody() || result.getBody().isEmpty())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(listRequest, "listRequest");
             bindingResult.reject(ERRCODE_NO_ITEM_ON_PAGE, new String[]{String.valueOf(listRequest.getPage())}, "pagination.item.empty");
-            throw new RestRourceNotFoundException(bindingResult);
+            throw new ResourceNotFoundException(bindingResult);
         }
     }
 

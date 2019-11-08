@@ -193,6 +193,11 @@ public class EnumeratorAttribute extends MonoTextAttribute implements BeanFactor
         this._beanFactory = beanFactory;
     }
 
+    @Override
+    public boolean isSearchableOptionSupported() {
+        return true;
+    }
+
     private String[] _items;
     private String _staticItems;
     private String _extractorBeanName;

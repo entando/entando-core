@@ -7,8 +7,11 @@
 <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css">
 <link rel="stylesheet" type="text/css" href="<wp:resourceURL />administration/css/pages/settingsPage.css"/>
 
+
+
 <!--JS inclusions-->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src="<wp:resourceURL />administration/js/jquery-3.4.1.min.js"></script>
+<script src="<wp:resourceURL />administration/js/jquery-migrate-3.0.1.min.js"></script>
 <script src="<wp:resourceURL />administration/js/entando-stream.js"></script>
 <script src="<wp:resourceURL />administration/js/jquery.matchHeight-min.js"></script>
 <script src="<wp:resourceURL />administration/patternfly/js/patternfly.js"></script>

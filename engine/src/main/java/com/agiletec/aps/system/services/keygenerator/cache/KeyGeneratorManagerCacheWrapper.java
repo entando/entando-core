@@ -35,6 +35,16 @@ public class KeyGeneratorManagerCacheWrapper extends AbstractCacheWrapper implem
 		this.releaseCachedObjects(cache);
 		this.insertObjectsOnCache(cache, value);
 	}
+    
+    @Override
+	public synchronized int getAndIncrementUniqueKeyCurrentValue(IKeyGeneratorDAO keyGeneratorDAO) {
+        Cache cache = this.getCache();
+        Integer currentValue = this.get(cache, CURRENT_KEY, Integer.class);
+        Integer nextValue = currentValue + 1;
+        this.insertObjectsOnCache(cache, nextValue);
+        keyGeneratorDAO.updateKey(nextValue);
+		return nextValue;
+    }
 
 	@Override
 	public int getUniqueKeyCurrentValue() {

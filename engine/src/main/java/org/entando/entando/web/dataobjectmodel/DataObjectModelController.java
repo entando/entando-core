@@ -13,42 +13,54 @@
  */
 package org.entando.entando.web.dataobjectmodel;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.dataobjectmodel.IDataObjectModelService;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.dataobjectmodel.model.DataObjectModelRequest;
 import org.entando.entando.web.dataobjectmodel.validator.DataObjectModelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.MapBindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/dataModels")
 public class DataObjectModelController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    JsonPatchPatchConverter jsonPatchPatchConverter;
+
+    @Autowired
+    DataModelDtoToRequestConverter dataModelDtoToRequestConverter;
 
     @Autowired
     private IDataObjectModelService dataObjectModelService;
@@ -90,7 +102,7 @@ public class DataObjectModelController {
         int result = this.getDataObjectModelValidator().checkModelId(dataModelId, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST, "dataObjectModel", dataModelId);
+                throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_DOES_NOT_EXIST, "dataObjectModel", dataModelId);
             } else {
                 throw new ValidationGenericException(bindingResult);
             }
@@ -116,7 +128,7 @@ public class DataObjectModelController {
         int result = this.getDataObjectModelValidator().validateBody(dataObjectModelRequest, false, bindingResult);
         if (bindingResult.hasErrors()) {
             if (404 == result) {
-                throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_POST_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
             } else {
                 throw new ValidationGenericException(bindingResult);
             }
@@ -143,9 +155,9 @@ public class DataObjectModelController {
         if (bindingResult.hasErrors()) {
             if (404 == result) {
                 if (1 == bindingResult.getFieldErrorCount("type")) {
-                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
+                    throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_PUT_DATAOBJECTTYPE_DOES_NOT_EXIST, "type", dataObjectModelRequest.getType());
                 } else {
-                    throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
+                    throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_DATAOBJECTMODEL_ALREADY_EXISTS, "modelId", dataObjectModelRequest.getModelId());
                 }
             } else {
                 throw new ValidationGenericException(bindingResult);
@@ -154,6 +166,26 @@ public class DataObjectModelController {
         DataModelDto dataModelDto = this.getDataObjectModelService().updateDataObjectModel(dataObjectModelRequest);
         logger.debug("Main Response -> {}", dataModelDto);
         return new ResponseEntity<>(new SimpleRestResponse<>(dataModelDto), HttpStatus.OK);
+
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{dataModelId}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes="application/json-patch+json")
+    public ResponseEntity<SimpleRestResponse<DataModelDto>> patchDataObjectModel(@PathVariable Long dataModelId,
+                                                                                 @RequestBody JsonNode jsonPatch,
+                                                                                 BindingResult bindingResult) throws JsonProcessingException {
+        logger.debug("Patching data object model -> {}", dataModelId);
+
+        this.getDataObjectModelValidator().validateDataObjectModelJsonPatch(jsonPatch, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        DataModelDto patchedDataModelDto = this.getDataObjectModelService().getPatchedDataObjectModel(dataModelId, jsonPatch);
+        DataObjectModelRequest dataObjectModelRequest = this.dataModelDtoToRequestConverter.convert(patchedDataModelDto);
+
+        return this.updateDataObjectModel(Long.toString(dataModelId), dataObjectModelRequest, bindingResult);
+
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

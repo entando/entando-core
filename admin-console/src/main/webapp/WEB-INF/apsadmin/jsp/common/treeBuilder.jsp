@@ -12,7 +12,7 @@
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
-    <tr id="<s:property value="#currentRoot.code"/>" data-parent='#<s:property value="#currentRoot.parent.code"/>' 
+    <tr id="<s:property value="#currentRoot.code"/>" data-parent='#<s:property value="#currentRoot.parentCode"/>' 
         class="treeRow <s:if test="%{!#currentRoot.isRoot() && #isHidden}">collapsed childrenNodes</s:if>">
         <td class="treegrid-node">
 

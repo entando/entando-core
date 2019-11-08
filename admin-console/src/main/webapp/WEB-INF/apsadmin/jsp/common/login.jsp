@@ -17,7 +17,8 @@
     <link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen"/>
     <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css"/>
     <!--JS inclusions-->
-    <script src="<wp:resourceURL />administration/js/jquery-2.2.4.min.js"></script>
+    <script src="<wp:resourceURL />administration/js/jquery-3.4.1.min.js"></script>
+    <script src="<wp:resourceURL />administration/js/jquery-migrate-3.0.1.min.js"></script>
     <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 </head>
 
@@ -33,16 +34,13 @@
     <div class="col-md-6 v-align ">
         <div class="center1">
             <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg"/>
-            <p class="ux_brand"><strong>THE LEADING DXP PLATFORM</strong></p>
+            <p class="ux_brand"><strong>THE LEADING PLATFORM</strong></p>
             <p class="ux_brand_subtitle"> FOR CLOUD NATIVE APPLICATIONS</p>
             <div class="spacer-login"></div>
             <div class="entando-intro">
-                Entando is the lightest, open source Digital Experience Platform (DXP) for
-                modern applications. Entando harmonizes customer experience across the
-                omnichannel applying the techniques of modern software practices to
-                enterprise applications. Learn quickly, develop easily, deploy rapidly.
+                Entando is the lightest open source Digital Transformation Platform for Modern Applications. We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
             </div>
-            <div class="copyright-entando">Copyright 2017 <span class="entando-sm-write">Entando</span></div>
+            <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
         </div>
     </div>
 

@@ -232,7 +232,7 @@
 
         <div class="form-group<s:property value="#controlGroupErrorClass" />">
             <label class="col-sm-2 control-label" for="extraGroups">
-                <s:text name="label.join" />&#32;<s:text name="label.group" />
+                <s:text name="label.extraGroups" />
             </label>
             <div class="col-sm-10">
                 <div class="input-group">

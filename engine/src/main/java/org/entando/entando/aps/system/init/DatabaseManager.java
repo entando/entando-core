@@ -25,10 +25,15 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.agiletec.aps.util.DateConverter;
+import com.agiletec.aps.util.FileTextReader;
 import org.apache.commons.beanutils.BeanComparator;
 import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.init.model.ComponentEnvironment;
 import org.entando.entando.aps.system.init.model.ComponentInstallationReport;
+import org.entando.entando.aps.system.init.model.ComponentUninstallerInfo;
 import org.entando.entando.aps.system.init.model.DataInstallationReport;
 import org.entando.entando.aps.system.init.model.DataSourceDumpReport;
 import org.entando.entando.aps.system.init.model.DataSourceInstallationReport;
@@ -42,11 +47,6 @@ import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ServletContextAware;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import com.agiletec.aps.util.DateConverter;
-import com.agiletec.aps.util.FileTextReader;
-
 /**
  * @author E.Santoboni
  */
@@ -54,6 +54,8 @@ public class DatabaseManager extends AbstractInitializerManager
         implements IDatabaseManager, IDatabaseInstallerManager, ServletContextAware {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseManager.class);
+
+    private static final String LOG_PREFIX = "|   ";
 
     public static final int STATUS_READY = 0;
     public static final int STATUS_DUMPING_IN_PROGRESS = 1;
@@ -123,22 +125,21 @@ public class DatabaseManager extends AbstractInitializerManager
     }
 
     private void initMasterDatabases(SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
-        String logPrefix = "|   ";
-        System.out.println("+ [ Component: Core ] :: SCHEMA\n" + logPrefix);
+        System.out.println("+ [ Component: Core ] :: SCHEMA\n" + LOG_PREFIX);
         ComponentInstallationReport componentReport = report.getComponentReport("entandoCore", true);
         DataSourceInstallationReport dataSourceReport = componentReport.getDataSourceReport();
         if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
-            logger.debug("{}( ok )  Already installed\n{}", logPrefix, logPrefix);
-            System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
+            logger.debug("{}( ok )  Already installed\n{}", LOG_PREFIX, LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
             return;
         }
         try {
             String[] dataSourceNames = this.extractBeanNames(DataSource.class);
             Map<String, SystemInstallationReport.Status> databasesStatus = dataSourceReport.getDatabaseStatus();
-            System.out.println(logPrefix + "Starting installation");
+            System.out.println(LOG_PREFIX + "Starting installation");
             for (String dataSourceName : dataSourceNames) {
                 if (report.getStatus().equals(SystemInstallationReport.Status.PORTING)) {
-                    System.out.println(logPrefix + " - Already present! db " + dataSourceName);
+                    System.out.println(LOG_PREFIX + " - Already present! db " + dataSourceName);
                     SystemInstallationReport.Status status = (checkOnStatup)
                             ? report.getStatus()
                             : SystemInstallationReport.Status.SKIPPED;
@@ -148,13 +149,13 @@ public class DatabaseManager extends AbstractInitializerManager
                 }
                 SystemInstallationReport.Status dbStatus = databasesStatus.get(dataSourceName);
                 if (dbStatus != null && (SystemInstallationReport.isSafeStatus(dbStatus))) {
-                    System.out.println(logPrefix + "\n" + logPrefix + "( ok )  " + dataSourceName + " already installed");
+                    System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "( ok )  " + dataSourceName + " already installed");
                 } else if (dbStatus == null || !dbStatus.equals(SystemInstallationReport.Status.OK)) {
                     DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
-                    //System.out.println(logPrefix + " - '" + dataSourceName + "' Installation Started... ");
+                    //System.out.println(LOG_PREFIX + " - '" + dataSourceName + "' Installation Started... ");
                     if (checkOnStatup) {
                         databasesStatus.put(dataSourceName, SystemInstallationReport.Status.INCOMPLETE);
-                        System.out.println(logPrefix);
+                        System.out.println(LOG_PREFIX);
                         this.initMasterDatabase(dataSourceName, dataSource, dataSourceReport);
                         databasesStatus.put(dataSourceName, SystemInstallationReport.Status.OK);
                     } else {
@@ -163,8 +164,8 @@ public class DatabaseManager extends AbstractInitializerManager
                     report.setUpdated();
                 }
             }
-            System.out.println(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
-            logger.debug(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
+            logger.debug(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
         } catch (Throwable t) {
             logger.error("Error initializating master databases", t);
             throw new ApsSystemException("Error initializating master databases", t);
@@ -192,27 +193,26 @@ public class DatabaseManager extends AbstractInitializerManager
     }
 
     public void initComponentDatabases(Component componentConfiguration, SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
-        String logPrefix = "|   ";
-        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: SCHEMA\n" + logPrefix);
+        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: SCHEMA\n" + LOG_PREFIX);
         ComponentInstallationReport componentReport = report.getComponentReport(componentConfiguration.getCode(), true);
         if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
-            logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
-            System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
+            logger.debug(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
             return;
         } else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
-            logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
-            System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+            logger.debug(LOG_PREFIX + "( ok )  Uninstalled\n" + LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok )  Uninstalled\n" + LOG_PREFIX);
             return;
         }
         try {
             String[] dataSourceNames = this.extractBeanNames(DataSource.class);
             Map<String, List<String>> tableMapping = componentConfiguration.getTableMapping();
             DataSourceInstallationReport dataSourceReport = componentReport.getDataSourceReport();
-            System.out.println(logPrefix + "Starting installation\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "Starting installation\n" + LOG_PREFIX);
             for (String dataSourceName : dataSourceNames) {
                 List<String> tableClassNames = (null != tableMapping) ? tableMapping.get(dataSourceName) : null;
                 if (null == tableClassNames || tableClassNames.isEmpty()) {
-                    System.out.println(logPrefix + "( !! )  skipping " + dataSourceName + ": not available");
+                    System.out.println(LOG_PREFIX + "( !! )  skipping " + dataSourceName + ": not available");
                     dataSourceReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.NOT_AVAILABLE);
                     report.setUpdated();
                     continue;
@@ -222,14 +222,14 @@ public class DatabaseManager extends AbstractInitializerManager
                             ? report.getStatus()
                             : SystemInstallationReport.Status.SKIPPED;
                     dataSourceReport.getDatabaseStatus().put(dataSourceName, status);
-                    logger.debug(logPrefix + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
-                    System.out.println(logPrefix + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
+                    logger.debug(LOG_PREFIX + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
+                    System.out.println(LOG_PREFIX + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
                     continue;
                 }
                 SystemInstallationReport.Status schemaStatus = dataSourceReport.getDatabaseStatus().get(dataSourceName);
                 if (SystemInstallationReport.isSafeStatus(schemaStatus)) {
                     //Already Done!
-                    System.out.println(logPrefix + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
+                    System.out.println(LOG_PREFIX + "( ok )  " + dataSourceName + " already installed" + SystemInstallationReport.Status.PORTING);
                     continue;
                 }
                 if (null == dataSourceReport.getDataSourceTables().get(dataSourceName)) {
@@ -239,15 +239,15 @@ public class DatabaseManager extends AbstractInitializerManager
                     dataSourceReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.INCOMPLETE);
                     DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
                     this.createTables(dataSourceName, tableClassNames, dataSource, dataSourceReport);
-                    System.out.println(logPrefix);
+                    System.out.println(LOG_PREFIX);
                     dataSourceReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.OK);
                 } else {
                     dataSourceReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.SKIPPED);
                 }
                 report.setUpdated();
             }
-            System.out.println(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
-            logger.debug(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
+            logger.debug(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
         } catch (Throwable t) {
             logger.error("Error initializating component {}", componentConfiguration.getCode(), t);
             throw new ApsSystemException("Error initializating component " + componentConfiguration.getCode(), t);
@@ -268,32 +268,31 @@ public class DatabaseManager extends AbstractInitializerManager
 
     //---------------- DATA ------------------- START
     private void initMasterDefaultResource(SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
-        String logPrefix = "|   ";
-        System.out.println("+ [ Component: Core ] :: DATA\n" + logPrefix);
+        System.out.println("+ [ Component: Core ] :: DATA\n" + LOG_PREFIX);
         ComponentInstallationReport coreComponentReport = report.getComponentReport("entandoCore", false);
         if (coreComponentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
-            String message = logPrefix + "( ok )  Already installed. " + coreComponentReport.getStatus() + "\n" + logPrefix;
+            String message = LOG_PREFIX + "( ok )  Already installed. " + coreComponentReport.getStatus() + "\n" + LOG_PREFIX;
             logger.debug(message);
             System.out.println(message);
             return;
         }
         DataInstallationReport dataReport = coreComponentReport.getDataReport();
         try {
-            System.out.println(logPrefix + "Starting installation\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "Starting installation\n" + LOG_PREFIX);
             String[] dataSourceNames = this.extractBeanNames(DataSource.class);
             for (String dataSourceName : dataSourceNames) {
                 if ((report.getStatus().equals(SystemInstallationReport.Status.PORTING)
                         || report.getStatus().equals(SystemInstallationReport.Status.RESTORE)) && checkOnStatup) {
                     dataReport.getDatabaseStatus().put(dataSourceName, report.getStatus());
                     report.setUpdated();
-                    String message = logPrefix + "( ok )  " + dataSourceName + " already installed. " + report.getStatus() + "\n" + logPrefix;
+                    String message = LOG_PREFIX + "( ok )  " + dataSourceName + " already installed. " + report.getStatus() + "\n" + LOG_PREFIX;
                     logger.debug(message);
                     System.out.println(message);
                     continue;
                 }
                 SystemInstallationReport.Status schemaStatus = dataReport.getDatabaseStatus().get(dataSourceName);
                 if (SystemInstallationReport.isSafeStatus(schemaStatus)) {
-                    String message = logPrefix + "( ok )  " + dataSourceName + " already installed. " + report.getStatus() + "\n" + logPrefix;
+                    String message = LOG_PREFIX + "( ok )  " + dataSourceName + " already installed. " + report.getStatus() + "\n" + LOG_PREFIX;
                     System.out.println(message);
                     continue;
                 }
@@ -314,13 +313,13 @@ public class DatabaseManager extends AbstractInitializerManager
                     }
                     report.setUpdated();
                 } else {
-                    System.out.println(logPrefix + "( !! )  skipping " + dataSourceName + ": not available");
+                    System.out.println(LOG_PREFIX + "( !! )  skipping " + dataSourceName + ": not available");
                     dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.NOT_AVAILABLE);
                     report.setUpdated();
                 }
             }
-            System.out.println(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
-            logger.debug(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
+            logger.debug(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
         } catch (Throwable t) {
             logger.error("Error initializating master DefaultResource", t);
             throw new ApsSystemException("Error initializating master DefaultResource", t);
@@ -329,21 +328,20 @@ public class DatabaseManager extends AbstractInitializerManager
 
     public void initComponentDefaultResources(Component componentConfiguration,
             SystemInstallationReport report, boolean checkOnStatup) throws ApsSystemException {
-        String logPrefix = "|   ";
-        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: DATA\n" + logPrefix);
+        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: DATA\n" + LOG_PREFIX);
         ComponentInstallationReport componentReport = report.getComponentReport(componentConfiguration.getCode(), false);
         if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
-            logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
-            System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
+            logger.debug(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
             return;
         } else if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
-            logger.debug(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
-            System.out.println(logPrefix + "( ok )  Uninstalled\n" + logPrefix);
+            logger.debug(LOG_PREFIX + "( ok )  Uninstalled\n" + LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok )  Uninstalled\n" + LOG_PREFIX);
             return;
         }
         DataInstallationReport dataReport = componentReport.getDataReport();
         try {
-            System.out.println(logPrefix + "Starting installation\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "Starting installation\n" + LOG_PREFIX);
             String[] dataSourceNames = this.extractBeanNames(DataSource.class);
             for (String dataSourceName : dataSourceNames) {
                 if ((report.getStatus().equals(SystemInstallationReport.Status.PORTING)
@@ -356,8 +354,8 @@ public class DatabaseManager extends AbstractInitializerManager
                 DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
                 SystemInstallationReport.Status dataStatus = dataReport.getDatabaseStatus().get(dataSourceName);
                 if (SystemInstallationReport.isSafeStatus(dataStatus)) {
-                    logger.debug(logPrefix + "( ok )  Already installed\n" + logPrefix);
-                    System.out.println(logPrefix + "( ok )  Already installed\n" + logPrefix);
+                    logger.debug(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
+                    System.out.println(LOG_PREFIX + "( ok )  Already installed\n" + LOG_PREFIX);
                     continue;
                 }
                 Map<String, ComponentEnvironment> environments = componentConfiguration.getEnvironments();
@@ -378,16 +376,67 @@ public class DatabaseManager extends AbstractInitializerManager
                     }
                     report.setUpdated();
                 } else {
-                    System.out.println(logPrefix + "( !! )  skipping " + dataSourceName + ": not available");
+                    System.out.println(LOG_PREFIX + "( !! )  skipping " + dataSourceName + ": not available");
                     dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.NOT_AVAILABLE);
                     report.setUpdated();
                 }
             }
-            System.out.println(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
-            logger.debug(logPrefix + "\n" + logPrefix + "Installation complete\n" + logPrefix);
+            System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
+            logger.debug(LOG_PREFIX + "\n" + LOG_PREFIX + "Installation complete\n" + LOG_PREFIX);
         } catch (Throwable t) {
             logger.error("Error restoring default resources of component {}", componentConfiguration.getCode(), t);
             throw new ApsSystemException("Error restoring default resources of component " + componentConfiguration.getCode(), t);
+        }
+    }
+
+    public void uninstallComponentResources(Component componentConfiguration,
+                                            SystemInstallationReport report) throws ApsSystemException {
+        System.out.println("+ [ Component: " + componentConfiguration.getCode() + " ] :: DATA\n" + LOG_PREFIX);
+        ComponentInstallationReport componentReport = report.getComponentReport(componentConfiguration.getCode(), false);
+        if (componentReport.getStatus().equals(SystemInstallationReport.Status.UNINSTALLED)) {
+
+            logger.debug(LOG_PREFIX + "( ok ) Already uninstalled\n" + LOG_PREFIX);
+            System.out.println(LOG_PREFIX + "( ok ) Already uninstalled\n" + LOG_PREFIX);
+
+        } else if (componentReport.getStatus().equals(SystemInstallationReport.Status.OK)) {
+
+            DataInstallationReport dataReport = componentReport.getDataReport();
+            try {
+                System.out.println(LOG_PREFIX + "Starting uninstall\n" + LOG_PREFIX);
+                ComponentUninstallerInfo uninstallInfo = componentConfiguration.getUninstallerInfo();
+
+                // Remove sqlResources
+                String[] dataSourceNames = this.extractBeanNames(DataSource.class);
+                for (String dataSourceName : dataSourceNames) {
+
+                    DataSource dataSource = (DataSource) this.getBeanFactory().getBean(dataSourceName);
+                    SystemInstallationReport.Status dataStatus = dataReport.getDatabaseStatus().get(dataSourceName);
+                    if (SystemInstallationReport.isSafeStatus(dataStatus)) {
+                        // We can proceed with removing the stuff
+                        Resource sqlResource = uninstallInfo.getSqlResources(dataSourceName);
+                        String script = (null != sqlResource) ? this.readFile(sqlResource) : null;
+                        if (null != script && script.trim().length() > 0) {
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.INCOMPLETE);
+                            TableDataUtils.valueDatabase(script, dataSourceName, dataSource, dataReport);
+                            System.out.println("|   ( ok )  " + dataSourceName);
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.UNINSTALLED);
+                            report.setUpdated();
+                        } else {
+                            System.out.println(LOG_PREFIX + "( !! )  skipping " + dataSourceName + ": not available");
+                            dataReport.getDatabaseStatus().put(dataSourceName, SystemInstallationReport.Status.NOT_AVAILABLE);
+                            report.setUpdated();
+                        }
+                    }
+                }
+
+                report.removeComponentReport(componentConfiguration.getCode());
+                report.setUpdated();
+                System.out.println(LOG_PREFIX + "\n" + LOG_PREFIX + "Uninstall complete\n" + LOG_PREFIX);
+                logger.debug(LOG_PREFIX + "\n" + LOG_PREFIX + "Uninstall complete\n" + LOG_PREFIX);
+            } catch (Throwable t) {
+                logger.error("Error removing component {}", componentConfiguration.getCode(), t);
+                throw new ApsSystemException("Error removing component " + componentConfiguration.getCode(), t);
+            }
         }
     }
 

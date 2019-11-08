@@ -14,6 +14,7 @@
 package org.entando.entando.web.guifragment;
 
 import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -38,7 +39,7 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS"));
+        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));

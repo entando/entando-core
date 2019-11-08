@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.system.services.language.LanguageDto;
 import org.entando.entando.aps.util.FilterUtils;
@@ -36,18 +37,19 @@ public class LanguageRequestListProcessor extends RequestListProcessor<LanguageD
 
     @Override
     protected Function<Filter, Predicate<LanguageDto>> getPredicates() {
-        return (filter) -> {
-            switch (filter.getValue()) {
+        return filter -> {
+            switch (filter.getAttribute()) {
                 case CODE:
-                    return p -> FilterUtils.filterString(filter, p::getCode);
+                    return p -> FilterUtils.filterString(filter, p.getCode());
                 case DESCRIPTION:
-                    return p -> FilterUtils.filterString(filter, p::getDescription);
+                    return p -> FilterUtils.filterString(filter, p.getDescription());
                 case DEFAULT:
-                    return p -> FilterUtils.filterBoolean(filter, p::isDefaultLang);
+                    return p -> FilterUtils.filterBoolean(filter, p.isDefaultLang());
                 case ACTIVE:
-                    return p -> FilterUtils.filterBoolean(filter, p::isActive);
+                    return p -> FilterUtils.filterBoolean(filter, p.isActive());
+                default:
+                    return null;
             }
-            return null;
         };
     }
 
@@ -56,14 +58,14 @@ public class LanguageRequestListProcessor extends RequestListProcessor<LanguageD
         return sort -> {
             switch (sort) {
                 case DESCRIPTION:
-                    return (a, b) -> a.getDescription().compareTo(b.getDescription());
+                    return (a, b) -> StringUtils.compare(a.getDescription(), b.getDescription());
                 case DEFAULT:
                     return (a, b) -> Boolean.compare(a.isDefaultLang(), b.isDefaultLang());
                 case ACTIVE:
                     return (a, b) -> Boolean.compare(a.isActive(), b.isActive());
-                case CODE:
+                case CODE: // code is the default sorting field
                 default:
-                    return (a, b) -> a.getCode().compareTo(b.getCode());
+                    return (a, b) -> StringUtils.compare(a.getCode(), b.getCode());
             }
         };
     }

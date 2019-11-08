@@ -23,6 +23,13 @@ import java.util.stream.Stream;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.RestListRequest;
 
+/**
+ * Base class used for defining filtering and sorting at service layer. This is
+ * useful when entities have already been retrieved from the database and are
+ * inside a cache or when the DAO layer is missing (e.g. the data is retrieved
+ * from a web service and not from a database). The other filters are usually
+ * managed at DAO layer.
+ */
 public abstract class RequestListProcessor<T> {
 
     private final RestListRequest restListRequest;
@@ -48,9 +55,14 @@ public abstract class RequestListProcessor<T> {
         if (null != restListRequest && null != restListRequest.getFilters()) {
 
             for (Filter filter : restListRequest.getFilters()) {
+
                 String filterAttribute = filter.getAttribute();
                 String filterValue = filter.getValue();
-                if (filterAttribute != null && filterValue != null) {
+
+                if (filterAttribute != null && !filterAttribute.isEmpty()
+                        && ((filterValue != null && !filterValue.isEmpty())
+                        || (filter.getAllowedValues() != null && filter.getAllowedValues().length > 0))) {
+
                     Predicate<T> p = predicatesProvider.apply(filter);
                     if (null != p) {
                         stream = stream.filter(p);
@@ -83,7 +95,7 @@ public abstract class RequestListProcessor<T> {
 
         return this;
     }
-    
+
     public RequestListProcessor<T> filterAndSort() {
         return filter().sort();
     }

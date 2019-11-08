@@ -1,13 +1,10 @@
 package org.entando.entando.aps.system.services.pagemodel.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.agiletec.aps.system.services.page.Widget;
-import com.agiletec.aps.system.services.pagemodel.Frame;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.pagemodel.*;
 import org.entando.entando.aps.system.services.DtoBuilder;
+
+import java.util.*;
 
 public class PageModelDtoBuilder extends DtoBuilder<PageModel, PageModelDto> {
 

@@ -22,14 +22,16 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobjectmodel.dictionary.DataModelDictionaryProvider;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDto;
 import org.entando.entando.aps.system.services.dataobjectmodel.model.IEntityModelDictionary;
+import org.entando.entando.aps.system.services.jsonpatch.JsonPatchService;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -44,6 +46,9 @@ import org.springframework.validation.BeanPropertyBindingResult;
 public class DataObjectModelService implements IDataObjectModelService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+//    @Autowired
+//    JsonPatchPatchConverter jsonPatchPatchConverter;
 
     @Autowired
     private IDataObjectModelManager dataObjectModelManager;
@@ -60,6 +65,8 @@ public class DataObjectModelService implements IDataObjectModelService {
     protected IDataObjectModelManager getDataObjectModelManager() {
         return dataObjectModelManager;
     }
+
+    private JsonPatchService<DataModelDto> jsonPatchService = new JsonPatchService<>(DataModelDto.class);
 
     public void setDataObjectModelManager(IDataObjectModelManager dataObjectModelManager) {
         this.dataObjectModelManager = dataObjectModelManager;
@@ -120,7 +127,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         DataObjectModel model = this.getDataObjectModelManager().getDataObjectModel(dataModelId);
         if (null == model) {
             logger.warn("no model found with code {}", dataModelId);
-            throw new RestRourceNotFoundException("dataModelId", String.valueOf(dataModelId));
+            throw new ResourceNotFoundException("dataModelId", String.valueOf(dataModelId));
         }
         return this.getDtoBuilder().convert(model);
     }
@@ -144,7 +151,7 @@ public class DataObjectModelService implements IDataObjectModelService {
             Long modelId = Long.parseLong(code);
             DataObjectModel dataObjectModel = this.getDataObjectModelManager().getDataObjectModel(modelId);
             if (null == dataObjectModel) {
-                throw new RestRourceNotFoundException("dataObjectModel", code);
+                throw new ResourceNotFoundException("dataObjectModel", code);
             }
             dataObjectModel.setDataType(dataObjectModelRequest.getType());
             dataObjectModel.setDescription(dataObjectModelRequest.getDescr());
@@ -152,12 +159,18 @@ public class DataObjectModelService implements IDataObjectModelService {
             dataObjectModel.setStylesheet(dataObjectModelRequest.getStylesheet());
             this.getDataObjectModelManager().updateDataObjectModel(dataObjectModel);
             return this.getDtoBuilder().convert(dataObjectModel);
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw e;
         } catch (ApsSystemException e) {
             logger.error("Error updating DataObjectModel {}", code, e);
             throw new RestServerError("error in update DataObjectModel", e);
         }
+    }
+
+    @Override
+    public DataModelDto getPatchedDataObjectModel(Long dataModelId, JsonNode jsonPatch) {
+        DataModelDto dataModelDto = this.getDataObjectModel(dataModelId);
+        return this.jsonPatchService.applyPatch(jsonPatch, dataModelDto);
     }
 
     @Override
@@ -209,7 +222,7 @@ public class DataObjectModelService implements IDataObjectModelService {
         IApsEntity prototype = this.getDataObjectManager().getEntityPrototype(typeCode);
         if (null == prototype) {
             logger.warn("no model found with id {}", typeCode);
-            throw new RestRourceNotFoundException(DataObjectModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, "dataObject", typeCode);
+            throw new ResourceNotFoundException(DataObjectModelValidator.ERRCODE_CONTENTMODEL_TYPECODE_NOT_FOUND, "dataObject", typeCode);
         }
         return this.getDictionaryProvider().buildDictionary(prototype);
     }

@@ -82,7 +82,7 @@ public class AbstractComponentModule implements ComponentModule {
     @Override
     public Resource getSqlResources(String datasourceName) {
         String path = this.getSqlResourcesPaths().get(datasourceName);
-        if (null == path) {
+        if (null == path || path.isEmpty()) {
             return null;
         }
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();

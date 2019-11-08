@@ -13,9 +13,16 @@
  */
 package org.entando.entando.web.page;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -25,8 +32,10 @@ import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -40,14 +49,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  *
@@ -59,22 +68,11 @@ public class PageController {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static final String ERRCODE_PAGE_ALREADY_EXISTS = "1";
-    public static final String ERRCODE_URINAME_MISMATCH = "2";
-    public static final String ERRCODE_ONLINE_PAGE = "1";
-    public static final String ERRCODE_PAGE_HAS_CHILDREN = "2";
-    public static final String ERRCODE_GROUP_MISMATCH = "2";
-    public static final String ERRCODE_INVALID_PARENT = "3";
-    public static final String ERRCODE_STATUS_PAGE_MISMATCH = "6";
-    public static final String ERRCODE_CHANGE_POSITION_INVALID_REQUEST = "7";
-    public static final String ERRCODE_REFERENCED_ONLINE_PAGE = "2";
-    public static final String ERRCODE_REFERENCED_DRAFT_PAGE = "3";
-
-    public static final String ERRCODE_PAGE_WITH_PUBLIC_CHILD = "8";
-    public static final String ERRCODE_PAGE_WITH_NO_PUBLIC_PARENT = "9";
-
     @Autowired
     private IPageService pageService;
+
+    @Autowired
+    private PageDtoToRequestConverter pageDtoToRequestConverter;
 
     @Autowired
     private PageValidator pageValidator;
@@ -272,5 +270,22 @@ public class PageController {
         PagedMetadata<?> result = this.getPageService().getPageReferences(pageCode, manager, requestList);
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
+
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE, consumes = "application/json-patch+json")
+    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> patchPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestBody JsonNode patchRequest, BindingResult bindingResult) {
+        logger.debug("update page {} with jsonpatch-request {}", pageCode, patchRequest);
+
+        this.getPageValidator().validateJsonPatchRequest(patchRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            throw new ValidationGenericException(bindingResult);
+        }
+
+        PageDto updatedPageDto = this.getPageService().getPatchedPage(pageCode, patchRequest);
+        PageRequest pageRequest = this.pageDtoToRequestConverter.convert(updatedPageDto);
+
+        return this.updatePage(user, pageCode, pageRequest, bindingResult);
+    }
+
 
 }

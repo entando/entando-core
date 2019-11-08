@@ -171,14 +171,16 @@ public class PageTreeMenuAction extends PageTreeAction {
         if (null == page) {
             return null;
         }
-        List<IPage> pages = new ArrayList<IPage>();
+        List<IPage> pages = new ArrayList<>();
         this.getSubBreadCrumbsTargets(pages, page);
         return pages;
     }
 
     private void getSubBreadCrumbsTargets(List<IPage> pages, IPage current) {
         pages.add(0, current);
-        IPage parent = current.getParent();
+        IPage parent = (current.isOnlineInstance()) ? 
+                this.getPageManager().getOnlinePage(current.getParentCode()) : 
+                this.getPageManager().getDraftPage(current.getParentCode());
         if (parent != null && !parent.getCode().equals(current.getCode())) {
             this.getSubBreadCrumbsTargets(pages, parent);
         }

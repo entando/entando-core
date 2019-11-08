@@ -20,6 +20,15 @@ public class LabelDto {
     private String key;
     private Map<String, String> titles;
 
+    public LabelDto() {
+        super();
+    }
+
+    public LabelDto(final String key, final Map<String, String> titles) {
+        this.key = key;
+        this.titles = titles;
+    }
+
     public String getKey() {
         return key;
     }

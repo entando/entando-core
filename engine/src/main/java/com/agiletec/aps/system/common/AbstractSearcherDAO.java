@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import org.apache.commons.lang3.ArrayUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
 
     protected List<String> searchId(FieldSearchFilter[] filters) {
         Connection conn = null;
-        List<String> idList = new ArrayList<String>();
+        List<String> idList = new ArrayList<>();
         PreparedStatement stat = null;
         ResultSet result = null;
         try {
@@ -88,16 +89,7 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
     }
 
     protected FieldSearchFilter[] addFilter(FieldSearchFilter[] filters, FieldSearchFilter filterToAdd) {
-        int len = 0;
-        if (filters != null) {
-            len = filters.length;
-        }
-        FieldSearchFilter[] newFilters = new FieldSearchFilter[len + 1];
-        for (int i = 0; i < len; i++) {
-            newFilters[i] = filters[i];
-        }
-        newFilters[len] = filterToAdd;
-        return newFilters;
+        return ArrayUtils.add(filters, filterToAdd);
     }
 
     protected PreparedStatement buildStatement(FieldSearchFilter[] filters, boolean isCount, boolean selectAll, Connection conn) {
@@ -128,7 +120,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return index;
         }
-
         for (FieldSearchFilter filter : filters) {
             if (filter.getKey() != null) {
                 index = this.addObjectSearchStatementBlock(filter, index, stat);
@@ -149,7 +140,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
      *
      */
     protected int addObjectSearchStatementBlock(FieldSearchFilter filter, int index, PreparedStatement stat) throws SQLException {
-
         if (filter.isNullOption()) {
             return index;
         }
@@ -193,7 +183,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             Integer dateDelay,
             boolean isLikeOption,
             FieldSearchFilter.LikeOptionType likeOptionType) throws SQLException {
-
         if (object instanceof String) {
             if (isLikeOption) {
                 object = ((String) object).toUpperCase();
@@ -236,38 +225,22 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (!isCount) {
             boolean ordered = appendOrderQueryBlocks(filters, query, false);
-            this.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
+            this.appendLimitQueryBlock(filters, query);
         }
-
         return query.toString();
-    }
-
-    /**
-     * Create the 'base block' of the query with the eventual references to the
-     * support table.
-     *
-     * @param filters The filters defined.
-     * @param selectAll When true, this will insert all the fields in the master
-     * table in the select of the master query. When true we select all the
-     * available fields; when false only the field addressed by the filter is
-     * selected.
-     * @return The base block of the query.
-     */
-    protected StringBuffer createBaseQueryBlock(FieldSearchFilter[] filters, boolean selectAll) {
-        return this.createBaseQueryBlock(filters, false, selectAll);
     }
 
     protected StringBuffer createBaseQueryBlock(FieldSearchFilter[] filters, boolean isCount, boolean selectAll) {
         StringBuffer query = null;
         if (isCount) {
-            query = this.createMasterCountQueryBlock(filters, selectAll);
+            query = this.createMasterCountQueryBlock();
         } else {
             query = this.createMasterSelectQueryBlock(filters, selectAll);
         }
         return query;
     }
 
-    private StringBuffer createMasterCountQueryBlock(FieldSearchFilter[] filters, boolean selectAll) {
+    protected StringBuffer createMasterCountQueryBlock() {
         String masterTableName = this.getMasterTableName();
         StringBuffer query = new StringBuffer("SELECT COUNT(*)");
         query.append(" FROM ").append(masterTableName).append(" ");
@@ -281,22 +254,12 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             query.append("* ");
         } else {
             query.append(this.getMasterTableIdFieldName());
-            /*
-            if (filters != null) {
-                for (FieldSearchFilter filter : filters) {
-                    if (filter.isLikeOption()) {
-                        query.append(", ").append(masterTableName).append(".").append(this.getTableFieldName(filter.getKey()));
-                    }
-                }
-            }
-            */
         }
         query.append(" FROM ").append(masterTableName).append(" ");
         return query;
     }
-
-    //TODO REMOVE VARS per prepared statement
-    protected void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query, boolean hasAppendWhereClause) {
+    
+    protected void appendLimitQueryBlock(FieldSearchFilter[] filters, StringBuffer query) {
         try {
             if (null == filters || filters.length == 0) {
                 logger.warn("no filters");
@@ -317,13 +280,11 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return hasAppendWhereClause;
         }
-
         for (FieldSearchFilter filter : filters) {
             if (filter.getKey() != null) {
                 hasAppendWhereClause = this.addMetadataFieldFilterQueryBlock(filter, query, hasAppendWhereClause);
             }
         }
-
         return hasAppendWhereClause;
     }
 
@@ -363,7 +324,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             } else {
                 query.append(this.getMasterTableName()).append(".").append(tableFieldName).append(" ");
             }
-
             if (filter.getValue() != null) {
                 if (filter.isLikeOption()) {
                     query.append(this.getLikeClause());
@@ -391,7 +351,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
         if (filters == null) {
             return ordered;
         }
-
         for (FieldSearchFilter filter : filters) {
             if (null != filter.getKey() && null != filter.getOrder() && !filter.isNullOption()) {
                 if (!ordered) {
@@ -404,7 +363,6 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
                 query.append(this.getMasterTableName()).append(".").append(fieldName).append(" ").append(filter.getOrder());
             }
         }
-
         return ordered;
     }
 

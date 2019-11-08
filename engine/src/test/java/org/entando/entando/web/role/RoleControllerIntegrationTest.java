@@ -17,18 +17,24 @@ import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.role.model.RoleRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -230,6 +236,44 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(status().isOk());
 
             //--------------
+            payload = new JsonPatchBuilder()
+                    .withOperation("replace", "/name", "New Test Role")
+                    .withOperation("replace", "/permissions", ImmutableMap.of("manageCategories", true) )
+                    .getJsonPatchAsString();
+
+
+            result = mockMvc
+                    .perform(patch("/roles/{code}", code)
+                                     .contentType(RestMediaTypes.JSON_PATCH_JSON)
+                                     .content(payload)
+                                     .header("Authorization", "Bearer " + accessToken));
+
+
+            result.andExpect(status().isOk());
+            result.andExpect(jsonPath("$.payload.name", is("New Test Role")));
+            result.andExpect(jsonPath("$.payload.permissions.manageCategories", is(true)));
+
+            //--------------
+
+            payload = new JsonPatchBuilder()
+                    .withOperation("replace", "/code", "newcode")
+                    .getJsonPatchAsString();
+
+            result = mockMvc
+                    .perform(patch("/roles/{code}", code)
+                                     .contentType(RestMediaTypes.JSON_PATCH_JSON)
+                                     .content(payload)
+                                     .header("Authorization", "Bearer " + accessToken));
+
+
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.errors[0]", allOf(
+                   hasEntry("code", "1"),
+                   hasEntry("message", "The field 'code' can not be updated via JSON patch")
+                 )));
+
+            //--------------
+
             result = mockMvc
                     .perform(delete("/roles/{code}", code)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)

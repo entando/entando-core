@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.RequestListProcessor;
 import org.entando.entando.aps.util.FilterUtils;
 import org.entando.entando.web.common.model.Filter;
@@ -36,7 +37,7 @@ public class AttributeTypeRequestListProcessor extends RequestListProcessor<Attr
         return (filter) -> {
             switch (filter.getAttribute()) {
                 case KEY_CODE:
-                    return p -> FilterUtils.filterString(filter, p::getType);
+                    return p -> FilterUtils.filterString(filter, p.getType());
                 default:
                     return null;
             }
@@ -46,7 +47,7 @@ public class AttributeTypeRequestListProcessor extends RequestListProcessor<Attr
     @Override
     protected Function<String, Comparator<AttributeInterface>> getComparators() {
         return sort -> {
-            return (a, b) -> a.getType().compareTo(b.getType());
+            return (a, b) -> StringUtils.compare(a.getType(), b.getType());
         };
     }
 }

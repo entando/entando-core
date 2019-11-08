@@ -25,6 +25,7 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ITreeAction;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 import com.opensymphony.xwork2.Action;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -37,7 +38,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testViewTree_1() throws Throwable {
         this.initAction("/do/Page", "viewTree");
         this.setUserOnSession("admin");
@@ -76,8 +77,11 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         assertEquals(Action.SUCCESS, result);
         this.checkTestViewTree_3_4();
     }
-
+    
     public void testViewTree_4() throws Throwable {
+        IPage page = this._pageManager.getDraftPage("pagina_1");
+        System.out.println("CODES -> " + Arrays.asList(page.getChildrenCodes()));
+        
         this.initAction("/do/Page", "viewTree");
         this.addParameter("selectedNode", "pagina_12");
         this.setUserOnSession("admin");
@@ -108,7 +112,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
             fail();
         }
     }
-
+    
     public void testViewTree_5() throws Throwable {
         this.initAction("/do/Page", "openCloseTreeNode");
         this.addParameter("targetNode", "customers_page");
@@ -159,7 +163,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         Collection<String> errors = this.getAction().getActionErrors();
         assertEquals(1, errors.size());
     }
-
+    
     public void testMoveForAdminUser() throws Throwable {
         String pageToMoveCode = "pagina_12";
         String sisterPageCode = "pagina_11";
@@ -176,20 +180,28 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         String result = this.executeAction();
 
         assertEquals(Action.SUCCESS, result);
+        Collection<String> errors = this.getAction().getActionErrors();
+        assertEquals(0, errors.size());
         Collection<String> messages = this.getAction().getActionMessages();
         assertEquals(0, messages.size());
-
+        
         pageToMove = this._pageManager.getDraftPage(pageToMoveCode);
         assertEquals(pageToMove.getPosition(), 1);
         sisterPage = this._pageManager.getDraftPage(sisterPageCode);
         assertEquals(sisterPage.getPosition(), 2);
-
+        IPage parent = this._pageManager.getDraftPage(sisterPage.getParentCode());
+        String[] children = parent.getChildrenCodes();
+        assertEquals("pagina_12", children[0]);
+        assertEquals("pagina_11", children[1]);
+        
         this.initAction("/do/Page", "moveDown");
         this.setUserOnSession("admin");
         this.addParameter("selectedNode", pageToMoveCode);
         result = this.executeAction();
 
         assertEquals(Action.SUCCESS, result);
+        errors = this.getAction().getActionErrors();
+        assertEquals(0, errors.size());
         messages = this.getAction().getActionMessages();
         assertEquals(0, messages.size());
 
@@ -198,7 +210,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         sisterPage = _pageManager.getDraftPage(sisterPageCode);
         assertEquals(sisterPage.getPosition(), 1);
     }
-
+    
     public void testMoveForCoachUser() throws Throwable {
         String pageToMoveCode = "pagina_12";
         this.setUserOnSession("pageManagerCoach");
@@ -315,10 +327,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         this.addParameter("frame", frame);
         return this.executeAction();
     }
-
-    /**
-     * A free page can be moved inside a other free node.
-     */
+    
     public void testMoveTreeFreePageIntoFreePage() throws Throwable {
         String pageCode = "testFreePage";
         try {
@@ -335,10 +344,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(pageCode);
         }
     }
-
-    /**
-     * A reserved page can be moved inside a free node.
-     */
+    
     public void testMoveReservedPageIntoFreePage() throws Throwable {
         String pageCode = "testReservedPage";
         try {
@@ -355,11 +361,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(pageCode);
         }
     }
-
-    /**
-     * A reserved page can be moved inside a reserved node (ONLY when owners
-     * group are equals).
-     */
+    
     public void testMoveReservedPageIntoParentWithSameGroup() throws Throwable {
         String parentCode = "testReservedParent";
         String childCode = "testReservedChild";
@@ -381,11 +383,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(parentCode);
         }
     }
-
-    /**
-     * A reserved page CAN'T be moved inside a reserved node having different
-     * owners group.
-     */
+    
     public void testMoveReservedPageIntoParentWithDifferentGroup() throws Throwable {
         this.setUserOnSession("admin");
         this.initAction("/do/rs/Page", "moveTree");
@@ -395,10 +393,7 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         assertEquals("pageTree", result);
         assertEquals(1, this.getAction().getActionErrors().size());
     }
-
-    /**
-     * A free page CAN'T be moved inside a reserved node.
-     */
+    
     public void testMoveTreeFreePageIntoReservedPage() throws Throwable {
         this.setUserOnSession("admin");
         this.initAction("/do/rs/Page", "moveTree");
@@ -408,10 +403,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         assertEquals("pageTree", result);
         assertEquals(1, this.getAction().getActionErrors().size());
     }
-
-    /**
-     * An unpublished page can be moved inside a public node.
-     */
     public void testMoveTreeDraftInsideOnline() throws Throwable {
         String pageCode = "testPage";
         try {
@@ -429,9 +420,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         }
     }
 
-    /**
-     * A public page CAN'T be moved inside an unpublished node.
-     */
     public void testMoveTreeOnlineInsideDraft() throws Throwable {
         String draftPageCode = "testDraft";
         String onlinePageCode = "testOnline";
@@ -456,9 +444,6 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         }
     }
 
-    /**
-     * A draft page can be moved inside another draft page.
-     */
     public void testMoveDraftInsideDraft() throws Throwable {
         String draft1PageCode = "draft1";
         String draft2PageCode = "draft2";
@@ -530,12 +515,11 @@ public class TestPageTreeAction extends ApsAdminBaseTestCase {
         assertEquals("pageTree", result);
         assertEquals(1, this.getAction().getActionErrors().size());
     }
-
+    
     private Page createDraftPage(String pageCode) {
         IPage root = this._pageManager.getDraftRoot();
         Page testPage = new Page();
         testPage.setCode(pageCode);
-        testPage.setParent(root);
         testPage.setParentCode(root.getCode());
         PageMetadata draft = new PageMetadata();
         draft.setTitle("en", pageCode);

@@ -70,7 +70,6 @@ public class CategoryController {
         this.categoryValidator = categoryValidator;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<List<CategoryDto>, Map<String, String>>> getCategories(@RequestParam(value = "parentCode", required = false, defaultValue = "home") String parentCode) {
         logger.debug("getting category tree for parent {}", parentCode);

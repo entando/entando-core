@@ -40,12 +40,13 @@ public interface IOAuthConsumerManager extends ClientDetailsService {
 
     public ConsumerRecordVO getConsumerRecord(String consumerKey) throws ApsSystemException;
 
-    public void addConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
+    public ConsumerRecordVO addConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
 
-    public void updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
+    public ConsumerRecordVO updateConsumer(ConsumerRecordVO consumer) throws ApsSystemException;
 
     public void deleteConsumer(String consumerKey) throws ApsSystemException;
 
-    public List<String> getConsumerKeys(FieldSearchFilter[] filters) throws ApsSystemException;
+    public List<String> getConsumerKeys(FieldSearchFilter<?>[] filters) throws ApsSystemException;
 
+    public List<ConsumerRecordVO> getConsumers(FieldSearchFilter<?>[] filters) throws ApsSystemException;
 }

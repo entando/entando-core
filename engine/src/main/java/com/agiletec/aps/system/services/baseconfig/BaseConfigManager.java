@@ -53,7 +53,7 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
     private IConfigManagerCacheWrapper cacheWrapper;
 
-    private boolean argon2 = false;
+    private boolean legacyPasswordsUpdated = false;
 
     private IConfigItemDAO configDao;
 
@@ -63,8 +63,8 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
     public void init() throws Exception {
         String version = this.getSystemParams().get(SystemConstants.INIT_PROP_CONFIG_VERSION);
         this.getCacheWrapper().initCache(this.getConfigDAO(), version);
-        argon2 = (this.getParam("argon2") != null
-                && this.getParam("argon2").equalsIgnoreCase("true"));
+        legacyPasswordsUpdated = (this.getParam(LEGACY_PASSWORDS_UPDATED) != null
+                && this.getParam(LEGACY_PASSWORDS_UPDATED).equalsIgnoreCase("true"));
         Properties props = this.extractSecurityConfiguration();
         this.checkSecurityConfiguration(props);
         logger.debug("{} ready. Initialized", this.getClass().getName());
@@ -121,12 +121,12 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
 
     protected Properties extractSecurityConfiguration() throws IOException {
         Properties props = new Properties();
-        InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath());
-        if (null == is) {
-            throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
+        try (InputStream is = this.getServletContext().getResourceAsStream(this.getSecurityConfigPath())) {
+            if (null == is) {
+                throw new RuntimeException("Null security configuration inside " + this.getSecurityConfigPath());
+            }
+            props.load(is);
         }
-        props.load(is);
-        is.close();
         return props;
     }
 
@@ -170,6 +170,11 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
             throw new RuntimeException("Memory size must be greater than 8xparallelism - value '" + memory + "'");
         }
         System.getProperties().setProperty(ALGO_MEMORY_PARAM_NAME, String.valueOf(memory));
+
+        String defaultEncryptionKey = mainProps.getProperty(ALGO_DEFAULT_KEY);
+        if (StringUtils.isNotEmpty(defaultEncryptionKey)) {
+            System.getProperties().setProperty(ALGO_DEFAULT_KEY, defaultEncryptionKey);
+        }
     }
 
     @Override
@@ -240,12 +245,12 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
     }
 
     @Override
-    public boolean isArgon2() {
-        return argon2;
+    public boolean areLegacyPasswordsUpdated() {
+        return legacyPasswordsUpdated;
     }
 
-    public void setArgon2(boolean argon2) {
-        this.argon2 = argon2;
+    public void setLegacyPasswordsUpdated(boolean updated) {
+        this.legacyPasswordsUpdated = updated;
     }
 
     protected ServletContext getServletContext() {

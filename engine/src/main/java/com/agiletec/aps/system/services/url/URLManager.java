@@ -143,7 +143,7 @@ public class URLManager extends AbstractURLManager {
             } else {
                 url.append("pages/");
                 url.append(requiredLang.getCode()).append('/');
-                StringBuffer fullPath = PageUtils.getFullPath(requiredPage, "/");
+                StringBuffer fullPath = PageUtils.getFullPath(this.getPageManager(), requiredPage, "/");
                 url.append(fullPath.append("/"));
             }
             String queryString = this.createQueryString(params, escapeAmp);

@@ -13,25 +13,17 @@
  */
 package org.entando.entando.aps.system.services.label;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.label.LabelValidator;
@@ -39,12 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
 
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
 public class LabelService implements ILabelService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    private static final String LABEL_KEY_FILTER_KEY = "key";
-    private static final String LABEL_KEY_FILTER_VALUE = "value";
 
     private II18nManager i18nManager;
     private ILangManager langManager;
@@ -72,35 +65,12 @@ public class LabelService implements ILabelService {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public PagedMetadata<LabelDto> getLabelGroups(RestListRequest restRequest) {
-        Map<String, ApsProperties> result = this.i18nManager.getLabelGroups();
-        List<LabelDto> dtoList = this.getDtoBuilder().convert(result);
-        if (restRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-            dtoList = dtoList.stream().sorted(Comparator.comparing(LabelDto::getKey).reversed()).collect(Collectors.toList());
-        } else {
-            dtoList = dtoList.stream().sorted(Comparator.comparing(LabelDto::getKey)).collect(Collectors.toList());
-        }
-
-        if (null != restRequest.getFilters()) {
-            for (Filter f : restRequest.getFilters()) {
-                if (f.getAttributeName().equals(LABEL_KEY_FILTER_KEY)) {
-                    dtoList = dtoList
-                                     .stream()
-                                     .filter(i -> i.getKey().toLowerCase().contains(f.getValue().toLowerCase()))
-                                     .collect(Collectors.toList());
-                }
-                if (f.getAttributeName().equals(LABEL_KEY_FILTER_VALUE)) {
-                    dtoList = dtoList
-                                     .stream()
-                                     .filter(i -> i.getTitles().values().stream().filter(k -> k.contains(f.getValue())).collect(Collectors.toList()).size() > 0)
-                                     .collect(Collectors.toList());
-                }
-            }
-        }
-        List<?> subList = restRequest.getSublist(dtoList);
-        SearcherDaoPaginatedResult<LabelDto> resultx = new SearcherDaoPaginatedResult(dtoList.size(), subList);
-        PagedMetadata<LabelDto> pagedMetadata = new PagedMetadata<>(restRequest, resultx);
-        pagedMetadata.setBody((List<LabelDto>) subList);
+    public PagedMetadata<LabelDto> getLabelGroups(final RestListRequest restRequest) {
+        final List<LabelDto> dtoList = this.getDtoBuilder().convert(this.i18nManager.getLabelGroups());
+        final List<LabelDto> subList = new LabelRequestListProcessor(restRequest, dtoList).filterAndSort().toList();
+        final SearcherDaoPaginatedResult<LabelDto> result = new SearcherDaoPaginatedResult(dtoList.size(), subList);
+        final PagedMetadata<LabelDto> pagedMetadata = new PagedMetadata<>(restRequest, result);
+        pagedMetadata.setBody(subList);
         return pagedMetadata;
     }
 
@@ -110,7 +80,7 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
+                throw new ResourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             return this.getDtoBuilder().convert(code, labelGroup);
         } catch (ApsSystemException t) {
@@ -126,7 +96,7 @@ public class LabelService implements ILabelService {
             ApsProperties labelGroup = this.getI18nManager().getLabelGroup(code);
             if (null == labelGroup) {
                 logger.warn("no label found with key {}", code);
-                throw new RestRourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
+                throw new ResourceNotFoundException(LabelValidator.ERRCODE_LABELGROUP_NOT_FOUND, "label", code);
             }
             BeanPropertyBindingResult validationResult = this.validateUpdateLabelGroup(labelRequest);
             if (validationResult.hasErrors()) {

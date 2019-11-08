@@ -16,67 +16,67 @@ package com.agiletec.aps.system.services.user;
 import javax.sql.DataSource;
 
 import com.agiletec.aps.BaseTestCase;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * @version 1.0
- * @author M.Diana
- */
 public class UserDAOIntegrationTest extends BaseTestCase {
-	
+
+    private IUserDAO userDao;
+
+    @Override
     protected void setUp() throws Exception {
-		super.setUp();
-		DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
-		UserDAO userDao = new UserDAO();
-		userDao.setDataSource(dataSource);
-		this._userDao = userDao;
-	}
-    
-	public void testAddDeleteUser() throws Throwable {
-		String username = "UserForTest1";
-		User user = this.createUserForTest(username);
-		try {
-            _userDao.deleteUser(user);
-            assertNull(_userDao.loadUser(username));
-            
-            _userDao.addUser(user);
-            UserDetails extractedUser = _userDao.loadUser(username);
+        super.setUp();
+        DataSource dataSource = (DataSource) this.getApplicationContext().getBean("servDataSource");
+        PasswordEncoder passwordEncoder = (PasswordEncoder) this.getApplicationContext().getBean("compatiblePasswordEncoder");
+        UserDAO dao = new UserDAO();
+        dao.setDataSource(dataSource);
+        dao.setPasswordEncoder(passwordEncoder);
+        this.userDao = dao;
+    }
+
+    public void testAddDeleteUser() throws Throwable {
+        String username = "UserForTest1";
+        User user = this.createUserForTest(username);
+        try {
+            userDao.deleteUser(user);
+            assertNull(userDao.loadUser(username));
+
+            userDao.addUser(user);
+            UserDetails extractedUser = userDao.loadUser(username);
             assertEquals(user.getUsername(), extractedUser.getUsername());
-            assertEquals(user.getPassword(), extractedUser.getPassword());
+            assertThat(extractedUser.getPassword()).startsWith("{bcrypt}");
         } catch (Throwable t) {
-        	throw t;
+            throw t;
         } finally {
-            _userDao.deleteUser(user);
-            assertNull(_userDao.loadUser(username));
+            userDao.deleteUser(user);
+            assertNull(userDao.loadUser(username));
         }
-	}
-	
-	public void testUpdateUser() throws Throwable {
-		String username = "UserForTest2";
-		User user = this.createUserForTest(username);
-		try {
-            _userDao.addUser(user);
-            
+    }
+
+    public void testUpdateUser() throws Throwable {
+        String username = "UserForTest2";
+        User user = this.createUserForTest(username);
+        try {
+            userDao.addUser(user);
+
             user.setPassword("newPassword");
-            _userDao.updateUser(user);
-            
-            UserDetails extractedUser = _userDao.loadUser(username);
+            userDao.updateUser(user);
+
+            UserDetails extractedUser = userDao.loadUser(username);
             assertEquals(user.getUsername(), extractedUser.getUsername());
             assertEquals(user.getPassword(), "newPassword");
         } catch (Throwable t) {
-        	throw t;
+            throw t;
         } finally {
-            _userDao.deleteUser(user);
-            assertNull(_userDao.loadUser(username));
+            userDao.deleteUser(user);
+            assertNull(userDao.loadUser(username));
         }
-	}
-	
-	private User createUserForTest(String username) {
-		User user = new User();
-		user.setUsername(username);
+    }
+
+    private User createUserForTest(String username) {
+        User user = new User();
+        user.setUsername(username);
         user.setPassword("temp");
         return user;
-	}
-	
-	private IUserDAO _userDao;
-	
+    }
 }

@@ -303,23 +303,19 @@
                             <s:if
                                 test="null != #attributeRolesVar && #attributeRolesVar.size() > 0">
                                 <s:iterator var="attributeRoleVar" value="#attributeRolesVar">
-                                    <s:set var="currentFieldIdVar">userFinding_<s:property
-                                            value="#attributeRoleVar.name" />
-                                    </s:set>
+                                    <s:set var="currentFieldIdVar">userFinding_<s:property value="#attributeRoleVar.name" /></s:set>
                                     <div class="form-group">
-                                        <s:if
-                                            test="%{#attributeRoleVar.formFieldType.toString().equals('TEXT')}">
+                                        <s:if test="%{#attributeRoleVar.formFieldType.toString().equals('TEXT')}">
                                             <div class="col-sm-3" style="text-align: end">
                                                 <label for="<s:property value="%{#currentFieldIdVar}" />">
-                                                        <!--<span class="label label-default"><s:text name="name.role" /></span>&#32;-->
-                                                    <s:property value="#attributeRoleVar.name" />
+                                                    <s:set var="replacedRoleCodeVar" value="%{#attributeRoleVar.name.replace(':', '.')}" />
+                                                    <s:text name="%{'label.userRole.' + #replacedRoleCodeVar}" />
                                                 </label>
                                             </div>
                                             <div class="col-sm-8">
                                                 <s:set var="textInputFieldName">
                                                     <s:property value="#attributeRoleVar.name" />_textFieldName</s:set>
-                                                <wpsf:textfield id="%{#currentFieldIdVar}"
-                                                                name="%{#textInputFieldName}"
+                                                <wpsf:textfield id="%{#currentFieldIdVar}" name="%{#textInputFieldName}" 
                                                                 value="%{getSearchFormFieldValue(#textInputFieldName)}"
                                                                 cssClass="form-control" />
                                             </div>

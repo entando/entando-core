@@ -13,8 +13,6 @@
  */
 package com.agiletec.aps.system.services.page;
 
-import java.util.Arrays;
-
 public class PageRecord {
 
     public IPage createDraftPage() {
@@ -50,8 +48,42 @@ public class PageRecord {
         if (onlineMeta != null) {
             PageMetadata draftMeta = this.getMetadataDraft();
             if (draftMeta != null) {
-                boolean widgetEquals = Arrays.deepEquals(this.getWidgetsDraft(), this.getWidgetsOnline());
-                boolean metaEquals = this.getMetadataOnline().hasEqualConfiguration(this.getMetadataDraft());
+                boolean widgetEquals = true;
+                if (null != this.getWidgetsDraft() && null != this.getWidgetsOnline()
+                        && this.getWidgetsDraft().length != this.getWidgetsOnline().length) {
+                    return true;
+                }
+                for (int i = 0; i < this.getWidgetsDraft().length; i++) {
+                    Widget widgetDraft = this.getWidgetsDraft()[i];
+                    if (this.getWidgetsOnline().length < i) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    Widget widgetOnline = this.getWidgetsOnline()[i];
+                    if (null == widgetOnline && null == widgetDraft) {
+                        continue;
+                    }
+                    if ((null != widgetOnline && null == widgetDraft) || (null == widgetOnline && null != widgetDraft)) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    if (!widgetOnline.getType().getCode().equals(widgetDraft.getType().getCode())) {
+                        widgetEquals = false;
+                    }
+                    if (null == widgetOnline.getConfig() && null == widgetDraft.getConfig()) {
+                        continue;
+                    }
+                    if ((null != widgetOnline.getConfig() && null == widgetDraft.getConfig())
+                            || (null == widgetOnline.getConfig() && null != widgetDraft.getConfig())) {
+                        widgetEquals = false;
+                        break;
+                    }
+                    if (!widgetOnline.getConfig().equals(widgetDraft.getConfig())) {
+                        widgetEquals = false;
+                        break;
+                    }
+                }
+                boolean metaEquals = onlineMeta.hasEqualConfiguration(draftMeta);
                 return !(widgetEquals && metaEquals);
             } else {
                 changed = true;

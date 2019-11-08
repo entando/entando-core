@@ -51,7 +51,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testNewPage_1() throws Throwable {
         String selectedPageCode = "homepage";
         String result = this.executeNewPage(selectedPageCode, "admin");
@@ -472,7 +472,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(pageCode);
         }
     }
-
+    
     public void testSavePage_Draft_2() throws Throwable {
         String pageCode = "pagina_test_2";
         assertNull(this._pageManager.getDraftPage(pageCode));
@@ -489,7 +489,9 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             String result = this.executeSave(params, "admin");
             assertEquals(Action.SUCCESS, result);
             IPage addedPage = this._pageManager.getDraftPage(pageCode);
+            assertNotNull(addedPage);
             this.executeSetDefaultWidgets(params, "admin");
+            addedPage = this._pageManager.getDraftPage(pageCode);
             assertNotNull(addedPage);
             assertEquals("Pagina Test 2", addedPage.getMetadata().getTitles().getProperty("it"));
             Widget[] showlets = addedPage.getWidgets();
@@ -515,7 +517,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(pageCode);
         }
     }
-
+    
     public void testSavePage_3() throws Throwable {
         String pageCode = "pagina_test_3";
         assertNull(this._pageManager.getDraftPage(pageCode));
@@ -592,7 +594,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
             this._pageManager.deletePage(pageCode);
         }
     }
-
+    
     private String executeSave(Map<String, String> params, String username) throws Throwable {
         this.setUserOnSession(username);
         this.initAction("/do/Page", "save");
@@ -608,7 +610,7 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         String result = this.executeAction();
         return result;
     }
-
+    
     public void testTrashPage() throws Throwable {
         String result = this.executeTrashPage(this._pageManager.getDraftRoot().getCode(), "admin");
         assertEquals("pageTree", result);
@@ -782,16 +784,16 @@ public class TestPageAction extends ApsAdminBaseTestCase {
         assertEquals(1, extraGroups.size());
         assertTrue(extraGroups.contains("group2"));
     }
-
+    
     private void addPage(String pageCode) throws ApsSystemException {
         IPage parentPage = _pageManager.getOnlinePage("service");
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null,
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel, true, "pagina temporanea", null, null, false, null,
                 null);
         ApsProperties config = PageTestUtil.createProperties("tempKey", "tempValue", "contentId", "ART1");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         this._pageManager.addPage(pageToAdd);
     }
 

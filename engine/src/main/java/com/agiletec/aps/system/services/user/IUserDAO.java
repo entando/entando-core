@@ -13,8 +13,8 @@
  */
 package com.agiletec.aps.system.services.user;
 
-import com.agiletec.aps.util.IApsEncrypter;
 import java.util.List;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Interfaccia base per Data Access Object degli oggetti User (User).
@@ -117,6 +117,6 @@ public interface IUserDAO {
 
     public void updateLastAccess(String username);
 
-    public IApsEncrypter getEncrypter();
+    public PasswordEncoder getPasswordEncoder();
 
 }

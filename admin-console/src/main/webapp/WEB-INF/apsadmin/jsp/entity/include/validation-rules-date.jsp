@@ -39,31 +39,32 @@
     </div>
     <s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
         <div class="form-group">
-            <label for="rangeEndDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.range.to.attribute" />:</label>
-            <wpsf:select name="rangeEndDateAttribute" id="rangeEndDateAttribute"
-                         list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
+            <label class="col-sm-2 control-label" for="rangeEndDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.range.to.attribute" />:</label>
+            <div class="col-sm-3">
+                <wpsf:select name="rangeEndDateAttribute" id="rangeEndDateAttribute"
+                             list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
+            </div>
         </div>
-    </div>
-</s:if>
+    </s:if>
 
-<div class="form-group">
-    <label class="col-sm-2 control-label" for="equalDate_cal"><s:text name="note.equals.to" />
-    </label>
-    <div class="col-sm-3">
-        <s:date name="equalDate" format="dd/MM/yyyy" var="equalDateValue" />
-        <wpsf:textfield name="equalDate" id="equalDate_cal" value="%{#equalDateValue}" cssClass=" form-control bootstrap-datepicker" />
-        <span class="help-block"><s:text name="label.date.format" /></span>
-    </div>
-</div>
-<s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
     <div class="form-group">
-        <label class="col-sm-2 control-label" for="equalDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.equals.to.attribute" />:</label>
+        <label class="col-sm-2 control-label" for="equalDate_cal"><s:text name="note.equals.to" />
+        </label>
         <div class="col-sm-3">
-            <wpsf:select name="equalDateAttribute" id="equalDateAttribute"
-                         list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
+            <s:date name="equalDate" format="dd/MM/yyyy" var="equalDateValue" />
+            <wpsf:textfield name="equalDate" id="equalDate_cal" value="%{#equalDateValue}" cssClass=" form-control bootstrap-datepicker" />
+            <span class="help-block"><s:text name="label.date.format" /></span>
         </div>
     </div>
-</s:if>
+    <s:if test="#sameAttributesList != null && #sameAttributesList.size() > 0">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" for="equalDateAttribute"><s:text name="note.or" />&#32;<s:text name="note.equals.to.attribute" />:</label>
+            <div class="col-sm-3">
+                <wpsf:select name="equalDateAttribute" id="equalDateAttribute"
+                             list="#sameAttributesList" headerKey="" headerValue="%{getText('label.none')}" listKey="name" listValue="name" cssClass=" form-control bootstrap-datepicker" />
+            </div>
+        </div>
+    </s:if>
 
 </fieldset>
 

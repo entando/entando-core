@@ -14,7 +14,7 @@
 package org.entando.entando.web.common.handlers;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.*;
 import org.entando.entando.web.common.model.RestError;
@@ -59,7 +59,7 @@ public class RestExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorRestResponse processRuntimeExceptionException(RuntimeException ex) {
-        logger.debug("Handling {} error", ex.getClass().getSimpleName());
+        logger.warn("Processing unhandled exception", ex);
         RestError error = new RestError(RestErrorCodes.INTERNAL_ERROR, this.resolveLocalizedErrorMessage("GENERIC_ERROR", new Object[]{ex.getMessage()}));
         return new ErrorRestResponse(error);
     }
@@ -96,10 +96,10 @@ public class RestExceptionHandler {
         }
     }
 
-    @ExceptionHandler(value = RestRourceNotFoundException.class)
+    @ExceptionHandler(value = ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ResponseBody
-    public ErrorRestResponse processRestRourceNotFoundEx(RestRourceNotFoundException ex) {
+    public ErrorRestResponse processRestRourceNotFoundEx(ResourceNotFoundException ex) {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         if (null != ex.getBindingResult()) {
             BindingResult result = ex.getBindingResult();

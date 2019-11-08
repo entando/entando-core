@@ -22,7 +22,7 @@ import com.agiletec.aps.system.services.group.GroupManager;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.RoleManager;
 import com.agiletec.aps.system.services.user.IUserManager;
-import com.agiletec.aps.system.services.user.MockUser;
+import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
@@ -126,7 +126,7 @@ public class TestDataObjectAuthorization extends BaseTestCase {
     }
     
     private void addUserForTest(String username, String password) throws Throwable {
-        MockUser user = new MockUser();
+        User user = new User();
         user.setUsername(username);
         user.setPassword(password);
         user.setDisabled(false);

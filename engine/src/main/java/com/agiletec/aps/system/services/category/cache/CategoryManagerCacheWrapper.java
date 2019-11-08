@@ -13,17 +13,24 @@
  */
 package com.agiletec.aps.system.services.category.cache;
 
+import static com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper.DRAFT_ROOT_CACHE_NAME;
+import static com.agiletec.aps.system.services.page.cache.IPageManagerCacheWrapper.ONLINE_ROOT_CACHE_NAME;
+
 import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryDAO;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -39,14 +46,14 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 	public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException {
 		List<Category> categories = null;
 		try {
-			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			categories = categoryDAO.loadCategories(langManager);
 			if (categories.isEmpty()) {
 				Category root = this.createRoot(langManager);
 				categoryDAO.addCategory(root);
 				categories.add(root);
 			}
+            Cache cache = this.getCache();
+			//this.releaseCachedObjects(cache);
 			this.initCache(cache, categories);
 		} catch (Throwable t) {
 			logger.error("Error loading the category tree", t);
@@ -81,7 +88,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 			if (cat != root) {
 				parent.addChildCode(cat.getCode());
 			}
-			cat.setParent(parent);
+			cat.setParentCode(parent.getCode());
 		}
 		if (root == null) {
 			throw new ApsSystemException("Error found in the category tree: undefined root");
@@ -111,17 +118,75 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
 
 	@Override
 	public Category getCategory(String code) {
-		return this.get(CATEGORY_CACHE_NAME_PREFIX + code, Category.class);
+        Category category = this.get(CATEGORY_CACHE_NAME_PREFIX + code, Category.class);
+		if (null != category) {
+            return category.clone();
+        }
+        return null;
 	}
+
+    @Override
+    public void addCategory(Category category) {
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
+        if (null != codes && !codes.contains(category.getCode())) {
+            codes.add(category.getCode());
+            cache.put(CATEGORY_CODES_CACHE_NAME, codes);
+        }
+        Category parent = this.getCategory(category.getParentCode());
+        String[] childCodes = parent.getChildrenCodes();
+        childCodes = ArrayUtils.add(childCodes, category.getCode());
+        parent.setChildrenCodes(childCodes);
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+        this.checkRootModification(parent, cache);
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+    }
+
+    @Override
+    public void updateCategory(Category category) {
+        Cache cache = this.getCache();
+        cache.put(CATEGORY_CACHE_NAME_PREFIX + category.getCode(), category);
+        this.checkRootModification(category, cache);
+    }
 
 	@Override
 	public void deleteCategory(String code) {
-		this.getCache().evict(CATEGORY_CACHE_NAME_PREFIX + code);
+        Cache cache = this.getCache();
+        Category category = this.getCategory(code);
+        if (null == category) {
+            return;
+        }
+        Category parent = this.getCategory(category.getParentCode());
+        if (null != parent.getChildrenCodes()) {
+            List<String> childrenCodes = new ArrayList<>(Arrays.asList(parent.getChildrenCodes()));
+            boolean executedRemove = childrenCodes.remove(code);
+            if (executedRemove) {
+                parent.setChildrenCodes(childrenCodes.toArray(new String[childrenCodes.size()]));
+                cache.put(CATEGORY_CACHE_NAME_PREFIX + parent.getCode(), parent);
+                this.checkRootModification(parent, cache);
+            }
+        }
+        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            codes.remove(code);
+            cache.put(CATEGORY_CODES_CACHE_NAME, codes);
+        }
+        cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
 	}
+    
+    private void checkRootModification(Category category, Cache cache) {
+        if (category.isRoot()) {
+            cache.put(CATEGORY_ROOT_CACHE_NAME, category);
+        }
+    }
 
 	@Override
 	public Category getRoot() {
-		return this.get(CATEGORY_ROOT_CACHE_NAME, Category.class);
+        Category category = this.get(CATEGORY_ROOT_CACHE_NAME, Category.class);
+		if (null != category) {
+            return category.clone();
+        }
+        return null;
 	}
 
 	@Override

@@ -19,12 +19,11 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.*;
 import com.agiletec.aps.system.services.role.*;
 import com.agiletec.aps.system.services.user.*;
-import com.agiletec.aps.util.IApsEncrypter;
 import de.mkammerer.argon2.Argon2Factory;
 import org.entando.entando.aps.system.services.user.UserService;
 import org.entando.entando.aps.system.services.user.model.*;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
-import org.entando.entando.aps.util.argon2.Argon2Encrypter;
+import org.entando.entando.aps.util.crypto.Argon2PasswordEncoder;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
@@ -38,11 +37,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.*;
+import org.entando.entando.aps.util.crypto.CryptoException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -67,6 +69,8 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
     @InjectMocks
     private UserController controller;
+    
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Before
     public void setUp() throws Exception {
@@ -79,7 +83,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         userValidator.setUserManager(userManager);
         userValidator.setGroupManager(groupManager);
         userValidator.setRoleManager(roleManager);
-        userValidator.setEncrypter(this.getEncrypter());
+        userValidator.setPasswordEncoder(passwordEncoder);
         this.controller.setUserValidator(userValidator);
     }
 
@@ -330,8 +334,8 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         user1.setMaxMonthsSinceLastPasswordChange(1);
         String password;
         try {
-            password = this.getEncrypter().encrypt("password");
-        } catch (ApsSystemException ex) {
+            password = passwordEncoder.encode("password");
+        } catch (CryptoException ex) {
             password = "plain_password";
         }
         user1.setPassword(password);
@@ -348,23 +352,12 @@ public class UserControllerUnitTest extends AbstractControllerTest {
         user1.setMaxMonthsSinceLastPasswordChange(1);
         String password;
         try {
-            password = this.getEncrypter().encrypt("password");
-        } catch (ApsSystemException ex) {
+            password = passwordEncoder.encode("password");
+        } catch (CryptoException ex) {
             password = "plain_password";
         }
         user1.setPassword(password);
         return user1;
-    }
-
-    private IApsEncrypter getEncrypter() {
-        Argon2Encrypter encrypter = new Argon2Encrypter();
-        encrypter.setType(Argon2Factory.Argon2Types.ARGON2i);
-        encrypter.setHashLen(32);
-        encrypter.setSaltLen(16);
-        encrypter.setIterations(4);
-        encrypter.setMemory(65536);
-        encrypter.setParallelism(4);
-        return encrypter;
     }
 
     private PagedMetadata<UserDto> mockUsersWithProfile() {

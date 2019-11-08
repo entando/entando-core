@@ -14,7 +14,7 @@
 package org.entando.entando.web.filebrowser.validator;
 
 import com.agiletec.aps.system.SystemConstants;
-import org.entando.entando.aps.system.exception.RestRourceNotFoundException;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
@@ -72,7 +72,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
         try {
             String directory = path.substring(0, path.lastIndexOf("/"));
             if (!this.getStorageManager().exists(directory, request.isProtectedFolder())) {
-                throw new RestRourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, "parent folder", path);
+                throw new ResourceNotFoundException(FileBrowserValidator.ERRCODE_RESOURCE_DOES_NOT_EXIST, "parent folder", path);
             }
             if (request instanceof FileBrowserFileRequest) {
                 FileBrowserFileRequest fileRequest = (FileBrowserFileRequest) target;
@@ -86,7 +86,7 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
             }
         } catch (ValidationConflictException vce) {
             throw vce;
-        } catch (RestRourceNotFoundException e) {
+        } catch (ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
             logger.error("Error checking path {} , protected {} ", path, request.isProtectedFolder(), e);

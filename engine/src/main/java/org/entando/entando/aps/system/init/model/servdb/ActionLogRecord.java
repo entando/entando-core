@@ -40,7 +40,7 @@ public class ActionLogRecord {
 	
 	@DatabaseField(columnName = "actiondate", 
 			dataType = DataType.DATE, 
-			canBeNull = true)
+			canBeNull = true, index = true)
 	private Date _actionDate;
 	
 	@DatabaseField(columnName = "namespace", 
@@ -63,11 +63,10 @@ public class ActionLogRecord {
 			dataType = DataType.LONG_STRING, 
 			canBeNull = true)
 	private String _activitystreaminfo;
-	
-	
+    
 	@DatabaseField(columnName = "updatedate", 
 			dataType = DataType.DATE, 
-			canBeNull = true)
+			canBeNull = true, index = true)
 	private Date _updateDate;
 	
 	public static final String TABLE_NAME = "actionlogrecords";

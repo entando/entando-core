@@ -22,13 +22,15 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.cache.IGroupManagerCacheWrapper;
+import java.util.Collections;
+import org.apache.commons.beanutils.BeanComparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Servizio gestore dei gruppi.
  *
- * @author E.Santoboni
+ * @author E.Santoboni Modificato da emarcias
  */
 public class GroupManager extends AbstractService implements IGroupManager {
 
@@ -117,12 +119,14 @@ public class GroupManager extends AbstractService implements IGroupManager {
      */
     @Override
     public List<Group> getGroups() {
-        return new ArrayList<Group>(this.getGroupsMap().values());
+        List<Group> groups = new ArrayList<Group>(this.getGroupsMap().values());
+        BeanComparator c = new BeanComparator("description");
+        Collections.sort(groups, c);
+        return groups;
     }
 
     /**
-     * Restituisce la mappa dei gruppi presenti nel sistema. La mappa è
-     * indicizzata in base al nome del gruppo.
+     * Restituisce la mappa dei gruppi presenti nel sistema. La mappa è indicizzata in base al nome del gruppo.
      *
      * @return La mappa dei gruppi presenti nel sistema.
      */

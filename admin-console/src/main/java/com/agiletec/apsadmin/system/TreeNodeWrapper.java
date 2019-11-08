@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 
 /**
@@ -27,8 +28,9 @@ public class TreeNodeWrapper extends TreeNode {
 	protected TreeNodeWrapper() {
 	}
 
-	public TreeNodeWrapper(ITreeNode node) {
+	public TreeNodeWrapper(ITreeNode node, ITreeNode parent) {
 		this.setCode(node.getCode());
+		this.setParentCode(node.getParentCode());
 		Set<Object> codes = node.getTitles().keySet();
 		Iterator<Object> iterKey = codes.iterator();
 		while (iterKey.hasNext()) {
@@ -37,18 +39,14 @@ public class TreeNodeWrapper extends TreeNode {
 			this.getTitles().put(key, title);
 		}
 		this._empty = (null == node.getChildrenCodes() || node.getChildrenCodes().length == 0);
-		this.setParent(node.getParent());
+		this.setParent(parent);
 	}
 
-	public TreeNodeWrapper(ITreeNode tree, String currentLang) {
-		this.setCode(tree.getCode());
-		ITreeNode parent = tree.getParent();
-		if (null != parent) {
-			super.setParent(parent);
-		}
+	public TreeNodeWrapper(ITreeNode tree, ITreeNode parent, String currentLang, ITreeNodeManager treeNodeManager) {
+		this(tree, parent);
 		this.setTitle(tree.getTitle(currentLang));
-		this.setFullTitle(tree.getFullTitle(currentLang));
-		this.setShortFullTitle(tree.getShortFullTitle(currentLang));
+		this.setFullTitle(tree.getFullTitle(currentLang, treeNodeManager));
+		this.setShortFullTitle(tree.getShortFullTitle(currentLang, treeNodeManager));
 	}
 
 	public boolean isOpen() {
@@ -57,13 +55,6 @@ public class TreeNodeWrapper extends TreeNode {
 
 	public void setOpen(boolean open) {
 		this._open = open;
-	}
-
-	public String getParentCode() {
-		if (null != super.getParent()) {
-			return super.getParent().getCode();
-		}
-		return null;
 	}
 
 	public String getTitle() {
@@ -98,6 +89,14 @@ public class TreeNodeWrapper extends TreeNode {
 		this._empty = empty;
 	}
 
+    public ITreeNode getParent() {
+        return parent;
+    }
+
+    public void setParent(ITreeNode parent) {
+        this.parent = parent;
+    }
+
 	public ITreeNode[] getChildren() {
 		return _children;
 	}
@@ -122,6 +121,8 @@ public class TreeNodeWrapper extends TreeNode {
 	private String _title;
 	private String _fullTitle;
 	private String _shortFullTitle;
+    
+    private ITreeNode parent;
 
 	private ITreeNode[] _children = new ITreeNode[0];
 

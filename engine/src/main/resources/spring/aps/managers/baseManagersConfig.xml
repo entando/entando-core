@@ -16,6 +16,8 @@
 			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
+    <context:component-scan base-package="org.entando.entando.aps.util.crypto" />
+    
     <cache:annotation-driven cache-manager="springCacheManager" />
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
@@ -105,16 +107,16 @@
                     <value>${file.upload.maxSize}</value>
                 </entry>
                 <entry key="configVersion">
-                    <jee:jndi-lookup jndi-name="java:comp/env/configVersion" />
+                    <value>${configVersion}</value>
                 </entry>
                 <entry key="applicationBaseURL">
-                    <jee:jndi-lookup jndi-name="java:comp/env/applicationBaseURL" />
+                    <value>${applicationBaseURL}</value>
                 </entry>
                 <entry key="resourceRootURL">
-                    <jee:jndi-lookup jndi-name="java:comp/env/resourceRootURL" />
+                    <value>${resourceRootURL}</value>
                 </entry>
                 <entry key="resourceDiskRootFolder">
-                    <jee:jndi-lookup jndi-name="java:comp/env/resourceDiskRootFolder" />
+                    <value>${resourceDiskRootFolder}</value>
                 </entry>
             </map>
         </property>
@@ -138,7 +140,7 @@
         <property name="groupDAO" >
             <bean class="com.agiletec.aps.system.services.group.GroupDAO">
                 <property name="dataSource" ref="servDataSource" />
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${servDataSourceClassName}</value></property>
             </bean>
         </property>
         <property name="cacheWrapper">
@@ -172,11 +174,9 @@
         </property>
     </bean>
 
-    <bean id="Argon2" class="org.entando.entando.aps.util.argon2.Argon2Encrypter"/>
-
     <bean id="UserDAO" class="com.agiletec.aps.system.services.user.UserDAO">
         <property name="dataSource" ref="servDataSource" />
-        <property name="encrypter" ref="Argon2" />
+        <property name="passwordEncoder" ref="compatiblePasswordEncoder" />
     </bean>
 
     <bean id="UserManager" class="com.agiletec.aps.system.services.user.UserManager"
@@ -192,7 +192,7 @@
         <property name="authorizationDAO" >
             <bean class="com.agiletec.aps.system.services.authorization.AuthorizationDAO">
                 <property name="dataSource" ref="servDataSource" />
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${servDataSourceClassName}</value></property>
             </bean>
         </property>
     </bean>
@@ -259,7 +259,7 @@
         <property name="guiFragmentDAO">
             <bean class="org.entando.entando.aps.system.services.guifragment.GuiFragmentDAO">
                 <property name="dataSource" ref="portDataSource" />
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${portDataSourceClassName}</value></property>
             </bean>
         </property>
     </bean>
@@ -274,7 +274,7 @@
             <bean class="com.agiletec.aps.system.services.pagemodel.PageModelDAO">
                 <property name="dataSource" ref="portDataSource" />
                 <property name="widgetTypeManager" ref="WidgetTypeManager" />
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/portDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${portDataSourceClassName}</value></property>
             </bean>
         </property>
         <property name="cacheWrapper">
@@ -359,7 +359,7 @@
         <property name="actionLogDAO">
             <bean class="org.entando.entando.aps.system.services.actionlog.ActionLogDAO">
                 <property name="dataSource" ref="servDataSource" />
-                <property name="dataSourceClassName"><jee:jndi-lookup jndi-name="java:comp/env/servDataSourceClassName" /></property>
+                <property name="dataSourceClassName"><value>${servDataSourceClassName}</value></property>
             </bean>
         </property>
         <property name="managerConfiguration" ref="ActionLogManagerConfiguration" />

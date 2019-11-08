@@ -13,18 +13,14 @@
  */
 package com.agiletec.aps.system.services.pagemodel;
 
-import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
+import com.agiletec.aps.system.services.page.Widget;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.entando.entando.aps.system.services.api.model.CDataXmlTypeAdapter;
 
-import com.agiletec.aps.system.services.page.Widget;
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Representation of a page template. 
@@ -32,11 +28,17 @@ import com.agiletec.aps.system.services.page.Widget;
  * The definition of the page model is in the form of jsp or freemarker template. 
  * In the case of representation on jsp, the file name is equals then the model code.
  * The "frames" are page sections that can contains a "widget".
- * @author M.Diana
  */
 @XmlRootElement(name = "pageModel")
 @XmlType(propOrder = {"code", "description", "pluginCode", "template", "configuration"})
 public class PageModel implements Serializable {
+
+	private String code;
+	private String description;
+	private Frame[] configuration = new Frame[0];
+	private int mainFrame = -1;
+	private String pluginCode;
+	private String template;
 
 	/**
 	 * Return the code of page model.
@@ -44,7 +46,7 @@ public class PageModel implements Serializable {
 	 */
 	@XmlElement(name = "code", required = true)
 	public String getCode() {
-		return _code;
+		return code;
 	}
 
 	/**
@@ -52,7 +54,7 @@ public class PageModel implements Serializable {
 	 * @param code The code to set
 	 */
 	public void setCode(String code) {
-		this._code = code;
+		this.code = code;
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class PageModel implements Serializable {
 	 */
 	@XmlElement(name = "description", required = true)
 	public String getDescription() {
-		return _description;
+		return description;
 	}
 
 	/**
@@ -69,7 +71,7 @@ public class PageModel implements Serializable {
 	 * @param description The description to set
 	 */
 	public void setDescription(String description) {
-		this._description = description;
+		this.description = description;
 	}
 
 	/**
@@ -97,7 +99,6 @@ public class PageModel implements Serializable {
 	 */
 	@XmlTransient
 	public String[] getFrames() {
-		Frame[] configuration = this.getConfiguration();
 		if (null == configuration) {
 			return new String[0];
 		}
@@ -112,12 +113,11 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Restituisce il numero relativo del mainFrame.
-	 * @return Il numero relativo del mainFrame.
+	 * @return Position of the main frame, if it exists, -1 otherwise
 	 */
 	@XmlTransient
 	public int getMainFrame() {
-		return _mainFrame;
+		return mainFrame;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class PageModel implements Serializable {
 	 * @param mainFrame Il numero relativo del mainFrame.
 	 */
 	public void setMainFrame(int mainFrame) {
-		this._mainFrame = mainFrame;
+		this.mainFrame = mainFrame;
 	}
 
 	/**
@@ -134,13 +134,13 @@ public class PageModel implements Serializable {
 	 * @return the {@link Frame} or null
 	 */
 	public Frame getFrameConfig(int index) {
-		Frame[] configuration = this.getConfiguration();
-		if (null != configuration) {
-			if (0 <= index && index < configuration.length) {
-				return configuration[index];
-			}
-		}
-		return null;
+		return isValidFrameIndex(index) ? configuration[index] : null;
+	}
+
+	private boolean isValidFrameIndex(int index) {
+		return (configuration != null) &&
+			   (index >= 0) &&
+			   (index < configuration.length);
 	}
 
 	/**
@@ -149,11 +149,7 @@ public class PageModel implements Serializable {
 	 */
 	@XmlTransient
 	public Frame[] getFramesConfig() {
-		Frame[] configuration = this.getConfiguration();
-		if (null != configuration) {
-			return configuration;
-		}
-		return null;
+		return configuration;
 	}
 
 	/**
@@ -162,7 +158,6 @@ public class PageModel implements Serializable {
 	 */
 	@XmlTransient
 	public Widget[] getDefaultWidget() {
-		Frame[] configuration = this.getConfiguration();
 		Widget[] defaultWidgets = new Widget[configuration.length];
 		for (int i = 0; i < configuration.length; i++) {
 			Frame frame = configuration[i];
@@ -197,7 +192,7 @@ public class PageModel implements Serializable {
 
 	@XmlTransient
 	public String getPageModelJspPath() {
-		return PageModel.getPageModelJspPath(this.getCode(), this.getPluginCode());
+		return PageModel.getPageModelJspPath(code, pluginCode);
 	}
 
 	public static String getPageModelJspPath(String code, String pluginCode) {
@@ -213,11 +208,11 @@ public class PageModel implements Serializable {
 	@XmlElement(name = "frame", required = false)
 	@XmlElementWrapper(name = "configuration")
 	public Frame[] getConfiguration() {
-		return _configuration;
+		return configuration;
 	}
 
 	public void setConfiguration(Frame[] configuration) {
-		this._configuration = configuration;
+		this.configuration = configuration;
 	}
 
 	/**
@@ -227,7 +222,7 @@ public class PageModel implements Serializable {
 	 */
 	@XmlElement(name = "pluginCode", required = false)
 	public String getPluginCode() {
-		return _pluginCode;
+		return pluginCode;
 	}
 
 	/**
@@ -235,41 +230,48 @@ public class PageModel implements Serializable {
 	 * @param pluginCode The plugin code. 
 	 */
 	public void setPluginCode(String pluginCode) {
-		this._pluginCode = pluginCode;
+		this.pluginCode = pluginCode;
 	}
 
 	@XmlJavaTypeAdapter(CDataXmlTypeAdapter.class)
 	@XmlElement(name = "template", required = false)
 	public String getTemplate() {
-		return _template;
+		return template;
 	}
+
 	public void setTemplate(String template) {
-		this._template = template;
+		this.template = template;
 	}
 
-	/**
-	 * Il codice del modello di pagina
-	 */
-	private String _code;
+	@Override
+	public String toString() {
+		return new ToStringBuilder(this)
+				.append("code", code)
+				.append("description", description)
+				.append("configuration", configuration)
+				.append("mainFrame", mainFrame)
+				.append("pluginCode", pluginCode)
+				.append("template", template)
+				.toString();
+	}
 
-	/**
-	 * La descrizione del modello di pagina
-	 */
-	private String _description;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		PageModel pageModel = (PageModel) o;
+		return mainFrame == pageModel.mainFrame &&
+			   Objects.equals(code, pageModel.code) &&
+			   Objects.equals(description, pageModel.description) &&
+			   Arrays.equals(configuration, pageModel.configuration) &&
+			   Objects.equals(pluginCode, pageModel.pluginCode) &&
+			   Objects.equals(template, pageModel.template);
+	}
 
-	private Frame[] _configuration = new Frame[0];
-
-	/**
-	 * La posizione del frame principale, se esiste;
-	 * vale -1 se non esiste;
-	 */
-	private int _mainFrame = -1;
-
-	/**
-	 * The code of the plugin owner of page model.
-	 */
-	private String _pluginCode;
-
-	private String _template;
-
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(code, description, mainFrame, pluginCode, template);
+		result = 31 * result + Arrays.hashCode(configuration);
+		return result;
+	}
 }

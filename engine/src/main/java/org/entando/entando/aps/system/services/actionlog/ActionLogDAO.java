@@ -252,7 +252,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             stat = this.buildStatement(filters, groupCodes, true, conn);
             result = stat.executeQuery();
             if (result.next()) {
-                date = result.getDate(1);
+                Timestamp updateDate = result.getTimestamp(1);
+                date = new Date(updateDate.getTime());
             }
         } catch (Throwable t) {
             logger.error("Error loading last update date", t);

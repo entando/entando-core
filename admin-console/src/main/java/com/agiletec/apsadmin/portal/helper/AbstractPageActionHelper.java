@@ -168,6 +168,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
                 PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode, currentWrapper);
                 currentWrapper.addChildCode(newNode.getCode());
                 currentWrapper.addChild(newNode);
+                newNode.setParentCode(currentWrapper.getCode());
                 newNode.setParent(currentWrapper);
                 this.addTreeWrapper(newNode, newCurrentNode, userGroupCodes, alsoFreeViewPages);
             } else {
@@ -193,12 +194,19 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
             virtualRoot.setTitle(lang.getCode(), "ROOT");
         }
         virtualRoot.setParent(virtualRoot);
+        virtualRoot.setParentCode(virtualRoot.getCode());
         return virtualRoot;
     }
 
     @Override
     protected void buildCheckNodes(ITreeNode treeNode, Set<String> nodesToShow, Collection<String> groupCodes) {
         nodesToShow.add(treeNode.getCode());
+        if (treeNode instanceof PageTreeNodeWrapper) {
+            treeNode = ((PageTreeNodeWrapper) treeNode).getOrigin();
+        }
+        if (treeNode == null) {
+            return;
+        }
         IPage parent = (((IPage) treeNode).isOnlineInstance()) ? 
                 this.getPageManager().getOnlinePage(treeNode.getParentCode()) : 
                 this.getPageManager().getDraftPage(treeNode.getParentCode());

@@ -406,38 +406,30 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineToMoveDown.getCode(), onlineToMoveDown);
             }
             if (draftToMoveUp.getPosition()<draftToMoveDown.getPosition()) {
-                this.switchSister(draftToMoveUp.getParentCode(), pageUp, pageDown);
+                this.switchSister(draftToMoveUp.getParentCode(), pageUp, pageDown, false);
+                this.switchSister(draftToMoveUp.getParentCode(), pageUp, pageDown, true);
             }
         } else {
             _logger.error("Movement impossible - page to move up {} - page to move down {}", pageUp, pageDown);
         }
     }
-
-    private void switchSister(String parentCode, String pageUp, String pageDown) {
+    
+    private void switchSister(String parentCode, String pageUp, String pageDown, boolean online) {
         Cache cache = this.getCache();
-        IPage onlineParent = this.getOnlinePage(parentCode);
-        if (null != onlineParent) {
-            List<String> children = new ArrayList(Arrays.asList(onlineParent.getChildrenCodes()));
+        IPage parent = (online) ? this.getOnlinePage(parentCode) : this.getDraftPage(parentCode);
+        if (null != parent) {
+            List<String> children = new ArrayList(Arrays.asList(parent.getChildrenCodes()));
             int pos1 = children.indexOf(pageUp);
             int pos2 = children.indexOf(pageDown);
             if (pos1 >= 0 && pos2 >= 0) {
                 Collections.swap(children, pos1, pos2);
-                ((Page) onlineParent).setChildrenCodes(children.toArray(new String[children.size()]));
-                cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onlineParent.getCode(), onlineParent);
+                ((Page) parent).setChildrenCodes(children.toArray(new String[children.size()]));
+                String cacheKey = (online) ? 
+                        (ONLINE_PAGE_CACHE_NAME_PREFIX + parent.getCode()) :
+                        (DRAFT_PAGE_CACHE_NAME_PREFIX + parent.getCode());
+                cache.put(cacheKey, parent);
             }
-            this.checkRootModification(onlineParent, true, cache);
-        }
-        IPage draftParent = this.getDraftPage(parentCode);
-        if (null != draftParent) {
-            List<String> children = new ArrayList(Arrays.asList(draftParent.getChildrenCodes()));
-            int pos1 = children.indexOf(pageUp);
-            int pos2 = children.indexOf(pageDown);
-            if (pos1 >= 0 && pos2 >= 0) {
-                Collections.swap(children, pos1, pos2);
-                ((Page) draftParent).setChildrenCodes(children.toArray(new String[children.size()]));
-                cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftParent.getCode(), draftParent);
-            }
-            this.checkRootModification(draftParent, false, cache);
+            this.checkRootModification(parent, online, cache);
         }
     }
     

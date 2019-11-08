@@ -109,7 +109,8 @@ public abstract class AbstractEntityService<I extends IApsEntity, T extends Enti
                         new String[]{oldEntity.getTypeCode(), typeCode}, "entity.type.invalid");
                 throw new ValidationConflictException(bindingResult);
             }
-            I entity = this.getEntityPrototype(entityManager, request.getTypeCode());
+
+            I entity = (I) entityManager.getEntity(request.getId());
             request.fillEntity(entity, this.getCategoryManager(), bindingResult);
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {

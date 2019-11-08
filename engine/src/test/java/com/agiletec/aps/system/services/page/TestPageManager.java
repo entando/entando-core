@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.page;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -488,6 +489,65 @@ public class TestPageManager extends BaseTestCase {
         }
         return widget;
     }
+    
+	public void testGetDraftPage_should_load_draftPages() {
+		String onlyDraftPageCode = "pagina_draft";
+		IPage page = this._pageManager.getDraftPage(onlyDraftPageCode);
+		assertNotNull(page);
+		assertFalse(page.isOnline());
+	}
+
+	public void testGetDraftPage_should_load_onlinePages() {
+		String onlinePageCode = "pagina_1";
+		IPage page = this._pageManager.getDraftPage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+	}
+
+	public void testGetOnlinePage_should_ignore_draftPages() {
+		String onlyDraftPageCode = "pagina_draft";
+		IPage page = this._pageManager.getOnlinePage(onlyDraftPageCode);
+		assertNull(page);
+	}
+
+	public void testGetOnlinePage_should_load_onlinePages() {
+		String onlinePageCode = "pagina_1";
+		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		assertEquals(2, childs.size());
+	}
+
+	public void testGetOnlinePage_should_ignore_draftPageChildren() {
+		String onlyDraftPageCode = "pagina_draft";
+		String onlinePageCode = "homepage";
+		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		for (String child : childs) {
+			String code = child;
+			assertFalse(code.equalsIgnoreCase(onlyDraftPageCode));
+			IPage childPage = this._pageManager.getOnlinePage(code);
+			assertTrue(childPage.isOnlineInstance());
+		}
+	}
+
+	public void testGetDraftPage_should_load_draftPageChildren() {
+		String onlyDraftPageCode = "pagina_draft";
+		String onlinePageCode = "homepage";
+		IPage page = this._pageManager.getDraftPage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		boolean found = false;
+		for (String child : childs) {
+			String code = child;
+			found = code.equals(onlyDraftPageCode);
+		}
+		assertTrue(found);
+	}
 
     private void init() throws Exception {
         try {

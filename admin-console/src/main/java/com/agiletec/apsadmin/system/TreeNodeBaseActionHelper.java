@@ -82,7 +82,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 
 	@Override
 	public Set<String> checkTargetNodes(String nodeToOpen, Set<String> lastOpenedNodes, Collection<String> groupCodes) throws ApsSystemException {
-		Set<String> checkedTargetNodes = new HashSet<String>();
+		Set<String> checkedTargetNodes = new HashSet<>();
 		try {
 			if (null != nodeToOpen && this.checkNode(nodeToOpen, groupCodes)) {
 				checkedTargetNodes.add(nodeToOpen);
@@ -109,7 +109,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 		if (null == nodeToCloseCode || null == nodeToClose) {
 			return this.checkTargetNodes(null, lastOpenedNodes, groupCodes);
 		}
-		Set<String> checkedTargetNodes = new HashSet<String>();
+		Set<String> checkedTargetNodes = new HashSet<>();
 		try {
 			if (nodeToClose.isRoot()) {
 				return checkedTargetNodes;
@@ -152,11 +152,11 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
 			_logger.warn("No selected nodes");
-			return this.buildWrapper(fullTree);//new TreeNodeWrapper(fullTree);
+			return this.buildWrapper(fullTree);
 		}
 		TreeNodeWrapper root = null;
 		try {
-			Set<String> nodesToShow = new HashSet<String>();
+			Set<String> nodesToShow = new HashSet<>();
 			this.buildCheckNodes(treeNodesToOpen, nodesToShow, groupCodes);
 			root = this.buildWrapper(fullTree);
 			root.setParent(root);
@@ -199,13 +199,14 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 				ITreeNode newCurrentTreeNode = this.getTreeNode(children[i]);
 				TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 				newNode.setParent(currentNode);
+				newNode.setParentCode(currentNode.getCode());
 				currentNode.addChildCode(newNode.getCode());
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, newCurrentTreeNode, checkNodes);
 			}
 		}
 	}
-
+    
 	protected abstract boolean isNodeAllowed(String code, Collection<String> groupCodes);
 
 	/**

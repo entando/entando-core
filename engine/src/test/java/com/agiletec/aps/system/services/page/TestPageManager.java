@@ -14,6 +14,7 @@
 package com.agiletec.aps.system.services.page;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class TestPageManager extends BaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testGetPage_1() throws Throwable {
         IPage root = _pageManager.getDraftRoot();
         assertNotNull(root);
@@ -103,44 +104,47 @@ public class TestPageManager extends BaseTestCase {
 
     private void checkAddPage() throws Throwable {
         IPage parentPage = _pageManager.getDraftPage("service");
+        String parentForNewPage = parentPage.getParentCode();
         PageModel pageModel = parentPage.getMetadata().getModel();
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(),
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel,
                 true, "pagina temporanea", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage("temp", parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage("temp", parentForNewPage, "free", metadata, widgets);
         _pageManager.addPage(pageToAdd);
 
         IPage addedPage = _pageManager.getDraftPage("temp");
-        assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
         PageTestUtil.comparePages(pageToAdd, addedPage, false);
         PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
-
-        parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParent(parentPage);
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(8, addedPage.getPosition());
+        
+        pageToAdd = (Page) pageToAdd.clone();
         pageToAdd.setCode("temp1");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp1");
-        assertEquals(addedPage, _pageManager.getDraftPage(addedPage.getCode()));
         PageTestUtil.comparePages(pageToAdd, addedPage, false);
         PageTestUtil.comparePageMetadata(pageToAdd.getMetadata(), addedPage.getMetadata(), 0);
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(9, addedPage.getPosition());
 
-        parentPage = _pageManager.getDraftPage("service");
-        pageToAdd.setParent(parentPage);
+        pageToAdd = (Page) pageToAdd.clone();
         pageToAdd.setCode("temp2");
         _pageManager.addPage(pageToAdd);
         addedPage = _pageManager.getDraftPage("temp2");
         assertNotNull(_pageManager.getDraftPage(addedPage.getCode()));
         assertNotNull(pageToAdd.getMetadata());
-        assertEquals(widgetToAdd, addedPage.getWidgets()[0]);
+        assertEquals(widgetToAdd.getConfig(), addedPage.getWidgets()[0].getConfig());
+        assertEquals(widgetToAdd.getType().getCode(), addedPage.getWidgets()[0].getType().getCode());
+        assertEquals(10, addedPage.getPosition());
     }
 
     private void checkUpdatePage() throws Exception {
         Page dbPage = (Page) _pageManager.getDraftPage("temp");
-        Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParent(), "free", dbPage.getMetadata().clone(), PageTestUtil
+        Page pageToUpdate = PageTestUtil.createPage("temp", dbPage.getParentCode(), "free", dbPage.getMetadata().clone(), PageTestUtil
                 .copyArray(dbPage.getWidgets()));
         pageToUpdate.setPosition(dbPage.getPosition());
         PageMetadata onlineMetadata = pageToUpdate.getMetadata();
@@ -149,11 +153,12 @@ public class TestPageManager extends BaseTestCase {
 
         ApsProperties config = PageTestUtil.createProperties("actionPath", "/myJsp.jsp", "param1", "value1");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this._widgetTypeManager);
-        pageToUpdate.getWidgets()[2] = widgetToAdd;
+        pageToUpdate.getWidgets()[0] = widgetToAdd;
         _pageManager.setPageOnline(pageToUpdate.getCode());
 
         IPage updatedPage = _pageManager.getOnlinePage(dbPage.getCode());
         pageToUpdate = (Page) _pageManager.getOnlinePage(pageToUpdate.getCode());
+        
         assertNotNull(updatedPage);
         PageTestUtil.comparePages(pageToUpdate, updatedPage, false);
         PageTestUtil.comparePageMetadata(pageToUpdate.getMetadata(), updatedPage.getMetadata(), 0);
@@ -185,10 +190,11 @@ public class TestPageManager extends BaseTestCase {
     }
 
     private void movePage() throws Exception {
-        int firstPos = 7;
+        int firstPos = 8;
         assertEquals(firstPos, _pageManager.getDraftPage("temp").getPosition());
         assertEquals(firstPos + 1, _pageManager.getDraftPage("temp1").getPosition());
         assertEquals(firstPos + 2, _pageManager.getDraftPage("temp2").getPosition());
+        
         _pageManager.deletePage("temp");
         assertNull(_pageManager.getDraftPage("temp"));
 
@@ -200,18 +206,21 @@ public class TestPageManager extends BaseTestCase {
         _pageManager.movePage("temp2", true);
         IPage movedTemp1 = _pageManager.getDraftPage("temp1");
         IPage movedTemp2 = _pageManager.getDraftPage("temp2");
+        IPage movedTemp2Parent = _pageManager.getDraftPage(movedTemp2.getParentCode());
         assertEquals(firstPos, movedTemp2.getPosition());
         assertEquals(firstPos + 1, movedTemp1.getPosition());
-        String[] pages = movedTemp2.getParent().getChildrenCodes();
+        
+        String[] pages = movedTemp2Parent.getChildrenCodes();
         assertEquals(pages[pages.length - 2], "temp2");
         assertEquals(pages[pages.length - 1], "temp1");
 
         _pageManager.movePage("temp2", false);
         movedTemp1 = _pageManager.getDraftPage("temp1");
         movedTemp2 = _pageManager.getDraftPage("temp2");
-        assertEquals(firstPos + 1, movedTemp2.getPosition());
         assertEquals(firstPos, movedTemp1.getPosition());
-        pages = movedTemp2.getParent().getChildrenCodes();
+        assertEquals(firstPos + 1, movedTemp2.getPosition());
+        movedTemp2Parent = _pageManager.getDraftPage(movedTemp2.getParentCode());
+        pages = movedTemp2Parent.getChildrenCodes();
         assertEquals(pages[pages.length - 2], "temp1");
         assertEquals(pages[pages.length - 1], "temp2");
     }
@@ -420,37 +429,52 @@ public class TestPageManager extends BaseTestCase {
         assertEquals(1, pageUtilizers3.size());
         assertEquals("pagina_1", pageUtilizers3.get(0).getCode());
     }
-
+    
     public void testPageStatus() throws ApsSystemException {
         String testCode = "testcode";
+        PagesStatus status = this._pageManager.getPagesStatus();
         try {
-            PagesStatus status = this._pageManager.getPagesStatus();
             IPage parentPage = _pageManager.getDraftRoot();
             PageModel pageModel = parentPage.getMetadata().getModel();
-            PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, "pagina temporanea", null, null, false, null, null);
-            PageMetadata draftMeta = metadata;
-            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage, "free", draftMeta, null);
+            PageMetadata draftMeta = PageTestUtil.createPageMetadata(pageModel, true, "pagina temporanea", null, null, false, null, null);
+            Page pageToAdd = PageTestUtil.createPage(testCode, parentPage.getCode(), "free", draftMeta, new Widget[pageModel.getFrames().length]);
             _pageManager.addPage(pageToAdd);
             PagesStatus newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline());
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished() + 1);
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished() + 1, newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
             this._pageManager.setPageOnline(testCode);
             newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline() + 1);
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges());
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline() + 1, newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
             IPage test = this._pageManager.getDraftPage(testCode);
             test.getMetadata().setTitle("it", "modxxxx");
+            
             this._pageManager.updatePage(test);
-            test = this._pageManager.getDraftPage(testCode);
             newStatus = this._pageManager.getPagesStatus();
-            assertEquals(newStatus.getOnline(), status.getOnline());
-            assertEquals(newStatus.getOnlineWithChanges(), status.getOnlineWithChanges() + 1);
-            assertEquals(newStatus.getUnpublished(), status.getUnpublished());
-            assertEquals(newStatus.getTotal(), status.getTotal() + 1);
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges() + 1, newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
+            this._pageManager.setPageOffline(testCode);
+            newStatus = this._pageManager.getPagesStatus();
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished() + 1, newStatus.getUnpublished());
+            assertEquals(status.getTotal() + 1, newStatus.getTotal());
+            
+            this._pageManager.deletePage(testCode);
+            newStatus = this._pageManager.getPagesStatus();
+            assertEquals(status.getOnline(), newStatus.getOnline());
+            assertEquals(status.getOnlineWithChanges(), newStatus.getOnlineWithChanges());
+            assertEquals(status.getUnpublished(), newStatus.getUnpublished());
+            assertEquals(status.getTotal(), newStatus.getTotal());
         } finally {
             this._pageManager.deletePage(testCode);
         }
@@ -465,6 +489,65 @@ public class TestPageManager extends BaseTestCase {
         }
         return widget;
     }
+    
+	public void testGetDraftPage_should_load_draftPages() {
+		String onlyDraftPageCode = "pagina_draft";
+		IPage page = this._pageManager.getDraftPage(onlyDraftPageCode);
+		assertNotNull(page);
+		assertFalse(page.isOnline());
+	}
+
+	public void testGetDraftPage_should_load_onlinePages() {
+		String onlinePageCode = "pagina_1";
+		IPage page = this._pageManager.getDraftPage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+	}
+
+	public void testGetOnlinePage_should_ignore_draftPages() {
+		String onlyDraftPageCode = "pagina_draft";
+		IPage page = this._pageManager.getOnlinePage(onlyDraftPageCode);
+		assertNull(page);
+	}
+
+	public void testGetOnlinePage_should_load_onlinePages() {
+		String onlinePageCode = "pagina_1";
+		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		assertEquals(2, childs.size());
+	}
+
+	public void testGetOnlinePage_should_ignore_draftPageChildren() {
+		String onlyDraftPageCode = "pagina_draft";
+		String onlinePageCode = "homepage";
+		IPage page = this._pageManager.getOnlinePage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		for (String child : childs) {
+			String code = child;
+			assertFalse(code.equalsIgnoreCase(onlyDraftPageCode));
+			IPage childPage = this._pageManager.getOnlinePage(code);
+			assertTrue(childPage.isOnlineInstance());
+		}
+	}
+
+	public void testGetDraftPage_should_load_draftPageChildren() {
+		String onlyDraftPageCode = "pagina_draft";
+		String onlinePageCode = "homepage";
+		IPage page = this._pageManager.getDraftPage(onlinePageCode);
+		assertNotNull(page);
+		assertTrue(page.isOnline());
+		List<String> childs = Arrays.asList(page.getChildrenCodes());
+		boolean found = false;
+		for (String child : childs) {
+			String code = child;
+			found = code.equals(onlyDraftPageCode);
+		}
+		assertTrue(found);
+	}
 
     private void init() throws Exception {
         try {

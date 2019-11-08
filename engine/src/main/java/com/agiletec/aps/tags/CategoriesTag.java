@@ -90,15 +90,15 @@ public class CategoriesTag extends TagSupport {
 				title = child.getTitles().getProperty(langCode);
 			} else if (titleStyle.equals(TITLE_TYPE_FULL)) {
 				if (null != this.getFullTitleSeparator()) {
-					title = child.getFullTitle(langCode, this.getFullTitleSeparator());
+					title = child.getFullTitle(langCode, this.getFullTitleSeparator(), catManager);
 				} else {
-					title = child.getFullTitle(langCode);
+					title = child.getFullTitle(langCode, catManager);
 				}
 			} else if (titleStyle.equals(TITLE_TYPE_PRETTY_FULL)) {
 				if (null != this.getFullTitleSeparator()) {
-					title = child.getShortFullTitle(langCode, this.getFullTitleSeparator());
+					title = child.getShortFullTitle(langCode, this.getFullTitleSeparator(), catManager);
 				} else {
-					title = child.getShortFullTitle(langCode);
+					title = child.getShortFullTitle(langCode, catManager);
 				}
 			}
 			SelectItem catSmall = new SelectItem(child.getCode(), title);

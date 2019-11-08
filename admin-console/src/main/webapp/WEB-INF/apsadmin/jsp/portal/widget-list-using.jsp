@@ -45,16 +45,16 @@
                 <s:iterator var="singlePage">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title row" title="<s:property value="%{#singlePage.getFullTitle(currentLang.code)}" />">
+                            <h2 class="panel-title row" title="<s:property value="%{getFullTitle(#singlePage, currentLang.code)}" />">
                                 <s:if test="%{isUserAllowed(#singlePage)}">
                                     <div class="col-sm-2 col-lg-2">
                                         <div class="btn-group">
                                             <a href="<s:url namespace="/do/Page" action="viewTree">
-                                                   <s:param name="selectedNode" value="#singlePage.code" /></s:url>" class="btn btn-default" title="<s:text name="note.goToSomewhere" />: <s:property value="%{#singlePage.getFullTitle(currentLang.code)}" />">
+                                                   <s:param name="selectedNode" value="#singlePage.code" /></s:url>" class="btn btn-default" title="<s:text name="note.goToSomewhere" />: <s:property value="%{getFullTitle(#singlePage, currentLang.code)}" />">
                                                    <span class="icon fa fa-sitemap"></span>
                                                </a>
                                                <a href="<s:url namespace="/do/Page" action="configure"><s:param name="pageCode" value="#singlePage.code" />
-                                               </s:url>" class="btn btn-default" title="<s:text name="title.configPage" />: <s:property value="%{#singlePage.getFullTitle(currentLang.code)}" />" />
+                                               </s:url>" class="btn btn-default" title="<s:text name="title.configPage" />: <s:property value="%{getFullTitle(#singlePage, currentLang.code)}" />" />
                                             <span class="icon fa fa-cog"></span>
                                             </a>
                                         </div>
@@ -65,7 +65,7 @@
                                     <s:else>
                                         <div class="col-sm-9 col-lg-9 padding-small-top padding-small-bottom">
                                         </s:else>
-                                            <s:property value="%{#singlePage.getShortFullTitle(currentLang.code)}" />&nbsp;&nbsp;
+                                            <s:property value="%{getShortFullTitle(#singlePage, currentLang.code)}" />&nbsp;&nbsp;
                                             <s:if test="%{#singlePage.isOnlineInstance()}"><code class="label label-success"><s:text name="label.online" /></code></s:if>
                                             <s:else><code class="label label-default"><s:text name="label.draft" /></code></s:else>
                                     </div>

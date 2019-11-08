@@ -50,12 +50,20 @@ public class CategoryService implements ICategoryService {
     private List<CategoryServiceUtilizer> categoryServiceUtilizers;
 
     protected IDtoBuilder<Category, CategoryDto> getDtoBuilder() {
-        return new DtoBuilder<Category, CategoryDto>() {
-            @Override
-            protected CategoryDto toDto(Category src) {
-                return new CategoryDto(src);
-            }
-        };
+        CategoryDtoBuilder builder = new CategoryDtoBuilder();
+        builder.setCategoryManager(this.categoryManager);
+        return builder;
+    }
+    
+    public class CategoryDtoBuilder extends DtoBuilder<Category, CategoryDto> {
+        private ICategoryManager categoryManager;
+        @Override
+        protected CategoryDto toDto(Category src) {
+            return new CategoryDto(src, this.categoryManager);
+        }
+        public void setCategoryManager(ICategoryManager categoryManager) {
+            this.categoryManager = categoryManager;
+        }
     }
 
     @Override

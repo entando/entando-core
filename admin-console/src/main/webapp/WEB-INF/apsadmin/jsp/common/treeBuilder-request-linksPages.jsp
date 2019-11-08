@@ -9,7 +9,7 @@
 <s:else>
     <s:set var="treeItemIconNameVar" value="#treeItemIconName" />
 </s:else>
-<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if> <s:if test="%{#currentRoot.code == #selectedTreeNode}">active</s:if>">
+<tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parentCode" />" class="treeRow <s:if test="%{#currentRoot.code != 'homepage'}"></s:if> <s:if test="%{#currentRoot.code == #selectedTreeNode}">active</s:if>">
         <td class="treegrid-node pointer">
         <s:set var="pageCodeTokenVar" value="%{#parameters['pageCodeToken'][0]}" />
         <s:set var="pageCodeTokenCheckVar" value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}" />
@@ -64,16 +64,19 @@
 </td>
 <td class="text-center">
     <div class="moveButtons hidden">
+        <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT') && !#currentRoot.parentCode.equals('VIRTUAL_PAGE_ROOT')}" >
         <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn-no-button" data-toggle="tooltip">
             <i class="fa fa-caret-up" aria-hidden="true"></i>
         </wpsf:submit>
         <wpsf:submit action="moveDown" type="button" title="%{getText('page.options.moveDown')}" cssClass="btn-no-button" data-toggle="tooltip">
             <i class="fa fa-caret-down" aria-hidden="true"></i>
         </wpsf:submit>
+        </s:if>
     </div>
 </td>
 <td class="text-center">
     <span class="statusField">
+    <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT')}" >
     <s:if test="%{!#currentRoot.getEntity().isOnline()}">
         <i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i>
     </s:if>
@@ -83,6 +86,7 @@
     <s:else>
         <i class="fa fa-circle green" aria-hidden="true" title="Online"></i>
     </s:else>
+    </s:if>
 </span>
 </td>
 <td class="text-center">
@@ -95,8 +99,10 @@
 </td>
 <td class=" table-view-pf-actions text-center">
     <div class="dropdown dropdown-kebab-pf">
+        <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT')}" >
         <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-            <span class="fa fa-ellipsis-v"></span></button>
+            <span class="fa fa-ellipsis-v"></span>
+        </button>
         <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
             <li>
             <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
@@ -142,6 +148,7 @@
                 </li>
             </s:if>
         </ul>
+        </s:if>
     </div>
 </td>
 </tr>

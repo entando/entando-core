@@ -25,6 +25,8 @@ public interface IKeyGeneratorManagerCacheWrapper {
 
 	public int getUniqueKeyCurrentValue();
 
+	public int getAndIncrementUniqueKeyCurrentValue(IKeyGeneratorDAO keyGeneratorDAO);
+
 	public void updateCurrentKey(int val);
 
 }

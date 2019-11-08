@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.page;
 
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             throw e;
         }
     }
-
+    
     @Test
     public void testGetPage() {
         PageDto page = pageService.getPage("pagina_1", IPageService.STATUS_ONLINE);
@@ -90,7 +91,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             assertNull(addedPage);
         }
     }
-
+    
     @Test
     public void testUpdatePage() {
         String newCode = "pagina_13";
@@ -99,11 +100,20 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             assertNotNull(pageToClone);
             assertEquals(2, pageToClone.getTitles().size());
             assertEquals("Pagina 1-2", pageToClone.getTitles().get("it"));
+            PageDto parentPage = pageService.getPage(pageToClone.getParentCode(), "draft");
+            assertEquals(2, parentPage.getChildren().size());
             PageRequest pageRequest = this.createRequestFromDto(pageToClone);
             pageRequest.setCode(newCode);
             pageRequest.getTitles().put("en", "Page 1-3");
             pageRequest.getTitles().put("it", "Pagina 1-3");
             PageDto addedPage = pageService.addPage(pageRequest);
+            assertEquals(3, addedPage.getPosition());
+            parentPage = pageService.getPage(addedPage.getParentCode(), "draft");
+            assertEquals(3, parentPage.getChildren().size());
+            assertEquals(newCode, parentPage.getChildren().get(2));
+            
+            IPage newDraftPage = this.pageManager.getDraftPage(newCode);
+            assertEquals(3, newDraftPage.getPosition());
 
             PageRequest newPageRequest = this.createRequestFromDto(addedPage);
             newPageRequest.getTitles().put("it", "Pagina 1-3 mod");
@@ -111,19 +121,26 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             assertNotNull(modPage);
             assertEquals(2, modPage.getTitles().size());
             assertEquals("Pagina 1-3 mod", modPage.getTitles().get("it"));
+            assertEquals(3, modPage.getPosition());
+            
+            newDraftPage = this.pageManager.getDraftPage(newCode);
+            assertEquals(3, newDraftPage.getPosition());
 
             modPage = pageService.getPage(newCode, "draft");
             assertNotNull(modPage);
             assertEquals(2, modPage.getTitles().size());
             assertEquals("Pagina 1-3 mod", modPage.getTitles().get("it"));
+            assertEquals(3, modPage.getPosition());
 
             newPageRequest.getTitles().put("it", "Pagina 1-3");
             modPage = pageService.updatePage(newCode, newPageRequest);
+            assertEquals(3, modPage.getPosition());
 
             modPage = pageService.getPage(newCode, "draft");
             assertNotNull(modPage);
             assertEquals(2, modPage.getTitles().size());
             assertEquals("Pagina 1-3", modPage.getTitles().get("it"));
+            assertEquals(3, modPage.getPosition());
         } catch (Exception e) {
             throw e;
         } finally {
@@ -131,7 +148,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             assertNull(pageManager.getDraftPage(newCode));
         }
     }
-
+    
     @Test
     public void testUpdatePageStatus() {
         String newPageCode = "pagina_13";
@@ -163,7 +180,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             pageService.removePage(newPageCode);
         }
     }
-
+    
     @Test
     public void testChangeOnlyPosition() {
         String newPageCode = "pagina_13";
@@ -191,7 +208,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
             pageService.removePage(newPageCode);
         }
     }
-
+    
     @Test
     public void testChangeNode() {
         String newPageCode = "pagina_13";

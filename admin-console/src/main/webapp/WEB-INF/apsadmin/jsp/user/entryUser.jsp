@@ -261,10 +261,9 @@
                value="#fieldFieldErrorsVar != null && !#fieldFieldErrorsVar.isEmpty()" />
         <s:set var="controlGroupErrorClassVar"
                value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
-        <div
-                class="form-group<s:property value="#controlGroupErrorClassVar" />">
+        <div class="form-group<s:property value="#controlGroupErrorClassVar" />">
             <label class="col-sm-2 control-label" for="profileType">
-                <s:text name="profileType" />&nbsp;
+                <s:text name="label.profileType" />&nbsp;
                 <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
             </label>
             <div class="col-sm-10">
@@ -292,7 +291,7 @@
            value="%{#fieldHasFieldErrorVar ? ' has-error' : ''}" />
     <div
             class="form-group<s:property value="#controlGroupErrorClassVar" />">
-        <label class="col-sm-2 control-label" for="profileType">
+        <label class="col-sm-2 control-label" for="active">
             <s:text name="label.state" />
         </label>
         <div class="col-sm-10">

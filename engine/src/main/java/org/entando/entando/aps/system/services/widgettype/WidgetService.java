@@ -163,7 +163,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         details.setFrameIndex(index);
         details.setFrame(page.getModel().getFrames()[index]);
         details.setPageCode(page.getCode());
-        details.setPageFullPath(page.getPath());
+        details.setPageFullPath(page.getPath(this.getPageManager()));
         return details;
     }
 
@@ -333,5 +333,5 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     public void setServletContext(ServletContext srvCtx) {
         this.srvCtx = srvCtx;
     }
-
+    
 }

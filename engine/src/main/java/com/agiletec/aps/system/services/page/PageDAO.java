@@ -225,7 +225,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
     }
 
     protected void addPageRecord(IPage page, Connection conn) throws ApsSystemException {
-        String parentCode = page.getParent().getCode();
+        String parentCode = page.getParentCode();
         // a new page is always inserted in the last position,
         // to avoid changes of the position of the "sister" pages.
         int position = this.getLastPosition(parentCode, conn) + 1;
@@ -369,6 +369,10 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             conn.setAutoCommit(false);
             this.updatePosition(pageDown, MOVE_DOWN, conn);
             this.updatePosition(pageUp, MOVE_UP, conn);
+            this.updatePageMetadataOnlineLastUpdate(pageDown, new Date(), conn);
+            this.updatePageMetadataOnlineLastUpdate(pageUp, new Date(), conn);
+            this.updatePageMetadataDraftLastUpdate(pageDown, new Date(), conn);
+            this.updatePageMetadataDraftLastUpdate(pageUp, new Date(), conn);
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
@@ -403,6 +407,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             this.updateWidgetPosition(pageCode, frameToMove, TEMP_FRAME_POSITION, conn);
             this.updateWidgetPosition(pageCode, destFrame, frameToMove, conn);
             this.updateWidgetPosition(pageCode, TEMP_FRAME_POSITION, destFrame, conn);
+            this.updatePageMetadataDraftLastUpdate(pageCode, new Date(), conn);
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
@@ -446,6 +451,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             this.deleteDraftWidgets(pageCode, conn);
             this.deleteDraftPageMetadata(pageCode, conn);
             this.updatePageRecord(page, conn);
+            PageMetadata metadata = page.getMetadata();
+            metadata.setUpdatedAt(new Date());
             this.addDraftPageMetadata(pageCode, page.getMetadata(), conn);
             this.addWidgetForPage(page, WidgetConfigDest.DRAFT, conn);
             conn.commit();
@@ -504,6 +511,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             conn.setAutoCommit(false);
             this.deleteOnlineWidgets(pageCode, conn);
             this.deleteOnlinePageMetadata(pageCode, conn);
+            this.updatePageMetadataDraftLastUpdate(pageCode, new Date(), conn);
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
@@ -723,6 +731,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
             stat.setString(3, currentPage.getCode());
             stat.executeUpdate();
             this.shiftPages(currentPage.getParentCode(), currentPage.getPosition(), conn);
+            this.updatePageMetadataDraftLastUpdate(currentPage.getCode(), new Date(), conn);
             conn.commit();
         } catch (Throwable t) {
             this.executeRollback(conn);
@@ -764,8 +773,8 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
     private void updatePageMetatataUpdate(String pageCode, Date date, String tablename, Connection conn) throws SQLException {
         PreparedStatement stat = null;
         try {
-            StringBuilder query = new StringBuilder("UPDATE ").append(tablename).append(" SET updatedat = ? WHERE code = ?");
-            stat = conn.prepareStatement(query.toString());
+            String query = "UPDATE " + tablename + " SET updatedat = ? WHERE code = ?";
+            stat = conn.prepareStatement(query);
             stat.setTimestamp(1, new Timestamp(date.getTime()));
             stat.setString(2, pageCode);
             stat.executeUpdate();
@@ -784,7 +793,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
         Connection conn = null;
         PreparedStatement stat = null;
         ResultSet res = null;
-        List<String> pages = new ArrayList<String>();
+        List<String> pages = new ArrayList<>();
         try {
             conn = this.getConnection();
             String query = LOAD_LAST_UPDATED_PAGES;

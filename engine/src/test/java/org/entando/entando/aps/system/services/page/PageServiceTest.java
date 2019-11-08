@@ -34,6 +34,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.agiletec.aps.system.services.page.IPage;
+import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.mockito.Mockito;
+
 @RunWith(MockitoJUnitRunner.class)
 public class PageServiceTest {
 
@@ -45,21 +49,26 @@ public class PageServiceTest {
 
     @Mock
     private IGroupManager groupManager;
+    
+    @Mock
+    private IDtoBuilder<IPage, PageDto> dtoBuilder;
 
     @InjectMocks
     private PageService pageService;
 
     @Before
     public void setUp() {
-        pageService.setDtoBuilder(new PageDtoBuilder());
-
         when(groupManager.getGroup("free")).thenReturn(new Group());
         when(groupManager.getGroup("admin")).thenReturn(new Group());
     }
 
     @Test
     public void shouldAddExtraGroup() {
-
+        PageDto dto = new PageDto();
+        dto.addJoinGroup("free");
+        dto.addJoinGroup("admin");
+        when(dtoBuilder.convert(Mockito.any(IPage.class))).thenReturn(dto);
+        
         PageModel pageModel = getServicePageModel();
         when(pageModelManager.getPageModel(pageModel.getCode())).thenReturn(pageModel);
 
@@ -70,7 +79,6 @@ public class PageServiceTest {
         PageRequest request = getPageRequest(page);
         request.setJoinGroups(Arrays.asList("free", "admin"));
         when(pageManager.getDraftPage(request.getParentCode())).thenReturn(new Page());
-
         PageDto pageDto = pageService.updatePage(page.getCode(), request);
 
         assertThat(pageDto.getJoinGroups()).containsExactlyInAnyOrder("free", "admin");
@@ -78,7 +86,10 @@ public class PageServiceTest {
 
     @Test
     public void shouldRemoveExtraGroup() {
-
+        PageDto dto = new PageDto();
+        dto.addJoinGroup("free");
+        when(dtoBuilder.convert(Mockito.any(IPage.class))).thenReturn(dto);
+        
         PageModel pageModel = getServicePageModel();
         when(pageModelManager.getPageModel(pageModel.getCode())).thenReturn(pageModel);
 
@@ -89,7 +100,6 @@ public class PageServiceTest {
         PageRequest request = getPageRequest(page);
         request.setJoinGroups(Arrays.asList("free"));
         when(pageManager.getDraftPage(request.getParentCode())).thenReturn(new Page());
-
         PageDto pageDto = pageService.updatePage(page.getCode(), request);
 
         assertThat(pageDto.getJoinGroups()).containsExactly("free");

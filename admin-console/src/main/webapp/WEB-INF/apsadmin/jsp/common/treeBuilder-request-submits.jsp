@@ -9,7 +9,7 @@
     <s:set var="treeItemIconNameVar" value="#treeItemIconName"/>
 </s:else>
 
-<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}"
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parentCode}"
     class="treeRow tree_node_flag ${liClassName} <s:if test="%{#currentRoot.code != 'homepage'}"></s:if> ">
 
         <td class="treegrid-node pointer">
@@ -17,16 +17,17 @@
         <s:set var="pageCodeTokenCheckVar"
                value="%{null != #pageCodeTokenVar && #pageCodeTokenVar.trim().length() > 0}"/>
         <s:if test="#pageCodeTokenCheckVar">
-            <s:set var="openTreeActionName" value="'openCloseTreeResultNode'"/><s:set var="closeTreeActionName"
-                                                                                      value="'openCloseTreeResultNode'"/>
+            <s:set var="openTreeActionName" value="'openCloseTreeResultNode'"/>
+            <s:set var="closeTreeActionName" value="'openCloseTreeResultNode'"/>
         </s:if>
-        <s:else><s:set var="openTreeActionName" value="'openCloseTreeNode'"/><s:set var="closeTreeActionName"
-                                                                                    value="'openCloseTreeNode'"/></s:else>
+        <s:else>
+            <s:set var="openTreeActionName" value="'openCloseTreeNode'"/>
+            <s:set var="closeTreeActionName" value="'openCloseTreeNode'"/>
+        </s:else>
         <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'"/></s:if>
         <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'"/></s:if>
         <s:if test="!#currentRoot.open && !#currentRoot.empty">
-            <a class="treeOpenCloseJS"
-               href="<s:url action="%{#openTreeActionName}">
+            <a class="treeOpenCloseJS" href="<s:url action="%{#openTreeActionName}">
                    <wpsa:paramMap map="#treeNodeExtraParamsMap" />
                    <s:param name="contentOnSessionMarker" value="%{contentOnSessionMarker}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
@@ -36,7 +37,7 @@
                 <span class="treeOpenCloseJS icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open"/></span>
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" escapeHtml="true" />
             </a>
         </s:if>
         <s:elseif test="#currentRoot.open && !#currentRoot.empty">
@@ -50,7 +51,7 @@
                 <span class="treeOpenCloseJS icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close"/></span>
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" escapeHtml="true" />
             </a>
         </s:elseif>
         <input
@@ -65,7 +66,7 @@
         <label for="fagianonode_<s:property value="#currentRoot.code" />">
             <s:if test="#currentRoot.empty">
                 <span class="icon node-icon fa <s:property value="#treeItemIconNameVar" />"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)"/>
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" escapeHtml="true" />
             </s:if>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;<span class="text-muted icon fa fa-lock"></span></s:if>
             </label>

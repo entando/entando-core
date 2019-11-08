@@ -41,8 +41,10 @@
     </bean>
 
     <bean id="PageSettingsDtoBuilder" class="org.entando.entando.aps.system.services.pagesettings.model.PageSettingsDtoBuilder" />
-
-    <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" />
+    
+    <bean id="PageDtoBuilder" class="org.entando.entando.aps.system.services.page.model.PageDtoBuilder" >
+        <property name="pageManager" ref="PageManager" />
+    </bean>
 
     <bean id="PageModelDtoBuilder" class="org.entando.entando.aps.system.services.pagemodel.model.PageModelDtoBuilder" />
 
@@ -177,11 +179,11 @@
         <constructor-arg ref="OAuthConsumerManager" />
     </bean>
 
-   <bean name="DefaultObjectMapper"
-         class="com.fasterxml.jackson.databind.ObjectMapper" />
+    <bean name="DefaultObjectMapper"
+          class="com.fasterxml.jackson.databind.ObjectMapper" />
 
     <bean id="JsonPatchPatchConverter"
-        class="org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter">
+          class="org.springframework.data.rest.webmvc.json.patch.JsonPatchPatchConverter">
         <constructor-arg ref="DefaultObjectMapper"/>
     </bean>
 

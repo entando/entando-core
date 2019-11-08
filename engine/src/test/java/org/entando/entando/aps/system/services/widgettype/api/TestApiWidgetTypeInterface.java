@@ -46,7 +46,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testJaxbWidgetType() throws Throwable {
         this.testJaxbWidgetType("login_form");
         this.testJaxbWidgetType("formAction");
@@ -251,7 +251,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(code));
         }
     }
-
+    
     public void testDeleteJaxbWidgetType_3() throws Throwable {
         String code = "jaxb_test_delete_2";
         String pageCode = "homepage";
@@ -268,10 +268,13 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             widget.setType(addedWidgetType);
             this.setPageWidgets(pageCode, frame, widget);
             homepage = this._pageManager.getDraftPage(pageCode);
-
+            assertNotNull(homepage.getWidgets()[frame]);
+            assertEquals(code, homepage.getWidgets()[frame].getType().getCode());
+            
             this.testInvokeDeleteJaxbNoLogicWidgetType(code, false);
             this.setPageWidgets(pageCode, frame, null);
-            this._pageManager.updatePage(homepage);
+            homepage = this._pageManager.getDraftPage(pageCode);
+            assertNull(homepage.getWidgets()[frame]);
             this.testInvokeDeleteJaxbNoLogicWidgetType(code, true);
         } catch (Throwable t) {
             this.setPageWidgets(pageCode, frame, null);
@@ -281,10 +284,9 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(code));
         }
     }
-
+    
     private void setPageWidgets(String pageCode, int frame, Widget widget) throws ApsSystemException {
         IPage page = this._pageManager.getDraftPage(pageCode);
-        page.getWidgets()[frame] = widget;
         page.getWidgets()[frame] = widget;
         this._pageManager.updatePage(page);
     }
@@ -306,10 +308,12 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
             assertNull(this._guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode));
         } catch (ApiException ae) {
             if (expectedSuccess) {
-                fail();
+                throw ae;
             }
         } catch (Throwable t) {
-            throw t;
+            if (expectedSuccess) {
+                throw t;
+            }
         } finally {
             if (null != previousFragment && null == this._guiFragmentManager.getUniqueGuiFragmentByWidgetType(widgetTypeCode)) {
                 this._guiFragmentManager.addGuiFragment(previousFragment);

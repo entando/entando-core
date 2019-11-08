@@ -17,34 +17,50 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageDAO;
 import com.agiletec.aps.system.services.page.PagesStatus;
+import java.util.List;
 
 /**
  * @author E.Santoboni
  */
 public interface IPageManagerCacheWrapper {
 
-	public static final String PAGE_MANAGER_CACHE_NAME = "Entando_PageManager";
-	public static final String ONLINE_PAGE_CACHE_NAME_PREFIX = "PageManager_onLine_";
-	public static final String DRAFT_PAGE_CACHE_NAME_PREFIX = "PageManager_draft_";
-	public static final String ONLINE_ROOT_CACHE_NAME = "PageManager_onLineRoot";
-	public static final String DRAFT_ROOT_CACHE_NAME = "PageManager_draftRoot";
-	public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
-	public static final String PAGE_CODES_CACHE_NAME = "PageManager_codes";
+    public static final String PAGE_MANAGER_CACHE_NAME = "Entando_PageManager";
+    public static final String ONLINE_PAGE_CACHE_NAME_PREFIX = "PageManager_onLine_";
+    public static final String DRAFT_PAGE_CACHE_NAME_PREFIX = "PageManager_draft_";
+    public static final String ONLINE_ROOT_CACHE_NAME = "PageManager_onLineRoot";
+    public static final String DRAFT_ROOT_CACHE_NAME = "PageManager_draftRoot";
+    public static final String PAGE_STATUS_CACHE_NAME = "PageManager_pagesStatus";
+    public static final String DRAFT_PAGE_CODES_CACHE_NAME = "PageManager_draftCodes";
+    public static final String ONLINE_PAGE_CODES_CACHE_NAME = "PageManager_onlineCodes";
 
-	public void initCache(IPageDAO pageDao) throws ApsSystemException;
+    public static final String ONLINE_WIDGET_UTILIZER_CACHE_NAME_PREFIX = "PageManager_onlineUtilizer_";
+    public static final String DRAFT_WIDGET_UTILIZER_CACHE_NAME_PREFIX = "PageManager_draftUtilizer_";
 
-	public PagesStatus getPagesStatus();
+    public void initCache(IPageDAO pageDao) throws ApsSystemException;
 
-	public IPage getOnlinePage(String pageCode);
+    public PagesStatus getPagesStatus();
 
-	public IPage getDraftPage(String pageCode);
+    public IPage getOnlinePage(String pageCode);
 
-	public IPage getOnlineRoot();
+    public IPage getDraftPage(String pageCode);
 
-	public IPage getDraftRoot();
+    public IPage getOnlineRoot();
 
-	public void deleteDraftPage(String pageCode);
+    public IPage getDraftRoot();
+    
+    public List<String> getOnlineWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
 
-	public void deleteOnlinePage(String pageCode);
-
+    public List<String> getDraftWidgetUtilizers(String widgetTypeCode) throws ApsSystemException;
+    
+    public void deleteDraftPage(String pageCode);
+    
+    public void addDraftPage(IPage page);
+    
+    public void updateDraftPage(IPage page);
+    
+    public void moveUpDown(String pageDown, String pageUp);
+    
+    public void setPageOnline(String pageCode);
+    
+    public void setPageOffline(String pageCode);
 }

@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
@@ -81,7 +82,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 
 	@Override
 	public Set<String> checkTargetNodes(String nodeToOpen, Set<String> lastOpenedNodes, Collection<String> groupCodes) throws ApsSystemException {
-		Set<String> checkedTargetNodes = new HashSet<String>();
+		Set<String> checkedTargetNodes = new HashSet<>();
 		try {
 			if (null != nodeToOpen && this.checkNode(nodeToOpen, groupCodes)) {
 				checkedTargetNodes.add(nodeToOpen);
@@ -108,7 +109,7 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 		if (null == nodeToCloseCode || null == nodeToClose) {
 			return this.checkTargetNodes(null, lastOpenedNodes, groupCodes);
 		}
-		Set<String> checkedTargetNodes = new HashSet<String>();
+		Set<String> checkedTargetNodes = new HashSet<>();
 		try {
 			if (nodeToClose.isRoot()) {
 				return checkedTargetNodes;
@@ -118,14 +119,14 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 				while (iter.hasNext()) {
 					String code = (String) iter.next();
 					if (null != code && this.checkNode(code, groupCodes)
-							&& !code.equals(nodeToCloseCode) && !this.getTreeNode(code).isChildOf(nodeToCloseCode)) {
+							&& !code.equals(nodeToCloseCode) && !this.getTreeNode(code).isChildOf(nodeToCloseCode, this.getTreeNodeManager())) {
 						checkedTargetNodes.add(code);
 					}
 				}
 			}
-			if (null != nodeToClose.getParent()
-					&& this.checkNode(nodeToClose.getParent().getCode(), groupCodes)) {
-				checkedTargetNodes.add(nodeToClose.getParent().getCode());
+			if (null != nodeToClose.getParentCode()
+					&& this.checkNode(nodeToClose.getParentCode(), groupCodes)) {
+				checkedTargetNodes.add(nodeToClose.getParentCode());
 			}
 		} catch (Throwable t) {
 			_logger.error("Error check target nodes on closing tree", t);
@@ -151,11 +152,11 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	public TreeNodeWrapper getShowableTree(Set<String> treeNodesToOpen, ITreeNode fullTree, Collection<String> groupCodes) throws ApsSystemException {
 		if (null == treeNodesToOpen || treeNodesToOpen.isEmpty()) {
 			_logger.warn("No selected nodes");
-			return this.buildWrapper(fullTree);//new TreeNodeWrapper(fullTree);
+			return this.buildWrapper(fullTree);
 		}
 		TreeNodeWrapper root = null;
 		try {
-			Set<String> nodesToShow = new HashSet<String>();
+			Set<String> nodesToShow = new HashSet<>();
 			this.buildCheckNodes(treeNodesToOpen, nodesToShow, groupCodes);
 			root = this.buildWrapper(fullTree);
 			root.setParent(root);
@@ -183,8 +184,8 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 
 	protected void buildCheckNodes(ITreeNode treeNode, Set<String> nodesToShow, Collection<String> groupCodes) {
 		nodesToShow.add(treeNode.getCode());
-		ITreeNode parent = treeNode.getParent();
-		if (parent != null && parent.getParent() != null
+		ITreeNode parent = this.getTreeNodeManager().getNode(treeNode.getParentCode());
+		if (parent != null && parent.getParentCode() != null
 				&& !parent.getCode().equals(treeNode.getCode())) {
 			this.buildCheckNodes(parent, nodesToShow, groupCodes);
 		}
@@ -198,13 +199,14 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 				ITreeNode newCurrentTreeNode = this.getTreeNode(children[i]);
 				TreeNodeWrapper newNode = this.buildWrapper(newCurrentTreeNode);
 				newNode.setParent(currentNode);
+				newNode.setParentCode(currentNode.getCode());
 				currentNode.addChildCode(newNode.getCode());
 				currentNode.addChild(newNode);
 				this.builShowableTree(newNode, newCurrentTreeNode, checkNodes);
 			}
 		}
 	}
-
+    
 	protected abstract boolean isNodeAllowed(String code, Collection<String> groupCodes);
 
 	/**
@@ -235,8 +237,11 @@ public abstract class TreeNodeBaseActionHelper extends BaseActionHelper implemen
 	}
 
 	protected TreeNodeWrapper buildWrapper(ITreeNode treeNode) {
-		return new TreeNodeWrapper(treeNode);
+        ITreeNode parent = this.getTreeNodeManager().getNode(treeNode.getParentCode());
+		return new TreeNodeWrapper(treeNode, parent);
 	}
+    
+    protected abstract ITreeNodeManager getTreeNodeManager();
 
 	/**
 	 * Return the root node of the managed tree.

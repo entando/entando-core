@@ -12,46 +12,46 @@
 
 <s:if test="null == #openTreeActionName"><s:set var="openTreeActionName" value="'openCloseTreeNode'" /></s:if>
 <s:if test="null == #closeTreeActionName"><s:set var="closeTreeActionName" value="'openCloseTreeNode'" /></s:if>
-<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}"
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parentCode}"
     class="treeRow tree_node_flag ${liClassName}" >
     <td class="treegrid-node pointer">
-        <s:if test="!#currentRoot.open && !#currentRoot.empty">
+        <s:if test="%{!#currentRoot.open && !#currentRoot.empty}">
             <a href="<s:url action="%{#openTreeActionName}">
-                   <wpsa:paramMap map="#treeNodeExtraParamsMap" />
+                   <wpsa:paramMap map="%{#treeNodeExtraParamsMap}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="treeNodeActionMarkerCode" value="'open'" />
-                   <s:param name="targetNode" value="#currentRoot.code" />
+                   <s:param name="targetNode" value="%{#currentRoot.code}" />
                    <s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="icon fa fa-plus" title="<s:text name="label.open" />"></span>
                 <span class="sr-only"><s:text name="label.open" /></span>
                 <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" />
             </a>
         </s:if>
-        <s:elseif test="#currentRoot.open && !#currentRoot.empty">
+        <s:elseif test="%{#currentRoot.open && !#currentRoot.empty}">
             <a href="<s:url action="%{#closeTreeActionName}">
-                   <wpsa:paramMap map="#treeNodeExtraParamsMap" />
+                   <wpsa:paramMap map="%{#treeNodeExtraParamsMap}" />
                    <s:param name="%{#treeNodeExtraParamName}" value="%{#treeNodeExtraParamValue}" />
                    <s:param name="treeNodeActionMarkerCode" value="'close'" />
-                   <s:param name="targetNode" value="#currentRoot.code" />
+                   <s:param name="targetNode" value="%{#currentRoot.code}" />
                    <s:param name="treeNodesToOpen" value="treeNodesToOpen" /></s:url>">
                 <span class="icon fa fa-minus" title="<s:text name="label.close" />"></span>
                 <span class="sr-only"><s:text name="label.close" /></span>
                 <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" />
             </a>
         </s:elseif>
-
+        
         <input type="radio" name="${inputFieldName}"
                id="fagianonode_${currentRoot.code}"
                value="${currentRoot.code}"
-               class="subTreeToggler ${(isSelected)?'active':''} hidden
+               class="subTreeToggler <s:if test="#isSelected">active</s:if> hidden
                <s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
                <s:if test="#isSelected"> checked="checked"</s:if> />&#32;
         <label for="fagianonode_${currentRoot.code}" class="${margin}">
-            <s:if test="#currentRoot.empty">
+            <s:if test="%{#currentRoot.empty}">
                 <span class="icon node-icon fa ${treeItemIconNameVar}"></span>
-                <s:property value="getTitle(#currentRoot.code, #currentRoot.titles)" />
+                <s:property value="%{getTitle(#currentRoot.code, #currentRoot.titles)}" />
             </s:if>
             <s:if test="%{#currentRoot.group != null && !#currentRoot.group.equals('free')}">&#32;
                 <span class="text-muted icon fa fa-lock"></span>

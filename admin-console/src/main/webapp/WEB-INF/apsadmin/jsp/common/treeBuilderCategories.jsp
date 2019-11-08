@@ -32,7 +32,7 @@
 <s:set var="isHidden" value="%{!#currentRoot.isRoot() && (treeNodesToOpen == null || !treeNodesToOpen.contains(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
 
-<tr id="${currentRoot.code}" data-parent="#${currentRoot.parent.code}" 
+<tr id="${currentRoot.code}" data-parent="#${currentRoot.parentCode}" 
     class="treeRow <s:if test="%{#isHidden}">collapsed childrenNodes</s:if> tree_node_flag ${liClassName}" >
         <td class="treegrid-node pointer">
             <input type="radio" name="${inputFieldName}"  

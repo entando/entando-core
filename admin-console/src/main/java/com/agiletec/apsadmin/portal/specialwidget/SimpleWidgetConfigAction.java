@@ -42,33 +42,30 @@ public class SimpleWidgetConfigAction extends AbstractPortalAction {
 		return this.extractInitConfig();
 	}
 
-	protected String extractInitConfig() {
-		if (null != this.getWidget()) {
-			return SUCCESS;
-		}
-		Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];
-		if (null == widget) {
-			widget = this.createNewWidget();
-			if (null == widget) {
-				this.addActionError(this.getText("error.page.nullWidgetOnFrame", this.getPageCode(), String.valueOf(this.getFrame())));
-				return "pageTree";
-			}
-			/*
-			} catch (Exception e) {
-				_logger.error("error in extractInitConfig", e);
-				//TODO METTI MESSAGGIO DI ERRORE NON PREVISTO... Vai in pageTree con messaggio di errore Azione non prevista o cosa del genere
-				this.addActionError(this.getText("Message.userNotAllowed"));
-				return "pageTree";
-			}
-			 */
-			_logger.info("Configurating new Widget {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
-		} else {
-			_logger.info("Edit Widget config {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
-			widget = this.createCloneFrom(widget);
-		}
-		this.setWidget(widget);
-		return SUCCESS;
-	}
+    protected String extractInitConfig() {
+        if (null != this.getWidget()) {
+            return SUCCESS;
+        }
+        if (null == this.getCurrentPage()) {
+            _logger.error("Null page - code {}", this.getPageCode());
+            this.addActionError(this.getText("error.page.invalidPageCode.adv", this.getPageCode()));
+            return "pageTree";
+        }
+        Widget widget = this.getCurrentPage().getWidgets()[this.getFrame()];
+        if (null == widget) {
+            widget = this.createNewWidget();
+            if (null == widget) {
+                this.addActionError(this.getText("error.page.nullWidgetOnFrame", this.getPageCode(), String.valueOf(this.getFrame())));
+                return "pageTree";
+            }
+            _logger.info("Configurating new Widget {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
+        } else {
+            _logger.info("Edit Widget config {} - Page {} - Frame {}", this.getWidgetTypeCode(), this.getPageCode(), this.getFrame());
+            widget = this.createCloneFrom(widget);
+        }
+        this.setWidget(widget);
+        return SUCCESS;
+    }
 
 	protected Widget createNewWidget() {
 		if (this.getWidgetTypeCode() == null || this.getWidgetType(this.getWidgetTypeCode()) == null) {

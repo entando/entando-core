@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
@@ -29,46 +30,29 @@ import java.io.Serializable;
  * @author M.Diana - E.Santoboni
  */
 public class Page extends TreeNode implements IPage, Serializable {
-
-    /**
-     * Set the position of the page with regard to its sisters
-     *
-     * @param position the position of the page.
-     */
+    
     @Override
-    protected void setPosition(int position) {
-        super.setPosition(position);
+    public IPage clone() {
+        Page clone = (Page) super.clone();
+        clone.setChanged(this.isChanged());
+        clone.setOnline(this.isOnline());
+        clone.setOnlineInstance(this.isOnlineInstance());
+        if (null != this.getMetadata()) {
+            clone.setMetadata(this.getMetadata().clone());
+        }
+        if (null != this.getWidgets()) {
+            Widget[] clonedWidgets = new Widget[this.getWidgets().length];
+            for (int i = 0; i < this.getWidgets().length; i++) {
+                Widget widgetToClone = this.getWidgets()[i];
+                if (null != widgetToClone) {
+                    clonedWidgets[i] = widgetToClone.clone();
+                }
+            }
+            clone.setWidgets(clonedWidgets);
+        }
+        return clone;
     }
-
-    @Override
-    public IPage getParent() {
-        return (IPage) super.getParent();
-    }
-
-    /**
-     * WARING: this method is reserved to the page manager service only. Return
-     * the code of the father of this page. This methods exists only to simplify
-     * the loading of the pages structure, it cannot be used in any other
-     * circumstance.
-     *
-     * @return the code of the higher level page
-     */
-    @Override
-    public String getParentCode() {
-        return _parentCode;
-    }
-
-    /**
-     * WARING: this method is reserved to the page manager service only. Set the
-     * code of the father of this page. This methods exists only to simplify the
-     * loading of the pages structure, it cannot be used in any other
-     * circumstance.
-     *
-     * @param parentCode the code of the higher level page
-     */
-    public void setParentCode(String parentCode) {
-        this._parentCode = parentCode;
-    }
+    
 
     /**
      * Return the related model of page
@@ -262,7 +246,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return this.online;
     }
 
-    protected void setOnline(boolean online) {
+    public void setOnline(boolean online) {
         this.online = online;
     }
 
@@ -280,35 +264,15 @@ public class Page extends TreeNode implements IPage, Serializable {
         return this.changed;
     }
 
-    protected void setChanged(boolean changed) {
+    public void setChanged(boolean changed) {
         this.changed = changed;
     }
-
+    
     @Override
-    protected String getFullTitle(String langCode, String separator, boolean shortTitle) {
-        String title = this.getTitles().getProperty(langCode);
-        if (null == title) {
-            title = this.getCode();
-        }
-        if (this.isRoot()) {
-            return title;
-        }
-        ITreeNode parent = this.getParent();
-        while (parent != null && parent.getParent() != null) {
-            String parentTitle = "..";
-            if (!shortTitle) {
-                parentTitle = parent.getTitles().getProperty(langCode);
-                if (null == parentTitle) {
-                    parentTitle = parent.getCode();
-                }
-            }
-            title = parentTitle + separator + title;
-            if (parent.isRoot()) {
-                return title;
-            }
-            parent = parent.getParent();
-        }
-        return title;
+    protected ITreeNode getParent(ITreeNode node, ITreeNodeManager treeNodeManager) {
+        return (this.isOnlineInstance()) ? 
+                ((IPageManager) treeNodeManager).getOnlinePage(node.getParentCode()) :
+                ((IPageManager) treeNodeManager).getDraftPage(node.getParentCode());
     }
 
     @Override
@@ -339,7 +303,6 @@ public class Page extends TreeNode implements IPage, Serializable {
     /**
      * The code of the higher level page
      */
-    private String _parentCode;
     private PageMetadata _metadata = new PageMetadata();
     private Widget[] widgets;
     private boolean online;

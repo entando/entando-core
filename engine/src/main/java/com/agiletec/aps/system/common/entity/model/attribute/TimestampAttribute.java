@@ -69,6 +69,11 @@ public class TimestampAttribute extends DateAttribute {
 		this._failedSecondString = failedSecondString;
 	}
 
+	@Override
+	public boolean isSearchableOptionSupported() {
+		return true;
+	}
+
 	private String _failedHourString;
     private String _failedMinuteString;
     private String _failedSecondString;

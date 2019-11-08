@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.CategoryUtilizer;
@@ -130,6 +131,11 @@ public class CategoryActionHelper extends TreeNodeBaseActionHelper implements IC
 	protected boolean isNodeAllowed(String code, Collection<String> groupCodes) {
 		return true;
 	}
+
+    @Override
+    protected ITreeNodeManager getTreeNodeManager() {
+        return this.getCategoryManager();
+    }
 	
 	protected ICategoryManager getCategoryManager() {
 		return _categoryManager;

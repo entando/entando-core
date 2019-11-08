@@ -63,56 +63,49 @@ public class CacheInfoManager extends AbstractService implements ICacheInfoManag
 
     @Around("@annotation(cacheableInfo)")
     public Object aroundCacheableMethod(ProceedingJoinPoint pjp, CacheableInfo cacheableInfo) throws Throwable {
-        Object result = pjp.proceed();
-        if (cacheableInfo.expiresInMinute() < 0 && (cacheableInfo.groups() == null || cacheableInfo.groups().trim().length() == 0)) {
-            return result;
+        boolean skipCacheableInfo = (cacheableInfo.expiresInMinute() < 0 && (StringUtils.isBlank(cacheableInfo.groups())));
+        if (skipCacheableInfo) {
+            return pjp.proceed();
         }
+        Object result = null;
         try {
             MethodSignature methodSignature = (MethodSignature) pjp.getSignature();
             Method targetMethod = methodSignature.getMethod();
             Class targetClass = pjp.getTarget().getClass();
             Method effectiveTargetMethod = targetClass.getMethod(targetMethod.getName(), targetMethod.getParameterTypes());
             Cacheable cacheable = effectiveTargetMethod.getAnnotation(Cacheable.class);
+            String keyExpression = null;
+            String[] cacheNames = null;
             if (null == cacheable) {
                 CachePut cachePut = effectiveTargetMethod.getAnnotation(CachePut.class);
                 if (null == cachePut) {
-                    return result;
+                    return pjp.proceed();
                 }
-                String[] cacheNames = cachePut.value();
-                Object key = this.evaluateExpression(cachePut.key().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
-                for (String cacheName : cacheNames) {
-                    if (cacheableInfo.groups() != null && cacheableInfo.groups().trim().length() > 0) {
-                        Object groupsCsv = this.evaluateExpression(cacheableInfo.groups().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
-                        if (null != groupsCsv && groupsCsv.toString().trim().length() > 0) {
-                            String[] groups = groupsCsv.toString().split(",");
-                            this.putInGroup(cacheName, key.toString(), groups);
-                        }
-                    }
-                    if (cacheableInfo.expiresInMinute() > 0) {
-                        this.setExpirationTime(cacheName, key.toString(), cacheableInfo.expiresInMinute());
-                    }
-                }
+                cacheNames = cachePut.value();
+                keyExpression = cachePut.key();
             } else {
-                String[] cacheNames = cacheable.value();
                 if (!StringUtils.isBlank(cacheable.condition())) {
                     Object isCacheable = this.evaluateExpression(cacheable.condition(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
                     Boolean check = Boolean.valueOf(isCacheable.toString());
                     if (null != check && !check) {
-                        return result;
+                        return pjp.proceed();
                     }
                 }
-                Object key = this.evaluateExpression(cacheable.key().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
-                for (String cacheName : cacheNames) {
-                    if (cacheableInfo.groups() != null && cacheableInfo.groups().trim().length() > 0) {
-                        Object groupsCsv = this.evaluateExpression(cacheableInfo.groups().toString(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
-                        if (null != groupsCsv && groupsCsv.toString().trim().length() > 0) {
-                            String[] groups = groupsCsv.toString().split(",");
-                            this.putInGroup(cacheName, key.toString(), groups);
-                        }
+                cacheNames = cacheable.value();
+                keyExpression = cacheable.key();
+            }
+            Object key = this.evaluateExpression(keyExpression, targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
+            result = pjp.proceed();
+            for (String cacheName : cacheNames) {
+                if (cacheableInfo.groups() != null && cacheableInfo.groups().trim().length() > 0) {
+                    Object groupsCsv = this.evaluateExpression(cacheableInfo.groups(), targetMethod, pjp.getArgs(), effectiveTargetMethod, targetClass);
+                    if (null != groupsCsv && groupsCsv.toString().trim().length() > 0) {
+                        String[] groups = groupsCsv.toString().split(",");
+                        this.putInGroup(cacheName, key.toString(), groups);
                     }
-                    if (cacheableInfo.expiresInMinute() > 0) {
-                        this.setExpirationTime(cacheName, key.toString(), cacheableInfo.expiresInMinute());
-                    }
+                }
+                if (cacheableInfo.expiresInMinute() > 0) {
+                    this.setExpirationTime(cacheName, key.toString(), cacheableInfo.expiresInMinute());
                 }
             }
         } catch (Throwable t) {

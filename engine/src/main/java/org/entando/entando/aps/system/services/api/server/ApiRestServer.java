@@ -283,8 +283,8 @@ public class ApiRestServer {
                 String username = token.getLocalUser();
                 IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
                 UserDetails user = userManager.getUser(username);
-                properties.put(SystemConstants.API_USER_PARAMETER, user);
                 if (user != null) {
+                    properties.put(SystemConstants.API_USER_PARAMETER, user);
                     _logger.info("User {} requesting resource that requires {} permission ", username, permission);
                     request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
                     if (permission != null) {

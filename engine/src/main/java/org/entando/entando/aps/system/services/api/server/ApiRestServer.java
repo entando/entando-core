@@ -26,6 +26,9 @@ import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.*;
+import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
+import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
+import org.entando.entando.web.common.interceptor.EntandoBearerTokenExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +37,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
 import java.util.Map.Entry;
-import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
-import org.entando.entando.aps.system.services.oauth2.model.OAuth2AccessTokenImpl;
-import org.entando.entando.web.common.interceptor.EntandoBearerTokenExtractor;
 
 /**
  * @author E.Santoboni
@@ -49,7 +49,7 @@ public class ApiRestServer {
     @Produces({"application/xml", "text/plain", "application/json", "application/javascript"})
     @Path("/{langCode}/{resourceName}")
     public Object doGet(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                        @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, null, resourceName, request, ui);
     }
 
@@ -57,7 +57,7 @@ public class ApiRestServer {
     @Produces({"application/xml", "text/plain", "application/json", "application/javascript"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doGet(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                        @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, namespace, resourceName, request, ui);
     }
 
@@ -66,7 +66,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
     public Object doPostFromXmlBody(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                                    @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
 
@@ -75,7 +75,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doPostFromXmlBody(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                                    @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
 
@@ -84,7 +84,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
     public Object doPostFromJsonBody(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                                     @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
 
@@ -93,7 +93,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doPostFromJsonBody(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                                     @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
 
@@ -102,7 +102,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
     public Object doPutFromXmlBody(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                                   @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
 
@@ -111,7 +111,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doPutFromXmlBody(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                                   @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
 
@@ -120,7 +120,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
     public Object doPutFromJsonBody(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                                    @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
 
@@ -129,7 +129,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doPutFromJsonBody(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                                    @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
 
@@ -137,7 +137,7 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
     public Object doDelete(@PathParam("langCode") String langCode, @PathParam("resourceName") String resourceName,
-            @Context HttpServletRequest request, @Context UriInfo ui) {
+                           @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, null, resourceName, request, ui);
     }
 
@@ -145,19 +145,19 @@ public class ApiRestServer {
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
     public Object doDelete(@PathParam("langCode") String langCode, @PathParam("namespace") String namespace,
-            @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
+                           @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, namespace, resourceName, request, ui);
     }
 
     protected Object buildGetDeleteResponse(String langCode, ApiMethod.HttpMethod httpMethod,
-            String namespace, String resourceName, HttpServletRequest request, UriInfo ui) {
+                                            String namespace, String resourceName, HttpServletRequest request, UriInfo ui) {
         Object responseObject = null;
         try {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
             Properties properties = this.extractProperties(langCode, ui, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
             if (apiMethod.getRequiredAuth()) {
-                this.extractOAuthParameters(request, apiMethod.getRequiredPermission());
+                this.extractOAuthParameters(request, apiMethod.getRequiredPermission(), properties);
             }
             responseObject = responseBuilder.createResponse(apiMethod, properties);
         } catch (ApiException ae) {
@@ -169,14 +169,14 @@ public class ApiRestServer {
     }
 
     protected Object buildPostPutResponse(String langCode, ApiMethod.HttpMethod httpMethod,
-            String namespace, String resourceName, HttpServletRequest request, UriInfo ui, MediaType mediaType) {
+                                          String namespace, String resourceName, HttpServletRequest request, UriInfo ui, MediaType mediaType) {
         Object responseObject = null;
         try {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
             Properties properties = this.extractProperties(langCode, ui, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
             if (apiMethod.getRequiredAuth()) {
-                this.extractOAuthParameters(request, apiMethod.getRequiredPermission());
+                this.extractOAuthParameters(request, apiMethod.getRequiredPermission(), properties);
             }
             Object bodyObject = UnmarshalUtils.unmarshal(apiMethod.getExpectedType(), request, mediaType);
             responseObject = responseBuilder.createResponse(apiMethod, bodyObject, properties);
@@ -211,7 +211,7 @@ public class ApiRestServer {
             Set<Entry<String, List<String>>> entries = queryParams.entrySet();
             Iterator<Entry<String, List<String>>> iter = entries.iterator();
             while (iter.hasNext()) {
-                Map.Entry<String, List<String>> entry = iter.next();
+                Entry<String, List<String>> entry = iter.next();
                 String key = entry.getKey();
                 if (!reservedParameters.contains(key)) {
                     //extract only the first value
@@ -266,7 +266,7 @@ public class ApiRestServer {
         return response;
     }
 
-    protected void extractOAuthParameters(HttpServletRequest request, String permission) throws ApiException {
+    protected void extractOAuthParameters(HttpServletRequest request, String permission, Properties properties) throws ApiException {
         try {
             _logger.info("Permission required: {}", permission);
             String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
@@ -284,6 +284,7 @@ public class ApiRestServer {
                 IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
                 UserDetails user = userManager.getUser(username);
                 if (user != null) {
+                    properties.put(SystemConstants.API_USER_PARAMETER, user);
                     _logger.info("User {} requesting resource that requires {} permission ", username, permission);
                     request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
                     if (permission != null) {

@@ -2012,14 +2012,14 @@ label .fa-folder, .fa-folder {
     text-rendering: optimizeLegibility;
 }
 #background-full {
-    background: url("../img/bg-login.jpg");
+    background: linear-gradient(rgba(2, 42, 107, 0.49),rgba(0,0,0,0.5)), url("../img/bg-login.jpg");
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
     background-size: cover;
 }
 #background-full-landing{
-    background: url("../img/bg_landing.jpg");
+    background: linear-gradient(rgba(2, 42, 107, 0.49),rgba(0,0,0,0.5)), url("../img/bg_landing.jpg");
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;

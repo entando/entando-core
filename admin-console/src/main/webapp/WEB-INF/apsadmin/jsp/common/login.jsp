@@ -34,11 +34,11 @@
     <div class="col-md-6 v-align ">
         <div class="center1">
             <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg"/>
-            <p class="ux_brand"><strong>THE LEADING PLATFORM</strong></p>
-            <p class="ux_brand_subtitle"> FOR CLOUD NATIVE APPLICATIONS</p>
+            <p class="ux_brand"><strong>THE LEADING UX INNOVATION PLATFORM</strong></p>
+            <p class="ux_brand_subtitle"></p>
             <div class="spacer-login"></div>
             <div class="entando-intro">
-                Entando is the lightest open source Digital Transformation Platform for Modern Applications. We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
+                Entando is the leading open source UX innovation platform for building modern web applications on Kubernetes. We help enterprises innovate faster and develop exceptional user experiences by bringing leading edge tools and architectures like cloud-native development, containers and micro frontends to help developers build applications that are truly modern.
             </div>
             <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
         </div>

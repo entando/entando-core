@@ -260,7 +260,7 @@
         <springsecurityoauth2.version>2.3.6.RELEASE</springsecurityoauth2.version>
         <struts2.version>2.5.17</struts2.version>
         <cxf.version>3.1.16</cxf.version>
-        <jackson.version>2.9.9</jackson.version>
+        <jackson.version>2.10.0</jackson.version>
         <hibernate-validator-version>6.0.17.Final</hibernate-validator-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -361,7 +361,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.4</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -903,7 +903,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.3</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>

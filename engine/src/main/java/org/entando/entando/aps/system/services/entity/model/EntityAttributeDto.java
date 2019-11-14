@@ -108,8 +108,8 @@ public class EntityAttributeDto {
             BigDecimal number = new BigDecimal(this.getValue().toString());
             ((NumberAttribute) attribute).setValue(number);
         }
-        if (attribute instanceof BooleanAttribute && (null != this.getValue())) {
-            ((BooleanAttribute) attribute).setBooleanValue(Boolean.parseBoolean(this.getValue().toString()));
+        if (attribute instanceof BooleanAttribute) {
+            ((BooleanAttribute) attribute).setBooleanValue((Boolean)this.getValue());
         }
         if (attribute instanceof DateAttribute && (null != this.getValue())) {
             Date date = null;
@@ -134,6 +134,7 @@ public class EntityAttributeDto {
                 i.fillEntityAttribute(prototype, bindingResult);
             });
         } else if (attribute instanceof ListAttribute && (null != this.getListElements())) {
+            ((ListAttribute) attribute).getAttributeListMap().clear();
             this.getListElements().keySet().stream().forEach(langCode -> {
                 List<EntityAttributeDto> list = this.getListElements().get(langCode);
                 list.stream().forEach(i -> {

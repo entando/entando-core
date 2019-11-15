@@ -212,33 +212,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
         }
         return actionRecords;
     }
-
-    @Override
-    public List<Integer> getActivityStream(List<String> userGroupCodes) {
-        Connection conn = null;
-        List<Integer> idList = new ArrayList<>();
-        PreparedStatement stat = null;
-        ResultSet result = null;
-        try {
-            conn = this.getConnection();
-            FieldSearchFilter filter1 = new FieldSearchFilter("actiondate");
-            filter1.setOrder(FieldSearchFilter.DESC_ORDER);
-            FieldSearchFilter filter2 = new FieldSearchFilter("activitystreaminfo");
-            FieldSearchFilter[] filters = {filter1, filter2};
-            List<String> groupCodes = (null != userGroupCodes && userGroupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroupCodes;
-            stat = this.buildStatement(filters, groupCodes, false, conn);
-            result = stat.executeQuery();
-            while (result.next()) {
-                idList.add(result.getInt(1));
-            }
-        } catch (Throwable t) {
-            logger.error("Error loading activity stream records", t);
-            throw new RuntimeException("Error loading activity stream records", t);
-        } finally {
-            closeDaoResources(result, stat, conn);
-        }
-        return idList;
-    }
     
     @Override
     public Date getLastUpdate(FieldSearchFilter[] filters, List<String> userGroupCodes) {

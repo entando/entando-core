@@ -40,8 +40,6 @@ public interface IActionLogDAO {
 	public ActionLogRecord getActionRecord(int id);
 	
 	public void deleteActionRecord(int id);
-	
-	public List<Integer> getActivityStream(List<String> userGroupCodes);
     
     public Date getLastUpdate(IActionLogRecordSearchBean searchBean);
     

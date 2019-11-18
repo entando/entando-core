@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -68,8 +69,12 @@ public interface IActionLogManager {
     public void deleteActionRecord(int id) throws ApsSystemException;
 
     public List<Integer> getActivityStream(List<String> userGroupCodes) throws ApsSystemException;
+    
+    public List<Integer> getActivityStream(FieldSearchFilter[] filters, List<String> userGroupCodes) throws ApsSystemException;
 
     public List<Integer> getActivityStream(UserDetails loggedUser) throws ApsSystemException;
+
+    public List<Integer> getActivityStream(FieldSearchFilter[] filters, UserDetails loggedUser) throws ApsSystemException;
 
     public List<Integer> getActivityStream(IActivityStreamSearchBean activityStreamSearchBean) throws ApsSystemException;
 

@@ -53,11 +53,11 @@ public class AdminPagerTagHelper extends PagerTagHelper {
 		return pagerVo;
 	}
 	
-	protected int getItemNumber(ServletRequest request) {
+	public int getItemNumber(ServletRequest request) {
 		return this.getItemNumber(null, request);
 	}
 	
-	protected int getItemNumber(String pagerId, ServletRequest request) {
+	public int getItemNumber(String pagerId, ServletRequest request) {
 		String stringItem = null;
 		String marker = (null != pagerId && pagerId.trim().length() > 0) ? pagerId : DEFAULT_PAGER_NAME; 
 		String[] params = ApsRequestParamsUtil.getApsParams(marker, "_", request);

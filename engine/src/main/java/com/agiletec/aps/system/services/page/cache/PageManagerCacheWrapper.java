@@ -539,12 +539,16 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             }
             utilizersMap.keySet().stream().forEach(cacheKey -> {
                 cache.put(cacheKey, utilizersMap.get(cacheKey));
-                this.localObject.add(cacheKey);
+                if (!this.localObject.contains(cacheKey)) {
+                    this.localObject.add(cacheKey);
+                }
             });
             pageCodes = utilizersMap.get(key);
         }
         if (null == pageCodes) {
             pageCodes = new ArrayList<>();
+            cache.put(key, pageCodes);
+            this.localObject.add(key);
         }
         return pageCodes;
     }

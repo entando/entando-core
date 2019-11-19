@@ -21,6 +21,7 @@ import com.agiletec.aps.system.common.entity.model.FieldError;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.services.category.ICategoryManager;
+import java.util.ArrayList;
 import java.util.List;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -97,19 +98,21 @@ public abstract class AbstractEntityService<I extends IApsEntity, T extends Enti
         IEntityManager entityManager = this.extractEntityManager(entityManagerCode);
         try {
             String id = request.getId();
-            I oldEntity = (I) entityManager.getEntity(id);
-            if (null == oldEntity) {
+
+            I entity = (I) entityManager.getEntity(id);
+
+            if (null == entity) {
                 bindingResult.reject(EntityValidator.ERRCODE_ENTITY_DOES_NOT_EXIST,
                         new String[]{id}, "entity.notExists");
                 throw new ResourceNotFoundException(bindingResult);
             }
             String typeCode = request.getTypeCode();
-            if (!oldEntity.getTypeCode().equals(typeCode)) {
+            if (!entity.getTypeCode().equals(typeCode)) {
                 bindingResult.reject(EntityValidator.ERRCODE_TYPE_MISMATCH,
-                        new String[]{oldEntity.getTypeCode(), typeCode}, "entity.type.invalid");
+                        new String[]{entity.getTypeCode(), typeCode}, "entity.type.invalid");
                 throw new ValidationConflictException(bindingResult);
             }
-            I entity = this.getEntityPrototype(entityManager, request.getTypeCode());
+
             request.fillEntity(entity, this.getCategoryManager(), bindingResult);
             this.scanEntity(entity, bindingResult);
             if (!bindingResult.hasErrors()) {

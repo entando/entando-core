@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import org.jdom.Element;
 
 import com.agiletec.aps.system.SystemConstants;
@@ -37,7 +38,7 @@ import com.agiletec.aps.system.services.lang.Lang;
  *
  * @author W.Ambu - E.Santoboni
  */
-public class DateAttribute extends AbstractAttribute {
+public class DateAttribute extends AbstractAttribute implements IndexableAttributeInterface {
 
     /**
      * Get the FULLy qualified date such as Tuesday, April 12, 1952 AD or
@@ -223,6 +224,11 @@ public class DateAttribute extends AbstractAttribute {
             errors.add(new AttributeFieldError(this, FieldError.INVALID_FORMAT, tracer));
         }
         return errors;
+    }
+
+    @Override
+    public String getIndexeableFieldValue() {
+        return String.valueOf(_date);
     }
 
     private Date _date;

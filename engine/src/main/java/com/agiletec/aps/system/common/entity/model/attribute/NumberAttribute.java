@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import org.jdom.Element;
 
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
@@ -34,7 +35,7 @@ import com.agiletec.aps.system.services.lang.Lang;
  *
  * @author W.Ambu - S.Didaci - E.Santoboni
  */
-public class NumberAttribute extends AbstractAttribute {
+public class NumberAttribute extends AbstractAttribute implements IndexableAttributeInterface {
 
     /**
      * Return the number in the format used for the current language.
@@ -180,6 +181,11 @@ public class NumberAttribute extends AbstractAttribute {
             errors.add(new AttributeFieldError(this, FieldError.INVALID_FORMAT, tracer));
         }
         return errors;
+    }
+
+    @Override
+    public String getIndexeableFieldValue() {
+        return String.valueOf(_number);
     }
 
     private BigDecimal _number;

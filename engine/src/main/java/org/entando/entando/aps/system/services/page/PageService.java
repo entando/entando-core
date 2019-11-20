@@ -41,6 +41,7 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
@@ -50,6 +51,7 @@ import org.entando.entando.aps.system.services.group.GroupServiceUtilizer;
 import org.entando.entando.aps.system.services.jsonpatch.JsonPatchService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
 import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
@@ -58,6 +60,7 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
+import org.entando.entando.aps.util.PageUtils;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -799,5 +802,32 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     public PagesStatusDto getPagesStatus() {
         PagesStatus raw = this.getPageManager().getPagesStatus();
         return new PagesStatusDto(raw);
+    }
+
+    @Override
+    public List<PageDto> listViewPages() {
+        IPage root = pageManager.getOnlineRoot();
+        List<IPage> pages = new ArrayList<IPage>();
+        addViewPages(root, pages);
+        return pages.stream()
+                .map(PageDtoBuilder::converToDto)
+                .collect(Collectors.toList());
+    }
+
+    private void addViewPages(IPage page, List<IPage> pages) {
+        if (null == page) {
+            return;
+        }
+        if (page.getGroup().equals(Group.FREE_GROUP_NAME) && PageUtils.isOnlineFreeViewerPage(page, null)) {
+            pages.add(page);
+        }
+        String[] children = page.getChildrenCodes();
+        if (null == children) {
+            return;
+        }
+        for (int i = 0; i < children.length; i++) {
+            IPage child = pageManager.getOnlinePage(children[i]);
+            this.addViewPages(child, pages);
+        }
     }
 }

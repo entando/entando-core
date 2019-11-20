@@ -15,6 +15,7 @@ package com.agiletec.aps.system.common.entity.model.attribute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jdom.Element;
 
@@ -28,7 +29,7 @@ import com.agiletec.aps.system.services.lang.Lang;
  *
  * @author E.Santoboni
  */
-public class BooleanAttribute extends AbstractAttribute {
+public class BooleanAttribute extends AbstractAttribute implements IndexableAttributeInterface {
 
     @Override
     public Element getJDOMElement() {
@@ -127,6 +128,11 @@ public class BooleanAttribute extends AbstractAttribute {
     @Override
     public Status getStatus() {
         return Status.VALUED;
+    }
+
+    @Override
+    public String getIndexeableFieldValue() {
+        return String.valueOf(_boolean);
     }
 
     private Boolean _boolean;

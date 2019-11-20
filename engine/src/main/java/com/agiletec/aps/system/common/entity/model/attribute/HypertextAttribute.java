@@ -140,4 +140,7 @@ public class HypertextAttribute extends TextAttribute {
         }
     }
 
+    @Override
+    public Boolean isIndexableOptionSupported() { return false; }
+
 }

@@ -367,6 +367,8 @@ public abstract class AbstractSearcherDAO extends AbstractDAO {
             if (filter.getValue() != null) {
                 if (filter.isLikeOption()) {
                     query.append(this.getLikeClause());
+                } else if (filter.isNotOption()) {
+                    query.append("<> ? ");
                 } else {
                     query.append("= ? ");
                 }

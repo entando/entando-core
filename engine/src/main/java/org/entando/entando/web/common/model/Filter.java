@@ -126,6 +126,9 @@ public class Filter {
             filter = new EntitySearchFilter(key, isAttributeFilter, objectValue, null);
         } else if (FilterOperator.LOWER.getValue().equalsIgnoreCase(this.getOperator())) {
             filter = new EntitySearchFilter(key, isAttributeFilter, null, objectValue);
+        } else if (FilterOperator.NOT_EQUAL.getValue().equalsIgnoreCase(this.getOperator())) {
+            filter = new EntitySearchFilter(key, isAttributeFilter, objectValue, false);
+            filter.setNotOption(true);
         } else {
             filter = new EntitySearchFilter(key, isAttributeFilter, objectValue, FilterOperator.LIKE.getValue().equalsIgnoreCase(this.getOperator()), LikeOptionType.COMPLETE);
         }

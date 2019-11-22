@@ -15,20 +15,42 @@ public final class PageModelTestUtil {
     }
 
     public static PageModelRequest validPageModelRequest() {
+        return validPageModelRequest(false);
+    }
+
+    public static PageModelRequest validPageModelRequest(boolean withMainFrame) {
         PageModelRequest request = new PageModelRequest();
         request.setCode(PAGE_MODEL_CODE);
         request.setDescr(DESCRIPTION);
-        request.setConfiguration(createValidPageModelConfigurationRequest());
+        request.setConfiguration(createValidPageModelConfigurationRequest(withMainFrame));
         return request;
     }
 
     private static PageModelConfigurationRequest createValidPageModelConfigurationRequest() {
+        return createValidPageModelConfigurationRequest(false);
+    }
+
+    private static PageModelConfigurationRequest createValidPageModelConfigurationRequest(boolean withMainFrame) {
         PageModelConfigurationRequest configuration = new PageModelConfigurationRequest();
-        configuration.setFrames(singletonList(createValidFrameRequest()));
+
+        PageModelFrameReq frames;
+        if (withMainFrame) {
+            frames = createValidMainFrameRequest();
+        } else {
+            frames = createValidFrameRequest();
+        }
+
+        configuration.setFrames(singletonList(frames));
         return configuration;
     }
 
     private static PageModelFrameReq createValidFrameRequest() {
         return new PageModelFrameReq(0, FRAME_DESCRIPTION);
+    }
+
+    private static PageModelFrameReq createValidMainFrameRequest() {
+        PageModelFrameReq req = new PageModelFrameReq(0, FRAME_DESCRIPTION);
+        req.setMainFrame(true);
+        return req;
     }
 }

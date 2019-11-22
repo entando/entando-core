@@ -70,12 +70,13 @@ public class EntityDto implements Serializable {
 
     public void fillEntity(IApsEntity prototype, ICategoryManager categoryManager, BindingResult bindingResult) {
         prototype.setId(this.getId());
-        prototype.setDescription(this.getDescription());
-        prototype.setMainGroup(this.getMainGroup());
+        prototype.setDescription(getDescription() == null ? prototype.getDescription() : getDescription());
+        prototype.setMainGroup(getMainGroup() == null ? prototype.getMainGroup() : getMainGroup());
         if (null != this.getGroups()) {
             prototype.getGroups().addAll(this.getGroups());
         }
         if (null != this.getCategories()) {
+            prototype.getCategories().clear();
             this.getCategories().stream().forEach(i -> {
                 Category category = categoryManager.getCategory(i);
                 if (null != category) {

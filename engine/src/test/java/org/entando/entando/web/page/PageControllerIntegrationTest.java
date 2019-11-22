@@ -639,12 +639,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         String newPageCode1 = "view_page_1";
         String newPageCode2 = "view_page_2";
 
-        PageModel pageModel = null;
-
         try {
-            pageModel = createPageModel();
-
-            IPage newPage1 = this.createPage(newPageCode1, pageModel, this.pageManager.getDraftRoot().getCode(), true);
+            IPage newPage1 = this.createPage(newPageCode1, null, this.pageManager.getDraftRoot().getCode(), true);
             newPage1.setTitle("it", "Title1 IT");
             newPage1.setTitle("en", "Title1 EN");
             pageManager.addPage(newPage1);
@@ -666,23 +662,12 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         } finally {
             pageManager.deletePage(newPageCode1);
             pageManager.deletePage(newPageCode2);
-
-            if (pageModel != null) {
-                pageModelManager.deletePageModel(pageModel.getCode());
-            }
-
         }
     }
 
     private ResultActions performListViewPages(String accessToken) throws Exception {
         return mockMvc.perform(get("/pages/viewpages")
                 .header("Authorization", "Bearer " + accessToken));
-    }
-
-    private PageModel createPageModel() throws Exception {
-        PageModel pageModel = null;
-        pageModelManager.addPageModel(pageModel);
-        return pageModel;
     }
 
     private Widget createWidget() {

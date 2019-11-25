@@ -320,11 +320,6 @@ public class UserFilterOptionBean implements Serializable {
             if (this.getKey().equals(KEY_FULLTEXT) && !StringUtils.isEmpty(value0)) {
                 //String[] fieldsSuffix = {"", "_option"};
                 filter = new SearchEngineFilter(this.getCurrentLang().getCode(), value0, this.getOption(value1));
-                String attachOption = this.getFormValue(2);
-                try {
-                    filter.setIncludeAttachments(Boolean.parseBoolean(attachOption));
-                } catch (Exception e) {
-                }
             } else if (this.getKey().equals(KEY_CATEGORY) && !StringUtils.isEmpty(value0)) {
                 filter = new SearchEngineFilter(IIndexerDAO.DATAOBJECT_CATEGORY_FIELD_NAME, value0, SearchEngineFilter.TextSearchOption.EXACT);
             }

@@ -29,25 +29,62 @@ import java.util.List;
 /**
  * @author E.Santoboni
  */
-public class SearchEngineFilter extends FieldSearchFilter implements Serializable {
+public class SearchEngineFilter<T> extends FieldSearchFilter<T> implements Serializable {
+    
+    private TextSearchOption _textSearchOption;
+    
+    private boolean fullTextSearch;
+    private boolean attributeFilter;
+    private String langCode;
+    
+    public enum TextSearchOption {EXACT, ALL_WORDS, AT_LEAST_ONE_WORD, ANY_WORD}
 	
-	public SearchEngineFilter(String key, Object value) {
+	public SearchEngineFilter(String key, T value) {
 		this(key, value, TextSearchOption.AT_LEAST_ONE_WORD);
 	}
 	
-	public SearchEngineFilter(String key, Object value, TextSearchOption textSearchOption) {
+	public SearchEngineFilter(String key, T value, TextSearchOption textSearchOption) {
 		super(key, value, false);
 		this.setTextSearchOption(textSearchOption);
 	}
 	
-	public SearchEngineFilter(String key, List allowedValues, TextSearchOption textSearchOption) {
+	public SearchEngineFilter(String key, List<T> allowedValues, TextSearchOption textSearchOption) {
 		super(key, allowedValues, false);
 		this.setTextSearchOption(textSearchOption);
 	}
 	
-	public SearchEngineFilter(String key, Object start, Object end) {
+	public SearchEngineFilter(String key, T start, T end) {
 		super(key, start, end);
 	}
+    
+    public SearchEngineFilter(String key, boolean attributeFilter) {
+        this(key, null);
+        this.setAttributeFilter(attributeFilter);
+    }
+
+    public SearchEngineFilter(String key, boolean attributeFilter, T value) {
+        this(key, value);
+        this.setAttributeFilter(attributeFilter);
+    }
+
+    public SearchEngineFilter(String key, boolean attributeFilter, T value, TextSearchOption textSearchOption) {
+        this(key, value, textSearchOption);
+        this.setAttributeFilter(attributeFilter);
+    }
+
+    public static SearchEngineFilter createAllowedValuesFilter(String key, boolean attributeFilter, List allowedValues, TextSearchOption textSearchOption) {
+        SearchEngineFilter filter = new SearchEngineFilter(key, attributeFilter);
+        filter.setAllowedValues(allowedValues);
+        filter.setTextSearchOption(textSearchOption);
+        return filter;
+    }
+
+    public static SearchEngineFilter createRangeFilter(String key, boolean attributeFilter, Object start, Object end) {
+        SearchEngineFilter filter = new SearchEngineFilter(key, attributeFilter);
+        filter.setStart(start);
+        filter.setEnd(end);
+        return filter;
+    }
 	
 	public TextSearchOption getTextSearchOption() {
 		if (null == this._textSearchOption && super.isNullOption()) {
@@ -58,17 +95,29 @@ public class SearchEngineFilter extends FieldSearchFilter implements Serializabl
 	protected void setTextSearchOption(TextSearchOption textSearchOption) {
 		this._textSearchOption = textSearchOption;
 	}
-	
-	public boolean isIncludeAttachments() {
-		return _includeAttachments;
-	}
-	public void setIncludeAttachments(boolean includeAttachments) {
-		this._includeAttachments = includeAttachments;
-	}
-	
-	private TextSearchOption _textSearchOption;
-	private boolean _includeAttachments;
-	
-	public enum TextSearchOption {EXACT, ALL_WORDS, AT_LEAST_ONE_WORD, ANY_WORD}
+
+    public boolean isFullTextSearch() {
+        return fullTextSearch;
+    }
+
+    public void setFullTextSearch(boolean fullTextSearch) {
+        this.fullTextSearch = fullTextSearch;
+    }
+
+    public boolean isAttributeFilter() {
+        return attributeFilter;
+    }
+
+    public void setAttributeFilter(boolean attributeFilter) {
+        this.attributeFilter = attributeFilter;
+    }
+
+    public String getLangCode() {
+        return langCode;
+    }
+
+    public void setLangCode(String langCode) {
+        this.langCode = langCode;
+    }
 	
 }

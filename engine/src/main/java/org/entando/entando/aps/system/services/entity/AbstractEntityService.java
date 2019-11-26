@@ -46,6 +46,7 @@ public abstract class AbstractEntityService<I extends IApsEntity, T extends Enti
     @Autowired
     private List<IEntityManager> entityManagers;
 
+    @Autowired
     private ICategoryManager categoryManager;
 
     protected abstract T buildEntityDto(I entity);

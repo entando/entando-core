@@ -81,4 +81,6 @@ public interface IPageService {
 
     public PagesStatusDto getPagesStatus();
 
+    public List<PageDto> listViewPages();
+
 }

@@ -27,4 +27,8 @@ public class PageDtoBuilder extends DtoBuilder<IPage, PageDto> {
         return new PageDto(src);
     }
 
+    public static PageDto converToDto(IPage src) {
+        return new PageDtoBuilder().toDto(src);
+    }
+
 }

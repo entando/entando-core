@@ -134,6 +134,15 @@ public class PageController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RequestMapping(value = "/pages/viewpages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<List<PageDto>>> listViewPages() {
+        logger.debug("REST request - content type list view pages");
+
+        return ResponseEntity.ok(
+                new SimpleRestResponse<>(pageService.listViewPages()));
+    }
+
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<PageDto, Map<String, String>>> getPage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("getting page {}", pageCode);

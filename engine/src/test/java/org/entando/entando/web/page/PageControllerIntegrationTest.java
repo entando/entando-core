@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.page;
 
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.jayway.jsonpath.JsonPath;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,12 +33,15 @@ import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
+import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
+import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
 import org.junit.Test;
@@ -70,6 +75,12 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
+
+    @Autowired
+    private IPageModelManager pageModelManager;
+
+    @Autowired
+    private IWidgetService widgetService;
 
     private ObjectMapper mapper = new ObjectMapper();
     
@@ -619,6 +630,49 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage(codeParent);
         }
     }
+
+    @Test
+    public void testListViewPages() throws Throwable {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        String newPageCode1 = "view_page_1";
+        String newPageCode2 = "view_page_2";
+
+        try {
+            IPage newPage1 = this.createPage(newPageCode1, null, this.pageManager.getDraftRoot().getCode(), true);
+            newPage1.setTitle("it", "Title1 IT");
+            newPage1.setTitle("en", "Title1 EN");
+            pageManager.addPage(newPage1);
+            pageManager.setPageOnline(newPageCode1);
+
+            IPage test = pageManager.getOnlinePage(newPageCode1);
+
+            IPage newPage2 = this.createPage(newPageCode2, null, this.pageManager.getDraftRoot().getCode(), false);
+            newPage2.setTitle("it", "Title2 IT");
+            newPage2.setTitle("en", "Title2 EN");
+            this.pageManager.addPage(newPage2);
+            pageManager.setPageOnline(newPageCode2);
+
+            ResultActions result = performListViewPages(accessToken);
+
+            result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.size()", is(1)))
+                .andExpect(jsonPath("$.payload[0].code", is(newPageCode1)));
+        } finally {
+            pageManager.deletePage(newPageCode1);
+            pageManager.deletePage(newPageCode2);
+        }
+    }
+
+    private ResultActions performListViewPages(String accessToken) throws Exception {
+        return mockMvc.perform(get("/pages/viewpages")
+                .header("Authorization", "Bearer " + accessToken));
+    }
+
+    private Widget createWidget() {
+        return null;
+    }
     
     private void addPage(String accessToken, PageRequest pageRequest) throws Exception {
         ResultActions result = mockMvc
@@ -641,6 +695,10 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     protected Page createPage(String pageCode, PageModel pageModel, String parent) {
+        return createPage(pageCode, pageModel, parent, false);
+    }
+
+    protected Page createPage(String pageCode, PageModel pageModel, String parent, boolean viewPage) {
         if (null == parent) {
             parent = "service";
         }
@@ -652,6 +710,12 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         ApsProperties config = new ApsProperties();
         config.put("actionPath", "/mypage.jsp");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this.widgetTypeManager);
+
+        if (viewPage) {
+            pageModel.setMainFrame(0);
+            widgetToAdd.setConfig(null);
+        }
+
         Widget[] widgets = {widgetToAdd};
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
         return pageToAdd;

@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class SearchEngineFilter<T> extends FieldSearchFilter<T> implements Serializable {
     
-    private TextSearchOption _textSearchOption;
+    private TextSearchOption textSearchOption;
     
     private boolean fullTextSearch;
     private boolean attributeFilter;
@@ -87,13 +87,13 @@ public class SearchEngineFilter<T> extends FieldSearchFilter<T> implements Seria
     }
 	
 	public TextSearchOption getTextSearchOption() {
-		if (null == this._textSearchOption && super.isNullOption()) {
+		if (null == this.textSearchOption && super.isNullOption()) {
 			return TextSearchOption.ANY_WORD;
 		}
-		return _textSearchOption;
+		return textSearchOption;
 	}
 	protected void setTextSearchOption(TextSearchOption textSearchOption) {
-		this._textSearchOption = textSearchOption;
+		this.textSearchOption = textSearchOption;
 	}
 
     public boolean isFullTextSearch() {
@@ -118,6 +118,14 @@ public class SearchEngineFilter<T> extends FieldSearchFilter<T> implements Seria
 
     public void setLangCode(String langCode) {
         this.langCode = langCode;
+    }
+
+    @Override
+    public void setLikeOption(boolean likeOption) {
+        if (likeOption && null != this.getTextSearchOption() && this.getTextSearchOption() == TextSearchOption.EXACT) {
+            throw new RuntimeException("Error: the 'likeOption' can't be apply if textsearchOption is setted on 'EXACT'");
+        }
+        super.setLikeOption(likeOption);
     }
 	
 }

@@ -63,6 +63,50 @@ public class PagedMetadataTest {
         assertThat(result.getBody().size(), is(5));
     }
 
+    @Test
+    public void lastPage() {
+
+        RestListRequest request = new RestListRequest();
+        request.setPage(1);
+        request.setPageSize(25);
+
+        request.setSort("outerCode");
+        request.setDirection(FieldSearchFilter.Order.ASC.name());
+
+        request.addFilter(new Filter("outerCode", "code"));
+
+        List<Outer> list = createList();
+
+        PagedMetadata<Outer> result = new PagedMetadata<>(request, list, list.size());
+
+        assertThat(result.getBody().size(), is(10));
+        assertThat(result.getPage(), is(1));
+        assertThat(result.getTotalItems(), is(10));
+        assertThat(result.getLastPage(), is(1));
+    }
+
+    @Test
+    public void lastPage2() {
+
+        RestListRequest request = new RestListRequest();
+        request.setPage(1);
+        request.setPageSize(25);
+
+        request.setSort("outerCode");
+        request.setDirection(FieldSearchFilter.Order.ASC.name());
+
+        request.addFilter(new Filter("outerCode", "code"));
+
+        List<Outer> list = new ArrayList<>();
+
+        PagedMetadata<Outer> result = new PagedMetadata<>(request, list, list.size());
+
+        assertThat(result.getBody().size(), is(0));
+        assertThat(result.getPage(), is(1));
+        assertThat(result.getTotalItems(), is(0));
+        assertThat(result.getLastPage(), is(1));
+    }
+
     private List<Outer> createList() {
         List<Outer> list = new ArrayList<>();
         for (int i = 0; i < 5; i++) {

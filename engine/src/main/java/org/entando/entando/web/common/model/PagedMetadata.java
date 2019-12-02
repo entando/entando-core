@@ -56,7 +56,7 @@ public class PagedMetadata<T> {
         this.page = req.getPage();
         this.pageSize = req.getPageSize();
         Double pages = Math.ceil(new Double(totalItems) / new Double(this.actualSize));
-        this.lastPage = pages.intValue();
+        this.lastPage = pages.intValue() == 0 ? 1 : pages.intValue();
         this.totalItems = totalItems;
         this.setSort(req.getSort());
         this.setDirection(req.getDirection());
@@ -68,7 +68,7 @@ public class PagedMetadata<T> {
     public PagedMetadata(int page, int size, int last, int totalItems) {
         this.page = page;
         this.pageSize = size;
-        this.lastPage = last;
+        this.lastPage = last == 0 ? 1 : last;
         this.totalItems = totalItems;
     }
 

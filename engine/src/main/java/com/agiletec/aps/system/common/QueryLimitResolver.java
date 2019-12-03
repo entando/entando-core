@@ -60,7 +60,7 @@ public class QueryLimitResolver {
             Method method = dataSource.getClass().getDeclaredMethod("getDriverClassName");
             driver = (String) method.invoke(dataSource);
         } catch (Exception e) {
-            logger.warn("Error extract datasource - errors {}: return static class name", e.getMessage());
+            logger.debug("Extracting datasource class - errors {}: return static class name", e.getMessage());
             if (null == dataSourceClassName) {
                 logger.warn("Null dataSourceClassName - Please configure it in dao bean");
             }

@@ -58,12 +58,6 @@ public class DataObjectManager extends ApsEntityManager implements IDataObjectMa
     private IDataObjectUpdaterService dataobjectUpdaterService;
 
     @Override
-    public void init() throws Exception {
-        super.init();
-        logger.debug("{} ready. Initialized {} DataObject types", this.getClass().getName(), super.getEntityTypes().size());
-    }
-
-    @Override
     protected String getConfigItemName() {
         return "dataTypeDefinitions";
     }

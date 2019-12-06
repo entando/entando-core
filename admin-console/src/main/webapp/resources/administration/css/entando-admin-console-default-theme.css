@@ -1361,6 +1361,26 @@ ul {
 .searchPanel .panel-group .panel-title>a:after {
     margin-left: 10px;
 }
+.login-page {
+    min-height: 100vh;
+    padding-top: 40px;
+}
+
+.login-page > * {
+    float: none;
+}
+
+.left-wrapper, .right-wrapper {
+    width: 89%;
+    margin: auto;
+    color: #fff;
+}
+
+.left-wrap-cont {
+    margin: 0 auto;
+    padding: 0;
+}
+
 /* --------------- Display e Visibility --------------- */
 .display-block {
     display: block;
@@ -2063,14 +2083,16 @@ label .fa-folder, .fa-folder {
     margin: 0 0 24px 0;
 }
 .control-label-entando{
+    display: block;
     color: #fff!important;
-    font-size: 18px;
-    font-weight: 300;
+    font-size: 17px;
+    font-weight: 500;
     margin: 0 0 9px;
     font-family: 'LatoWeb';
 }
 .entando-input{
-    width: 434px;
+    display: block;
+    width: 100%;
     border-radius:3px;
     height:48px;
     font-size:18px;
@@ -2079,8 +2101,8 @@ label .fa-folder, .fa-folder {
     font-family: 'LatoWeb';
 }
 .login-buttons{
-    margin: 49px 0 0 0;
-    width: 434px;
+    margin: 50px 0 0 0;
+    width: auto;
 }
 .btn-custom-login{
     height:35px !important;
@@ -2092,18 +2114,21 @@ label .fa-folder, .fa-folder {
     font-family: LatoWebBold;
     transition: all 0.4s ease;
 }
+.login-buttons [data-toggle="buttons"] {
+    margin-bottom: 20px;
+}
 .login-buttons .btn-login{
+    display: block;
     height:35px;
-    width:207px;
+    width:100%;
     background: #00B9F7;
     border-color: #00B9F7;
     border-radius:3px;
     color:#fff;
     font-size: 11px;
     text-transform: uppercase;
-    margin-left: 227px;
-    margin-top: -35px;
     transition: all 0.4s ease;
+    margin-bottom: 20px;
 }
 .login-buttons .btn-login:hover, .login-buttons-lp .btn-login:hover{
     color: #00B9F7;
@@ -2123,6 +2148,17 @@ label .fa-folder, .fa-folder {
     font-size: 11px;
     font-family: LatoWebBold;
 }
+.left-wrapper .copyright-entando {
+    display: none;
+}
+.right-wrapper .copyright-entando {
+    padding-bottom: 25px;
+}
+.right-wrapper form {
+    margin-right: auto;
+    margin-left: auto;
+    padding: 30px 0;
+}
 .entando-sm-write{
     color: #00b9f7;
 }
@@ -2134,7 +2170,7 @@ label .fa-folder, .fa-folder {
 .v-align{
     margin: auto 0;
 }
-.center2 .alert{
+.right-wrapper .alert{
     width:434px;
 }
 @media (min-width: 768px){
@@ -2149,6 +2185,49 @@ label .fa-folder, .fa-folder {
         margin: auto;
         width: 91%;
         color: #fff;
+    }
+}
+@media (min-width: 992px){
+    .login-page > * {
+        float: left;
+    }
+    .login-page {
+        display: flex;
+        padding-top: 0;
+        align-items: center;
+        justify-content: center;
+    }
+    .left-wrapper, .right-wrapper {
+        width: 66%;
+    }
+    .left-wrap-cont {
+        padding: 0 0 20px 0;
+    }
+    .left-wrapper .copyright-entando {
+        display: block;
+    }
+    .right-wrapper .copyright-entando {
+        display: none;
+    }
+    .right-wrapper form {
+        padding: 30px;
+    }
+    .entando-input {
+        display: inline-block;
+        width: 434px;
+    }
+    .login-buttons{
+        width: 440px;
+    }
+    .login-buttons [data-toggle="buttons"] {
+        margin-bottom: 0;
+    }
+    .login-buttons .btn-login{
+        display: inline-block;
+        width:207px;
+        margin-left: 227px;
+        margin-top: -35px;
+        margin-bottom: 0;
     }
 }
 @media (min-width: 1200px){

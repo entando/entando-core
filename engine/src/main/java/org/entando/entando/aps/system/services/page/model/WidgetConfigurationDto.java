@@ -2,10 +2,14 @@ package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import org.entando.entando.aps.system.services.page.serializer.WidgetConfigPropertiesSerializer;
 
 public class WidgetConfigurationDto {
 
     private String code;
+
+    @JsonSerialize(using = WidgetConfigPropertiesSerializer.class)
     private ApsProperties config;
 
     public String getCode() {

@@ -13,12 +13,14 @@
  */
 package org.entando.entando.web.page.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.entando.entando.aps.system.services.page.serializer.WidgetConfigPropertiesDeserializer;
 
 public class WidgetConfigurationRequest {
 
@@ -28,6 +30,7 @@ public class WidgetConfigurationRequest {
     @NotNull(message = "widgetConfigurationRequest.code.notBlank")
     private String code;
 
+    @JsonDeserialize(converter = WidgetConfigPropertiesDeserializer.class)
     private Map<String, Object> config;
 
     public String getCode() {

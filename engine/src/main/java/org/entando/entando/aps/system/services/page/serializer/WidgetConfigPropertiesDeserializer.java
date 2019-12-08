@@ -32,7 +32,7 @@ public class WidgetConfigPropertiesDeserializer extends StdConverter<Map<String,
     }
 
     private String readFilters(List<Map<String, Object>> filters) {
-        return readObjects(filters,null, null, "({)", ")", "+", ";", "=");
+        return readObjects(filters,null, null, "(", ")", "+", ";", "=");
     }
 
     private String readContents(List<Map<String, Object>> contents) {

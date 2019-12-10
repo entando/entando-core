@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.page;
 
+import com.agiletec.aps.system.SystemConstants;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +31,15 @@ import java.io.Serializable;
  * @author M.Diana - E.Santoboni
  */
 public class Page extends TreeNode implements IPage, Serializable {
+
+    /**
+     * The code of the higher level page
+     */
+    private PageMetadata _metadata = new PageMetadata();
+    private Widget[] widgets;
+    private boolean online;
+    private boolean onlineInstance;
+    private boolean changed;
     
     @Override
     public IPage clone() {
@@ -300,13 +310,9 @@ public class Page extends TreeNode implements IPage, Serializable {
         this.widgets = widgets;
     }
 
-    /**
-     * The code of the higher level page
-     */
-    private PageMetadata _metadata = new PageMetadata();
-    private Widget[] widgets;
-    private boolean online;
-    private boolean onlineInstance;
-    private boolean changed;
+    @Override
+    public String getManagerBeanCode() {
+        return SystemConstants.PAGE_MANAGER;
+    }
 
 }

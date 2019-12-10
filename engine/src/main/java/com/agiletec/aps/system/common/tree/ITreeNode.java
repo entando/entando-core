@@ -18,8 +18,8 @@ import java.io.Serializable;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
- * Interface of a node of a tree. The node is the basic information a tree and
- * contains all the minimum information necessary for its definition.
+ * Interface of a node of a tree. The node is the basic information a tree and contains all the minimum information
+ * necessary for its definition.
  *
  * @author E.Santoboni
  */
@@ -61,9 +61,9 @@ public interface ITreeNode extends Serializable {
      * @return The position of the node compared to the brothers nodes.
      */
     public int getPosition();
-    
+
     public void setPosition(int position);
-    
+
     /**
      * Return the group code this node belongs to
      *
@@ -72,8 +72,7 @@ public interface ITreeNode extends Serializable {
     public String getGroup();
 
     /**
-     * Returns a properties with the titles of the node, where the keys are the
-     * codes of language.
+     * Returns a properties with the titles of the node, where the keys are the codes of language.
      *
      * @return The node titles.
      */
@@ -96,8 +95,7 @@ public interface ITreeNode extends Serializable {
     public void setTitle(String langCode, String title);
 
     /**
-     * Returns the title (including the parent nodes) of the single node in the
-     * specified language.
+     * Returns the title (including the parent nodes) of the single node in the specified language.
      *
      * @param langCode The code of the language.
      * @param treeNodeManager
@@ -110,8 +108,7 @@ public interface ITreeNode extends Serializable {
     public String getShortFullTitle(String langCode, String separator, ITreeNodeManager treeNodeManager);
 
     /**
-     * Returns the title (including the parent nodes) of the single node in the
-     * specified language.
+     * Returns the title (including the parent nodes) of the single node in the specified language.
      *
      * @param langCode The code of the language.
      * @param separator The separator between the titles.
@@ -121,8 +118,8 @@ public interface ITreeNode extends Serializable {
     public String getFullTitle(String langCode, String separator, ITreeNodeManager treeNodeManager);
 
     /**
-     * Returns the path of the single node.The separator between the node will
- be '/' and the path contains the root node.
+     * Returns the path of the single node.The separator between the node will be '/' and the path contains the root
+     * node.
      *
      * @param treeNodeManager
      * @return the path of the single node.
@@ -130,8 +127,7 @@ public interface ITreeNode extends Serializable {
     public String getPath(ITreeNodeManager treeNodeManager);
 
     /**
-     * Returns the path of the single node.The array in composed by node codes
- from the root up to the current node
+     * Returns the path of the single node.The array in composed by node codes from the root up to the current node
      *
      * @param separator The separator between the nodes.
      * @param addRoot Add the root node
@@ -141,8 +137,8 @@ public interface ITreeNode extends Serializable {
     public String getPath(String separator, boolean addRoot, ITreeNodeManager treeNodeManager);
 
     /**
-     * Returns the path array of the current node.The array in composed by node
- codes from the root up to the current node.
+     * Returns the path array of the current node.The array in composed by node codes from the root up to the current
+     * node.
      *
      * @param treeNodeManager
      * @return the required path array of the single node.
@@ -150,8 +146,8 @@ public interface ITreeNode extends Serializable {
     public String[] getPathArray(ITreeNodeManager treeNodeManager);
 
     /**
-     * Returns the path array of the current node.The array in composed by node
- codes from the root up to the current node
+     * Returns the path array of the current node.The array in composed by node codes from the root up to the current
+     * node
      *
      * @param addRoot if true, the array starts with the code of the root node
      * @param treeNodeManager
@@ -167,5 +163,7 @@ public interface ITreeNode extends Serializable {
      * @return true if the node is child of the other node, false otherwise.
      */
     public boolean isChildOf(String nodeCode, ITreeNodeManager treeNodeManager);
+    
+    public String getManagerBeanCode();
 
 }

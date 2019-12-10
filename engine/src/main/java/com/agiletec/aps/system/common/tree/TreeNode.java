@@ -13,9 +13,6 @@
  */
 package com.agiletec.aps.system.common.tree;
 
-import com.agiletec.aps.system.common.entity.model.attribute.AbstractAttribute;
-import com.agiletec.aps.system.common.entity.parse.attribute.AttributeHandlerInterface;
-import com.agiletec.aps.system.services.page.PageDAO;
 import java.io.Serializable;
 
 import com.agiletec.aps.util.ApsProperties;
@@ -23,15 +20,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A node of a tree. The node is the basic information a tree and contains all
- * the minimum information necessary for its definition.
+ * A node of a tree. The node is the basic information a tree and contains all the minimum information necessary for its
+ * definition.
  *
  * @author E.Santoboni
  */
 public class TreeNode implements ITreeNode, Serializable {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(TreeNode.class);
-    
+
+    private String _code;
+
+    private String parentCode;
+
+    private String _group;
+
+    private String[] _childrenCodes = new String[0];
+
+    private int _position = -1;
+
+    private ApsProperties _titles = new ApsProperties();
+
     @Override
     public ITreeNode clone() {
         TreeNode clone = null;
@@ -105,8 +114,7 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Adds a node to nodes in a lower level. The new node is inserted in the
-     * final position.
+     * Adds a node to nodes in a lower level. The new node is inserted in the final position.
      *
      * @param treeNode The node to add.
      */
@@ -124,6 +132,7 @@ public class TreeNode implements ITreeNode, Serializable {
     public int getPosition() {
         return _position;
     }
+
     @Override
     public void setPosition(int position) {
         this._position = position;
@@ -137,8 +146,7 @@ public class TreeNode implements ITreeNode, Serializable {
     /**
      * Set the titles of the node.
      *
-     * @param titles A set of properties with the titles, where the keys are the
-     * codes of language.
+     * @param titles A set of properties with the titles, where the keys are the codes of language.
      */
     public void setTitles(ApsProperties titles) {
         this._titles = titles;
@@ -175,17 +183,15 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Create a full title of the code of the current page.The full title
- (breadcrumb) consists of the set of page titles (from the characters ".."
- if shortTitle = true) starting from the root up to the current page, and
- it is created by moving backwards in the page structure starting from the
- node current.
+     * Create a full title of the code of the current page.The full title (breadcrumb) consists of the set of page
+     * titles (from the characters ".." if shortTitle = true) starting from the root up to the current page, and it is
+     * created by moving backwards in the page structure starting from the node current.
      *
      * @param langCode The language code to extract the title of each node
      * @param separator The separator between the nodes
-     * @param shortTitle defines whether to return the full title in the form
-     * "short" (each title of the relative replaced with "..")
-     * @param treeNodeManager 
+     * @param shortTitle defines whether to return the full title in the form "short" (each title of the relative
+     * replaced with "..")
+     * @param treeNodeManager
      * @return The required full title.
      */
     protected String getFullTitle(String langCode, String separator, boolean shortTitle, ITreeNodeManager treeNodeManager) {
@@ -215,8 +221,8 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Returns the path of the single node. The path is composed by node codes
-     * (separated by "/") starting from the root up to the current node
+     * Returns the path of the single node. The path is composed by node codes (separated by "/") starting from the root
+     * up to the current node
      *
      * @return the path of the single node.
      */
@@ -226,9 +232,8 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Returns the path of the single node. The path is composed by node codes
-     * (separated by the given separator) starting from the root up to the
-     * current node
+     * Returns the path of the single node. The path is composed by node codes (separated by the given separator)
+     * starting from the root up to the current node
      *
      * @param separator The separator to use to divide the node codes
      * @param addRoot if true, the path starts with the code of the root node
@@ -241,8 +246,8 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Returns the path of the single node.The separator between the node will
- be '/' and the path contains the root node.
+     * Returns the path of the single node.The separator between the node will be '/' and the path contains the root
+     * node.
      *
      * @param treeNodeManager
      * @return the path of the single node.
@@ -253,8 +258,8 @@ public class TreeNode implements ITreeNode, Serializable {
     }
 
     /**
-     * Returns the path array of the current node.The array in composed by node
- codes from the root up to the current node
+     * Returns the path array of the current node.The array in composed by node codes from the root up to the current
+     * node
      *
      * @param addRoot if true, the array starts with the code of the root node
      * @param treeNodeManager
@@ -311,7 +316,7 @@ public class TreeNode implements ITreeNode, Serializable {
             }
         }
     }
-    
+
     protected ITreeNode getParent(ITreeNode node, ITreeNodeManager treeNodeManager) {
         return treeNodeManager.getNode(node.getParentCode());
     }
@@ -321,16 +326,9 @@ public class TreeNode implements ITreeNode, Serializable {
         return "Node: " + this.getCode();
     }
 
-    private String _code;
-
-    private String parentCode;
-
-    private String _group;
-
-    private String[] _childrenCodes = new String[0];
-
-    private int _position = -1;
-
-    private ApsProperties _titles = new ApsProperties();
+    @Override
+    public String getManagerBeanCode() {
+        return null;
+    }
 
 }

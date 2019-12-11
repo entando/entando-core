@@ -78,9 +78,7 @@ public class AttributeTypeDto implements Serializable {
             this.setEnumeratorOptionsSupported(attribute instanceof EnumeratorAttribute);
         }
         this.setListAttribute(attribute instanceof AbstractListAttribute);
-        this.setIndexableOptionSupported(
-                attribute.isIndexableOptionSupported() != null ?
-                        attribute.isIndexableOptionSupported() : attribute instanceof IndexableAttributeInterface);
+        this.setIndexableOptionSupported(attribute instanceof IndexableAttributeInterface);
     }
 
     public String getCode() {

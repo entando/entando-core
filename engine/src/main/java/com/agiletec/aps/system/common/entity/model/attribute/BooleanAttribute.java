@@ -29,7 +29,7 @@ import com.agiletec.aps.system.services.lang.Lang;
  *
  * @author E.Santoboni
  */
-public class BooleanAttribute extends AbstractAttribute implements IndexableAttributeInterface {
+public class BooleanAttribute extends AbstractAttribute {
 
     @Override
     public Element getJDOMElement() {
@@ -79,7 +79,7 @@ public class BooleanAttribute extends AbstractAttribute implements IndexableAttr
 
     @Override
     public boolean isSearchableOptionSupported() {
-        return false;
+        return true;
     }
 
     @Override
@@ -128,11 +128,6 @@ public class BooleanAttribute extends AbstractAttribute implements IndexableAttr
     @Override
     public Status getStatus() {
         return Status.VALUED;
-    }
-
-    @Override
-    public String getIndexeableFieldValue() {
-        return String.valueOf(_boolean);
     }
 
     private Boolean _boolean;

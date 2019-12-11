@@ -325,18 +325,6 @@ public interface AttributeInterface extends Serializable {
     public Status getStatus();
 
     /**
-     * Check whether the attribute supports indexable option or not. The
-     * motivation for this method is the ambiguity created by checking only if
-     * an attribute implements the interface IndexableAttributeInterface or not.
-     * Some attributes inherits from a class that implements
-     * IndexableAttributeInterface but doesn't support is indexable option.
-     * Ex: HypertextAttribute.
-     *
-     * @return True if the attribute supports indexable option, false otherwise.
-     */
-    public default Boolean isIndexableOptionSupported() { return null; }
-
-    /**
      * Return the class name of the manager of the attribute. The Attribute
      * Manager magage (the updating process) the attribute inside custom GUI
      * interface (like http form).

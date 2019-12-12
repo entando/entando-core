@@ -13,10 +13,12 @@
  */
 package org.entando.entando.aps.servlet;
 
-import java.util.regex.Pattern;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.errors.ValidationException;
 
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 

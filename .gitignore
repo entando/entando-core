@@ -28,6 +28,7 @@ local.properties
 .springBeans
 
 # Webstorm
+.factorypath
 .idea
 *.iml
 .idea/

@@ -109,7 +109,7 @@ public class HypertextAttribute extends TextAttribute {
 
     @Override
     public boolean isSearchableOptionSupported() {
-        return true;
+        return false;
     }
 
     @Override
@@ -139,8 +139,5 @@ public class HypertextAttribute extends TextAttribute {
             this.getTextMap().put(langToSet, value);
         }
     }
-
-    @Override
-    public Boolean isIndexableOptionSupported() { return false; }
 
 }

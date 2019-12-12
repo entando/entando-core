@@ -22,6 +22,10 @@ public class WidgetConfigPropertiesDeserializer extends StdConverter<Map<String,
     public Map<String, Object> convert(Map<String, Object> json) {
         Map<String, Object> properties = new HashMap<>();
 
+        if (json == null) {
+            return properties;
+        }
+
         for (Entry<String, Object> property : json.entrySet()) {
             if (property.getKey().equals("categories")) {
                 logger.warn("Serializing WidgetConfig.config.categories from JSON Format to custom persistence format");

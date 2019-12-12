@@ -5,19 +5,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WidgetConfigPropertiesDeserializer extends StdConverter<Map<String, Object>, Map<String, Object>> {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /*
+     * Related to EN6-183, Frontend needs all config objects to be completely valid JSON objects.
+     * This Deserializer converts known widget config formats, but may need to be improved case by case.
+     * Also, possible conflicts may arise if different widgets use same property names and different value formats.
+     * See also, WidgetConfigPropertiesSerializer.java.
+     */
     @Override
     public Map<String, Object> convert(Map<String, Object> json) {
         Map<String, Object> properties = new HashMap<>();
 
         for (Entry<String, Object> property : json.entrySet()) {
             if (property.getKey().equals("categories")) {
+                logger.warn("Serializing WidgetConfig.config.categories from JSON Format to custom persistence format");
                 properties.put(property.getKey(), readCategories((List<String>) property.getValue()));
             } else if (property.getKey().toLowerCase().contains("filters")) {
+                logger.warn("Serializing WidgetConfig.config.filters from JSON Format to custom persistence format");
                 properties.put(property.getKey(), readFilters((List<Map<String, Object>>) property.getValue()));
             } else if (property.getKey().equals("contents")) {
+                logger.warn("Serializing WidgetConfig.config.contents from JSON Format to custom persistence format");
                 properties.put(property.getKey(), readContents((List<Map<String, Object>>) property.getValue()));
             } else {
                 properties.put(property.getKey(), property.getValue().toString());

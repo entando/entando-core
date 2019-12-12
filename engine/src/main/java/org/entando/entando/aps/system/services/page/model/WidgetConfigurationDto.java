@@ -9,6 +9,12 @@ public class WidgetConfigurationDto {
 
     private String code;
 
+    /*
+     * Related to EN6-183, Frontend needs all config objects to be completely valid JSON objects.
+     * This Serializer converts known widget config formats, but may need to be improved case by case.
+     * Also, possible conflicts may arise if different widgets use same property names and different value formats.
+     * See also, WidgetConfigPropertiesDeserializer.java.
+     */
     @JsonSerialize(using = WidgetConfigPropertiesSerializer.class)
     private ApsProperties config;
 

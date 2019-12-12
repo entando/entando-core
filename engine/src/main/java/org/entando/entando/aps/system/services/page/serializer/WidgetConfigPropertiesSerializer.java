@@ -28,6 +28,12 @@ public class WidgetConfigPropertiesSerializer extends StdSerializer<ApsPropertie
         super(t);
     }
 
+    /*
+     * Related to EN6-183, Frontend needs all config objects to be completely valid JSON objects.
+     * This Serializer converts known widget config formats, but may need to be improved case by case.
+     * Also, possible conflicts may arise if different widgets use same property names and different value formats.
+     * See also, WidgetConfigPropertiesDeserializer.java.
+     */
     @Override
     public void serialize(ApsProperties properties, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
             throws IOException {
@@ -36,10 +42,13 @@ public class WidgetConfigPropertiesSerializer extends StdSerializer<ApsPropertie
 
         for (Entry<Object,Object> property : properties.entrySet()) {
             if(property.getKey().equals("categories")) {
+                logger.warn("Serializing WidgetConfig.config.categories into JSON Format");
                 writeCategories(jsonGenerator, property.getKey().toString(), property.getValue().toString());
             } else if (property.getKey().equals("contents")) {
+                logger.warn("Serializing WidgetConfig.config.contents into JSON Format");
                 writeContentsConfig(jsonGenerator, property.getKey().toString(), property.getValue().toString());
             } else if (property.getKey().toString().toLowerCase().contains("filters")) {
+                logger.warn("Serializing WidgetConfig.config.filters into JSON Format");
                 writeFiltersConfig(jsonGenerator, property.getKey().toString(), property.getValue().toString());
             } else {
                 writeStringProperty(jsonGenerator, property.getKey().toString(), property.getValue().toString());

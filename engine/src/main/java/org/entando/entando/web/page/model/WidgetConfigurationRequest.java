@@ -13,12 +13,14 @@
  */
 package org.entando.entando.web.page.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.entando.entando.aps.system.services.page.serializer.WidgetConfigPropertiesDeserializer;
 
 public class WidgetConfigurationRequest {
 
@@ -28,6 +30,13 @@ public class WidgetConfigurationRequest {
     @NotNull(message = "widgetConfigurationRequest.code.notBlank")
     private String code;
 
+    /*
+     * Related to EN6-183, Frontend needs all config objects to be completely valid JSON objects.
+     * This Deserializer converts known widget config formats, but may need to be improved case by case.
+     * Also, possible conflicts may arise if different widgets use same property names and different value formats.
+     * See also, WidgetConfigPropertiesSerializer.java.
+     */
+    @JsonDeserialize(converter = WidgetConfigPropertiesDeserializer.class)
     private Map<String, Object> config;
 
     public String getCode() {

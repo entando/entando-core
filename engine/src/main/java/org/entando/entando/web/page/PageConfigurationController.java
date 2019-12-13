@@ -14,6 +14,10 @@
 package org.entando.entando.web.page;
 
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
@@ -67,12 +71,17 @@ public class PageConfigurationController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<WidgetConfigurationDto[], Map>> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
+    public ResponseEntity<RestResponse<List<WidgetConfigurationDto>, Map>> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("requested {} widgets detail", pageCode);
         PageConfigurationDto pageConfiguration = this.getPageService().getPageConfiguration(pageCode, status);
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
-        return new ResponseEntity<>(new RestResponse<>(pageConfiguration.getWidgets(), metadata), HttpStatus.OK);
+
+        List<WidgetConfigurationDto> widgets = Arrays.stream(pageConfiguration.getWidgets())
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(new RestResponse<>(widgets, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -91,6 +100,7 @@ public class PageConfigurationController {
         }
 
         WidgetConfigurationDto widgetConfiguration = this.getPageService().getWidgetConfiguration(pageCode, Integer.valueOf(frameId), status);
+
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse<>(widgetConfiguration, metadata), HttpStatus.OK);

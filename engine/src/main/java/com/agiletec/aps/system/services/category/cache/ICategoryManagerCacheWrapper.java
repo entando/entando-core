@@ -45,5 +45,7 @@ public interface ICategoryManagerCacheWrapper {
 	public Map<String, Integer> getMoveNodeStatus();
 
 	public void updateMoveNodeStatus(String beanName, Integer status);
+    
+    public void moveCategory(String categoryCode, String newParentCode);
 
 }

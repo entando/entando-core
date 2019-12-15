@@ -157,6 +157,8 @@ public interface IPageManager extends ITreeNodeManager {
 
     public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException;
 
+    public boolean movePage(String pageCode, String newParentCode) throws ApsSystemException;
+
     /**
      * Extract page statistics
      *

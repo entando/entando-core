@@ -188,15 +188,15 @@ public class CategoryManager extends AbstractService implements ICategoryManager
         Category newParent = this.getCategory(newParentCode);
 		boolean resultOperation = false;
         if (null == currentCategory || null == newParent) {
-            _logger.error("Category to move ''{}'' or new parent ''{}'' is null", categoryCode, newParentCode);
+            _logger.error("Category to move '{}' or new parent '{}' is null", categoryCode, newParentCode);
             return resultOperation;
         }
         if (categoryCode.equals(newParentCode)) {
-            _logger.error("Category to move ''{}'' and new parent ''{}'' are the same", categoryCode, newParentCode);
+            _logger.error("Category to move '{}' and new parent '{}' are the same", categoryCode, newParentCode);
             return resultOperation;
         }
         if (newParent.isChildOf(categoryCode, this)) {
-            _logger.error("Category to move ''{}'' is parent of the new parent ''{}''", categoryCode, newParentCode);
+            _logger.error("Category to move '{}' is parent of the new parent '{}'", categoryCode, newParentCode);
             return resultOperation;
         }
 		_logger.debug("start move category {} under {}", currentCategory, newParent);

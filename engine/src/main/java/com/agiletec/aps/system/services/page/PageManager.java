@@ -22,6 +22,7 @@ import com.agiletec.aps.system.ApsSystemUtils;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.GroupUtilizer;
 import com.agiletec.aps.system.services.lang.events.LangsChangedEvent;
@@ -229,7 +230,6 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
                     }
                 }
             }
-            //da trovare improvement
         } catch (Throwable t) {
             _logger.error("Error while moving  page {}", pageCode, t);
             throw new ApsSystemException("Error while moving a page", t);
@@ -644,19 +644,38 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
             _logger.error("Error during refres pages", t);
         }
     }
-
+    
     @Override
-    public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException {
-        boolean resultOperation = false;
-        _logger.debug("start move page " + currentPage + "under " + newParent);
+	public boolean movePage(IPage currentPage, IPage newParent) throws ApsSystemException {
+        return this.movePage(currentPage.getCode(), newParent.getCode());
+    }
+
+	@Override
+	public boolean movePage(String pageCode, String newParentCode) throws ApsSystemException {
+        IPage pageToMove = this.getDraftPage(pageCode);
+        IPage newParent = this.getDraftPage(newParentCode);
+		boolean resultOperation = false;
+        if (null == pageToMove || null == newParent) {
+            _logger.error("Page to move '{}' or new parent '{}' is null", pageCode, newParentCode);
+            return resultOperation;
+        }
+        if (pageCode.equals(newParentCode)) {
+            _logger.error("Page to move '{}' and new parent '{}' are the same", pageCode, newParentCode);
+            return resultOperation;
+        }
+        if (newParent.isChildOf(pageCode, this)) {
+            _logger.error("Page to move '{}' is parent of the new parent '{}'", pageCode, newParentCode);
+            return resultOperation;
+        }
+        _logger.debug("start move page '" + pageToMove + "' under '" + newParent + "'");
         try {
-            this.getPageDAO().movePage(currentPage, newParent);
+            this.getPageDAO().movePage(pageToMove, newParent);
+            this.getCacheWrapper().movePage(pageCode, newParentCode);
             resultOperation = true;
         } catch (Throwable t) {
             ApsSystemUtils.logThrowable(t, this, "movePage");
             throw new ApsSystemException("Error while moving a page under a root node", t);
         }
-        this.initCache();
         return resultOperation;
     }
 

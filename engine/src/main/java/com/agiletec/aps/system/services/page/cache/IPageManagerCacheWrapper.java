@@ -63,4 +63,7 @@ public interface IPageManagerCacheWrapper {
     public void setPageOnline(String pageCode);
     
     public void setPageOffline(String pageCode);
+    
+    public void movePage(String pageCode, String newParentCode);
+    
 }

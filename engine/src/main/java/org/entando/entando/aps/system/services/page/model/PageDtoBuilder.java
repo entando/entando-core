@@ -29,6 +29,12 @@ public class PageDtoBuilder extends DtoBuilder<IPage, PageDto> {
     protected PageDto toDto(IPage src) {
         return new PageDto(src, this.getPageManager());
     }
+    
+    public static PageDto converToDto(IPage src, IPageManager pageManager) {
+        PageDtoBuilder dto = new PageDtoBuilder();
+        dto.setPageManager(pageManager);
+        return dto.toDto(src);
+    }
 
     public IPageManager getPageManager() {
         return pageManager;

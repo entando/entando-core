@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.jsonpatch.validator.JsonPatchValidator;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
-import org.entando.entando.web.page.PageController;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.slf4j.LoggerFactory;

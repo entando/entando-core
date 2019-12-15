@@ -49,6 +49,7 @@ public class FieldSearchFilter<T> implements Serializable {
     private boolean likeOption;
     private LikeOptionType likeOptionType;
     private boolean nullOption;
+    private boolean notOption;
 
     private List<T> allowedValues;
 
@@ -273,9 +274,20 @@ public class FieldSearchFilter<T> implements Serializable {
     
     public void setNullOption(boolean nullOption) {
         if (nullOption && (null != this.getValue() || null != this.getAllowedValues() || null != this.getStart() || null != this.getEnd())) {
-            throw new RuntimeException("Error: the NULL cluase may be used only in conjunction with null metadata fields");
+            throw new RuntimeException("Error: the NULL clause may be used only in conjunction with null metadata fields");
         }
         this.nullOption = nullOption;
+    }
+
+    public boolean isNotOption() {
+        return notOption;
+    }
+
+    public void setNotOption(boolean notOption) {
+        if (notOption && (null == this.getValue() || null != this.getAllowedValues() || null != this.getStart() || null != this.getEnd())) {
+            throw new RuntimeException("Error: the NOT clause must have a value");
+        }
+        this.notOption = notOption;
     }
     
     public List<T> getAllowedValues() {
@@ -326,7 +338,7 @@ public class FieldSearchFilter<T> implements Serializable {
     public String toString() {
         return "FieldSearchFilter [key=" + key + ", value=" + value + ", order=" + order + ", start=" + start + ", end=" + end + ", likeOption=" + likeOption + ", likeOptionType=" + likeOptionType + ", nullOption=" +
                nullOption + ", allowedValues=" + allowedValues + ", startDateDelay=" + startDateDelay + ", endDateDelay=" + endDateDelay + ", valueDateDelay=" + valueDateDelay + ", limit=" + limit + ", offset=" +
-               offset + "]";
+               offset + ", notOption=" + notOption + "]";
     }
 
 }

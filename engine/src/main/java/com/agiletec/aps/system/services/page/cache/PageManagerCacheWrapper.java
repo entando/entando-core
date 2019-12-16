@@ -276,7 +276,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                     IPage parentDraft = this.getDraftPage(newOnlinePage.getParentCode());
                     List<String> draftChildrenCodes = Arrays.asList(parentDraft.getChildrenCodes());
                     List<String> newOnLineCodesForParent = draftChildrenCodes.stream()
-                            .filter(code -> null != this.getOnlinePage(code)).collect(Collectors.toList());
+                            .filter(code -> null != this.getOnlinePage(code) && totalOnlineCodes.contains(code))
+                            .collect(Collectors.toList());
                     ((Page) parentOnLine).setChildrenCodes(newOnLineCodesForParent.toArray(new String[newOnLineCodesForParent.size()]));
                     cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + parentOnLine.getCode(), parentOnLine);
                     this.checkRootModification(parentOnLine, true, cache);

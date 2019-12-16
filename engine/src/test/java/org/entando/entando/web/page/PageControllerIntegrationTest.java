@@ -297,7 +297,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(12)));
     }
-    /*
+    
     @Test
     public void testMove() throws Throwable {
 
@@ -359,7 +359,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage("page_root");
         }
     }
-*/
+    
     @Test
     public void testAddPublishUnpublishDelete() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -722,13 +722,16 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         ApsProperties config = new ApsProperties();
         config.put("actionPath", "/mypage.jsp");
         Widget widgetToAdd = PageTestUtil.createWidget("formAction", config, this.widgetTypeManager);
-
         if (viewPage) {
             pageModel.setMainFrame(0);
             widgetToAdd.setConfig(null);
         }
-
-        Widget[] widgets = {widgetToAdd};
+        Widget[] widgets = new Widget[pageModel.getFrames().length];
+        if (pageModel.getMainFrame() >= 0) {
+            widgets[pageModel.getMainFrame()] = widgetToAdd;
+        } else {
+            widgets[0] = widgetToAdd;
+        }
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         return pageToAdd;
     }

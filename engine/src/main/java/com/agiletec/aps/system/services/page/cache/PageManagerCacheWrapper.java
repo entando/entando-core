@@ -261,6 +261,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             ((Page) page).setOnline(true);
             ((Page) page).setChanged(false);
             IPage newOnlinePage = page.clone();
+            ((Page) newOnlinePage).setOnlineInstance(true);
             List<String> totalOnlineCodes = (List<String>) this.get(cache, ONLINE_PAGE_CODES_CACHE_NAME, List.class);
             List<String> onLineCodes = Arrays.asList(newOnlinePage.getChildrenCodes())
                     .stream().filter(code -> null != this.getOnlinePage(code) && totalOnlineCodes.contains(code))

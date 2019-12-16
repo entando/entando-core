@@ -265,7 +265,7 @@ public class Page extends TreeNode implements IPage, Serializable {
         return this.onlineInstance;
     }
 
-    protected void setOnlineInstance(boolean onlineInstance) {
+    public void setOnlineInstance(boolean onlineInstance) {
         this.onlineInstance = onlineInstance;
     }
 

@@ -66,17 +66,17 @@ public class EntityAttributeDto {
             } else if (value instanceof Date) {
                 String stringDate = DateConverter.getFormattedDate((Date) value, SystemConstants.API_DATE_FORMAT);
                 this.setValue(stringDate);
-            } else if (value instanceof Boolean) {
-                this.setValue((Boolean) value);
             } else if (value instanceof Map) {
                 ((Map) value).keySet().stream().forEach(key -> {
                     Object mapValue = ((Map) value).get(key);
                     if (mapValue instanceof AttributeInterface) {
                         this.getValues().put(key.toString(), new EntityAttributeDto((AttributeInterface) mapValue));
                     } else {
-                        this.getValues().put(key.toString(), mapValue.toString());
+                        this.getValues().put(key.toString(), mapValue);
                     }
                 });
+            } else {
+                this.setValue(value);
             }
         } else if (src instanceof MonoListAttribute) {
             List<AttributeInterface> list = ((MonoListAttribute) src).getAttributes();

@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
@@ -84,8 +85,11 @@ public class EntityAttributeDto {
                         }
                     })
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-            } else {
+            } else if(TextAttribute.class.isAssignableFrom(src.getClass())){
                 setValue(value);
+                setValues(((TextAttribute)src).getTextMap().entrySet().stream()
+                        .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             }
         } else if (src instanceof MonoListAttribute) {
             List<AttributeInterface> list = ((MonoListAttribute) src).getAttributes();

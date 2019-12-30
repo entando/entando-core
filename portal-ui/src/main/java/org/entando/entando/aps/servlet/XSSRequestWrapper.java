@@ -13,13 +13,14 @@
  */
 package org.entando.entando.aps.servlet;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.ValidationException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
@@ -61,10 +62,10 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
         try {
             value = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
         } catch (ValidationException e) {
-            LOGGER.log(Level.SEVERE,
-                    String.format("Invalid parameter (%s - %s), encoding as HTML attribute", name, value),
-                    e);
+            LOGGER.log(Level.SEVERE, String.format("Invalid parameter (%s - %s), encoding as HTML attribute", name, value), e);
             value = ESAPI.encoder().encodeForHTMLAttribute(value);
+        } catch (Throwable e) {
+            LOGGER.log(Level.FINE, String.format("Invalid parameter (%s - %s) - error message %s", name, value, e.getMessage()));
         }
         return value;
     }
@@ -77,10 +78,10 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
         try {
             value = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
         } catch (ValidationException e) {
-            LOGGER.log(Level.SEVERE,
-                    String.format("Invalid header (%s - %s), encoding as HTML attribute", name, value),
-                    e);
+            LOGGER.log(Level.SEVERE, String.format("Invalid header (%s - %s), encoding as HTML attribute", name, value), e);
             value = ESAPI.encoder().encodeForHTMLAttribute(value);
+        } catch (Throwable e) {
+            LOGGER.log(Level.FINE, String.format("Invalid parameter (%s - %s) - error message %s", name, value, e.getMessage()));
         }
         return value;
     }

@@ -147,7 +147,7 @@ public class PageDAO extends AbstractDAO implements IPageDAO {
                 Widget widget = this.createWidget(page, pos, res, startIndex + 1);
                 widgets[pos] = widget;
             } else {
-                _logger.warn("The position read from the database exceeds the numer of frames defined in the model of the page {}", page
+                _logger.warn("The position read from the database exceeds the number of frames defined in the model of the page {}", page
                         .getCode());
             }
         }

@@ -207,8 +207,7 @@ public class PageModelDOM {
 		int y1 = StringUtils.isNumeric(x1Val) ? new Integer(y1Val) : 0;
 		int x2 = StringUtils.isNumeric(x1Val) ? new Integer(x2Val) : 0;
 		int y2 = StringUtils.isNumeric(x1Val) ? new Integer(y2Val) : 0;
-
-		
+        
 		FrameSketch frameSketch = new FrameSketch();
 		frameSketch.setCoords(x1, y1, x2, y2);
 		return frameSketch;
@@ -219,7 +218,7 @@ public class PageModelDOM {
 		String widgetCode = defaultWidgetElement.getAttributeValue(ATTRIBUTE_CODE);
 		WidgetType type = widgetTypeManager.getWidgetType(widgetCode);
 		if (null == type) {
-			_logger.error("Unknown code of the default widget - '{}'", widgetCode);
+			_logger.warn("Unknown code of the default widget - '{}'", widgetCode);
 			return;
 		}
 		widget.setType(type);
@@ -227,39 +226,9 @@ public class PageModelDOM {
 		if (null != propertiesElement) {
 			ApsProperties prop = this.buildProperties(propertiesElement);
 			widget.setConfig(prop);
-		}// else {
-		//	widget.setConfig(new ApsProperties());
-		//}
+		}
 		frame.setDefaultWidget(widget);
 	}
-	/*
-	private void buildDefaultWidget(Element defaultWidgetElement, int pos, IWidgetTypeManager widgetTypeManager) {
-		Widget widget = new Widget();
-		String widgetCode = defaultWidgetElement.getAttributeValue(ATTRIBUTE_CODE);
-		WidgetType type = widgetTypeManager.getWidgetType(widgetCode);
-		if (null == type) {
-			_logger.error("Unknown code of the default widget - '{}'", widgetCode);
-			return;
-		}
-		widget.setType(type);
-		Element propertiesElement = defaultWidgetElement.getChild(TAB_PROPERTIES);
-		if (null != propertiesElement) {
-			ApsProperties prop = this.buildProperties(propertiesElement);
-			widget.setConfig(prop);
-		}// else {
-		//	widget.setConfig(new ApsProperties());
-		//}
-		_defaultWidget[pos] = widget;
-	}
-	*/
-	/*
-	 * Restituisce l'insieme ordinato delle descrizioni dei "frames"
-	 * del modello.  
-	 * @return L'insieme delle descrizioni dei "frames"
-	 */
-	//public String[] getFrames() {
-	//	return this._frames;
-	//}
 	
 	/**
 	 * La posizione del frame principale, se esiste;
@@ -282,19 +251,6 @@ public class PageModelDOM {
 		return out.outputString(this._doc);
 	}
 	
-	/*
-	 * @deprecated Use {@link #getDefaultWidget()} instead
-	 */
-	//public Widget[] getDefaultShowlet() {
-	//	return getDefaultWidget();
-	//}
-	/*
-	 * Restituisce la configurazione dei widget di default.
-	 * @return Il widget di default.
-	 */
-	//public Widget[] getDefaultWidget() {
-	//	return this._defaultWidget;
-	//}
 	public Frame[] getConfiguration() {
 		return _configuration;
 	}
@@ -319,8 +275,6 @@ public class PageModelDOM {
 	
 	private boolean _existMainFrame;
 	private int _mainFrame;
-	//private String[] _frames;
-	//private Widget[] _defaultWidget;
 	private Frame[] _configuration;
 	
 }

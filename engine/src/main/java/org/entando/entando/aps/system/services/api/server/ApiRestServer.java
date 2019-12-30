@@ -266,6 +266,7 @@ public class ApiRestServer {
         IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
         IAuthorizationManager authManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, request);
         try {
+            properties.put(SystemConstants.API_REQUEST_PARAMETER, request);
             UserDetails user = null;
             String permission = apiMethod.getRequiredPermission();
             _logger.debug("Permission required: {}", permission);
@@ -286,7 +287,11 @@ public class ApiRestServer {
                     user.addAuthorizations(authManager.getUserAuthorizations(username));
                     properties.put(SystemConstants.API_USER_PARAMETER, user);
                     _logger.info("User {} requesting resource that requires {} permission ", username, permission);
-                    request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
+                    UserDetails userOnSession = (UserDetails) request.getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+                    if (null == userOnSession || userOnSession.getUsername().equals(SystemConstants.GUEST_USER_NAME)) {
+                        user.setAccessToken(accessToken);
+                        request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
+                    } 
                 }
             } else if (accessToken != null) {
                 _logger.warn("Token not found from access token");

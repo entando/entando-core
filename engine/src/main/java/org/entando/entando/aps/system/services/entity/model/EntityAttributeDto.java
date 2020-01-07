@@ -22,20 +22,26 @@ import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
+import com.agiletec.aps.system.common.entity.model.attribute.TextAttribute;
 import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 
 /**
  * @author E.Santoboni
  */
 public class EntityAttributeDto {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String code;
 
@@ -66,17 +72,24 @@ public class EntityAttributeDto {
             } else if (value instanceof Date) {
                 String stringDate = DateConverter.getFormattedDate((Date) value, SystemConstants.API_DATE_FORMAT);
                 this.setValue(stringDate);
-            } else if (value instanceof Boolean) {
-                this.setValue((Boolean) value);
             } else if (value instanceof Map) {
-                ((Map) value).keySet().stream().forEach(key -> {
-                    Object mapValue = ((Map) value).get(key);
-                    if (mapValue instanceof AttributeInterface) {
-                        this.getValues().put(key.toString(), new EntityAttributeDto((AttributeInterface) mapValue));
-                    } else {
-                        this.getValues().put(key.toString(), mapValue.toString());
-                    }
-                });
+                setValues(((Map<String,Object>) value).entrySet().stream()
+                    .filter(e -> e.getValue() != null)
+                    .map(e -> {
+                        Object mapValue = e.getValue();
+                        String key = e.getKey();
+                        if (mapValue instanceof AttributeInterface) {
+                            return new AbstractMap.SimpleEntry<>(key, new EntityAttributeDto((AttributeInterface) mapValue));
+                        } else {
+                            return new AbstractMap.SimpleEntry<>(key, mapValue);
+                        }
+                    })
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            } else if(TextAttribute.class.isAssignableFrom(src.getClass())){
+                setValue(value);
+                setValues(((TextAttribute)src).getTextMap().entrySet().stream()
+                        .map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue()))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             }
         } else if (src instanceof MonoListAttribute) {
             List<AttributeInterface> list = ((MonoListAttribute) src).getAttributes();

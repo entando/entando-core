@@ -223,6 +223,8 @@ public interface SystemConstants {
 
     public static final String API_USER_PARAMETER = "apiMethod:user";
 
+    public static final String API_REQUEST_PARAMETER = "apiMethod:request";
+
     public static final String API_OAUTH_CONSUMER_PARAMETER = "apiMethod:OAuthConsumer";
 
     public static final String API_APPLICATION_BASE_URL_PARAMETER = "apiMethod:applicationBaseURL";

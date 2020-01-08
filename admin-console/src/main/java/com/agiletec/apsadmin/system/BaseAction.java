@@ -17,11 +17,9 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
-import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
@@ -212,12 +210,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
     }
     
     protected ITreeNodeManager getTreeNodeManager(ITreeNode treeNode) {
-        String beanName = null;
-        if (treeNode instanceof IPage) {
-            beanName = SystemConstants.PAGE_MANAGER;
-        } else if (treeNode instanceof Category) {
-            beanName = SystemConstants.CATEGORY_MANAGER;
-        }
+        String beanName = treeNode.getManagerBeanCode();
         return (ITreeNodeManager) ApsWebApplicationUtils.getBean(beanName, this.getRequest());
     }
 	

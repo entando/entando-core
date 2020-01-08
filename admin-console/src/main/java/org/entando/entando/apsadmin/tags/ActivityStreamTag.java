@@ -24,12 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsWebApplicationUtils;
-import com.opensymphony.xwork2.util.ValueStack;
-
-import com.agiletec.aps.system.ApsSystemUtils;
-import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.opensymphony.xwork2.util.ValueStack;
@@ -48,7 +43,9 @@ public class ActivityStreamTag extends StrutsBodyTagSupport {
 		try {
 			IActionLogManager loggerManager = (IActionLogManager) ApsWebApplicationUtils.getBean(SystemConstants.ACTION_LOGGER_MANAGER, this.pageContext);
 			UserDetails currentUser = (UserDetails) request.getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
-			List<Integer> ids = loggerManager.getActivityStream(currentUser);
+            FieldSearchFilter limitFilter = new FieldSearchFilter(10, 0);
+            FieldSearchFilter[] filters = {limitFilter};
+			List<Integer> ids = loggerManager.getActivityStream(filters, currentUser);
 			if (null != this.getVar()) {
 				ValueStack stack = this.getStack();
 				stack.getContext().put(this.getVar(), ids);

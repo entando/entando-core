@@ -28,6 +28,7 @@ public class ReloadingCategoryReferencesThread extends NotifyingThread {
 	 * Setup the thread for the references reloading
 	 * @param categoryManager 
 	 * @param beanName 
+     * @param categoryCode 
 	 */
 	public ReloadingCategoryReferencesThread(ICategoryManager categoryManager, String beanName, String categoryCode) {
 		this._categoryManager = categoryManager;
@@ -43,15 +44,12 @@ public class ReloadingCategoryReferencesThread extends NotifyingThread {
 	@Override
 	public void doRun() {
 		try {
-			//System.out.println(this._label + " STARTING....");
-			((CategoryManager)this._categoryManager).reloadCategoryReferencesByBeanName(_beanName, _categoryCode);
-			//System.out.println(this._label + " ENDED");
+			((CategoryManager) this._categoryManager).reloadCategoryReferencesByBeanName(this._beanName, this._categoryCode);
 		} catch (Throwable e) {
 			_logger.error("failed to reload in category manager ",e);
 		}
 	}
-	
-	
+		
 	public int getListIndex() {
 		return _listIndex;
 	}
@@ -59,14 +57,12 @@ public class ReloadingCategoryReferencesThread extends NotifyingThread {
 		this._listIndex = listIndex;
 	}
 
-
 	public int getListSize() {
 		return _listSize;
 	}
 	public void setListSize(int listSize) {
 		this._listSize = listSize;
 	}
-
 
 	private ICategoryManager _categoryManager;
 	private String _beanName;

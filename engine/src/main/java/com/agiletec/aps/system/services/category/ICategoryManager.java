@@ -92,8 +92,11 @@ public interface ICategoryManager extends ITreeNodeManager {
 	 * @param currentCategory the category to move
 	 * @param newParent the new parent
 	 * @return true if the the operation succeeds
+     * @throws com.agiletec.aps.system.exception.ApsSystemException
 	 */
 	public boolean moveCategory(Category currentCategory, Category newParent) throws ApsSystemException;
+
+	public boolean moveCategory(String categoryCode, String newParentCode) throws ApsSystemException;
 
 	public int getMoveTreeStatus();
 

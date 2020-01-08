@@ -27,6 +27,7 @@ import com.agiletec.aps.system.services.keygenerator.IKeyGeneratorManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.DateConverter;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.ArrayUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActivityStreamSeachBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
@@ -150,12 +151,25 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
         }
         return record;
     }
-
+    
     @Override
     public List<Integer> getActivityStream(List<String> userGroupCodes) throws ApsSystemException {
+        return this.getActivityStream(null, userGroupCodes);
+    }
+    
+    @Override
+    public List<Integer> getActivityStream(FieldSearchFilter[] filters, List<String> userGroupCodes) throws ApsSystemException {
+        if (null == filters) {
+            filters = new FieldSearchFilter[0];
+        }
         List<Integer> recordIds = null;
         try {
-            recordIds = this.getActionLogDAO().getActivityStream(userGroupCodes);
+            FieldSearchFilter filter1 = new FieldSearchFilter("actiondate");
+            filter1.setOrder(FieldSearchFilter.DESC_ORDER);
+            FieldSearchFilter filter2 = new FieldSearchFilter("activitystreaminfo");
+            filters = ArrayUtils.add(filters, filter1);
+            filters = ArrayUtils.add(filters, filter2);
+            recordIds = this.getActionLogDAO().getActionRecords(filters, userGroupCodes);
             ManagerConfiguration config = this.getManagerConfiguration();
             if (null != recordIds && null != config
                     && config.getCleanOldActivities() && config.getMaxActivitySizeByGroup() < recordIds.size()) {
@@ -185,9 +199,14 @@ public class ActionLogManager extends AbstractService implements IActionLogManag
     }
 
     @Override
-    public List<Integer> getActivityStream(UserDetails loggedUser) throws ApsSystemException {
+    public List<Integer> getActivityStream(FieldSearchFilter[] filters, UserDetails loggedUser) throws ApsSystemException {
         List<String> userGroupCodes = this.extractUserGroupCodes(loggedUser);
-        return this.getActivityStream(userGroupCodes);
+        return this.getActivityStream(filters, userGroupCodes);
+    }
+
+    @Override
+    public List<Integer> getActivityStream(UserDetails loggedUser) throws ApsSystemException {
+        return this.getActivityStream(null, loggedUser);
     }
 
     @Override

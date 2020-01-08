@@ -266,9 +266,10 @@ public class ApiRestServer {
         IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
         IAuthorizationManager authManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, request);
         try {
+            properties.put(SystemConstants.API_REQUEST_PARAMETER, request);
             UserDetails user = null;
             String permission = apiMethod.getRequiredPermission();
-            _logger.info("Permission required: {}", permission);
+            _logger.debug("Permission required: {}", permission);
             String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
             IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_TOKEN_MANAGER, request);
             final OAuth2AccessTokenImpl token = (OAuth2AccessTokenImpl) tokenManager.readAccessToken(accessToken);
@@ -286,7 +287,11 @@ public class ApiRestServer {
                     user.addAuthorizations(authManager.getUserAuthorizations(username));
                     properties.put(SystemConstants.API_USER_PARAMETER, user);
                     _logger.info("User {} requesting resource that requires {} permission ", username, permission);
-                    request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
+                    UserDetails userOnSession = (UserDetails) request.getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+                    if (null == userOnSession || userOnSession.getUsername().equals(SystemConstants.GUEST_USER_NAME)) {
+                        user.setAccessToken(accessToken);
+                        request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
+                    } 
                 }
             } else if (accessToken != null) {
                 _logger.warn("Token not found from access token");
@@ -297,7 +302,7 @@ public class ApiRestServer {
                     if (!authManager.isAuthOnPermission(user, permission)) {
                         List<Role> roles = authManager.getUserRoles(user);
                         for (Role role : roles) {
-                            _logger.info("User {} requesting resource has {} permission ", username, role.getPermissions().toArray()[0]);
+                            _logger.debug("User {} requesting resource has {} permission ", username, (null != role.getPermissions()) ? role.getPermissions().toString() : "");
                         }
                         throw new ApiException(IApiErrorCodes.API_AUTHORIZATION_REQUIRED, "Authorization Required", Response.Status.UNAUTHORIZED);
                     }

@@ -13,7 +13,7 @@
  */
 package com.agiletec.aps.system.services.category;
 
-import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.util.ApsProperties;
@@ -30,6 +30,9 @@ import java.util.Set;
  * @author E.Santoboni
  */
 public class Category extends TreeNode implements Comparable, Serializable {
+
+    private String _renderingLang;
+    private String _defaultLang;
     
     @Override
     public Category clone() {
@@ -172,7 +175,9 @@ public class Category extends TreeNode implements Comparable, Serializable {
         this._defaultLang = langCode;
     }
 
-    private String _renderingLang;
-    private String _defaultLang;
-
+    @Override
+    public String getManagerBeanCode() {
+        return SystemConstants.CATEGORY_MANAGER;
+    }
+    
 }

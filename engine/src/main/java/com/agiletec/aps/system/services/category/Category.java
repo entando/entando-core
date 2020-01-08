@@ -13,6 +13,8 @@
  */
 package com.agiletec.aps.system.services.category;
 
+import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.common.tree.TreeNode;
 import com.agiletec.aps.util.ApsProperties;
 
@@ -29,27 +31,15 @@ import java.util.Set;
  */
 public class Category extends TreeNode implements Comparable, Serializable {
 
+    private String _renderingLang;
+    private String _defaultLang;
+    
     @Override
-    public Category getParent() {
-        return (Category) super.getParent();
-    }
-
-    /**
-     * Restituisce il codice della categoria di livello superiore.
-     *
-     * @return il codice della categoria di livello superiore
-     */
-    public String getParentCode() {
-        return _parentCode;
-    }
-
-    /**
-     * Imposta il codice della categoria di livello superiore.
-     *
-     * @param parentCode Il codice della categoria di livello superiore.
-     */
-    public void setParentCode(String parentCode) {
-        this._parentCode = parentCode;
+    public Category clone() {
+        Category clone = (Category) super.clone();
+        clone.setDefaultLang(this._defaultLang);
+        clone.setRenderingLang(this._renderingLang);
+        return clone;
     }
 
     /**
@@ -89,18 +79,19 @@ public class Category extends TreeNode implements Comparable, Serializable {
 
     /**
      * Restituisce il titolo (comprensivo delle progenitrici) della singola
-     * categoria. Il titolo viene restituito nella lingua corrente
-     * (precedentemente impostata con il metodo setRenderingLang) o, se non
-     * disponibile, nella lingua di default.
+     * categoria.Il titolo viene restituito nella lingua corrente
+ (precedentemente impostata con il metodo setRenderingLang) o, se non
+ disponibile, nella lingua di default.
      *
+     * @param treeNodeManager
      * @return Il titolo della categoria.
      */
-    public String getFullTitle() {
+    public String getFullTitle(ITreeNodeManager treeNodeManager) {
         String title = this.getTitle();
-        Category parent = this.getParent();
-        if (parent != null && parent.getParent() != null
+        Category parent = (Category) treeNodeManager.getNode(this.getParentCode());
+        if (parent != null && parent.getParentCode() != null
                 && !parent.getCode().equals(parent.getParentCode())) {
-            String parentTitle = parent.getFullTitle();
+            String parentTitle = parent.getFullTitle(treeNodeManager);
             title = parentTitle + " / " + title;
         }
         return title;
@@ -110,10 +101,11 @@ public class Category extends TreeNode implements Comparable, Serializable {
      * Restituisce il titolo (comprensivo delle progenitrici) della singola
      * categoria nella lingua di default.
      *
+     * @param treeNodeManager
      * @return Il titolo della categoria.
      */
-    public String getDefaultFullTitle() {
-        return this.getFullTitle(this._defaultLang);
+    public String getDefaultFullTitle(ITreeNodeManager treeNodeManager) {
+        return this.getFullTitle(this._defaultLang, treeNodeManager);
     }
 
     @Override
@@ -141,8 +133,8 @@ public class Category extends TreeNode implements Comparable, Serializable {
 
     /**
      * Crea un clone dell'oggetto categoria copiano solo gli elementi necessari
-     * ad essere erogata. Il metodo viene invocato dal Wrapper dei contenuti
-     * esclusivamente quando viene chiesto di erogare la lista di categorie.
+     * ad essere erogata.Il metodo viene invocato dal Wrapper dei contenuti
+ esclusivamente quando viene chiesto di erogare la lista di categorie.
      *
      * @return La categoria clonata.
      */
@@ -159,10 +151,7 @@ public class Category extends TreeNode implements Comparable, Serializable {
             cloneProperties.put(currentLangCode, title);
         }
         clone.setTitles(cloneProperties);
-        if (null != this.getParent() && !this.getParent().getCode().equals(this.getCode())) {
-            Category parent = this.getParent();
-            clone.setParent(parent.getCloneForWrapper());
-        }
+        clone.setParentCode(this.getParentCode());
         return clone;
     }
 
@@ -175,9 +164,6 @@ public class Category extends TreeNode implements Comparable, Serializable {
      */
     public void setRenderingLang(String langCode) {
         this._renderingLang = langCode;
-        if (null != this.getParent()) {
-            ((Category) this.getParent()).setRenderingLang(langCode);
-        }
     }
 
     /**
@@ -189,12 +175,9 @@ public class Category extends TreeNode implements Comparable, Serializable {
         this._defaultLang = langCode;
     }
 
-    /**
-     * Il codice della categoria di livello superiore
-     */
-    private String _parentCode;
-
-    private String _renderingLang;
-    private String _defaultLang;
-
+    @Override
+    public String getManagerBeanCode() {
+        return SystemConstants.CATEGORY_MANAGER;
+    }
+    
 }

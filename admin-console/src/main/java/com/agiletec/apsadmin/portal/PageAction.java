@@ -286,13 +286,14 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
 
     protected void valueFormForEdit(IPage pageToEdit) throws CloneNotSupportedException {
         this.setStrutsAction(ApsAdminSystemConstants.EDIT);
-        this.setParentPageCode(pageToEdit.getParent().getCode());
+        this.setParentPageCode(pageToEdit.getParentCode());
         this.setPageCode(pageToEdit.getCode());
         this.setGroup(pageToEdit.getGroup());
         PageMetadata draftMetadata = pageToEdit.getMetadata();
         this.copyMetadataToForm(draftMetadata);
         boolean isAdmin = this.getAuthorizationManager().isAuthOnGroup(this.getCurrentUser(), Group.ADMINS_GROUP_NAME);
-        boolean isParentFree = (pageToEdit.isRoot() || pageToEdit.getParent().getGroup().equals(Group.FREE_GROUP_NAME));
+        IPage parentPage = this.getPageManager().getDraftPage(pageToEdit.getParentCode());
+        boolean isParentFree = (pageToEdit.isRoot() || parentPage.getGroup().equals(Group.FREE_GROUP_NAME));
         this.setGroupSelectLock(!(isAdmin && isParentFree));
     }
 
@@ -416,7 +417,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
     protected IPage buildNewPage() throws ApsSystemException {
         Page page = new Page();
         try {
-            page.setParent(this.getPage(this.getParentPageCode()));
+            page.setParentCode(this.getParentPageCode());
             if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
                 IPage copyPage = this.getPage(this.getCopyPageCode());
                 IPage publicPage = this.getOnlinePage(this.getCopyPageCode());
@@ -522,7 +523,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             page.setWidgets(widgets);
             this.getPageManager().updatePage(page);
         } catch (Throwable t) {
-            logger.error("Error setting default widget to page {}", page.getCode(), t);
+            logger.error("Error setting default widget to page {}", this.getPageCode(), t);
             return FAILURE;
         }
         return SUCCESS;
@@ -604,7 +605,8 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
                 return check;
             }
             IPage page = this.getPage(selectedPageCode);
-            if (!page.getParent().isOnline()) {
+            IPage parentPage = this.getPageManager().getDraftPage(page.getParentCode());
+            if (!parentPage.isOnline()) {
                 this.addActionError(this.getText("error.page.parentDraft"));
                 return "pageTree";
             }
@@ -637,7 +639,7 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
             }
             IPage currentPage = this.getPage(selectedNode);
             this.setNodeToBeDelete(selectedNode);
-            this.setSelectedNode(currentPage.getParent().getCode());
+            this.setSelectedNode(currentPage.getParentCode());
         } catch (Throwable t) {
             logger.error("error in trash", t);
             return FAILURE;
@@ -707,10 +709,11 @@ public class PageAction extends AbstractPortalAction implements ServletResponseA
         }
         IPage currentPage = this.getPage(selectedNode);
         IPage root = this.getPageManager().getOnlineRoot();
+        IPage parentPage = this.getPageManager().getDraftPage(currentPage.getParentCode());
         if (root.getCode().equals(currentPage.getCode())) {
             this.addActionError(this.getText("error.page.removeHome.notAllowed"));
             return "pageTree";
-        } else if (!isUserAllowed(currentPage) || !isUserAllowed(currentPage.getParent())) {
+        } else if (!isUserAllowed(currentPage) || !isUserAllowed(parentPage)) {
             this.addActionError(this.getText("error.page.remove.notAllowed"));
             return "pageTree";
         } else if (null != currentPage.getChildrenCodes() && currentPage.getChildrenCodes().length != 0) {

@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
+import java.util.Date;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordSearchBean;
 import org.entando.entando.aps.system.services.actionlog.model.IActivityStreamSearchBean;
@@ -39,27 +40,13 @@ public interface IActionLogDAO {
 	public ActionLogRecord getActionRecord(int id);
 	
 	public void deleteActionRecord(int id);
-	
-	public List<Integer> getActivityStream(List<String> userGroupCodes);
-	/*
-	public void editActionLikeRecord(int id, String username, boolean add);
-	
-	public void addActionLikeRecord(int id, String username);
-	
-	public void deleteActionLikeRecord(int id, String username);
-	
-	public List<ActivityStreamLikeInfo> getActionLikeRecords(int id);
-	
-	public List<ActivityStreamComment> getActionCommentRecords(int id);
-	
-	public void addActionCommentRecord(int id, int recordId, String username, String comment);
-	*/
-	//public void deleteActionCommentRecord(int id, int streamId);
-	
+    
+    public Date getLastUpdate(IActionLogRecordSearchBean searchBean);
+    
+	public Date getLastUpdate(FieldSearchFilter[] filters, List<String> userGroupCodes);
+    
 	public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup);
-	
-	//public void cleanOldActivityStreamLogs(int maxActivitySizeByGroup);
-	
+    
 	public void updateRecordDate(int id);
 
     public int countActionLogRecords(IActionLogRecordSearchBean searchBean);

@@ -146,7 +146,10 @@ public abstract class AbstractPortalAction extends BaseAction {
 
 	private void getSubBreadCrumbsTargets(List<IPage> pages, IPage current) {
 		pages.add(0, current);
-		IPage parent = current.getParent();
+        boolean isOnLine = current.isOnlineInstance();
+		IPage parent = (isOnLine) ? 
+                this.getPageManager().getOnlinePage(current.getParentCode()) : 
+                this.getPageManager().getDraftPage(current.getParentCode());
 		if (parent != null && !parent.getCode().equals(current.getCode())) {
 			this.getSubBreadCrumbsTargets(pages, parent);
 		}

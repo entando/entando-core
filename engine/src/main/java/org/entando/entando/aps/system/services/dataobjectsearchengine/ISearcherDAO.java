@@ -15,6 +15,7 @@ package org.entando.entando.aps.system.services.dataobjectsearchengine;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.category.ICategoryManager;
 
 import java.io.File;
 import java.util.Collection;
@@ -61,5 +62,7 @@ public interface ISearcherDAO {
 			Collection<ITreeNode> categories, Collection<String> allowedGroups) throws ApsSystemException;
 
 	public void close();
+        
+        public void setCategoryManager(ICategoryManager categoryManager);
 
 }

@@ -28,8 +28,6 @@ public class KeyGeneratorManager extends AbstractService implements IKeyGenerato
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	private final String UNIQUE_KEY_LOCK = "UNIQUE_KEY_LOCK";
-
 	private IKeyGeneratorDAO keyGeneratorDao;
 
 	private IKeyGeneratorManagerCacheWrapper cacheWrapper;
@@ -49,22 +47,7 @@ public class KeyGeneratorManager extends AbstractService implements IKeyGenerato
 	 */
 	@Override
 	public int getUniqueKeyCurrentValue() throws ApsSystemException {
-		int key;
-		synchronized (UNIQUE_KEY_LOCK) {
-			key = this.getCacheWrapper().getUniqueKeyCurrentValue() + 1;
-		}
-		this.updateKey(key);
-		return key;
-	}
-
-	private void updateKey(int val) throws ApsSystemException {
-		try {
-			this.getKeyGeneratorDAO().updateKey(val);
-			this.cacheWrapper.updateCurrentKey(val);
-		} catch (Throwable t) {
-			logger.error("Error updating the unique key", t);
-			throw new ApsSystemException("Error updating the unique key", t);
-		}
+		return this.getCacheWrapper().getAndIncrementUniqueKeyCurrentValue(this.getKeyGeneratorDAO());
 	}
 
 	protected IKeyGeneratorDAO getKeyGeneratorDAO() {

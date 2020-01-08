@@ -29,7 +29,7 @@
     </button>
     <a href="<s:url action="main" namespace="/do" />" class="navbar-brand">
         <img class="navbar-brand-icon logo-entando" src="<wp:resourceURL />administration/img/entando-logo.svg" alt="Entando 5.0" />
-        <span class="entando-development"><s:text name="note.administration.console" /></span>    </a>
+        <span class="entando-development"><s:text name="note.administration.console" />&#32;<wp:info key="systemParam" paramName="version" /></span></a>
 </div>
 <nav class="collapse navbar-collapse">
     <ul class="nav navbar-nav navbar-right navbar-iconic">
@@ -39,14 +39,11 @@
                 <s:text name="note.goToPortal" />
             </a>
         </li>
-
         <li id="notification-ico" class="drawer-pf-trigger2 notifications dropdown">
             <a class="nav-item-iconic drawer-pf-trigger-icon">
                 <span class="fa fa-bell" title="Notifications"></span>
-
             </a>
         </li>
-
         <li class="dropdown">
             <a class="dropdown-toggle nav-item-iconic" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 <span title="Info" class="fa pficon-info"></span>
@@ -83,7 +80,6 @@
                     </a>
                 </li>
             </ul>
-
             <div class="drawer-pf drawer-pf-custom hide drawer-pf-notifications-non-clickable">
                 <div class="drawer-pf-title drawer-pf-title-right-menu">
                     <a id="toggle-stream" class="drawer-pf-toggle-expand"></a>
@@ -92,7 +88,8 @@
                 </div>
                 <div class="panel-group" id="notification-drawer-accordion">
                     <jsp:include page="/WEB-INF/apsadmin/jsp/common/template/mainBody.jsp" />
-                </div>  
+                </div> 
+            </div>
         </li>
     </ul>
 </nav>

@@ -14,6 +14,7 @@
 package org.entando.entando.aps.system.services.page.model;
 
 import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
 import org.entando.entando.aps.system.services.DtoBuilder;
 
 /**
@@ -21,14 +22,26 @@ import org.entando.entando.aps.system.services.DtoBuilder;
  * @author paddeo
  */
 public class PageDtoBuilder extends DtoBuilder<IPage, PageDto> {
+    
+    private IPageManager pageManager;
 
     @Override
     protected PageDto toDto(IPage src) {
-        return new PageDto(src);
+        return new PageDto(src, this.getPageManager());
+    }
+    
+    public static PageDto converToDto(IPage src, IPageManager pageManager) {
+        PageDtoBuilder dto = new PageDtoBuilder();
+        dto.setPageManager(pageManager);
+        return dto.toDto(src);
     }
 
-    public static PageDto converToDto(IPage src) {
-        return new PageDtoBuilder().toDto(src);
+    public IPageManager getPageManager() {
+        return pageManager;
+    }
+
+    public void setPageManager(IPageManager pageManager) {
+        this.pageManager = pageManager;
     }
 
 }

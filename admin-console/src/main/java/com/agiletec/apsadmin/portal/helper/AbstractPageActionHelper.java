@@ -14,6 +14,7 @@
 package com.agiletec.apsadmin.portal.helper;
 
 import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.group.Group;
@@ -86,7 +87,9 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
                 }
             }
             if (!page.isRoot()) {
-                IPage parent = page.getParent();
+                IPage parent = (page.isOnlineInstance()) ? 
+                        this.getPageManager().getOnlinePage(page.getParentCode()) : 
+                        this.getPageManager().getDraftPage(page.getParentCode());
                 String parentGroupCode = parent.getGroup();
                 if (!parentGroupCode.equals(Group.FREE_GROUP_NAME) && !parentGroupCode.equals(groupCode)) {
                     String textMessage = currentAction.getText("error.page.parent.invalidGroup", new String[]{parent.getCode(), parentGroupCode});
@@ -146,7 +149,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
         IPage pageRoot = (IPage) this.getRoot();
         if (userGroupCodes.contains(Group.FREE_GROUP_NAME) || userGroupCodes.contains(Group.ADMINS_GROUP_NAME)
                 || (alsoFreeViewPages && null != pageRoot.getExtraGroups() && pageRoot.getExtraGroups().contains(Group.FREE_GROUP_NAME))) {
-            root = new PageTreeNodeWrapper(this.getRoot());
+            root = new PageTreeNodeWrapper(this.getRoot(), null);
         } else {
             root = this.getVirtualRoot();
         }
@@ -162,9 +165,10 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
                 return;
             }
             if (this.isPageAllowed(newCurrentNode, userGroupCodes, alsoFreeViewPages)) {
-                PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode);
+                PageTreeNodeWrapper newNode = new PageTreeNodeWrapper(newCurrentNode, currentWrapper);
                 currentWrapper.addChildCode(newNode.getCode());
                 currentWrapper.addChild(newNode);
+                newNode.setParentCode(currentWrapper.getCode());
                 newNode.setParent(currentWrapper);
                 this.addTreeWrapper(newNode, newCurrentNode, userGroupCodes, alsoFreeViewPages);
             } else {
@@ -190,13 +194,22 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
             virtualRoot.setTitle(lang.getCode(), "ROOT");
         }
         virtualRoot.setParent(virtualRoot);
+        virtualRoot.setParentCode(virtualRoot.getCode());
         return virtualRoot;
     }
 
     @Override
     protected void buildCheckNodes(ITreeNode treeNode, Set<String> nodesToShow, Collection<String> groupCodes) {
         nodesToShow.add(treeNode.getCode());
-        ITreeNode parent = treeNode.getParent();
+        if (treeNode instanceof PageTreeNodeWrapper) {
+            treeNode = ((PageTreeNodeWrapper) treeNode).getOrigin();
+        }
+        if (treeNode == null) {
+            return;
+        }
+        IPage parent = (((IPage) treeNode).isOnlineInstance()) ? 
+                this.getPageManager().getOnlinePage(treeNode.getParentCode()) : 
+                this.getPageManager().getDraftPage(treeNode.getParentCode());
         if (parent == null) {
             return;
         }
@@ -205,7 +218,7 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
             nodesToShow.add(AbstractPortalAction.VIRTUAL_ROOT_CODE);
             return;
         }
-        if (parent.getParent() != null
+        if (parent.getParentCode() != null
                 && !parent.getCode().equals(treeNode.getCode())) {
             this.buildCheckNodes(parent, nodesToShow, groupCodes);
         }
@@ -283,15 +296,21 @@ public abstract class AbstractPageActionHelper extends TreeNodeBaseActionHelper 
 
     @Override
     protected TreeNodeWrapper buildWrapper(ITreeNode treeNode) {
+        IPage parent = this.getPage(treeNode.getParentCode());
         if (treeNode instanceof IPage) {
-            return new PageTreeNodeWrapper((IPage) treeNode);
+            return new PageTreeNodeWrapper((IPage) treeNode, parent);
         } else {
             if (AbstractPortalAction.VIRTUAL_ROOT_CODE.equals(treeNode.getCode())) {
                 return this.getVirtualRoot();
             }
             IPage page = this.getPage(treeNode.getCode());
-            return new PageTreeNodeWrapper(page);
+            return new PageTreeNodeWrapper(page, parent);
         }
+    }
+
+    @Override
+    protected ITreeNodeManager getTreeNodeManager() {
+        return this.getPageManager();
     }
 
     protected IPageManager getPageManager() {

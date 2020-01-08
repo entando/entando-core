@@ -21,20 +21,22 @@ import com.agiletec.aps.util.ApsProperties;
 
 public interface II18nManagerCacheWrapper {
 
-	public static final String I18N_MANAGER_CACHE_NAME = "Entando_I18nManager";
+    public static final String I18N_MANAGER_CACHE_NAME = "Entando_I18nManager";
 
-	public static final String I18N_CACHE_NAME_PREFIX = "I18nManager_labelGroup_";
+    public static final String I18N_CACHE_NAME_PREFIX = "I18nManager_labelGroup_";
 
-	public static final String I18N_CODES_CACHE_NAME = "I18nManager_labelGroups";
+    public static final String I18N_CODES_CACHE_NAME = "I18nManager_labelGroups";
 
-	public void initCache(II18nDAO i18nDAO) throws ApsSystemException;
+    public void initCache(II18nDAO i18nDAO) throws ApsSystemException;
 
-	public Map<String, ApsProperties> getLabelGroups();
+    public Map<String, ApsProperties> getLabelGroups();
 
-	public void addLabelGroup(String key, ApsProperties labels);
+    public ApsProperties getLabelGroup(String key);
 
-	public void updateLabelGroup(String key, ApsProperties labels);
+    public void addLabelGroup(String key, ApsProperties labels);
 
-	public void removeLabelGroup(String key);
+    public void updateLabelGroup(String key, ApsProperties labels);
+
+    public void removeLabelGroup(String key);
 
 }

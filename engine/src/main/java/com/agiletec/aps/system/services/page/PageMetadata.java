@@ -53,7 +53,7 @@ public class PageMetadata implements Cloneable, Serializable {
     private Date updatedAt;
 
     @Override
-    public PageMetadata clone() throws CloneNotSupportedException {
+    public PageMetadata clone() {
         PageMetadata copy = null;
         try {
             copy = this.getClass().newInstance();
@@ -248,17 +248,14 @@ public class PageMetadata implements Cloneable, Serializable {
      * @return
      */
     public boolean hasEqualConfiguration(Object obj) {
-        if (this == obj) {
-            return true;
-        }
         if (obj == null) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
+        if (!this.getClass().getName().equals(obj.getClass().getName())) {
             return false;
         }
         PageMetadata other = (PageMetadata) obj;
-        if (charset == null) {
+        if (this.charset == null) {
             if (other.charset != null) {
                 return false;
             }
@@ -290,7 +287,7 @@ public class PageMetadata implements Cloneable, Serializable {
             if (other.model != null) {
                 return false;
             }
-        } else if (!model.equals(other.model)) {
+        } else if (!model.getCode().equals(other.model.getCode())) {
             return false;
         }
         if (showable != other.showable) {

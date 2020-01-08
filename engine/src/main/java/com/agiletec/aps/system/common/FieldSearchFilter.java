@@ -40,11 +40,11 @@ public class FieldSearchFilter<T> implements Serializable {
 
     private String key;
 
-    private Object value;
+    private T value;
 
     private Order order;
-    private Object start;
-    private Object end;
+    private T start;
+    private T end;
 
     private boolean likeOption;
     private LikeOptionType likeOptionType;
@@ -92,7 +92,7 @@ public class FieldSearchFilter<T> implements Serializable {
      * This option can be used to filter by the value of a string metadata. It can be
      * used only with string and with not null values.
      */
-    public FieldSearchFilter(String key, Object value, boolean useLikeOption) {
+    public FieldSearchFilter(String key, T value, boolean useLikeOption) {
         this(key);
         if (null != value && value instanceof Collection && ((Collection) value).size() > 0) {
             List<T> allowedValues = new ArrayList<T>();
@@ -109,7 +109,7 @@ public class FieldSearchFilter<T> implements Serializable {
         }
     }
     
-    public FieldSearchFilter(String key, Object value, boolean useLikeOption, LikeOptionType likeOptionType) {
+    public FieldSearchFilter(String key, T value, boolean useLikeOption, LikeOptionType likeOptionType) {
         this(key, value, useLikeOption);
         if (this.isLikeOption()) {
             this.setLikeOptionType(likeOptionType);
@@ -125,7 +125,7 @@ public class FieldSearchFilter<T> implements Serializable {
      * @param end The ending value of the interval. It can be an object of type 
      * "String", "Date", "BigDecimal", "Boolean" o null.
      */
-    public FieldSearchFilter(String key, Object start, Object end) {
+    public FieldSearchFilter(String key, T start, T end) {
         this(key);
         if (start != null && end != null && !start.getClass().equals(end.getClass())) {
             throw new RuntimeException("Error: 'start' and 'end' types have to be equals");
@@ -178,10 +178,10 @@ public class FieldSearchFilter<T> implements Serializable {
      * Return the value of the key of the entity to look for.
      * @return The value to look for.
      */
-    public Object getValue() {
+    public T getValue() {
         return value;
     }
-    protected void setValue(Object value) {
+    protected void setValue(T value) {
         this.value = value;
     }
     
@@ -190,10 +190,10 @@ public class FieldSearchFilter<T> implements Serializable {
      * "String", "Date", "BigDecimal", "Boolean" o null.
      * @return The starting value of the interval.
      */
-    public Object getStart() {
+    public T getStart() {
         return start;
     }
-    protected void setStart(Object start) {
+    protected void setStart(T start) {
         this.start = start;
     }
     
@@ -202,10 +202,10 @@ public class FieldSearchFilter<T> implements Serializable {
      * "String", "Date", "BigDecimal", "Boolean" o null.
      * @return L'end dell'intervallo;
      */
-    public Object getEnd() {
+    public T getEnd() {
         return end;
     }
-    protected void setEnd(Object end) {
+    protected void setEnd(T end) {
         this.end = end;
     }
     

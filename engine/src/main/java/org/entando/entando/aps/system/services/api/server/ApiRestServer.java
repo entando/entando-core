@@ -156,9 +156,7 @@ public class ApiRestServer {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
             Properties properties = this.extractProperties(langCode, ui, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
-            if (apiMethod.getRequiredAuth()) {
-                this.extractOAuthParameters(request, apiMethod.getRequiredPermission(), properties);
-            }
+            this.extractOAuthParameters(request, apiMethod, properties);
             responseObject = responseBuilder.createResponse(apiMethod, properties);
         } catch (ApiException ae) {
             responseObject = this.buildErrorResponse(httpMethod, namespace, resourceName, ae);
@@ -175,9 +173,7 @@ public class ApiRestServer {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
             Properties properties = this.extractProperties(langCode, ui, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
-            if (apiMethod.getRequiredAuth()) {
-                this.extractOAuthParameters(request, apiMethod.getRequiredPermission(), properties);
-            }
+            this.extractOAuthParameters(request, apiMethod, properties);
             Object bodyObject = UnmarshalUtils.unmarshal(apiMethod.getExpectedType(), request, mediaType);
             responseObject = responseBuilder.createResponse(apiMethod, bodyObject, properties);
         } catch (ApiException ae) {
@@ -266,9 +262,14 @@ public class ApiRestServer {
         return response;
     }
 
-    protected void extractOAuthParameters(HttpServletRequest request, String permission, Properties properties) throws ApiException {
+    protected void extractOAuthParameters(HttpServletRequest request, ApiMethod apiMethod, Properties properties) throws ApiException {
+        IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
+        IAuthorizationManager authManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, request);
         try {
-            _logger.info("Permission required: {}", permission);
+            properties.put(SystemConstants.API_REQUEST_PARAMETER, request);
+            UserDetails user = null;
+            String permission = apiMethod.getRequiredPermission();
+            _logger.debug("Permission required: {}", permission);
             String accessToken = new EntandoBearerTokenExtractor().extractToken(request);
             IApiOAuth2TokenManager tokenManager = (IApiOAuth2TokenManager) ApsWebApplicationUtils.getBean(SystemConstants.OAUTH_TOKEN_MANAGER, request);
             final OAuth2AccessTokenImpl token = (OAuth2AccessTokenImpl) tokenManager.readAccessToken(accessToken);
@@ -281,29 +282,32 @@ public class ApiRestServer {
                     throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token expired", Response.Status.UNAUTHORIZED);
                 }
                 String username = token.getLocalUser();
-                IUserManager userManager = (IUserManager) ApsWebApplicationUtils.getBean(SystemConstants.USER_MANAGER, request);
-                UserDetails user = userManager.getUser(username);
+                user = userManager.getUser(username);
                 if (user != null) {
+                    user.addAuthorizations(authManager.getUserAuthorizations(username));
                     properties.put(SystemConstants.API_USER_PARAMETER, user);
                     _logger.info("User {} requesting resource that requires {} permission ", username, permission);
-                    request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
-                    if (permission != null) {
-                        IAuthorizationManager authManager = (IAuthorizationManager) ApsWebApplicationUtils.getBean(SystemConstants.AUTHORIZATION_SERVICE, request);
-                        user.addAuthorizations(authManager.getUserAuthorizations(username));
-                        if (!authManager.isAuthOnPermission(user, permission)) {
-                            List<Role> roles = authManager.getUserRoles(user);
-                            for (Role role : roles) {
-                                _logger.info("User {} requesting resource has {} permission ", username, role.getPermissions().toArray()[0]);
-                            }
-                            _logger.info("User {} requesting resource has {} permission ", username, "none");
-                            throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Authentication Required", Response.Status.UNAUTHORIZED);
+                    UserDetails userOnSession = (UserDetails) request.getSession().getAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER);
+                    if (null == userOnSession || userOnSession.getUsername().equals(SystemConstants.GUEST_USER_NAME)) {
+                        user.setAccessToken(accessToken);
+                        request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
+                    } 
+                }
+            } else if (accessToken != null) {
+                _logger.warn("Token not found from access token");
+            }
+            if (null != user) {
+                String username = user.getUsername();
+                if (permission != null) {
+                    if (!authManager.isAuthOnPermission(user, permission)) {
+                        List<Role> roles = authManager.getUserRoles(user);
+                        for (Role role : roles) {
+                            _logger.debug("User {} requesting resource has {} permission ", username, (null != role.getPermissions()) ? role.getPermissions().toString() : "");
                         }
+                        throw new ApiException(IApiErrorCodes.API_AUTHORIZATION_REQUIRED, "Authorization Required", Response.Status.UNAUTHORIZED);
                     }
                 }
-            } else {
-                if (accessToken != null) {
-                    throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Token not found, request new one", Response.Status.UNAUTHORIZED);
-                }
+            } else if (apiMethod.getRequiredAuth()) {
                 throw new ApiException(IApiErrorCodes.API_AUTHENTICATION_REQUIRED, "Authentication Required", Response.Status.UNAUTHORIZED);
             }
         } catch (ApsSystemException ex) {

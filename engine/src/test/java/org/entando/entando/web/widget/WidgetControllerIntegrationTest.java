@@ -16,6 +16,7 @@ package org.entando.entando.web.widget;
 import java.util.Map;
 
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
@@ -46,6 +49,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class WidgetControllerIntegrationTest extends AbstractControllerIntegrationTest {
+    
+    @Autowired
+    private IPageManager pageManager;
 
     @Autowired
     private IWidgetTypeManager widgetTypeManager;
@@ -71,21 +77,17 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
-        ResultActions result = mockMvc.perform(
-                get("/widgets/{code}", "1").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
-        result.andExpect(status().isNotFound());
+        ResultActions result = this.executeWidgetGet("1", accessToken, status().isNotFound());
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
     }
-
+    
     @Test
     public void testGetWidget_2() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
-        ResultActions result = mockMvc.perform(
-                get("/widgets/{code}", "login_form").header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
-        result.andExpect(status().isOk());
+        ResultActions result = this.executeWidgetGet("login_form", accessToken, status().isOk());
         result.andExpect(jsonPath("$.payload.code", is("login_form")));
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
@@ -255,6 +257,71 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     }
     
     @Test
+    public void testAddUpdateWidget_3() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String pageCode = "test_add_delete_widget";
+        String newWidgetCode = "test_new_type_3";
+        Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+        try {
+            WidgetRequest request = new WidgetRequest();
+            request.setCode(newWidgetCode);
+            request.setGroup(Group.FREE_GROUP_NAME);
+            Map<String, String> titles = new HashMap<>();
+            titles.put("it", "Titolo ITA 3");
+            titles.put("en", "Title EN 3");
+            request.setTitles(titles);
+            request.setCustomUi("<h1>Test</h1>");
+            request.setGroup(Group.FREE_GROUP_NAME);
+            ResultActions result0 = this.executeWidgetPost(request, accessToken, status().isOk());
+            result0.andExpect(jsonPath("$.payload.code", is(newWidgetCode)));
+            Assert.assertNotNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+            
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCode(pageCode);
+            pageRequest.setPageModel("home");
+            pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
+            Map<String, String> pageTitles = new HashMap<>();
+            pageTitles.put("it", pageCode);
+            pageTitles.put("en", pageCode);
+            pageRequest.setTitles(pageTitles);
+            pageRequest.setParentCode("service");
+            this.addPage(accessToken, pageRequest);
+            
+            ResultActions result1 = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
+            result1.andExpect(jsonPath("$.payload.used", is(0)));
+            
+            WidgetConfigurationRequest wcr = new WidgetConfigurationRequest();
+            wcr.setCode(newWidgetCode);
+            ResultActions resultPutWidget = mockMvc
+                .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 1})
+                        .content(mapper.writeValueAsString(wcr))
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+            resultPutWidget.andExpect(status().isOk());
+            
+            ResultActions result3 = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
+            result3.andExpect(jsonPath("$.payload.used", is(1)));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.pageManager.deletePage(pageCode);
+            Assert.assertNull(this.pageManager.getDraftPage(pageCode));
+            this.widgetTypeManager.deleteWidgetType(newWidgetCode);
+            Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+        }
+    }
+    
+    private void addPage(String accessToken, PageRequest pageRequest) throws Exception {
+        ResultActions result = mockMvc
+                .perform(post("/pages")
+                        .content(mapper.writeValueAsString(pageRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+    
+    @Test
     public void testUpdateStockLocked() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -275,6 +342,14 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         String code = "login_form";
         ResultActions result = this.executeWidgetDelete(code, accessToken, status().isBadRequest());
         result.andExpect(jsonPath("$.errors[0].code", is(WidgetValidator.ERRCODE_OPERATION_FORBIDDEN_LOCKED)));
+    }
+    
+    private ResultActions executeWidgetGet(String widgetTypeCode, String accessToken, ResultMatcher expected) throws Exception {
+        ResultActions result = mockMvc
+                .perform(get("/widgets/{code}", new Object[]{widgetTypeCode})
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+        result.andExpect(expected);
+        return result;
     }
     
     private ResultActions executeWidgetPost(WidgetRequest request, String accessToken, ResultMatcher expected) throws Exception {

@@ -67,11 +67,11 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	public void addCategory(Category category) throws ApsSystemException {
 		try {
 			this.getCategoryDAO().addCategory(category);
+            this.getCacheWrapper().addCategory(category);
 		} catch (Throwable t) {
 			_logger.error("Error detected while adding a category", t);
 			throw new ApsSystemException("Error detected while adding a category", t);
 		}
-		this.initCache();
 	}
 
 	/**
@@ -92,7 +92,6 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 				throw new ApsSystemException("Error detected while removing a category", t);
 			}
 		}
-		this.initCache();
 	}
 
 	/**
@@ -105,11 +104,11 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	public void updateCategory(Category category) throws ApsSystemException {
 		try {
 			this.getCategoryDAO().updateCategory(category);
+            this.getCacheWrapper().updateCategory(category);
 		} catch (Throwable t) {
 			_logger.error("Error detected while updating a category", t);
 			throw new ApsSystemException("Error detected while updating a category", t);
 		}
-		this.initCache();
 	}
 
 	/**
@@ -131,7 +130,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public List<Category> getCategoriesList() {
-		List<Category> categories = new ArrayList<Category>();
+		List<Category> categories = new ArrayList<>();
 		if (null != this.getRoot()) {
 			for (int i = 0; i < this.getRoot().getChildrenCodes().length; i++) {
 				this.addCategories(categories, this.getRoot().getChildrenCodes()[i]);
@@ -166,7 +165,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 
 	@Override
 	public List<Category> searchCategories(String categoryCodeToken) throws ApsSystemException {
-		List<Category> searchResult = new ArrayList<Category>();
+		List<Category> searchResult = new ArrayList<>();
 		try {
 			Category root = this.getRoot();
 			this.searchCategories(root, categoryCodeToken, searchResult);
@@ -177,19 +176,38 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		}
 		return searchResult;
 	}
+    
+    @Override
+	public boolean moveCategory(Category currentCategory, Category newParent) throws ApsSystemException {
+        return this.moveCategory(currentCategory.getCode(), newParent.getCode());
+    }
 
 	@Override
-	public boolean moveCategory(Category currentCategory, Category newParent) throws ApsSystemException {
+	public boolean moveCategory(String categoryCode, String newParentCode) throws ApsSystemException {
+        Category currentCategory = this.getCategory(categoryCode);
+        Category newParent = this.getCategory(newParentCode);
 		boolean resultOperation = false;
+        if (null == currentCategory || null == newParent) {
+            _logger.error("Category to move '{}' or new parent '{}' is null", categoryCode, newParentCode);
+            return resultOperation;
+        }
+        if (categoryCode.equals(newParentCode)) {
+            _logger.error("Category to move '{}' and new parent '{}' are the same", categoryCode, newParentCode);
+            return resultOperation;
+        }
+        if (newParent.isChildOf(categoryCode, this)) {
+            _logger.error("Category to move '{}' is parent of the new parent '{}'", categoryCode, newParentCode);
+            return resultOperation;
+        }
 		_logger.debug("start move category {} under {}", currentCategory, newParent);
 		try {
 			this.getCategoryDAO().moveCategory(currentCategory, newParent);
+            this.getCacheWrapper().moveCategory(categoryCode, newParentCode);
 			resultOperation = true;
 		} catch (Throwable t) {
 			_logger.error("Error while moving  page {} under the node {}", currentCategory, newParent, t);
 			throw new ApsSystemException("Error while moving a category under a different node", t);
 		}
-		this.initCache();
 		this.startReloadCategoryReferences(currentCategory.getCode());
 		return resultOperation;
 	}
@@ -239,7 +257,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 
 	@Override
 	public Map<String, Integer> getReloadStatus() {
-		Map<String, Integer> status = new HashMap<String, Integer>();
+		Map<String, Integer> status = new HashMap<>();
 		String[] utilizers = this.loadCategoryUtilizers();
 		for (int i = 0; i < utilizers.length; i++) {
 			String beanName = utilizers[i];

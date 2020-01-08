@@ -57,6 +57,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			IPage page = pageManager.getOnlinePage(this.getPageCode());
 			if (null == page) {
 				_logger.error("Required info for null page : inserted code '{}'", this.getPageCode());
+                return EVAL_PAGE;
 			}
 			if (this.getInfo() == null || this.getInfo().equals(CODE_INFO)) {
 				this.setValue(page.getCode());
@@ -67,7 +68,7 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 			} else if (this.getInfo().equals(OWNER_INFO)) {
 				this.extractPageOwner(page, reqCtx);
 			} else if (this.getInfo().equals(CHILD_OF_INFO)) {
-				this.extractIsChildOfTarget(page);
+				this.extractIsChildOfTarget(page, pageManager);
 			} else if (this.getInfo().equals(HAS_CHILD)) {
 				boolean hasChild = (page.getChildrenCodes() != null && page.getChildrenCodes().length > 0);
 				this._value = new Boolean(hasChild).toString();
@@ -82,9 +83,9 @@ public class PageInfoTag extends ExtendedTagSupport implements IParameterParentT
 		return EVAL_PAGE;
 	}
 
-	protected void extractIsChildOfTarget(IPage page) {
+	protected void extractIsChildOfTarget(IPage page, IPageManager pageManager) {
 		if (null != this.getTargetPage()) {
-			boolean isChild = (page.getCode().equals(this.getTargetPage()) || page.isChildOf(this.getTargetPage()));
+			boolean isChild = (page.getCode().equals(this.getTargetPage()) || page.isChildOf(this.getTargetPage(), pageManager));
 			this._value = new Boolean(isChild).toString();
 		}
 	}

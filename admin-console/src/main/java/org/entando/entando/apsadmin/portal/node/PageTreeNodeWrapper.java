@@ -13,6 +13,8 @@
  */
 package org.entando.entando.apsadmin.portal.node;
 
+import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.apsadmin.system.TreeNodeWrapper;
 
@@ -22,13 +24,13 @@ public class PageTreeNodeWrapper extends TreeNodeWrapper {
 		super();
 	}
 
-	public PageTreeNodeWrapper(IPage page) {
-		super(page);
+	public PageTreeNodeWrapper(IPage page, ITreeNode parent) {
+		super(page, parent);
 		this._origin = page;
 	}
 
-	public PageTreeNodeWrapper(IPage page, String currentLang) {
-		super(page, currentLang);
+	public PageTreeNodeWrapper(IPage page, ITreeNode parent, String currentLang, ITreeNodeManager treeNodeManager) {
+		super(page, parent, currentLang, treeNodeManager);
 		this._origin = page;
 	}
 

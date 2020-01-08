@@ -34,6 +34,7 @@ import com.agiletec.apsadmin.ApsAdminBaseTestCase;
 import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
+import java.util.Arrays;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
@@ -48,7 +49,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testFailureUpdateTitles() throws Throwable {
         String result = this.executeUpdate("content_viewer", "italian title", "english title", "editorCustomers", "*GUI*");
         assertEquals("userNotAllowed", result);
@@ -210,7 +211,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
         }
     }
-
+    
     public void testTrashType() throws Throwable {
         String pageCode = "pagina_1";
         int frame = 1;
@@ -234,8 +235,13 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertEquals(1, action.getActionErrors().size());
 
             result = this.executeDeleteWidgetFromPage(pageCode, frame, "admin");
+            IPage page = this._pageManager.getDraftPage(pageCode);
+            boolean hasWidget = Arrays.asList(page.getWidgets()).stream()
+                    .filter(w -> (null != w && w.getType().getCode().equals(widgetTypeCode)))
+                    .findFirst().isPresent();
+            assertFalse(hasWidget);
             assertEquals(Action.SUCCESS, result);
-
+            
             result = this.executeTrash(widgetTypeCode, "admin");
             assertEquals(Action.SUCCESS, result);
 
@@ -243,6 +249,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertEquals(Action.SUCCESS, result);
 
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
+            
         } catch (Throwable t) {
             throw t;
         } finally {

@@ -32,14 +32,20 @@ public interface ICategoryManagerCacheWrapper {
 
 	public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException;
 
-	public Category getCategory(String code);
-
 	public Category getRoot();
+
+	public Category getCategory(String code);
+    
+    public void addCategory(Category category);
+    
+    public void updateCategory(Category category);
 
 	public void deleteCategory(String code);
 
 	public Map<String, Integer> getMoveNodeStatus();
 
 	public void updateMoveNodeStatus(String beanName, Integer status);
+    
+    public void moveCategory(String categoryCode, String newParentCode);
 
 }

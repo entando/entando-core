@@ -13,33 +13,35 @@
  */
 package org.entando.entando.aps.servlet;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.ValidationException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     private static final Logger LOGGER = Logger.getLogger(XSSRequestWrapper.class.getName());
 
     public XSSRequestWrapper(HttpServletRequest servletRequest) {
-            super(servletRequest);
+        super(servletRequest);
     }
 
     @Override
     public String[] getParameterValues(String parameter) {
-            String[] values = super.getParameterValues(parameter);
-            if (values == null) {
-                    return null;
-            }
-            int count = values.length;
-            String[] encodedValues = new String[count];
-            for (int i = 0; i < count; i++) {
-                    encodedValues[i] = validatedParameter(values[i]);
-            }
-            return encodedValues;
+        String[] values = super.getParameterValues(parameter);
+        if (values == null) {
+            return null;
+        }
+        int count = values.length;
+        String[] encodedValues = new String[count];
+        for (int i = 0; i < count; i++) {
+            encodedValues[i] = validatedParameter(values[i]);
+        }
+        return encodedValues;
     }
 
     @Override
@@ -49,34 +51,39 @@ public class XSSRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-            return validatedHeader(name);
+        return validatedHeader(name);
     }
 
     private String validatedParameter(String name) {
-            String value = super.getParameter(name);
-            try {
-                    value = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
-            } catch (ValidationException e) {
-                    LOGGER.log(Level.SEVERE,
-                                    String.format("Invalid parameter (%s - %s), encoding as HTML attribute", name, value),
-                                    e);
-                    value = ESAPI.encoder().encodeForHTMLAttribute(value);
-            }
+        String value = super.getParameter(name);
+        if (StringUtils.isBlank(value)) {
             return value;
+        }
+        try {
+            value = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
+        } catch (ValidationException e) {
+            LOGGER.log(Level.SEVERE, String.format("Invalid parameter (%s - %s), encoding as HTML attribute", name, value), e);
+            value = ESAPI.encoder().encodeForHTMLAttribute(value);
+        } catch (Throwable e) {
+            LOGGER.log(Level.FINE, String.format("Invalid parameter (%s - %s) - error message %s", name, value, e.getMessage()));
+        }
+        return value;
     }
 
     private String validatedHeader(String name) {
-            String value = super.getHeader(name);
-            try {
-                    value = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
-            } catch (ValidationException e) {
-                    LOGGER.log(Level.SEVERE,
-                                    String.format("Invalid header (%s - %s), encoding as HTML attribute", name, value),
-                                    e);
-                    value = ESAPI.encoder().encodeForHTMLAttribute(value);
-            }
+        String value = super.getHeader(name);
+        if (StringUtils.isBlank(value)) {
             return value;
+        }
+        try {
+            value = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
+        } catch (ValidationException e) {
+            LOGGER.log(Level.SEVERE, String.format("Invalid header (%s - %s), encoding as HTML attribute", name, value), e);
+            value = ESAPI.encoder().encodeForHTMLAttribute(value);
+        } catch (Throwable e) {
+            LOGGER.log(Level.FINE, String.format("Invalid parameter (%s - %s) - error message %s", name, value, e.getMessage()));
+        }
+        return value;
     }
 
 }
-

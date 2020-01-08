@@ -98,7 +98,8 @@ public class PageTestUtil {
 		} else {
 			assertEquals(expected.length, actual.length);
 			for (int i = 0; i < expected.length; i++) {
-				assertEquals(expected[i], actual[i]);
+				assertEquals(expected[i].getConfig(), actual[i].getConfig());
+				assertEquals(expected[i].getType().getCode(), actual[i].getType().getCode());
 			}
 		}
 	}
@@ -118,23 +119,26 @@ public class PageTestUtil {
 		return pages.get(code);
 	}
 
-	public static Page createPage(String code, IPage parentPage, String groupName, PageMetadata metadata, Widget[] widgets) {
+	public static Page createPage(String code, String parentPageCode, String groupName, PageMetadata metadata, Widget[] widgets) {
 		Page page = new Page();
 		page.setCode(code);
-		page.setParent(parentPage);
-		page.setParentCode(parentPage.getCode());
-		//page.setPosition(parentPage.getChildrenCodes().length + 1);
+		page.setParentCode(parentPageCode);
 		page.setMetadata(metadata);
 		page.setGroup(groupName);
+        if (null == widgets) {
+            if (null != metadata && null != metadata.getModel()) {
+                widgets = new Widget[metadata.getModel().getFrames().length];
+            } else {
+                widgets = new Widget[0];
+            }
+        }
 		page.setWidgets(widgets);
 		return page;
 	}
 
-	public static PageMetadata createPageMetadata(String pageModelCode, boolean showable, String defaultTitle, String mimeType,
+	public static PageMetadata createPageMetadata(PageModel pageModel, boolean showable, String defaultTitle, String mimeType,
 			String charset, boolean useExtraTitles, Set<String> extraGroups, Date updatedAt) {
 		PageMetadata metadata = new PageMetadata();
-		PageModel pageModel = new PageModel();
-		pageModel.setCode(pageModelCode);
 		metadata.setModel(pageModel);
 
 		metadata.setShowable(showable);

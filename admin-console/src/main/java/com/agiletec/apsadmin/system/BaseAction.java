@@ -14,12 +14,15 @@
 package com.agiletec.apsadmin.system;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.tree.ITreeNode;
+import com.agiletec.aps.system.common.tree.ITreeNodeManager;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.ApsWebApplicationUtils;
 import com.opensymphony.xwork2.ActionSupport;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.struts2.interceptor.ParameterAware;
@@ -99,7 +102,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 		if (null != this._actualAllowedGroups) {
 			return _actualAllowedGroups;
 		}
-		this._actualAllowedGroups = new ArrayList<Group>();
+		this._actualAllowedGroups = new ArrayList<>();
 		UserDetails currentUser = this.getCurrentUser();
 		if (null == currentUser || null == this.getRequiredPermissions()) {
 			return this._actualAllowedGroups;
@@ -122,7 +125,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	}
 	
 	protected List<String> getActualAllowedGroupCodes() {
-		List<String> codes = new ArrayList<String>();
+		List<String> codes = new ArrayList<>();
 		List<Group> groups = this.getActualAllowedGroups();
 		for (int i = 0; i < groups.size(); i++) {
 			Group group = groups.get(i);
@@ -185,7 +188,7 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 			return;
 		}
 		if (null == this._activityStreamInfos) {
-			this._activityStreamInfos = new ArrayList<ActivityStreamInfo>();
+			this._activityStreamInfos = new ArrayList<>();
 		}
 		this._activityStreamInfos.add(asi);
 	}
@@ -193,6 +196,23 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	public boolean isComponentInstalled(String componentName) {
 		return this.getComponentManager().isComponentInstalled(componentName);
 	}
+    
+    public String getDefaultFullTitle(ITreeNode treeNode) {
+        return this.getFullTitle(treeNode, this.getLangManager().getDefaultLang().getCode());
+    }
+    
+    public String getShortFullTitle(ITreeNode treeNode, String langCode) {
+        return treeNode.getShortFullTitle(langCode, this.getTreeNodeManager(treeNode));
+    }
+    
+    public String getFullTitle(ITreeNode treeNode, String langCode) {
+        return treeNode.getFullTitle(langCode, this.getTreeNodeManager(treeNode));
+    }
+    
+    protected ITreeNodeManager getTreeNodeManager(ITreeNode treeNode) {
+        String beanName = treeNode.getManagerBeanCode();
+        return (ITreeNodeManager) ApsWebApplicationUtils.getBean(beanName, this.getRequest());
+    }
 	
 	@Override
 	public void setServletRequest(HttpServletRequest request) {

@@ -62,7 +62,8 @@ public class PageTreeAction extends AbstractTreeAction {
 				return check;
 			}
 			IPage currentPage = this.getPageManager().getDraftPage(selectedNode);
-			if (!isUserAllowed(currentPage.getParent())) {
+            IPage parentPage = this.getPageManager().getDraftPage(currentPage.getParentCode());
+			if (!isUserAllowed(parentPage)) {
 				_logger.info("User not allowed!");
 				this.addActionError(this.getText("error.page.userNotAllowed"));
 				return SUCCESS;
@@ -141,7 +142,7 @@ public class PageTreeAction extends AbstractTreeAction {
 			this.addActionError(this.getText("error.page.move.childUnderParent.notAllowed", args));
 			return "pageTree";
 		}
-		if (parent.isChildOf(selectedNode)) {
+		if (parent.isChildOf(selectedNode, this.getPageManager())) {
 			_logger.info("trying to move a node under its own child..");
 			this.addActionError(this.getText("error.page.move.parentUnderChild.notAllowed"));
 			return "pageTree";

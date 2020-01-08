@@ -122,7 +122,6 @@ public class PreviewRequestValidator extends AbstractControlService {
 		if (null != currentPage) {
 			page = new Page();
 			page.setCode(currentPage.getCode());
-			page.setParent(currentPage.getParent());
 			page.setParentCode(currentPage.getParentCode());
 			page.setGroup(currentPage.getGroup());
 			PageMetadata metadata = currentPage.getMetadata();

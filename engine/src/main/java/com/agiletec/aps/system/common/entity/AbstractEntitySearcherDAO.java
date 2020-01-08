@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
+import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.entity.model.ApsEntityRecord;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.slf4j.Logger;
@@ -45,9 +46,8 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
         ResultSet result = null;
         try {
             conn = this.getConnection();
-            stat = this.buildStatement(filters, true, conn);
+            stat = this.buildStatement(filters, false, true, conn);
             result = stat.executeQuery();
-
             while (result.next()) {
                 ApsEntityRecord record = this.createRecord(result);
                 if (!records.contains(record)) {
@@ -65,6 +65,27 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
     }
 
     protected abstract ApsEntityRecord createRecord(ResultSet result) throws Throwable;
+
+    protected Integer countId(EntitySearchFilter[] filters) {
+        Connection conn = null;
+        int count = 0;
+        PreparedStatement stat = null;
+        ResultSet result = null;
+        try {
+            conn = this.getConnection();
+            stat = this.buildStatement(filters, true, false, conn);
+            result = stat.executeQuery();
+            if (result.next()) {
+                count = result.getInt(1);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error while loading the count of IDs", t);
+            throw new RuntimeException("Error while loading the count of IDs", t);
+        } finally {
+            closeDaoResources(result, stat, conn);
+        }
+        return count;
+    }
 
     @Override
     public List<String> searchId(String typeCode, EntitySearchFilter[] filters) {
@@ -84,7 +105,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
         ResultSet result = null;
         try {
             conn = this.getConnection();
-            stat = this.buildStatement(filters, false, conn);
+            stat = this.buildStatement(filters, false, false, conn);
             result = stat.executeQuery();
             while (result.next()) {
                 String id = result.getString(this.getMasterTableIdFieldName());
@@ -114,8 +135,8 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
         return newFilters;
     }
 
-    private PreparedStatement buildStatement(EntitySearchFilter[] filters, boolean selectAll, Connection conn) {
-        String query = this.createQueryString(filters, selectAll);
+    private PreparedStatement buildStatement(EntitySearchFilter[] filters, boolean isCount, boolean selectAll, Connection conn) {
+        String query = this.createQueryString(filters, isCount, selectAll);
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(query);
@@ -158,9 +179,8 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
      * @return The last used index.
      * @throws SQLException In case of error.
      */
-    protected int addAttributeFilterStatementBlock(EntitySearchFilter[] filters,
-                                                   int index,
-                                                   PreparedStatement stat) throws SQLException {
+    protected int addAttributeFilterStatementBlock(EntitySearchFilter[] filters, 
+            int index, PreparedStatement stat) throws SQLException {
         if (filters == null) {
             return index;
         }
@@ -192,27 +212,36 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
         }
         return super.addObjectSearchStatementBlock(filter, index, stat);
     }
-
-    private String createQueryString(EntitySearchFilter[] filters, boolean selectAll) {
-        StringBuffer query = this.createBaseQueryBlock(filters, selectAll);
+    
+    protected String createQueryString(EntitySearchFilter[] filters, boolean isCount, boolean selectAll) {
+        StringBuffer query = this.createBaseQueryBlock(filters, isCount, selectAll);
         boolean hasAppendWhereClause = this.appendFullAttributeFilterQueryBlocks(filters, query, false);
         this.appendMetadataFieldFilterQueryBlocks(filters, query, hasAppendWhereClause);
-        boolean ordered = this.appendOrderQueryBlocks(filters, query, false);
+        if (!isCount) {
+            boolean ordered = this.appendOrderQueryBlocks(filters, query, false);
+            this.appendLimitQueryBlock(filters, query);
+        }
         return query.toString();
     }
 
     /**
      * Create the 'base block' of the query with the eventual references to the support table.
      * @param filters The filters defined.
+     * @param isCount
      * @param selectAll When true, this will insert all the fields in the master table in the select 
      * of the master query.
      * When true we select all the available fields; when false only the field addressed by the filter
      * is selected.
      * @return The base block of the query.
      */
-    protected StringBuffer createBaseQueryBlock(EntitySearchFilter[] filters, boolean selectAll) {
-        StringBuffer query = this.createMasterSelectQueryBlock(filters, selectAll);
-        this.appendJoinSerchTableQueryBlock(filters, query);
+    protected StringBuffer createBaseQueryBlock(EntitySearchFilter[] filters, boolean isCount, boolean selectAll) {
+        StringBuffer query = null;
+        if (isCount) {
+            query = this.createMasterCountQueryBlock();
+        } else {
+            query = this.createMasterSelectQueryBlock(filters, selectAll);
+        }
+        this.appendJoinSearchTableQueryBlock(filters, query);
         return query;
     }
 
@@ -235,7 +264,6 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
                         query.append(", ").append(masterTableName).append(".").append(tableFieldName);
                     }
                 } else if (filter.isAttributeFilter() && filter.isLikeOption()) {
-
                     String columnName = this.getAttributeFieldColunm(filter);
                     query.append(", ").append(searchTableName).append(i).append(".").append(columnName);
                     query.append(" AS ").append(columnName).append(i).append(" ");
@@ -246,7 +274,7 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
         return query;
     }
 
-    protected void appendJoinSerchTableQueryBlock(EntitySearchFilter[] filters, StringBuffer query) {
+    protected void appendJoinSearchTableQueryBlock(EntitySearchFilter[] filters, StringBuffer query) {
         if (filters == null) {
             return;
         }
@@ -426,10 +454,8 @@ public abstract class AbstractEntitySearcherDAO extends AbstractSearcherDAO impl
                 query.append(searchTableName).append(".").append(this.getAttributeFieldColunm(object)).append(" ");
             }
         } else {
-
             query.append("(").append(searchTableName).append(".").append(this.getAttributeFieldColunm(object)).append(") ");
         }
-
         query.append(operator);
         return hasAppendWhereClause;
     }

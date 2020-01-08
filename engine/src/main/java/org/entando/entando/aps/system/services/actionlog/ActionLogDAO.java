@@ -34,6 +34,7 @@ import java.util.Set;
 import com.agiletec.aps.system.common.AbstractSearcherDAO;
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.services.group.Group;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecord;
 import org.entando.entando.aps.system.services.actionlog.model.ActionLogRecordApiSearchBean;
@@ -49,6 +50,36 @@ import org.slf4j.LoggerFactory;
 public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final String ADD_ACTION_RECORD
+            = "INSERT INTO actionlogrecords ( id, username, actiondate, namespace, actionname, parameters, activitystreaminfo, updatedate) "
+            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
+
+    private static final String GET_ACTION_RECORD
+            = "SELECT username, actiondate, updatedate, namespace, actionname, parameters, activitystreaminfo FROM actionlogrecords WHERE id = ?";
+
+    private static final String SELECT_LAST_UPDATE_MAIN_BLOCK = "SELECT MAX(updatedate) FROM actionlogrecords ";
+    
+    private static final String DELETE_LOG_RECORD
+            = "DELETE from actionlogrecords where id = ?";
+
+    private static final String DELETE_LOG_RECORD_RELATIONS
+            = "DELETE from actionlogrelations where recordid = ?";
+
+    private static final String DELETE_LOG_RECORD_LIKES
+            = "DELETE from actionloglikerecords where recordid = ?";
+
+    private static final String DELETE_LOG_RECORD_COMMENTS
+            = "DELETE from actionlogcommentrecords where recordid = ?";
+
+    private final String ADD_LOG_RECORD_RELATION
+            = "INSERT INTO actionlogrelations (recordid, refgroup) VALUES ( ? , ? )";
+
+    private static final String GET_GROUP_OCCURRENCES
+            = "SELECT refgroup, count(refgroup) FROM actionlogrelations GROUP BY refgroup";
+
+    private static final String UPDATE_UPDATEDATE_ACTION_RECORD
+            = "UPDATE actionlogrecords SET updatedate = ? WHERE id = ?";
 
     @Override
     public int countActionLogRecords(IActionLogRecordSearchBean searchBean) {
@@ -104,7 +135,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
         if (null == groups || groups.isEmpty()) {
             return;
         }
-        Set<String> codes = new HashSet<String>(groups);
+        Set<String> codes = new HashSet<>(groups);
         Iterator<String> iterator = codes.iterator();
         PreparedStatement stat = null;
         try {
@@ -138,6 +169,13 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
     }
 
     @Override
+    public Date getLastUpdate(IActionLogRecordSearchBean searchBean) {
+        FieldSearchFilter[] filters = this.createFilters(searchBean);
+        List<String> codes = (searchBean != null && searchBean.getUserGroupCodes() != null) ? searchBean.getUserGroupCodes() : null;
+        return this.getLastUpdate(filters, codes);
+    }
+
+    @Override
     public List<Integer> getActivityStreamRecords(IActivityStreamSearchBean searchBean) {
         return getActionRecords(searchBean);
     }
@@ -145,13 +183,13 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
     @Override
     public List<Integer> getActionRecords(FieldSearchFilter[] filters, List<String> userGroupCodes) {
         Connection conn = null;
-        List<Integer> idList = new ArrayList<Integer>();
+        List<Integer> idList = new ArrayList<>();
         PreparedStatement stat = null;
         ResultSet result = null;
         try {
             conn = this.getConnection();
             List<String> groupCodes = (null != userGroupCodes && userGroupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroupCodes;
-            stat = this.buildStatement(filters, groupCodes, conn);
+            stat = this.buildStatement(filters, groupCodes, false, conn);
             result = stat.executeQuery();
             while (result.next()) {
                 idList.add(result.getInt(1));
@@ -167,51 +205,40 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
     @Override
     public List<Integer> getActionRecords(FieldSearchFilter[] filters) {
-        List<Integer> actionRecords = new ArrayList<Integer>();
-        try {
-            List<String> ids = super.searchId(filters);
-            if (null != ids) {
-                for (int i = 0; i < ids.size(); i++) {
-                    String id = ids.get(i);
-                    actionRecords.add(Integer.parseInt(id));
-                }
-            }
-        } catch (Throwable t) {
-            logger.error("Error loading actionlogger records", t);
-            throw new RuntimeException("Error loading actionlogger records", t);
+        List<Integer> actionRecords = new ArrayList<>();
+        List<String> ids = super.searchId(filters);
+        if (null != ids) {
+            actionRecords = ids.stream().map(id -> Integer.parseInt(id)).collect(Collectors.toList());
         }
         return actionRecords;
     }
-
+    
     @Override
-    public List<Integer> getActivityStream(List<String> userGroupCodes) {
+    public Date getLastUpdate(FieldSearchFilter[] filters, List<String> userGroupCodes) {
         Connection conn = null;
-        List<Integer> idList = new ArrayList<Integer>();
+        Date date = new Date();
         PreparedStatement stat = null;
         ResultSet result = null;
         try {
             conn = this.getConnection();
-            FieldSearchFilter filter1 = new FieldSearchFilter("actiondate");
-            filter1.setOrder(FieldSearchFilter.DESC_ORDER);
-            FieldSearchFilter filter2 = new FieldSearchFilter("activitystreaminfo");
-            FieldSearchFilter[] filters = {filter1, filter2};
             List<String> groupCodes = (null != userGroupCodes && userGroupCodes.contains(Group.ADMINS_GROUP_NAME)) ? null : userGroupCodes;
-            stat = this.buildStatement(filters, groupCodes, conn);
+            stat = this.buildStatement(filters, groupCodes, true, conn);
             result = stat.executeQuery();
-            while (result.next()) {
-                idList.add(result.getInt(1));
+            if (result.next()) {
+                Timestamp updateDate = result.getTimestamp(1);
+                date = new Date(updateDate.getTime());
             }
         } catch (Throwable t) {
-            logger.error("Error loading activity stream records", t);
-            throw new RuntimeException("Error loading activity stream records", t);
+            logger.error("Error loading last update date", t);
+            throw new RuntimeException("Error loading last update date", t);
         } finally {
             closeDaoResources(result, stat, conn);
         }
-        return idList;
+        return date;
     }
-
-    private PreparedStatement buildStatement(FieldSearchFilter[] filters, Collection<String> groupCodes, Connection conn) {
-        String query = this.createQueryString(filters, groupCodes);
+    
+    private PreparedStatement buildStatement(FieldSearchFilter[] filters, Collection<String> groupCodes, boolean isSelectMax, Connection conn) {
+        String query = (isSelectMax) ? this.createQueryStringForSelectMax(filters, groupCodes): this.createQueryString(filters, groupCodes);
         PreparedStatement stat = null;
         try {
             stat = conn.prepareStatement(query);
@@ -226,7 +253,20 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
     }
 
     protected String createQueryString(FieldSearchFilter[] filters, Collection<String> groupCodes) {
-        StringBuffer query = this.createBaseQueryBlock(filters, false);
+        StringBuffer query = this.createBaseQueryBlock(filters, false, false);
+        this.appendMiddleBlocks(query, filters, groupCodes);
+        boolean ordered = appendOrderQueryBlocks(filters, query, false);
+        super.appendLimitQueryBlock(filters, query);
+        return query.toString();
+    }
+
+    protected String createQueryStringForSelectMax(FieldSearchFilter[] filters, Collection<String> groupCodes) {
+        StringBuffer query = new StringBuffer(SELECT_LAST_UPDATE_MAIN_BLOCK);
+        this.appendMiddleBlocks(query, filters, groupCodes);
+        return query.toString();
+    }
+
+    private void appendMiddleBlocks(StringBuffer query, FieldSearchFilter[] filters, Collection<String> groupCodes) {
         this.appendJoinTableRefQueryBlock(query, groupCodes);
         boolean hasAppendWhereClause = this.appendMetadataFieldFilterQueryBlocks(filters, query, false);
         if (null != groupCodes && !groupCodes.isEmpty()) {
@@ -241,9 +281,6 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             }
             query.append(") ");
         }
-        boolean ordered = appendOrderQueryBlocks(filters, query, false);
-        super.appendLimitQueryBlock(filters, query, hasAppendWhereClause);
-        return query.toString();
     }
 
     private void appendJoinTableRefQueryBlock(StringBuffer query, Collection<String> groupCodes) {
@@ -386,6 +423,8 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
         try {
             conn = this.getConnection();
             conn.setAutoCommit(false);
+            super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_LIKES, id);
+            super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_COMMENTS, id);
             super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD_RELATIONS, id);
             super.executeQueryWithoutResultset(conn, DELETE_LOG_RECORD, id);
             conn.commit();
@@ -433,7 +472,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
 
     @Override
     public Set<Integer> extractOldRecords(Integer maxActivitySizeByGroup) {
-        Set<Integer> recordsToDelete = new HashSet<Integer>();
+        Set<Integer> recordsToDelete = new HashSet<>();
         Connection conn = null;
         try {
             conn = this.getConnection();
@@ -453,7 +492,7 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
     }
 
     private Map<String, Integer> getOccurrences(Integer maxActivitySizeByGroup, Connection conn) {
-        Map<String, Integer> occurrences = new HashMap<String, Integer>();
+        Map<String, Integer> occurrences = new HashMap<>();
         Statement stat = null;
         ResultSet res = null;
         try {
@@ -480,14 +519,14 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
         PreparedStatement stat = null;
         ResultSet result = null;
         try {
-            List<Integer> idList = new ArrayList<Integer>();
+            List<Integer> idList = new ArrayList<>();
             FieldSearchFilter filter1 = new FieldSearchFilter("actiondate");
             filter1.setOrder(FieldSearchFilter.Order.DESC);
             FieldSearchFilter filter2 = new FieldSearchFilter("activitystreaminfo");
             FieldSearchFilter[] filters = {filter1, filter2};
-            List<String> groupCodes = new ArrayList<String>();
+            List<String> groupCodes = new ArrayList<>();
             groupCodes.add(groupName);
-            stat = this.buildStatement(filters, groupCodes, conn);
+            stat = this.buildStatement(filters, groupCodes, false, conn);
             result = stat.executeQuery();
             while (result.next()) {
                 Integer id = result.getInt(1);
@@ -508,27 +547,5 @@ public class ActionLogDAO extends AbstractSearcherDAO implements IActionLogDAO {
             closeDaoResources(result, stat);
         }
     }
-
-    private static final String ADD_ACTION_RECORD
-            = "INSERT INTO actionlogrecords ( id, username, actiondate, namespace, actionname, parameters, activitystreaminfo, updatedate) "
-            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ? )";
-
-    private static final String GET_ACTION_RECORD
-            = "SELECT username, actiondate, updatedate, namespace, actionname, parameters, activitystreaminfo FROM actionlogrecords WHERE id = ?";
-
-    private static final String DELETE_LOG_RECORD
-            = "DELETE from actionlogrecords where id = ?";
-
-    private static final String DELETE_LOG_RECORD_RELATIONS
-            = "DELETE from actionlogrelations where recordid = ?";
-
-    private final String ADD_LOG_RECORD_RELATION
-            = "INSERT INTO actionlogrelations (recordid, refgroup) VALUES ( ? , ? )";
-
-    private static final String GET_GROUP_OCCURRENCES
-            = "SELECT refgroup, count(refgroup) FROM actionlogrelations GROUP BY refgroup";
-
-    private static final String UPDATE_UPDATEDATE_ACTION_RECORD
-            = "UPDATE actionlogrecords SET updatedate = ? WHERE id = ?";
 
 }

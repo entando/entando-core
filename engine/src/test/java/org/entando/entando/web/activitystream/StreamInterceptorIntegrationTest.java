@@ -109,9 +109,9 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
         if (null == pageModel) {
             pageModel = parentPage.getMetadata().getModel();
         }
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel, true, pageCode + "_title", null, null, false, null, null);
         Widget[] widgets = {};
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         return pageToAdd;
     }
 

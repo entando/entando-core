@@ -224,7 +224,7 @@ public class SearchEngineManager extends AbstractService
 		SearchEngineFilter[] filters = new SearchEngineFilter[0];
 		if (StringUtils.isNotEmpty(langCode) && StringUtils.isNotEmpty(word)) {
 			SearchEngineFilter filter = new SearchEngineFilter(langCode, word);
-			filter.setIncludeAttachments(true);
+            filter.setFullTextSearch(true);
 			filters = this.addFilter(filters, filter);
 		}
 		return this.searchEntityId(filters, null, allowedGroups);

@@ -11,7 +11,7 @@
 
 <s:set var="isHidden" value="%{#selectedPage == null || (#selectedPage.code != #currentRoot.code && !#selectedPage.isChildOf(#currentRoot.code))}" ></s:set>
 <s:set var="isSelected" value="%{#currentRoot.code == #selectedTreeNode}" ></s:set>
-    <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parent.code" />" class="treeRow <s:if test="%{!#currentRoot.isRoot() && #isHidden}">collapsed childrenNodes</s:if> <s:if test="#isSelected">active</s:if>">
+    <tr id="<s:property value="#currentRoot.code" />" data-parent="#<s:property value="#currentRoot.parentCode" />" class="treeRow <s:if test="%{!#currentRoot.isRoot() && #isHidden}">collapsed childrenNodes</s:if> <s:if test="#isSelected">active</s:if>">
         <td class="treegrid-node pointer">
             <input type="radio" name="<s:property value="#inputFieldName" />" id="fagianonode_<s:property value="#currentRoot.code" />" value="<s:property value="#currentRoot.code" />"
                class="subTreeToggler <s:if test="#isSelected">active </s:if>hidden<s:if test="#currentRoot.children.length > 0">  tree_<s:property value="#currentRoot.code" /> </s:if>"
@@ -21,29 +21,34 @@
         </td>
         <td class="text-center">
             <div class="moveButtons<s:if test="!#isSelected" > hidden</s:if>">
+            <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT') && !#currentRoot.parentCode.equals('VIRTUAL_PAGE_ROOT')}" >
             <wpsf:submit action="moveUp" type="button" title="%{getText('page.options.moveUp')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-caret-up" aria-hidden="true"></i>
             </wpsf:submit>
             <wpsf:submit action="moveDown" type="button" title="%{getText('page.options.moveDown')}" cssClass="btn-no-button" data-toggle="tooltip">
                 <i class="fa fa-caret-down" aria-hidden="true"></i>
             </wpsf:submit>
+            </s:if>
         </div>
     </td>
     <td class="text-center">
         <span class="statusField">
+            <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT')}" >
             <s:if test="%{!#currentRoot.getEntity().isOnline()}"><i class="fa fa-circle gray" aria-hidden="true" title="Draft"></i></s:if>
             <s:elseif test="%{#currentRoot.getEntity().isChanged()}"><i class="fa fa-circle yellow" aria-hidden="true" title="Online&#32;&ne;&#32;Draft"></i></s:elseif>
             <s:else><i class="fa fa-circle green" aria-hidden="true" title="Online"></i></s:else>
+            </s:if>
             </span>
         </td>
         <td class="text-center"><s:if test="%{#currentRoot.getEntity().isOnline() && #currentRoot.getEntity().getMetadata().isShowable()}"><s:text name="label.pageInMenu.displayed" /></s:if><s:else><s:text name="label.pageInMenu.notdisplayed" /></s:else></td>
         <td class=" text-center table-view-pf-actions">
             <div class="dropdown dropdown-kebab-pf">
+                <s:if test="%{!#currentRoot.code.equals('VIRTUAL_PAGE_ROOT')}" >
                 <button class="btn btn-menu-right dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span class="fa fa-ellipsis-v"></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownKebabRight">
-                    <li>
+                <li>
                     <wpsf:submit action="new" type="button" title="%{getText('page.options.new')}" cssClass="btn-no-button" data-toggle="tooltip">
                         <s:text name="label.add" />
                     </wpsf:submit>
@@ -87,6 +92,7 @@
                     </li>
                 </s:if>
             </ul>
+            </s:if>
         </div>
     </td>
 </tr>

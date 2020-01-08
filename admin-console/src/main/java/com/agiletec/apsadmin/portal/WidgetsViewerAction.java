@@ -28,97 +28,115 @@ import java.util.ArrayList;
  */
 public class WidgetsViewerAction extends AbstractPortalAction {
 
-	private static final Logger _logger = LoggerFactory.getLogger(WidgetsViewerAction.class);
+    private static final Logger _logger = LoggerFactory.getLogger(WidgetsViewerAction.class);
 
-	@Deprecated
-	public String viewShowlets() {
-		return viewWidgets();
-	}
+    @Deprecated
+    public String viewShowlets() {
+        return viewWidgets();
+    }
 
-	public String viewWidgets() {
-		return SUCCESS;
-	}
+    public String viewWidgets() {
+        return SUCCESS;
+    }
 
-	@Deprecated
-	public List<IPage> getShowletUtilizers(String widgetTypeCode) {
-		return this.getWidgetUtilizers(widgetTypeCode);
-	}
+    @Deprecated
+    public List<IPage> getShowletUtilizers(String widgetTypeCode) {
+        return this.getWidgetUtilizers(widgetTypeCode);
+    }
 
-	public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
-		List<IPage> utilizers = new ArrayList<>();
-		try {
-			List<IPage> draftUtilizers = this.getPageManager().getDraftWidgetUtilizers(widgetTypeCode);
-			if (null != draftUtilizers && draftUtilizers.size() > 0) {
-				utilizers.addAll(draftUtilizers);
-			}
-			List<IPage> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizers(widgetTypeCode);
-			if (null != onlineUtilizers && onlineUtilizers.size() > 0) {
-				utilizers.addAll(onlineUtilizers);
-			}
-		} catch (Throwable t) {
-			_logger.error("Error on extracting widgetUtilizers : widget type code {}", t);
-			throw new RuntimeException("Error on extracting widgetUtilizers : widget type code " + widgetTypeCode, t);
-		}
-		return utilizers;
-	}
+    public List<IPage> getWidgetUtilizers(String widgetTypeCode) {
+        List<IPage> utilizers = new ArrayList<>();
+        try {
+            List<IPage> draftUtilizers = this.getPageManager().getDraftWidgetUtilizers(widgetTypeCode);
+            if (null != draftUtilizers && draftUtilizers.size() > 0) {
+                utilizers.addAll(draftUtilizers);
+            }
+            List<IPage> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizers(widgetTypeCode);
+            if (null != onlineUtilizers && onlineUtilizers.size() > 0) {
+                utilizers.addAll(onlineUtilizers);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error on extracting widgetUtilizers : widget type code {}", t);
+            throw new RuntimeException("Error on extracting widgetUtilizers : widget type code " + widgetTypeCode, t);
+        }
+        return utilizers;
+    }
 
-	public Group getGroup(String groupCode) {
-		Group group = super.getGroupManager().getGroup(groupCode);
-		if (null == group) {
-			group = super.getGroupManager().getGroup(Group.FREE_GROUP_NAME);
-		}
-		return group;
-	}
+    public List<String> getWidgetUtilizerCodes(String widgetTypeCode) {
+        List<String> utilizers = new ArrayList<>();
+        try {
+            List<String> draftUtilizers = this.getPageManager().getDraftWidgetUtilizerCodes(widgetTypeCode);
+            if (null != draftUtilizers && draftUtilizers.size() > 0) {
+                utilizers.addAll(draftUtilizers);
+            }
+            List<String> onlineUtilizers = this.getPageManager().getOnlineWidgetUtilizerCodes(widgetTypeCode);
+            if (null != onlineUtilizers && onlineUtilizers.size() > 0) {
+                utilizers.addAll(onlineUtilizers);
+            }
+        } catch (Throwable t) {
+            _logger.error("Error on extracting widgetUtilizers : widget type code {}", t);
+            throw new RuntimeException("Error on extracting widgetUtilizers : widget type code " + widgetTypeCode, t);
+        }
+        return utilizers;
+    }
 
-	public String listJson() {
-		return SUCCESS;
-	}
+    public Group getGroup(String groupCode) {
+        Group group = super.getGroupManager().getGroup(groupCode);
+        if (null == group) {
+            group = super.getGroupManager().getGroup(Group.FREE_GROUP_NAME);
+        }
+        return group;
+    }
 
-	@Deprecated
-	public String viewShowletUtilizers() {
-		return viewWidgetUtilizers();
-	}
+    public String listJson() {
+        return SUCCESS;
+    }
 
-	public String viewWidgetUtilizers() {
-		return SUCCESS;
-	}
+    @Deprecated
+    public String viewShowletUtilizers() {
+        return viewWidgetUtilizers();
+    }
 
-	public List<IPage> getWidgetUtilizers() {
-		return this.getWidgetUtilizers(this.getWidgetTypeCode());
-	}
+    public String viewWidgetUtilizers() {
+        return SUCCESS;
+    }
 
-	@Deprecated
-	public List<IPage> getShowletUtilizers() {
-		return this.getWidgetUtilizers();
-	}
+    public List<IPage> getWidgetUtilizers() {
+        return this.getWidgetUtilizers(this.getWidgetTypeCode());
+    }
 
-	public WidgetType getWidgetType(String typeCode) {
-		return this.getWidgetTypeManager().getWidgetType(typeCode);
-	}
+    @Deprecated
+    public List<IPage> getShowletUtilizers() {
+        return this.getWidgetUtilizers();
+    }
 
-	@Deprecated
-	public WidgetType getShowletType(String typeCode) {
-		return this.getWidgetType(typeCode);
-	}
+    public WidgetType getWidgetType(String typeCode) {
+        return this.getWidgetTypeManager().getWidgetType(typeCode);
+    }
 
-	@Deprecated
-	public String getShowletTypeCode() {
-		return this.getWidgetTypeCode();
-	}
+    @Deprecated
+    public WidgetType getShowletType(String typeCode) {
+        return this.getWidgetType(typeCode);
+    }
 
-	@Deprecated
-	public void setShowletTypeCode(String widgetTypeCode) {
-		this._widgetTypeCode = widgetTypeCode;
-	}
+    @Deprecated
+    public String getShowletTypeCode() {
+        return this.getWidgetTypeCode();
+    }
 
-	public String getWidgetTypeCode() {
-		return _widgetTypeCode;
-	}
+    @Deprecated
+    public void setShowletTypeCode(String widgetTypeCode) {
+        this._widgetTypeCode = widgetTypeCode;
+    }
 
-	public void setWidgetTypeCode(String widgetTypeCode) {
-		this._widgetTypeCode = widgetTypeCode;
-	}
+    public String getWidgetTypeCode() {
+        return _widgetTypeCode;
+    }
 
-	private String _widgetTypeCode;
+    public void setWidgetTypeCode(String widgetTypeCode) {
+        this._widgetTypeCode = widgetTypeCode;
+    }
+
+    private String _widgetTypeCode;
 
 }

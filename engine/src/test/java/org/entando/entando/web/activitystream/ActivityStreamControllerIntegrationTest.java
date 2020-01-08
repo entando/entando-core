@@ -287,7 +287,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         for (String pageCode : pageCodes) {
             PageModel pageModel = this.pageModelManager.getPageModel("internal");
             Page mockPage = createPage(pageCode, pageModel);
-            mockPage.setWidgets(new Widget[mockPage.getWidgets().length]);
+            mockPage.setWidgets(new Widget[pageModel.getFrames().length]);
             this.pageManager.addPage(mockPage);
             IPage onlinePage = this.pageManager.getOnlinePage(pageCode);
             assertThat(onlinePage, is(nullValue()));
@@ -342,11 +342,11 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         if (null == pageModel) {
             pageModel = parentPage.getMetadata().getModel();
         }
-        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel.getCode(), true, pageCode + "_title", null, null, false, null, null);
+        PageMetadata metadata = PageTestUtil.createPageMetadata(pageModel, true, pageCode + "_title", null, null, false, null, null);
         ApsProperties config = PageTestUtil.createProperties("modelId", "default", "contentId", "EVN24");
         Widget widgetToAdd = PageTestUtil.createWidget("content_viewer", config, this.widgetTypeManager);
         Widget[] widgets = {widgetToAdd};
-        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage, "free", metadata, widgets);
+        Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         return pageToAdd;
     }
 

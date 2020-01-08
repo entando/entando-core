@@ -29,8 +29,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * This action class contains all the elements currently use to perform searches
- * across the portal pages.
+ * This action class contains all the elements currently use to perform searches across the portal pages.
  *
  * @author M.E. Minnai
  */
@@ -67,12 +66,14 @@ public class PageFinderAction extends AbstractPortalAction {
         try {
             List<IPage> pages = this.getPageManager().loadLastUpdatedPages(this.getLastUpdateResponseSize());
             if (null != pages && !pages.isEmpty()) {
-                response = new ArrayList<PageJO>();
+                response = new ArrayList<>();
                 Iterator<IPage> it = pages.iterator();
                 while (it.hasNext()) {
                     IPage page = it.next();
-                    PageJO pageJO = this.buildLastUpdateResponseItem(page);
-                    response.add(pageJO);
+                    if (null != page) {
+                        PageJO pageJO = this.buildLastUpdateResponseItem(page);
+                        response.add(pageJO);
+                    }
                 }
             }
         } catch (Throwable t) {
@@ -128,6 +129,13 @@ public class PageFinderAction extends AbstractPortalAction {
             allowedGroups.add(group.getName());
         }
         return allowedGroups;
+    }
+    
+    public String getFullTitle(IPage page, String langCode) {
+        if (null != page) {
+            return page.getFullTitle(langCode, this.getPageManager());
+        }
+        return "undefined";
     }
 
     /**

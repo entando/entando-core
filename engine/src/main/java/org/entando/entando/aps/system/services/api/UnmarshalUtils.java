@@ -15,6 +15,8 @@ package org.entando.entando.aps.system.services.api;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -27,7 +29,6 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
 import org.entando.entando.aps.system.services.api.model.ApiMethod;
-import org.entando.entando.aps.system.services.api.provider.json.JSONProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -76,11 +77,9 @@ public class UnmarshalUtils {
 			String body = IOUtils.toString(bodyStream, "UTF-8");
 			InputStream stream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
             if (MediaType.APPLICATION_JSON_TYPE.equals(contentType)) {
-                JSONProvider jsonProvider = (null != applicationContext) ? 
-						(JSONProvider) applicationContext.getBean("jsonProvider"): 
-						new JSONProvider();
-                bodyObject = jsonProvider.readFrom(expectedType, expectedType.getGenericSuperclass(),
-                        expectedType.getAnnotations(), contentType, null, stream/*bodyStream*/);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+                bodyObject = mapper.readValue(bodyStream, expectedType);
             } else {
                 JAXBContext context = JAXBContext.newInstance(expectedType);
                 Unmarshaller unmarshaller = context.createUnmarshaller();

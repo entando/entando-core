@@ -14,10 +14,6 @@
 package org.entando.entando.aps.system.services.api.server;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -31,14 +27,43 @@ import org.slf4j.LoggerFactory;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author E.Santoboni
  */
+@RestController
+@RequestMapping(value = "/apistatus")
 public class ApiRestStatusServer {
 
 	private static final Logger _logger = LoggerFactory.getLogger(ApiRestStatusServer.class);
-	
+    
+    @RequestMapping(value = "/{resourceName}/{httpMethod}.xml", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object getApiStatusXml(@PathVariable String resourceName, 
+            @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, null, resourceName, request);
+    }
+
+    @RequestMapping(value = "/{resourceName}/{httpMethod}.json", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object getApiStatusJson(@PathVariable String resourceName, 
+            @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, null, resourceName, request);
+    }
+
+    @RequestMapping(value = "/{resourceName}/{httpMethod}", method = RequestMethod.GET,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.TEXT_PLAIN_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object getApiStatus(@PathVariable String resourceName, 
+            @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, null, resourceName, request);
+    }
+	/*
     @GET
     @Produces({"application/json", "application/xml", "application/javascript"})
     @Path("/{resourceName}/{httpMethod}")
@@ -46,12 +71,33 @@ public class ApiRestStatusServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request) {
         return this.getApiStatus(httpMethodString, null, resourceName, request);
     }
+    */
+    
+    @RequestMapping(value = "/{namespace}/{resourceName}/{httpMethod}.xml", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object getApiStatusXml(@PathVariable String namespace, 
+            @PathVariable String resourceName, @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, namespace, resourceName, request);
+    }
 
-    @GET
-    @Produces({"application/json", "application/xml", "application/javascript"})
-    @Path("/{namespace}/{resourceName}/{httpMethod}")
-    public Object getApiStatus(@PathParam("httpMethod") String httpMethodString,
-            @PathParam("namespace") String namespace, @PathParam("resourceName") String resourceName, @Context HttpServletRequest request) {
+    @RequestMapping(value = "/{namespace}/{resourceName}/{httpMethod}.json", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object getApiStatusJson(@PathVariable String namespace, 
+            @PathVariable String resourceName, @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, namespace, resourceName, request);
+    }
+
+    @RequestMapping(value = "/{namespace}/{resourceName}/{httpMethod}", method = RequestMethod.GET,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.TEXT_PLAIN_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object getApiStatus(@PathVariable String namespace, 
+            @PathVariable String resourceName, @PathVariable String httpMethod, HttpServletRequest request) {
+        return this.executeGetApiStatus(httpMethod, namespace, resourceName, request);
+    }
+    
+    protected Object executeGetApiStatus(String httpMethodString,
+            String namespace, String resourceName, @Context HttpServletRequest request) {
         StringApiResponse response = new StringApiResponse();
         ApiMethod.HttpMethod httpMethod = Enum.valueOf(ApiMethod.HttpMethod.class, httpMethodString.toUpperCase());
         try {

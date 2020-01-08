@@ -1,63 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
        xmlns:security="http://www.springframework.org/schema/security"
        xmlns:util="http://www.springframework.org/schema/util"
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
-	        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
-            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd 
-            http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-5.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+	        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd 
+                http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
     
     <context:component-scan base-package="org.entando.entando.aps.servlet.security" />
     <context:annotation-config/>
-    
-    <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
-        <property name="marshallerProperties">
-            <map>
-                <entry>
-                    <key>
-                        <value>com.sun.xml.bind.marshaller.CharacterEscapeHandler</value>
-                    </key>
-                    <ref bean="ApiCDataCharacterEscapeHandler" />
-                </entry>
-            </map>
-        </property>
-    </bean>
-    
-    <bean id="ApiCDataCharacterEscapeHandler" class="org.entando.entando.aps.system.services.api.model.CDataCharacterEscapeHandler"/>
-    
-    <util:list id="ApiJsonTypes">
-        <value>application/json</value>
-        <value>application/jettison</value>
-    </util:list>
-    
-    <bean id="jsonProvider" class="org.entando.entando.aps.system.services.api.provider.json.JSONProvider">
-        <property name="produceMediaTypes" ref="ApiJsonTypes"/>
-        <property name="consumeMediaTypes" ref="ApiJsonTypes"/>
-		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
-		<!-- <property name="serializeAsArray" value="true" /> -->
-    </bean>
-    
-    <util:list id="ApiJsonpTypes">
-        <value>application/javascript</value>
-    </util:list>
-    
-    <bean id="jsonpProvider" class="org.entando.entando.aps.system.services.api.provider.jsonp.JSONPProvider">
-        <property name="produceMediaTypes" ref="ApiJsonpTypes" />
-        <!-- <property name="consumeMediaTypes" ref="ApiJsonpTypes"/> -->
-		<!-- <property name="dropCollectionWrapperElement" value="true" /> -->
-		<!-- <property name="serializeAsArray" value="true" /> -->
-    </bean>
 
-    <context:component-scan base-package="org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
+    <context:component-scan base-package="org.entando.entando.aps.system.services.api.server.*,org.entando.entando.web.*,org.entando.entando.plugins.*.web.*" />
 
     <beans profile="swagger">
         <bean id="swagger" class="org.entando.entando.web.swagger.SwaggerConfig">
             <constructor-arg ref="BaseConfigManager"/>
         </bean>
-
         <bean id="swaggerMvc" class="org.entando.entando.web.swagger.SwaggerMvcAdapter" />
     </beans>
 

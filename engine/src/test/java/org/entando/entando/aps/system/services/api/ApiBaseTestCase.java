@@ -20,14 +20,13 @@ import org.entando.entando.aps.system.services.api.server.IResponseBuilder;
 import com.agiletec.aps.BaseTestCase;
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.user.UserDetails;
-import java.io.ByteArrayOutputStream;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.StringWriter;
 import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-import org.entando.entando.aps.system.services.api.model.CDataCharacterEscapeHandler;
-import org.entando.entando.aps.system.services.api.provider.json.JSONProvider;
 
 /**
  * @author E.Santoboni
@@ -62,16 +61,13 @@ public class ApiBaseTestCase extends BaseTestCase {
 	
 	protected String marshall(Object result, MediaType mediaType) throws Throwable {
 		if (null != mediaType && mediaType.equals(MediaType.APPLICATION_JSON_TYPE)) {
-			JSONProvider jsonProvider = (JSONProvider) super.getApplicationContext().getBean("jsonProvider");
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			jsonProvider.writeTo(result, result.getClass().getGenericSuperclass(), 
-					result.getClass().getAnnotations(), mediaType, null, baos);
-			return new String(baos.toByteArray(), "UTF-8");
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            return mapper.writeValueAsString(result);
 		} else {
 			JAXBContext context = JAXBContext.newInstance(result.getClass());
 			Marshaller marshaller = context.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.setProperty("com.sun.xml.bind.marshaller.CharacterEscapeHandler", new CDataCharacterEscapeHandler());
 			StringWriter writer = new StringWriter();
 			marshaller.marshal(result, writer);
 			return writer.toString();

@@ -22,7 +22,9 @@ import com.agiletec.aps.system.services.url.IURLManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
-import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
+import com.fasterxml.jackson.annotation.JsonRawValue;
+import com.fasterxml.jackson.annotation.JsonValue;
+import java.net.URLDecoder;
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.UnmarshalUtils;
 import org.entando.entando.aps.system.services.api.model.*;
@@ -33,18 +35,48 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import java.util.*;
-import java.util.Map.Entry;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author E.Santoboni
  */
+@RestController
+@RequestMapping(value = "/rs")
 public class ApiRestServer {
 
     private static final Logger _logger = LoggerFactory.getLogger(ApiRestServer.class);
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.xml", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doGetXml(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, null, resourceName, request, response);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doGetJson(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, null, resourceName, request, response);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.GET,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.TEXT_PLAIN_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object doGet(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, null, resourceName, request, response);
+    }
+    /*
     @GET
     @Produces({"application/xml", "text/plain", "application/json", "application/javascript"})
     @Path("/{langCode}/{resourceName}")
@@ -52,7 +84,34 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, null, resourceName, request, ui);
     }
+    */
+    
+    // -------------------------------------------------------------
+    
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doGetXml(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, namespace, resourceName, request, response);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.GET,
+            produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doGetJson(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, namespace, resourceName, request, response);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.GET,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.TEXT_PLAIN_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object doGet(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, namespace, resourceName, request, response);
+    }
+    /*
     @GET
     @Produces({"application/xml", "text/plain", "application/json", "application/javascript"})
     @Path("/{langCode}/{namespace}/{resourceName}")
@@ -60,7 +119,35 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.GET, namespace, resourceName, request, ui);
     }
+    */
+    
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.xml", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostXmlFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostJsonFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+    /*
     @POST
     @Consumes({"application/xml"})
     @Produces({"application/json", "application/xml"})
@@ -69,7 +156,34 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostXmlFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostJsonFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPostFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+    /*
     @POST
     @Consumes({"application/xml"})
     @Produces({"application/json", "application/xml"})
@@ -78,7 +192,34 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.xml", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostXmlFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostJsonFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+    /*
     @POST
     @Consumes({"application/json"})
     @Produces({"application/json", "application/xml"})
@@ -87,7 +228,34 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, null, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostXmlFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostJsonFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.POST,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPostFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+    /*
     @POST
     @Consumes({"application/json"})
     @Produces({"application/json", "application/xml"})
@@ -96,7 +264,34 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.POST, namespace, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutXmlFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutJsonFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutFromXmlBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+    /*
     @PUT
     @Consumes({"application/xml"})
     @Produces({"application/json", "application/xml"})
@@ -105,7 +300,34 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutXmlFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutJsonFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_XML_VALUE)
+    public Object doPutFromXmlBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_XML_TYPE);
+    }
+    /*
     @PUT
     @Consumes({"application/xml"})
     @Produces({"application/json", "application/xml"})
@@ -114,7 +336,35 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, ui, MediaType.APPLICATION_XML_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.xml", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutXmlFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutJsonFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutFromJsonBody(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+    
+    /*
     @PUT
     @Consumes({"application/json"})
     @Produces({"application/json", "application/xml"})
@@ -123,7 +373,34 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, null, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
+    */
+    // --------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutXmlFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutJsonFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.PUT,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE},
+            consumes = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public Object doPutFromJsonBody(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, response, MediaType.APPLICATION_JSON_TYPE);
+    }
+    /*
     @PUT
     @Consumes({"application/json"})
     @Produces({"application/json", "application/xml"})
@@ -132,7 +409,31 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildPostPutResponse(langCode, ApiMethod.HttpMethod.PUT, namespace, resourceName, request, ui, MediaType.APPLICATION_JSON_TYPE);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{resourceName}.xml", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE})
+    public Object doDeleteXml(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, null, resourceName, request, response);
+    }
 
+    @RequestMapping(value = "/{langCode}/{resourceName}.json", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object doDeleteJson(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, null, resourceName, request, response);
+    }
+
+    @RequestMapping(value = "/{langCode}/{resourceName}", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE,
+                org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object doDelete(@PathVariable String langCode, @PathVariable String resourceName,
+            HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, null, resourceName, request, response);
+    }
+    /*
     @DELETE
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{resourceName}")
@@ -140,7 +441,30 @@ public class ApiRestServer {
             @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, null, resourceName, request, ui);
     }
+    */
+    // ---------------------------------------------
+    
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.xml", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE})
+    public Object doDeleteXml(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, namespace, resourceName, request, response);
+    }
 
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}.json", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_JSON_VALUE})
+    public Object doDeleteJson(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, namespace, resourceName, request, response);
+    }
+
+    @RequestMapping(value = "/{langCode}/{namespace}/{resourceName}", method = RequestMethod.DELETE,
+            produces = {org.springframework.http.MediaType.APPLICATION_XML_VALUE})
+    public Object doDelete(@PathVariable String langCode, @PathVariable String namespace,
+            @PathVariable String resourceName, HttpServletRequest request, HttpServletResponse response) {
+        return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, namespace, resourceName, request, response);
+    }
+    /*
     @DELETE
     @Produces({"application/json", "application/xml"})
     @Path("/{langCode}/{namespace}/{resourceName}")
@@ -148,13 +472,15 @@ public class ApiRestServer {
             @PathParam("resourceName") String resourceName, @Context HttpServletRequest request, @Context UriInfo ui) {
         return this.buildGetDeleteResponse(langCode, ApiMethod.HttpMethod.DELETE, namespace, resourceName, request, ui);
     }
+    */
+    // ---------------------------------------------
 
     protected Object buildGetDeleteResponse(String langCode, ApiMethod.HttpMethod httpMethod,
-            String namespace, String resourceName, HttpServletRequest request, UriInfo ui) {
+            String namespace, String resourceName, HttpServletRequest request, HttpServletResponse response) {
         Object responseObject = null;
         try {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
-            Properties properties = this.extractProperties(langCode, ui, request);
+            Properties properties = this.extractProperties(langCode, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
             this.extractOAuthParameters(request, apiMethod, properties);
             responseObject = responseBuilder.createResponse(apiMethod, properties);
@@ -163,15 +489,15 @@ public class ApiRestServer {
         } catch (Throwable t) {
             responseObject = this.buildErrorResponse(httpMethod, namespace, resourceName, t);
         }
-        return this.createResponse(responseObject);
+        return this.createResponseEntity(responseObject);
     }
 
     protected Object buildPostPutResponse(String langCode, ApiMethod.HttpMethod httpMethod,
-            String namespace, String resourceName, HttpServletRequest request, UriInfo ui, MediaType mediaType) {
+            String namespace, String resourceName, HttpServletRequest request, HttpServletResponse response, MediaType mediaType) {
         Object responseObject = null;
         try {
             IResponseBuilder responseBuilder = (IResponseBuilder) ApsWebApplicationUtils.getBean(SystemConstants.API_RESPONSE_BUILDER, request);
-            Properties properties = this.extractProperties(langCode, ui, request);
+            Properties properties = this.extractProperties(langCode, request);
             ApiMethod apiMethod = responseBuilder.extractApiMethod(httpMethod, namespace, resourceName);
             this.extractOAuthParameters(request, apiMethod, properties);
             Object bodyObject = UnmarshalUtils.unmarshal(apiMethod.getExpectedType(), request, mediaType);
@@ -181,12 +507,12 @@ public class ApiRestServer {
         } catch (Throwable t) {
             responseObject = this.buildErrorResponse(httpMethod, namespace, resourceName, t);
         }
-        return this.createResponse(responseObject);
+        return this.createResponseEntity(responseObject);
     }
 
-    protected Properties extractProperties(String langCode, UriInfo ui, HttpServletRequest request) throws Throwable {
+    protected Properties extractProperties(String langCode, HttpServletRequest request) throws Throwable {
         ILangManager langManager = (ILangManager) ApsWebApplicationUtils.getBean(SystemConstants.LANGUAGE_MANAGER, request);
-        Properties properties = this.extractRequestParameters(ui);
+        Properties properties = this.extractRequestParameters(request);
         if (null == langManager.getLang(langCode)) {
             langCode = langManager.getDefaultLang().getCode();
         }
@@ -199,20 +525,16 @@ public class ApiRestServer {
         return properties;
     }
 
-    protected Properties extractRequestParameters(UriInfo ui) {
-        MultivaluedMap<String, String> queryParams = ui.getQueryParameters(false);
+    protected Properties extractRequestParameters(HttpServletRequest request) throws Exception {
         Properties properties = new Properties();
-        if (null != queryParams) {
-            List<String> reservedParameters = Arrays.asList(SystemConstants.API_RESERVED_PARAMETERS);
-            Set<Entry<String, List<String>>> entries = queryParams.entrySet();
-            Iterator<Entry<String, List<String>>> iter = entries.iterator();
-            while (iter.hasNext()) {
-                Entry<String, List<String>> entry = iter.next();
-                String key = entry.getKey();
-                if (!reservedParameters.contains(key)) {
-                    //extract only the first value
-                    properties.put(key, entry.getValue().get(0));
-                }
+        List<String> reservedParameters = Arrays.asList(SystemConstants.API_RESERVED_PARAMETERS);
+        Enumeration<String> enumParameterNames = request.getParameterNames();
+        while (enumParameterNames.hasMoreElements()) {
+            String key = enumParameterNames.nextElement();
+            if (!reservedParameters.contains(key)) {
+                String[] values = request.getParameterValues(key);
+                String value = values[0];//prende il primo valore
+                properties.put(key, URLDecoder.decode(value, "UTF-8"));
             }
         }
         return properties;
@@ -315,27 +637,49 @@ public class ApiRestServer {
             throw new ApiException(IApiErrorCodes.SERVER_ERROR, ex.getMessage(), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
-
-    protected Response createResponse(Object responseObject) {
-        ResponseBuilderImpl responsex = new ResponseBuilderImpl();
-        responsex.entity(responseObject);
+    
+    protected ResponseEntity createResponseEntity(Object responseObject) {
+        Response.Status status = null;
         if (responseObject instanceof AbstractApiResponse) {
-            Response.Status status = Response.Status.OK;
             AbstractApiResponse mainResponse = (AbstractApiResponse) responseObject;
-            if (null != mainResponse.getErrors()) {
-                for (int i = 0; i < mainResponse.getErrors().size(); i++) {
-                    ApiError error = mainResponse.getErrors().get(i);
-                    Response.Status errorStatus = error.getStatus();
-                    if (null != errorStatus && status.getStatusCode() < errorStatus.getStatusCode()) {
-                        status = errorStatus;
-                    }
+            status = this.extractResponseStatus(mainResponse.getErrors());
+        } else {
+            status = Response.Status.OK;
+        }
+        if (responseObject instanceof String) {
+            return new ResponseEntity(new JsonResponse(responseObject.toString()), HttpStatus.valueOf(status.getStatusCode()));
+        }
+        return new ResponseEntity(responseObject, HttpStatus.valueOf(status.getStatusCode()));
+    }
+
+    protected class JsonResponse {
+
+        private final String value;
+
+        public JsonResponse(String value) {
+            this.value = value;
+        }
+
+        @JsonValue
+        @JsonRawValue
+        public String value() {
+            return value;
+        }
+    }
+
+    protected Response.Status extractResponseStatus(List<ApiError> errors) {
+        Response.Status status = Response.Status.OK;
+        if (null != errors) {
+            for (int i = 0; i < errors.size(); i++) {
+                ApiError error = errors.get(i);
+                Response.Status errorStatus = error.getStatus();
+                if (null != errorStatus && status.getStatusCode() < errorStatus.getStatusCode()) {
+                    status = errorStatus;
                 }
             }
-            responsex.status(status);
-        } else {
-            responsex.status(Response.Status.OK);
         }
-        return responsex.build();
+        return status;
     }
+    
 
 }

@@ -50,7 +50,7 @@ import com.agiletec.aps.util.FileTextReader;
  */
 public class ResponseBuilder implements IResponseBuilder, BeanFactoryAware, ServletContextAware {
    
-	private static final Logger _logger = LoggerFactory.getLogger(ApiRestStatusServer.class);
+	private static final Logger _logger = LoggerFactory.getLogger(ResponseBuilder.class);
 	
 	@Override
     @Deprecated

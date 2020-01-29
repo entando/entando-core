@@ -63,6 +63,15 @@ public class WidgetCatalog {
 			dataType = DataType.STRING, 
 			width = 20)
 	private String _mainGroup;
+
+	@DatabaseField(columnName = "configui",
+			dataType = DataType.LONG_STRING)
+	private String configUi;
+
+	@DatabaseField(columnName = "bundleid",
+			dataType = DataType.STRING,
+			width = 150)
+	private String bundleId;
 	
 	public static final String TABLE_NAME = "widgetcatalog";
 	
@@ -78,6 +87,8 @@ CREATE TABLE widgetcatalog
   defaultconfig character varying,
   locked smallint NOT NULL,
   maingroup character varying(20),
+  configui character varying,
+  bundleid character varying(150),
   CONSTRAINT showletcatalog_pkey PRIMARY KEY (code )
 )
  */

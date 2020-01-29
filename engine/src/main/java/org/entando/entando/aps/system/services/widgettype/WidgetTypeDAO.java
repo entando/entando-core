@@ -44,8 +44,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
             = "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup FROM widgetcatalog";
 
     private final String ADD_WIDGET_TYPE
-            = "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) "
-            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)";
+            = "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup, configui, bundleid) "
+            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?, ?)";
 
     private final String DELETE_WIDGET_TYPE
             = "DELETE FROM widgetcatalog WHERE code = ? AND locked = ? ";
@@ -147,6 +147,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
                 stat.setInt(7, 0);
             }
             stat.setString(8, widgetType.getMainGroup());
+            stat.setString(9, widgetType.getConfigUi());
+            stat.setString(10, widgetType.getBundleId());
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {

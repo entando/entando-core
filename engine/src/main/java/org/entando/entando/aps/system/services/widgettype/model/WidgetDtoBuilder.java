@@ -15,17 +15,21 @@ package org.entando.entando.aps.system.services.widgettype.model;
 
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
-import java.util.Hashtable;
-import java.util.List;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.model.Component;
-
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.WidgetTypeParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
 
@@ -36,6 +40,8 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
     private String stockWidgetCodes;
 
     private IComponentManager componentManager;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected WidgetDto toDto(WidgetType src) {
@@ -68,6 +74,14 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
             dest.setTypology(WidgetDto.STOCK_TYPOLOGY_CODE);
         } else {
             dest.setTypology(WidgetDto.CUSTOM_TYPOLOGY_CODE);
+        }
+        dest.setBundleId(src.getBundleId());
+        try {
+            dest.setConfigUi(objectMapper.readValue(src.getConfigUi(), new TypeReference<Map<String, Object>>() {
+            }));
+        } catch (JsonProcessingException e) {
+            logger.error("Error parsing configUi json to object {}", src.getCode());
+            throw new RestServerError("Error parsing configUi string to object for widget " + src.getCode(), e);
         }
         return dest;
     }

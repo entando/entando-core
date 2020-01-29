@@ -13,9 +13,10 @@
  */
 package org.entando.entando.web.widget.model;
 
-import java.util.Map;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import java.util.Map;
 
 public class WidgetRequest {
 
@@ -30,6 +31,10 @@ public class WidgetRequest {
 
     //@NotBlank(message = "widgettype.customUi.notBlank")
     private String customUi;
+
+    private String bundleId;
+
+    private Map<String, Object> configUi;
 
     public String getCode() {
         return code;
@@ -63,4 +68,19 @@ public class WidgetRequest {
         this.customUi = customUi;
     }
 
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
+    public Map<String, Object> getConfigUi() {
+        return configUi;
+    }
+
+    public void setConfigUi(Map<String, Object> configUi) {
+        this.configUi = configUi;
+    }
 }

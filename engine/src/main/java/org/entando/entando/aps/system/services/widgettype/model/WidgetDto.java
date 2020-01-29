@@ -33,6 +33,8 @@ public class WidgetDto {
     private String pluginDesc;
     private List<GuiFragmentRef> guiFragments = new ArrayList<>();
     private boolean hasConfig = false;
+    private String bundleId;
+    private Map<String, Object> configUi;
 
     protected class GuiFragmentRef {
 
@@ -149,4 +151,19 @@ public class WidgetDto {
         this.hasConfig = hasConfig;
     }
 
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
+    public Map<String, Object> getConfigUi() {
+        return configUi;
+    }
+
+    public void setConfigUi(Map<String, Object> configUi) {
+        this.configUi = configUi;
+    }
 }

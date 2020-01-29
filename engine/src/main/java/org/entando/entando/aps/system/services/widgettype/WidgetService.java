@@ -26,6 +26,9 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import java.util.Arrays;
 import javax.servlet.ServletContext;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -63,6 +66,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
     private ServletContext srvCtx;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     protected IWidgetTypeManager getWidgetManager() {
         return widgetManager;
@@ -180,17 +185,16 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             bindingResult.reject(WidgetValidator.ERRCODE_WIDGET_GROUP_INVALID, new String[]{widgetRequest.getGroup()}, "widgettype.group.invalid");
             throw new ValidationGenericException(bindingResult);
         }
-        WidgetDto widgetDto = null;
         try {
             this.getWidgetManager().addWidgetType(widgetType);
             this.createAndAddFragment(widgetType, widgetRequest);
-            widgetDto = this.dtoBuilder.convert(widgetType);
+            WidgetDto widgetDto = this.dtoBuilder.convert(widgetType);
             this.addFragments(widgetDto);
+            return widgetDto;
         } catch (Exception e) {
-            logger.error("Failed to add widget type for request {} ", widgetRequest);
+            logger.error("Failed to add widget type for request {} ", widgetRequest, e);
             throw new RestServerError("error in add widget", e);
         }
-        return widgetDto;
     }
 
     @Override
@@ -298,9 +302,16 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private void processWidgetType(WidgetType type, WidgetRequest widgetRequest) {
         type.setCode(widgetRequest.getCode());
         ApsProperties titles = new ApsProperties();
-        widgetRequest.getTitles().forEach((k, v) -> titles.put(k, v));
+        widgetRequest.getTitles().forEach(titles::put);
         type.setTitles(titles);
         type.setMainGroup(widgetRequest.getGroup());
+        type.setBundleId(widgetRequest.getBundleId());
+        try {
+            type.setConfigUi(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
+        } catch (JsonProcessingException e) {
+            logger.error("Failed to parse configUi property for request {} ", widgetRequest, e);
+            throw new RestServerError("error in add widget", e);
+        }
     }
 
     private void addFragments(WidgetDto widgetDto) throws Exception {

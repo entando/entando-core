@@ -18,6 +18,7 @@ import com.agiletec.aps.system.services.page.IPageManager;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.init.IComponentManager;
 import org.entando.entando.aps.system.init.model.Component;
@@ -77,11 +78,12 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
         }
         dest.setBundleId(src.getBundleId());
         try {
-            dest.setConfigUi(objectMapper.readValue(src.getConfigUi(), new TypeReference<Map<String, Object>>() {
-            }));
+            if (StringUtils.isNotBlank(src.getConfigUi())) {
+                dest.setConfigUi(objectMapper.readValue(src.getConfigUi(), new TypeReference<Map<String, Object>>() {
+                }));
+            }
         } catch (JsonProcessingException e) {
-            logger.error("Error parsing configUi json to object {}", src.getCode());
-            throw new RestServerError("Error parsing configUi string to object for widget " + src.getCode(), e);
+            logger.error("Error parsing configUi json to object for widget {}", src.getCode(), e);
         }
         return dest;
     }

@@ -17,6 +17,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -38,6 +39,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -49,6 +51,14 @@ public class WidgetServiceTest {
 
     private static final String WIDGET_1_CODE = "widget1";
     private static final String WIDGET_2_CODE = "widget2";
+    private static final String CUSTOM_ELEMENT_1 = "my-custom-element-1";
+    private static final String CUSTOM_ELEMENT_2 = "my-custom-element-2";
+    private static final List<String> RESOURCES_1 = Arrays.asList("/relative/path/to/script.js", "/relative/path/to/otherScript.js");
+    private static final List<String> RESOURCES_2 = Arrays.asList("/relative/path/to/script2.js", "/relative/path/to/otherScript2.js");
+    private static final String BUNDLE_1 = "bundle1";
+    private static final String BUNDLE_2 = "bundle2";
+    private static final String CUSTOM_ELEMENT_KEY = "customElement";
+    private static final String RESOURCES_KEY = "resources";
 
     @Mock
     private IPageManager pageManager;
@@ -88,7 +98,14 @@ public class WidgetServiceTest {
     @Test
     public void shouldReturnAll() {
         PagedMetadata<WidgetDto> result = widgetService.getWidgets(new RestListRequest());
+
         assertThat(result.getBody()).hasSize(2);
+        assertThat(result.getBody().get(0).getBundleId()).isEqualTo(BUNDLE_1);
+        assertThat(result.getBody().get(0).getConfigUi().get(CUSTOM_ELEMENT_KEY)).isEqualTo(CUSTOM_ELEMENT_1);
+        assertThat(result.getBody().get(0).getConfigUi().get(RESOURCES_KEY)).isEqualTo(RESOURCES_1);
+        assertThat(result.getBody().get(1).getBundleId()).isEqualTo(BUNDLE_2);
+        assertThat(result.getBody().get(1).getConfigUi().get(CUSTOM_ELEMENT_KEY)).isEqualTo(CUSTOM_ELEMENT_2);
+        assertThat(result.getBody().get(1).getConfigUi().get(RESOURCES_KEY)).isEqualTo(RESOURCES_2);
     }
 
     @Test
@@ -201,7 +218,7 @@ public class WidgetServiceTest {
         widgetRequest.setTitles(ImmutableMap.of("it", "Mio Titolo", "en", "My Title"));
         widgetRequest.setCustomUi("<div></div>");
         widgetRequest.setGroup("group");
-        widgetRequest.setConfigUi(ImmutableMap.of("customElement", "my-custom-element-name", "resources",
+        widgetRequest.setConfigUi(ImmutableMap.of(CUSTOM_ELEMENT_KEY, "my-custom-element-name", RESOURCES_KEY,
                 Arrays.asList("/relative/path/to/script.js", "/relative/path/to/otherScript.js")));
         widgetRequest.setBundleId("test-bundle");
         when(groupManager.getGroup(widgetRequest.getGroup())).thenReturn(mock(Group.class));
@@ -221,19 +238,25 @@ public class WidgetServiceTest {
         assertThat(widgetDto.getBundleId()).isEqualTo(widgetRequest.getBundleId());
     }
 
-    private WidgetType getWidget1() {
+    private WidgetType getWidget1() throws JsonProcessingException {
         WidgetType widgetType = new WidgetType();
         widgetType.setCode(WIDGET_1_CODE);
         widgetType.setMainGroup("group1");
         widgetType.setLocked(true);
+        widgetType.setBundleId(BUNDLE_1);
+        widgetType.setConfigUi(objectMapper.writeValueAsString(
+                ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_1, RESOURCES_KEY, RESOURCES_1)));
         return widgetType;
     }
 
-    private WidgetType getWidget2() {
+    private WidgetType getWidget2() throws JsonProcessingException {
         WidgetType widgetType = new WidgetType();
         widgetType.setCode(WIDGET_2_CODE);
         widgetType.setMainGroup("group2");
         widgetType.setParentType(getWidget1());
+        widgetType.setBundleId(BUNDLE_2);
+        widgetType.setConfigUi(objectMapper.writeValueAsString(
+                ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_2, RESOURCES_KEY, RESOURCES_2)));
         return widgetType;
     }
 }

@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +42,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
     private ILangManager langManager;
 
     private final String ALL_WIDGET_TYPES
-            = "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup FROM widgetcatalog";
+            = "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup, configui, bundleid FROM widgetcatalog";
 
     private final String ADD_WIDGET_TYPE
             = "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup, configui, bundleid) "
@@ -109,6 +110,14 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
             String mainGroup = res.getString(8);
             if (null != mainGroup && mainGroup.trim().length() > 0) {
                 widgetType.setMainGroup(mainGroup.trim());
+            }
+            String configUi = res.getString(9);
+            if (StringUtils.isNotEmpty(configUi)) {
+                widgetType.setConfigUi(configUi);
+            }
+            String bundleId = res.getString(10);
+            if (StringUtils.isNotEmpty(bundleId)) {
+                widgetType.setBundleId(bundleId);
             }
         } catch (Throwable t) {
             logger.error("Error parsing the Widget Type '{}'", code, t);

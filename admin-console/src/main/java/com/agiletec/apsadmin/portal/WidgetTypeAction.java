@@ -206,7 +206,8 @@ public class WidgetTypeAction extends AbstractPortalAction {
                 if (type.isLogic() && type.isUserType() && !type.isLocked() && this.hasCurrentUserPermission(Permission.SUPERUSER)) {
                     configToSet = this.extractWidgetTypeConfig(type.getParentType().getTypeParameters());
                 }
-                this.getWidgetTypeManager().updateWidgetType(this.getWidgetTypeCode(), titles, configToSet, mainGroupToSet);
+                this.getWidgetTypeManager().updateWidgetType(this.getWidgetTypeCode(), titles, configToSet, mainGroupToSet,
+                        type.getConfigUi(), type.getBundleId());
             }
             if (!type.isLogic() && !super.isInternalServletWidget(this.getWidgetTypeCode())) {
                 GuiFragment guiFragment = this.extractUniqueGuiFragment(this.getWidgetTypeCode());

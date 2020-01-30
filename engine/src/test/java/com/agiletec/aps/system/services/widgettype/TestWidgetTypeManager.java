@@ -166,7 +166,8 @@ public class TestWidgetTypeManager extends BaseTestCase {
             ApsProperties newTitles = new ApsProperties();
             newTitles.put("it", "Titolo modificato");
             newTitles.put("en", "Modified title");
-            this._widgetTypeManager.updateWidgetType(widgetTypeCode, newTitles, type.getConfig(), type.getMainGroup());
+            this._widgetTypeManager.updateWidgetType(widgetTypeCode, newTitles, type.getConfig(), type.getMainGroup(),
+                    type.getConfigUi(), type.getBundleId());
             extracted = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(extracted);
             assertEquals("Titolo modificato", extracted.getTitles().get("it"));
@@ -193,14 +194,16 @@ public class TestWidgetTypeManager extends BaseTestCase {
             assertEquals("/myNewJsp.jsp", extracted.getConfig().get("actionPath"));
 
             ApsProperties newProperties = new ApsProperties();
-            this._widgetTypeManager.updateWidgetType(widgetTypeCode, extracted.getTitles(), newProperties, type.getMainGroup());
+            this._widgetTypeManager.updateWidgetType(widgetTypeCode, extracted.getTitles(), newProperties, type.getMainGroup(),
+                    type.getConfigUi(), type.getBundleId());
             extracted = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(extracted);
             assertNotNull(extracted.getConfig());
             assertEquals(0, extracted.getConfig().size());
 
             newProperties.put("contentId", "EVN103");
-            this._widgetTypeManager.updateWidgetType(widgetTypeCode, extracted.getTitles(), newProperties, type.getMainGroup());
+            this._widgetTypeManager.updateWidgetType(widgetTypeCode, extracted.getTitles(), newProperties, type.getMainGroup(),
+                    type.getConfigUi(), type.getBundleId());
             extracted = this._widgetTypeManager.getWidgetType(widgetTypeCode);
             assertNotNull(extracted);
             assertEquals("EVN103", extracted.getConfig().get("contentId"));

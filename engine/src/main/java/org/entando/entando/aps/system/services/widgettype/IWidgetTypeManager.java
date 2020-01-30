@@ -66,8 +66,11 @@ public interface IWidgetTypeManager {
      * @param titles The titles of the widget type to update.
      * @param defaultConfig The configuration of the widget type to update.
      * @param mainGroup The main group of the widget type to update.
+     * @param configUi The config UI of the widget type to update.
+     * @param bundleId The bundle id of the widget type to update.
      * @throws ApsSystemException in case of error
      */
-    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) throws ApsSystemException;
+    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup,
+                                 String configUi, String bundleId) throws ApsSystemException;
 
 }

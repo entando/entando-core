@@ -24,6 +24,7 @@ import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
+
 import java.util.Arrays;
 import javax.servlet.ServletContext;
 
@@ -219,7 +220,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
             }
             this.processWidgetType(type, widgetRequest);
             widgetDto = dtoBuilder.convert(type);
-            this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup());
+            this.getWidgetManager().updateWidgetType(widgetCode, type.getTitles(), type.getConfig(), type.getMainGroup(),
+                    type.getConfigUi(), type.getBundleId());
             if (!StringUtils.isEmpty(widgetCode)) {
                 GuiFragment guiFragment = this.getGuiFragmentManager().getUniqueGuiFragmentByWidgetType(widgetCode);
                 if (null == guiFragment) {
@@ -344,5 +346,5 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     public void setServletContext(ServletContext srvCtx) {
         this.srvCtx = srvCtx;
     }
-    
+
 }

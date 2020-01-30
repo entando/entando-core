@@ -52,7 +52,7 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
             = "DELETE FROM widgetcatalog WHERE code = ? AND locked = ? ";
 
     private final String UPDATE_WIDGET_TYPE
-            = "UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ? WHERE code = ? ";
+            = "UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ?, configui = ?, bundleid = ? WHERE code = ? ";
 
     @Override
     public Map<String, WidgetType> loadWidgetTypes() {
@@ -191,7 +191,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
     }
 
     @Override
-    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) {
+    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup,
+                                 String configUi, String bundleId) {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -205,7 +206,9 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
                 stat.setString(2, defaultConfig.toXml());
             }
             stat.setString(3, mainGroup);
-            stat.setString(4, widgetTypeCode);
+            stat.setString(4, configUi);
+            stat.setString(5, bundleId);
+            stat.setString(6, widgetTypeCode);
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {

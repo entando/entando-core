@@ -42,6 +42,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -213,14 +216,7 @@ public class WidgetServiceTest {
     @Test
     public void shouldAddNewWidget() throws Exception {
         // Given
-        WidgetRequest widgetRequest = new WidgetRequest();
-        widgetRequest.setCode(WIDGET_1_CODE);
-        widgetRequest.setTitles(ImmutableMap.of("it", "Mio Titolo", "en", "My Title"));
-        widgetRequest.setCustomUi("<div></div>");
-        widgetRequest.setGroup("group");
-        widgetRequest.setConfigUi(ImmutableMap.of(CUSTOM_ELEMENT_KEY, "my-custom-element-name", RESOURCES_KEY,
-                Arrays.asList("/relative/path/to/script.js", "/relative/path/to/otherScript.js")));
-        widgetRequest.setBundleId("test-bundle");
+        WidgetRequest widgetRequest = getWidgetRequest1();
         when(groupManager.getGroup(widgetRequest.getGroup())).thenReturn(mock(Group.class));
 
         // When
@@ -234,6 +230,27 @@ public class WidgetServiceTest {
         assertThat(argument.getConfigUi()).isEqualTo(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
         assertThat(argument.getBundleId()).isEqualTo(widgetRequest.getBundleId());
         assertThat(widgetDto.getCode()).isEqualTo(widgetRequest.getCode());
+        assertThat(widgetDto.getConfigUi()).isEqualTo(widgetRequest.getConfigUi());
+        assertThat(widgetDto.getBundleId()).isEqualTo(widgetRequest.getBundleId());
+    }
+
+    @Test
+    public void shouldUpdateWidget() throws Exception {
+        // Given
+        WidgetRequest widgetRequest = getWidgetRequest1();
+        when(widgetManager.getWidgetType(eq(widgetRequest.getCode()))).thenReturn(getWidget1());
+        when(groupManager.getGroup(widgetRequest.getGroup())).thenReturn(mock(Group.class));
+
+        // When
+        WidgetDto widgetDto = widgetService.updateWidget(WIDGET_1_CODE, widgetRequest);
+
+        // Then
+        ArgumentCaptor<String> configUiCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> bundleIdCaptor = ArgumentCaptor.forClass(String.class);
+        verify(widgetManager).updateWidgetType(anyString(), any(), any(), anyString(), configUiCaptor.capture(),
+                bundleIdCaptor.capture());
+        assertThat(configUiCaptor.getValue()).isEqualTo(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
+        assertThat(bundleIdCaptor.getValue()).isEqualTo(widgetRequest.getBundleId());
         assertThat(widgetDto.getConfigUi()).isEqualTo(widgetRequest.getConfigUi());
         assertThat(widgetDto.getBundleId()).isEqualTo(widgetRequest.getBundleId());
     }
@@ -258,5 +275,16 @@ public class WidgetServiceTest {
         widgetType.setConfigUi(objectMapper.writeValueAsString(
                 ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_2, RESOURCES_KEY, RESOURCES_2)));
         return widgetType;
+    }
+
+    private WidgetRequest getWidgetRequest1() {
+        WidgetRequest widgetRequest = new WidgetRequest();
+        widgetRequest.setCode(WIDGET_1_CODE);
+        widgetRequest.setTitles(ImmutableMap.of("it", "Mio Titolo", "en", "My Title"));
+        widgetRequest.setCustomUi("<div></div>");
+        widgetRequest.setGroup("group");
+        widgetRequest.setConfigUi(ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_1, RESOURCES_KEY, RESOURCES_1));
+        widgetRequest.setBundleId(BUNDLE_1);
+        return widgetRequest;
     }
 }

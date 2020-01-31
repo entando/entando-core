@@ -207,7 +207,7 @@ public class TestApiWidgetTypeInterface extends BaseTestCase {
                 this._guiFragmentManager.updateGuiFragment(previousFragment);
             }
             this._widgetTypeManager.updateWidgetType(widgetType.getCode(), originalTitles, widgetType.getConfig(), widgetType
-                    .getMainGroup());
+                    .getMainGroup(), widgetType.getConfigUi(), widgetType.getBundleId());
         }
     }
 

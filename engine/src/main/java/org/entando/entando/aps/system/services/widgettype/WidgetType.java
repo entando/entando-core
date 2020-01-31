@@ -34,6 +34,45 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
  */
 public class WidgetType implements Serializable {
 
+    /**
+     * Il codice del tipo di widget.
+     */
+    private String _code;
+
+    private ApsProperties _titles;
+
+    /**
+     * La lista dei parametri previsti per il tipo di widget.
+     */
+    private List<WidgetTypeParameter> _parameters;
+
+    /**
+     * Il nome della action specifica che gestisce questo tipo di widget. null
+     * se non vi è nessun action specifica.
+     */
+    private String _action;
+
+    /**
+     * The code of the plugin owner of widget type.
+     */
+    private String _pluginCode;
+
+    private String _parentTypeCode;
+
+    private WidgetType _parentType;
+
+    private ApsProperties _config;
+
+    private boolean _locked;
+
+    private String _mainGroup;
+
+    private String configUi;
+
+    private String bundleId;
+
+    public final static String WIDGET_LOCATION = "aps/jsp/widgets/";
+
     @Override
     public WidgetType clone() {
         WidgetType clone = new WidgetType();
@@ -228,6 +267,22 @@ public class WidgetType implements Serializable {
         this._mainGroup = mainGroup;
     }
 
+    public String getConfigUi() {
+        return configUi;
+    }
+
+    public void setConfigUi(String configUi) {
+        this.configUi = configUi;
+    }
+
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
     public String getJspPath() {
         WidgetType widgetType = (this.isLogic()) ? this.getParentType() : this;
         return getJspPath(widgetType.getCode(), widgetType.getPluginCode());
@@ -242,7 +297,7 @@ public class WidgetType implements Serializable {
         jspPath.append(WIDGET_LOCATION).append(code).append(".jsp");
         return jspPath.toString();
     }
-    
+
     public static boolean existsJsp(ServletContext srvCtx, String code, String pluginCode) throws IOException {
         String jspPath = getJspPath(code, pluginCode);
 		String folderPath = srvCtx.getRealPath("/");
@@ -260,7 +315,7 @@ public class WidgetType implements Serializable {
 		}
         return false;
     }
-    
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -358,40 +413,4 @@ public class WidgetType implements Serializable {
         }
         return true;
     }
-
-    /**
-     * Il codice del tipo di widget.
-     */
-    private String _code;
-
-    private ApsProperties _titles;
-
-    /**
-     * La lista dei parametri previsti per il tipo di widget.
-     */
-    private List<WidgetTypeParameter> _parameters;
-
-    /**
-     * Il nome della action specifica che gestisce questo tipo di widget. null
-     * se non vi è nessun action specifica.
-     */
-    private String _action;
-
-    /**
-     * The code of the plugin owner of widget type.
-     */
-    private String _pluginCode;
-
-    private String _parentTypeCode;
-
-    private WidgetType _parentType;
-
-    private ApsProperties _config;
-
-    private boolean _locked;
-
-    private String _mainGroup;
-
-    public final static String WIDGET_LOCATION = "aps/jsp/widgets/";
-
 }

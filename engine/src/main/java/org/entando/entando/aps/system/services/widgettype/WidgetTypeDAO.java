@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.Types;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,17 +42,17 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
     private ILangManager langManager;
 
     private final String ALL_WIDGET_TYPES
-            = "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup FROM widgetcatalog";
+            = "SELECT code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup, configui, bundleid FROM widgetcatalog";
 
     private final String ADD_WIDGET_TYPE
-            = "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup) "
-            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)";
+            = "INSERT INTO widgetcatalog (code, titles, parameters, plugincode, parenttypecode, defaultconfig, locked, maingroup, configui, bundleid) "
+            + "VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?, ?)";
 
     private final String DELETE_WIDGET_TYPE
             = "DELETE FROM widgetcatalog WHERE code = ? AND locked = ? ";
 
     private final String UPDATE_WIDGET_TYPE
-            = "UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ? WHERE code = ? ";
+            = "UPDATE widgetcatalog SET titles = ? , defaultconfig = ? , maingroup = ?, configui = ?, bundleid = ? WHERE code = ? ";
 
     @Override
     public Map<String, WidgetType> loadWidgetTypes() {
@@ -110,6 +111,14 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
             if (null != mainGroup && mainGroup.trim().length() > 0) {
                 widgetType.setMainGroup(mainGroup.trim());
             }
+            String configUi = res.getString(9);
+            if (StringUtils.isNotEmpty(configUi)) {
+                widgetType.setConfigUi(configUi);
+            }
+            String bundleId = res.getString(10);
+            if (StringUtils.isNotEmpty(bundleId)) {
+                widgetType.setBundleId(bundleId);
+            }
         } catch (Throwable t) {
             logger.error("Error parsing the Widget Type '{}'", code, t);
             throw new ApsSystemException("Error in the parsing in the Widget Type '" + code + "'", t);
@@ -147,6 +156,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
                 stat.setInt(7, 0);
             }
             stat.setString(8, widgetType.getMainGroup());
+            stat.setString(9, widgetType.getConfigUi());
+            stat.setString(10, widgetType.getBundleId());
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {
@@ -180,7 +191,8 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
     }
 
     @Override
-    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup) {
+    public void updateWidgetType(String widgetTypeCode, ApsProperties titles, ApsProperties defaultConfig, String mainGroup,
+                                 String configUi, String bundleId) {
         Connection conn = null;
         PreparedStatement stat = null;
         try {
@@ -194,7 +206,9 @@ public class WidgetTypeDAO extends AbstractDAO implements IWidgetTypeDAO {
                 stat.setString(2, defaultConfig.toXml());
             }
             stat.setString(3, mainGroup);
-            stat.setString(4, widgetTypeCode);
+            stat.setString(4, configUi);
+            stat.setString(5, bundleId);
+            stat.setString(6, widgetTypeCode);
             stat.executeUpdate();
             conn.commit();
         } catch (Throwable t) {

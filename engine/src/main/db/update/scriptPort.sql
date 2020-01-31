@@ -5,3 +5,5 @@ UPDATE pages_metadata_draft SET groupcode = (SELECT pages.groupcode FROM pages W
 ALTER TABLE pages DROP groupcode;
 ALTER TABLE resources ADD COLUMN owner character varying(128);
 ALTER TABLE contents ADD COLUMN restriction character varying(40);
+ALTER TABLE widgetcatalog ADD COLUMN bundleid character varying(150);
+ALTER TABLE widgetcatalog ADD COLUMN configui character varying;

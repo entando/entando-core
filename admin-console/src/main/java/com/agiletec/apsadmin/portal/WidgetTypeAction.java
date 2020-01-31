@@ -197,16 +197,21 @@ public class WidgetTypeAction extends AbstractPortalAction {
             titles.put("it", this.getItalianTitle());
             titles.put("en", this.getEnglishTitle());
             String mainGroupToSet = (this.hasCurrentUserPermission(Permission.SUPERUSER)) ? this.getMainGroup() : type.getMainGroup();
+            String bundleIdToSet = (this.hasCurrentUserPermission(Permission.SUPERUSER)) ? this.getBundleId() : type.getBundleId();
+            String configUiToSet = (this.hasCurrentUserPermission(Permission.SUPERUSER)) ? this.getConfigUi() : type.getConfigUi();
             if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
                 type.setTitles(titles);
                 type.setMainGroup(mainGroupToSet);
+                type.setBundleId(bundleIdToSet);
+                type.setConfigUi(configUiToSet);
                 this.getWidgetTypeManager().addWidgetType(type);
             } else {
                 ApsProperties configToSet = type.getConfig();
                 if (type.isLogic() && type.isUserType() && !type.isLocked() && this.hasCurrentUserPermission(Permission.SUPERUSER)) {
                     configToSet = this.extractWidgetTypeConfig(type.getParentType().getTypeParameters());
                 }
-                this.getWidgetTypeManager().updateWidgetType(this.getWidgetTypeCode(), titles, configToSet, mainGroupToSet);
+                this.getWidgetTypeManager().updateWidgetType(this.getWidgetTypeCode(), titles, configToSet, mainGroupToSet,
+                        configUiToSet, bundleIdToSet);
             }
             if (!type.isLogic() && !super.isInternalServletWidget(this.getWidgetTypeCode())) {
                 GuiFragment guiFragment = this.extractUniqueGuiFragment(this.getWidgetTypeCode());
@@ -413,6 +418,8 @@ public class WidgetTypeAction extends AbstractPortalAction {
             this.setEnglishTitle(titles.getProperty("en"));
             String mainGroup = (StringUtils.isBlank(type.getMainGroup())) ? Group.FREE_GROUP_NAME : type.getMainGroup();
             this.setMainGroup(mainGroup);
+            this.setBundleId(type.getBundleId());
+            this.setConfigUi(type.getConfigUi());
             if (type.isLogic()) {
                 List<String> guiFragmentCodes = this.extractGuiFragmentCodes(this.getWidgetTypeCode());
                 for (int i = 0; i < guiFragmentCodes.size(); i++) {
@@ -633,6 +640,22 @@ public class WidgetTypeAction extends AbstractPortalAction {
         this._mainGroup = mainGroup;
     }
 
+    public String getBundleId() {
+        return bundleId;
+    }
+
+    public void setBundleId(String bundleId) {
+        this.bundleId = bundleId;
+    }
+
+    public String getConfigUi() {
+        return configUi;
+    }
+
+    public void setConfigUi(String configUi) {
+        this.configUi = configUi;
+    }
+
     @Deprecated
     public String getParentShowletTypeCode() {
         return this.getParentWidgetTypeCode();
@@ -749,6 +772,10 @@ public class WidgetTypeAction extends AbstractPortalAction {
     private String _italianTitle;
 
     private String _mainGroup;
+
+    private String bundleId;
+
+    private String configUi;
 
     private String _parentWidgetTypeCode;
 

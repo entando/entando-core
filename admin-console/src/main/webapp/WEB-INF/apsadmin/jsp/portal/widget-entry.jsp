@@ -182,6 +182,29 @@
                 </div>
             </s:if>
 
+            <div class="form-group<s:property value="controlGroupErrorClassVar" />">
+                <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['bundleId']}" />
+                <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
+                <label for="bundleId" class="col-sm-2 control-label"><s:text name="label.bundleId" /></label>
+                <div class="col-sm-10">
+                    <wpsf:textfield id="bundleId" name="bundleId" cssClass="form-control" />
+                    <s:if test="#pageCodeHasFieldErrorVar">
+                        <p class="text-danger padding-small-vertical"><s:iterator value="#pageCodeFieldErrorsVar"><s:property /> </s:iterator></p>
+                    </s:if>
+                </div>
+            </div>
+            <div class="form-group<s:property value="controlGroupErrorClassVar" />">
+                <s:set var="pageCodeFieldErrorsVar" value="%{fieldErrors['configUi']}" />
+                <s:set var="pageCodeHasFieldErrorVar" value="#pageCodeFieldErrorsVar != null && !#pageCodeFieldErrorsVar.isEmpty()" />
+                <label for="bundleId" class="col-sm-2 control-label"><s:text name="label.configUi" /></label>
+                <div class="col-sm-10">
+                    <wpsf:textarea name="configUi" id="configUi" cssClass="form-control" rows="8" cols="50" />
+                    <s:if test="#pageCodeHasFieldErrorVar">
+                        <p class="text-danger padding-small-vertical"><s:iterator value="#pageCodeFieldErrorsVar"><s:property /> </s:iterator></p>
+                    </s:if>
+                </div>
+            </div>
+
         </fieldset>
 
         <s:if test="strutsAction != 1 && (strutsAction != 2 || #widgetTypeVar.logic)">

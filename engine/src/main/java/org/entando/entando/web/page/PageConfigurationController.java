@@ -77,11 +77,7 @@ public class PageConfigurationController {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
 
-        List<WidgetConfigurationDto> widgets = Arrays.stream(pageConfiguration.getWidgets())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-
-        return new ResponseEntity<>(new RestResponse<>(widgets, metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse<>(Arrays.asList(pageConfiguration.getWidgets()), metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

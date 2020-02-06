@@ -66,7 +66,7 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
         dest.setPluginCode(pluginCode);
         dest.setPluginDesc(plugin != null ? plugin.getDescription() : null);
         List<WidgetTypeParameter> params = src.getTypeParameters();
-        dest.setHasConfig(null != params && params.size() > 0);
+        dest.setHasConfig((null != params && params.size() > 0) || StringUtils.isNotBlank(src.getConfigUi()));
         if (null != pluginCode && pluginCode.trim().length() > 0) {
             dest.setTypology(pluginCode);
         } else if (src.isUserType()) {

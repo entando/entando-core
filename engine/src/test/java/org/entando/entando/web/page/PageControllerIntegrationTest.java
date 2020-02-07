@@ -62,6 +62,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -674,6 +675,64 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         } finally {
             pageManager.deletePage(newPageCode1);
             pageManager.deletePage(newPageCode2);
+        }
+    }
+
+    @Test
+    public void testPutOnPageWithChildren() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String parentPageCode = "pageWithChildren";
+        String childrenPageCode = "childrenPage";
+
+        try {
+            //Posting parent page
+            PageRequest pageRequest = new PageRequest();
+            pageRequest.setCode(parentPageCode);
+            pageRequest.setPageModel("home");
+            pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
+            Map<String, String> titles = new HashMap<>();
+            titles.put("it", parentPageCode);
+            titles.put("en", parentPageCode);
+            pageRequest.setTitles(titles);
+            pageRequest.setParentCode("homepage");
+            this.addPage(accessToken, pageRequest);
+
+            IPage page = this.pageManager.getDraftPage(parentPageCode);
+            assertThat(page, is(not(nullValue())));
+            Assert.assertEquals(0, page.getChildrenCodes().length);
+
+            //Adding children
+            pageRequest.setCode(childrenPageCode);
+            pageRequest.setParentCode(parentPageCode);
+            this.addPage(accessToken, pageRequest);
+
+            page = this.pageManager.getDraftPage(childrenPageCode);
+            assertThat(page, is(not(nullValue())));
+            Assert.assertEquals(0, page.getChildrenCodes().length);
+
+            page = this.pageManager.getDraftPage(parentPageCode);
+            assertThat(page, is(not(nullValue())));
+            Assert.assertEquals(1, page.getChildrenCodes().length);
+
+            //Updating parentPage
+            pageRequest.setCode(parentPageCode);
+            pageRequest.setParentCode("homepage");
+            pageRequest.getTitles().put("it", parentPageCode.toUpperCase());
+            ResultActions result = mockMvc
+                    .perform(put("/pages/{code}", parentPageCode)
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isOk()).andDo(print());
+
+            page = this.pageManager.getDraftPage(parentPageCode);
+            assertThat(page, is(not(nullValue())));
+            Assert.assertEquals(1, page.getChildrenCodes().length);
+
+        } finally {
+            this.pageManager.deletePage(childrenPageCode);
+            this.pageManager.deletePage(parentPageCode);
         }
     }
 

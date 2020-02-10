@@ -43,43 +43,28 @@ public class UnmarshalUtils {
 	private UnmarshalUtils() {
 		//
 	}
-
-	@Deprecated
+    
 	public static Object unmarshal(ApiMethod apiMethod, HttpServletRequest request, MediaType contentType) throws Throwable {
 		return unmarshal(apiMethod.getExpectedType(), request, contentType);
 	}
 	
 	public static Object unmarshal(Class expectedType, HttpServletRequest request, MediaType contentType) throws Throwable {
-		ApplicationContext applicationContext = ApsWebApplicationUtils.getWebApplicationContext(request);
-		return unmarshal(applicationContext, expectedType, request.getInputStream(), contentType);
+		return unmarshal(expectedType, request.getInputStream(), contentType);
 	}
-	
+    
 	@Deprecated
 	public static Object unmarshal(ApiMethod apiMethod, String requestBody, MediaType contentType) throws Throwable {
 		return unmarshal(apiMethod.getExpectedType(), requestBody, contentType);
 	}
 	
-	@Deprecated
 	public static Object unmarshal(Class expectedType, String requestBody, MediaType contentType) throws Throwable {
-		InputStream stream = new ByteArrayInputStream(requestBody.getBytes(StandardCharsets.UTF_8));
-		return unmarshal(null, expectedType, stream, contentType);
-	}
-	
-	@Deprecated
-	public static Object unmarshal(ApiMethod apiMethod, InputStream bodyStream, MediaType contentType) throws Throwable {
-		return unmarshal(null, apiMethod.getExpectedType(), bodyStream, contentType);
-	}
-	
-	public static Object unmarshal(ApplicationContext applicationContext, 
-			Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
-		Object bodyObject = null;
+        Object bodyObject = null;
 		try {
-			String body = IOUtils.toString(bodyStream, "UTF-8");
-			InputStream stream = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
+			InputStream stream = new ByteArrayInputStream(requestBody.getBytes(StandardCharsets.UTF_8));
             if (MediaType.APPLICATION_JSON_TYPE.equals(contentType)) {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-                bodyObject = mapper.readValue(bodyStream, expectedType);
+                bodyObject = mapper.readValue(stream, expectedType);
             } else {
                 JAXBContext context = JAXBContext.newInstance(expectedType);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -90,6 +75,22 @@ public class UnmarshalUtils {
 			throw new ApsSystemException("Error unmarshalling request body", t);
 		}
 		return bodyObject;
+	}
+	
+	public static Object unmarshal(ApiMethod apiMethod, InputStream bodyStream, MediaType contentType) throws Throwable {
+		return unmarshal(apiMethod.getExpectedType(), bodyStream, contentType);
+	}
+	
+    @Deprecated
+	public static Object unmarshal(ApplicationContext applicationContext, 
+			Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
+        String body = IOUtils.toString(bodyStream, "UTF-8");
+		return unmarshal(expectedType, body, contentType);
+	}
+	
+	public static Object unmarshal(Class expectedType, InputStream bodyStream, MediaType contentType) throws Throwable {
+        String body = IOUtils.toString(bodyStream, "UTF-8");
+		return unmarshal(expectedType, body, contentType);
 	}
 	
 }

@@ -65,7 +65,16 @@ public class JAXBEntity implements Serializable {
             this.setTypeCode(mainEntity.getTypeCode());
             this.setTypeDescription(mainEntity.getTypeDescription());
             this.setGroups(mainEntity.getGroups());
-            this.setCategories(mainEntity.getCategories());
+            List<Category> mainCategories = mainEntity.getCategories();
+            if (null != mainCategories && mainCategories.size() > 0) {
+                this.setCategories(new HashSet<>());
+                for (int i = 0; i < mainCategories.size(); i++) {
+                    Category category = mainCategories.get(i);
+                    if (null != category) {
+                        this.getCategories().add(category.getCode());
+                    }
+                }
+            }
             List<AttributeInterface> attributes = mainEntity.getAttributeList();
             if (null == attributes || attributes.isEmpty()) {
                 return;
@@ -246,18 +255,6 @@ public class JAXBEntity implements Serializable {
 
     protected void setCategories(Set<String> categories) {
         this._categories = categories;
-    }
-
-    protected void setCategories(List<Category> categories) {
-        if (null != categories && categories.size() > 0) {
-            this.setCategories(new HashSet<String>());
-            for (int i = 0; i < categories.size(); i++) {
-                Category category = categories.get(i);
-                if (null != category) {
-                    this.getCategories().add(category.getCode());
-                }
-            }
-        }
     }
 
     @XmlElement(name = "attribute", required = true)

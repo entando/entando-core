@@ -156,8 +156,7 @@ public class TestApiDataObjectInterface extends ApiBaseTestCase {
         Object singleResult = apiDataObjectInterface.getDataObject(properties);
         assertNotNull(singleResult);
         String toString = this.marshall(singleResult, mediaType);
-        InputStream stream = new ByteArrayInputStream(toString.getBytes());
-        JAXBDataObject jaxbData = (JAXBDataObject) UnmarshalUtils.unmarshal(super.getApplicationContext(), JAXBDataObject.class, stream, mediaType);
+        JAXBDataObject jaxbData = (JAXBDataObject) UnmarshalUtils.unmarshal(JAXBDataObject.class, toString, mediaType);
         assertNotNull(jaxbData);
         return jaxbData;
     }

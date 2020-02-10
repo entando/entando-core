@@ -100,8 +100,7 @@ public class TestApiI18nLabelInterface extends ApiBaseTestCase {
 		Object singleResult = apiLabelInterface.getLabel(properties);
 		assertNotNull(singleResult);
 		String toString = this.marshall(singleResult, mediaType);
-		InputStream stream = new ByteArrayInputStream(toString.getBytes());
-		JAXBI18nLabel jaxbLabel = (JAXBI18nLabel) UnmarshalUtils.unmarshal(super.getApplicationContext(), JAXBI18nLabel.class, stream, mediaType);
+		JAXBI18nLabel jaxbLabel = (JAXBI18nLabel) UnmarshalUtils.unmarshal(JAXBI18nLabel.class, toString, mediaType);
 		assertNotNull(jaxbLabel);
 		return jaxbLabel;
 	}

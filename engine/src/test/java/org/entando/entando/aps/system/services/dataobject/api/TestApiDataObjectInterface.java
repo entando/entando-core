@@ -20,8 +20,6 @@ import com.agiletec.aps.system.common.entity.model.attribute.AbstractListAttribu
 import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.model.attribute.CompositeAttribute;
 import com.agiletec.aps.util.DateConverter;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -50,27 +48,27 @@ public class TestApiDataObjectInterface extends ApiBaseTestCase {
         super.setUp();
         this.init();
     }
-
+    
     public void testGetXmlDataObject() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
         this.testGetDataObject(mediaType, "admin", "ALL4", "it");
     }
-
+    /*
     public void testGetJsonDataObject() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
         this.testGetDataObject(mediaType, "admin", "ALL4", "en");
     }
-
+    */
     public void testCreateNewDataObjectFromXml() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_XML_TYPE;
         this.testCreateNewDataObject(mediaType, "ALL4");
     }
-
+    /*
     public void testCreateNewDataObjectFromJson() throws Throwable {
         MediaType mediaType = MediaType.APPLICATION_JSON_TYPE;
         this.testCreateNewDataObject(mediaType, "ALL4");
     }
-
+    */
     protected void testCreateNewDataObject(MediaType mediaType, String dataObjectId) throws Throwable {
         String dateNow = DateConverter.getFormattedDate(new Date(), SystemConstants.DATA_TYPE_METADATA_DATE_FORMAT);
         EntitySearchFilter filter = new EntitySearchFilter(IDataObjectManager.DATA_OBJECT_CREATION_DATE_FILTER_KEY, false, dateNow, null);

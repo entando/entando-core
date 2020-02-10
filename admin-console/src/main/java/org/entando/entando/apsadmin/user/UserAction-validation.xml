@@ -36,7 +36,7 @@
             <message key="error.user.wrongPasswordConfirm" />
         </field-validator>
         <field-validator type="regex" short-circuit="true">
-           <param name="regex"><![CDATA[^(?=.*[\d])(?=.*[a-z])(?=.*[A-Z])(?=.*.)(?=\S+$).{8,}$]]></param>
+           <param name="regex"><![CDATA[^(?=.*[\d])(?=.*[a-z])(?=.*[A-Z])(?!.*[\/'"(){}<>,:*|[\]])(?=\S+$).{8,}$]]></param>
            <message key="wrongCharacters" />
         </field-validator>
     </field>

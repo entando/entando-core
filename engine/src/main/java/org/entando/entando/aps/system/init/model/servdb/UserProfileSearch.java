@@ -38,7 +38,7 @@ public class UserProfileSearch implements ExtendedColumnDefinition {
     private int _id;
 
     @DatabaseField(foreign = true, columnName = "username",
-            width = 40,
+            width = 80,
             canBeNull = false, index = true)
     private UserProfile _username;
 
@@ -84,7 +84,7 @@ public class UserProfileSearch implements ExtendedColumnDefinition {
 /*
 CREATE TABLE userprofile_profilesearch
 (
-  username character varying(40) NOT NULL,
+  username character varying(80) NOT NULL,
   attrname character varying(30) NOT NULL,
   textvalue character varying(255),
   datevalue date,

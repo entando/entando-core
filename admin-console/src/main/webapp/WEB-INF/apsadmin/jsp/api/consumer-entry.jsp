@@ -71,7 +71,7 @@
         <div class="col-sm-10">
             <wpsf:textfield name="consumerKey" id="consumerKey" disabled="%{getStrutsAction() == 2}" cssClass="form-control" />
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -89,7 +89,7 @@
                 <wpsf:password name="secret" id="secret" cssClass="form-control" placeholder="********" />
             </s:if>
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -102,7 +102,7 @@
         <div class="col-sm-10">
             <wpsf:textfield name="name" id="name" cssClass="form-control" />
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -115,7 +115,7 @@
         <div class="col-sm-10">
             <s:textarea  cols="50" rows="3" name="description" id="description" cssClass="form-control"  />
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -125,7 +125,7 @@
         <div class="col-sm-10">
             <wpsf:textfield name="callbackUrl" id="callbackUrl" cssClass="form-control" />
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -138,7 +138,7 @@
         <div class="col-sm-10">
             <wpsf:textfield name="scope" id="scope" cssClass="form-control" />
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -151,7 +151,7 @@
         <div class="col-sm-10">
             <wpsf:textfield name="expirationDate" id="expirationDate_cal" cssClass="form-control datepicker" placeholder="dd/mm/yyyy" title="dd/mm/yyyy"/>
             <s:if test="#currentFieldHasFieldErrorVar">
-                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property />&#32;</s:iterator></span>
+                <span class="text-danger padding-small-vertical"><s:iterator value="#currentFieldErrorsVar"><s:property escapeHtml="false" />&#32;</s:iterator></span>
             </s:if>
         </div>
     </div>
@@ -180,8 +180,8 @@
                                    name="grantTypes" id="<s:property value="%{#grantTypesVar}" />"
                                    value="<s:property value="%{#grantTypesVar}" />"
                                    <s:if test="%{grantTypes.contains(#grantTypesVar)}"> checked="checked" </s:if> />
-                            </div>
                         </div>
+                    </div>
                 </s:iterator>
             </div>
         </div>

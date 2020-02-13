@@ -401,7 +401,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         }
     }
 
-    /*@Test
+    @Test
     public void testAddUserWithLongName() throws Exception {
         String validUsername = "valid.username_with_very_long_name_with_a_total_of_80_characters_maximum_allowed";
         try {
@@ -451,7 +451,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             UserDetails user = this.userManager.getUser(invalidUsername);
             assertNull(user);
         }
-    }*/
+    }
 
     @Test
     public void testUpdateUser() throws Exception {

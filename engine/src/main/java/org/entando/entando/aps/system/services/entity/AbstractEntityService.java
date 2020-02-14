@@ -140,7 +140,8 @@ public abstract class AbstractEntityService<I extends IApsEntity, T extends Enti
                         AttributeInterface attribute = attributeFieldError.getAttribute();
                         String messagePrefix = this.createErrorMessageAttributePositionPrefix(attribute, tracer);
                         bindingResult.reject(EntityValidator.ERRCODE_ATTRIBUTE_INVALID,
-                                messagePrefix + " " + this.getErrorMessage(attributeFieldError.getErrorCode()));
+                                messagePrefix + " " + this.getErrorMessage(
+                                        attributeFieldError.getErrorCode()) + ": " + attributeFieldError.getMessage());
                     }
                 }
             }

@@ -66,7 +66,10 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
         dest.setPluginCode(pluginCode);
         dest.setPluginDesc(plugin != null ? plugin.getDescription() : null);
         List<WidgetTypeParameter> params = src.getTypeParameters();
-        dest.setHasConfig((null != params && params.size() > 0) || StringUtils.isNotBlank(src.getConfigUi()));
+        Map<String, Object> configUi = parseConfigUi(src);
+        dest.setHasConfig((null != params && params.size() > 0) || (configUi != null && !configUi.isEmpty()));
+        dest.setConfigUi(configUi);
+        dest.setBundleId(src.getBundleId());
         if (null != pluginCode && pluginCode.trim().length() > 0) {
             dest.setTypology(pluginCode);
         } else if (src.isUserType()) {
@@ -76,16 +79,20 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
         } else {
             dest.setTypology(WidgetDto.CUSTOM_TYPOLOGY_CODE);
         }
-        dest.setBundleId(src.getBundleId());
+        return dest;
+    }
+
+    private Map<String, Object> parseConfigUi(WidgetType src) {
+        Map<String, Object> configUi = null;
         try {
             if (StringUtils.isNotBlank(src.getConfigUi())) {
-                dest.setConfigUi(objectMapper.readValue(src.getConfigUi(), new TypeReference<Map<String, Object>>() {
-                }));
+                configUi = objectMapper.readValue(src.getConfigUi(), new TypeReference<Map<String, Object>>() {
+                });
             }
         } catch (JsonProcessingException e) {
             logger.error("Error parsing configUi json to object for widget {}", src.getCode(), e);
         }
-        return dest;
+        return configUi;
     }
 
     public IPageManager getPageManager() {

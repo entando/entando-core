@@ -309,7 +309,9 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         type.setMainGroup(widgetRequest.getGroup());
         type.setBundleId(widgetRequest.getBundleId());
         try {
-            type.setConfigUi(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
+            if (widgetRequest.getConfigUi() != null) {
+                type.setConfigUi(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
+            }
         } catch (JsonProcessingException e) {
             logger.error("Failed to parse configUi property for request {} ", widgetRequest, e);
             throw new RestServerError("error in add widget", e);

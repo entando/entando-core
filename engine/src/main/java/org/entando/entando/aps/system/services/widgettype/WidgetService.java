@@ -311,6 +311,8 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         try {
             if (widgetRequest.getConfigUi() != null) {
                 type.setConfigUi(objectMapper.writeValueAsString(widgetRequest.getConfigUi()));
+            } else {
+                type.setConfigUi(null);
             }
         } catch (JsonProcessingException e) {
             logger.error("Failed to parse configUi property for request {} ", widgetRequest, e);

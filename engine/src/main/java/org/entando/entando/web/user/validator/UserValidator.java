@@ -125,7 +125,7 @@ public class UserValidator extends AbstractPaginationValidator {
         }
         Matcher matcherUsername = pattern.matcher(username);
         int usLength = username.length();
-        if (usLength < 4 || usLength > 20 || !matcherUsername.matches()) {
+        if (usLength < 4 || usLength > 80 || !matcherUsername.matches()) {
             bindingResult.reject(UserValidator.ERRCODE_USERNAME_FORMAT_INVALID, new String[]{username}, "user.username.format.invalid");
         }
         this.checkNewPassword(username, request.getPassword(), bindingResult);

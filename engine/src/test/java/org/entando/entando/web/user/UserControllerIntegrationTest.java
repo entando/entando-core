@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
-import org.hamcrest.Matcher;
+
 import org.junit.Assert;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -328,7 +328,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("2")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
-            String invalidBody2 = "{\"username\": \"usernamevelylong_.veryverylong\",\"status\": \"active\",\"password\": \"password\"}";
+            String invalidBody2 = "{\"username\": \"usernamevelylong_.veryveryveryveryveryveryveryveryveryveryveryveryveryveryverylong\",\"status\": \"active\",\"password\": \"password\"}";
             ResultActions resultInvalid2 = this.executeUserPost(invalidBody2, accessToken, status().isBadRequest());
             resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("2")));
 
@@ -397,6 +397,58 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             throw e;
         } finally {
             UserDetails user = this.userManager.getUser(validUsername);
+            assertNull(user);
+        }
+    }
+
+    @Test
+    public void testAddUserWithLongName() throws Exception {
+        String validUsername = "valid.username_with_very_long_name_with_a_total_of_80_characters_maximum_allowed";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String mockJson = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"password\"}";
+            ResultActions result = this.executeUserPost(mockJson, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.username", is(validUsername)));
+
+            ResultActions result2 = this.executeUserPost(mockJson, accessToken, status().isConflict());
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result2.andExpect(jsonPath("$.errors[0].code", is("1")));
+            result2.andExpect(jsonPath("$.metaData.size()", is(0)));
+
+            ResultActions resultDelete = mockMvc.perform(
+                    delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
+                            .content(mockJson)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            resultDelete.andExpect(status().isOk());
+            resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
+        } catch (Throwable e) {
+            this.userManager.removeUser(validUsername);
+            throw e;
+        } finally {
+            UserDetails user = this.userManager.getUser(validUsername);
+            assertNull(user);
+        }
+    }
+
+    @Test
+    public void testAddUserWithNameTooLong() throws Exception {
+        String invalidUsername = "invalid.username_with_too_many_characters_81_one_more_than_the_maximum_allowed_80";
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            String mockJson = "{\"username\": \"" + invalidUsername + "\",\"status\": \"active\",\"password\": \"password\"}";
+            this.executeUserPost(mockJson, accessToken, status().isBadRequest());
+
+        } catch (Throwable e) {
+            this.userManager.removeUser(invalidUsername);
+            throw e;
+        } finally {
+            UserDetails user = this.userManager.getUser(invalidUsername);
             assertNull(user);
         }
     }

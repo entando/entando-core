@@ -37,7 +37,7 @@ public class UserGroupRoleReference implements ExtendedColumnDefinition {
 
     @DatabaseField(columnName = "username",
             dataType = DataType.STRING,
-            width = 40,
+            width = 80,
             canBeNull = false)
     private String _username;
 
@@ -77,7 +77,7 @@ public class UserGroupRoleReference implements ExtendedColumnDefinition {
 /*
 CREATE TABLE authusergrouprole
 (
-  username character varying(40) NOT NULL,
+  username character varying(80) NOT NULL,
   groupname character varying(20),
   rolename character varying(20),
   CONSTRAINT authusergrouprole_grn_fkey FOREIGN KEY (groupname)

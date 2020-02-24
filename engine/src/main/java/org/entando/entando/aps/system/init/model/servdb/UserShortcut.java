@@ -27,7 +27,7 @@ public class UserShortcut {
 	
 	@DatabaseField(columnName = "username", 
 			dataType = DataType.STRING, 
-			width = 40, 
+			width = 80,
 			canBeNull = false, id = true)
 	private String _username;
 	
@@ -42,7 +42,7 @@ public class UserShortcut {
 /*
 CREATE TABLE authusershortcuts
 (
-  username character varying(40) NOT NULL,
+  username character varying(80) NOT NULL,
   config character varying NOT NULL,
   CONSTRAINT authusershortcuts_pkey PRIMARY KEY (username )
 )

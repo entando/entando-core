@@ -30,7 +30,7 @@ public class User {
 
     @DatabaseField(columnName = "username",
             dataType = DataType.STRING,
-            width = 40,
+            width = 80,
             canBeNull = false, id = true)
     private String _username;
 
@@ -62,7 +62,7 @@ public class User {
 /*
 CREATE TABLE authusers
 (
-  username character varying(40) NOT NULL,
+  username character varying(80) NOT NULL,
   passwd character varying(40),
   registrationdate date NOT NULL,
   lastaccess date,

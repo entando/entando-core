@@ -27,7 +27,7 @@ public class UserProfile {
 	
 	@DatabaseField(columnName = "username", 
 			dataType = DataType.STRING, 
-			width = 40, 
+			width = 80,
 			canBeNull = false, id = true)
 	private String _username;
 	
@@ -53,7 +53,7 @@ public class UserProfile {
 /*
 CREATE TABLE userprofile_authuserprofiles
 (
-  username character varying(40) NOT NULL,
+  username character varying(80) NOT NULL,
   profiletype character varying(30) NOT NULL,
   profilexml character varying NOT NULL,
   publicprofile smallint NOT NULL,

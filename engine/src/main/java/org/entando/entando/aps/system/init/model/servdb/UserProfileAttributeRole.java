@@ -36,7 +36,7 @@ public class UserProfileAttributeRole implements ExtendedColumnDefinition {
     private int _id;
 
     @DatabaseField(foreign = true, columnName = "username",
-            width = 40,
+            width = 80,
             canBeNull = false, index = true)
     private UserProfile _username;
 

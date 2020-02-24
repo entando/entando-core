@@ -9,7 +9,5 @@ ALTER TABLE widgetcatalog ADD COLUMN bundleid character varying(150);
 ALTER TABLE widgetcatalog ADD COLUMN configui character varying;
 ALTER TABLE authusers ALTER COLUMN username TYPE character varying(80);
 ALTER TABLE authusergrouprole ALTER COLUMN username TYPE character varying(80);
-ALTER TABLE userprofile_authuserprofiles ALTER COLUMN username TYPE character varying(80);
 ALTER TABLE authuserprofileattrroles ALTER COLUMN username TYPE character varying(80);
-ALTER TABLE userprofile_profilesearch ALTER COLUMN username TYPE character varying(80);
 ALTER TABLE authusershortcuts ALTER COLUMN username TYPE character varying(80);

@@ -34,8 +34,6 @@ You can request bug fixes and new features on the [issues](https://github.com/en
 
 For latest updated news, please visit the company website: https://www.entando.com.
 
-Entando Core is released under [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt) v2.1 
-
 Enjoy!
 
 *The Entando Team*

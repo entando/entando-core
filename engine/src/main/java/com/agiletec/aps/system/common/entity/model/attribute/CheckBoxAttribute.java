@@ -21,6 +21,11 @@ package com.agiletec.aps.system.common.entity.model.attribute;
 public class CheckBoxAttribute extends BooleanAttribute {
 	
 	@Override
+	protected boolean saveBooleanJDOMElement() {
+		return (null != super.getBooleanValue() && super.getBooleanValue());
+	}
+
+	@Override
 	protected boolean addSearchInfo() {
 		return (null != super.getBooleanValue() && super.getBooleanValue());
 	}

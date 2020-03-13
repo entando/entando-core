@@ -57,7 +57,7 @@ public class WidgetDtoBuilder extends DtoBuilder<WidgetType, WidgetDto> {
             List<IPage> draftPages = this.getPageManager().getDraftWidgetUtilizers(src.getCode());
             count += draftPages.size();
         } catch (Exception e) {
-            logger.error("Error extracting utilizers for widget {}", src.getCode());
+            logger.error("Error extracting utilizers for widget {}", src.getCode(), e);
             throw new RestServerError("Error extracting utilizers for widget " + src.getCode(), e);
         }
         dest.setUsed(count);

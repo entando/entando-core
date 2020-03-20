@@ -32,9 +32,7 @@ You can contribute to our Open Source project, please read [GitHub guidelines](h
 
 You can request bug fixes and new features on the [issues](https://github.com/entando/entando-core/issues) page.
 
-For latest updated news, please visit the company website: https://www.entando.com.
-
-Entando Core is released under [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt) v2.1 
+For latest updated news, please visit the company website: https://www.entando.com. 
 
 Enjoy!
 

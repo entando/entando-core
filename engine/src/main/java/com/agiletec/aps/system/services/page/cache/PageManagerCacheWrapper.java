@@ -568,22 +568,28 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private void getWidgetUtilizers(IPage page, Map<String, List> utilizersMap, boolean draft) {
         Widget[] widgets = page.getWidgets();
-        for (Widget widget : widgets) {
-            if (null != widget && null != widget.getType()) {
-                String cacheCode = this.getWidgetUtilizerCacheName(widget.getType().getCode(), draft);
-                List<String> widgetUtilizers = utilizersMap.get(cacheCode);
-                if (null == widgetUtilizers) {
-                    widgetUtilizers = new ArrayList<>();
-                    utilizersMap.put(cacheCode, widgetUtilizers);
+
+        if(widgets!=null) {
+            for (Widget widget : widgets) {
+                if (null != widget && null != widget.getType()) {
+                    String cacheCode = this.getWidgetUtilizerCacheName(widget.getType().getCode(), draft);
+                    List<String> widgetUtilizers = utilizersMap.get(cacheCode);
+                    if (null == widgetUtilizers) {
+                        widgetUtilizers = new ArrayList<>();
+                        utilizersMap.put(cacheCode, widgetUtilizers);
+                    }
+                    widgetUtilizers.add(page.getCode());
                 }
-                widgetUtilizers.add(page.getCode());
             }
         }
         String[] childrenCodes = page.getChildrenCodes();
-        for (String childrenCode : childrenCodes) {
-            IPage child = (draft) ? this.getDraftPage(childrenCode) : this.getOnlinePage(childrenCode);
-            if (null != child) {
-                this.getWidgetUtilizers(child, utilizersMap, draft);
+
+        if(childrenCodes !=null) {
+            for (String childrenCode : childrenCodes) {
+                IPage child = (draft) ? this.getDraftPage(childrenCode) : this.getOnlinePage(childrenCode);
+                if (null != child) {
+                    this.getWidgetUtilizers(child, utilizersMap, draft);
+                }
             }
         }
     }

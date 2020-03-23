@@ -25,8 +25,8 @@ import java.util.*;
 /**
  * Representation of a page template. 
  * This object contains the description and the definition of "frames" available. 
- * The definition of the page model is in the form of jsp or freemarker template. 
- * In the case of representation on jsp, the file name is equals then the model code.
+ * The definition of the page template is in the form of jsp or freemarker template. 
+ * In the case of representation on jsp, the file name is equals then the template code.
  * The "frames" are page sections that can contains a "widget".
  */
 @XmlRootElement(name = "pageModel")
@@ -41,8 +41,8 @@ public class PageModel implements Serializable {
 	private String template;
 
 	/**
-	 * Return the code of page model.
-	 * @return The code of page model.
+	 * Return the code of page template.
+	 * @return The code of page template.
 	 */
 	@XmlElement(name = "code", required = true)
 	public String getCode() {
@@ -50,7 +50,7 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Set the code of page model.
+	 * Set the code of page template.
 	 * @param code The code to set
 	 */
 	public void setCode(String code) {
@@ -58,8 +58,8 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Return the description of page model.
-	 * @return The description of page model.
+	 * Return the description of page template.
+	 * @return The description of page template.
 	 */
 	@XmlElement(name = "description", required = true)
 	public String getDescription() {
@@ -67,7 +67,7 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Set the description of page model.
+	 * Set the description of page template.
 	 * @param description The description to set
 	 */
 	public void setDescription(String description) {
@@ -75,8 +75,8 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Return the description of page model.
-	 * @return The description of page model.
+	 * Return the description of page template.
+	 * @return The description of page template.
 	 * @deprecated use getDescription()
 	 */
 	@XmlTransient
@@ -85,7 +85,7 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Set the description of page model.
+	 * Set the description of page template.
 	 * @param descr The code to set
 	 * @deprecated use setDescription(String)
 	 */
@@ -216,8 +216,8 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Return the code of the plugin owner of page model.
-	 * The field is null if the page model belong to Entando Core.
+	 * Return the code of the plugin owner of page template.
+	 * The field is null if the page template belong to Entando Core.
 	 * @return The plugin code.
 	 */
 	@XmlElement(name = "pluginCode", required = false)
@@ -226,7 +226,7 @@ public class PageModel implements Serializable {
 	}
 
 	/**
-	 * Set the code of the plugin owner of page model.
+	 * Set the code of the plugin owner of page template.
 	 * @param pluginCode The plugin code. 
 	 */
 	public void setPluginCode(String pluginCode) {

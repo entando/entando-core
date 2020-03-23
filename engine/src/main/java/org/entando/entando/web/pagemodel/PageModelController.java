@@ -49,7 +49,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Retrieve multiple page models")
+    @ApiOperation("Retrieve multiple page templates")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request")
@@ -58,7 +58,7 @@ public class PageModelController {
     @GetMapping
     public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(
             RestListRequest requestList, @RequestParam Map<String, String> requestParams) {
-        logger.trace("loading page models");
+        logger.trace("loading page templates");
 
         pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
         PagedMetadata<PageModelDto> result = pageModelService.getPageModels(requestList, requestParams);
@@ -69,7 +69,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Retrieve page model by code")
+    @ApiOperation("Retrieve page template by code")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "NotFound")
@@ -82,7 +82,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Retrieve page model references")
+    @ApiOperation("Retrieve page template references")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
@@ -96,7 +96,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Update page model")
+    @ApiOperation("Update page template")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request")
@@ -124,7 +124,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Add page model")
+    @ApiOperation("Add page template")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request"),
@@ -152,7 +152,7 @@ public class PageModelController {
     }
 
 
-    @ApiOperation("Delete page model")
+    @ApiOperation("Delete page template")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })

@@ -84,9 +84,9 @@
 			</url>
 		</shortcut>
 		<shortcut id="jacms.contentModel.new" requiredPermission="superuser" menusection="cms" source="jacms">
-			<description key="jacms.shortcut.contentModel.new.shortDesc" >New Content Model</description>
+			<description key="jacms.shortcut.contentModel.new.shortDesc" >New Content Template</description>
 			<longdesc key="jacms.shortcut.contentModel.new.longDesc">
-				<![CDATA[Insert a new Content Model.]]>
+				<![CDATA[Insert a new Content Template.]]>
 			</longdesc>
 			<url>
 				<param name="namespace">/do/jacms/ContentModel</param>

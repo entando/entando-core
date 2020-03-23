@@ -237,7 +237,7 @@
 			"code" (the code page)<br/> "parent" (the parent page)<br/> "children" (the list of child pages)<br/>
 			"position" (the position relative to other pages)<br/>
 			"titles" (map of titles indexed by the system languages)<br/>
-			"model" (the page model)<br/>
+			"model" (the page template)<br/>
 			"group" (the code of the owner group)<br/>
 			"extraGroups" (the list of extra group codes)<br/>
 			"showable" (whether to be displayed in the menu)<br/>

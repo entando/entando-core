@@ -286,47 +286,47 @@
 		</method>
 	</resource>
 	
-	<!-- *********** Page Model *********** -->
+	<!-- *********** Page Template *********** -->
 	
 	<resource name="pageModel" namespace="core">
-		<description>The representation of the page model</description>
+		<description>The representation of the page template</description>
 		<source>core</source>
 		<method httpMethod="GET" active="true" requiredAuth="true">
-			<description>Return a page model by code</description>
+			<description>Return a page template by code</description>
 			<springBean name="ApiPageModelInterface" method="getPageModel" />
 			<responseClass>org.entando.entando.aps.system.services.pagemodel.api.PageModelResponse</responseClass>
 			<parameters>
 				<parameter key="code" required="true">
-					<description>The code of the page model to return</description>
+					<description>The code of the page template to return</description>
 				</parameter>
 			</parameters>
 		</method>
 		<method httpMethod="POST" active="true" requiredAuth="true" requiredPermission="superuser">
-			<description>Add a page model</description>
+			<description>Add a page template</description>
 			<springBean name="ApiPageModelInterface" method="addPageModel" />
 			<expectedType>com.agiletec.aps.system.services.pagemodel.PageModel</expectedType>
 		</method>
 		<method httpMethod="PUT" active="true" requiredAuth="true" requiredPermission="superuser">
-			<description>Update a page model</description>
+			<description>Update a page template</description>
 			<springBean name="ApiPageModelInterface" method="updatePageModel" />
 			<expectedType>com.agiletec.aps.system.services.pagemodel.PageModel</expectedType>
 		</method>
 		<method httpMethod="DELETE" active="true" requiredAuth="true" requiredPermission="superuser">
-			<description>Delete a page model by code</description>
+			<description>Delete a page template by code</description>
 			<springBean name="ApiPageModelInterface" method="deletePageModel" />
 			<parameters>
 				<parameter key="code" required="true">
-					<description>The code of the page model to delete</description>
+					<description>The code of the page template to delete</description>
 				</parameter>
 			</parameters>
 		</method>
 	</resource>
 	
 	<resource name="pageModels" namespace="core">
-		<description>Return the page model list</description>
+		<description>Return the page template list</description>
 		<source>core</source>
 		<method httpMethod="GET" active="true" requiredAuth="true">
-			<description>Return the page model list</description>
+			<description>Return the page template list</description>
 			<springBean name="ApiPageModelInterface" method="getPageModels" />
 			<responseClass>org.entando.entando.aps.system.services.api.model.LinkedListApiResponse</responseClass>
 		</method>
@@ -343,7 +343,7 @@
 			<responseClass>org.entando.entando.aps.system.services.widgettype.api.WidgetTypeResponse</responseClass>
 			<parameters>
 				<parameter key="code" required="true">
-					<description>The code of the page model to return</description>
+					<description>The code of the page template to return</description>
 				</parameter>
 			</parameters>
 		</method>

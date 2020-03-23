@@ -21,7 +21,7 @@ import com.agiletec.aps.util.ApsWebApplicationUtils;
  * Returns a page (or one of its property) through the code.
  * You can choose whether to return the entire object (leaving the attribute "property" empty) or a single property.
  * The names of the available property of "Page": "code" (the code page), "parent (the parent page), "children" (the list of child pages),
- * "position" (the position relative to other pages), "titles" (map of titles indexed by the system languages), "model" (the page model),
+ * "position" (the position relative to other pages), "titles" (map of titles indexed by the system languages), "model" (the page template),
  * "group" (the code of the owner group), "extraGroups" (the list of extra group codes), "showable" (whether to be displayed in the menu),
  * "useExtraTitles" (if the page must use any extra titles), "widgets" (the widgets applied to the page).
  * @author E.Santoboni

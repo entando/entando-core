@@ -20,22 +20,22 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.*;
 
 /**
- * Interface of the page models manager.
+ * Interface of the page templates manager.
  */
 public interface IPageModelManager {
 
 	/**
-	 * Return a Page Model by the code.
+	 * Return a Page Template by the code.
 	 *
-	 * @param code The code of the Page Model
-	 * @return The required Page Model
+	 * @param code The code of the Page Template
+	 * @return The required Page Template
 	 */
 	PageModel getPageModel(String code);
 
 	/**
-	 * Return the collection of defined Page Models
+	 * Return the collection of defined Page Templates
 	 *
-	 * @return The collection of defined Page Models
+	 * @return The collection of defined Page Templates
 	 */
 	Collection<PageModel> getPageModels();
 

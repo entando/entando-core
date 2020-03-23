@@ -59,7 +59,7 @@
 	</tag>
 	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
 		<description><![CDATA[This sub-tag verifies the availability of the information to display.<br/>
-			This sub-tag can be used <b>only</b> in a page model, in conjunction with 'outputHeadInfo'.]]></description>
+			This sub-tag can be used <b>only</b> in a page template, in conjunction with 'outputHeadInfo'.]]></description>
 		<name>checkHeadInfoOuputter</name>
 		<tag-class>com.agiletec.aps.tags.CheckHeadInfoOutputterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -475,7 +475,7 @@
 		<description><![CDATA[Iterates over various information in HTML header displaying them;
 			this tag works in conjunction with other specific sub-tags.<br/>
 			Please note that the body can contain <b>only</b> a sub-tag, or information, at once.<br/>
-			This tag must be used <b>only</b> in a page model.]]></description>
+			This tag must be used <b>only</b> in a page template.]]></description>
 		<name>outputHeadInfo</name>
 		<tag-class>com.agiletec.aps.tags.HeadInfoOutputterTag</tag-class>
 		<body-content>JSP</body-content>
@@ -609,7 +609,7 @@
 	</tag>
 	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
 		<description><![CDATA[Returns the information to display.<br/>
-			This sub-tag must be used <b>only</b> in a page model, in conjunction with 'outputHeadInfo'.]]></description>
+			This sub-tag must be used <b>only</b> in a page template, in conjunction with 'outputHeadInfo'.]]></description>
 		<name>printHeadInfo</name>
 		<tag-class>com.agiletec.aps.tags.HeadInfoPrinterTag</tag-class>
 		<body-content>empty</body-content>
@@ -635,7 +635,7 @@
 	</tag>
 	<tag><!--  SPECIAL SYSTEM TAG // Use only within pagemodels -->
 		<description><![CDATA[Defines the position of inclusion of a widget.<br/>
-		This tag can be used <b>only</b> in a page model.]]></description>
+		This tag can be used <b>only</b> in a page template.]]></description>
 		<name>show</name>
 		<tag-class>com.agiletec.aps.tags.WidgetTag</tag-class>
 		<body-content>empty</body-content>

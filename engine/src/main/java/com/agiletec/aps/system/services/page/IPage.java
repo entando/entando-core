@@ -50,7 +50,7 @@ public interface IPage extends ITreeNode, Serializable {
     /**
      * Return the model of the associated page
      *
-     * @return The page model
+     * @return The page template
      */
     public PageModel getModel();
 

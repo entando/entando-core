@@ -109,9 +109,9 @@ public class PageMetadata implements Cloneable, Serializable {
     }
 
     /**
-     * Return the related model of page
+     * Return the related template of page
      *
-     * @return the page model
+     * @return the page template
      */
     public PageModel getModel() {
         return model;
@@ -119,9 +119,9 @@ public class PageMetadata implements Cloneable, Serializable {
 
     /**
      * WARNING: This method is for the page manager service only exclusive use
-     * Assign the given page model to the current object
+     * Assign the given page template to the current object
      *
-     * @param pageModel the model of the page to assign
+     * @param pageModel the template of the page to assign
      */
     public void setModel(PageModel pageModel) {
         this.model = pageModel;

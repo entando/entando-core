@@ -204,7 +204,7 @@ public class PageModelAction extends AbstractPageModelAction implements ServletR
 	/**
 	 * Updates the sketch info.
 	 * The body format must be the same returned by /do/rs/PageModel/frames?code=code
-	 * @return 200 - the page model xml representation, updated with the sketch info provided;
+	 * @return 200 - the page template xml representation, updated with the sketch info provided;
 	 */
 	@SuppressWarnings("unchecked")
 	public String updateSketch() {
@@ -313,7 +313,7 @@ public class PageModelAction extends AbstractPageModelAction implements ServletR
 			model.setConfiguration(configuration);
 			//TO DELETE - end
 		} catch (Throwable t) {
-			_logger.error("error in creating page model", t);
+			_logger.error("error in creating page template", t);
 			throw t;
 		}
 		return model;
@@ -342,7 +342,7 @@ public class PageModelAction extends AbstractPageModelAction implements ServletR
 				}
 			}
 		} catch (Throwable t) {
-			_logger.error("Error extracting referenced objects by page model '{}'", pageModelCode, t);
+			_logger.error("Error extracting referenced objects by page template '{}'", pageModelCode, t);
 		}
 	}
 	

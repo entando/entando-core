@@ -345,7 +345,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 widgetsOnline = (null == widgetsOnline) ? new Widget[0] : widgetsOnline;
                 for (int i = 0; i < widgetsDraft.length; i++) {
                     Widget widgetDraft = widgetsDraft[i];
-                    if (widgetsOnline.length < i) {
+                    if (widgetsOnline.length <= i) {
                         widgetEquals = false;
                         break;
                     }

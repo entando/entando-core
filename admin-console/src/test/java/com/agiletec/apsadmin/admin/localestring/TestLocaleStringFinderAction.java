@@ -66,7 +66,7 @@ public class TestLocaleStringFinderAction extends ApsAdminBaseTestCase {
 		localeStrings = ((LocaleStringFinderAction) this.getAction()).getLocaleStrings();
 		assertEquals(0, localeStrings.size());
 		
-		result = this.executeSearch("admin", "en", "page mod");
+		result = this.executeSearch("admin", "en", "page temp");
 		assertEquals(Action.SUCCESS, result);
 		localeStrings = ((LocaleStringFinderAction) this.getAction()).getLocaleStrings();
 		assertEquals(1, localeStrings.size());

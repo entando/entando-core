@@ -565,10 +565,17 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     private IPage updatePage(IPage oldPage, PageRequest pageRequest) {
         Page page = new Page();
+        PageMetadata metadata = oldPage.getMetadata();
+        if (metadata == null) {
+            metadata = new PageMetadata();
+        }
+        this.valueMetadataFromRequest(metadata, pageRequest);
+        page.setMetadata(metadata);
         page.setCode(pageRequest.getCode());
         page.setShowable(pageRequest.isDisplayedInMenu());
         if (!oldPage.getModel().getCode().equals(pageRequest.getPageModel())) {
             PageModel model = this.getPageModelManager().getPageModel(pageRequest.getPageModel());
+            model.setCode(pageRequest.getPageModel());
             page.setModel(model);
             page.setWidgets(new Widget[model.getFrames().length]);
         }
@@ -591,12 +598,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             pageRequest.getJoinGroups().forEach(page::addExtraGroup);
         }
         page.setParentCode(pageRequest.getParentCode());
-        PageMetadata metadata = oldPage.getMetadata();
-        if (metadata == null) {
-            metadata = new PageMetadata();
-        }
-        this.valueMetadataFromRequest(metadata, pageRequest);
-        page.setMetadata(metadata);
         page.setPosition(oldPage.getPosition());
         page.setChildrenCodes(oldPage.getChildrenCodes());
         return page;

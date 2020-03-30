@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wp" uri="/aps-core" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
 <!DOCTYPE html>
 
@@ -14,168 +15,67 @@
     <link rel="shortcut icon" href="<wp:resourceURL />administration/img/favicon-entando.png">
 
     <!--CSS inclusions-->
-    <link rel="stylesheet" href="<wp:resourceURL />administration/bootstrap/css/bootstrap.min.css" media="screen"/>
-    <link rel="stylesheet" href="<wp:resourceURL />administration/css/entando-admin-console-default-theme.css"/>
+    <link rel="stylesheet" href="<wp:resourceURL />administration/css/login.css" />
     <!--JS inclusions-->
-    <script src="<wp:resourceURL />administration/js/jquery-3.4.1.min.js"></script>
-    <script src="<wp:resourceURL />administration/js/jquery-migrate-3.0.1.min.js"></script>
-    <script src="<wp:resourceURL />administration/bootstrap/js/bootstrap.min.js"></script>
 </head>
 
-<body id="background-full" class="login-page">
-<s:set var="passwordFieldErrorsVar" value="%{fieldErrors['password']}"/>
-<s:set var="passwordHasFieldErrorVar" value="#passwordFieldErrorsVar != null && !#passwordFieldErrorsVar.isEmpty()"/>
-<s:set var="controlGroupErrorClassVar" value="''"/>
-<s:set var="usernameFieldErrorsVar" value="%{fieldErrors['username']}"/>
-<s:set var="usernameHasFieldErrorVar" value="#usernameFieldErrorsVar != null && !#usernameFieldErrorsVar.isEmpty()"/>
-<s:set var="controlGroupErrorClassVar" value="''"/>
-<div class="col-xs-12 col-md-6">
-    <div class="left-wrapper">
-        <div class="left-wrap-cont">
-            <img class="logo-entando-login" src="<wp:resourceURL />administration/img/entando-logo.svg"/>
-            <p class="ux_brand"><strong>THE LEADING UX INNOVATION PLATFORM</strong></p>
-            <p class="ux_brand_subtitle"></p>
-            <div class="spacer-login"></div>
-            <div class="entando-intro">
-                Entando is the leading open source UX innovation platform for building modern web applications on Kubernetes. We help enterprises innovate faster and develop exceptional user experiences by bringing leading edge tools and architectures like cloud-native development, containers and micro frontends to help developers build applications that are truly modern.
-            </div>
-            <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
+<body>
+  <div class="LoginPage">
+    <form class="LoginPage__form" action="doLogin" id="form-login">
+      <div class="LoginPage__brand">
+        <div class="LoginPage__logo"></div>
+        <div class="LoginPage__description"></div>
+      </div>
+      <div class="LoginPage__formGroup">
+        <div class="LoginPage__inputGroup">
+          <label class="LoginPage__label"><s:text name="label.username"/></label>
+          <input type="text" name="username" tabindex="1" class="LoginPage__input" id="username" placeholder="Username" />
         </div>
-    </div>
-</div>
-
-<div class="col-xs-12 col-md-6">
-    <div class="right-wrapper">
-        <s:form action="doLogin" id="form-login">
-            <!-----------sezione errori----------->
-            <s:if test="hasActionErrors()">
-                <div class="alert alert-danger alert-dismissable">
-                    <ul class="margin-base-vertical">
-                        <s:iterator value="actionErrors">
-                            <li>
-                                <s:property/>
-                            </li>
-                        </s:iterator>
-                    </ul>
-                </div>
-            </s:if>
-
-            <s:if test="#passwordHasFieldErrorVar || #usernameFieldErrorsVar">
-                <div class="alert alert-danger alert-dismissable">
-                    <ul class="margin-base-vertical">
-                        <s:text name="error.user.login.credentialsEmpty"/>
-                    </ul>
-                </div>
-            </s:if>
-            <!-----------sezione errori----------->
-
-            <s:if test="#session.currentUser != null && #session.currentUser.username != 'guest'">
-                <h2 class="welcome-back">
-                    <s:text name="note.userbar.welcome"/>&#32;
-                    <s:property value="#session.currentUser"/>&nbsp;!
-                </h2>
-                <br>
-                <s:if test="!#session.currentUser.credentialsNotExpired">
-                    <div class="col-xs-5">
-                        <strong><s:text name="note.login.expiredPassword.intro"/></strong><br/>
-                    </div>
-                    <div class="col-xs-5 submit">
-                        <a href="<s:url action="editPassword" />" class="btn btn-custom-login btn-warning">
-                            <s:text name="note.login.expiredPassword.outro"/>
-                        </a>
-                    </div>
-                </s:if>
-                <s:else>
-                    <wp:ifauthorized permission="enterBackend" var="checkEnterBackend"/>
-                    <c:choose>
-                        <c:when test="${checkEnterBackend}">
-                            <div class="col-xs-5">
-                                <p class="entando-installed">
-                                    <strong><s:text name="note.login.yetLogged"/></strong>
-                                </p>
-
-                            </div>
-                            <div class="col-xs-5 submit">
-                                <a href="<s:url action="main" />" class="btn btn-custom-login btn-primary">
-                                    <s:text name="note.goToMain"/>
-                                </a>
-                                <a href="<s:url action="logout" namespace="/do" />"
-                                    class="btn btn-custom-login btn-danger">
-                                    <s:text name="menu.exit"/>
-                                </a>
-                            </div>
-                        </c:when>
-
-                        <c:otherwise>
-                            <div class="col-xs-5">
-                                <strong><s:text name="note.login.notAllowed"/></strong><br/>
-                            </div>
-                            <div class="col-xs-5 submit">
-                                <a href="<s:url action="logout" namespace="/do" />"
-                                    class="btn btn-custom-login btn-danger">
-                                    <s:text name="menu.exit"/>
-                                </a>
-                            </div>
-                        </c:otherwise>
-                    </c:choose>
-                </s:else>
-            </s:if>
-            <s:else>
-                <!-------------------sezione user e password validation-------------->
-                <s:if test="%{#usernameHasFieldErrorVar || hasActionErrors()}">
-                    <s:set var="controlGroupErrorClassVar" value="' has-error'"/>
-                </s:if>
-
-                <div class="form-group<s:property value="controlGroupErrorClassVar" />">
-                    <label for="username" class="control-label control-label-entando">
-                        <s:text name="label.username"/>
-                    </label>
-                    <div>
-                        <wpsf:textfield name="username" id="username" cssClass="entando-input"/>
-                        <s:if test="#usernameHasFieldErrorVar">
-                        <span class="help-block help-block-entando"><s:iterator value="#usernameFieldErrorsVar">
-                            <s:property/>
-                                        </s:iterator>
-                                    </s:if>
-                    </div>
-                </div>
-
-                <s:if test="%{#passwordHasFieldErrorVar || hasActionErrors()}">
-                    <s:set var="controlGroupErrorClassVar" value="' has-error'"/>
-                </s:if>
-
-                <div class="form-group<s:property value="controlGroupErrorClassVar" />">
-                    <label for="password" class="control-label control-label-entando">
-                        <s:text name="label.password"/>
-                    </label>
-                    <div>
-                        <wpsf:password name="password" id="password" cssClass="entando-input"/>
-                        <s:if test="passwordHasFieldErrorVar">
-                            <span class="help-block help-block-entando"><s:iterator value="#passwordFieldErrorsVar"><s:property/></s:iterator></span>
-                        </s:if>
-                    </div>
-                </div>
-                <!-------------------sezione user e password validation-------------->
-
-                <!----------- lingue e log in button------------------>
-                <div class="login-buttons">
-                    <div data-toggle="buttons">
-                        <label class="btn btn-custom-login active">
-                            <input type="radio" name="request_locale" value="en" checked="checked"/> English
-                        </label>
-                        <label class="btn btn-custom-login ">
-                            <input type="radio" name="request_locale" value="it"/> Italiano
-                        </label>
-                    </div>
-                    <wpsf:submit type="button" id="button-login" cssClass="btn btn-login pull-right">
-                        <s:text name="label.signin"/>
-                    </wpsf:submit>
-                </div>
-                <!----------- lingue e log in button------------------>
-            </s:else>
-        </s:form>
-        <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
-    </div>
+        <div class="LoginPage__inputGroup extra-margin">
+          <label class="LoginPage__label"><s:text name="label.password"/></label>
+          <input type="password" name="password" tabindex="2" class="LoginPage__input" id="password" placeholder="Password" />
+        </div>
+        <s:if test="hasActionErrors()">
+          <div class="LoginPage__error">
+            <ul>
+              <s:iterator value="actionErrors">
+                  <li>
+                      <s:property/>
+                  </li>
+              </s:iterator>
+            </ul>
+          </div>
+          <div class="LoginPage__actionGroup" style="margin-top: 0">
+            <div></div>
+            <button class="LoginPage__button" id="button-login" type="submit"><s:text name="label.signin"/></button>
+            <div class="LoginPage__loading">
+              <div class="LoginPage__spinner" />
+            </div>
+          </div>
+        </s:if>
+        <s:else>
+          <div class="LoginPage__error">
+            <ul>
+              <s:iterator value="actionErrors">
+                  <li>
+                      <s:property/>
+                  </li>
+              </s:iterator>
+            </ul>
+          </div>
+          <div class="LoginPage__actionGroup">
+            <div></div>
+            <button class="LoginPage__button" id="button-login" type="submit"><s:text name="label.signin"/></button>
+            <div class="LoginPage__loading">
+              <div class="LoginPage__spinner" />
+            </div>
+          </div>
+        </s:else>
+      </div>
+      <jsp:useBean id="date" class="java.util.Date" />
+      <div class="LoginPage__copyright">Copyright <fmt:formatDate value="${date}" pattern="yyyy" /> <a href="https://www.entando.com/" class="LoginPage__url"> Entando</a></div>
+    </form>
+  </div>
 </body>
 
 </html>

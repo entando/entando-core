@@ -13,8 +13,12 @@
  */
 package org.entando.entando.web.page;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.util.FileTextReader;
 import com.jayway.jsonpath.JsonPath;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -645,6 +649,42 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    public void testUpdatePageModel() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String pageCode = "testUpdateModelPage";
+        try {
+
+            ResultActions result = mockMvc
+                    .perform(post("/pages")
+                            .content(getPageJson("1_POST_valid_page.json", pageCode))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.pageModel", is("service")));
+
+            IPage page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNotNull(page);
+
+            result = mockMvc
+                    .perform(put("/pages/{pageCode}", pageCode)
+                            .content(getPageJson("1_PUT_valid_page.json", pageCode))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.pageModel", is("home")));
+
+            page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNotNull(page);
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
     public void testListViewPages() throws Throwable {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
@@ -793,6 +833,17 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         }
         Page pageToAdd = PageTestUtil.createPage(pageCode, parentPage.getCode(), "free", metadata, widgets);
         return pageToAdd;
+    }
+
+    protected String getPageJson(String filename, String pageCode) throws Exception {
+        InputStream isJsonPostValid = this.getClass().getResourceAsStream(filename);
+        String result = FileTextReader.getText(isJsonPostValid);
+
+        if (pageCode != null) {
+            result = result.replace("pageCodePlaceHolder", pageCode);
+        }
+
+        return result;
     }
 
 }

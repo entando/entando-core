@@ -685,6 +685,112 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
+    public void testRecreatePage() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String pageCode = "testUpdateModelPage";
+        try {
+
+            IPage page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNull(page);
+
+            page = this.pageManager.getOnlinePage(pageCode);
+            Assert.assertNull(page);
+
+            ResultActions result = mockMvc
+                    .perform(post("/pages")
+                            .content(getPageJson("1_POST_valid_page.json", pageCode))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)));
+
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}", pageCode)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.status", is("unpublished")));
+
+            PageStatusRequest pageStatusRequest = new PageStatusRequest();
+            pageStatusRequest.setStatus("published");
+
+            result = mockMvc
+                    .perform(put("/pages/{code}/status", pageCode)
+                            .content(mapper.writeValueAsString(pageStatusRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.status", is("published")));
+
+            page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNotNull(page);
+
+            page = this.pageManager.getOnlinePage(pageCode);
+            Assert.assertNotNull(page);
+
+            result = mockMvc
+                    .perform(delete("/pages/{code}", pageCode)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.errors.size()", is(1)))
+                    .andExpect(jsonPath("$.errors[0].message", is("Online pages can not be deleted")));
+
+            page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNotNull(page);
+
+            page = this.pageManager.getOnlinePage(pageCode);
+            Assert.assertNotNull(page);
+
+            pageStatusRequest.setStatus("draft");
+
+            result = mockMvc
+                    .perform(put("/pages/{code}/status", pageCode)
+                            .content(mapper.writeValueAsString(pageStatusRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.status", is("unpublished")));
+
+            page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNotNull(page);
+
+            page = this.pageManager.getOnlinePage(pageCode);
+            Assert.assertNull(page);
+
+            result = mockMvc
+                    .perform(delete("/pages/{code}", pageCode)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk());
+
+            page = this.pageManager.getDraftPage(pageCode);
+            Assert.assertNull(page);
+
+            page = this.pageManager.getOnlinePage(pageCode);
+            Assert.assertNull(page);
+
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}", pageCode)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isNotFound());
+
+            result = mockMvc
+                    .perform(post("/pages")
+                            .content(getPageJson("1_POST_valid_page.json", pageCode))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)));
+
+        } finally {
+            this.pageManager.deletePage(pageCode);
+        }
+    }
+
+    @Test
     public void testListViewPages() throws Throwable {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);

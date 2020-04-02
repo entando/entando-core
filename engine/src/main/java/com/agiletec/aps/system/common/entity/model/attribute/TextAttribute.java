@@ -166,7 +166,7 @@ public class TextAttribute extends AbstractTextAttribute {
         while (langIter.hasNext()) {
             String currentLangCode = langIter.next();
             String text = this.getTextMap().get(currentLangCode);
-            if (null != text && text.trim().length() > 0) {
+            if (null != text && text.trim().length() > 0 && currentLangCode != null) {
                 Element textElement = new Element("text");
                 textElement.setAttribute("lang", currentLangCode);
                 textElement.setText(text.trim());

@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fentando%2Fentando-core.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fentando%2Fentando-core?ref=badge_shield)
+
 entando-core
 ============
 
@@ -37,3 +39,7 @@ For latest updated news, please visit the company website: https://www.entando.c
 Enjoy!
 
 *The Entando Team*
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fentando%2Fentando-core.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fentando%2Fentando-core?ref=badge_large)

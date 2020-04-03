@@ -1,0 +1,17 @@
+{
+    "code":"pageCodePlaceHolder",
+    "status":null,
+    "displayedInMenu":false,
+    "pageModel":"service",
+    "charset":null,
+    "contentType":null,
+    "parentCode":"homepage",
+    "seo":false,
+    "titles":{
+        "en":"testPageParent",
+        "it":"testPageParent"
+    },
+    "ownerGroup":"free",
+    "joinGroups":[
+    ]
+}

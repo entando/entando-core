@@ -111,7 +111,7 @@ public class EntityAttributeDto {
     public void fillEntityAttribute(AttributeInterface attribute, BindingResult bindingResult) {
         if (attribute instanceof ITextAttribute) {
             ITextAttribute textAttribute = (ITextAttribute) attribute;
-            if (attribute.isMultilingual() && !this.getValues().isEmpty()) {
+            if (attribute.isMultilingual() && this.getValues() != null && !this.getValues().isEmpty()) {
                 this.getValues().keySet().stream().forEach(langCode -> textAttribute.setText(this.getValues().get(langCode).toString(), langCode));
             } else if (null != this.getValue()) {
                 textAttribute.setText(this.getValue().toString(), null);

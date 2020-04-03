@@ -437,7 +437,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
 
     @Deprecated
     private boolean checkAuth(UserDetails user, IApsAuthority requiredAuth) {
-        if (null == requiredAuth) {
+        if (null == requiredAuth || null == user) {
             return false;
         }
         boolean isRole = (requiredAuth instanceof Role);
@@ -446,7 +446,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     }
 
     private boolean checkAuth(UserDetails user, String requiredAuthName, boolean isRole) {
-        if (null == requiredAuthName) {
+        if (null == requiredAuthName || null == user) {
             return false;
         }
         List<Authorization> auths = user.getAuthorizations();

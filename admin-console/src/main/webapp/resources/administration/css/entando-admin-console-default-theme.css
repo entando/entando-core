@@ -1966,7 +1966,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {
 .padding-versioning{
     padding: 0 0 0 0;
 }
-/*fix content model textArea*/
+/*fix content template textArea*/
 .display-block .panel{
     width:auto !important;
 }

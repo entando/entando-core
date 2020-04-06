@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class for xml descriptor of page model.
+ * Helper class for xml descriptor of page template.
  * @author E.Santoboni
  */
 public class PageModelDOM {
@@ -45,7 +45,7 @@ public class PageModelDOM {
 	
 	/**
 	 * Constructor of the dom. This constructor has to be used 
-	 * for create a page model from xml.
+	 * for create a page template from xml.
 	 * @param xmlText The xml tring to parse.
 	 * @param widgetTypeManager The manager of widget types.
 	 * @throws ApsSystemException in case of errors.
@@ -113,8 +113,8 @@ public class PageModelDOM {
 		try {
 			_doc = builder.build(reader);
 		} catch (Throwable t) {
-			_logger.error("Error parsing the page model XML: {}", xmlText, t);
-			throw new ApsSystemException("Error parsing the page model XML", t);
+			_logger.error("Error parsing the page template XML: {}", xmlText, t);
+			throw new ApsSystemException("Error parsing the page template XML", t);
 		}
 	}
 	
@@ -144,7 +144,7 @@ public class PageModelDOM {
 				Element frameElement = frameElements.get(i);
 				int pos = Integer.parseInt(frameElement.getAttributeValue(ATTRIBUTE_POS));
 				if (pos >= framesNumber) {
-					throw new ApsSystemException("The position '" + pos + "' exceeds the number of frames defined in the page model");
+					throw new ApsSystemException("The position '" + pos + "' exceeds the number of frames defined in the page template");
 				}
 				Frame frame = new Frame();
 				frame.setPos(pos);

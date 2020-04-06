@@ -18,7 +18,7 @@ import java.util.List;
 import com.agiletec.aps.system.exception.ApsSystemException;
 
 /**
- * Base interface for the services whose elements can directly reference the page models
+ * Base interface for the services whose elements can directly reference the page templates
  * @author E.Santoboni
  */
 public interface PageModelUtilizer {
@@ -30,9 +30,9 @@ public interface PageModelUtilizer {
 	public String getName();
 	
 	/**
-	 * Return the list of the objects which reference the given page model.
+	 * Return the list of the objects which reference the given page template.
 	 * @param pageModelCode The code of the page
-	 * @return The list of the object referencing the given page model
+	 * @return The list of the object referencing the given page template
 	 * @throws ApsSystemException In case of error
 	 */
 	public List getPageModelUtilizers(String pageModelCode) throws ApsSystemException;

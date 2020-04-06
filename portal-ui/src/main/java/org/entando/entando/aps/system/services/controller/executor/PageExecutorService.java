@@ -64,17 +64,17 @@ public class PageExecutorService implements ExecutorServiceInterface {
 				try {
 					template.process(ebc.getTemplateModel(), response.getWriter());
 				} catch (Throwable t) {
-					String msg = "Error detected while including a page model " + model.getCode();
+					String msg = "Error detected while including a page template " + model.getCode();
 					_logger.error(msg, t);
 					throw new RuntimeException(msg, t);
 				}
 			}
 		} catch (ServletException e) {
-			String msg = "Error detected while including a page model";
+			String msg = "Error detected while including a page template";
 			_logger.error(msg, e);
 			throw new RuntimeException(msg, e);
 		} catch (IOException e) {
-			String msg = "IO error detected while including the page model";
+			String msg = "IO error detected while including the page template";
 			_logger.error(msg, e);
 			throw new RuntimeException(msg, e);
 		}

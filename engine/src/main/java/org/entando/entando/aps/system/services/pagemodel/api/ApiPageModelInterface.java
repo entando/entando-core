@@ -79,12 +79,12 @@ public class ApiPageModelInterface implements BeanFactoryAware, IApiExportable {
 		try {
 			pageModel = this.getPageModelManager().getPageModel(code);
 			if (null == pageModel) {
-				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "PageModel with code '" + code + "' does not exist", Response.Status.CONFLICT);
+				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Page template with code '" + code + "' does not exist", Response.Status.CONFLICT);
 			}
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error creating page model - code '{}'", code, t);
+			_logger.error("Error creating page template - code '{}'", code, t);
 			throw t;
 		}
         return pageModel;
@@ -93,13 +93,13 @@ public class ApiPageModelInterface implements BeanFactoryAware, IApiExportable {
     public void addPageModel(PageModel pageModel) throws ApiException, Throwable {
 		try {
 			if (null != this.getPageModelManager().getPageModel(pageModel.getCode())) {
-				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "PageModel with code " + pageModel.getCode() + " already exists", Response.Status.CONFLICT);
+				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Page template with code " + pageModel.getCode() + " already exists", Response.Status.CONFLICT);
 			}
 			this.getPageModelManager().addPageModel(pageModel);
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error adding new page model", t);
+			_logger.error("Error adding new page template", t);
 			throw t;
 		}
     }
@@ -107,13 +107,13 @@ public class ApiPageModelInterface implements BeanFactoryAware, IApiExportable {
     public void updatePageModel(PageModel pageModel) throws ApiException, Throwable {
 		try {
 			if (null != this.getPageModelManager().getPageModel(pageModel.getCode())) {
-				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "PageModel with code '" + pageModel.getCode() + "' does not exist", Response.Status.CONFLICT);
+				throw new ApiException(IApiErrorCodes.API_VALIDATION_ERROR, "Page template with code '" + pageModel.getCode() + "' does not exist", Response.Status.CONFLICT);
 			}
 			this.getPageModelManager().updatePageModel(pageModel);
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error updating page model", t);
+			_logger.error("Error updating page template", t);
 			throw t;
 		}
     }
@@ -151,7 +151,7 @@ public class ApiPageModelInterface implements BeanFactoryAware, IApiExportable {
 		} catch (ApiException ae) {
 			throw ae;
 		} catch (Throwable t) {
-			_logger.error("Error deleting page model throw api", t);
+			_logger.error("Error deleting page template throw api", t);
 			throw t;
 		}
     }

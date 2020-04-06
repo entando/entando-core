@@ -30,7 +30,7 @@ import com.agiletec.aps.tags.util.HeadInfoContainer;
  * This tag works in conjunction with other sub-tag specific to the information
  * type
  * Please note that the body can contain only a sub-tag, or information, at once.<br/>
- * This tag must be used <b>only</b> in a page model. 
+ * This tag must be used <b>only</b> in a page template. 
  */
 @SuppressWarnings("serial")
 public class HeadInfoOutputterTag extends TagSupport {

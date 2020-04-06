@@ -38,8 +38,8 @@ public class PageModelManagerCacheWrapper extends AbstractGenericCacheWrapper<Pa
 			Map<String, PageModel> models = pageModelDAO.loadModels();
 			this.insertObjectsOnCache(cache, models);
 		} catch (Throwable t) {
-			_logger.error("Error loading page models", t);
-			throw new ApsSystemException("Error loading page models", t);
+			_logger.error("Error loading page templates", t);
+			throw new ApsSystemException("Error loading page templates", t);
 		}
 	}
 

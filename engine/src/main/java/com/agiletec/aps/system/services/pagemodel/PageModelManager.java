@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.regex.*;
 
 /**
- * The manager of the page models.
+ * The manager of the page template.
  */
 public class PageModelManager extends AbstractService implements IPageModelManager, GuiFragmentUtilizer {
 
@@ -65,7 +65,7 @@ public class PageModelManager extends AbstractService implements IPageModelManag
     @Override
     public void addPageModel(PageModel pageModel) throws ApsSystemException {
         if (null == pageModel) {
-            logger.debug("Null page model can be add");
+            logger.debug("Null page template can be add");
             return;
         }
         try {
@@ -73,21 +73,21 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().addPageModel(pageModel);
             this.notifyPageModelChangedEvent(pageModel, PageModelChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
-            logger.error("Error adding page models", t);
-            throw new ApsSystemException("Error adding page models", t);
+            logger.error("Error adding page templates", t);
+            throw new ApsSystemException("Error adding page templates", t);
         }
     }
 
     @Override
     public void updatePageModel(PageModel pageModel) throws ApsSystemException {
         if (null == pageModel) {
-            logger.debug("Null page model can be update");
+            logger.debug("Null page template can be update");
             return;
         }
         try {
             PageModel pageModelToUpdate = this.getCacheWrapper().getPageModel(pageModel.getCode());
             if (null == pageModelToUpdate) {
-                logger.debug("Page model {} does not exist", pageModel.getCode());
+                logger.debug("Page template {} does not exist", pageModel.getCode());
                 return;
             }
             this.getPageModelDAO().updateModel(pageModel);
@@ -101,8 +101,8 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().updatePageModel(pageModelToUpdate);
             this.notifyPageModelChangedEvent(pageModelToUpdate, PageModelChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {
-            logger.error("Error updating page model {}", pageModel.getCode(), t);
-            throw new ApsSystemException("Error updating page model " + pageModel.getCode(), t);
+            logger.error("Error updating page template {}", pageModel.getCode(), t);
+            throw new ApsSystemException("Error updating page template " + pageModel.getCode(), t);
         }
     }
 
@@ -114,8 +114,8 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             this.getCacheWrapper().deletePageModel(code);
             this.notifyPageModelChangedEvent(model, PageModelChangedEvent.REMOVE_OPERATION_CODE);
         } catch (Throwable t) {
-            logger.error("Error deleting page models", t);
-            throw new ApsSystemException("Error deleting page models", t);
+            logger.error("Error deleting page templates", t);
+            throw new ApsSystemException("Error deleting page templates", t);
         }
     }
 

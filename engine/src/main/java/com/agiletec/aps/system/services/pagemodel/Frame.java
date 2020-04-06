@@ -23,7 +23,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Representation of a frame of page model
+ * Representation of a frame of page template
  */
 @XmlRootElement(name = "frame")
 @XmlType(propOrder = {"pos", "description", "mainFrame", "jaxbDefaultWidget", "sketch"})

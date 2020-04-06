@@ -600,8 +600,8 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
             root = this.getOnlineRoot();
             this.getPageModelUtilizers(root, pageModelCode, pages, false);
         } catch (Throwable t) {
-            String message = "Error during searching page utilizers of page model with code " + pageModelCode;
-            _logger.error("Error during searching page utilizers of page model with code {}", pageModelCode, t);
+            String message = "Error during searching page utilizers of page template with code " + pageModelCode;
+            _logger.error("Error during searching page utilizers of page template with code {}", pageModelCode, t);
             throw new ApsSystemException(message, t);
         }
         return pages;

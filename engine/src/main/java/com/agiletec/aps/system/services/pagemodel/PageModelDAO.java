@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Data Access Object for page model objects
+ * Data Access Object for page template objects
  * @author M.Diana - E.Santoboni
  */
 public class PageModelDAO extends AbstractSearcherDAO implements IPageModelDAO {
@@ -80,8 +80,8 @@ public class PageModelDAO extends AbstractSearcherDAO implements IPageModelDAO {
 				models.put(pageModel.getCode(), pageModel);
 			}
 		} catch (Throwable t) {
-            logger.error("Error loading the page models", t);
-			throw new RuntimeException("Error loading the page models", t);
+            logger.error("Error loading the page templates", t);
+			throw new RuntimeException("Error loading the page templates", t);
 		} finally{
 			closeDaoResources(res, stat, conn);
 		}
@@ -89,9 +89,9 @@ public class PageModelDAO extends AbstractSearcherDAO implements IPageModelDAO {
 	}
 	
 	/**
-	 * Build and return a page model by a resultset.
+	 * Build and return a page template by a resultset.
 	 * @param res The resultset to read.
-	 * @return The built page model.
+	 * @return The built page template.
 	 * @throws ApsSystemException In case of error.
 	 */
 	protected PageModel getPageModelFromResultSet(ResultSet res) throws ApsSystemException {
@@ -110,8 +110,8 @@ public class PageModelDAO extends AbstractSearcherDAO implements IPageModelDAO {
 			pageModel.setPluginCode(res.getString(4));
 			pageModel.setTemplate(res.getString(5));
 		} catch (Throwable t) {
-            logger.error("Error building the page model code '{}'", code, t);
-			throw new RuntimeException("Error building the page model code '" + code + "'", t);
+            logger.error("Error building the page template code '{}'", code, t);
+			throw new RuntimeException("Error building the page template code '" + code + "'", t);
 		}
 		return pageModel;
 	}

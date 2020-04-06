@@ -67,7 +67,7 @@ public class Page extends TreeNode implements IPage, Serializable {
     /**
      * Return the related model of page
      *
-     * @return the page model
+     * @return the page template
      */
     @Override
     public PageModel getModel() {
@@ -77,7 +77,7 @@ public class Page extends TreeNode implements IPage, Serializable {
 
     /**
      * WARNING: This method is for the page manager service only exclusive use
-     * Assign the given page model to the current object
+     * Assign the given page template to the current object
      *
      * @param pageModel the model of the page to assign
      */

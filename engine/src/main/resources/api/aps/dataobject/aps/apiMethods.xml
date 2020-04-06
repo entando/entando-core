@@ -135,7 +135,7 @@
 		</method>
     </resource>
 	
-	<!-- ************** CONTENT MODELS ************** -->
+	<!-- ************** CONTENT Templates ************** -->
 	
 	<resource name="dataObjectModels" namespace="core">
         <description>Returns a list of dataObject models</description>

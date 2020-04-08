@@ -84,7 +84,7 @@ public class PageConfigurationController {
         if(pageConfiguration.getWidgets() != null){
             widgetConfigDtos = Arrays.asList(pageConfiguration.getWidgets());
         }
-        return new ResponseEntity<>(new RestResponse<>(widgetConfigDtos), metadata), HttpStatus.OK);
+        return new ResponseEntity<>(new RestResponse<>(widgetConfigDtos, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

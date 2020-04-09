@@ -112,18 +112,19 @@ public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
         return this.addParameters(prev, params);
     }
 
-    private String addParamsFromRequestBody(String prev, InputStream is) throws Exception {
+    private String addParamsFromRequestBody(String prev, InputStream is) {
         if (null == is) {
             return prev;
         }
-        CloseShieldInputStream cloned = new CloseShieldInputStream(is);
-        String body = FileTextReader.getText(cloned);
-        byte[] bytes = body.getBytes();
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
+            CloseShieldInputStream cloned = new CloseShieldInputStream(is);
+            String body = FileTextReader.getText(cloned);
+            byte[] bytes = body.getBytes();
+            ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> params = objectMapper.readValue(bytes, HashMap.class);
             return this.addParameters(prev, params);
         } catch (Exception e) {
+            logger.error("System exception {}", e.getMessage(), e);
             return prev;
         }
     }

@@ -13,12 +13,11 @@
  */
 package org.entando.entando.web.common.model;
 
+import com.agiletec.aps.system.common.FieldSearchFilter;
+import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.agiletec.aps.system.common.FieldSearchFilter;
-import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -37,6 +36,15 @@ public class RestListRequest {
     private Integer pageSize = PAGE_SIZE_DEFAULT;
 
     private Filter[] filters;
+
+    public RestListRequest() {
+
+    }
+
+    public RestListRequest(Integer page, Integer pageSize) {
+        this.page = page;
+        this.pageSize = pageSize;
+    }
 
     /**
      * Return the filters.

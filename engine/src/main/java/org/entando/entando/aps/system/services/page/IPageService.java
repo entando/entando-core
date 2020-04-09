@@ -53,6 +53,8 @@ public interface IPageService {
 
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
 
+    public Integer getPageUsage(String pageCode);
+
     /**
      * Search against online pages
      *

@@ -13,25 +13,29 @@
  */
 package org.entando.entando.web.pagemodel;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.*;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.pagemodel.PageModelManager;
 import com.agiletec.aps.system.services.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PageModelControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -100,6 +104,20 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
+    }
+
+    @Test
+    public void shouldTestGetPageModelUsage() throws Exception {
+        String code = "home";
+
+        mockMvc.perform(get("/pageModels/{code}/usage", code)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.type", is(PageModelController.COMPONENT_ID)))
+                .andExpect(jsonPath("$.payload.code", is(code)))
+                .andExpect(jsonPath("$.payload.usage", is(25)))
+                .andReturn();;
     }
 
     @Test public void

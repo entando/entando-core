@@ -47,6 +47,7 @@ import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.entando.entando.web.widget.WidgetController;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,6 +231,22 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         } finally {
             this.pageManager.deletePage(newPageCode);
         }
+    }
+
+    @Test
+    public void testGetPageUsage() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String code = "pagina_11";
+
+        mockMvc.perform(get("/pages/{code}/usage", code)
+                .header("Authorization", "Bearer " + accessToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.type", is(PageController.COMPONENT_ID)))
+                .andExpect(jsonPath("$.payload.code", is(code)))
+                .andExpect(jsonPath("$.payload.usage", is(1)))
+                .andReturn();
     }
 
     @Test

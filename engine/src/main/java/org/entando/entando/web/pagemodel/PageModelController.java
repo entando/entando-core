@@ -18,9 +18,11 @@ import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.*;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
+import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.slf4j.*;
@@ -36,6 +38,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/pageModels", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PageModelController {
+    public static final String COMPONENT_ID = "pageModels";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -95,6 +98,23 @@ public class PageModelController {
         return ResponseEntity.ok(new PagedRestResponse<>(result));
     }
 
+    @ApiOperation("Retrieve pageModel usage count")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK")
+    })
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{code}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String code) {
+        logger.trace("get {} usage by code {}", COMPONENT_ID, code);
+
+        ComponentUsage usage = ComponentUsage.builder()
+                .type(COMPONENT_ID)
+                .code(code)
+                .usage(pageModelService.getPageModelUsage(code))
+                .build();
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
+    }
 
     @ApiOperation("Update page template")
     @ApiResponses({

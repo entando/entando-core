@@ -15,6 +15,7 @@ package org.entando.entando.web.widget;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
+import org.entando.entando.aps.system.init.model.Component;
 import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
@@ -22,6 +23,7 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
@@ -41,6 +43,7 @@ import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 public class WidgetController {
+    public static final String COMPONENT_ID = "widgets";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -56,6 +59,20 @@ public class WidgetController {
         logger.trace("getWidget by code {}", widgetCode);
         WidgetDto group = this.widgetService.getWidget(widgetCode);
         return new ResponseEntity<>(new SimpleRestResponse<>(group), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/widgets/{widgetCode}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String widgetCode) {
+        logger.trace("get {} usage by code {}", COMPONENT_ID, widgetCode);
+
+        ComponentUsage usage = ComponentUsage.builder()
+                .type(COMPONENT_ID)
+                .code(widgetCode)
+                .usage(widgetService.getWidget(widgetCode).getUsed())
+                .build();
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

@@ -36,6 +36,7 @@ import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.common.model.RestResponse;
 import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -65,6 +66,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RestController
 @SessionAttributes("user")
 public class PageController {
+    public static final String COMPONENT_ID = "pages";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -153,6 +155,20 @@ public class PageController {
         PageDto page = this.getPageService().getPage(pageCode, status);
         metadata.put("status", status);
         return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String pageCode) {
+        logger.trace("get {} usage by code {}", COMPONENT_ID, pageCode);
+
+        ComponentUsage usage = ComponentUsage.builder()
+                .type(COMPONENT_ID)
+                .code(pageCode)
+                .usage(getPageService().getPageUsage(pageCode))
+                .build();
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
 
     @ActivityStreamAuditable

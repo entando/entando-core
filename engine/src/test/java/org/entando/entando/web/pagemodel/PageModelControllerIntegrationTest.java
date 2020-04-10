@@ -28,6 +28,7 @@ import com.agiletec.aps.system.services.pagemodel.PageModelManager;
 import com.agiletec.aps.system.services.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -37,11 +38,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 public class PageModelControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     private static final String USERNAME = "jack_bauer";
     private static final String PASSWORD = "0x24";
     private static final String PAGE_MODEL_CODE = "testPM";
+    private static final String PAGE_MODEL_WITH_DOT_CODE = "test.PM";
     private static final String NONEXISTENT_PAGE_MODEL = "nonexistentPageModel";
 
     private String accessToken;
@@ -150,6 +160,10 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     private String createPageModelPayload(String pageModelCode) throws JsonProcessingException {
         PageModelRequest pageModelRequest = validPageModelRequest();
         pageModelRequest.setCode(pageModelCode);
+        return createJson(pageModelRequest);
+    }
+
+    private String createJson(PageModelRequest pageModelRequest) throws JsonProcessingException {
         return jsonMapper.writeValueAsString(pageModelRequest);
     }
 
@@ -186,5 +200,54 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
+    }
+
+    @Test public void
+    add_page_model_with_dot_return_OK() throws Exception {
+        try {
+            PageModelRequest pageModelRequest = PageModelTestUtil.validPageModelRequest();
+
+            pageModelRequest.setCode(PAGE_MODEL_WITH_DOT_CODE);
+
+            ResultActions result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description")));
+
+            pageModelRequest.setDescr("description2");
+
+            result = mockMvc.perform(
+                    put("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description2")));
+
+            result = mockMvc.perform(
+                    get("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
+                            .header("Authorization", "Bearer " + accessToken));
+
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description2")));
+        } finally {
+            ResultActions result = mockMvc.perform(
+                    delete("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk());
+        }
     }
 }

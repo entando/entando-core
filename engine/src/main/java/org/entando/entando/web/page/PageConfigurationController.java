@@ -14,10 +14,12 @@
 package org.entando.entando.web.page;
 
 import com.agiletec.aps.system.services.role.Permission;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Map;
+import javax.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
@@ -27,6 +29,7 @@ import org.entando.entando.web.common.annotation.ActivityStreamAuditable;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
 import org.entando.entando.web.page.model.WidgetConfigurationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +39,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PageConfigurationController {
@@ -77,7 +80,11 @@ public class PageConfigurationController {
         Map<String, String> metadata = new HashMap<>();
         metadata.put("status", status);
 
-        return new ResponseEntity<>(new RestResponse<>(Arrays.asList(pageConfiguration.getWidgets()), metadata), HttpStatus.OK);
+        List<WidgetConfigurationDto> widgetConfigDtos = new ArrayList<>();
+        if(pageConfiguration.getWidgets() != null){
+            widgetConfigDtos = Arrays.asList(pageConfiguration.getWidgets());
+        }
+        return new ResponseEntity<>(new RestResponse<>(widgetConfigDtos, metadata), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

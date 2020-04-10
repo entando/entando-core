@@ -434,7 +434,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             if (null == page) {
                 throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
             }
-            if (frameId > page.getWidgets().length) {
+            if (page.getWidgets() == null || frameId > page.getWidgets().length) {
                 throw new ResourceNotFoundException(ERRCODE_FRAME_INVALID, "frame", String.valueOf(frameId));
             }
             if (null == this.getWidgetType(widgetReq.getCode())) {

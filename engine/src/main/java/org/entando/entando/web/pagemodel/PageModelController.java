@@ -75,7 +75,7 @@ public class PageModelController {
             @ApiResponse(code = 404, message = "NotFound")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @GetMapping(value = "/{code}")
+    @GetMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = pageModelService.getPageModel(code);
         return ResponseEntity.ok(new SimpleRestResponse<>(pageModelDto));
@@ -87,7 +87,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @GetMapping(value = "/{code}/references/{manager}")
+    @GetMapping(value = "/{code:.+}/references/{manager}")
     public ResponseEntity<PagedRestResponse<?>> getPageModelReferences(
             @PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
 
@@ -102,7 +102,7 @@ public class PageModelController {
             @ApiResponse(code = 400, message = "Bad Request")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @PutMapping(value = "/{code}", name = "roleGroup")
+    @PutMapping(value = "/{code:.+}", name = "roleGroup")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> updatePageModel(@PathVariable String code,
             @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
 
@@ -157,7 +157,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK")
     })
     @RestAccessControl(permission = Permission.SUPERUSER)
-    @DeleteMapping(value = "/{code}")
+    @DeleteMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<Map>> deletePageModel(@PathVariable String code) {
         logger.debug("deleting {}", code);
         pageModelService.removePageModel(code);

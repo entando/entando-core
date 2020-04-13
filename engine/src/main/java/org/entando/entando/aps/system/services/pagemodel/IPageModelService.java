@@ -21,4 +21,6 @@ public interface IPageModelService {
 
     PagedMetadata<?> getPageModelReferences(String pageModelCode, String managerName, RestListRequest restRequest);
 
+    Integer getPageModelUsage(String pageModelCode);
+
 }

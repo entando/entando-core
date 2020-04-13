@@ -739,6 +739,17 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
     }
 
+    @Override
+    public Integer getPageUsage(String pageCode) {
+        RestListRequest request = new RestListRequest(1, 1);
+
+        PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
+        int count = page.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0; //1 usage if page is published
+        count += page.getChildren().size(); //+1 usage for each child
+
+        return count;
+    }
+
     private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
         PageSearchRequest pageSearchReq = new PageSearchRequest();
         BeanUtils.copyProperties(request, pageSearchReq);

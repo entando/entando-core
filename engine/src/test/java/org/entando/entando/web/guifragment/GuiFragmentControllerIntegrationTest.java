@@ -13,20 +13,21 @@
  */
 package org.entando.entando.web.guifragment;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GuiFragmentControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -116,6 +117,23 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(10)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(0)));
+    }
+
+    @Test
+    public void testGetFragmentUsage() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String code = "login_form";
+
+        mockMvc.perform(get("/fragments/{code}/usage".replace("{code}", code))
+                .header("Authorization", "Bearer " + accessToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.errors", Matchers.hasSize(0)))
+                .andExpect(jsonPath("$.payload.type", is(GuiFragmentController.COMPONENT_ID)))
+                .andExpect(jsonPath("$.payload.code", is(code)))
+                .andExpect(jsonPath("$.payload.usage", is(0)))
+                .andReturn();
     }
 
 }

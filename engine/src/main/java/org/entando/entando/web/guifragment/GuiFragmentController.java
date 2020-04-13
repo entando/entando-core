@@ -16,6 +16,10 @@ package org.entando.entando.web.guifragment;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
@@ -23,8 +27,10 @@ import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoS
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.PagedRestResponse;
 import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
+import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
@@ -34,18 +40,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/fragments")
 public class GuiFragmentController {
+    public static final String COMPONENT_ID = "fragments";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -87,6 +91,21 @@ public class GuiFragmentController {
     public ResponseEntity<SimpleRestResponse<GuiFragmentDto>> getGuiFragment(@PathVariable String fragmentCode) {
         GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
         return new ResponseEntity<>(new SimpleRestResponse<>(fragment), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{fragmentCode}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String fragmentCode) {
+        logger.trace("get {} usage by code {}", COMPONENT_ID, fragmentCode);
+        GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
+
+        ComponentUsage usage = ComponentUsage.builder()
+                .type(COMPONENT_ID)
+                .code(fragmentCode)
+                .usage(fragment.getPageModels().size())
+                .build();
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

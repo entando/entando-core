@@ -151,6 +151,12 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         return pagedMetadata;
     }
 
+    @Override
+    public Integer getPageModelUsage(String pageModelCode) {
+        RestListRequest request = new RestListRequest(1, 1);
+        return getPageModelReferences(pageModelCode, "PageManager", request).getTotalItems();
+    }
+
     protected PageModel createPageModel(PageModelRequest pageModelRequest) {
         PageModel pageModel = new PageModel();
         copyProperties(pageModelRequest, pageModel);

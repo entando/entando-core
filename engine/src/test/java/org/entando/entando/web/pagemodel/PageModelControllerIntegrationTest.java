@@ -19,6 +19,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,14 +39,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class PageModelControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -217,8 +211,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
             result.andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
-                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description")));
+                    .andExpect(jsonPath("$.payload.code", is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", is("description")));
 
             pageModelRequest.setDescr("description2");
 
@@ -230,8 +224,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
             result.andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
-                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description2")));
+                    .andExpect(jsonPath("$.payload.code", is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", is("description2")));
 
             result = mockMvc.perform(
                     get("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
@@ -239,8 +233,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
             result.andDo(print())
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.payload.code", Matchers.is(PAGE_MODEL_WITH_DOT_CODE)))
-                    .andExpect(jsonPath("$.payload.descr", Matchers.is("description2")));
+                    .andExpect(jsonPath("$.payload.code", is(PAGE_MODEL_WITH_DOT_CODE)))
+                    .andExpect(jsonPath("$.payload.descr", is("description2")));
         } finally {
             ResultActions result = mockMvc.perform(
                     delete("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)

@@ -1,7 +1,7 @@
 entando-core
 ============
 
-```entando-core``` is the heart of the **Entando Platform**. 
+```entando-core``` is the heart of the **Entando Platform**.
 It provides the basic structure, tools, and functionality to build an instance of the Entando application.
 
 **Entando** is the lightest, open source Digital Experience Platform (DXP) for Modern Applications. Entando harmonizes customer experience across the omnichannel (UX convergence) applying the techniques of modern software practices to enterprise applications (modern applications). Entando can be used to modernize UI/UX layers on top of existing applications or to build new generation applications aligned to UI/UX best practices, across different industries and use cases.
@@ -12,7 +12,7 @@ It provides the basic structure, tools, and functionality to build an instance o
 2. **admin-console**, includes tools to manage administrative core features and WCMS functionality
 3. **portal-ui**, provides tools to create interactive web apps UI/UX
 
-The Entando platform **v6.0.0-SNAPSHOT** project includes also the following Github projects:
+The Entando platform **v6.1.0** project includes also the following Github projects:
 
 * **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando platform. There are two types of components: Plugins and Bundles. Plugins extend the functionality of Entando engine, admin-console and portal-ui; Bundles extend the functionality of UI/UX Applications.
 

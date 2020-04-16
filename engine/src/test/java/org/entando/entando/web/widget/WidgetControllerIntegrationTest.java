@@ -279,19 +279,11 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         String newWidgetCode = "test_new_type_3";
         Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
         try {
-            WidgetRequest request = new WidgetRequest();
-            request.setCode(newWidgetCode);
-            request.setGroup(Group.FREE_GROUP_NAME);
-            Map<String, String> titles = new HashMap<>();
-            titles.put("it", "Titolo ITA 3");
-            titles.put("en", "Title EN 3");
-            request.setTitles(titles);
-            request.setCustomUi("<h1>Test</h1>");
-            request.setGroup(Group.FREE_GROUP_NAME);
+            WidgetRequest request = getWidgetRequest(newWidgetCode);
             ResultActions result0 = this.executeWidgetPost(request, accessToken, status().isOk());
             result0.andExpect(jsonPath("$.payload.code", is(newWidgetCode)));
             Assert.assertNotNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
-            
+
             PageRequest pageRequest = new PageRequest();
             pageRequest.setCode(pageCode);
             pageRequest.setPageModel("home");
@@ -326,7 +318,135 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
         }
     }
-    
+
+    @Test
+    public void testMoveWidgetToAnotherFrame() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        String pageCode = "test_move_widget_page";
+        String newWidgetCode = "test_move_widget_1";
+        Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+        Assert.assertNull(this.pageManager.getDraftPage(pageCode));
+        try {
+            WidgetRequest request = getWidgetRequest(newWidgetCode);
+            ResultActions result = this.executeWidgetPost(request, accessToken, status().isOk());
+            result.andDo(print())
+                    .andExpect(jsonPath("$.payload.code", is(newWidgetCode)));
+            Assert.assertNotNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+
+            PageRequest pageRequest = getPageRequest(pageCode);
+
+            result = mockMvc
+                    .perform(post("/pages")
+                            .content(mapper.writeValueAsString(pageRequest))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk());
+
+            result = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.used", is(0)));
+
+            WidgetConfigurationRequest wcr = new WidgetConfigurationRequest();
+            wcr.setCode(newWidgetCode);
+            result = mockMvc
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .content(mapper.writeValueAsString(wcr))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk());
+
+            result = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.used", is(1)));
+
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/widgets", pageCode)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload[0].code", is(newWidgetCode)))
+                    .andExpect(jsonPath("$.payload[1]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[2]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[3]", Matchers.isEmptyOrNullString()));
+
+            result = mockMvc
+                    .perform(delete("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk());
+
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/widgets", pageCode)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload[0]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[1]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[2]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[3]", Matchers.isEmptyOrNullString()));
+
+            result = mockMvc
+                    .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 2})
+                            .content(mapper.writeValueAsString(wcr))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk());
+
+            result = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.used", is(1)));
+
+            result = mockMvc
+                    .perform(get("/pages/{pageCode}/widgets", pageCode)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload[0]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[1]", Matchers.isEmptyOrNullString()))
+                    .andExpect(jsonPath("$.payload[2].code", is(newWidgetCode)))
+                    .andExpect(jsonPath("$.payload[3]", Matchers.isEmptyOrNullString()));
+
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.pageManager.deletePage(pageCode);
+            Assert.assertNull(this.pageManager.getDraftPage(pageCode));
+            this.widgetTypeManager.deleteWidgetType(newWidgetCode);
+            Assert.assertNull(this.widgetTypeManager.getWidgetType(newWidgetCode));
+        }
+    }
+
+    private PageRequest getPageRequest(String pageCode) {
+        PageRequest pageRequest = new PageRequest();
+        pageRequest.setCode(pageCode);
+        pageRequest.setPageModel("home");
+        pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
+        Map<String, String> pageTitles = new HashMap<>();
+        pageTitles.put("it", pageCode);
+        pageTitles.put("en", pageCode);
+        pageRequest.setTitles(pageTitles);
+        pageRequest.setParentCode("service");
+        return pageRequest;
+    }
+
+    private WidgetRequest getWidgetRequest(String newWidgetCode) {
+        WidgetRequest request = new WidgetRequest();
+        request.setCode(newWidgetCode);
+        request.setGroup(Group.FREE_GROUP_NAME);
+        Map<String, String> titles = new HashMap<>();
+        titles.put("it", "Titolo ITA 3");
+        titles.put("en", "Title EN 3");
+        request.setTitles(titles);
+        request.setCustomUi("<h1>Test</h1>");
+        request.setGroup(Group.FREE_GROUP_NAME);
+        return request;
+    }
+
     private void addPage(String accessToken, PageRequest pageRequest) throws Exception {
         ResultActions result = mockMvc
                 .perform(post("/pages")

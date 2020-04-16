@@ -28,7 +28,7 @@
         <span class="icon-bar"></span>
     </button>
     <a href="<s:url action="main" namespace="/do" />" class="navbar-brand">
-        <img class="navbar-brand-icon logo-entando" src="<wp:resourceURL />administration/img/entando-logo-white.svg" alt="Entando 6.1" />
+        <img class="navbar-brand-icon logo-entando" src="<wp:resourceURL />administration/img/entando-logo-white.svg" alt="Entando <wp:info key="systemParam" paramName="version" />" />
         <span class="entando-development"><s:text name="note.administration.console" />&#32;<wp:info key="systemParam" paramName="version" /></span></a>
 </div>
 <nav class="collapse navbar-collapse">

@@ -38,7 +38,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/pageModels", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PageModelController {
-    public static final String COMPONENT_ID = "pageModels";
+    public static final String COMPONENT_ID = "pageTemplate";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

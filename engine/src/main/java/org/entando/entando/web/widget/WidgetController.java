@@ -43,7 +43,7 @@ import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 public class WidgetController {
-    public static final String COMPONENT_ID = "widgets";
+    public static final String COMPONENT_ID = "widget";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

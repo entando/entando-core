@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/fragments")
 public class GuiFragmentController {
-    public static final String COMPONENT_ID = "fragments";
+    public static final String COMPONENT_ID = "fragment";
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

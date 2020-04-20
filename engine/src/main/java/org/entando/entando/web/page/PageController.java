@@ -66,7 +66,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @RestController
 @SessionAttributes("user")
 public class PageController {
-    public static final String COMPONENT_ID = "pages";
+    public static final String COMPONENT_ID = "page";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 

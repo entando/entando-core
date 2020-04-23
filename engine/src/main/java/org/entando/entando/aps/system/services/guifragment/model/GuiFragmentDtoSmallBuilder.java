@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.guifragment.model;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.DtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
@@ -22,6 +23,7 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 public class GuiFragmentDtoSmallBuilder extends DtoBuilder<GuiFragment, GuiFragmentDtoSmall> {
 
 	private IWidgetTypeManager widgetTypeManager;
+	private ILangManager langManager;
 
 	@Override
 	protected GuiFragmentDtoSmall toDto(GuiFragment src) {
@@ -32,7 +34,7 @@ public class GuiFragmentDtoSmallBuilder extends DtoBuilder<GuiFragment, GuiFragm
 		if (StringUtils.isNotEmpty(src.getWidgetTypeCode())) {
 			type = this.getWidgetTypeManager().getWidgetType(src.getWidgetTypeCode());
 		}
-		GuiFragmentDtoSmall dest = new GuiFragmentDtoSmall(src, type);
+		GuiFragmentDtoSmall dest = new GuiFragmentDtoSmall(src, type, langManager);
 		return dest;
 	}
 
@@ -44,4 +46,11 @@ public class GuiFragmentDtoSmallBuilder extends DtoBuilder<GuiFragment, GuiFragm
 		this.widgetTypeManager = widgetTypeManager;
 	}
 
+	public ILangManager getLangManager() {
+		return langManager;
+	}
+
+	public void setLangManager(ILangManager langManager) {
+		this.langManager = langManager;
+	}
 }

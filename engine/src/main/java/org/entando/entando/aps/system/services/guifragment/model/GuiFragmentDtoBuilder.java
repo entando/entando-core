@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.guifragment.model;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +35,7 @@ public class GuiFragmentDtoBuilder extends DtoBuilder<GuiFragment, GuiFragmentDt
 
 	private BeanFactory beanFactory;
 	private IWidgetTypeManager widgetTypeManager;
+	private ILangManager langManager;
 
 	@Override
 	protected GuiFragmentDto toDto(GuiFragment src) {
@@ -44,7 +46,7 @@ public class GuiFragmentDtoBuilder extends DtoBuilder<GuiFragment, GuiFragmentDt
 		if (StringUtils.isNotEmpty(src.getWidgetTypeCode())) {
 			type = this.getWidgetTypeManager().getWidgetType(src.getWidgetTypeCode());
 		}
-		GuiFragmentDto dest = new GuiFragmentDto(src, type);
+		GuiFragmentDto dest = new GuiFragmentDto(src, type, langManager);
 		ListableBeanFactory factory = (ListableBeanFactory) this.beanFactory;
 		String[] defNames = factory.getBeanNamesForType(GuiFragmentUtilizer.class);
 		for (String defName : defNames) {
@@ -88,4 +90,11 @@ public class GuiFragmentDtoBuilder extends DtoBuilder<GuiFragment, GuiFragmentDt
 		this.widgetTypeManager = widgetTypeManager;
 	}
 
+	public ILangManager getLangManager() {
+		return langManager;
+	}
+
+	public void setLangManager(ILangManager langManager) {
+		this.langManager = langManager;
+	}
 }

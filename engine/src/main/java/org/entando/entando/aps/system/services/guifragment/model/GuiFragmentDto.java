@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.guifragment.model;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,8 @@ public class GuiFragmentDto extends GuiFragmentDtoSmall {
     public GuiFragmentDto() {
     }
 
-    public GuiFragmentDto(GuiFragment guiFragment, WidgetType type) {
-        super(guiFragment, type);
+    public GuiFragmentDto(GuiFragment guiFragment, WidgetType type, ILangManager langManager) {
+        super(guiFragment, type, langManager);
         this.setDefaultGuiCode(guiFragment.getDefaultGui());
         this.setGuiCode(guiFragment.getGui());
     }

@@ -50,10 +50,12 @@
 
     <bean id="GuiFragmentDtoBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder">
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
+        <property name="langManager" ref="LangManager" />
     </bean>
 
     <bean id="GuiFragmentDtoSmallBuilder" class="org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmallBuilder">
         <property name="widgetTypeManager" ref="WidgetTypeManager" />
+        <property name="langManager" ref="LangManager" />
     </bean>
 
     <bean id="DataObjectModelBuilder" class="org.entando.entando.aps.system.services.dataobjectmodel.model.DataModelDtoBuilder" />

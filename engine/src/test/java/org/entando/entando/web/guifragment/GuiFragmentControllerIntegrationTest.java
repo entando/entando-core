@@ -38,6 +38,7 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         ResultActions result = mockMvc
                 .perform(get("/fragments")
                         .header("Authorization", "Bearer " + accessToken));
+        result.andDo(print());
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
@@ -48,6 +49,10 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(1)));
+
+        result.andExpect(jsonPath("$.payload[0].widgetType.code", is("login_form")));
+        result.andExpect(jsonPath("$.payload[0].widgetType.title", is("Widget di Login")));
+
         RestListRequest restListReq = new RestListRequest();
         restListReq.setPage(1);
         restListReq.setPageSize(4);
@@ -70,6 +75,9 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(4)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(1)));
+
+        result.andExpect(jsonPath("$.payload[0].widgetType.code", is("login_form")));
+        result.andExpect(jsonPath("$.payload[0].widgetType.title", is("Widget di Login")));
 
         result = mockMvc.perform(
                 get("/fragments").param("page", "1")
@@ -103,6 +111,9 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         result.andExpect(jsonPath("$.metaData.page", is(1)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(4)));
         result.andExpect(jsonPath("$.metaData.totalItems", is(1)));
+
+        result.andExpect(jsonPath("$.payload[0].widgetType.code", is("login_form")));
+        result.andExpect(jsonPath("$.payload[0].widgetType.title", is("Widget di Login")));
 
         result = mockMvc.perform(
                 get("/fragments").param("page", "1")

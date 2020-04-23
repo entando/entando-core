@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.guifragment.model;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
@@ -30,11 +31,12 @@ public class GuiFragmentDtoSmall {
     public GuiFragmentDtoSmall() {
     }
 
-    public GuiFragmentDtoSmall(GuiFragment guiFragment, WidgetType type) {
+    public GuiFragmentDtoSmall(GuiFragment guiFragment, WidgetType type, ILangManager langManager) {
         this.setCode(guiFragment.getCode());
         this.setLocked(guiFragment.isLocked());
         if (!StringUtils.isEmpty(guiFragment.getWidgetTypeCode())) {
-            WidgetTypeRef widgetType = new WidgetTypeRef(guiFragment.getWidgetTypeCode(), null);
+            WidgetTypeRef widgetType = new WidgetTypeRef(type.getCode(),
+                    (String) type.getTitles().get(langManager.getDefaultLang().getCode()));
             this.setWidgetType(widgetType);
         }
         if (!StringUtils.isEmpty(guiFragment.getPluginCode())) {

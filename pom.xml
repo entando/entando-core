@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.entando.entando</groupId>
     <artifactId>entando-core</artifactId>
-    <version>6.2.0-SNAPSHOT</version>
+    <version>6.1.1</version>
     <packaging>pom</packaging>
     <name>Entando Core</name>
     <description>Entando Core: an agile, modern and user-centric open source Portal platform.</description>
@@ -15,6 +15,19 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+    <developers>
+        <developer>
+            <id>entando</id>
+            <name>Entando Inc</name>
+            <email>info@entando.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:entando/entando-core.git</connection>
+        <developerConnection>scm:git:git@github.com:entando/entando-core.git</developerConnection>
+        <url>https://github.com/entando/entando-core</url>
+        <tag>v6.1.1</tag>
+    </scm>
     <organization>
         <name>Entando Inc.</name>
         <url>http://www.entando.com/</url>
@@ -216,16 +229,14 @@
         </profile>
     </profiles>
     <distributionManagement>
-        <repository>
-            <id>nexus-release</id>
-            <name>Releases</name>
-            <url>${maven-repository-url-release}</url>
-        </repository>
         <snapshotRepository>
-            <id>nexus-snapshot</id>
-            <name>Snapshot</name>
-            <url>${maven-repository-url-snapshot}</url>
+            <id>sonatype-nexus-snapshot</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
     <properties>
 

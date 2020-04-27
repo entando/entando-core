@@ -13,9 +13,6 @@
  */
 package org.entando.entando.web.common.interceptor;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
@@ -23,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.input.CloseShieldInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
@@ -119,10 +118,15 @@ public class ActivityStreamInterceptor extends HandlerInterceptorAdapter {
         try {
             CloseShieldInputStream cloned = new CloseShieldInputStream(is);
             String body = FileTextReader.getText(cloned);
-            byte[] bytes = body.getBytes();
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, String> params = objectMapper.readValue(bytes, HashMap.class);
-            return this.addParameters(prev, params);
+            int bodyLength = body.length();
+            if (bodyLength > 0) {
+                byte[] bytes = body.getBytes();
+                ObjectMapper objectMapper = new ObjectMapper();
+                Map<String, String> params;
+                params = objectMapper.readValue(bytes, HashMap.class);
+                return this.addParameters(prev, params);
+            }
+            return prev;
         } catch (Exception e) {
             logger.error("System exception {}", e.getMessage(), e);
             return prev;

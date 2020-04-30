@@ -578,6 +578,8 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             model.setCode(pageRequest.getPageModel());
             page.setModel(model);
             page.setWidgets(new Widget[model.getFrames().length]);
+        } else {
+            page.setWidgets(oldPage.getWidgets());
         }
         page.setCharset(pageRequest.getCharset());
         page.setMimeType(pageRequest.getContentType());
@@ -600,6 +602,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         page.setParentCode(pageRequest.getParentCode());
         page.setPosition(oldPage.getPosition());
         page.setChildrenCodes(oldPage.getChildrenCodes());
+
         return page;
     }
 

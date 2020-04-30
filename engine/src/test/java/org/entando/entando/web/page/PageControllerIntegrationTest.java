@@ -13,54 +13,10 @@
  */
 package org.entando.entando.web.page;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
-import com.agiletec.aps.util.FileTextReader;
-import com.jayway.jsonpath.JsonPath;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.aps.system.services.page.PageTestUtil;
-import com.agiletec.aps.system.services.page.Widget;
-import com.agiletec.aps.system.services.pagemodel.PageModel;
-import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.util.ApsProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
-import org.entando.entando.aps.system.services.widgettype.IWidgetService;
-import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
-import org.entando.entando.web.AbstractControllerIntegrationTest;
-import org.entando.entando.web.JsonPatchBuilder;
-import org.entando.entando.web.page.model.PagePositionRequest;
-import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.PageStatusRequest;
-import org.entando.entando.web.pagemodel.model.PageModelRequest;
-import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.entando.entando.web.widget.WidgetController;
-import org.hamcrest.Matchers;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.RestMediaTypes;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.ResultMatcher;
-
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -70,6 +26,44 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.page.IPage;
+import com.agiletec.aps.system.services.page.IPageManager;
+import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageMetadata;
+import com.agiletec.aps.system.services.page.PageTestUtil;
+import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
+import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.util.ApsProperties;
+import com.agiletec.aps.util.FileTextReader;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.entando.entando.aps.system.services.widgettype.IWidgetService;
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
+import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.JsonPatchBuilder;
+import org.entando.entando.web.page.model.PagePositionRequest;
+import org.entando.entando.web.page.model.PageRequest;
+import org.entando.entando.web.page.model.PageStatusRequest;
+import org.entando.entando.web.page.model.WidgetConfigurationRequest;
+import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.RestMediaTypes;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 
 /**
  *
@@ -896,6 +890,60 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         } finally {
             this.pageManager.deletePage(childrenPageCode);
             this.pageManager.deletePage(parentPageCode);
+        }
+    }
+
+    @Test
+    public void testPageAddUpdateDelete() throws Exception {
+        String pageCode = "page_update_test";
+        String widgetCode = "login_form";
+
+        PageRequest pageRequest = new PageRequest();
+        pageRequest.setCode(pageCode);
+        pageRequest.setPageModel("home");
+        pageRequest.setOwnerGroup(Group.FREE_GROUP_NAME);
+        Map<String, String> titles = new HashMap<>();
+        titles.put("it", pageCode);
+        titles.put("en", pageCode);
+        pageRequest.setTitles(titles);
+        pageRequest.setParentCode("homepage");
+
+        WidgetConfigurationRequest widgetRequest = new WidgetConfigurationRequest();
+        widgetRequest.setCode(widgetCode);
+        widgetRequest.setConfig(new HashMap<>());
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        try {
+            mockMvc.perform(post("/pages", pageCode)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(mapper.writeValueAsString(pageRequest)))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.numWidget", is(0)));
+
+            mockMvc.perform(put("/pages/{code}/widgets/{frame}", pageCode, 0)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(mapper.writeValueAsString(widgetRequest)))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(put("/pages/{code}", pageCode)
+                    .header("Authorization", "Bearer " + accessToken)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(mapper.writeValueAsString(pageRequest)))
+                    .andDo(print()).andDo(print())
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.payload.code", is(pageCode)))
+                    .andExpect(jsonPath("$.payload.numWidget", is(1)));
+        } finally {
+            mockMvc.perform(delete("/pages/{code}", pageCode)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andExpect(status().isOk());
         }
     }
 

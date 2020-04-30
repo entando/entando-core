@@ -191,7 +191,6 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
             result = this.executeDelete("invalid_category", accessToken, status().isNotFound());
-            result.andExpect(jsonPath("$.payload.code", is("invalid_category")));
             result = this.executeDelete("cat1", accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_REFERENCES)));
         } finally {

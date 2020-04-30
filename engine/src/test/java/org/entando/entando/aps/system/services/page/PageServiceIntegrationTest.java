@@ -242,7 +242,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         }
     }
 
-    public static PageRequest createRequestFromDto(PageDto pageToClone) {
+    private PageRequest createRequestFromDto(PageDto pageToClone) {
         PageRequest request = new PageRequest();
         request.setCharset(pageToClone.getCharset());
         request.setCode(pageToClone.getCode());

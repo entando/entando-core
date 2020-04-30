@@ -187,8 +187,15 @@ public class CategoryService implements ICategoryService {
     public void deleteCategory(String categoryCode) {
         Category category = this.getCategoryManager().getCategory(categoryCode);
         if (null == category) {
-            return;
+            throw new ResourceNotFoundException("category", categoryCode);
         }
+
+        if (category.getChildrenCodes().length > 0) {
+            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(category, "category");
+            bindingResult.reject(CategoryValidator.ERRCODE_CATEGORY_HAS_CHILDREN, new String[]{categoryCode}, "category.cannot.delete.children");
+            throw new ValidationGenericException(bindingResult);
+        }
+
         try {
             for (CategoryUtilizer categoryUtilizer : this.getCategoryUtilizers()) {
                 List references = categoryUtilizer.getCategoryUtilizers(categoryCode);

@@ -253,7 +253,7 @@ public class PageServiceIntegrationTest extends BaseTestCase {
         request.setPageModel(pageToClone.getPageModel());
         request.setParentCode(pageToClone.getParentCode());
         request.setSeo(pageToClone.isSeo());
-        request.setStatus(pageToClone.getStatus());
+        //request.setStatus(pageToClone.getStatus());
         Map<String, String> titles = new HashMap<>();
         pageToClone.getTitles().keySet().forEach(lang -> titles.put(lang, pageToClone.getTitles().get(lang)));
         request.setTitles(titles);

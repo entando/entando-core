@@ -128,7 +128,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             this.executeDelete(categoryCode, accessToken, status().isOk());
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
         }
     }
 
@@ -168,7 +170,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
         }
     }
 
@@ -186,12 +190,14 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             result = this.executeDelete(categoryCode, accessToken, status().isOk());
             result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
-            result = this.executeDelete("invalid_category", accessToken, status().isOk());
+            result = this.executeDelete("invalid_category", accessToken, status().isNotFound());
             result.andExpect(jsonPath("$.payload.code", is("invalid_category")));
             result = this.executeDelete("cat1", accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_REFERENCES)));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
         }
     }
 

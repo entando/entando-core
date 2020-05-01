@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.category;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 
 import com.agiletec.aps.system.SystemConstants;
@@ -20,8 +21,12 @@ import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.category.ICategoryService;
+import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.category.validator.CategoryValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -38,6 +43,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -52,6 +58,8 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
 
     @Autowired
     private CategoryController controller;
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
     public void testGetCategories() throws Exception {
@@ -120,7 +128,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             this.executeDelete(categoryCode, accessToken, status().isOk());
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
         }
     }
 
@@ -160,7 +170,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
         }
     }
 
@@ -178,12 +190,72 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             result = this.executeDelete(categoryCode, accessToken, status().isOk());
             result.andExpect(jsonPath("$.payload.code", is(categoryCode)));
             Assert.assertNull(this.categoryManager.getCategory(categoryCode));
-            result = this.executeDelete("invalid_category", accessToken, status().isOk());
-            result.andExpect(jsonPath("$.payload.code", is("invalid_category")));
+            result = this.executeDelete("invalid_category", accessToken, status().isNotFound());
             result = this.executeDelete("cat1", accessToken, status().isBadRequest());
             result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_REFERENCES)));
         } finally {
-            this.categoryManager.deleteCategory(categoryCode);
+            if (categoryManager.getCategory(categoryCode) != null) {
+                this.categoryManager.deleteCategory(categoryCode);
+            }
+        }
+    }
+
+    @Test
+    public void testDeleteCategoryWithChildren() throws Exception {
+        String parentCategoryCode = "parent_category";
+        String childCategoryCode = "child_category";
+
+        CategoryDto parentCategory = new CategoryDto();
+        parentCategory.setCode(parentCategoryCode);
+        parentCategory.setParentCode("home");
+        parentCategory.setTitles(Collections.singletonMap("en", "Parent Title"));
+
+        CategoryDto childCategory = new CategoryDto();
+        childCategory.setCode(childCategoryCode);
+        childCategory.setParentCode(parentCategoryCode);
+        childCategory.setTitles(Collections.singletonMap("en", "Parent Title"));
+
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+
+            mockMvc.perform(post("/categories")
+                    .content(MAPPER.writeValueAsString(parentCategory))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(post("/categories")
+                    .content(MAPPER.writeValueAsString(childCategory))
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(delete("/categories/{code}", parentCategoryCode)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isBadRequest());
+
+            mockMvc.perform(delete("/categories/{code}", childCategoryCode)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+            mockMvc.perform(delete("/categories/{code}", parentCategoryCode)
+                    .header("Authorization", "Bearer " + accessToken))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+
+        } finally {
+            if (categoryManager.getCategory(childCategoryCode) != null) {
+                this.categoryManager.deleteCategory(childCategoryCode);
+            }
+
+            if (categoryManager.getCategory(parentCategoryCode) != null) {
+                this.categoryManager.deleteCategory(parentCategoryCode);
+            }
         }
     }
 

@@ -83,14 +83,16 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	@Override
 	public void deleteCategory(String code) throws ApsSystemException {
 		Category cat = this.getCategory(code);
-		if (cat != null && cat.getChildrenCodes().length <= 0) {
-			try {
-				this.getCategoryDAO().deleteCategory(code);
-				this.getCacheWrapper().deleteCategory(code);
-			} catch (Throwable t) {
-				_logger.error("Error detected while removing the category {}", code, t);
-				throw new ApsSystemException("Error detected while removing a category", t);
-			}
+		if (cat == null || cat.getChildrenCodes().length > 0) {
+			throw new ApsSystemException("Error detected while removing a category");
+		}
+
+		try {
+			this.getCategoryDAO().deleteCategory(code);
+			this.getCacheWrapper().deleteCategory(code);
+		} catch (Throwable t) {
+			_logger.error("Error detected while removing the category {}", code, t);
+			throw new ApsSystemException("Error detected while removing a category", t);
 		}
 	}
 

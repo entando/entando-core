@@ -13,16 +13,32 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
+import com.agiletec.aps.system.services.lang.ILangManager;
+import com.agiletec.aps.system.services.lang.Lang;
+import org.entando.entando.aps.system.services.assertionhelper.GuiFragmentAssertionHelper;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoBuilder;
+import org.entando.entando.aps.system.services.mockhelper.FragmentMockHelper;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.AssertionErrors;
+
+import java.util.Arrays;
+import java.util.Map;
 
 public class GuiFragmentServiceTest {
 
@@ -34,6 +50,9 @@ public class GuiFragmentServiceTest {
 
     @Mock
     private IGuiFragmentManager guiFragmentManager;
+
+    @Mock
+    private ILangManager langManager;
 
     @Before
     public void setUp() throws Exception {
@@ -55,5 +74,25 @@ public class GuiFragmentServiceTest {
         when(guiFragmentManager.getGuiFragment("test_code")).thenReturn(fragment);
         this.guiFragmentService.removeGuiFragment(fragment.getCode());
     }
+
+
+    @Test
+    public void getFragmentUsageTest() throws Exception {
+
+        Lang lang = new Lang();
+        lang.setCode("IT");
+        when(langManager.getDefaultLang()).thenReturn(lang);
+
+        GuiFragment fragment = FragmentMockHelper.mockGuiFragment();
+        GuiFragmentDto fragmentDto = FragmentMockHelper.mockGuiFragmentDto(fragment, langManager);
+
+        when(guiFragmentManager.getGuiFragment(anyString())).thenReturn(fragment);
+        when(this.dtoBuilder.convert(any(GuiFragment.class))).thenReturn(fragmentDto);
+
+        PagedMetadata<ComponentUsageEntity> componentUsageDetails = guiFragmentService.getComponentUsageDetails(fragment.getCode(), new PageSearchRequest(PageMockHelper.PAGE_CODE));
+
+        GuiFragmentAssertionHelper.assertUsageDetails(componentUsageDetails);
+    }
+
 
 }

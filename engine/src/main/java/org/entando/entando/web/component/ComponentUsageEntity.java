@@ -2,6 +2,11 @@ package org.entando.entando.web.component;
 
 public class ComponentUsageEntity {
 
+    public static final String TYPE_PAGE = "page";
+    public static final String TYPE_WIDGET = "widget";
+    public static final String TYPE_FRAGMENT = "fragment";
+    public static final String TYPE_PAGE_TEMPLATE = "pageTemplate";
+
     private String type;
     private String code;
     private String status;

@@ -132,9 +132,9 @@ public class PageServiceTest {
 
         mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
 
-        PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getPageUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
+        PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
-        PageAssertionHelper.assertPageUsageDetails(pageUsageDetails);
+        PageAssertionHelper.assertUsageDetails(pageUsageDetails);
     }
 
 

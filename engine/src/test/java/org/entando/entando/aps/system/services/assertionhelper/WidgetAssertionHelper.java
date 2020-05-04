@@ -3,35 +3,30 @@ package org.entando.entando.aps.system.services.assertionhelper;
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.component.ComponentUsageEntity;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
-public class PageAssertionHelper {
+public class WidgetAssertionHelper {
 
 
     /**
-     * does assertions on the received PagedMetadata basing on the default PageMockHelper mocked data
+     * does assertions on the received PagedMetadata basing on the default WidgetMockHelper mocked data
      * @param usageDetails
      */
     public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails) {
 
-        assertEquals(PageMockHelper.UTILIZERS.length, usageDetails.getTotalItems());
-        assertEquals(PageMockHelper.UTILIZERS.length, usageDetails.getBody().size());
-        assertEquals(1, usageDetails.getPage());
+        assertEquals(2, usageDetails.getTotalItems());
+        assertEquals(2, usageDetails.getBody().size());
 
-        String[] utilizs = {PageMockHelper.UTILIZER_2, PageMockHelper.UTILIZER_1};  // does not utilize PageMockHelper.UTILIZERS in order to manually simulate sorting
-        List<ComponentUsageEntity> usageEntityList = Arrays.stream(utilizs)
-                .map(utilizer -> new ComponentUsageEntity("page", utilizer))
-                .collect(Collectors.toList());
+        List<ComponentUsageEntity> usageEntityList = Arrays.asList(
+                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT),
+                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE));
 
         IntStream.range(0, usageDetails.getBody().size())
                 .forEach(i -> ComponentUsageEntityAssertionHelper.assertComponentUsageEntity(usageEntityList.get(i), usageDetails.getBody().get(i)));

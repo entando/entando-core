@@ -24,6 +24,8 @@ import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.component.ComponentUsage;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
@@ -69,11 +71,23 @@ public class WidgetController {
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(widgetCode)
-                .usage(widgetService.getWidget(widgetCode).getUsed())
+                .usage(widgetService.getComponentUsage(widgetCode))
                 .build();
 
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/widgets/{widgetCode}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String widgetCode, PageSearchRequest searchRequest) {
+
+        logger.trace("get {} usage details by code {}", COMPONENT_ID, widgetCode);
+
+        PagedMetadata<ComponentUsageEntity> result = widgetService.getComponentUsageDetails(widgetCode, searchRequest);
+
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
+    }
+
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")

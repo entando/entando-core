@@ -744,7 +744,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
-    public Integer getPageUsage(String pageCode) {
+    public Integer getComponentUsage(String pageCode) {
         RestListRequest request = new RestListRequest(1, 1);
 
         PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
@@ -756,7 +756,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
 
     @Override
-    public PagedMetadata<ComponentUsageEntity> getPageUsageDetails(String pageCode, PageSearchRequest searchRequest) {
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String pageCode, PageSearchRequest searchRequest) {
 
         // TODO firegloves as is we loose the requested page status
 
@@ -780,7 +780,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return getPagedResult(pageSearchReq, pages);
     }
 
-    // TODO firegloves generify and centralize
+    // FIXME firegloves generify and centralize
     private PagedMetadata<ComponentUsageEntity> getComponentUsagePagedResult(PageSearchRequest request, List<ComponentUsageEntity> compUsageList) {
 
         PageSearchRequest pageSearchReq = new PageSearchRequest();

@@ -15,6 +15,7 @@ package org.entando.entando.web.page.model;
 
 import org.entando.entando.web.common.model.RestListRequest;
 
+// TODO firegloves => can we change its name in something like CodeEntitySearchRequest in order to generify?
 /**
  *
  * @author paddeo

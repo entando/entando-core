@@ -166,7 +166,7 @@ public class PageController {
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(pageCode)
-                .usage(getPageService().getPageUsage(pageCode))
+                .usage(getPageService().getComponentUsage(pageCode))
                 .build();
 
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
@@ -179,7 +179,7 @@ public class PageController {
 
         logger.trace("get {} usage details by code {}", COMPONENT_ID, pageCode);
 
-        PagedMetadata<ComponentUsageEntity> result = pageService.getPageUsageDetails(pageCode, searchRequest);
+        PagedMetadata<ComponentUsageEntity> result = pageService.getComponentUsageDetails(pageCode, searchRequest);
 
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }

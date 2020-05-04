@@ -13,13 +13,18 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import org.entando.entando.aps.system.services.IComponentUsageService;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
 
-public interface IWidgetService {
+import java.util.Map;
+
+public interface IWidgetService extends IComponentUsageService {
 
     public String BEAN_NAME = "WidgetService";
 
@@ -34,4 +39,7 @@ public interface IWidgetService {
     public WidgetDto updateWidget(String widgetCode, WidgetRequest widgetRequest);
 
     public WidgetInfoDto getWidgetInfo(String widgetCode);
+
+    // TODO firegloves
+//    PagedMetadata<ComponentUsageEntity> getUsageDetails(String widgetCode, PageSearchRequest searchRequest);
 }

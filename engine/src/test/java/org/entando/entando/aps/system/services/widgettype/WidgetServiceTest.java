@@ -22,13 +22,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.entando.entando.aps.system.init.IComponentManager;
+import org.entando.entando.aps.system.services.assertionhelper.WidgetAssertionHelper;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
+import org.entando.entando.aps.system.services.mockhelper.WidgetMockHelper;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.FilterOperator;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,12 +47,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WidgetServiceTest {
@@ -286,5 +287,22 @@ public class WidgetServiceTest {
         widgetRequest.setConfigUi(ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_1, RESOURCES_KEY, RESOURCES_1));
         widgetRequest.setBundleId(BUNDLE_1);
         return widgetRequest;
+    }
+
+
+    @Test
+    public void getWidgetUsageTest() throws Exception {
+
+        Page onlinePage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        when(pageManager.getOnlineWidgetUtilizers(WIDGET_1_CODE)).thenReturn(ImmutableList.of(onlinePage));
+
+        Page draftPage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        when(pageManager.getDraftWidgetUtilizers(WIDGET_1_CODE)).thenReturn(ImmutableList.of(draftPage));
+
+        when(widgetManager.getWidgetType(anyString())).thenReturn(getWidget1());
+
+        PagedMetadata<ComponentUsageEntity> usageDetails = widgetService.getComponentUsageDetails(WIDGET_1_CODE, new PageSearchRequest(WidgetMockHelper.WIDGET_1_CODE));
+
+        WidgetAssertionHelper.assertUsageDetails(usageDetails);
     }
 }

@@ -45,6 +45,7 @@ import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDetails;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
@@ -307,7 +308,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
         totalReferenced.addAll(draftReferenced);
 
-        return getComponentUsagePagedResult(searchRequest, totalReferenced);
+        return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, totalReferenced);
     }
 
 
@@ -385,25 +386,4 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         this.srvCtx = srvCtx;
     }
 
-
-
-    // FIXME firegloves generify and centralize
-    private PagedMetadata<ComponentUsageEntity> getComponentUsagePagedResult(PageSearchRequest request, List<ComponentUsageEntity> compUsageList) {
-
-        PageSearchRequest pageSearchReq = new PageSearchRequest();
-        BeanUtils.copyProperties(request, pageSearchReq);
-
-        BeanComparator<ComponentUsageEntity> comparator = new BeanComparator<>(request.getSort());
-
-        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-            compUsageList.sort(comparator.reversed());
-        } else {
-            compUsageList.sort(comparator);
-        }
-
-        PagedMetadata<ComponentUsageEntity> result = new PagedMetadata<>(request, compUsageList, compUsageList.size());
-        result.imposeLimits();
-
-        return result;
-    }
 }

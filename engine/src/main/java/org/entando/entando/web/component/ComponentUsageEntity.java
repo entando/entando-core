@@ -2,9 +2,9 @@ package org.entando.entando.web.component;
 
 public class ComponentUsageEntity {
 
-    private String status;
     private String type;
     private String code;
+    private String status;
 
     public ComponentUsageEntity() {
     }
@@ -14,7 +14,7 @@ public class ComponentUsageEntity {
         this.code = code;
     }
 
-    public ComponentUsageEntity(String status, String type, String code) {
+    public ComponentUsageEntity(String type, String code, String status) {
         this.status = status;
         this.type = type;
         this.code = code;

@@ -25,8 +25,8 @@ public class WidgetAssertionHelper {
         assertEquals(2, usageDetails.getBody().size());
 
         List<ComponentUsageEntity> usageEntityList = Arrays.asList(
-                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT),
-                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE));
+                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE),
+                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT));
 
         IntStream.range(0, usageDetails.getBody().size())
                 .forEach(i -> ComponentUsageEntityAssertionHelper.assertComponentUsageEntity(usageEntityList.get(i), usageDetails.getBody().get(i)));

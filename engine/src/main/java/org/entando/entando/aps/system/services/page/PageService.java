@@ -61,6 +61,7 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.util.PageUtils;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -697,12 +698,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
     }
 
+    // TODO firegloves testare equivalenza
     @Override
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
         try {
             List<IPage> rawPages = this.getPageManager().searchPages(request.getPageCodeToken(), allowedGroups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return this.getPagedResult(request, pages);
+            return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
             throw new RestServerError("Error searching pages", ex);
@@ -729,6 +731,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return pagedMetadata;
     }
 
+    // TODO firegloves testare equivalenza
     @Override
     public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request) {
         try {
@@ -736,7 +739,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             groups.add(Group.FREE_GROUP_NAME);
             List<IPage> rawPages = this.getPageManager().searchOnlinePages(null, groups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return this.getPagedResult(request, pages);
+            return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching free online pages ", ex);
             throw new RestServerError("Error searching free online pages", ex);
@@ -758,59 +761,36 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @Override
     public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String pageCode, PageSearchRequest searchRequest) {
 
-        // TODO firegloves as is we loose the requested page status
-
         PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
 
         List<ComponentUsageEntity> componentUsageEntityList = page.getChildren().stream()
-                .map(child -> new ComponentUsageEntity()
-                                .setCode(child)
-                                .setType("page")
-                )
+                .map(child -> new ComponentUsageEntity("page", child, page.getStatus()))
                 .collect(Collectors.toList());
 
-        return getComponentUsagePagedResult(searchRequest, componentUsageEntityList);
+        return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, componentUsageEntityList);
     }
 
 
-    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
-        PageSearchRequest pageSearchReq = new PageSearchRequest();
-        BeanUtils.copyProperties(request, pageSearchReq);
-
-        return getPagedResult(pageSearchReq, pages);
-    }
-
-    // FIXME firegloves generify and centralize
-    private PagedMetadata<ComponentUsageEntity> getComponentUsagePagedResult(PageSearchRequest request, List<ComponentUsageEntity> compUsageList) {
-
-        PageSearchRequest pageSearchReq = new PageSearchRequest();
-        BeanUtils.copyProperties(request, pageSearchReq);
-
-        BeanComparator<ComponentUsageEntity> comparator = new BeanComparator<>(request.getSort());
-
-        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-            compUsageList.sort(comparator.reversed());
-        } else {
-            compUsageList.sort(comparator);
-        }
-
-        PagedMetadata<ComponentUsageEntity> result = new PagedMetadata<>(request, compUsageList, compUsageList.size());
-        result.imposeLimits();
-
-        return result;
-    }
-
-    private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
-        BeanComparator comparator = new BeanComparator(request.getSort());
-        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-            Collections.sort(pages, comparator.reversed());
-        } else {
-            Collections.sort(pages, comparator);
-        }
-        PageSearchDto result = new PageSearchDto(request, pages);
-        result.imposeLimits();
-        return result;
-    }
+    // TODO firegloves cancellare
+//    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
+//        PageSearchRequest pageSearchReq = new PageSearchRequest();
+//        BeanUtils.copyProperties(request, pageSearchReq);
+//
+//        return getPagedResult(pageSearchReq, pages);
+//    }
+//
+//
+//    private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
+//        BeanComparator comparator = new BeanComparator(request.getSort());
+//        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+//            Collections.sort(pages, comparator.reversed());
+//        } else {
+//            Collections.sort(pages, comparator);
+//        }
+//        PageSearchDto result = new PageSearchDto(request, pages);
+//        result.imposeLimits();
+//        return result;
+//    }
 
     private Map<String, Boolean> getReferencesInfo(IPage page) {
         Map<String, Boolean> references = new HashMap<>();

@@ -44,7 +44,7 @@ Furthermore, if you want to change the parameters, you have to create the proper
 
 
 
-Entando Core is released under [GNU Lesser General Public License](https://www.gnu.org/licenses/lgpl-2.1.txt) v2.1
+Entando Core is released under [GNU Lesser General Public License V 3.0] https://github.com/entando/entando-core/blob/master/LICENSE
 
 Enjoy!
 

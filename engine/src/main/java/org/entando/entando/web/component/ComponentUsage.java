@@ -1,25 +1,8 @@
 package org.entando.entando.web.component;
 
-public class ComponentUsage {
-    private String type;
-    private String code;
+public class ComponentUsage extends ComponentUsageEntity {
+
     private Integer usage;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public Integer getUsage() {
         return usage;
@@ -34,15 +17,16 @@ public class ComponentUsage {
     }
 
     public static class Builder {
+
         private ComponentUsage build = new ComponentUsage();
 
         public Builder type(String type) {
-            build.type = type;
+            build.setType(type);
             return this;
         }
 
         public Builder code(String code) {
-            build.code = code;
+            build.setCode(code);
             return this;
         }
 

@@ -23,6 +23,16 @@ public class PageSearchRequest extends RestListRequest {
 
     private String pageCodeToken;
 
+
+    public PageSearchRequest() {
+        super();
+    }
+
+    public PageSearchRequest(String pageCodeToken) {
+        super();
+        this.pageCodeToken = pageCodeToken;
+    }
+
     public String getPageCodeToken() {
         return pageCodeToken;
     }

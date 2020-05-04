@@ -22,6 +22,7 @@ import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -54,6 +55,8 @@ public interface IPageService {
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
 
     public Integer getPageUsage(String pageCode);
+
+    PagedMetadata<ComponentUsageEntity> getPageUsageDetails(String pageCode, PageSearchRequest searchRequest);
 
     /**
      * Search against online pages

@@ -65,6 +65,7 @@ import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -753,11 +754,50 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return count;
     }
 
+
+    @Override
+    public PagedMetadata<ComponentUsageEntity> getPageUsageDetails(String pageCode, PageSearchRequest searchRequest) {
+
+        // TODO firegloves as is we loose the requested page status
+
+        PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
+
+        List<ComponentUsageEntity> componentUsageEntityList = page.getChildren().stream()
+                .map(child -> new ComponentUsageEntity()
+                                .setCode(child)
+                                .setType("page")
+                )
+                .collect(Collectors.toList());
+
+        return getComponentUsagePagedResult(searchRequest, componentUsageEntityList);
+    }
+
+
     private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
         PageSearchRequest pageSearchReq = new PageSearchRequest();
         BeanUtils.copyProperties(request, pageSearchReq);
 
         return getPagedResult(pageSearchReq, pages);
+    }
+
+    // TODO firegloves generify and centralize
+    private PagedMetadata<ComponentUsageEntity> getComponentUsagePagedResult(PageSearchRequest request, List<ComponentUsageEntity> compUsageList) {
+
+        PageSearchRequest pageSearchReq = new PageSearchRequest();
+        BeanUtils.copyProperties(request, pageSearchReq);
+
+        BeanComparator<ComponentUsageEntity> comparator = new BeanComparator<>(request.getSort());
+
+        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+            compUsageList.sort(comparator.reversed());
+        } else {
+            compUsageList.sort(comparator);
+        }
+
+        PagedMetadata<ComponentUsageEntity> result = new PagedMetadata<>(request, compUsageList, compUsageList.size());
+        result.imposeLimits();
+
+        return result;
     }
 
     private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {

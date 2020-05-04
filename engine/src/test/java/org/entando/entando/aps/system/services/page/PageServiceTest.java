@@ -13,17 +13,25 @@
  */
 package org.entando.entando.aps.system.services.page;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
+import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import org.entando.entando.aps.system.services.assertionhelper.PageAssertionHelper;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageRequest;
 import java.util.Arrays;
 import java.util.HashSet;
-import org.entando.entando.aps.system.services.page.model.PageDtoBuilder;
+import java.util.Map;
+
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,11 +40,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import com.agiletec.aps.system.services.page.IPage;
 import org.entando.entando.aps.system.services.IDtoBuilder;
-import org.mockito.Mockito;
+import org.springframework.context.ApplicationContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PageServiceTest {
@@ -49,9 +59,18 @@ public class PageServiceTest {
 
     @Mock
     private IGroupManager groupManager;
-    
+
     @Mock
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
+
+    @Mock
+    private IPageTokenManager pageTokenManager;
+
+    @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
+    private PageUtilizer pageUtilizer;
 
     @InjectMocks
     private PageService pageService;
@@ -67,37 +86,37 @@ public class PageServiceTest {
         PageDto dto = new PageDto();
         dto.addJoinGroup("free");
         dto.addJoinGroup("admin");
-        when(dtoBuilder.convert(Mockito.any(IPage.class))).thenReturn(dto);
-        
-        PageModel pageModel = getServicePageModel();
-        when(pageModelManager.getPageModel(pageModel.getCode())).thenReturn(pageModel);
+        when(dtoBuilder.convert(any(IPage.class))).thenReturn(dto);
 
-        Page page = getTestPage();
-        page.setExtraGroups(new HashSet<>(Arrays.asList("free")));
+//        PageModel pageModel = PageMockHelper.mockServicePageModel();
+
+        Page page = PageMockHelper.mockTestPage();
+        page.setExtraGroups(new HashSet<>(Arrays.asList(PageMockHelper.GROUP)));
         when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
+        when(pageModelManager.getPageModel(page.getModel().getCode())).thenReturn(page.getModel());
 
-        PageRequest request = getPageRequest(page);
-        request.setJoinGroups(Arrays.asList("free", "admin"));
+        PageRequest request = PageMockHelper.mockPageRequest(page);
+        request.setJoinGroups(Arrays.asList(PageMockHelper.GROUP, "admin"));
         when(pageManager.getDraftPage(request.getParentCode())).thenReturn(new Page());
         PageDto pageDto = pageService.updatePage(page.getCode(), request);
 
-        assertThat(pageDto.getJoinGroups()).containsExactlyInAnyOrder("free", "admin");
+        assertThat(pageDto.getJoinGroups()).containsExactlyInAnyOrder(PageMockHelper.GROUP, "admin");
     }
 
     @Test
     public void shouldRemoveExtraGroup() {
         PageDto dto = new PageDto();
         dto.addJoinGroup("free");
-        when(dtoBuilder.convert(Mockito.any(IPage.class))).thenReturn(dto);
-        
-        PageModel pageModel = getServicePageModel();
+        when(dtoBuilder.convert(any(IPage.class))).thenReturn(dto);
+
+        PageModel pageModel = PageMockHelper.mockServicePageModel();
         when(pageModelManager.getPageModel(pageModel.getCode())).thenReturn(pageModel);
 
-        Page page = getTestPage();
+        Page page = PageMockHelper.mockTestPage();
         page.setExtraGroups(new HashSet<>(Arrays.asList("free", "admin")));
         when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
 
-        PageRequest request = getPageRequest(page);
+        PageRequest request = PageMockHelper.mockPageRequest(page);
         request.setJoinGroups(Arrays.asList("free"));
         when(pageManager.getDraftPage(request.getParentCode())).thenReturn(new Page());
         PageDto pageDto = pageService.updatePage(page.getCode(), request);
@@ -105,26 +124,34 @@ public class PageServiceTest {
         assertThat(pageDto.getJoinGroups()).containsExactly("free");
     }
 
-    private Page getTestPage() {
-        Page page = new Page();
-        page.setCode("test");
-        page.setParentCode("homepage");
-        page.setGroup("free");
-        page.setModel(getServicePageModel());
-        return page;
+
+    @Test
+    public void getPageUsageDetailsTest() throws Exception {
+
+        PageDto pageDto = PageMockHelper.mockPageDto();
+
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+
+        PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getPageUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
+
+        PageAssertionHelper.assertPageUsageDetails(pageUsageDetails);
     }
 
-    private PageRequest getPageRequest(Page page) {
-        PageRequest request = new PageRequest();
-        request.setPageModel(page.getModel().getCode());
-        request.setParentCode(page.getParentCode());
-        request.setOwnerGroup(page.getGroup());
-        return request;
-    }
 
-    private PageModel getServicePageModel() {
-        PageModel pageModel = new PageModel();
-        pageModel.setCode("service");
-        return pageModel;
+
+    /**
+     *
+     */
+    private void mockForPageUsageTest(Page page, PageDto pageDto) throws ApsSystemException {
+
+        when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
+        when(pageTokenManager.encrypt(page.getCode())).thenReturn(PageMockHelper.TOKEN);
+        when(dtoBuilder.convert(any(IPage.class))).thenReturn(pageDto);
+        when(applicationContext.getBeanNamesForType((Class<?>) any())).thenReturn(PageMockHelper.UTILIZERS);
+        when(applicationContext.getBean(anyString())).thenReturn(pageUtilizer);
+        when(pageUtilizer.getPageUtilizers(page.getCode())).thenReturn(Arrays.asList(PageMockHelper.UTILIZERS));
+        when(pageUtilizer.getName())
+                .thenReturn(PageMockHelper.UTILIZER_1)
+                .thenReturn(PageMockHelper.UTILIZER_2);
     }
 }

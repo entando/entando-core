@@ -36,24 +36,4 @@ public class PagedMetadataMapper {
 
         return result;
     }
-
-
-//    public PagedMetadata<ComponentUsageEntity> getComponentUsagePagedResult(PageSearchRequest request, List<ComponentUsageEntity> compUsageList) {
-//
-//        PageSearchRequest pageSearchReq = new PageSearchRequest();
-//        BeanUtils.copyProperties(request, pageSearchReq);
-//
-//        BeanComparator<ComponentUsageEntity> comparator = new BeanComparator<>(request.getSort());
-//
-//        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
-//            compUsageList.sort(comparator.reversed());
-//        } else {
-//            compUsageList.sort(comparator);
-//        }
-//
-//        PagedMetadata<ComponentUsageEntity> result = new PagedMetadata<>(request, compUsageList, compUsageList.size());
-//        result.imposeLimits();
-//
-//        return result;
-//    }
 }

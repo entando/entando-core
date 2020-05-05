@@ -764,7 +764,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
 
         List<ComponentUsageEntity> componentUsageEntityList = page.getChildren().stream()
-                .map(child -> new ComponentUsageEntity("page", child, page.getStatus()))
+                .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
                 .collect(Collectors.toList());
 
         return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, componentUsageEntityList);

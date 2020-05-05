@@ -198,7 +198,7 @@ public class GuiFragmentService implements IGuiFragmentService {
 
         List<ComponentUsageEntity> componentUsageEntityList = new ArrayList<>();
 
-                GuiFragmentDto fragmentDto = this.getGuiFragment(componentCode);
+        GuiFragmentDto fragmentDto = this.getGuiFragment(componentCode);
 
         if (null != fragmentDto.getWidgetType()) {
             componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_WIDGET, fragmentDto.getWidgetTypeCode()));

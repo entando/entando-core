@@ -3,19 +3,28 @@ package org.entando.entando.aps.system.services.pagemodel;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.*;
+import org.entando.entando.aps.system.services.assertionhelper.PageModelAssertionHelper;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
+import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.pagemodel.model.*;
 import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.pagemodel.model.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.ApplicationContext;
 
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,16 +35,25 @@ public class PageModelServiceTest {
 
     private static final RestListRequest EMPTY_REQUEST = new RestListRequest();
 
+    @Mock
+    private IPageModelManager pageModelManager;
 
-    @Mock IPageModelManager pageModelManager;
+    @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
+    private PageModelServiceUtilizer pageModelServiceUtilizer;
 
     private PageModelDtoBuilder dtoBuilder;
+
+    @InjectMocks
     private PageModelService pageModelService;
 
     @Before
     public void setUp() throws Exception {
         dtoBuilder = new PageModelDtoBuilder();
-        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
+//        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
+        pageModelService.setApplicationContext(applicationContext);
     }
 
     @Test public void
@@ -65,6 +83,28 @@ public class PageModelServiceTest {
         PagedMetadata<PageModelDto> expected = resultPagedMetadata();
         assertThat(result).isEqualTo(expected);
     }
+
+    @Test
+    public void getPageModelUsageTest() {
+
+        String managerName = "PageManager";
+
+        PageModel pageModel = PageMockHelper.mockServicePageModel();
+        PageDto pageDto = PageMockHelper.mockPageDto();
+        Map<String, Object> pageModelServiceUtilizerMap = new HashMap<>();
+        pageModelServiceUtilizerMap.put(managerName, pageModelServiceUtilizer);
+
+        when(pageModelManager.getPageModel(anyString())).thenReturn(pageModel);
+        when(applicationContext.getBeansOfType(any())).thenReturn(pageModelServiceUtilizerMap);
+        when(pageModelServiceUtilizer.getManagerName()).thenReturn(managerName);
+        when(pageModelServiceUtilizer.getPageModelUtilizer(anyString())).thenReturn(Collections.singletonList(pageDto));
+
+        PagedMetadata<ComponentUsageEntity> usageDetails = pageModelService.getComponentUsageDetails(pageModel.getCode(), new PageSearchRequest(pageModel.getCode()));
+
+        PageModelAssertionHelper.assertUsageDetails(usageDetails);
+    }
+
+
 
     private PagedMetadata<PageModelDto> resultPagedMetadata() {
         RestListRequest request = new RestListRequest();

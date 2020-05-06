@@ -193,29 +193,14 @@ public class PageController {
         int position = pageService.getPages(pageCode).size() + 1;
         pagePositionRequest.setPosition(position);
 
-        validateMovePage(pageCode, bindingResult, pagePositionRequest);
+        this.getPageValidator().validateMovePage(pageCode, bindingResult, pagePositionRequest);
 
         PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
     }
 
-    private void validateMovePage(@PathVariable String pageCode,
-            BindingResult bindingResult, PagePositionRequest pagePositionRequest) {
-        this.getPageValidator().validateChangePositionRequest(pageCode, pagePositionRequest, bindingResult);
 
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateGroups(pageCode, pagePositionRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validatePagesStatus(pageCode, pagePositionRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-    }
 
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
@@ -297,7 +282,7 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        validateMovePage(pageCode, bindingResult, pageRequest);
+        this.getPageValidator().validateMovePage(pageCode, bindingResult, pageRequest);
         PageDto page = this.getPageService().movePage(pageCode, pageRequest);
         return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
     }

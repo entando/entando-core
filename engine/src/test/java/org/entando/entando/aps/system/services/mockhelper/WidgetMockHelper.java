@@ -4,10 +4,15 @@ import com.agiletec.aps.system.services.page.Widget;
 import com.agiletec.aps.util.ApsProperties;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class WidgetMockHelper {
 
     public static final String WIDGET_1_CODE = "widget1";
     public static final String WIDGET_2_CODE = "widget2";
+    public static final String WIDGET_3_CODE = "widget3";
+    public static final List<String> WIDGET_CODE_LIST = Arrays.asList(WIDGET_1_CODE, WIDGET_2_CODE, WIDGET_3_CODE);
 
     public static Widget mockWidget() {
         return mockWidget(WIDGET_1_CODE);

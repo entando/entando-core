@@ -21,6 +21,7 @@ import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.page.PageUtilizer;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.assertionhelper.PageAssertionHelper;
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -29,7 +30,9 @@ import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageRequest;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.junit.Before;
@@ -40,6 +43,8 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -129,12 +134,60 @@ public class PageServiceTest {
     public void getPageUsageDetailsTest() throws Exception {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
-
         mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
         PageAssertionHelper.assertUsageDetails(pageUsageDetails);
+    }
+
+    @Test
+    public void getPageUsageDetailsWithPagination() throws Exception {
+
+        PageDto pageDto = PageMockHelper.mockPageDto();
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
+        pageSearchRequest.setPageSize(3);
+
+        // creates paged data
+        List<Integer> pageList = Arrays.asList(1, 2);
+        String[][] utilizers = {
+                { PageMockHelper.UTILIZER_1, PageMockHelper.UTILIZER_2, PageMockHelper.UTILIZER_3 },
+                { PageMockHelper.UTILIZER_4, PageMockHelper.UTILIZER_5 }
+        };
+
+        // does assertions
+        IntStream.range(0, pageList.size())
+                .forEach(i -> {
+
+                    pageSearchRequest.setPage(pageList.get(i));
+
+                    PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, pageSearchRequest);
+
+                    PageAssertionHelper.assertUsageDetails(pageUsageDetails,
+                            utilizers[i],
+                            PageMockHelper.UTILIZERS.length,
+                            pageList.get(i));
+                });
+    }
+
+
+    @Test
+    public void getPageUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() throws Exception {
+
+        PageDto pageDto = PageMockHelper.mockPageDto();
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+
+        Arrays.stream(new String[]{ "not existing", null, ""})
+                .forEach(code -> {
+                    try {
+                        pageService.getComponentUsageDetails(code, new PageSearchRequest(PageMockHelper.PAGE_CODE));
+                        fail("ResourceNotFoundException NOT thrown with code " + code);
+                    } catch (Exception e) {
+                        assertTrue(e instanceof ResourceNotFoundException);
+                    }
+                });
     }
 
 

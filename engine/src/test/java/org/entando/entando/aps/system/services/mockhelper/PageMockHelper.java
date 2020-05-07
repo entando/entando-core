@@ -13,15 +13,19 @@ import java.util.Arrays;
 public class PageMockHelper {
 
     public static final String PAGE_CODE = "service";
+    public static final String PAGE_MISSION_CODE = "mission";
     public static final String PAGE_MODEL_REF_CODE_1 = "page_model_1";
     public static final String PAGE_MODEL_REF_CODE_2 = "page_model_2";
     public static final String PARENT_CODE = "homepage";
     public static final String TOKEN = "tokeNNN";
     public static final String GROUP = "free";
     public static final String STATUS = IPageService.STATUS_ONLINE;
-    public static final String UTILIZER_1 = "mission";
+    public static final String UTILIZER_1 = "about";
     public static final String UTILIZER_2 = "contact";
-    public static final String[] UTILIZERS = new String[] {UTILIZER_1, UTILIZER_2};
+    public static final String UTILIZER_3 = "homepage";
+    public static final String UTILIZER_4 = "mission";
+    public static final String UTILIZER_5 = "personalarea";
+    public static final String[] UTILIZERS = new String[] {UTILIZER_1, UTILIZER_2, UTILIZER_3, UTILIZER_4, UTILIZER_5};
 
 
 

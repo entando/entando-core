@@ -20,13 +20,22 @@ public class PageAssertionHelper {
      */
     public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails) {
 
-        assertEquals(PageMockHelper.UTILIZERS.length, usageDetails.getTotalItems());
-        assertEquals(PageMockHelper.UTILIZERS.length, usageDetails.getBody().size());
-        assertEquals(1, usageDetails.getPage());
+       assertUsageDetails(usageDetails, PageMockHelper.UTILIZERS, PageMockHelper.UTILIZERS.length, 1);
+    }
 
-        String[] utilizs = {PageMockHelper.UTILIZER_2, PageMockHelper.UTILIZER_1};  // does not utilize PageMockHelper.UTILIZERS in order to manually simulate sorting
-        List<ComponentUsageEntity> usageEntityList = Arrays.stream(utilizs)
-                .map(utilizer -> new ComponentUsageEntity("page", utilizer, PageMockHelper.STATUS))
+
+    /**
+     * does assertions on the received PagedMetadata basing on the default PageMockHelper mocked data
+     * @param usageDetails
+     */
+    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails, String[] utilizers, int totalItems, int pageNumber) {
+
+        assertEquals(totalItems, usageDetails.getTotalItems());
+        assertEquals(utilizers.length, usageDetails.getBody().size());
+        assertEquals(pageNumber, usageDetails.getPage());
+
+        List<ComponentUsageEntity> usageEntityList = Arrays.stream(utilizers)
+                .map(utilizer -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, utilizer))
                 .collect(Collectors.toList());
 
         IntStream.range(0, usageDetails.getBody().size())

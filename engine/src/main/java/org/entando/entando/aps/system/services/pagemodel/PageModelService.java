@@ -168,8 +168,6 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         PagedMetadata<PageDto> pagedMetadata = (PagedMetadata<PageDto>) getPageModelReferences(componentCode, "PageManager", searchRequest);
 
         List<ComponentUsageEntity> componentUsageEntityList = pagedMetadata.getBody().stream()
-//                .flatMap(pageDto -> pageDto.getChildren().stream())
-//                .map(code -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, code))
                 .map(pageDto -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode(), pageDto.getStatus()))
                 .collect(Collectors.toList());
 

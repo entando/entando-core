@@ -13,19 +13,25 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.init.IComponentManager;
+import org.entando.entando.aps.system.services.assertionhelper.PageAssertionHelper;
 import org.entando.entando.aps.system.services.assertionhelper.WidgetAssertionHelper;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.mockhelper.WidgetMockHelper;
+import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder;
 import org.entando.entando.web.common.model.Filter;
@@ -35,6 +41,7 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,10 +50,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -291,12 +302,12 @@ public class WidgetServiceTest {
 
 
     @Test
-    public void getWidgetUsageTest() throws Exception {
+    public void getWidgetUsageDetails() throws Exception {
 
-        Page onlinePage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        Page onlinePage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE, null);
         when(pageManager.getOnlineWidgetUtilizers(WIDGET_1_CODE)).thenReturn(ImmutableList.of(onlinePage));
 
-        Page draftPage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        Page draftPage = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE, null);
         when(pageManager.getDraftWidgetUtilizers(WIDGET_1_CODE)).thenReturn(ImmutableList.of(draftPage));
 
         when(widgetManager.getWidgetType(anyString())).thenReturn(getWidget1());
@@ -305,4 +316,77 @@ public class WidgetServiceTest {
 
         WidgetAssertionHelper.assertUsageDetails(usageDetails);
     }
+
+
+    @Test
+    public void getWidgetUsageDetailsWithPagination() throws Exception {
+
+        Page page1 = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        Page page2 = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        page2.setCode(PageMockHelper.PAGE_MISSION_CODE);
+
+        List mockedPageList = Arrays.asList(page1, page2);
+
+        when(pageManager.getOnlineWidgetUtilizers(anyString())).thenReturn(mockedPageList);
+        when(pageManager.getDraftWidgetUtilizers(anyString())).thenReturn(mockedPageList);
+
+        when(widgetManager.getWidgetType(anyString())).thenReturn(getWidget1());
+
+        // creates paged data
+        List<Integer> pageNumList = Arrays.asList(1, 2);
+        Map<Integer, List<ComponentUsageEntity>> usageEntityMap = new HashMap<>();
+        usageEntityMap.put(pageNumList.get(0), Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_MISSION_CODE, IPageService.STATUS_ONLINE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_MISSION_CODE, IPageService.STATUS_DRAFT),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE)));
+        usageEntityMap.put(pageNumList.get(1), Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT)));
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(WidgetMockHelper.WIDGET_1_CODE);
+        pageSearchRequest.setPageSize(3);
+
+        // does assertions
+        IntStream.range(0, pageNumList.size())
+                .forEach(i -> {
+
+                    pageSearchRequest.setPage(pageNumList.get(i));
+
+                    PagedMetadata<ComponentUsageEntity> pageUsageDetails = widgetService.getComponentUsageDetails(WIDGET_1_CODE, pageSearchRequest);
+
+                    WidgetAssertionHelper.assertUsageDetails(pageUsageDetails,
+                            usageEntityMap.get(i+1),
+                            4,
+                            pageNumList.get(i));
+                });
+    }
+
+
+    @Test
+    public void getWidgetUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() throws Exception {
+
+        Page page1 = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        Page page2 = PageMockHelper.mockTestPage(WidgetMockHelper.WIDGET_1_CODE);
+        page2.setCode(PageMockHelper.PAGE_MISSION_CODE);
+
+        List mockedPageList = Arrays.asList(page1, page2);
+
+        when(pageManager.getOnlineWidgetUtilizers(anyString())).thenReturn(mockedPageList);
+        when(pageManager.getDraftWidgetUtilizers(anyString())).thenReturn(mockedPageList);
+
+        when(widgetManager.getWidgetType(anyString())).thenReturn(getWidget1());
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
+
+        Arrays.stream(new String[]{ "not existing", null, ""})
+                .forEach(code -> {
+                    try {
+                        widgetService.getComponentUsageDetails(code, pageSearchRequest);
+                        fail("NoSuchElementException NOT thrown with code " + code);
+                    } catch (Exception e) {
+                        assertTrue(e instanceof NoSuchElementException);
+                    }
+                });
+    }
+
+
 }

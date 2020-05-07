@@ -21,12 +21,23 @@ public class WidgetAssertionHelper {
      */
     public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails) {
 
-        assertEquals(2, usageDetails.getTotalItems());
-        assertEquals(2, usageDetails.getBody().size());
-
         List<ComponentUsageEntity> usageEntityList = Arrays.asList(
                 new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE),
                 new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT));
+
+        assertUsageDetails(usageDetails, usageEntityList, usageEntityList.size(), 1);
+    }
+
+
+    /**
+     * does assertions on the received PagedMetadata
+     * @param usageDetails
+     */
+    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails, List<ComponentUsageEntity> usageEntityList, int totalItems, int pageNumber) {
+
+        assertEquals(totalItems, usageDetails.getTotalItems());
+        assertEquals(usageEntityList.size(), usageDetails.getBody().size());
+        assertEquals(pageNumber, usageDetails.getPage());
 
         IntStream.range(0, usageDetails.getBody().size())
                 .forEach(i -> ComponentUsageEntityAssertionHelper.assertComponentUsageEntity(usageEntityList.get(i), usageDetails.getBody().get(i)));

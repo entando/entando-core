@@ -21,9 +21,37 @@ public class PagedMetadataMapper {
      * @param <T>
      * @return the created
      */
-    public <T> PagedMetadata<T> getComponentUsagePagedResult(RestListRequest restListRequest, List<T> list) {
+    public <T> PagedMetadata<T> getPagedResult(RestListRequest restListRequest, List<T> list) {
 
-        BeanComparator<T> comparator = new BeanComparator<>(restListRequest.getSort());
+       return getPagedResult(restListRequest, list, restListRequest.getSort());
+    }
+
+
+    /**
+     * craetes a PagedMetadata<T> starting from the received
+     *
+     * @param restListRequest
+     * @param list
+     * @param <T>
+     * @return the created
+     */
+    public <T> PagedMetadata<T> getPagedResult(RestListRequest restListRequest, List<T> list, String sortField) {
+
+        return getPagedResult(restListRequest, list, sortField, list.size());
+    }
+
+
+    /**
+     * craetes a PagedMetadata<T> starting from the received
+     *
+     * @param restListRequest
+     * @param list
+     * @param <T>
+     * @return the created
+     */
+    public <T> PagedMetadata<T> getPagedResult(RestListRequest restListRequest, List<T> list, String sortField, int totalItems) {
+
+        BeanComparator<T> comparator = new BeanComparator<>(sortField);
 
         if (restListRequest.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
             list.sort(comparator.reversed());
@@ -31,7 +59,7 @@ public class PagedMetadataMapper {
             list.sort(comparator);
         }
 
-        PagedMetadata<T> result = new PagedMetadata<T>(restListRequest, list, list.size());
+        PagedMetadata<T> result = new PagedMetadata<T>(restListRequest, list, totalItems);
         result.imposeLimits();
 
         return result;

@@ -46,13 +46,12 @@ public class PageModelServiceTest {
 
     private PageModelDtoBuilder dtoBuilder;
 
-    @InjectMocks
     private PageModelService pageModelService;
 
     @Before
     public void setUp() throws Exception {
         dtoBuilder = new PageModelDtoBuilder();
-//        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
+        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
         pageModelService.setApplicationContext(applicationContext);
     }
 

@@ -295,7 +295,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
 
     @Override
-    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, PageSearchRequest searchRequest) {
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, RestListRequest restListRequest) {
 
         WidgetInfoDto widgetInfoDto = this.getWidgetInfo(componentCode);
 
@@ -308,7 +308,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
         totalReferenced.addAll(draftReferenced);
 
-        return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, totalReferenced);
+        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, totalReferenced);
     }
 
 

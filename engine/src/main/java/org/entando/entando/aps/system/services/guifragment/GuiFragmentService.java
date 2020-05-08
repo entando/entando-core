@@ -194,7 +194,7 @@ public class GuiFragmentService implements IGuiFragmentService {
     }
 
     @Override
-    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, PageSearchRequest searchRequest) {
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, RestListRequest restListRequest) {
 
         List<ComponentUsageEntity> componentUsageEntityList = new ArrayList<>();
 
@@ -220,6 +220,6 @@ public class GuiFragmentService implements IGuiFragmentService {
             componentUsageEntityList.addAll(pageModelList);
         }
 
-        return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, componentUsageEntityList);
+        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
     }
 }

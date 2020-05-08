@@ -6,6 +6,7 @@ public class ComponentUsageEntity {
     public static final String TYPE_WIDGET = "widget";
     public static final String TYPE_FRAGMENT = "fragment";
     public static final String TYPE_PAGE_TEMPLATE = "pageTemplate";
+    public static final String TYPE_CONTENT = "content";
 
     private String type;
     private String code;

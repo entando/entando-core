@@ -163,15 +163,15 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     }
 
     @Override
-    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, PageSearchRequest searchRequest) {
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, RestListRequest restListRequest) {
 
-        PagedMetadata<PageDto> pagedMetadata = (PagedMetadata<PageDto>) getPageModelReferences(componentCode, "PageManager", searchRequest);
+        PagedMetadata<PageDto> pagedMetadata = (PagedMetadata<PageDto>) getPageModelReferences(componentCode, "PageManager", restListRequest);
 
         List<ComponentUsageEntity> componentUsageEntityList = pagedMetadata.getBody().stream()
                 .map(pageDto -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode(), pageDto.getStatus()))
                 .collect(Collectors.toList());
 
-        return PagedMetadataMapper.INSTANCE.getComponentUsagePagedResult(searchRequest, componentUsageEntityList);
+        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
     }
 
     protected PageModel createPageModel(PageModelRequest pageModelRequest) {

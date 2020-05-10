@@ -120,10 +120,10 @@ public class PageValidator extends AbstractPaginationValidator {
 
         if (!parent.getGroup().equals(Group.FREE_GROUP_NAME) && !page.getGroup().equals(parent.getGroup())) {
             if (page.getGroup().equals(Group.FREE_GROUP_NAME)) {
-                logger.debug("validation error ERRCODE_GROUP_MISMATCH 1 - {}", ERRCODE_GROUP_MISMATCH);
+                logger.debug("validation error for page with pageCode {} ERRCODE_GROUP_MISMATCH 1 - {}", pageCode, ERRCODE_GROUP_MISMATCH);
                 errors.reject(ERRCODE_GROUP_MISMATCH, new String[]{}, "page.move.freeUnderReserved.notAllowed");
             } else {
-                logger.debug("validation error ERRCODE_GROUP_MISMATCH 2 - {}", ERRCODE_GROUP_MISMATCH);
+                logger.debug("validation error for page with pageCode {} ERRCODE_GROUP_MISMATCH 2 - {}", pageCode, ERRCODE_GROUP_MISMATCH);
                 errors.reject(ERRCODE_GROUP_MISMATCH, new String[]{}, "page.move.group.mismatch");
             }
         }
@@ -132,10 +132,10 @@ public class PageValidator extends AbstractPaginationValidator {
     public void validatePagesStatus(String pageCode, PagePositionRequest pageRequest, Errors errors) {
         IPage parent = this.getPageManager().getDraftPage(pageRequest.getParentCode()),
                 page = this.getPageManager().getDraftPage(pageCode);
-        logger.debug("page.isOnline() {}", page.isOnline());
-        logger.debug("parent.isOnline()() {}", parent.isOnline());
+        logger.debug("page {} isOnline {}", pageCode, page.isOnline());
+        logger.debug("parent {} isOnline {}", parent.getCode(), parent.isOnline());
         if (page.isOnline() && !parent.isOnline()) {
-            logger.debug("validation error ERRCODE_STATUS_PAGE_MISMATCH {}", ERRCODE_STATUS_PAGE_MISMATCH);
+            logger.debug("validation error for page with pageCode {} ERRCODE_STATUS_PAGE_MISMATCH {}", pageCode, ERRCODE_STATUS_PAGE_MISMATCH);
             errors.reject(ERRCODE_STATUS_PAGE_MISMATCH, new String[]{pageCode}, "page.move.status.mismatch");
         }
     }

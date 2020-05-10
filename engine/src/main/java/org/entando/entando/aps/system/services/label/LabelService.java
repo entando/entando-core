@@ -18,6 +18,9 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.II18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
@@ -30,10 +33,6 @@ import org.entando.entando.web.label.LabelValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BeanPropertyBindingResult;
-
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 public class LabelService implements ILabelService {
 
@@ -71,6 +70,7 @@ public class LabelService implements ILabelService {
         final SearcherDaoPaginatedResult<LabelDto> result = new SearcherDaoPaginatedResult(dtoList.size(), subList);
         final PagedMetadata<LabelDto> pagedMetadata = new PagedMetadata<>(restRequest, result);
         pagedMetadata.setBody(subList);
+        pagedMetadata.imposeLimits();
         return pagedMetadata;
     }
 

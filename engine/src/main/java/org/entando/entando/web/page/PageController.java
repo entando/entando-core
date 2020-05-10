@@ -13,16 +13,14 @@
  */
 package org.entando.entando.web.page;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.PageAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -189,15 +187,27 @@ public class PageController {
             throw new ValidationGenericException(bindingResult);
         }
 
+        PagePositionRequest pagePositionRequest = new PagePositionRequest();
+        pagePositionRequest.setParentCode(pageRequest.getParentCode());
+        pagePositionRequest.setCode(pageCode);
+        int position = pageService.getPages(pageCode).size() + 1;
+        pagePositionRequest.setPosition(position);
+
+        this.getPageValidator().validateMovePage(pageCode, bindingResult, pagePositionRequest);
+
         PageDto page = this.getPageService().updatePage(pageCode, pageRequest);
         Map<String, String> metadata = new HashMap<>();
         return new ResponseEntity<>(new RestResponse<>(page, metadata), HttpStatus.OK);
     }
 
+
+
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> updatePageStatus(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
+    public ResponseEntity<RestResponse<PageDto, Map<String, String>>> updatePageStatus(
+            @ModelAttribute("user") UserDetails user, @PathVariable String pageCode,
+            @Valid @RequestBody PageStatusRequest pageStatusRequest, BindingResult bindingResult) {
         logger.debug("changing status for page {} with request {}", pageCode, pageStatusRequest);
         Map<String, String> metadata = new HashMap<>();
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
@@ -272,18 +282,7 @@ public class PageController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        this.getPageValidator().validateChangePositionRequest(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validateGroups(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
-        this.getPageValidator().validatePagesStatus(pageCode, pageRequest, bindingResult);
-        if (bindingResult.hasErrors()) {
-            throw new ValidationGenericException(bindingResult);
-        }
+        this.getPageValidator().validateMovePage(pageCode, bindingResult, pageRequest);
         PageDto page = this.getPageService().movePage(pageCode, pageRequest);
         return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
     }

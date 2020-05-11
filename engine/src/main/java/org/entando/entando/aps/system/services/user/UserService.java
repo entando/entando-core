@@ -19,17 +19,16 @@ import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
-import com.agiletec.aps.system.services.user.IUserManager;
-import com.agiletec.aps.system.services.user.User;
-import com.agiletec.aps.system.services.user.UserDetails;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.agiletec.aps.system.services.user.*;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.entando.entando.aps.system.services.role.IRoleService;
+import org.entando.entando.aps.system.services.role.RoleService;
+import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
@@ -71,6 +70,9 @@ public class UserService implements IUserService {
 
     @Autowired
     private IDtoBuilder<UserDetails, UserDto> dtoBuilder;
+
+    @Autowired
+    private IRoleService roleService;
 
     public IUserManager getUserManager() {
         return userManager;
@@ -304,6 +306,29 @@ public class UserService implements IUserService {
             throw new RestServerError("Error in updating password", e);
         }
     }
+
+
+    @Override
+    public UserPermissions getCurrentUserPermissions(UserDetails user) {
+
+        List<UserAuthorityDto> userAuthorities = this.getUserAuthorities(user.getUsername());
+
+        Set<String> permissionList = userAuthorities.stream()
+                .map(userAuthorityDto -> roleService.getRole(userAuthorityDto.getRole()))
+                .filter(Objects::nonNull)
+                .map(RoleDto::getPermissions)
+                .flatMap(stringBooleanMap -> stringBooleanMap.entrySet().stream())
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+
+        // TODO shouldn't it return a list of group? and so how to organize data? each group -> permissions or groups string -> permissions
+
+        return new UserPermissions()
+    }
+
+
+
 
     private UserDetails loadUser(String username) {
         try {

@@ -16,9 +16,11 @@ package org.entando.entando.web.user;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.system.services.user.UserPermissions;
 import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.*;
 import org.entando.entando.web.common.annotation.RestAccessControl;
+import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.user.model.*;
@@ -26,6 +28,8 @@ import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -221,6 +225,18 @@ public class UserController {
         }
         this.getUserService().deleteUserAuthorities(target);
         return new ResponseEntity<>(new SimpleRestResponse<>(new ArrayList<>()), HttpStatus.OK);
+    }
+
+
+
+    @GetMapping("/userProfiles/myAuthorities")
+    public ResponseEntity<SimpleRestResponse<UserPermissions>> getCurrentUserPermissions() {
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+        this.userService.getCurrentUserPermissions()
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(new UserPermissions()), HttpStatus.OK);
     }
 
 }

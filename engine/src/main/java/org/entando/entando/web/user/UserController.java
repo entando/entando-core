@@ -231,9 +231,7 @@ public class UserController {
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
     @GetMapping("/userProfiles/myAuthorities")
-    public ResponseEntity<SimpleRestResponse<List<UserPermissions>>> getCurrentUserPermissions(HttpServletRequest request) {
-
-        UserDetails userDetails = (UserDetails) request.getSession().getAttribute("user");
+    public ResponseEntity<SimpleRestResponse<List<UserPermissions>>> getCurrentUserPermissions(@ModelAttribute("user") UserDetails userDetails) {
 
         List<UserPermissions> currentUserPermissions = this.userService.getCurrentUserPermissions(userDetails);
 

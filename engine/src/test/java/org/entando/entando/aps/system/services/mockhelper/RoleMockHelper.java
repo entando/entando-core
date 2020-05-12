@@ -48,7 +48,7 @@ public class RoleMockHelper {
 
         RoleDto role = new RoleDto();
         role.setName(ROLE_NAME + suffix);
-        role.setPermissions(PERMISSION + suffix);
+//        role.setPermissions(PERMISSION + suffix);
         return role;
     }
 }

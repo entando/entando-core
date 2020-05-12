@@ -59,7 +59,7 @@ public class UserServiceTest {
     public void getCurrentUserPermissionsTest() throws Throwable {
         when(authorizationManager.getUserAuthorizations(anyString())).thenReturn(authorizationList);
 
-        authorizationList.stream()
-                .forEach(authorization -> when(roleService.getRole(authorization.getRole().getName())).thenReturn());
+//        authorizationList.stream()
+//                .forEach(authorization -> when(roleService.getRole(authorization.getRole().getName())).thenReturn());
     }
 }

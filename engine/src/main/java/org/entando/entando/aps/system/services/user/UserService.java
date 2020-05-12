@@ -311,22 +311,8 @@ public class UserService implements IUserService {
     @Override
     public List<UserPermissions> getCurrentUserPermissions(UserDetails user) {
 
-        List<UserAuthorityDto> userAuthorities = this.getUserAuthorities(user.getUsername());
-
-        return userAuthorities.stream()
-                .map(userAuthorityDto -> {
-                    RoleDto role = roleService.getRole(userAuthorityDto.getRole());
-                    return new UserPermissions(userAuthorityDto.getGroup(), this.getPermissionList(role));
-                })
-                .collect(Collectors.toList());
-    }
-
-
-    private List<String> getPermissionList(RoleDto roleDto) {
-
-        return roleDto.getPermissions().entrySet().stream()
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
+        return user.getAuthorizations().stream()
+                .map(authorization -> new UserPermissions(authorization.getGroup().getName(), authorization.getRole().getPermissions()))
                 .collect(Collectors.toList());
     }
 

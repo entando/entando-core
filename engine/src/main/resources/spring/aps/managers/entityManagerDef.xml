@@ -51,9 +51,7 @@
 			<bean class="com.agiletec.aps.system.common.entity.parse.ApsEntityDOM" />
 		</property>
 		<property name="cacheWrapper">
-			<bean class="com.agiletec.aps.system.common.entity.cache.EntityManagerCacheWrapper">
-				<property name="springCacheManager" ref="springCacheManager" />
-			</bean>
+			<bean class="com.agiletec.aps.system.common.entity.cache.EntityManagerCacheWrapper"/>
 		</property>
 	</bean>
 	

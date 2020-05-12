@@ -309,24 +309,26 @@ public class UserService implements IUserService {
 
 
     @Override
-    public UserPermissions getCurrentUserPermissions(UserDetails user) {
+    public List<UserPermissions> getCurrentUserPermissions(UserDetails user) {
 
         List<UserAuthorityDto> userAuthorities = this.getUserAuthorities(user.getUsername());
 
-        Set<String> permissionList = userAuthorities.stream()
-                .map(userAuthorityDto -> roleService.getRole(userAuthorityDto.getRole()))
-                .filter(Objects::nonNull)
-                .map(RoleDto::getPermissions)
-                .flatMap(stringBooleanMap -> stringBooleanMap.entrySet().stream())
-                .filter(Map.Entry::getValue)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-
-        // TODO shouldn't it return a list of group? and so how to organize data? each group -> permissions or groups string -> permissions
-
-        return new UserPermissions()
+        return userAuthorities.stream()
+                .map(userAuthorityDto -> {
+                    RoleDto role = roleService.getRole(userAuthorityDto.getRole());
+                    return new UserPermissions(userAuthorityDto.getGroup(), this.getPermissionList(role));
+                })
+                .collect(Collectors.toList());
     }
 
+
+    private List<String> getPermissionList(RoleDto roleDto) {
+
+        return roleDto.getPermissions().entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
 
 

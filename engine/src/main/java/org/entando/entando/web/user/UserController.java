@@ -34,6 +34,7 @@ import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -228,15 +229,15 @@ public class UserController {
     }
 
 
-
+    @RestAccessControl(permission = Permission.MANAGE_USERS)
     @GetMapping("/userProfiles/myAuthorities")
-    public ResponseEntity<SimpleRestResponse<UserPermissions>> getCurrentUserPermissions() {
+    public ResponseEntity<SimpleRestResponse<List<UserPermissions>>> getCurrentUserPermissions(HttpServletRequest request) {
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getDetails();
+        UserDetails userDetails = (UserDetails) request.getSession().getAttribute("user");
 
-        this.userService.getCurrentUserPermissions()
+        List<UserPermissions> currentUserPermissions = this.userService.getCurrentUserPermissions(userDetails);
 
-        return new ResponseEntity<>(new SimpleRestResponse<>(new UserPermissions()), HttpStatus.OK);
+        return new ResponseEntity<>(new SimpleRestResponse<>(currentUserPermissions), HttpStatus.OK);
     }
 
 }

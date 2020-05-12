@@ -62,5 +62,5 @@ public interface IUserService {
      * @param user the user of which return permission infos
      * @return informations about received user group and received user permissions
      */
-    UserPermissions getCurrentUserPermissions(UserDetails user);
+    List<UserPermissions> getCurrentUserPermissions(UserDetails user);
 }

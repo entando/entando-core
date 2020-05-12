@@ -13,7 +13,17 @@
  */
 package org.entando.entando.web.activitystream;
 
-import java.util.List;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.page.IPage;
@@ -30,29 +40,19 @@ import com.agiletec.aps.util.DateConverter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import java.sql.Timestamp;
+import java.util.List;
 import org.entando.entando.aps.system.services.actionlog.IActionLogManager;
 import org.entando.entando.aps.system.services.activitystream.ISocialActivityStreamManager;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 public class ActivityStreamControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -80,7 +80,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         ResultActions result = mockMvc
                 .perform(get("/activityStream")
                         .param("sort", "createdAt")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
 
@@ -95,7 +95,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                         .param("sort", "createdAt")
                         .param("filters[0].attribute", "createdAt")
                         .param("filters[0].value", String.format("[%s TO %s]", start, end))
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
 
@@ -110,7 +110,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                         .param("sort", "createdAt")
                         .param("filters[0].attribute", "createdAt")
                         .param("filters[0].value", String.format("[%s TO %s]", start, end))
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
 
@@ -133,14 +133,14 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             int recordId = this.actionLogManager.getActionRecords(null).stream().findFirst().get();
             ResultActions result = mockMvc
                     .perform(post("/activityStream/{recordId}/like", recordId)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.likes.size()", is(1)));
 
             //remove like
             result = mockMvc
                     .perform(delete("/activityStream/{recordId}/like", recordId)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.likes.size()", is(0)));
 
@@ -154,7 +154,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     .perform(post("/activityStream/{recordId}/comments", recordId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(req))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.comments.size()", is(1)));
 
@@ -162,13 +162,13 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     .perform(get("/activityStream")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(req))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
 
             //remove comment
             result = mockMvc
                     .perform(delete("/activityStream/{recordId}/like", recordId)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.comments.size()", is(1)));
 
@@ -181,7 +181,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     .perform(post("/activityStream/{recordId}/comments", recordId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(req))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isBadRequest());
 
             //add invalid comment
@@ -193,7 +193,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
                     .perform(post("/activityStream/{recordId}/comments", recordId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(mapper.writeValueAsString(req))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isBadRequest());
         } finally {
             this.destroyLogs(pageCode1, pageCode2);
@@ -215,7 +215,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             Assert.assertEquals(2, (actualSize - startSize));
             ResultActions result = mockMvc
                     .perform(get("/activityStream")
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             String bodyResult = result.andReturn().getResponse().getContentAsString();
             Integer firstId = JsonPath.read(bodyResult, "$.payload[0].id");
@@ -224,7 +224,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             result = mockMvc
                     .perform(get("/activityStream")
                             .param("direction", "DESC")
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload", Matchers.hasSize(actualSize)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
@@ -240,7 +240,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             result = mockMvc
                     .perform(get("/activityStream")
                             .param("pageSize", "1").param("direction", "DESC")
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(1)));
@@ -297,7 +297,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
             ResultActions result = mockMvc
                     .perform(put("/pages/{pageCode}/configuration/defaultWidgets", new Object[]{pageCode})
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             synchronized (this) {
                 this.wait(1000);
@@ -354,7 +354,7 @@ public class ActivityStreamControllerIntegrationTest extends AbstractControllerI
         ResultActions result = mockMvc
                 .perform(get("/activityStream")
                         .param("sort", "createdAt")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         String bodyResult = result.andReturn().getResponse().getContentAsString();
         return JsonPath.read(bodyResult, "$.payload.size()");

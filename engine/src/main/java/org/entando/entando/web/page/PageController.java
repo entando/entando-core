@@ -175,9 +175,13 @@ public class PageController {
 
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/pages/{pageCode}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String pageCode, PageSearchRequest searchRequest) {
+    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, PageSearchRequest searchRequest) {
 
         logger.trace("get {} usage details by code {}", COMPONENT_ID, pageCode);
+
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new PagedRestResponse<>(new PagedMetadata<>()), HttpStatus.UNAUTHORIZED);
+        }
 
         PagedMetadata<ComponentUsageEntity> result = pageService.getComponentUsageDetails(pageCode, searchRequest);
 

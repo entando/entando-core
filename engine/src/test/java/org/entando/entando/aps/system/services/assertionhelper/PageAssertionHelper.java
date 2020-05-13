@@ -1,6 +1,7 @@
 package org.entando.entando.aps.system.services.assertionhelper;
 
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
+import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.component.ComponentUsageEntity;
 
@@ -18,9 +19,9 @@ public class PageAssertionHelper {
      * does assertions on the received PagedMetadata basing on the default PageMockHelper mocked data
      * @param usageDetails
      */
-    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails) {
+    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails, String pageStatus) {
 
-       assertUsageDetails(usageDetails, PageMockHelper.UTILIZERS, PageMockHelper.UTILIZERS.length, 1);
+       assertUsageDetails(usageDetails, PageMockHelper.UTILIZERS, PageMockHelper.UTILIZERS.length, 1, pageStatus);
     }
 
 
@@ -28,17 +29,22 @@ public class PageAssertionHelper {
      * does assertions on the received PagedMetadata basing on the default PageMockHelper mocked data
      * @param usageDetails
      */
-    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails, String[] utilizers, int totalItems, int pageNumber) {
+    public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails, String[] utilizers, int totalItems, int pageNumber, String pageStatus) {
 
-        assertEquals(totalItems, usageDetails.getTotalItems());
-        assertEquals(utilizers.length, usageDetails.getBody().size());
+        int pagePublished = pageStatus.equals(IPageService.STATUS_ONLINE) ? 1 : 0;
+        boolean lastPage = usageDetails.getLastPage() == usageDetails.getPage();
+
+        assertEquals(totalItems + pagePublished, usageDetails.getTotalItems());
+        assertEquals(utilizers.length + (lastPage ? pagePublished : 0), usageDetails.getBody().size());
         assertEquals(pageNumber, usageDetails.getPage());
 
         List<ComponentUsageEntity> usageEntityList = Arrays.stream(utilizers)
                 .map(utilizer -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, utilizer))
                 .collect(Collectors.toList());
 
-        IntStream.range(0, usageDetails.getBody().size())
+        int maxRange = usageDetails.getBody().size() - pagePublished;
+
+        IntStream.range(0, maxRange)
                 .forEach(i -> ComponentUsageEntityAssertionHelper.assertComponentUsageEntity(usageEntityList.get(i), usageDetails.getBody().get(i)));
     }
 

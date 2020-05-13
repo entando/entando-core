@@ -40,6 +40,4 @@ public interface IWidgetService extends IComponentUsageService {
 
     public WidgetInfoDto getWidgetInfo(String widgetCode);
 
-    // TODO firegloves
-//    PagedMetadata<ComponentUsageEntity> getUsageDetails(String widgetCode, PageSearchRequest searchRequest);
 }

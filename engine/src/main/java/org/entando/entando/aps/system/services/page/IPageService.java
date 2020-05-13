@@ -55,11 +55,6 @@ public interface IPageService extends IComponentUsageService {
 
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
 
-    // TODO firegloves
-//    public Integer getPageUsage(String pageCode);
-//
-//    PagedMetadata<ComponentUsageEntity> getUsageDetails(String pageCode, PageSearchRequest searchRequest);
-
     /**
      * Search against online pages
      *

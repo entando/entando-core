@@ -15,12 +15,6 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertEquals;
 
 public class GuiFragmentAssertionHelper {
-//
-//
-//    assertEquals(WidgetMockHelper.WIDGET_1_CODE, ((GuiFragmentDtoSmall) fragmentUsage.get("widget")).getCode("code"));
-//    assertEquals(Arrays.asList(FragmentMockHelper.FRAGMENT_REF_1_CODE, FragmentMockHelper.FRAGMENT_REF_2_CODE), fragmentUsage.get("fragments"));
-//    assertEquals(Arrays.asList(PageMockHelper.PAGE_MODEL_REF_CODE_1, PageMockHelper.PAGE_MODEL_REF_CODE_2), fragmentUsage.get("pageTemplates"));
-//
 
     /**
      * does assertions on the received PagedMetadata basing on the default FragmentMockHelper mocked data

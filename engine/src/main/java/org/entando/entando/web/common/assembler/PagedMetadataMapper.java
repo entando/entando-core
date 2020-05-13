@@ -4,6 +4,8 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import org.apache.commons.beanutils.BeanComparator;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.page.model.PageSearchRequest;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 
@@ -64,4 +66,5 @@ public class PagedMetadataMapper {
 
         return result;
     }
+
 }

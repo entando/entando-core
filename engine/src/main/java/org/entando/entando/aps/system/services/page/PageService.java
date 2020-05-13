@@ -61,6 +61,7 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.util.PageUtils;
+import org.entando.entando.web.common.assembler.PageSearchMapper;
 import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
@@ -698,13 +699,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
     }
 
-    // TODO firegloves testare equivalenza
+
     @Override
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
         try {
             List<IPage> rawPages = this.getPageManager().searchPages(request.getPageCodeToken(), allowedGroups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return PagedMetadataMapper.INSTANCE.getPagedResult(request, pages);
+            return PageSearchMapper.INSTANCE.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
             throw new RestServerError("Error searching pages", ex);
@@ -731,7 +732,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         return pagedMetadata;
     }
 
-    // TODO firegloves testare equivalenza
     @Override
     public PagedMetadata<PageDto> searchOnlineFreePages(RestListRequest request) {
         try {
@@ -739,7 +739,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             groups.add(Group.FREE_GROUP_NAME);
             List<IPage> rawPages = this.getPageManager().searchOnlinePages(null, groups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return PagedMetadataMapper.INSTANCE.getPagedResult(request, pages);
+            return PageSearchMapper.INSTANCE.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching free online pages ", ex);
             throw new RestServerError("Error searching free online pages", ex);
@@ -748,7 +748,6 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Override
     public Integer getComponentUsage(String pageCode) {
-        RestListRequest request = new RestListRequest(1, 1);
 
         PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
         int count = page.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0; //1 usage if page is published
@@ -767,7 +766,30 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
                 .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
                 .collect(Collectors.toList());
 
+        if (page.getStatus().equals(IPageService.STATUS_ONLINE)) {
+            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
+        }
+
         return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
+    }
+
+    private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
+        BeanComparator comparator = new BeanComparator(request.getSort());
+        if (request.getDirection().equals(FieldSearchFilter.DESC_ORDER)) {
+            Collections.sort(pages, comparator.reversed());
+        } else {
+            Collections.sort(pages, comparator);
+        }
+        PageSearchDto result = new PageSearchDto(request, pages);
+        result.imposeLimits();
+        return result;
+    }
+
+    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
+        PageSearchRequest pageSearchReq = new PageSearchRequest();
+        BeanUtils.copyProperties(request, pageSearchReq);
+
+        return getPagedResult(pageSearchReq, pages);
     }
 
 

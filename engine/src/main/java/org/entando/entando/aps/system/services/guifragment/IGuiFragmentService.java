@@ -24,16 +24,15 @@ import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 
 public interface IGuiFragmentService extends IComponentUsageService {
 
-	public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq);
+    public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq);
 
-	public GuiFragmentDto getGuiFragment(String code);
+    public GuiFragmentDto getGuiFragment(String code);
 
-	public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
+    public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
 
-	public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
+    public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
 
-	public void removeGuiFragment(String guiFragmentCode);
+    public void removeGuiFragment(String guiFragmentCode);
 
     public List<String> getPluginCodes();
-
 }

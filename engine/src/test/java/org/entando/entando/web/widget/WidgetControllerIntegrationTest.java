@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPageManager;
@@ -64,7 +65,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/widgets")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
         result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
@@ -115,7 +116,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets/login_form/info")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         String response = result.andReturn().getResponse().getContentAsString();
         assertNotNull(response);
         result.andExpect(jsonPath("$.payload.publishedUtilizers", Matchers.hasSize(2)));
@@ -128,7 +129,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         // @formatter:off
         ResultActions result = mockMvc.perform(
                 get("/widgets").param("pageSize", "100")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(6)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
@@ -145,7 +146,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
         ResultActions result = mockMvc.perform(
                 get("/widgets").param("pageSize", "5")
                         .param("sort", "code").param("direction", "DESC")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
@@ -164,7 +165,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 get("/widgets").param("pageSize", "5")
                         .param("sort", "code").param("direction", "DESC")
                         .param("filters[0].attribute", "typology").param("filters[0].value", "oc")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
@@ -304,7 +305,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 1})
                         .content(mapper.writeValueAsString(wcr))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
             resultPutWidget.andExpect(status().isOk());
             
             ResultActions result3 = this.executeWidgetGet(newWidgetCode, accessToken, status().isOk());
@@ -340,7 +341,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                     .perform(post("/pages")
                             .content(mapper.writeValueAsString(pageRequest))
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk());
 
@@ -353,7 +354,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                     .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
                             .content(mapper.writeValueAsString(wcr))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk());
 
@@ -363,7 +364,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             result = mockMvc
                     .perform(get("/pages/{pageCode}/widgets", pageCode)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload[0].code", is(newWidgetCode)))
@@ -374,14 +375,14 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             result = mockMvc
                     .perform(delete("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 0})
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk());
 
             result = mockMvc
                     .perform(get("/pages/{pageCode}/widgets", pageCode)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload[0]", Matchers.isEmptyOrNullString()))
@@ -393,7 +394,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                     .perform(put("/pages/{pageCode}/widgets/{frameId}", new Object[]{pageCode, 2})
                             .content(mapper.writeValueAsString(wcr))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk());
 
@@ -403,7 +404,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
             result = mockMvc
                     .perform(get("/pages/{pageCode}/widgets", pageCode)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andDo(print())
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.payload[0]", Matchers.isEmptyOrNullString()))
@@ -452,7 +453,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 .perform(post("/pages")
                         .content(mapper.writeValueAsString(pageRequest))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
     
@@ -482,7 +483,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     private ResultActions executeWidgetGet(String widgetTypeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/widgets/{code}", new Object[]{widgetTypeCode})
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -490,7 +491,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     private ResultActions executeWidgetUsage(String widgetTypeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/widgets/{code}/usage", new Object[]{widgetTypeCode})
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -500,7 +501,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 .perform(post("/widgets")
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -510,7 +511,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
                 .perform(put("/widgets/{code}", new Object[]{widgetTypeCode})
                         .content(mapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -518,7 +519,7 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     private ResultActions executeWidgetDelete(String widgetTypeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc.perform(
                 delete("/widgets/{code}", new Object[]{widgetTypeCode})
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken));
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }

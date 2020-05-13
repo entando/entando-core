@@ -13,6 +13,19 @@
  */
 package org.entando.entando.web.role;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.services.role.IRoleManager;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -28,18 +41,6 @@ import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.hasEntry;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 public class RoleControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
     @Autowired
@@ -52,7 +53,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/roles")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
 
@@ -65,7 +66,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                 .perform(get("/roles")
                         .param("filter[0].attribute", "code")
                         .param("filter[0].value", "admin")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(1)));
     }
@@ -79,7 +80,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                 .perform(get("/roles")
                         .param("filter[0].attribute", "name")
                         .param("filter[0].value", "gestore")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
     }
@@ -94,7 +95,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                         .param("filter[0].value", "gestore")
                         .param("sort", "code")
                         .param("direction", "DESC")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
         result.andExpect(jsonPath("$.payload[0].name", is("Gestore di Pagine")));
@@ -105,7 +106,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                         .param("filter[0].value", "gestore")
                         .param("sort", "code")
                         .param("direction", "ASC")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(2)));
         result.andExpect(jsonPath("$.payload[0].name", is("Gestore di Contenuti e Risorse")));
@@ -119,7 +120,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}", code)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.permissions.length()", greaterThan(0)));
     }
@@ -131,7 +132,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}/userreferences", code)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
 
     }
@@ -143,7 +144,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/roles/{rolecode}", code)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isNotFound());
         //result.andExpect(jsonPath("$.payload.permissions.length()", greaterThan(0)));
     }
@@ -183,7 +184,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(post("/roles")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(payload)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -198,7 +199,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(put("/roles/{code}", code)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(payload)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -214,7 +215,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(put("/roles/{code}", code)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(payload)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isBadRequest());
 
@@ -231,7 +232,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(put("/roles/{code}", code)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(payload)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -246,7 +247,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(patch("/roles/{code}", code)
                                      .contentType(RestMediaTypes.JSON_PATCH_JSON)
                                      .content(payload)
-                                     .header("Authorization", "Bearer " + accessToken));
+                                     .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
 
             result.andExpect(status().isOk());
@@ -263,7 +264,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(patch("/roles/{code}", code)
                                      .contentType(RestMediaTypes.JSON_PATCH_JSON)
                                      .content(payload)
-                                     .header("Authorization", "Bearer " + accessToken));
+                                     .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
 
             result.andExpect(status().isBadRequest());
@@ -277,7 +278,7 @@ public class RoleControllerIntegrationTest extends AbstractControllerIntegration
             result = mockMvc
                     .perform(delete("/roles/{code}", code)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 

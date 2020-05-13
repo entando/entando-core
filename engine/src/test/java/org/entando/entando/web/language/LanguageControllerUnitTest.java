@@ -13,6 +13,10 @@
  */
 package org.entando.entando.web.language;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.language.LanguageService;
 import org.entando.entando.web.AbstractControllerTest;
@@ -26,9 +30,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LanguageControllerUnitTest extends AbstractControllerTest {
 
@@ -56,7 +57,7 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
                 .perform(put("/languages/{code}", new Object[]{"de"})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isBadRequest());
     }
 
@@ -69,7 +70,7 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
                 .perform(put("/languages/{code}", new Object[]{"de"})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isBadRequest());
     }
 
@@ -82,7 +83,7 @@ public class LanguageControllerUnitTest extends AbstractControllerTest {
                 .perform(put("/languages/{code}", new Object[]{"de"})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         Mockito.verify(languageService, Mockito.times(1)).updateLanguage("de", false);
         result.andExpect(status().isOk());
     }

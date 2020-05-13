@@ -13,6 +13,14 @@
  */
 package org.entando.entando.web.activitystream;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
@@ -28,18 +36,11 @@ import org.entando.entando.aps.system.services.actionlog.model.IActionLogRecordS
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.page.model.PageStatusRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import org.junit.Assert;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author E.Santoboni
@@ -73,7 +74,7 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
                     .perform(put("/pages/{code}/status", code)
                             .content(mapper.writeValueAsString(pageStatusRequest))
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             this.waitActionLoggerThread();
             List<Integer> logs2 = actionLogManager.getActionRecords(searchBean);

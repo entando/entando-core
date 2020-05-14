@@ -11,6 +11,9 @@ import java.util.stream.IntStream;
 public class AuthorizationMockHelper {
 
 
+    public static final int TOTAL_PERMISSIONS = 4;
+
+
     /**
      * @return a List of mocked Authorizations
      */
@@ -19,7 +22,7 @@ public class AuthorizationMockHelper {
         return IntStream.range(0, count)
                 .mapToObj(i -> {
                     Group group = GroupMockHelper.mockGroup(i+"");
-                    Role role = RoleMockHelper.mockRole(i+"");
+                    Role role = RoleMockHelper.mockRole(i+"", TOTAL_PERMISSIONS);
                     return new Authorization(group, role);
                 })
                 .collect(Collectors.toList());

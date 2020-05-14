@@ -16,7 +16,7 @@ package org.entando.entando.aps.system.services.user;
 import java.util.List;
 
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.system.services.user.UserPermissions;
+import com.agiletec.aps.system.services.user.UserGroupPermissions;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.web.common.model.PagedMetadata;
@@ -62,5 +62,5 @@ public interface IUserService {
      * @param user the user of which return permission infos
      * @return informations about received user group and received user permissions
      */
-    List<UserPermissions> getCurrentUserPermissions(UserDetails user);
+    List<UserGroupPermissions> getMyGroupPermissions(UserDetails user);
 }

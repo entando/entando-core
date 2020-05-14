@@ -2,12 +2,12 @@ package com.agiletec.aps.system.services.user;
 
 import java.util.Set;
 
-public class UserPermissions {
+public class UserGroupPermissions {
 
     private String group;
     private Set<String> permissions;
 
-    public UserPermissions(String group, Set<String> permissions) {
+    public UserGroupPermissions(String group, Set<String> permissions) {
         this.group = group;
         this.permissions = permissions;
     }
@@ -16,7 +16,7 @@ public class UserPermissions {
         return group;
     }
 
-    public UserPermissions setGroup(String group) {
+    public UserGroupPermissions setGroup(String group) {
         this.group = group;
         return this;
     }
@@ -25,7 +25,7 @@ public class UserPermissions {
         return permissions;
     }
 
-    public UserPermissions setPermissions(Set<String> permissions) {
+    public UserGroupPermissions setPermissions(Set<String> permissions) {
         this.permissions = permissions;
         return this;
     }

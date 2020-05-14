@@ -16,11 +16,10 @@ package org.entando.entando.web.user;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
-import com.agiletec.aps.system.services.user.UserPermissions;
+import com.agiletec.aps.system.services.user.UserGroupPermissions;
 import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.*;
 import org.entando.entando.web.common.annotation.RestAccessControl;
-import org.entando.entando.web.common.exceptions.EntandoAuthorizationException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.user.model.*;
@@ -28,13 +27,10 @@ import org.entando.entando.web.user.validator.UserValidator;
 import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -229,11 +225,10 @@ public class UserController {
     }
 
 
-    @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @GetMapping("/userProfiles/myAuthorities")
-    public ResponseEntity<SimpleRestResponse<List<UserPermissions>>> getCurrentUserPermissions(@ModelAttribute("user") UserDetails userDetails) {
+    @GetMapping("/userProfiles/myGroupPermissions")
+    public ResponseEntity<SimpleRestResponse<List<UserGroupPermissions>>> getMyGroupPermissions(@ModelAttribute("user") UserDetails userDetails) {
 
-        List<UserPermissions> currentUserPermissions = this.userService.getCurrentUserPermissions(userDetails);
+        List<UserGroupPermissions> currentUserPermissions = this.userService.getMyGroupPermissions(userDetails);
 
         return new ResponseEntity<>(new SimpleRestResponse<>(currentUserPermissions), HttpStatus.OK);
     }

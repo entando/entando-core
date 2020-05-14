@@ -14,21 +14,20 @@
 package org.entando.entando.aps.system.services.user;
 
 import com.agiletec.aps.system.services.authorization.Authorization;
-import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import com.agiletec.aps.system.services.user.UserGroupPermissions;
+import org.entando.entando.aps.system.services.assertionhelper.UserGroupPermissionAssertionHelper;
 import org.entando.entando.aps.system.services.mockhelper.AuthorizationMockHelper;
 import org.entando.entando.aps.system.services.mockhelper.UserMockHelper;
-import org.entando.entando.aps.system.services.role.IRoleService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
 
 /**
  *
@@ -36,30 +35,43 @@ import static org.mockito.Mockito.when;
  */
 public class UserServiceTest {
 
-    @Mock
-    private IRoleService roleService;
-    @Mock
-    private IUserManager userManager;
-    @Mock
-    private IAuthorizationManager authorizationManager;
-
     @InjectMocks
-    private IUserService userService;
+    private UserService userService;
 
     private UserDetails userDetails = UserMockHelper.mockUser();
     private List<Authorization> authorizationList = AuthorizationMockHelper.mockAuthorizationList(3);
 
     @Before
-    protected void setUp() throws Exception {
-        when(userManager.getUser(anyString())).thenReturn(userDetails);
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
     }
 
 
     @Test
-    public void getCurrentUserPermissionsTest() throws Throwable {
-        when(authorizationManager.getUserAuthorizations(anyString())).thenReturn(authorizationList);
+    public void getMyGroupPermissionsTest() {
 
-//        authorizationList.stream()
-//                .forEach(authorization -> when(roleService.getRole(authorization.getRole().getName())).thenReturn());
+        userDetails.addAuthorizations(authorizationList);
+
+        List<UserGroupPermissions> expectedList = authorizationList.stream()
+                .map(authorization -> new UserGroupPermissions(authorization.getGroup().getName(), authorization.getRole().getPermissions()))
+                .collect(Collectors.toList());
+
+        List<UserGroupPermissions> actualList = userService.getMyGroupPermissions(userDetails);
+        UserGroupPermissionAssertionHelper.assertUserGroupPermissions(expectedList, actualList);
+    }
+
+
+    @Test
+    public void getMyGroupPermissionsWithNoAuthorizationsTest() {
+
+        List<UserGroupPermissions> actualList = userService.getMyGroupPermissions(userDetails);
+        assertEquals(0, actualList.size());
+    }
+
+    @Test
+    public void getMyGroupPermissionsWithNullUserShouldReturnEmptyListTest() {
+
+        List<UserGroupPermissions> actualList = userService.getMyGroupPermissions(null);
+        assertEquals(0, actualList.size());
     }
 }

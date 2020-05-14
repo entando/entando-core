@@ -27,8 +27,6 @@ import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.role.IRoleService;
-import org.entando.entando.aps.system.services.role.RoleService;
-import org.entando.entando.aps.system.services.role.model.RoleDto;
 import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
 import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
@@ -309,10 +307,13 @@ public class UserService implements IUserService {
 
 
     @Override
-    public List<UserPermissions> getCurrentUserPermissions(UserDetails user) {
+    public List<UserGroupPermissions> getMyGroupPermissions(UserDetails user) {
 
-        return user.getAuthorizations().stream()
-                .map(authorization -> new UserPermissions(authorization.getGroup().getName(), authorization.getRole().getPermissions()))
+        return Optional.ofNullable(user)
+                .map(UserDetails::getAuthorizations)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(authorization -> new UserGroupPermissions(authorization.getGroup().getName(), authorization.getRole().getPermissions()))
                 .collect(Collectors.toList());
     }
 

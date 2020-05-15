@@ -734,7 +734,6 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
 
-
     @Test
     public void getMyGroupPermissionsWithLoggedUserShouldReturnPermissions() throws Exception {
 
@@ -759,11 +758,11 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                 .andExpect(status().isUnauthorized());
     }
 
-//    @Test
-//    public void getMyGroupPermissionsWithNOTLoggedUserShouldReturn401() throws Exception {
-//
-//        this.mockMvcHelper = new MockMvcHelper(mockMvc);
-//        this.mockMvcHelper.getMockMvc("/users/userProfiles/myGroupPermissions")
-//                .andExpect(status().isUnauthorized());
-//    }
+    @Test
+    public void getMyGroupPermissionsWithNOTLoggedUserShouldReturn401() throws Exception {
+
+        this.mockMvcHelper = new MockMvcHelper(mockMvc);
+        this.mockMvcHelper.getMockMvc("/users/userProfiles/myGroupPermissions")
+                .andExpect(status().isUnauthorized());
+    }
 }

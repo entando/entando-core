@@ -19,6 +19,7 @@ import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.system.services.user.UserGroupPermissions;
 import org.entando.entando.aps.system.services.user.IUserService;
 import org.entando.entando.aps.system.services.user.model.*;
+import org.entando.entando.aps.util.HttpSessionHelper;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
@@ -31,6 +32,7 @@ import org.springframework.validation.*;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -226,7 +228,9 @@ public class UserController {
 
 
     @GetMapping("/userProfiles/myGroupPermissions")
-    public ResponseEntity<SimpleRestResponse<List<UserGroupPermissions>>> getMyGroupPermissions(@ModelAttribute("user") UserDetails userDetails) {
+    public ResponseEntity<SimpleRestResponse<List<UserGroupPermissions>>> getMyGroupPermissions(HttpServletRequest request) {
+
+        UserDetails userDetails = HttpSessionHelper.extractCurrentUser(request);
 
         List<UserGroupPermissions> currentUserPermissions = this.userService.getMyGroupPermissions(userDetails);
 

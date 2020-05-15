@@ -766,14 +766,14 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @Override
     public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String pageCode, RestListRequest restListRequest) {
 
-        PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
+        PageDto pageDto = getPage(pageCode, IPageService.STATUS_DRAFT);
 
-        List<ComponentUsageEntity> componentUsageEntityList = page.getChildren().stream()
+        List<ComponentUsageEntity> componentUsageEntityList = pageDto.getChildren().stream()
                 .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
                 .collect(Collectors.toList());
 
-        if (page.getStatus().equals(IPageService.STATUS_ONLINE)) {
-            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
+        if (pageDto.getStatus().equals(IPageService.STATUS_ONLINE)) {
+            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode()));
         }
 
         return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);

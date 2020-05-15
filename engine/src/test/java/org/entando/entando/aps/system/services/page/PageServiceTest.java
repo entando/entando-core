@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.page.IPage;
@@ -31,10 +30,10 @@ import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.web.common.assembler.PageSearchMapper;
 import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -129,8 +128,12 @@ public class PageServiceTest {
     }
 
 
+    /**********************************************************************************
+     * PAGE USAGE DETAILS
+     *********************************************************************************/
+
     @Test
-    public void getPageUsageDetailsWithPublishedPageShouldAddItself() throws Exception {
+    public void getPageUsageDetailsWithPublishedPageShouldAddItself() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
 
@@ -138,23 +141,19 @@ public class PageServiceTest {
     }
 
     @Test
-    public void getPageUsageDetailsWithPaginationAndWithPublishedPageShouldAddItself() throws Exception {
+    public void getPageUsageDetailsWithPaginationAndWithPublishedPageShouldAddItself() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
 
-//        List<String> utilizers = Arrays.asList(PageMockHelper.UTILIZERS);
-//        utilizers.add(pageDto.getCode());
-
         this.testPagedPageUsageDetails(pageDto);
-//        this.testPagedPageUsageDetails(pageDto, (String[]) utilizers.toArray());
     }
 
 
     @Test
-    public void getPageUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() throws Exception {
+    public void getPageUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, PageMockHelper.UTILIZERS);
+        mockForSinglePage(PageMockHelper.mockTestPage(), pageDto, PageMockHelper.UTILIZERS);
 
         Arrays.stream(new String[]{"not existing", null, ""})
                 .forEach(code -> {
@@ -169,7 +168,7 @@ public class PageServiceTest {
 
 
     @Test
-    public void getPageUsageDetailsWithPublishedPageShouldNOTAddItself() throws Exception {
+    public void getPageUsageDetailsWithDraftPageShouldNOTAddItself() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
         pageDto.setStatus(IPageService.STATUS_DRAFT);
@@ -179,22 +178,22 @@ public class PageServiceTest {
 
 
     @Test
-    public void getPageUsageDetailsWithPaginationAndWithPublishedPageShouldNOTAddItself() throws Exception {
+    public void getPageUsageDetailsWithPaginationAndWithDraftPageShouldNOTAddItself() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
         pageDto.setStatus(IPageService.STATUS_DRAFT);
 
-//        this.testPagedPageUsageDetails(pageDto);
+        this.testPagedPageUsageDetails(pageDto);
     }
 
 
     @Test
-    public void getPageUsageDetailsWithNoChildrenShouldReturnItself() throws Exception {
+    public void getPageUsageDetailsWithNoChildrenShouldReturnItself() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
         pageDto.setChildren(new ArrayList<>());
 
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, new String[]{pageDto.getCode()});
+        mockForSinglePage(PageMockHelper.mockTestPage(), pageDto, new String[0]);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
@@ -208,12 +207,11 @@ public class PageServiceTest {
      * @param pageDto
      * @throws Exception
      */
-    private void testSinglePageUsageDetails(PageDto pageDto) throws Exception {
+    private void testSinglePageUsageDetails(PageDto pageDto) {
 
         Page page = PageMockHelper.mockTestPage();
 
-        mockForPageUsageTest(page, pageDto, PageMockHelper.UTILIZERS);
-        mockPagedMetadata(page, pageDto, PageMockHelper.UTILIZERS, 1, 1, 100, 6);
+        mockForSinglePage(page, pageDto, PageMockHelper.UTILIZERS);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
@@ -227,14 +225,14 @@ public class PageServiceTest {
      * @param pageDto
      * @throws Exception
      */
-    private void testPagedPageUsageDetails(PageDto pageDto) throws Exception {
+    private void testPagedPageUsageDetails(PageDto pageDto) {
 
         Page page = PageMockHelper.mockTestPage();
         int pageSize = 3;
         int totalSize = PageMockHelper.UTILIZERS.length +
                 (pageDto.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0);
 
-        mockForPageUsageTest(page, pageDto, PageMockHelper.UTILIZERS);
+        mockForSinglePage(page, pageDto, PageMockHelper.UTILIZERS);
 
         PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
         pageSearchRequest.setPageSize(pageSize);
@@ -265,61 +263,51 @@ public class PageServiceTest {
 
 
     /**
-     *
+     * init mock for a single paged request
      */
-    private void mockForPageUsageTest(Page page, PageDto pageDto, String[] utilizers) throws ApsSystemException {
+    private void mockForSinglePage(Page page, PageDto pageDto, String[] utilizers) {
 
-        when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
-        when(pageTokenManager.encrypt(page.getCode())).thenReturn(PageMockHelper.TOKEN);
-        when(dtoBuilder.convert(any(IPage.class))).thenReturn(pageDto);
-        when(applicationContext.getBeanNamesForType((Class<?>) any())).thenReturn(PageMockHelper.UTILIZERS);
-        when(applicationContext.getBean(anyString())).thenReturn(pageUtilizer);
-        when(pageUtilizer.getPageUtilizers(page.getCode())).thenReturn(Arrays.asList(PageMockHelper.UTILIZERS));
-        when(pageUtilizer.getName())
-                .thenReturn(PageMockHelper.UTILIZER_1)
-                .thenReturn(PageMockHelper.UTILIZER_2);
-
-        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
-        PageSearchDto pageSearchDto = new PageSearchDto(pageSearchRequest, Collections.singletonList(pageDto));
-        pageSearchDto.imposeLimits();
-        when(pageSearchMapper.toPageSearchDto(any(RestListRequest.class), any())).thenReturn(pageSearchDto);
-
-//        List<ComponentUsageEntity> componentUsageEntityList = Arrays.stream(utilizers)
-//                .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
-//                .collect(Collectors.toList());
-//        componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
-//
-//        PagedMetadata pagedMetadata = new PagedMetadata(pageSearchRequest, componentUsageEntityList, componentUsageEntityList.size());
-//        pagedMetadata.setPageSize(3);
-//        pagedMetadata.imposeLimits();
-//        when(pagedMetadataMapper.getPagedResult(any(RestListRequest.class), any())).thenReturn(pagedMetadata);
+        mockPagedMetadata(page, pageDto, utilizers, 1, 1, 100,
+                utilizers.length + (pageDto.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0));
     }
 
+    /**
+     * init mock for a multipaged request
+     */
+    private void mockPagedMetadata(Page page, PageDto pageDto, String[] utilizers, int currPage, int lastPage, int pageSize, int totalSize) {
 
-//    private void mockPagedMetadata(Page page, PageDto pageDto, String[] utilizers, int currPage, int lastPage, int pageSize, int totalSize) {
-//
-//        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
-//        pageSearchRequest.setPageSize(pageSize);
-//        PageSearchDto pageSearchDto = new PageSearchDto(pageSearchRequest, Collections.singletonList(pageDto));
-//        pageSearchDto.setPageSize(pageSize);
-//        pageSearchDto.imposeLimits();
-//        when(pageSearchMapper.toPageSearchDto(any(RestListRequest.class), any())).thenReturn(pageSearchDto);
-//
-//        List<ComponentUsageEntity> componentUsageEntityList = Arrays.stream(utilizers)
-//                .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
-//                .collect(Collectors.toList());
-//        if (pageDto.getStatus().equals(IPageService.STATUS_ONLINE) && currPage == lastPage) {
-//            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
-//        }
-//
-//        PagedMetadata pagedMetadata = new PagedMetadata(pageSearchRequest, componentUsageEntityList, totalSize);
-//        pagedMetadata.setPageSize(pageSize);
-////        pagedMetadata.setActualSize(pageSize);
-////        pagedMetadata.setLastPage(lastPage);
-//        pagedMetadata.setPage(currPage);
-//        pagedMetadata.imposeLimits();
-//        when(pagedMetadataMapper.getPagedResult(any(), any())).thenReturn(pagedMetadata);
-////        when(pagedMetadataMapper.getPagedResult(any(RestListRequest.class), any())).thenReturn(pagedMetadata);
-////        when(pagedMetadataMapper.getPagedResult(any(PageSearchRequest.class), any())).thenReturn(pagedMetadata);
-//    }
+        try {
+            when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
+            when(pageTokenManager.encrypt(page.getCode())).thenReturn(PageMockHelper.TOKEN);
+            when(dtoBuilder.convert(any(IPage.class))).thenReturn(pageDto);
+            when(applicationContext.getBeanNamesForType((Class<?>) any())).thenReturn(PageMockHelper.UTILIZERS);
+            when(applicationContext.getBean(anyString())).thenReturn(pageUtilizer);
+            when(pageUtilizer.getPageUtilizers(page.getCode())).thenReturn(Arrays.asList(PageMockHelper.UTILIZERS));
+            when(pageUtilizer.getName())
+                    .thenReturn(PageMockHelper.UTILIZER_1)
+                    .thenReturn(PageMockHelper.UTILIZER_2);
+
+            PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
+            pageSearchRequest.setPageSize(pageSize);
+            PageSearchDto pageSearchDto = new PageSearchDto(pageSearchRequest, Collections.singletonList(pageDto));
+            pageSearchDto.setPageSize(pageSize);
+            pageSearchDto.imposeLimits();
+
+            List<ComponentUsageEntity> componentUsageEntityList = Arrays.stream(utilizers)
+                    .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
+                    .collect(Collectors.toList());
+            if (pageDto.getStatus().equals(IPageService.STATUS_ONLINE) && currPage == lastPage) {
+                componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
+            }
+
+            PagedMetadata pagedMetadata = new PagedMetadata(pageSearchRequest, componentUsageEntityList, totalSize);
+            pagedMetadata.setPageSize(pageSize);
+            pagedMetadata.setPage(currPage);
+            pagedMetadata.imposeLimits();
+            when(pagedMetadataMapper.getPagedResult(any(), any())).thenReturn(pagedMetadata);
+
+        } catch (Exception e) {
+            Assert.fail("Mock Exception");
+        }
+    }
 }

@@ -34,9 +34,9 @@ public class PageAssertionHelper {
         int pagePublished = pageStatus.equals(IPageService.STATUS_ONLINE) ? 1 : 0;
         boolean lastPage = usageDetails.getLastPage() == usageDetails.getPage();
 
-        assertEquals(totalItems + pagePublished, usageDetails.getTotalItems());
-        assertEquals(utilizers.length + (lastPage ? pagePublished : 0), usageDetails.getBody().size());
-        assertEquals(pageNumber, usageDetails.getPage());
+        assertEquals("total size", totalItems + pagePublished, usageDetails.getTotalItems());
+        assertEquals("body size", utilizers.length + (lastPage ? pagePublished : 0), usageDetails.getBody().size());
+        assertEquals("page number", pageNumber, usageDetails.getPage());
 
         List<ComponentUsageEntity> usageEntityList = Arrays.stream(utilizers)
                 .map(utilizer -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, utilizer))

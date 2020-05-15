@@ -8,15 +8,13 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
 
+@Component
 public class PageSearchMapper {
-
-    // here Spring singleton is not used to keep consinstency with MapStruct library
-    public static final PageSearchMapper INSTANCE = new PageSearchMapper();
-
 
     /**
      * craetes a PageSearchDto starting from the received data

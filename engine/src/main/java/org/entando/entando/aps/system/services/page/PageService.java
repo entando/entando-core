@@ -131,6 +131,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @Autowired
     private IPageTokenManager pageTokenManager;
 
+    @Autowired
+    private PageSearchMapper pageSearchMapper;
+
+    @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
+
     protected IPageManager getPageManager() {
         return pageManager;
     }
@@ -705,7 +711,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         try {
             List<IPage> rawPages = this.getPageManager().searchPages(request.getPageCodeToken(), allowedGroups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return PageSearchMapper.INSTANCE.toPageSearchDto(request, pages);
+            return pageSearchMapper.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
             throw new RestServerError("Error searching pages", ex);
@@ -739,7 +745,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             groups.add(Group.FREE_GROUP_NAME);
             List<IPage> rawPages = this.getPageManager().searchOnlinePages(null, groups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return PageSearchMapper.INSTANCE.toPageSearchDto(request, pages);
+            return pageSearchMapper.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching free online pages ", ex);
             throw new RestServerError("Error searching free online pages", ex);
@@ -770,7 +776,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, page.getCode()));
         }
 
-        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
+        return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);
     }
 
     private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {

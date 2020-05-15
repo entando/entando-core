@@ -36,6 +36,9 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     private ApplicationContext applicationContext;
 
     @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
+
+    @Autowired
     public PageModelService(IPageModelManager pageModelManager, IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
         this.pageModelManager = pageModelManager;
         this.dtoBuilder = dtoBuilder;
@@ -171,7 +174,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
                 .map(pageDto -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode(), pageDto.getStatus()))
                 .collect(Collectors.toList());
 
-        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
+        return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);
     }
 
     protected PageModel createPageModel(PageModelRequest pageModelRequest) {

@@ -25,7 +25,11 @@ import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.assertionhelper.PageAssertionHelper;
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.PageSearchDto;
+import org.entando.entando.web.common.assembler.PageSearchMapper;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageRequest;
 
@@ -49,6 +53,7 @@ import static org.mockito.Mockito.when;
 
 import com.agiletec.aps.system.services.page.IPage;
 import org.entando.entando.aps.system.services.IDtoBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,24 +61,22 @@ public class PageServiceTest {
 
     @Mock
     private IPageManager pageManager;
-
     @Mock
     private IPageModelManager pageModelManager;
-
     @Mock
     private IGroupManager groupManager;
-
     @Mock
     private IDtoBuilder<IPage, PageDto> dtoBuilder;
-
     @Mock
     private IPageTokenManager pageTokenManager;
-
     @Mock
     private ApplicationContext applicationContext;
-
     @Mock
     private PageUtilizer pageUtilizer;
+    @Mock
+    private PageSearchMapper pageSearchMapper;
+    @Mock
+    private PagedMetadataMapper pagedMetadataMapper;
 
     @InjectMocks
     private PageService pageService;
@@ -149,7 +152,7 @@ public class PageServiceTest {
     public void getPageUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() throws Exception {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, 1);
 
         Arrays.stream(new String[]{ "not existing", null, ""})
                 .forEach(code -> {
@@ -190,7 +193,7 @@ public class PageServiceTest {
         PageDto pageDto = PageMockHelper.mockPageDto();
         pageDto.setChildren(new ArrayList<>());
 
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, 1);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
@@ -206,7 +209,7 @@ public class PageServiceTest {
      */
     private void testSinglePageUsageDetails(PageDto pageDto) throws Exception {
 
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, 1);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
@@ -221,7 +224,7 @@ public class PageServiceTest {
      */
     private void testPagedPageUsageDetails(PageDto pageDto) throws Exception {
 
-        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto);
+        mockForPageUsageTest(PageMockHelper.mockTestPage(), pageDto, 1);
 
         PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
         pageSearchRequest.setPageSize(3);
@@ -254,7 +257,7 @@ public class PageServiceTest {
     /**
      *
      */
-    private void mockForPageUsageTest(Page page, PageDto pageDto) throws ApsSystemException {
+    private void mockForPageUsageTest(Page page, PageDto pageDto, int totalItems) throws ApsSystemException {
 
         when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
         when(pageTokenManager.encrypt(page.getCode())).thenReturn(PageMockHelper.TOKEN);
@@ -265,5 +268,14 @@ public class PageServiceTest {
         when(pageUtilizer.getName())
                 .thenReturn(PageMockHelper.UTILIZER_1)
                 .thenReturn(PageMockHelper.UTILIZER_2);
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
+        PageSearchDto pageSearchDto = new PageSearchDto(pageSearchRequest, Collections.singletonList(pageDto));
+        pageSearchDto.imposeLimits();
+        when(pageSearchMapper.toPageSearchDto(any(RestListRequest.class), any())).thenReturn(pageSearchDto);
+
+        PagedMetadata pagedMetadata = new PagedMetadata(pageSearchRequest, Arrays.asList(pageDto), totalItems);
+        pagedMetadata.imposeLimits();
+        when(pagedMetadataMapper.getPagedResult(any(RestListRequest.class), any())).thenReturn(pagedMetadata);
     }
 }

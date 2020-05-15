@@ -56,6 +56,7 @@ import org.entando.entando.web.widget.validator.WidgetValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.context.ServletContextAware;
@@ -78,6 +79,9 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private ServletContext srvCtx;
 
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
 
     protected IWidgetTypeManager getWidgetManager() {
         return widgetManager;
@@ -308,7 +312,7 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
         totalReferenced.addAll(draftReferenced);
 
-        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, totalReferenced);
+        return pagedMetadataMapper.getPagedResult(restListRequest, totalReferenced);
     }
 
 

@@ -30,7 +30,6 @@ import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
-import org.entando.entando.web.page.model.PageSearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +47,9 @@ public class GuiFragmentService implements IGuiFragmentService {
 
     @Autowired
     private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
+
+    @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
 
     protected IGuiFragmentManager getGuiFragmentManager() {
         return guiFragmentManager;
@@ -220,6 +222,6 @@ public class GuiFragmentService implements IGuiFragmentService {
             componentUsageEntityList.addAll(pageModelList);
         }
 
-        return PagedMetadataMapper.INSTANCE.getPagedResult(restListRequest, componentUsageEntityList);
+        return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);
     }
 }

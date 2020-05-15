@@ -6,14 +6,12 @@ import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
 import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class PagedMetadataMapper {
-
-    // here Spring singleton is not used to keep consinstency with MapStruct library
-    public static final PagedMetadataMapper INSTANCE = new PagedMetadataMapper();
-
 
     /**
      * craetes a PagedMetadata<T> starting from the received

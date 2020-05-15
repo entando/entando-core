@@ -13,10 +13,17 @@
  */
 package org.entando.entando.web.user;
 
-import com.agiletec.aps.system.services.authorization.Authorization;
-import java.net.URLEncoder;
-import java.util.Date;
+import static junit.framework.TestCase.assertNull;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
@@ -27,11 +34,14 @@ import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.MockMvcHelper;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -80,7 +90,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/users")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
         result.andExpect(jsonPath("$.metaData.sort", is("username")));
@@ -94,9 +104,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/users")
                         .param("withProfile", "1")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
-        result.andExpect(jsonPath("$.payload", hasSize(Matchers.greaterThan(0))));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(Matchers.greaterThan(0))));
         result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("1")));
         System.out.println("with profile: " + result.andReturn().getResponse().getContentAsString());
     }
@@ -108,10 +118,10 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(get("/users")
                         .param("withProfile", "0")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         System.out.println("with no profile: " + result.andReturn().getResponse().getContentAsString());
-        result.andExpect(jsonPath("$.payload", hasSize(0)));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("0")));
     }
 
@@ -128,10 +138,10 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                         .param("filter[1].attribute", "profileType")
                         .param("filter[1].operator", "eq")
                         .param("filter[1].value", "All")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         System.out.println("with profile attr: " + result.andReturn().getResponse().getContentAsString());
-        result.andExpect(jsonPath("$.payload", hasSize(Matchers.greaterThan(0))));
+        result.andExpect(jsonPath("$.payload", Matchers.hasSize(Matchers.greaterThan(0))));
         result.andExpect(jsonPath("$.metaData.additionalParams.withProfile", is("1")));
         result.andExpect(jsonPath("$.payload[0].profileAttributes.fullname", Matchers.containsString("s")));
 
@@ -153,28 +163,28 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     put("/users/{target}/authorities", "wrongUser")
                             .content(mockJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result1.andExpect(status().isNotFound());
             ResultActions result2 = mockMvc.perform(
                     put("/users/{target}/authorities", "mockuser")
                             .content(mockJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("group1")));
 
             ResultActions result3 = mockMvc.perform(
                     get("/users/{target}/authorities", "wrongUser")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result3.andExpect(status().isNotFound());
 
             ResultActions result4 = mockMvc.perform(
                     get("/users/{target}/authorities", "mockuser")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result4.andExpect(status().isOk());
-            result4.andExpect(jsonPath("$.payload", hasSize(1)));
+            result4.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
             result4.andExpect(jsonPath("$.payload[0].group", is("group1")));
             result4.andExpect(jsonPath("$.payload[0].role", is("role1")));
         } finally {
@@ -201,7 +211,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result1 = mockMvc.perform(
                     post("/users/{target}/authorities", username)
                             .content(mockJson1).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result1.andExpect(status().isOk());
             result1.andExpect(jsonPath("$.payload[0].group", is("group1")));
 
@@ -212,7 +222,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result2 = mockMvc.perform(
                     post("/users/{target}/authorities", username)
                             .content(mockJson2).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("customers")));
 
@@ -222,16 +232,16 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result3 = mockMvc.perform(
                     get("/users/{target}/authorities", username)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result3.andExpect(status().isOk());
-            result3.andExpect(jsonPath("$.payload", hasSize(2)));
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
 
             String mockJson4 = "[{\"group\":\"helpdesk\", \"role\":\"pageManager\"}]";
 
             ResultActions result4 = mockMvc.perform(
                     put("/users/{target}/authorities", username)
                             .content(mockJson4).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result4.andExpect(status().isOk());
             result4.andExpect(jsonPath("$.payload[0].group", is("helpdesk")));
 
@@ -243,7 +253,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result5 = mockMvc.perform(
                     put("/users/{target}/authorities", username)
                             .content(mockJson5).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result5.andExpect(status().isBadRequest());
             result5.andExpect(jsonPath("$.errors.size()", is(1)));
             result5.andExpect(jsonPath("$.errors[0].code", is("2")));
@@ -276,7 +286,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result1 = mockMvc.perform(
                     post("/users/{target}/authorities", username)
                             .content(mockJson1).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result1.andExpect(status().isOk());
             result1.andExpect(jsonPath("$.payload[0].role", is("role100")));
 
@@ -287,7 +297,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result2 = mockMvc.perform(
                     post("/users/{target}/authorities", username)
                             .content(mockJson2).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result2.andExpect(status().isOk());
             result2.andExpect(jsonPath("$.payload[0].group", is("customers")));
 
@@ -297,16 +307,16 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             ResultActions result3 = mockMvc.perform(
                     get("/users/{target}/authorities", username)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result3.andExpect(status().isOk());
-            result3.andExpect(jsonPath("$.payload", hasSize(2)));
+            result3.andExpect(jsonPath("$.payload", Matchers.hasSize(2)));
 
             String mockJson4 = "[{\"group\":null, \"role\":null}]";
 
             ResultActions result4 = mockMvc.perform(
                     put("/users/{target}/authorities", username)
                             .content(mockJson4).contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result4.andExpect(status().isBadRequest());
             result4.andExpect(jsonPath("$.errors.size()", is(1)));
 
@@ -330,8 +340,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             String invalidBody1 = "{\"username\": \"$invalid%%\",\"status\": \"active\",\"password\": \"password\"}";
             ResultActions resultInvalid1 = this.executeUserPost(invalidBody1, accessToken, status().isBadRequest());
-            resultInvalid1.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid1.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("2")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
@@ -348,8 +358,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.username", is(validUsername)));
 
             ResultActions result2 = this.executeUserPost(mockJson, accessToken, status().isConflict());
-            result2.andExpect(jsonPath("$.payload", hasSize(0)));
-            result2.andExpect(jsonPath("$.errors", hasSize(1)));
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.errors[0].code", is("1")));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
@@ -357,7 +367,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
                             .content(mockJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
@@ -379,8 +389,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"$invalid%%\"}";
             ResultActions resultInvalid1 = this.executeUserPost(invalidBody1, accessToken, status().isBadRequest());
-            resultInvalid1.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid1.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
@@ -396,7 +406,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
                             .content(mockJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
@@ -420,8 +430,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.username", is(validUsername)));
 
             ResultActions result2 = this.executeUserPost(mockJson, accessToken, status().isConflict());
-            result2.andExpect(jsonPath("$.payload", hasSize(0)));
-            result2.andExpect(jsonPath("$.errors", hasSize(1)));
+            result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.errors[0].code", is("1")));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
@@ -429,7 +439,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     delete("/users/{username}", URLEncoder.encode(validUsername, "ISO-8859-1"))
                             .content(mockJson)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             resultDelete.andExpect(status().isOk());
             resultDelete.andExpect(jsonPath("$.payload.code", is(validUsername)));
         } catch (Throwable e) {
@@ -474,8 +484,8 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"status\": \"active\",\"password\": \"$invalid%%\"}";
             ResultActions resultInvalid1 = this.executeUserPut(invalidBody1, validUsername, accessToken, status().isBadRequest());
             System.out.println(resultInvalid1.andReturn().getResponse().getContentAsString());
-            resultInvalid1.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid1.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
@@ -525,36 +535,36 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"$invalid%%\"}";
             ResultActions resultInvalid1 = this.executeUpdatePassword(invalidBody1, validUsername, accessToken, status().isBadRequest());
-            resultInvalid1.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid1.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("3")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String invalidBody2 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"upasswordvelylong_.veryverylong\"}";
             ResultActions resultInvalid2 = this.executeUpdatePassword(invalidBody2, validUsername, accessToken, status().isBadRequest());
-            resultInvalid2.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid2.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("3")));
             resultInvalid2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String invalidBody3 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"invalid\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultInvalid3 = this.executeUpdatePassword(invalidBody3, validUsername, accessToken, status().isBadRequest());
-            resultInvalid3.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid3.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid3.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid3.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid3.andExpect(jsonPath("$.errors[0].code", is("4")));
             resultInvalid3.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String invalidBody4 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"invalid\",\"newPassword\": \"\"}";
             ResultActions resultInvalid4 = this.executeUpdatePassword(invalidBody4, validUsername, accessToken, status().isBadRequest());
-            resultInvalid4.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid4.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid4.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid4.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid4.andExpect(jsonPath("$.errors[0].code", is("52")));
             resultInvalid4.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String validBody = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultValid = this.executeUpdatePassword(validBody, validUsername, accessToken, status().isOk());
             resultValid.andExpect(jsonPath("$.payload.username", is(validUsername)));
-            resultValid.andExpect(jsonPath("$.errors", hasSize(0)));
+            resultValid.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             resultValid.andExpect(jsonPath("$.metaData.size()", is(0)));
 
         } catch (Throwable e) {
@@ -578,23 +588,23 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
 
             String invalidBody1 = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultInvalid1 = this.executeUpdatePassword(invalidBody1, "no_same_username", accessToken, status().isConflict());
-            resultInvalid1.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid1.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid1.andExpect(jsonPath("$.errors[0].code", is("2")));
             resultInvalid1.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String noExistingUser = "test12345";
             String invalidBody2 = "{\"username\": \"" + noExistingUser + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultInvalid2 = this.executeUpdatePassword(invalidBody2, noExistingUser, accessToken, status().isNotFound());
-            resultInvalid2.andExpect(jsonPath("$.payload", hasSize(0)));
-            resultInvalid2.andExpect(jsonPath("$.errors", hasSize(1)));
+            resultInvalid2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
+            resultInvalid2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             resultInvalid2.andExpect(jsonPath("$.errors[0].code", is("1")));
             resultInvalid2.andExpect(jsonPath("$.metaData.size()", is(0)));
 
             String validBody = "{\"username\": \"" + validUsername + "\",\"oldPassword\": \"" + validPassword + "\",\"newPassword\": \"" + newValidPassword + "\"}";
             ResultActions resultValid = this.executeUpdatePassword(validBody, validUsername, accessToken, status().isOk());
             resultValid.andExpect(jsonPath("$.payload.username", is(validUsername)));
-            resultValid.andExpect(jsonPath("$.errors", hasSize(0)));
+            resultValid.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             resultValid.andExpect(jsonPath("$.metaData.size()", is(0)));
 
         } catch (Throwable e) {
@@ -616,10 +626,10 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
             String accessToken = mockOAuthInterceptor(user);
             ResultActions result = mockMvc
                     .perform(get("/users").contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload", hasSize(28)));
-            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(28)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result.andExpect(jsonPath("$.metaData.size()", is(8)));
             result.andExpect(jsonPath("$.metaData.page", is(1)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(100)));
@@ -629,11 +639,11 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(get("/users")
                             .param("pageSize", "10").param("page", "2")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload", hasSize(10)));
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(10)));
             result.andExpect(jsonPath("$.payload[0].username", is("test_pager_10")));
-            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result.andExpect(jsonPath("$.metaData.size()", is(8)));
             result.andExpect(jsonPath("$.metaData.page", is(2)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(10)));
@@ -643,11 +653,11 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(get("/users")
                             .param("pageSize", "10").param("page", "2")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload", hasSize(10)));
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(10)));
             result.andExpect(jsonPath("$.payload[0].username", is("test_pager_10")));
-            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result.andExpect(jsonPath("$.metaData.size()", is(8)));
             result.andExpect(jsonPath("$.metaData.page", is(2)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(10)));
@@ -658,11 +668,11 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                     .perform(get("/users")
                             .param("pageSize", "5").param("page", "4")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
-            result.andExpect(jsonPath("$.payload", hasSize(5)));
+            result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
             result.andExpect(jsonPath("$.payload[0].username", is("test_pager_15")));
-            result.andExpect(jsonPath("$.errors", hasSize(0)));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
             result.andExpect(jsonPath("$.metaData.size()", is(8)));
             result.andExpect(jsonPath("$.metaData.page", is(4)));
             result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
@@ -683,7 +693,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                 .perform(post("/users")
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -692,7 +702,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         ResultActions result = mockMvc
                 .perform(put("/users/{username}", new Object[]{username})
                         .content(body).contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }
@@ -702,7 +712,7 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
                 .perform(post("/users/{username}/password", new Object[]{username})
                         .content(body)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(expected);
         return result;
     }

@@ -13,6 +13,14 @@
  */
 package org.entando.entando.web.userprofile;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -25,18 +33,12 @@ import org.entando.entando.web.userprofile.validator.ProfileValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
 
@@ -126,7 +128,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
         String accessToken = this.createAccessToken();
         return mockMvc.perform(
                 get("/userProfiles/{username}", username)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
     }
 
     private ResultActions performPostUserProfiles(String jsonContent) throws Exception {
@@ -135,7 +137,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
                 post("/userProfiles")
                         .content(jsonContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
     }
 
@@ -145,7 +147,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
                 put("/userProfiles/{username}", username)
                         .content(jsonContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
     }
 
     private String createAccessToken() throws Exception {

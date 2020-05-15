@@ -13,30 +13,16 @@
  */
 package org.entando.entando.web.user;
 
-import static junit.framework.TestCase.assertNull;
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.authorization.Authorization;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.role.IRoleManager;
-import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.role.Role;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
-import java.net.URLEncoder;
-import java.util.Date;
-import java.util.List;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.MockMvcHelper;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -48,17 +34,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
 
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.List;
+
 import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
-
-import org.junit.Assert;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -743,36 +726,4 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         return user;
     }
 
-
-    @Test
-    public void getMyGroupPermissionsWithLoggedUserShouldReturnPermissions() throws Exception {
-
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-
-        this.mockMvcHelper = new MockMvcHelper(mockMvc, accessToken);
-        this.mockMvcHelper.getMockMvc("/users/userProfiles/myGroupPermissions")
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.payload", hasSize(1)))
-                .andExpect(jsonPath("$.payload[0].group", is(Group.ADMINS_GROUP_NAME)))
-                .andExpect(jsonPath("$.payload[0].permissions", hasSize(1)))
-                .andExpect(jsonPath("$.payload[0].permissions[0]", is(Permission.SUPERUSER)));
-    }
-
-
-    @Test
-    public void getMyGroupPermissionsWithInvalidAccessTokenShouldReturnUnauthorized() throws Exception {
-
-        this.mockMvcHelper = new MockMvcHelper(mockMvc, "not_existing");
-        this.mockMvcHelper.getMockMvc("/users/userProfiles/myGroupPermissions")
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void getMyGroupPermissionsWithNOTLoggedUserShouldReturn401() throws Exception {
-
-        this.mockMvcHelper = new MockMvcHelper(mockMvc);
-        this.mockMvcHelper.getMockMvc("/users/userProfiles/myGroupPermissions")
-                .andExpect(status().isUnauthorized());
-    }
 }

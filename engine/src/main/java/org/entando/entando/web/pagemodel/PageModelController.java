@@ -130,6 +130,9 @@ public class PageModelController {
 
         logger.trace("get {} usage details by code {}", COMPONENT_ID, code);
 
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
+
         PagedMetadata<ComponentUsageEntity> result = pageModelService.getComponentUsageDetails(code, searchRequest);
 
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);

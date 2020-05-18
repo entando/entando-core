@@ -13,7 +13,6 @@
  */
 package org.entando.entando.web.page;
 
-import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.*;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
@@ -30,13 +29,11 @@ import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.assertionhelper.PageAssertionHelper;
-import org.entando.entando.web.component.ComponentUsage;
+import org.entando.entando.web.assertionhelper.PageRestResponseAssertionHelper;
+import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.mockhelper.PageRequestMockHelper;
-import org.entando.entando.web.page.model.PagePositionRequest;
-import org.entando.entando.web.page.model.PageRequest;
-import org.entando.entando.web.page.model.PageStatusRequest;
-import org.entando.entando.web.page.model.WidgetConfigurationRequest;
+import org.entando.entando.web.page.model.*;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -46,6 +43,7 @@ import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -1050,7 +1048,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     public void testPageUsageDetailsWithPublishedPageShouldBeIncluded() throws Exception {
 
         List<ComponentUsageEntity> expectedResult = Arrays.asList(
-                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_CHILD_PAGE_CODE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE),
                 new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_PAGE_CODE));
 
         this.execPageUsageDetailsTest(true, expectedResult);
@@ -1060,7 +1058,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     @Test
     public void testPageUsageDetailsWithUnpublishedPageShouldNOTBeIncluded() throws Exception {
 
-        List<ComponentUsageEntity> expectedResult = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_CHILD_PAGE_CODE));
+        List<ComponentUsageEntity> expectedResult = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE));
 
         this.execPageUsageDetailsTest(false, expectedResult);
     }
@@ -1075,32 +1073,68 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
         UserDetails admin = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String adminAccessToken = mockOAuthInterceptor(admin);
+        this.deletePagesForUsageDetailsTest();
 
         try {
-            // add base page
-            PageRequest pageRequest = PageRequestMockHelper.mockPageRequest();
-            this.addPage(adminAccessToken, pageRequest);
-            if (publishParentPage) {
-                this.pageManager.setPageOnline(PageRequestMockHelper.ADD_PAGE_CODE);
-            }
-
-            // add child page
-            PageRequest childPageRequest = PageRequestMockHelper.mockPageRequest();
-            childPageRequest.setCode(PageRequestMockHelper.ADD_CHILD_PAGE_CODE);
-            childPageRequest.setParentCode(PageRequestMockHelper.ADD_PAGE_CODE);
-            this.addPage(adminAccessToken, childPageRequest);
+            this.addPagesForUsageDetailsTest(publishParentPage, adminAccessToken, false);
 
             ResultActions resultActions = mockMvc.perform(get("/pages/{code}/usage/details", PageRequestMockHelper.ADD_PAGE_CODE)
+                    .params(getFilteredParams())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .header("Authorization", "Bearer " + adminAccessToken));
+                    .header("Authorization", "Bearer " + adminAccessToken))
+                    .andDo(print());
 
+            PageRestResponseAssertionHelper.assertNoFilters(resultActions);
             PageAssertionHelper.assertUsagePageDetails(resultActions, expectedResult);
 
         } catch (Exception e) {
             Assert.fail();
         } finally {
-            this.pageManager.deletePage(PageRequestMockHelper.ADD_CHILD_PAGE_CODE);
-            this.pageManager.deletePage(PageRequestMockHelper.ADD_PAGE_CODE);
+            this.deletePagesForUsageDetailsTest();
         }
+    }
+
+
+    /**
+     * creates and returns a LinkedMultiValueMap containing one filter
+     * @return
+     */
+    private LinkedMultiValueMap<String, String> getFilteredParams() {
+
+        LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("filters[0].attribute", "status");
+        requestParams.add("filters[0].operator", "eq");
+        requestParams.add("filters[0].value", "unpublished");
+        return requestParams;
+    }
+
+
+    /**
+     * insert some pages useful to test
+     */
+    private void addPagesForUsageDetailsTest(boolean publishParentPage, String adminAccessToken, boolean addSecondChildPage) throws Exception {
+
+        // add base page
+        PageRequest pageRequest = PageRequestMockHelper.mockPageRequest();
+        this.addPage(adminAccessToken, pageRequest);
+        if (publishParentPage) {
+            this.pageManager.setPageOnline(PageRequestMockHelper.ADD_PAGE_CODE);
+        }
+
+        // add first child page
+        PageRequest firstChildPageRequest = PageRequestMockHelper.mockPageRequest();
+        firstChildPageRequest.setCode(PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE);
+        firstChildPageRequest.setParentCode(PageRequestMockHelper.ADD_PAGE_CODE);
+        this.addPage(adminAccessToken, firstChildPageRequest);
+    }
+
+
+    /**
+     * insert some pages useful to test
+     */
+    private void deletePagesForUsageDetailsTest() throws Exception {
+
+        this.pageManager.deletePage(PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE);
+        this.pageManager.deletePage(PageRequestMockHelper.ADD_PAGE_CODE);
     }
 }

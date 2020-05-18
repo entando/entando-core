@@ -31,11 +31,7 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
@@ -178,6 +174,9 @@ public class PageController {
     public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, PageSearchRequest searchRequest) {
 
         logger.trace("get {} usage details by code {}", COMPONENT_ID, pageCode);
+
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
 
         if (!this.getAuthorizationService().isAuth(user, pageCode)) {
             return new ResponseEntity<>(new PagedRestResponse<>(new PagedMetadata<>()), HttpStatus.UNAUTHORIZED);

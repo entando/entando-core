@@ -10,7 +10,7 @@ import java.util.Map;
 public class PageRequestMockHelper {
 
     public static final String ADD_PAGE_CODE = "newPage";
-    public static final String ADD_CHILD_PAGE_CODE = "child";
+    public static final String ADD_FIRST_CHILD_PAGE_CODE = "child1";
     public static final String ADD_PAGE_MODEL = "home";
     public static final String ADD_PAGE_PARENT_CODE = "service";
     public static final String ADD_PAGE_STATUS = IPageService.STATUS_ONLINE;

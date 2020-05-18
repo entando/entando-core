@@ -21,8 +21,7 @@ import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetInfoDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsage;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -40,8 +39,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
 
 @RestController
 public class WidgetController {
@@ -82,6 +79,9 @@ public class WidgetController {
     public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String widgetCode, PageSearchRequest searchRequest) {
 
         logger.trace("get {} usage details by code {}", COMPONENT_ID, widgetCode);
+
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
 
         PagedMetadata<ComponentUsageEntity> result = widgetService.getComponentUsageDetails(widgetCode, searchRequest);
 

@@ -16,13 +16,15 @@ package org.entando.entando.web.user;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
@@ -43,6 +45,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -83,6 +86,11 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
+    @Autowired
+    @Qualifier(SystemConstants.BASE_CONFIG_MANAGER)
+    private ConfigInterface configManager;
+
+
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -92,7 +100,7 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter())
+                .addFilters(new CORSFilter(configManager))
                 .build();
 
         //workaround for dirty context

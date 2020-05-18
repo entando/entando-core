@@ -13,11 +13,12 @@
  */
 package org.entando.entando.web;
 
-import javax.annotation.Resource;
-
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import org.entando.entando.TestEntandoJndiUtils;
 import org.entando.entando.aps.servlet.security.CORSFilter;
@@ -31,6 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -72,6 +74,10 @@ public class AbstractControllerIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
+    @Autowired
+    @Qualifier(SystemConstants.BASE_CONFIG_MANAGER)
+    private ConfigInterface configManager;
+
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -80,8 +86,9 @@ public class AbstractControllerIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter(), springSecurityFilterChain)
+                .addFilters(new CORSFilter(configManager), springSecurityFilterChain)
                 .build();
         accessToken = null;
     }

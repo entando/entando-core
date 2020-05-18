@@ -32,6 +32,12 @@ public interface ConfigInterface {
     public static final String ALGO_DEFAULT_KEY = "algo.default.key";
     public static final String LEGACY_PASSWORDS_UPDATED = "legacyPasswordsUpdated";
 
+    public static final String CORS_ALLOWED_ORIGIN = "cors.access.control.allow.origin";
+    public static final String CORS_ALLOWED_HEADERS = "cors.access.control.allow.headers";
+    public static final String CORS_ALLOWED_METHODS = "cors.access.control.allow.methods";
+    public static final String CORS_ALLOWED_CREDENTIALS = "cors.access.control.allow.credentials";
+    public static final String CORS_MAX_AGE = "cors.access.control.maxAge";
+
     /**
      * Restituisce una voce di configurazione. La voce è un elemento di testo
      * che può essere complesso (es. XML). I valori restituiti sono relativi

@@ -118,6 +118,21 @@
                 <entry key="resourceDiskRootFolder">
                     <value>${resourceDiskRootFolder}</value>
                 </entry>
+                <entry key="cors.access.control.allow.origin">
+                    <value>${cors.access.control.allow.origin}</value>
+                </entry>
+                <entry key="cors.access.control.allow.headers">
+                    <value>${cors.access.control.allow.headers}</value>
+                </entry>
+                <entry key="cors.access.control.allow.methods">
+                    <value>${cors.access.control.allow.methods}</value>
+                </entry>
+                <entry key="cors.access.control.allow.credentials">
+                    <value>${cors.access.control.allow.credentials}</value>
+                </entry>
+                <entry key="cors.access.control.maxAge">
+                    <value>${cors.access.control.maxAge}</value>
+                </entry>
             </map>
         </property>
         <property name="securityConfigPath">

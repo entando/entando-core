@@ -13,15 +13,6 @@
  */
 package org.entando.entando.aps.system.services.page;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.IManager;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
@@ -41,6 +32,14 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.util.ApsProperties;
 import com.fasterxml.jackson.databind.JsonNode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.lang3.StringUtils;
@@ -269,12 +268,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new ResourceNotFoundException(null, "page", pageCode);
         }
         this.validateRequest(pageRequest);
-        if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
-            BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
-            bindingResult.reject(PageValidator.ERRCODE_INVALID_PARENT,
-                    new String[]{oldPage.getParentCode(), pageRequest.getParentCode()}, "page.update.parentcode.invalid");
-            throw new ValidationGenericException(bindingResult);
-        }
+
         if (!oldPage.getGroup().equals(pageRequest.getOwnerGroup())) {
             BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(oldPage, "page");
             bindingResult.reject(PageValidator.ERRCODE_GROUP_MISMATCH,
@@ -282,6 +276,16 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             throw new ValidationGenericException(bindingResult);
         }
         try {
+            if (!oldPage.getParentCode().equals(pageRequest.getParentCode())) {
+                PagePositionRequest pagePositionRequest = new PagePositionRequest();
+                pagePositionRequest.setParentCode(pageRequest.getParentCode());
+                pagePositionRequest.setCode(pageCode);
+                int position = this.getPages(pageCode).size() + 1;
+                pagePositionRequest.setPosition(position);
+                this.movePage(pageCode, pagePositionRequest);
+                oldPage = this.getPageManager().getDraftPage(pageCode);
+            }
+
             IPage newPage = this.updatePage(oldPage, pageRequest);
             this.getPageManager().updatePage(newPage);
             IPage updatePage = this.getPageManager().getDraftPage(pageCode);

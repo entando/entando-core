@@ -13,14 +13,21 @@
  */
 package org.entando.entando.web.group;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.group.IGroupService;
 import org.entando.entando.aps.system.services.group.model.GroupDto;
@@ -32,13 +39,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GroupControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -67,7 +67,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
             ResultActions result = mockMvc.perform(
                     get("/groups")
                     .param("pageSize", "5")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -82,7 +82,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups")
                     .param("pageSize", "5")
                     .param("page", "1")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -97,7 +97,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups")
                     .param("pageSize", "5")
                     .param("page", "7")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -112,7 +112,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups")
                     .param("pageSize", "0")
                     .param("page", "7")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isNotFound());
 
@@ -121,7 +121,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups")
                     .param("pageSize", "7")
                     .param("page", "0")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isBadRequest());
 
@@ -130,7 +130,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups")
                     .param("pageSize", "1")
                     .param("page", "7")
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -155,13 +155,13 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         ResultActions result = mockMvc.perform(
                 get("/groups").param("page", "0")
                 .param("direction", "DESC")
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isBadRequest());
 
         result = mockMvc.perform(
                 get("/groups").param("page", "1")
                 .param("direction", "DESC")
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.[0].code", is("management")));
 
@@ -169,7 +169,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 get("/groups").param("page", "1")
                 .param("pageSize", "4")
                 .param("direction", "ASC")
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload[0].code", is("administrators")));
 
@@ -192,7 +192,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 post("/groups")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isConflict());
 
@@ -210,7 +210,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
         ResultActions result = mockMvc.perform(
                 get("/groups/{code}", "invalid_code")
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
@@ -233,7 +233,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 put("/groups/{code}", groupRequest.getCode())
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_GROUP_NOT_FOUND)));
@@ -247,7 +247,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
         ResultActions result = mockMvc.perform(
                 get("/groups/{code}", Group.FREE_GROUP_NAME)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(4)));
         String[] managers = "PageManager,DataObjectManager,WidgetTypeManager,AuthorizationManager".split(",");
@@ -256,7 +256,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                     get("/groups/{code}/references/{manager}", Group.FREE_GROUP_NAME, managerName)
                     .param("page", "1").param("pageSize", "3")
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .header("Authorization", "Bearer " + accessToken));
+                    .header("Authorization", "Bearer " + accessToken).with(csrf()));
         }
     }
 
@@ -276,7 +276,7 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
                 post("/groups")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
 

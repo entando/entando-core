@@ -13,6 +13,10 @@
  */
 package org.entando.entando.web.usersettings;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.usersettings.UserSettingsService;
@@ -27,9 +31,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserSettingsControllerUnitTest extends AbstractControllerTest {
 
@@ -62,7 +63,7 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 put("/userSettings")
                         .content(mapper.writeValueAsString(userSettingsRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
     }
@@ -80,7 +81,7 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 put("/userSettings")
                         .content(mapper.writeValueAsString(userSettingsRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
     }

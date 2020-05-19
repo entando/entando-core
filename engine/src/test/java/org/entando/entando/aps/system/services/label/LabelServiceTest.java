@@ -1,10 +1,26 @@
 package org.entando.entando.aps.system.services.label;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.i18n.I18nManager;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 import com.agiletec.aps.util.ApsProperties;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.label.model.LabelDto;
@@ -18,15 +34,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.Collections;
-import java.util.Map;
-
-import static java.util.Collections.singletonList;
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Mockito.*;
 
 public class LabelServiceTest {
 
@@ -158,6 +165,47 @@ public class LabelServiceTest {
         assertThat(labelResult.getKey()).isEqualTo("lab");
         assertThat(labelResult.getTitles()).hasSize(1);
         assertThat(labelResult.getTitles()).containsOnly(entry("EN", "some_value"));
+    }
+
+    @Test
+    public void testGetLabelsPagination() {
+        RestListRequest request = new RestListRequest();
+        Map<String, String> labelsMap = new HashMap<>();
+
+        int pageSize = 5;
+        int totalItems = 14;
+        HashMap<String,ApsProperties> apsPropertiesMap = new HashMap();
+        for(int i=0; i<totalItems; i++) {
+            labelsMap.put("it" , "value");
+            labelsMap.put("en" , "value");
+            apsPropertiesMap.put(String.valueOf(i),create(labelsMap));
+        }
+
+        when(i18nManager.getLabelGroups()).thenReturn(apsPropertiesMap);
+
+        int page=1;
+        request.setPage(page);
+        request.setPageSize(pageSize);
+        PagedMetadata<LabelDto> labelGroups = labelService.getLabelGroups(request);
+        assertThat(labelGroups.getBody()).hasSize(pageSize);
+        assertThat(labelGroups.getTotalItems()).isEqualTo(totalItems);
+        assertThat(labelGroups.getPage()).isEqualTo(page);
+
+        page=2;
+        request.setPage(page);
+        request.setPageSize(pageSize);
+        labelGroups = labelService.getLabelGroups(request);
+        assertThat(labelGroups.getBody()).hasSize(pageSize);
+        assertThat(labelGroups.getTotalItems()).isEqualTo(totalItems);
+        assertThat(labelGroups.getPage()).isEqualTo(page);
+
+        page=3;
+        request.setPage(page);
+        request.setPageSize(pageSize);
+        labelGroups = labelService.getLabelGroups(request);
+        assertThat(labelGroups.getBody()).hasSize(totalItems - (pageSize * (page-1)));
+        assertThat(labelGroups.getTotalItems()).isEqualTo(totalItems);
+        assertThat(labelGroups.getPage()).isEqualTo(page);
     }
 
     @Test

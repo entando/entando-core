@@ -13,6 +13,13 @@
  */
 package org.entando.entando.web.userprofile;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
@@ -22,7 +29,6 @@ import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.userprofile.model.ProfileTypeDtoRequest;
 import org.entando.entando.web.userprofile.validator.ProfileTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
-import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,11 +40,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.validation.BindingResult;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ProfileTypeControllerTest extends AbstractControllerTest {
 
@@ -72,7 +74,7 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/profileTypes")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isBadRequest());
     }
 
@@ -86,7 +88,7 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/profileTypes")
                         .content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         Mockito.verify(userProfileTypeService, Mockito.times(1)).addUserProfileType(any(ProfileTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
     }
@@ -99,7 +101,7 @@ public class ProfileTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{"TST"})
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         Mockito.verify(userProfileTypeService, Mockito.times(1)).reloadProfileTypeReferences(ArgumentMatchers.anyString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.profileTypeCode", is("TST")));

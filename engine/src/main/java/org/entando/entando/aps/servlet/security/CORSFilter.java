@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
+import sun.misc.ObjectInputFilter.Config;
 
 /**
  *
@@ -38,20 +39,34 @@ public class CORSFilter extends OncePerRequestFilter {
     private String allowedCredentials;
     private String maxAge;
 
-    public CORSFilter(Properties properties) {
-        this.allowedOrigins = properties.getProperty(ConfigInterface.CORS_ALLOWED_ORIGIN);
-        this.allowedMethods = properties.getProperty(ConfigInterface.CORS_ALLOWED_METHODS);
-        this.allowedHeaders = properties.getProperty(ConfigInterface.CORS_ALLOWED_HEADERS);
-        this.allowedCredentials = properties.getProperty(ConfigInterface.CORS_ALLOWED_CREDENTIALS);
-        this.maxAge = properties.getProperty(ConfigInterface.CORS_MAX_AGE);
+    /**
+     * Loads CORS configurations from Environment variables.
+     * If not present, fallbacks to {@code systemParams} with converted key.
+     * Example: {@code CORS_ACCESS_CONTROL_ALLOW_ORIGIN} fallbacks to {@code systemParams} using key {@code cors.access.control.allow.origin}
+     * Useful for having default values or used during integration tests.
+     * @param configs Fallback systemParams Bean
+     */
+    public CORSFilter(ConfigInterface configs) {
+        this.allowedOrigins = configs.getProperty(ConfigInterface.CORS_ALLOWED_ORIGIN);
+        this.allowedMethods = configs.getProperty(ConfigInterface.CORS_ALLOWED_METHODS);
+        this.allowedHeaders = configs.getProperty(ConfigInterface.CORS_ALLOWED_HEADERS);
+        this.allowedCredentials = configs.getProperty(ConfigInterface.CORS_ALLOWED_CREDENTIALS);
+        this.maxAge = configs.getProperty(ConfigInterface.CORS_MAX_AGE);
     }
 
-    public CORSFilter(ConfigInterface configs) {
-        this.allowedOrigins = configs.getParam(ConfigInterface.CORS_ALLOWED_ORIGIN);
-        this.allowedMethods = configs.getParam(ConfigInterface.CORS_ALLOWED_METHODS);
-        this.allowedHeaders = configs.getParam(ConfigInterface.CORS_ALLOWED_HEADERS);
-        this.allowedCredentials = configs.getParam(ConfigInterface.CORS_ALLOWED_CREDENTIALS);
-        this.maxAge = configs.getParam(ConfigInterface.CORS_MAX_AGE);
+    /**
+     * Loads CORS configurations from Environment variables.
+     * If not present, fallbacks to manually provided {@code Property} map using a converted key.
+     * Example: {@code CORS_ACCESS_CONTROL_ALLOW_ORIGIN} fallbacks to provided properties map using key {@code cors.access.control.allow.origin}
+     * Useful for having default values or used during integration tests.
+     * @param properties Fallback properties map
+     */
+    public CORSFilter(Properties properties) {
+        this.allowedOrigins = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_ORIGIN);
+        this.allowedMethods = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_METHODS);
+        this.allowedHeaders = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_HEADERS);
+        this.allowedCredentials = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_CREDENTIALS);
+        this.maxAge = ConfigInterface.getProperty(properties, ConfigInterface.CORS_MAX_AGE);
     }
 
     @Override

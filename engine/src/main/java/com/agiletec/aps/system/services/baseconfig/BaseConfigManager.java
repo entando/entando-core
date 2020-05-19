@@ -103,13 +103,14 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
     }
 
     /**
-     * Restituisce il valore di un parametro di configurazione. I parametri sono
-     * desunti dalla voce "params" della tabella di sistema.
+     * Retrieves a configuration parameter. A parameter is a simple {@code String}.
      *
-     * @param name Il nome del parametro di configurazione.
-     * @return Il valore del parametro di configurazione.
+     * @param name Parameter key
+     * @return Parameter value
+     * @deprecated Use {@code getProperty method instead}
      */
     @Override
+    @Deprecated
     public String getParam(String name) {
         String param = this.getSystemParams().get(name);
         if (null != param) {
@@ -117,6 +118,18 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         } else {
             return this.getCacheWrapper().getParam(name);
         }
+    }
+
+    /**
+     * Retrieves property from Environment variable. If not present fallbacks to {@code systemParams}
+     * Example: {@code MY_SYSTEM_ENV_VARIABLE} fallbacks to {@code systemParams} with key {@code my.system.env.variable}
+     * @param name Parameter key
+     * @return Parameter value
+     */
+    @Override
+    public String getProperty(String name) {
+        String property = System.getenv(name);
+        return property == null ? getParam(name.replace("_", ".").toLowerCase()) : property;
     }
 
     protected Properties extractSecurityConfiguration() throws IOException {

@@ -15,6 +15,7 @@ package com.agiletec.aps.system.services.baseconfig;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Interfaccia per il servizio di configurazione.
@@ -32,11 +33,11 @@ public interface ConfigInterface {
     public static final String ALGO_DEFAULT_KEY = "algo.default.key";
     public static final String LEGACY_PASSWORDS_UPDATED = "legacyPasswordsUpdated";
 
-    public static final String CORS_ALLOWED_ORIGIN = "cors.access.control.allow.origin";
-    public static final String CORS_ALLOWED_HEADERS = "cors.access.control.allow.headers";
-    public static final String CORS_ALLOWED_METHODS = "cors.access.control.allow.methods";
-    public static final String CORS_ALLOWED_CREDENTIALS = "cors.access.control.allow.credentials";
-    public static final String CORS_MAX_AGE = "cors.access.control.maxAge";
+    public static final String CORS_ALLOWED_ORIGIN = "CORS_ACCESS_CONTROL_ALLOW_ORIGIN";
+    public static final String CORS_ALLOWED_HEADERS = "CORS_ACCESS_CONTROL_ALLOW_HEADERS";
+    public static final String CORS_ALLOWED_METHODS = "CORS_ACCESS_CONTROL_ALLOW_METHODS";
+    public static final String CORS_ALLOWED_CREDENTIALS = "CORS_ACCESS_CONTROL_ALLOW_CREDENTIALS";
+    public static final String CORS_MAX_AGE = "CORS_ACCESS_CONTROL_MAX_AGE";
 
     /**
      * Restituisce una voce di configurazione. La voce è un elemento di testo
@@ -59,13 +60,37 @@ public interface ConfigInterface {
     public void updateConfigItem(String name, String config) throws ApsSystemException;
 
     /**
-     * Restituisce un parametro di configurazione. Un parametro è una stringa
-     * semplice.
+     * Retrieves a configuration parameter. A parameter is a simple {@code String}.
      *
-     * @param name Il nome del parametro
-     * @return Il valore del parametro
+     * @param name Parameter key
+     * @return Parameter value
+     * @deprecated Use {@code getProperty method instead}
      */
     public String getParam(String name);
+
+    /**
+     * Retrieves property from Environment variable.
+     * If not present fallbacks to {@code systemParams}.
+     * Example: {@code MY_SYSTEM_ENV_VARIABLE} fallbacks to {@code systemParams} with key {@code my.system.env.variable}
+     *
+     * @param name Parameter key
+     * @return Parameter value
+     */
+    public String getProperty(String name);
+
+    /**
+     * Retrieves property from Environment variable.
+     * If not present fallbacks to manually provided {@code Property} property map.
+     * Example: {@code MY_SYSTEM_ENV_VARIABLE} fallbacks to properties map with key {@code my.system.env.variable}
+     *
+     * @param properties Fallback property map
+     * @param name Parameter key
+     * @return Parameter value
+     */
+    public static String getProperty(Properties properties, String name) {
+        String property = System.getenv(name);
+        return property == null ? properties.getProperty(name.replace("_", ".").toLowerCase()) : property;
+    }
 
     public void updateParam(String name, String value) throws ApsSystemException;
 

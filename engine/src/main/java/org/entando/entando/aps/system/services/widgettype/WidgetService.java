@@ -77,10 +77,9 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
     private IDtoBuilder<WidgetType, WidgetDto> dtoBuilder;
 
     private ServletContext srvCtx;
-
+    
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
     private PagedMetadataMapper pagedMetadataMapper;
 
     protected IWidgetTypeManager getWidgetManager() {
@@ -121,6 +120,14 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
 
     public void setDtoBuilder(IDtoBuilder<WidgetType, WidgetDto> dtoBuilder) {
         this.dtoBuilder = dtoBuilder;
+    }
+
+    public PagedMetadataMapper getPagedMetadataMapper() {
+        return pagedMetadataMapper;
+    }
+
+    public void setPagedMetadataMapper(PagedMetadataMapper pagedMetadataMapper) {
+        this.pagedMetadataMapper = pagedMetadataMapper;
     }
 
     @Override
@@ -304,10 +311,10 @@ public class WidgetService implements IWidgetService, GroupServiceUtilizer<Widge
         WidgetInfoDto widgetInfoDto = this.getWidgetInfo(componentCode);
 
         List<ComponentUsageEntity> totalReferenced = widgetInfoDto.getPublishedUtilizers().stream()
-                .map(widgetDetail -> new ComponentUsageEntity("page", widgetDetail.getPageCode(), IPageService.STATUS_ONLINE))
+                .map(widgetDetail -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, widgetDetail.getPageCode(), IPageService.STATUS_ONLINE))
                 .collect(Collectors.toList());
         List<ComponentUsageEntity> draftReferenced = widgetInfoDto.getDraftUtilizers().stream()
-                .map(widgetDetail -> new ComponentUsageEntity("page", widgetDetail.getPageCode(), IPageService.STATUS_DRAFT))
+                .map(widgetDetail -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, widgetDetail.getPageCode(), IPageService.STATUS_DRAFT))
                 .collect(Collectors.toList());
 
         totalReferenced.addAll(draftReferenced);

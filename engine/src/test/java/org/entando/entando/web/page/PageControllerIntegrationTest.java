@@ -30,6 +30,7 @@ import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.JsonPatchBuilder;
 import org.entando.entando.web.assertionhelper.PageAssertionHelper;
 import org.entando.entando.web.assertionhelper.PageRestResponseAssertionHelper;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.mockhelper.PageRequestMockHelper;
@@ -73,9 +74,6 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IPageModelManager pageModelManager;
-
-    @Autowired
-    private IWidgetService widgetService;
 
     private ObjectMapper mapper = new ObjectMapper();
 

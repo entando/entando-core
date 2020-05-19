@@ -29,20 +29,43 @@ public class PageMockHelper {
 
 
 
-    public static Page mockTestPage(String... widgetCodes) {
+    public static Page mockTestPage(String code, String... widgetCodes) {
         Page page = new Page();
-        page.setCode(PAGE_CODE);
+        page.setCode(code);
         page.setParentCode(PARENT_CODE);
         page.setGroup(GROUP);
         page.setModel(mockServicePageModel());
+
+        setWidgets(page, widgetCodes);
+
+        return page;
+    }
+
+//    public static Page mockTestPageMission(String... widgetCodes) {
+//        Page page = new Page();
+//        page.setCode(PAGE_MISSION_CODE);
+//        page.setParentCode(PARENT_CODE);
+//        page.setGroup(GROUP);
+//        page.setModel(mockServicePageModel());
+//
+//        setWidgets(page, widgetCodes);
+//
+//        return page;
+//    }
+
+
+    /**
+     *
+     */
+    private static Page setWidgets(Page page, String... widgetCodes) {
 
         Widget[] widgets = Arrays.stream(widgetCodes)
                 .map(WidgetMockHelper::mockWidget)
                 .toArray(Widget[]::new);
         page.setWidgets(widgets);
-
         return page;
     }
+
 
     public static PageDto mockPageDto() {
         PageDto pageDto = new PageDto();

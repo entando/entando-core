@@ -93,7 +93,7 @@ public class PageServiceTest {
 
 //        PageModel pageModel = PageMockHelper.mockServicePageModel();
 
-        Page page = PageMockHelper.mockTestPage();
+        Page page = PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE);
         page.setExtraGroups(new HashSet<>(Arrays.asList(PageMockHelper.GROUP)));
         when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
         when(pageModelManager.getPageModel(page.getModel().getCode())).thenReturn(page.getModel());
@@ -115,7 +115,7 @@ public class PageServiceTest {
         PageModel pageModel = PageMockHelper.mockServicePageModel();
         when(pageModelManager.getPageModel(pageModel.getCode())).thenReturn(pageModel);
 
-        Page page = PageMockHelper.mockTestPage();
+        Page page = PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE);
         page.setExtraGroups(new HashSet<>(Arrays.asList("free", "admin")));
         when(pageManager.getDraftPage(page.getCode())).thenReturn(page);
 
@@ -153,7 +153,7 @@ public class PageServiceTest {
     public void getPageUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() {
 
         PageDto pageDto = PageMockHelper.mockPageDto();
-        mockForSinglePage(PageMockHelper.mockTestPage(), pageDto, PageMockHelper.UTILIZERS);
+        mockForSinglePage(PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE), pageDto, PageMockHelper.UTILIZERS);
 
         Arrays.stream(new String[]{"not existing", null, ""})
                 .forEach(code -> {
@@ -193,7 +193,7 @@ public class PageServiceTest {
         PageDto pageDto = PageMockHelper.mockPageDto();
         pageDto.setChildren(new ArrayList<>());
 
-        mockForSinglePage(PageMockHelper.mockTestPage(), pageDto, new String[0]);
+        mockForSinglePage(PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE), pageDto, new String[0]);
 
         PagedMetadata<ComponentUsageEntity> pageUsageDetails = pageService.getComponentUsageDetails(PageMockHelper.PAGE_CODE, new PageSearchRequest(PageMockHelper.PAGE_CODE));
 
@@ -209,7 +209,7 @@ public class PageServiceTest {
      */
     private void testSinglePageUsageDetails(PageDto pageDto) {
 
-        Page page = PageMockHelper.mockTestPage();
+        Page page = PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE);
 
         mockForSinglePage(page, pageDto, PageMockHelper.UTILIZERS);
 
@@ -227,7 +227,7 @@ public class PageServiceTest {
      */
     private void testPagedPageUsageDetails(PageDto pageDto) {
 
-        Page page = PageMockHelper.mockTestPage();
+        Page page = PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE);
         int pageSize = 3;
         int totalSize = PageMockHelper.UTILIZERS.length +
                 (pageDto.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0);

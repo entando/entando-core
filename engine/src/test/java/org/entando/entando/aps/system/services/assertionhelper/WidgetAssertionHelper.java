@@ -22,8 +22,8 @@ public class WidgetAssertionHelper {
     public static void assertUsageDetails(PagedMetadata<ComponentUsageEntity> usageDetails) {
 
         List<ComponentUsageEntity> usageEntityList = Arrays.asList(
-                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE),
-                new ComponentUsageEntity("page", PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT));
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT));
 
         assertUsageDetails(usageDetails, usageEntityList, usageEntityList.size(), 1);
     }

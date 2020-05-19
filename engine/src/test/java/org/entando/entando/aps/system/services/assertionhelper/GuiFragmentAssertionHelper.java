@@ -29,11 +29,11 @@ public class GuiFragmentAssertionHelper {
         assertEquals(1, usageDetails.getPage());
 
         List<ComponentUsageEntity> usageEntityList = Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_WIDGET, WidgetMockHelper.WIDGET_1_CODE),
                 new ComponentUsageEntity(ComponentUsageEntity.TYPE_FRAGMENT, FragmentMockHelper.FRAGMENT_REF_1_CODE),
                 new ComponentUsageEntity(ComponentUsageEntity.TYPE_FRAGMENT, FragmentMockHelper.FRAGMENT_REF_2_CODE),
                 new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE_TEMPLATE, PageMockHelper.PAGE_MODEL_REF_CODE_1),
-                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE_TEMPLATE, PageMockHelper.PAGE_MODEL_REF_CODE_2),
-                new ComponentUsageEntity(ComponentUsageEntity.TYPE_WIDGET, WidgetMockHelper.WIDGET_1_CODE));
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE_TEMPLATE, PageMockHelper.PAGE_MODEL_REF_CODE_2));
 
         IntStream.range(0, usageDetails.getBody().size())
                 .forEach(i -> ComponentUsageEntityAssertionHelper.assertComponentUsageEntity(usageEntityList.get(i), usageDetails.getBody().get(i)));

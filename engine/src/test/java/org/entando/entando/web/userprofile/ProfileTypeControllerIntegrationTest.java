@@ -64,8 +64,9 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 
@@ -253,8 +254,9 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 

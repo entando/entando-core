@@ -13,6 +13,13 @@
  */
 package org.entando.entando.web.user;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
@@ -42,13 +49,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -90,8 +90,17 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        CORSFilter filter = new CORSFilter();
+        filter.setEnabled(true);
+        filter.setAllowedOrigins("*");
+        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        filter.setAllowedHeaders("Content-Type, Authorization");
+        filter.setAllowedCredentials("false");
+        filter.setMaxAge("3600");
+
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter())
+                .addFilters(filter)
                 .build();
 
         //workaround for dirty context

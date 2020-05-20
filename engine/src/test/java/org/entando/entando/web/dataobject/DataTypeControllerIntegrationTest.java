@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -64,8 +65,9 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 
@@ -250,8 +252,9 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 

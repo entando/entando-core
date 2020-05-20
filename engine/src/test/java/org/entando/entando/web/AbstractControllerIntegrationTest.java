@@ -13,11 +13,12 @@
  */
 package org.entando.entando.web;
 
-import javax.annotation.Resource;
-
+import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
+import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import org.entando.entando.TestEntandoJndiUtils;
 import org.entando.entando.aps.servlet.security.CORSFilter;
@@ -31,6 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -80,8 +82,17 @@ public class AbstractControllerIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        CORSFilter filter = new CORSFilter();
+        filter.setEnabled(true);
+        filter.setAllowedOrigins("*");
+        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        filter.setAllowedHeaders("Content-Type, Authorization");
+        filter.setAllowedCredentials("false");
+        filter.setMaxAge("3600");
+
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter(), springSecurityFilterChain)
+                .addFilters(filter, springSecurityFilterChain)
                 .build();
         accessToken = null;
     }

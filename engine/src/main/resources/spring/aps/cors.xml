@@ -5,12 +5,12 @@
 
     <bean id="corsFilter"
             class="org.entando.entando.aps.servlet.security.CORSFilter">
-        <property name="enabled" value="${cors.enabled}" />
-        <property name="allowedOrigins" value="${cors.access.control.allow.origin}" />
-        <property name="allowedHeaders" value="${cors.access.control.allow.headers}" />
-        <property name="allowedMethods" value="${cors.access.control.allow.methods}" />
-        <property name="allowedCredentials" value="${cors.access.control.allow.credentials}" />
-        <property name="maxAge" value="${cors.access.control.maxAge}" />
+        <property name="enabled" value="${cors.enabled:true}" />
+        <property name="allowedOrigins" value="${cors.access.control.allow.origin:*}" />
+        <property name="allowedHeaders" value="${cors.access.control.allow.headers:Content-Type, Authorization}" />
+        <property name="allowedMethods" value="${cors.access.control.allow.methods:GET, POST, PUT, DELETE, OPTIONS, PATCH}" />
+        <property name="allowedCredentials" value="${cors.access.control.allow.credentials:false}" />
+        <property name="maxAge" value="${cors.access.control.maxAge:3600}" />
     </bean>
 
 </beans>

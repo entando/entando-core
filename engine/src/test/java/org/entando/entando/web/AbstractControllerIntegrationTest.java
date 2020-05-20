@@ -84,6 +84,7 @@ public class AbstractControllerIntegrationTest {
         MockitoAnnotations.initMocks(this);
 
         CORSFilter filter = new CORSFilter();
+        filter.setEnabled(true);
         filter.setAllowedOrigins("*");
         filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
         filter.setAllowedHeaders("Content-Type, Authorization");

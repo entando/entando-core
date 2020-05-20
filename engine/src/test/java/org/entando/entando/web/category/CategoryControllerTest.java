@@ -13,10 +13,6 @@
  */
 package org.entando.entando.web.category;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.category.CategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.category.CategoryService;
@@ -30,6 +26,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 public class CategoryControllerTest extends AbstractControllerTest {
 
@@ -62,7 +60,7 @@ public class CategoryControllerTest extends AbstractControllerTest {
         ResultActions result = mockMvc
                 .perform(get("/categories")
                         .param("parentCode", "home")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
         result = mockMvc
@@ -77,7 +75,7 @@ public class CategoryControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories/{code}", "home")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
         result = mockMvc

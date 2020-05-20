@@ -13,13 +13,10 @@
  */
 package org.entando.entando.web.label;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import java.util.HashMap;
 
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.HashMap;
 import org.entando.entando.aps.system.services.label.LabelService;
 import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -31,6 +28,9 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LabelControllerUnitTest extends AbstractControllerTest {
 
@@ -66,7 +66,7 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
                 .perform(put("/labels/{labelCode}", new Object[]{"PAGE"})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
     }
 
@@ -85,7 +85,7 @@ public class LabelControllerUnitTest extends AbstractControllerTest {
                 .perform(put("/labels/{labelCode}", new Object[]{"PAGE"})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
     }
 

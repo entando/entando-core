@@ -13,10 +13,6 @@
  */
 package org.entando.entando.web.role;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -34,6 +30,9 @@ import org.mockito.Spy;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class RoleControllerUnitTest extends AbstractControllerTest {
 
@@ -70,7 +69,7 @@ public class RoleControllerUnitTest extends AbstractControllerTest {
                 post("/roles")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -91,7 +90,7 @@ public class RoleControllerUnitTest extends AbstractControllerTest {
                 post("/roles")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(payload)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }

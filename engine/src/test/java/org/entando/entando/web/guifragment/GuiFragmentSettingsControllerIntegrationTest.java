@@ -13,13 +13,6 @@
  */
 package org.entando.entando.web.guifragment;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -34,6 +27,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GuiFragmentSettingsControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -51,7 +50,7 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(
                 get("/fragmentsSettings")
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.payload." + GuiFragmentSettingsController.RESULT_PARAM_NAME, is(false)));
@@ -121,7 +120,7 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
         ResultActions result = mockMvc
                 .perform(get(uri)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }
@@ -130,7 +129,7 @@ public class GuiFragmentSettingsControllerIntegrationTest extends AbstractContro
         ResultActions result = mockMvc
                 .perform(put("/fragmentsSettings").content(body)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }

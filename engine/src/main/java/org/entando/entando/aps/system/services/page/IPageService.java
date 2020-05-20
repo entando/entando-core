@@ -16,12 +16,14 @@ package org.entando.entando.aps.system.services.page;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.entando.entando.aps.system.services.IComponentUsageService;
 import org.entando.entando.aps.system.services.page.model.PageConfigurationDto;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.page.model.PagesStatusDto;
 import org.entando.entando.aps.system.services.page.model.WidgetConfigurationDto;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -31,7 +33,7 @@ import org.entando.entando.web.page.model.WidgetConfigurationRequest;
  *
  * @author paddeo
  */
-public interface IPageService {
+public interface IPageService extends IComponentUsageService {
 
     String BEAN_NAME = "PageService";
 
@@ -52,8 +54,6 @@ public interface IPageService {
     public List<PageDto> getPages(String parentCode);
 
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups);
-
-    public Integer getPageUsage(String pageCode);
 
     /**
      * Search against online pages

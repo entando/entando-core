@@ -13,23 +13,37 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.page.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.init.IComponentManager;
+import org.entando.entando.aps.system.services.assertionhelper.PageAssertionHelper;
+import org.entando.entando.aps.system.services.assertionhelper.WidgetAssertionHelper;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
+import org.entando.entando.aps.system.services.mockhelper.WidgetMockHelper;
+import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.PageDto;
+import org.entando.entando.aps.system.services.page.model.PageSearchDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.aps.system.services.widgettype.model.WidgetDtoBuilder;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.model.Filter;
 import org.entando.entando.web.common.model.FilterOperator;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.widget.model.WidgetRequest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,16 +52,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.fail;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WidgetServiceTest {
@@ -77,6 +93,9 @@ public class WidgetServiceTest {
 
     @Mock
     private IGuiFragmentManager guiFragmentManager;
+
+    @Mock
+    private PagedMetadataMapper pagedMetadataMapper;
 
     @InjectMocks
     private WidgetService widgetService;
@@ -286,5 +305,115 @@ public class WidgetServiceTest {
         widgetRequest.setConfigUi(ImmutableMap.of(CUSTOM_ELEMENT_KEY, CUSTOM_ELEMENT_1, RESOURCES_KEY, RESOURCES_1));
         widgetRequest.setBundleId(BUNDLE_1);
         return widgetRequest;
+    }
+
+
+    @Test
+    public void getWidgetUsageDetails() throws Exception {
+
+        this.mockPagedMetadata(Arrays.asList(PageMockHelper.PAGE_CODE), 1, 1, 100, 2);
+
+        PagedMetadata<ComponentUsageEntity> usageDetails = widgetService.getComponentUsageDetails(WidgetMockHelper.WIDGET_1_CODE, new PageSearchRequest(WidgetMockHelper.WIDGET_1_CODE));
+
+        WidgetAssertionHelper.assertUsageDetails(usageDetails);
+    }
+
+
+    @Test
+    public void getWidgetUsageDetailsWithPagination() throws Exception {
+
+        int pageSize = 3;
+
+        // creates paged data
+        List<Integer> pageNumList = Arrays.asList(1, 2);
+        Map<Integer, List<ComponentUsageEntity>> usageEntityMap = new HashMap<>();
+        usageEntityMap.put(pageNumList.get(0), Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_MISSION_CODE, IPageService.STATUS_ONLINE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_MISSION_CODE, IPageService.STATUS_DRAFT)));
+        usageEntityMap.put(pageNumList.get(1), Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_DRAFT)));
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(WidgetMockHelper.WIDGET_1_CODE);
+        pageSearchRequest.setPageSize(pageSize);
+
+        // does assertions
+        IntStream.range(0, pageNumList.size())
+                .forEach(i -> {
+
+                    mockPagedMetadata(Arrays.asList(PageMockHelper.PAGE_MISSION_CODE, PageMockHelper.PAGE_CODE), pageNumList.get(i), pageNumList.get(pageNumList.size()-1), pageSize, 4);
+
+                    pageSearchRequest.setPage(pageNumList.get(i));
+
+                    PagedMetadata<ComponentUsageEntity> pageUsageDetails = widgetService.getComponentUsageDetails(WIDGET_1_CODE, pageSearchRequest);
+
+                    WidgetAssertionHelper.assertUsageDetails(pageUsageDetails,
+                            usageEntityMap.get(i+1),
+                            4,
+                            pageNumList.get(i));
+                });
+    }
+
+
+    @Test
+    public void getWidgetUsageDetailsWithInvalidCodeShouldThrowResourceNotFoundException() throws Exception {
+
+        Page page1 = PageMockHelper.mockTestPage(PageMockHelper.PAGE_MISSION_CODE, WidgetMockHelper.WIDGET_1_CODE);
+        Page page2 = PageMockHelper.mockTestPage(PageMockHelper.PAGE_CODE, WidgetMockHelper.WIDGET_1_CODE);
+
+        List mockedPageList = Arrays.asList(page1, page2);
+
+        mockPagedMetadata(Arrays.asList(PageMockHelper.PAGE_MISSION_CODE, PageMockHelper.PAGE_CODE), 1, 1, 100, 4);
+
+        PageSearchRequest pageSearchRequest = new PageSearchRequest(PageMockHelper.PAGE_CODE);
+
+        Arrays.stream(new String[]{ "not existing", null, ""})
+                .forEach(code -> {
+                    try {
+                        widgetService.getComponentUsageDetails(code, pageSearchRequest);
+                        fail("NoSuchElementException NOT thrown with code " + code);
+                    } catch (Exception e) {
+                        assertTrue(e instanceof NoSuchElementException || e instanceof NullPointerException);
+                    }
+                });
+    }
+
+
+
+
+    /**
+     * init mock for a multipaged request
+     */
+    private void mockPagedMetadata(List<String> utilizers, int currPage, int lastPage, int pageSize, int totalSize) {
+
+        try {
+
+            List<IPage> onlinePageList = utilizers.stream().map(u -> PageMockHelper.mockTestPage(u, WidgetMockHelper.WIDGET_1_CODE)).collect(Collectors.toList());
+            List<IPage> draftPageList = utilizers.stream().map(u -> PageMockHelper.mockTestPage(u, WidgetMockHelper.WIDGET_1_CODE)).collect(Collectors.toList());
+
+            when(pageManager.getOnlineWidgetUtilizers(anyString())).thenReturn(onlinePageList);
+            when(pageManager.getDraftWidgetUtilizers(anyString())).thenReturn(draftPageList);
+            when(widgetManager.getWidgetType(anyString())).thenReturn(WidgetMockHelper.mockWidgetType());
+
+            RestListRequest restListRequest = new RestListRequest();
+            restListRequest.setPageSize(pageSize);
+            restListRequest.setPage(currPage);
+
+            List<ComponentUsageEntity> componentUsageEntityList = onlinePageList.stream()
+                    .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child.getCode(), IPageService.STATUS_ONLINE))
+                    .collect(Collectors.toList());
+            componentUsageEntityList.addAll(draftPageList.stream()
+                    .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child.getCode(), IPageService.STATUS_DRAFT))
+                    .collect(Collectors.toList()));
+
+            PagedMetadata pagedMetadata = new PagedMetadata(restListRequest, componentUsageEntityList, totalSize);
+            pagedMetadata.setPageSize(pageSize);
+            pagedMetadata.setPage(currPage);
+            pagedMetadata.imposeLimits();
+            when(pagedMetadataMapper.getPagedResult(any(), any())).thenReturn(pagedMetadata);
+
+        } catch (Exception e) {
+            Assert.fail("Mock Exception");
+        }
     }
 }

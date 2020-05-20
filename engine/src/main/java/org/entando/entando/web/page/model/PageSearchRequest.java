@@ -15,6 +15,7 @@ package org.entando.entando.web.page.model;
 
 import org.entando.entando.web.common.model.RestListRequest;
 
+// TODO can we change its name in something like CodeEntitySearchRequest in order to generify?
 /**
  *
  * @author paddeo
@@ -22,6 +23,16 @@ import org.entando.entando.web.common.model.RestListRequest;
 public class PageSearchRequest extends RestListRequest {
 
     private String pageCodeToken;
+
+
+    public PageSearchRequest() {
+        super();
+    }
+
+    public PageSearchRequest(String pageCodeToken) {
+        super();
+        this.pageCodeToken = pageCodeToken;
+    }
 
     public String getPageCodeToken() {
         return pageCodeToken;

@@ -13,45 +13,24 @@
  */
 package org.entando.entando.web.page;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.page.IPage;
-import com.agiletec.aps.system.services.page.IPageManager;
-import com.agiletec.aps.system.services.page.Page;
-import com.agiletec.aps.system.services.page.PageMetadata;
-import com.agiletec.aps.system.services.page.PageTestUtil;
-import com.agiletec.aps.system.services.page.Widget;
+import com.agiletec.aps.system.services.page.*;
 import com.agiletec.aps.system.services.pagemodel.IPageModelManager;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.ApsProperties;
 import com.agiletec.aps.util.FileTextReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.entando.entando.aps.system.services.widgettype.IWidgetService;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.JsonPatchBuilder;
+import org.entando.entando.web.assertionhelper.PageAssertionHelper;
+import org.entando.entando.web.assertionhelper.PageRestResponseAssertionHelper;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.mockhelper.PageRequestMockHelper;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageStatusRequest;
@@ -65,9 +44,25 @@ import org.springframework.data.rest.webmvc.RestMediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.util.LinkedMultiValueMap;
+
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- *
  * @author paddeo
  */
 public class PageControllerIntegrationTest extends AbstractControllerIntegrationTest {
@@ -80,9 +75,6 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Autowired
     private IPageModelManager pageModelManager;
-
-    @Autowired
-    private IWidgetService widgetService;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -126,12 +118,12 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload[7].status", is("published")));
             result.andExpect(jsonPath("$.payload[7].titles.it", is("Title IT")));
             result.andExpect(jsonPath("$.payload[7].titles.en", is("Title EN")));
-
+            
             IPage extracted = this.pageManager.getDraftPage(newPageCode);
             extracted.setTitle("it", "DRAFT title IT");
             extracted.setTitle("en", "DRAFT title EN");
             this.pageManager.updatePage(extracted);
-
+            
             result = mockMvc
                 .perform(get("/pages")
                         .header("Authorization", "Bearer " + accessToken).with(csrf()));
@@ -145,7 +137,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage(newPageCode);
         }
     }
-
+    
     @Test
     public void testPageSearch() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
@@ -209,12 +201,12 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             result.andExpect(jsonPath("$.payload.status", is("published")));
             result.andExpect(jsonPath("$.payload.titles.it", is("Title IT")));
             result.andExpect(jsonPath("$.payload.titles.en", is("Title EN")));
-
+            
             IPage extracted = this.pageManager.getDraftPage(newPageCode);
             extracted.setTitle("it", "DRAFT title IT");
             extracted.setTitle("en", "DRAFT title EN");
             this.pageManager.updatePage(extracted);
-
+            
             result = mockMvc
                 .perform(get("/pages/{code}", newPageCode)
                         .header("Authorization", "Bearer " + accessToken).with(csrf()));
@@ -1147,4 +1139,129 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         return result;
     }
 
+
+    @Test
+    public void testPageUsageDetailsWithoutPermissionWillResultIn401() throws Exception {
+
+        UserDetails admin = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String adminAccessToken = mockOAuthInterceptor(admin);
+
+        try {
+            PageRequest pageRequest = PageRequestMockHelper.mockPageRequest();
+            pageRequest.setOwnerGroup(Group.ADMINS_GROUP_NAME);
+            this.addPage(adminAccessToken, pageRequest);
+
+            UserDetails user = new OAuth2TestUtils.UserBuilder("John Lackland", "0x246")
+                    .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.SUPERUSER).build();
+            String userAccessToken = mockOAuthInterceptor(user);
+
+            ResultActions resultActions = mockMvc
+                    .perform(get("/pages/{code}/usage/details", PageRequestMockHelper.ADD_PAGE_CODE)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("Authorization", "Bearer " + userAccessToken));
+
+
+            resultActions.andExpect(status().isUnauthorized());
+
+        } catch (Exception e) {
+            Assert.fail();
+        } finally {
+            this.pageManager.deletePage(PageRequestMockHelper.ADD_PAGE_CODE);
+        }
+    }
+
+
+    @Test
+    public void testPageUsageDetailsWithPublishedPageShouldBeIncluded() throws Exception {
+
+        List<ComponentUsageEntity> expectedResult = Arrays.asList(
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_PAGE_CODE));
+
+        this.execPageUsageDetailsTest(true, expectedResult);
+    }
+
+
+    @Test
+    public void testPageUsageDetailsWithUnpublishedPageShouldNOTBeIncluded() throws Exception {
+
+        List<ComponentUsageEntity> expectedResult = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE));
+
+        this.execPageUsageDetailsTest(false, expectedResult);
+    }
+
+
+    /**
+     * executes a test of page usage details
+     *
+     * @param publishParentPage
+     */
+    private void execPageUsageDetailsTest(boolean publishParentPage, List<ComponentUsageEntity> expectedResult) throws Exception {
+
+        UserDetails admin = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String adminAccessToken = mockOAuthInterceptor(admin);
+        this.deletePagesForUsageDetailsTest();
+
+        try {
+            this.addPagesForUsageDetailsTest(publishParentPage, adminAccessToken, false);
+
+            ResultActions resultActions = mockMvc.perform(get("/pages/{code}/usage/details", PageRequestMockHelper.ADD_PAGE_CODE)
+                    .params(getFilteredParams())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Bearer " + adminAccessToken))
+                    .andDo(print());
+
+            PageRestResponseAssertionHelper.assertNoFilters(resultActions);
+            PageAssertionHelper.assertUsagePageDetails(resultActions, expectedResult);
+
+        } catch (Exception e) {
+            Assert.fail();
+        } finally {
+            this.deletePagesForUsageDetailsTest();
+        }
+    }
+
+
+    /**
+     * creates and returns a LinkedMultiValueMap containing one filter
+     * @return
+     */
+    private LinkedMultiValueMap<String, String> getFilteredParams() {
+
+        LinkedMultiValueMap<String, String> requestParams = new LinkedMultiValueMap<>();
+        requestParams.add("filters[0].attribute", "status");
+        requestParams.add("filters[0].operator", "eq");
+        requestParams.add("filters[0].value", "unpublished");
+        return requestParams;
+    }
+
+
+    /**
+     * insert some pages useful to test
+     */
+    private void addPagesForUsageDetailsTest(boolean publishParentPage, String adminAccessToken, boolean addSecondChildPage) throws Exception {
+
+        // add base page
+        PageRequest pageRequest = PageRequestMockHelper.mockPageRequest();
+        this.addPage(adminAccessToken, pageRequest);
+        if (publishParentPage) {
+            this.pageManager.setPageOnline(PageRequestMockHelper.ADD_PAGE_CODE);
+        }
+
+        // add first child page
+        PageRequest firstChildPageRequest = PageRequestMockHelper.mockPageRequest();
+        firstChildPageRequest.setCode(PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE);
+        firstChildPageRequest.setParentCode(PageRequestMockHelper.ADD_PAGE_CODE);
+        this.addPage(adminAccessToken, firstChildPageRequest);
+    }
+
+
+    /**
+     * insert some pages useful to test
+     */
+    private void deletePagesForUsageDetailsTest() throws Exception {
+
+        this.pageManager.deletePage(PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE);
+        this.pageManager.deletePage(PageRequestMockHelper.ADD_PAGE_CODE);
+    }
 }

@@ -13,13 +13,6 @@
  */
 package org.entando.entando.web.dataobject;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
@@ -29,6 +22,7 @@ import org.entando.entando.web.AbstractControllerTest;
 import org.entando.entando.web.dataobject.model.DataTypeDtoRequest;
 import org.entando.entando.web.dataobject.validator.DataTypeValidator;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +35,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DataTypeControllerTest extends AbstractControllerTest {
 
@@ -74,7 +72,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/dataTypes")
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isBadRequest());
     }
 
@@ -88,7 +86,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/dataTypes")
                         .content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         Mockito.verify(dataObjectService, Mockito.times(1)).addDataType(any(DataTypeDtoRequest.class), any(BindingResult.class));
         result.andExpect(status().isOk());
     }
@@ -101,7 +99,7 @@ public class DataTypeControllerTest extends AbstractControllerTest {
                 .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{"TST"})
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         Mockito.verify(dataObjectService, Mockito.times(1)).reloadDataTypeReferences(ArgumentMatchers.anyString());
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.dataTypeCode", is("TST")));

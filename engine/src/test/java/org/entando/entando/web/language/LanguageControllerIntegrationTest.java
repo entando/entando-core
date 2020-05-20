@@ -13,17 +13,6 @@
  */
 package org.entando.entando.web.language;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.servlet.security.CORSFilter;
@@ -36,6 +25,16 @@ import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class LanguageControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -56,7 +55,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         System.out.println(result.andReturn().getResponse().getContentAsString());
 
@@ -80,7 +79,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/languages")
                         .param("filter[0].attribute", "isActive")
                         .param("filter[0].value", "true")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
@@ -93,7 +92,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"en"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
 
     }
@@ -104,7 +103,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"de"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -114,7 +113,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"xx"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
     }
 
@@ -134,7 +133,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(put("/languages/{code}", new Object[]{langCode})
                             .content(payload)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             LanguageDto updatedLang = this.languageService.getLanguage(langCode);
             assertThat(updatedLang, is(not(nullValue())));
@@ -146,7 +145,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(put("/languages/{code}", new Object[]{langCode})
                             .content(payload)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
 
             updatedLang = this.languageService.getLanguage(langCode);
@@ -174,7 +173,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(put("/languages/{code}", new Object[]{langCode})
                             .content(payload)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             LanguageDto updatedLang = this.languageService.getLanguage(langCode);
             assertThat(updatedLang, is(not(nullValue())));
@@ -186,7 +185,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(put("/languages/{code}", new Object[]{langCode})
                             .content(payload)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isConflict());
             result.andExpect(jsonPath("$.errors[0].code", is("1")));
 
@@ -211,7 +210,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(put("/languages/{code}", new Object[]{langCode})
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
 
         result.andExpect(jsonPath("$.errors[0].code", is("2")));

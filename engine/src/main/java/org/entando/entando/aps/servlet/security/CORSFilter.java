@@ -33,6 +33,7 @@ public class CORSFilter implements Filter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    private boolean enabled;
     private String allowedOrigins;
     private String allowedMethods;
     private String allowedHeaders;
@@ -42,10 +43,15 @@ public class CORSFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
             throws IOException, ServletException {
-        logger.trace("Configuring CORS Headers....");
-        // CORS "pre-flight" request
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
         final HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+        if (!enabled) {
+            filterChain.doFilter(httpRequest, httpResponse);
+        }
+
+        logger.trace("Configuring CORS Headers....");
+        // CORS "pre-flight" request
 
         httpResponse.addHeader("Access-Control-Allow-Origin", allowedOrigins);
         httpResponse.addHeader("Access-Control-Allow-Methods", allowedMethods);
@@ -81,5 +87,9 @@ public class CORSFilter implements Filter {
 
     public void setMaxAge(String maxAge) {
         this.maxAge = maxAge;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

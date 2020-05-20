@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="corsFilter"
+            class="org.entando.entando.aps.servlet.security.CORSFilter">
+        <property name="enabled" value="${cors.enabled}" />
+        <property name="allowedOrigins" value="${cors.access.control.allow.origin}" />
+        <property name="allowedHeaders" value="${cors.access.control.allow.headers}" />
+        <property name="allowedMethods" value="${cors.access.control.allow.methods}" />
+        <property name="allowedCredentials" value="${cors.access.control.allow.credentials}" />
+        <property name="maxAge" value="${cors.access.control.maxAge}" />
+    </bean>
+
+</beans>

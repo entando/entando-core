@@ -48,6 +48,7 @@ public class CORSFilter implements Filter {
 
         if (!enabled) {
             filterChain.doFilter(httpRequest, httpResponse);
+            return;
         }
 
         logger.trace("Configuring CORS Headers....");

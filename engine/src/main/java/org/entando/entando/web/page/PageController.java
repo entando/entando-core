@@ -29,12 +29,9 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.RestResponse;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsage;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -163,11 +160,31 @@ public class PageController {
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(pageCode)
-                .usage(getPageService().getPageUsage(pageCode))
+                .usage(getPageService().getComponentUsage(pageCode))
                 .build();
 
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
+
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/pages/{pageCode}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, PageSearchRequest searchRequest) {
+
+        logger.trace("get {} usage details by code {}", COMPONENT_ID, pageCode);
+
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
+
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new PagedRestResponse<>(new PagedMetadata<>()), HttpStatus.UNAUTHORIZED);
+        }
+
+        PagedMetadata<ComponentUsageEntity> result = pageService.getComponentUsageDetails(pageCode, searchRequest);
+
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
+    }
+
 
     @ActivityStreamAuditable
     @RestAccessControl(permission = Permission.MANAGE_PAGES)

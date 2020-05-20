@@ -18,6 +18,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
 
+import java.util.Optional;
+
 /**
  * @author E.Santoboni
  */
@@ -66,6 +68,10 @@ public class GuiFragmentDtoSmall {
 
     public void setWidgetType(WidgetTypeRef widgetType) {
         this.widgetType = widgetType;
+    }
+
+    public String getWidgetTypeCode() {
+        return Optional.ofNullable(widgetType).map(WidgetTypeRef::getCode).orElse("");
     }
 
     public String getPluginCode() {

@@ -13,23 +13,23 @@
  */
 package org.entando.entando.aps.servlet.security;
 
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import java.io.IOException;
-import java.util.Properties;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.OncePerRequestFilter;
-import sun.misc.ObjectInputFilter.Config;
 
 /**
  *
- * @author paddeo
+ * @author paddeo, f.leandro
  */
-public class CORSFilter extends OncePerRequestFilter {
+public class CORSFilter implements Filter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -39,51 +39,47 @@ public class CORSFilter extends OncePerRequestFilter {
     private String allowedCredentials;
     private String maxAge;
 
-    /**
-     * Loads CORS configurations from Environment variables.
-     * If not present, fallbacks to {@code systemParams} with converted key.
-     * Example: {@code CORS_ACCESS_CONTROL_ALLOW_ORIGIN} fallbacks to {@code systemParams} using key {@code cors.access.control.allow.origin}
-     * Useful for having default values or used during integration tests.
-     * @param configs Fallback systemParams Bean
-     */
-    public CORSFilter(ConfigInterface configs) {
-        this.allowedOrigins = configs.getProperty(ConfigInterface.CORS_ALLOWED_ORIGIN);
-        this.allowedMethods = configs.getProperty(ConfigInterface.CORS_ALLOWED_METHODS);
-        this.allowedHeaders = configs.getProperty(ConfigInterface.CORS_ALLOWED_HEADERS);
-        this.allowedCredentials = configs.getProperty(ConfigInterface.CORS_ALLOWED_CREDENTIALS);
-        this.maxAge = configs.getProperty(ConfigInterface.CORS_MAX_AGE);
-    }
-
-    /**
-     * Loads CORS configurations from Environment variables.
-     * If not present, fallbacks to manually provided {@code Property} map using a converted key.
-     * Example: {@code CORS_ACCESS_CONTROL_ALLOW_ORIGIN} fallbacks to provided properties map using key {@code cors.access.control.allow.origin}
-     * Useful for having default values or used during integration tests.
-     * @param properties Fallback properties map
-     */
-    public CORSFilter(Properties properties) {
-        this.allowedOrigins = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_ORIGIN);
-        this.allowedMethods = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_METHODS);
-        this.allowedHeaders = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_HEADERS);
-        this.allowedCredentials = ConfigInterface.getProperty(properties, ConfigInterface.CORS_ALLOWED_CREDENTIALS);
-        this.maxAge = ConfigInterface.getProperty(properties, ConfigInterface.CORS_MAX_AGE);
-    }
-
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.trace("Sending Header....");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        logger.trace("Configuring CORS Headers....");
         // CORS "pre-flight" request
-        response.addHeader("Access-Control-Allow-Origin", allowedOrigins);
-        response.addHeader("Access-Control-Allow-Methods", allowedMethods);
-        response.addHeader("Access-Control-Allow-Headers", allowedHeaders);
-        response.addHeader("Access-Control-Allow-Credentials", allowedCredentials);
-        response.addHeader("Access-Control-Max-Age", maxAge);
+        final HttpServletRequest httpRequest = (HttpServletRequest) request;
+        final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
+        httpResponse.addHeader("Access-Control-Allow-Origin", allowedOrigins);
+        httpResponse.addHeader("Access-Control-Allow-Methods", allowedMethods);
+        httpResponse.addHeader("Access-Control-Allow-Headers", allowedHeaders);
+        httpResponse.addHeader("Access-Control-Allow-Credentials", allowedCredentials);
+        httpResponse.addHeader("Access-Control-Max-Age", maxAge);
+
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
         } else {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(httpRequest, httpResponse);
         }
     }
 
+    @Override public void init(final FilterConfig filterConfig) {}
+    @Override public void destroy() {}
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
+    public void setAllowedMethods(String allowedMethods) {
+        this.allowedMethods = allowedMethods;
+    }
+
+    public void setAllowedHeaders(String allowedHeaders) {
+        this.allowedHeaders = allowedHeaders;
+    }
+
+    public void setAllowedCredentials(String allowedCredentials) {
+        this.allowedCredentials = allowedCredentials;
+    }
+
+    public void setMaxAge(String maxAge) {
+        this.maxAge = maxAge;
+    }
 }

@@ -86,11 +86,6 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
-    @Autowired
-    @Qualifier(SystemConstants.BASE_CONFIG_MANAGER)
-    private ConfigInterface configManager;
-
-
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -99,8 +94,16 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        CORSFilter filter = new CORSFilter();
+        filter.setAllowedOrigins("*");
+        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        filter.setAllowedHeaders("Content-Type, Authorization");
+        filter.setAllowedCredentials("false");
+        filter.setMaxAge("3600");
+
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter(configManager))
+                .addFilters(filter)
                 .build();
 
         //workaround for dirty context

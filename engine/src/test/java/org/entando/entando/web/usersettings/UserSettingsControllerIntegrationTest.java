@@ -13,20 +13,13 @@
  */
 package org.entando.entando.web.usersettings;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import java.util.Map;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.baseconfig.SystemParamsUtils;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
 import org.entando.entando.aps.system.services.usersettings.IUserSettingsService;
 import org.entando.entando.aps.system.services.usersettings.model.UserSettingsDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -37,6 +30,13 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserSettingsControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -69,7 +69,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
         ResultActions result = mockMvc.perform(
                 get("/userSettings")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
 
@@ -97,7 +97,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
             ResultActions result = mockMvc.perform(
                     get("/userSettings")
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -125,7 +125,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
                     put("/userSettings")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(mapper.writeValueAsString(userSettingsRequest))
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 
@@ -145,7 +145,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
                     put("/userSettings")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(mapper.writeValueAsString(userSettingsRequest))
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andExpect(status().isOk());
 

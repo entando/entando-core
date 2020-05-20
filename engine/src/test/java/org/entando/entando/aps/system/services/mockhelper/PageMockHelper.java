@@ -41,18 +41,6 @@ public class PageMockHelper {
         return page;
     }
 
-//    public static Page mockTestPageMission(String... widgetCodes) {
-//        Page page = new Page();
-//        page.setCode(PAGE_MISSION_CODE);
-//        page.setParentCode(PARENT_CODE);
-//        page.setGroup(GROUP);
-//        page.setModel(mockServicePageModel());
-//
-//        setWidgets(page, widgetCodes);
-//
-//        return page;
-//    }
-
 
     /**
      *
@@ -94,7 +82,6 @@ public class PageMockHelper {
         PageModel pageModel = new PageModel();
         pageModel.setCode(pageCode);
 
-        // TODO move this mock to a dedicated class or improve it
         Frame frame = new Frame();
         frame.setDescription("frame desc");
         pageModel.setConfiguration(new Frame[] {frame});

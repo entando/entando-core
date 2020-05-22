@@ -61,6 +61,7 @@
         </s:elseif>
     </p>
     <s:form action="save" namespace="/do/Portal/WidgetType" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
 
         <wp:ifauthorized permission="superuser"><s:set var="isSuperuserVar" value="%{true}" /></wp:ifauthorized>
 

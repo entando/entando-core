@@ -67,6 +67,7 @@
     <s:set var="serviceFlavoursVar" value="serviceFlavours" />
 
     <s:form action="newService" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <div class="form-group">
             <label class="control-label col-sm-2" for="service-list">
                 <s:text name="label.api.service.createNew" />

@@ -5,6 +5,7 @@
     <div class="well col-md-offset-3 col-md-6  ">
         <p class="search-label"><s:text name="note.pageTree.intro" /></p>
         <s:form action="search" class="search-pf has-button " cssClass="form-horizontal" >
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="pageCodeToken" class="sr-only"><s:text name="label.pageCode"/></label>
                 <div class="col-sm-9">

@@ -8,6 +8,7 @@
 
     <s:include value="/WEB-INF/apsadmin/jsp/common/inc/messages.jsp" />
     <s:form action="initViewEntityTypes" role="search" namespace="do/Entity">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <p>
         <wpsf:hidden name="entityManagerName"/>
         </p>

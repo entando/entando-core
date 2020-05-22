@@ -248,6 +248,7 @@
             <hr />
             <s:form namespace="/do/Admin/Database" method="get"
                     cssClass="margin-more-top">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <p class="text-center">
                 <wpsf:hidden name="subFolderName"
                              value="%{#dumpReportVar.subFolderName}" />

@@ -45,6 +45,7 @@
     <div role="search">
 
         <s:form action="search" cssClass="action-form">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only"><wpsf:hidden name="pageCodeToken" /></p>
             <s:set var="pagesFoundVar" value="pagesFound" />
             <s:if test="%{#pagesFoundVar != null && #pagesFoundVar.isEmpty() == false}">

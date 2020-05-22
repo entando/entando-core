@@ -17,6 +17,7 @@
 <div id="main" role="main">
 
     <s:form action="doSetOffline">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <p class="sr-only">
             <wpsf:hidden name="selectedNode"/>
             <wpsf:hidden name="pageCode" />

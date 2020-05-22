@@ -56,6 +56,7 @@
 <div class="tab-content">
     <div id="language" class="tab-pane fade in active">
         <s:form action="add" cssClass="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <s:if test="hasActionErrors()">
                 <div class="alert alert-danger alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">

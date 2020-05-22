@@ -74,6 +74,7 @@
                     <s:text name="note.editFrame.chooseAWidget" />
                 </p>
                 <s:form action="joinWidget">
+                    <s:hidden name="_csrf" value="%{csrfToken}"/>
                     <p class="sr-only">
                         <wpsf:hidden name="pageCode" />
                         <wpsf:hidden name="frame" />

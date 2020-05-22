@@ -41,6 +41,7 @@
             <s:text name="label.add" />
         </a>
         <s:form cssClass="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
 
             <s:set var="pageTreeStyleVar" ><wp:info key="systemParam" paramName="treeStyle_page" /></s:set>
 

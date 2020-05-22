@@ -27,6 +27,7 @@
     <s:if test="serviceStatus == 0">
 
         <s:form action="executeMoveTree">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only">
                 <wpsf:hidden name="selectedNode"/>
                 <wpsf:hidden name="parentCategoryCode"/>

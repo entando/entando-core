@@ -71,7 +71,8 @@
     
     <div>
         <legend><s:text name="title.changePassword" /></legend>
-        <s:form namespace="/do/CurrentUser" action="changePassword" cssClass="form-horizontal">            
+        <s:form namespace="/do/CurrentUser" action="changePassword" cssClass="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             
             <p class="sr-only">
                 <wpsf:hidden name="username" />

@@ -105,6 +105,7 @@
         <legend><s:text name="label.api.options.for.all" /></legend>
 
         <s:form namespace="/do/Api/Resource" action="updateAllMethodStatus" cssClass="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <div class="form-group">
                 <wpsf:hidden name="resourceName" value="%{#apiResourceVar.resourceName}" />
                 <wpsf:hidden name="namespace" value="%{#apiResourceVar.namespace}" />

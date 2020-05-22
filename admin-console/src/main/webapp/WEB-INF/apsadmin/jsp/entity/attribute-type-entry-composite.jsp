@@ -37,6 +37,7 @@
 <div id="main" role="main">
 
     <s:form action="saveCompositeAttribute" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
 
         <s:if test="hasFieldErrors()">
             <div class="alert alert-danger alert-dismissable">

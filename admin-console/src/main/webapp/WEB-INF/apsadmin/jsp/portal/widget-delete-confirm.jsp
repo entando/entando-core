@@ -20,6 +20,7 @@
 
 <div id="main" role="main">
     <s:form namespace="/do/Portal/WidgetType" action="delete">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <p class="sr-only">
             <wpsf:hidden name="widgetTypeCode" />
         </p>

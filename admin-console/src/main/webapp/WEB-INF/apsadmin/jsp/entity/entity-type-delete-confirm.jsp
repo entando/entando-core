@@ -26,6 +26,7 @@
 
 <div class="text-center">
     <s:form action="removeEntityType">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <p class="sr-only">
             <wpsf:hidden name="entityManagerName"/>
             <wpsf:hidden name="entityTypeCode"/>

@@ -45,6 +45,7 @@
         <div class="well col-md-offset-3 col-md-6  ">
             <p class="search-label"><s:text name="label.message.seach"/></p>
             <s:form action="search" class="search-pf has-button " cssClass="form-horizontal">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="text" class="sr-only">
                         <s:text name="label.search.by"/>&#32;<s:text name="label.text"/>
@@ -111,6 +112,7 @@
             </s:if>
             <div id="<s:property value="#lang.code"/>" class="tab-pane fade <s:property value="classModifier"/>">
                 <s:form action="search" cssClass="form-horizontal margin-large-top">
+                    <s:hidden name="_csrf" value="%{csrfToken}"/>
                     <p class="sr-only">
                     <wpsf:hidden name="text"/>
                     <wpsf:hidden name="searchOption"/>

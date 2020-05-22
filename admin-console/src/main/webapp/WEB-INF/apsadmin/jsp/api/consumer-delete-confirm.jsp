@@ -18,6 +18,7 @@
 <div id="main" role="main">
     <div class="text-center">
         <s:form action="delete">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only">
                 <wpsf:hidden name="consumerKey" />
             </p>

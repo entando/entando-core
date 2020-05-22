@@ -38,6 +38,7 @@
 </div>
 <br />
 <s:form action="save" namespace="/do/LocaleString" cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
     <s:if test="hasFieldErrors()">
         <div class="alert alert-danger alert-dismissable fade in">
             <button type="button" class="close" data-dismiss="alert"

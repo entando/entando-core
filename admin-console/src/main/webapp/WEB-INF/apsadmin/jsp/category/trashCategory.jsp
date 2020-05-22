@@ -23,6 +23,7 @@
 
 <div class="text-center">
     <s:form action="delete">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:set var="categoryToDelete" value="getCategory(selectedNode)"/>
         <p class="sr-only">
         <wpsf:hidden name="selectedNode"/>

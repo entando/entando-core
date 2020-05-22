@@ -4,6 +4,7 @@
 <%-- COMUNE ROMA - AGGIUNTA RICERCA PER CODICE CATEGORIA --%>
 
 <s:form action="search" cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
 	
 	<div class="form-group">
 		<label for="categoryCodeToken" class="sr-only"><s:text name="label.search.by"/>&#32;<s:text name="name.categoryCode"/></label>

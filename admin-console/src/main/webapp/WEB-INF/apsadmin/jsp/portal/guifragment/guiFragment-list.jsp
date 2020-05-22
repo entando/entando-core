@@ -33,6 +33,7 @@
     <div class="tab-pane active" id="frag-list">
 
         <s:form action="list" cssClass="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <s:if test="hasActionErrors()">
                 <div class="alert alert-danger alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
@@ -118,6 +119,7 @@
             <s:text name="guiFragment.label.new" />
         </a>
         <s:form action="search">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only">
 			<wpsf:hidden name="code" />
 			<wpsf:hidden name="widgetTypeCode" />

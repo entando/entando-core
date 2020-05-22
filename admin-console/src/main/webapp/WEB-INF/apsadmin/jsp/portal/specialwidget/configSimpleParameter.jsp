@@ -42,6 +42,7 @@
 
     <!-- Form -->
     <s:form action="saveConfigSimpleParameter" cssClass="form-horizontal mt-20">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <p class="sr-only">
             <wpsf:hidden name="pageCode" />
             <wpsf:hidden name="frame" />

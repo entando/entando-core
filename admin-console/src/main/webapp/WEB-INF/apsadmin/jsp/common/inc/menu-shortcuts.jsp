@@ -83,6 +83,7 @@ shortcuts.label.position=Position
 					action="joinMyShortcut"
 					cssClass="modal-body"
 					id="form-shortcut-add">
+					    <s:hidden name="_csrf" value="%{csrfToken}"/>
 							<p class="noscreen">
 								<wpsf:hidden name="position" />
 								<wpsf:hidden name="strutsAction" value="1" />

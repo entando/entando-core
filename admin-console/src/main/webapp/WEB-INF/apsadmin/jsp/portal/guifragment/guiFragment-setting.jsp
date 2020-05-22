@@ -40,6 +40,7 @@
         <div class="tab-pane active" id="frag-settings">
 
             <s:form action="updateSystemParams" cssClass="form-horizontal">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <s:if test="hasActionMessages()">
                     <div class="alert alert-success">
                         <span class="pficon pficon-ok"></span>

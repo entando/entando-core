@@ -59,6 +59,7 @@
     </div>
     <br>
     <s:form action="new" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
 
 
     <p class="sr-only">

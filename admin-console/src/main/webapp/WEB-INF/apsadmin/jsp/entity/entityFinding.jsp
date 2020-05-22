@@ -22,7 +22,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 	</s:if>
 
 <s:form action="search"  role="search">
-	
+	<s:hidden name="_csrf" value="%{csrfToken}"/>
 	<fieldset>
 		<legend class="accordion_toggler"><s:text name="title.searchFilters" /></legend>  
 		
@@ -160,6 +160,7 @@ http://localhost:8080/PortalExample/do/Entity/search.action?entityManagerName=ja
 </s:form>
 
 <s:form action="search">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
 	<p class="sr-only">
 		<wpsf:hidden name="entityTypeCode" />
 		<s:iterator var="attribute" value="#searchableAttributesVar">

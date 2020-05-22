@@ -22,6 +22,7 @@
 
 <div id="main" role="main">
     <s:form action="updateSystemParams">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:if test="hasActionMessages()">
             <div class="alert alert-success">
                 <span class="pficon pficon-ok"></span>

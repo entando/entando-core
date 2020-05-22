@@ -126,6 +126,7 @@
             </s:else>
             <s:form action="restoreBackup" method="get"
                     namespace="/do/Admin/Database">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <p class="pull-right">
                 <wpsf:hidden name="subFolderName" value="%{subFolderName}" />
                 <wpsf:submit type="button"

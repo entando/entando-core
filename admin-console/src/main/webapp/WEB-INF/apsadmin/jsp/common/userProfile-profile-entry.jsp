@@ -4,6 +4,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:form namespace="/do/currentuser/profile" action="save" cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
 	<s:if test="hasFieldErrors()">
 		<div class="alert alert-danger alert-dismissable fade in">
 			<button class="close" data-dismiss="alert"><span class="icon fa fa-times"></span></button>

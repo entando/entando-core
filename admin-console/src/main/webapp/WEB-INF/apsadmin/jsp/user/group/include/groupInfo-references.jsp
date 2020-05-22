@@ -31,6 +31,7 @@
     <div class="tab-content">
         <div id="pages" class="tab-pane fade in active">
             <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <s:hidden name="name" />
                 <s:if test="null != references['PageManagerUtilizers']">
                     <wpsa:subset source="references['PageManagerUtilizers']" count="10"
@@ -117,6 +118,7 @@
         </div>
         <div id="users" class="tab-pane fade">
             <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <s:hidden name="name" />
                 <s:if test="null != references['AuthorizationManagerUtilizers']">
                     <wpsa:subset source="references['AuthorizationManagerUtilizers']"
@@ -255,6 +257,7 @@
         </div>
         <div id="widget" class="tab-pane fade">
             <s:form action="detail" cssClass="form-horizontal">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <s:hidden name="name" />
                 <s:if test="null != references['WidgetTypeManagerUtilizers']">
                     <wpsa:subset source="references['WidgetTypeManagerUtilizers']"

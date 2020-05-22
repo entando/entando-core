@@ -22,6 +22,7 @@
 <br>
 
 <s:form action="search"  role="search" cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
     <s:if test="hasActionMessages()">
         <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">

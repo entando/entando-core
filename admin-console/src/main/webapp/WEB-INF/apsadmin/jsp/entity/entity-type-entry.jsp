@@ -61,6 +61,7 @@
     </s:if>
 
     <s:form action="saveEntityType" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:set var="entityType" value="entityType"/>
         <s:if test="operationId != 1">
             <p class="sr-only">

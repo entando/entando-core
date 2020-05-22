@@ -32,6 +32,7 @@
                 <s:text name="label.search" />
             </p>
             <s:form action="search" cssClass="form-horizontal" role="search">
+                <s:hidden name="_csrf" value="%{csrfToken}"/>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">
                         <s:text name="label.type" />
@@ -59,6 +60,7 @@
     </div>
     <div class="col-md-12">
         <s:form action="search" role="list" namespace="/do/dataobject/model" class="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only">
             <wpsf:hidden name="dataType" />
             </p>

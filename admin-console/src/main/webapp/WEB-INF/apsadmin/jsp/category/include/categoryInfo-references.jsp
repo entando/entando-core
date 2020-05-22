@@ -2,6 +2,7 @@
 <%@ taglib uri="/apsadmin-core" prefix="wpsa" %>
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 <s:form>
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
 <p class="sr-only">
 	<wpsf:hidden name="selectedNode" />
 	<s:iterator value="#categoryInfoReferencesExtraPaginatorParamMap" var="extraParam">

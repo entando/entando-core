@@ -5,6 +5,7 @@
 <%@ taglib prefix="wpsf" uri="/apsadmin-form" %>
 
 <s:form cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
     <p class="sr-only">
         <wpsf:hidden name="code"/>
     </p>

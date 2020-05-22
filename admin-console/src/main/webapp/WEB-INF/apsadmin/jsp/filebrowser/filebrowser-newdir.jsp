@@ -31,6 +31,7 @@
         value="/WEB-INF/apsadmin/jsp/filebrowser/include/breadcrumbs.jsp" />
     <s:form cssClass="margin-base-top form-horizontal" action="createDir"
             namespace="/do/FileBrowser" method="post">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:if test="hasFieldErrors()">
             <div class="alert alert-danger alert-dismissable fade in">
                 <button type="button" class="close" data-dismiss="alert"

@@ -45,6 +45,7 @@
 <br />
 
 <s:form action="save" cssClass="form-horizontal">
+    <s:hidden name="_csrf" value="%{csrfToken}"/>
     <s:if test="hasActionErrors()">
         <div class="alert alert-danger alert-dismissable">
             <button type="button" class="close" data-dismiss="alert"

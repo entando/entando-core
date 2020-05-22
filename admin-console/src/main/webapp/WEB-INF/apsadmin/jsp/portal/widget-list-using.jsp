@@ -37,6 +37,7 @@
     </s:else>
     <s:if test="#showletUtilizers != null && #showletUtilizers.size() > 0">
         <s:form action="viewWidgetUtilizers" >
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <p class="sr-only">
                 <wpsf:hidden name="widgetTypeCode" />
             </p>

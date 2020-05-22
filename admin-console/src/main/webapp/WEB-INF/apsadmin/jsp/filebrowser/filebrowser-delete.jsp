@@ -21,6 +21,7 @@
 <div class="text-center">
     <s:form action="delete" namespace="/do/FileBrowser" method="post"
             cssClass="margin-base-top">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:hidden name="deleteFile" />
         <s:hidden name="currentPath" />
         <s:hidden name="filename" />

@@ -32,6 +32,7 @@
     <s:form action="upload" namespace="/do/FileBrowser" method="post"
             enctype="multipart/form-data"
             cssClass="margin-base-top form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
 
         <s:if test="hasFieldErrors()">
             <div class="alert alert-danger alert-dismissable fade in">

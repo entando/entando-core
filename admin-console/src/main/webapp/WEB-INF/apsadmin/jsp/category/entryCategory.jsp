@@ -39,6 +39,7 @@
 
 <div id="main" role="main">
     <s:form action="save" cssClass="form-horizontal">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
         <s:set var="currentFieldFieldErrorsVar" value="%{fieldErrors['parentCategoryCode']}" />
         <s:if test="hasFieldErrors()">
             <div class="alert alert-danger alert-dismissable">

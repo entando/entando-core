@@ -38,6 +38,7 @@
     </s:if>
 
     <s:form action="list" role="search" namespace="/do/PageModel">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
 
         <p>
             <a class="btn btn-primary pull-right mb-5" href="<s:url namespace="/do/PageModel" action="new" />">

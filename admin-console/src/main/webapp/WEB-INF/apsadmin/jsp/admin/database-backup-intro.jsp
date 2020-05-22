@@ -70,6 +70,7 @@
             <div class="col-sm-12">
                 <s:form action="executeBackup" namespace="/do/Admin/Database"
                         method="get">
+                    <s:hidden name="_csrf" value="%{csrfToken}"/>
                     <a class="btn btn-default"
                        href="<s:url namespace="/do/Admin/Database" action="entry" />">
                         <s:text name="database.management.label.go.to.list" />

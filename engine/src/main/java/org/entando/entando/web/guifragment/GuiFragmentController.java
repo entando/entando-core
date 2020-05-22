@@ -26,13 +26,12 @@ import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.PagedRestResponse;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsage;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,15 +96,28 @@ public class GuiFragmentController {
     @RequestMapping(value = "/{fragmentCode}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String fragmentCode) {
         logger.trace("get {} usage by code {}", COMPONENT_ID, fragmentCode);
-        GuiFragmentDto fragment = this.getGuiFragmentService().getGuiFragment(fragmentCode);
 
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(fragmentCode)
-                .usage(fragment.getPageModels().size())
+                .usage(guiFragmentService.getComponentUsage(fragmentCode))
                 .build();
 
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
+    }
+
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{fragmentCode}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String fragmentCode, PageSearchRequest searchRequest) {
+
+        logger.trace("get {} usage details by code {}", COMPONENT_ID, fragmentCode);
+
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
+
+        PagedMetadata<ComponentUsageEntity> result = guiFragmentService.getComponentUsageDetails(fragmentCode, searchRequest);
+
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
     @RestAccessControl(permission = Permission.SUPERUSER)

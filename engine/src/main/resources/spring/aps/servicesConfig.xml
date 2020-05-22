@@ -20,6 +20,8 @@
     <!--  async support -->
     <task:annotation-driven   />
 
+    <bean id="PagedMetadataMapper" class="org.entando.entando.web.common.assembler.PagedMetadataMapper" />
+
     <!-- === WIDGET VALIDATORS === -->
 
     <bean id="WidgetValidatorFactory" class="org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory" />
@@ -102,6 +104,7 @@
         <property name="pageManager" ref="PageManager" />
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
         <property name="groupManager" ref="GroupManager" />
+        <property name="pagedMetadataMapper" ref="PagedMetadataMapper" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

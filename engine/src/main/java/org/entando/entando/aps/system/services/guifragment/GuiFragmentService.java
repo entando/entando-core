@@ -13,20 +13,21 @@
  */
 package org.entando.entando.aps.system.services.guifragment;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import java.util.Arrays;
 import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 import org.entando.entando.web.guifragment.validator.GuiFragmentValidator;
 import org.slf4j.Logger;
@@ -46,6 +47,9 @@ public class GuiFragmentService implements IGuiFragmentService {
 
     @Autowired
     private IDtoBuilder<GuiFragment, GuiFragmentDtoSmall> dtoSmallBuilder;
+
+    @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
 
     protected IGuiFragmentManager getGuiFragmentManager() {
         return guiFragmentManager;
@@ -185,4 +189,39 @@ public class GuiFragmentService implements IGuiFragmentService {
         return bindingResult;
     }
 
+    @Override
+    public Integer getComponentUsage(String componentCode) {
+
+        return this.getGuiFragment(componentCode).getPageModels().size();
+    }
+
+    @Override
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String componentCode, RestListRequest restListRequest) {
+
+        List<ComponentUsageEntity> componentUsageEntityList = new ArrayList<>();
+
+        GuiFragmentDto fragmentDto = this.getGuiFragment(componentCode);
+
+        if (null != fragmentDto.getWidgetType()) {
+            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_WIDGET, fragmentDto.getWidgetTypeCode()));
+        }
+
+        if (null != fragmentDto.getFragments()) {
+
+            List<ComponentUsageEntity> fragmentList = fragmentDto.getFragments().stream()
+                    .map(fragmentRef -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_FRAGMENT, fragmentRef.getCode()))
+                    .collect(Collectors.toList());
+            componentUsageEntityList.addAll(fragmentList);
+        }
+
+        if (null != fragmentDto.getPageModels()) {
+
+            List<ComponentUsageEntity> pageModelList = fragmentDto.getPageModels().stream()
+                    .map(pageModelRef -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE_TEMPLATE, pageModelRef.getCode()))
+                    .collect(Collectors.toList());
+            componentUsageEntityList.addAll(pageModelList);
+        }
+
+        return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);
+    }
 }

@@ -15,24 +15,24 @@ package org.entando.entando.aps.system.services.guifragment;
 
 import java.util.List;
 
+import org.entando.entando.aps.system.services.IComponentUsageService;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDtoSmall;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.guifragment.model.GuiFragmentRequestBody;
 
-public interface IGuiFragmentService {
+public interface IGuiFragmentService extends IComponentUsageService {
 
-	public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq);
+    public PagedMetadata<GuiFragmentDtoSmall> getGuiFragments(RestListRequest restListReq);
 
-	public GuiFragmentDto getGuiFragment(String code);
+    public GuiFragmentDto getGuiFragment(String code);
 
-	public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
+    public GuiFragmentDto addGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
 
-	public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
+    public GuiFragmentDto updateGuiFragment(GuiFragmentRequestBody guiFragmentRequest);
 
-	public void removeGuiFragment(String guiFragmentCode);
+    public void removeGuiFragment(String guiFragmentCode);
 
     public List<String> getPluginCodes();
-
 }

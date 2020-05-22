@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
@@ -91,8 +90,17 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+
+        CORSFilter filter = new CORSFilter();
+        filter.setEnabled(true);
+        filter.setAllowedOrigins("*");
+        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
+        filter.setAllowedHeaders("Content-Type, Authorization");
+        filter.setAllowedCredentials("false");
+        filter.setMaxAge("3600");
+
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter())
+                .addFilters(filter)
                 .build();
 
         //workaround for dirty context
@@ -156,7 +164,7 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     private ResultActions executeDeleteUserAuthorities(String username, String accessToken) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/users/{username}/authorities", new Object[]{username})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         return result;
     }
 

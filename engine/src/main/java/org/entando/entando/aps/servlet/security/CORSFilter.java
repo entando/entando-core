@@ -14,38 +14,83 @@
 package org.entando.entando.aps.servlet.security;
 
 import java.io.IOException;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
  *
- * @author paddeo
+ * @author paddeo, f.leandro
  */
-public class CORSFilter extends OncePerRequestFilter {
+public class CORSFilter implements Filter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    public static final String ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
+
+    private boolean enabled;
+    private String allowedOrigins;
+    private String allowedMethods;
+    private String allowedHeaders;
+    private String allowedCredentials;
+    private String maxAge;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        logger.trace("Sending Header....");
-        // CORS "pre-flight" request
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Methods", ALLOWED_METHODS);
-        response.addHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-        response.addHeader("Access-Control-Max-Age", "3600");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        final HttpServletRequest httpRequest = (HttpServletRequest) request;
+        final HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            response.setStatus(HttpServletResponse.SC_OK);
+        if (!enabled) {
+            filterChain.doFilter(httpRequest, httpResponse);
+            return;
+        }
+
+        logger.trace("Configuring CORS Headers....");
+        // CORS "pre-flight" request
+
+        httpResponse.addHeader("Access-Control-Allow-Origin", allowedOrigins);
+        httpResponse.addHeader("Access-Control-Allow-Methods", allowedMethods);
+        httpResponse.addHeader("Access-Control-Allow-Headers", allowedHeaders);
+        httpResponse.addHeader("Access-Control-Allow-Credentials", allowedCredentials);
+        httpResponse.addHeader("Access-Control-Max-Age", maxAge);
+
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
+            httpResponse.setStatus(HttpServletResponse.SC_OK);
         } else {
-            filterChain.doFilter(request, response);
+            filterChain.doFilter(httpRequest, httpResponse);
         }
     }
 
+    @Override public void init(final FilterConfig filterConfig) {}
+    @Override public void destroy() {}
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
+
+    public void setAllowedMethods(String allowedMethods) {
+        this.allowedMethods = allowedMethods;
+    }
+
+    public void setAllowedHeaders(String allowedHeaders) {
+        this.allowedHeaders = allowedHeaders;
+    }
+
+    public void setAllowedCredentials(String allowedCredentials) {
+        this.allowedCredentials = allowedCredentials;
+    }
+
+    public void setMaxAge(String maxAge) {
+        this.maxAge = maxAge;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

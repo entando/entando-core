@@ -13,11 +13,6 @@
  */
 package org.entando.entando.web.system;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -26,6 +21,10 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 
 public class ReloadConfigurationControllerTest extends AbstractControllerIntegrationTest {
 
@@ -39,7 +38,7 @@ public class ReloadConfigurationControllerTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(post("/reloadConfiguration")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         /**
          * The response should have the correct CORS headers and the CORS
@@ -47,8 +46,9 @@ public class ReloadConfigurationControllerTest extends AbstractControllerIntegra
          * org.entando.entando.aps.servlet.CORSFilter class
          */
         result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
+        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
         result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
+        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
         result.andExpect(header().string("Access-Control-Max-Age", "3600"));
     }
 

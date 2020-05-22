@@ -3,19 +3,33 @@ package org.entando.entando.aps.system.services.pagemodel;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.*;
+import org.entando.entando.aps.system.services.assertionhelper.PageModelAssertionHelper;
+import org.entando.entando.aps.system.services.guifragment.GuiFragment;
+import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
+import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
+import org.entando.entando.aps.system.services.page.IPageService;
+import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.pagemodel.model.*;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.pagemodel.model.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.ApplicationContext;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -26,16 +40,26 @@ public class PageModelServiceTest {
 
     private static final RestListRequest EMPTY_REQUEST = new RestListRequest();
 
+    @Mock
+    private IPageModelManager pageModelManager;
 
-    @Mock IPageModelManager pageModelManager;
+    @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
+    private PageModelServiceUtilizer pageModelServiceUtilizer;
+    @Mock
+    private PagedMetadataMapper pagedMetadataMapper;
 
     private PageModelDtoBuilder dtoBuilder;
+
     private PageModelService pageModelService;
 
     @Before
     public void setUp() throws Exception {
         dtoBuilder = new PageModelDtoBuilder();
-        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
+        pageModelService = new PageModelService(pageModelManager, dtoBuilder, pagedMetadataMapper);
+        pageModelService.setApplicationContext(applicationContext);
     }
 
     @Test public void
@@ -65,6 +89,35 @@ public class PageModelServiceTest {
         PagedMetadata<PageModelDto> expected = resultPagedMetadata();
         assertThat(result).isEqualTo(expected);
     }
+
+    @Test
+    public void getPageModelUsageTest() {
+
+        String managerName = "PageManager";
+
+        PageModel pageModel = PageMockHelper.mockServicePageModel();
+        PageDto pageDto = PageMockHelper.mockPageDto();
+        Map<String, Object> pageModelServiceUtilizerMap = new HashMap<>();
+        pageModelServiceUtilizerMap.put(managerName, pageModelServiceUtilizer);
+
+        when(pageModelManager.getPageModel(anyString())).thenReturn(pageModel);
+        when(applicationContext.getBeansOfType(any())).thenReturn(pageModelServiceUtilizerMap);
+        when(pageModelServiceUtilizer.getManagerName()).thenReturn(managerName);
+        when(pageModelServiceUtilizer.getPageModelUtilizer(anyString())).thenReturn(Collections.singletonList(pageDto));
+        RestListRequest restListRequest = new RestListRequest();
+        restListRequest.setPageSize(1);
+        List<ComponentUsageEntity> componentUsageEntityList = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageMockHelper.PAGE_CODE, IPageService.STATUS_ONLINE));
+        PagedMetadata pagedMetadata = new PagedMetadata(restListRequest, componentUsageEntityList, 1);
+        pagedMetadata.setPageSize(1);
+        pagedMetadata.setPage(1);
+        pagedMetadata.imposeLimits();
+        when(pagedMetadataMapper.getPagedResult(any(), any())).thenReturn(pagedMetadata);
+
+        PagedMetadata<ComponentUsageEntity> usageDetails = pageModelService.getComponentUsageDetails(pageModel.getCode(), new PageSearchRequest(pageModel.getCode()));
+
+        PageModelAssertionHelper.assertUsageDetails(usageDetails);
+    }
+
 
     private PagedMetadata<PageModelDto> resultPagedMetadata() {
         RestListRequest request = new RestListRequest();

@@ -208,6 +208,14 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
     public String getFullTitle(ITreeNode treeNode, String langCode) {
         return treeNode.getFullTitle(langCode, this.getTreeNodeManager(treeNode));
     }
+
+	public String getCsrfToken() {
+		return csrfToken;
+	}
+
+	public void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
+	}
     
     protected ITreeNodeManager getTreeNodeManager(ITreeNode treeNode) {
         String beanName = treeNode.getManagerBeanCode();
@@ -262,5 +270,6 @@ public class BaseAction extends ActionSupport implements ServletRequestAware, Pa
 	public static final String USER_NOT_ALLOWED = "userNotAllowed";
 	
 	private List<ActivityStreamInfo> _activityStreamInfos;
-	
+	private String csrfToken;
+
 }

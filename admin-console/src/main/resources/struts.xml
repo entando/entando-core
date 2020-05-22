@@ -32,7 +32,8 @@
 			<interceptor name="entandoActionLogger" class="org.entando.entando.apsadmin.system.ActionLoggerInterceptor" />	
 			<interceptor name="entandoToken" class="org.entando.entando.apsadmin.system.CustomTokenInterceptor" />	
 			<interceptor name="redirectMessage" class="org.entando.entando.apsadmin.system.RedirectMessageInterceptor" />
-			
+			<interceptor name="csrfInterceptor" class="com.agiletec.apsadmin.system.CsrfInterceptor" />
+
 			<interceptor-stack name="entandoFreeStack">
 				<interceptor-ref name="exception"/>
 				<interceptor-ref name="alias"/>
@@ -45,6 +46,7 @@
 				<interceptor-ref name="staticParams"/>
 				<interceptor-ref name="apsParams"/>
 				<interceptor-ref name="conversionError"/>
+				<interceptor-ref name="csrfInterceptor"/>
 			</interceptor-stack>
 			
 			<interceptor-stack name="entandoFreeValidationStack">
@@ -68,9 +70,9 @@
 				<interceptor-ref name="requestAuth"/>
 				<interceptor-ref name="entandoFreeValidationStack" />
 			</interceptor-stack>
-			
+
 		</interceptors>
-    	
+
 		<global-results>
 			<result name="homepage">/index.jsp</result>
 			<result name="failure">/WEB-INF/apsadmin/jsp/common/error.jsp</result>
@@ -93,7 +95,7 @@
 		<interceptors>
             
 			<interceptor name="i18nFrontEnd" class="org.entando.entando.aps.internalservlet.system.I18nFrontEndInterceptor" />
-            
+
 			<interceptor-stack name="entandoFrontEndFreeStack">
 				<interceptor-ref name="exception"/>
 				<interceptor-ref name="alias"/>

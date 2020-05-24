@@ -13,15 +13,12 @@
  */
 package org.entando.entando.web;
 
-import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
-import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.user.IAuthenticationProviderManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import javax.annotation.Resource;
 import javax.servlet.Filter;
 import org.entando.entando.TestEntandoJndiUtils;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -32,7 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -40,6 +36,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CorsFilter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -74,6 +71,9 @@ public class AbstractControllerIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
+    @Autowired
+    protected CorsFilter corsFilter;
+
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -83,16 +83,8 @@ public class AbstractControllerIntegrationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        CORSFilter filter = new CORSFilter();
-        filter.setEnabled(true);
-        filter.setAllowedOrigins("*");
-        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
-        filter.setAllowedHeaders("Content-Type, Authorization");
-        filter.setAllowedCredentials("false");
-        filter.setMaxAge("3600");
-
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(filter, springSecurityFilterChain)
+                .addFilters(springSecurityFilterChain, corsFilter)
                 .build();
         accessToken = null;
     }

@@ -15,7 +15,6 @@ package org.entando.entando.web.filebrowser;
 
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.storage.IStorageManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.filebrowser.model.FileBrowserFileRequest;

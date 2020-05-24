@@ -15,7 +15,6 @@ package org.entando.entando.web.language;
 
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.language.ILanguageService;
 import org.entando.entando.aps.system.services.language.LanguageDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;

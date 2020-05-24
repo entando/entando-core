@@ -24,7 +24,6 @@ import com.agiletec.aps.util.FileTextReader;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Date;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileService;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;

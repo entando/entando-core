@@ -19,7 +19,6 @@ import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
@@ -30,7 +29,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -64,11 +63,11 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/dataTypes")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+    }
+
+    @Test
+    public void testDataTypesCors() throws Exception {
+        super.testCors("/dataTypes", HttpMethod.GET);
     }
 
     @Test
@@ -251,11 +250,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/dataTypeAttributes")
                         .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH"));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Allow-Credentials", "false"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+        testCors("/dataTypeAttributes");
     }
 
     @Test

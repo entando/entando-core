@@ -123,6 +123,7 @@
         <s:elseif test="#methodVar.requiredAuth"><s:set var="selectFieldValue">0</s:set></s:elseif>
         <s:url namespace="/do/Api/Resource" action="updateMethodStatus" var="updateMethodStatusURL" />
         <form action="<s:url namespace="/do/Api/Resource" action="updateMethodStatus" />#<s:property value="#methodVar.httpMethod" />_tab" class="form-horizontal">
+            <s:hidden name="_csrf" value="%{csrfToken}"/>
             <div class="form-group">
                 <wpsf:hidden name="resourceName" value="%{#methodVar.resourceName}" />
                 <wpsf:hidden name="namespace" value="%{#methodVar.namespace}" />

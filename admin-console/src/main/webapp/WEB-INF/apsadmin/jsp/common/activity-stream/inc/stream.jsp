@@ -182,6 +182,7 @@
                         <div class="media-body">
                             <%-- insert comment --%>
                             <form action="<s:url action="addComment" namespace="/do/ActivityStream" />">
+                                <s:hidden name="_csrf" value="%{csrfToken}"/>
                                 <wpsf:hidden name="streamRecordId" value="%{#actionLogRecordIdVar}" />
                                 <textarea  id="textarea-stream-<s:property value="#actionLogRecordIdVar" />" 
                                            class="form-control" cols="38" rows="1" placeholder="<s:property value="%{getText('activity.stream.comment.insert.tip')}" />" title="<s:property value="%{getText('activity.stream.comment.insert.tip')}" />"

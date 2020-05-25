@@ -22,6 +22,7 @@
 <body>
   <div class="LoginPage">
     <form class="LoginPage__form" action="doLogin" id="form-login">
+        <s:hidden name="_csrf" value="%{csrfToken}"/>
       <div class="LoginPage__brand">
         <div class="LoginPage__logo"></div>
         <div class="LoginPage__description"></div>

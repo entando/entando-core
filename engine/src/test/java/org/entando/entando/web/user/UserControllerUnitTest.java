@@ -13,55 +13,41 @@
  */
 package org.entando.entando.web.user;
 
+import com.agiletec.aps.system.common.entity.model.attribute.*;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.*;
+import com.agiletec.aps.system.services.role.*;
+import com.agiletec.aps.system.services.user.*;
+import de.mkammerer.argon2.Argon2Factory;
+import org.entando.entando.aps.system.services.user.UserService;
+import org.entando.entando.aps.system.services.user.model.*;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
+import org.entando.entando.aps.util.crypto.Argon2PasswordEncoder;
+import org.entando.entando.web.AbstractControllerTest;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.*;
+import org.entando.entando.web.user.model.*;
+import org.entando.entando.web.user.validator.UserValidator;
+import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.*;
+import org.mockito.*;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.*;
+import org.entando.entando.aps.util.crypto.CryptoException;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
-import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
-import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.Group;
-import com.agiletec.aps.system.services.group.IGroupManager;
-import com.agiletec.aps.system.services.role.IRoleManager;
-import com.agiletec.aps.system.services.role.Role;
-import com.agiletec.aps.system.services.user.IUserManager;
-import com.agiletec.aps.system.services.user.User;
-import com.agiletec.aps.system.services.user.UserDetails;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import org.entando.entando.aps.system.services.user.UserService;
-import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
-import org.entando.entando.aps.system.services.user.model.UserDto;
-import org.entando.entando.aps.system.services.user.model.UserDtoBuilder;
-import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
-import org.entando.entando.aps.util.crypto.CryptoException;
-import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.PagedMetadata;
-import org.entando.entando.web.common.model.RestListRequest;
-import org.entando.entando.web.user.model.UserAuthoritiesRequest;
-import org.entando.entando.web.user.model.UserRequest;
-import org.entando.entando.web.user.validator.UserValidator;
-import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  *
@@ -114,7 +100,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .param("filter[0].operator", "like")
                         .param("filter[0].value", "user")
                         .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         System.out.println("result: " + result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
@@ -131,7 +117,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .param("filter[0].operator", "like")
                         .param("filter[0].value", "user")
                         //.sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
 
@@ -152,7 +138,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         //.sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isOk());
@@ -175,7 +161,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isConflict());
@@ -197,7 +183,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -221,7 +207,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -245,7 +231,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -269,7 +255,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
     }
@@ -283,7 +269,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                 get("/users")
                         .param("withProfile", "1")
                         //                        .param("filter[0].attribute", "username")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();

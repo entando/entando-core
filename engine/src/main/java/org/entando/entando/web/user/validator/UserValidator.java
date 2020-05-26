@@ -209,8 +209,15 @@ public class UserValidator extends AbstractPaginationValidator {
     }
 
     private boolean verifyPassword(String username, String password) {
-        UserDetails user = this.extractUser(username);
-        return passwordEncoder.matches(password, user.getPassword());
+        try {
+            UserDetails user = this.getUserManager().getUser(username, password);
+            if (user != null) {
+                return true;
+            }
+        } catch (ApsSystemException e) {
+            logger.error("Invalid password for username {}", username, e);
+        }
+        return false;
     }
 
     private UserDetails extractUser(String username) {

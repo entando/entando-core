@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.common.interceptor;
 
+import com.agiletec.aps.system.SystemConstants;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -94,6 +95,7 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
             }
 
             request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute(SystemConstants.SESSIONPARAM_CURRENT_USER, user);
             return user;
         } catch (ApsSystemException ex) {
             logger.error("System exception {}", ex.getMessage());

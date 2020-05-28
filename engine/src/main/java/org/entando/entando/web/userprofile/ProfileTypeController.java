@@ -66,7 +66,7 @@ public class ProfileTypeController {
         this.profileTypeValidator = profileTypeValidator;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = {Permission.MANAGE_USERS, Permission.MANAGE_USER_PROFILES, Permission.VIEW_USERS})
     @RequestMapping(value = "/profileTypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<EntityTypeShortDto>> getUserProfileTypes(RestListRequest requestList) throws JsonProcessingException {
         this.getProfileTypeValidator().validateRestListRequest(requestList, UserProfileTypeDto.class);

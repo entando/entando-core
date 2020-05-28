@@ -103,15 +103,22 @@ public class EntandoOauth2Interceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    protected void checkAuthorization(UserDetails user, String permission, HttpServletRequest request) throws ApsSystemException {
+    protected void checkAuthorization(UserDetails user, String[] permissions, HttpServletRequest request) throws ApsSystemException {
         if (null == user) {
             throw new EntandoTokenException("no access token found", request, null);
         }
 
-        logger.debug("User {} requesting resource that requires {} permission ", user.getUsername(), permission);
-        if (StringUtils.isNotBlank(permission)) {
-            if (!this.getAuthorizationManager().isAuthOnPermission(user, permission)) {
-                logger.warn("User {} is missing the required permission {}", user.getUsername(), permission);
+        logger.debug("User {} requesting resource that requires at least one of the permissions {}", user.getUsername(), permissions);
+        if (permissions != null) {
+            boolean hasPermission = false;
+            for (String permission : permissions) {
+                if (this.getAuthorizationManager().isAuthOnPermission(user, permission)) {
+                    hasPermission = true;
+                    break;
+                }
+            }
+            if (!hasPermission) {
+                logger.warn("User {} needs at least one of the required permissions {}", user.getUsername(), permissions);
                 throw new EntandoAuthorizationException(null, request, user.getUsername());
             }
         }

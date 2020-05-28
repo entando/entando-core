@@ -35,13 +35,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
 
     private ApplicationContext applicationContext;
 
+    @Autowired
     private PagedMetadataMapper pagedMetadataMapper;
 
     @Autowired
-    public PageModelService(IPageModelManager pageModelManager, IDtoBuilder<PageModel, PageModelDto> dtoBuilder, PagedMetadataMapper pagedMetadataMapper) {
+    public PageModelService(IPageModelManager pageModelManager, IDtoBuilder<PageModel, PageModelDto> dtoBuilder) {
         this.pageModelManager = pageModelManager;
         this.dtoBuilder = dtoBuilder;
-        this.pagedMetadataMapper = pagedMetadataMapper;
     }
 
     @Override

@@ -759,25 +759,22 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     @Override
     public Integer getComponentUsage(String pageCode) {
 
-        PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
-        int count = page.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0; //1 usage if page is published
-        count += page.getChildren().size(); //+1 usage for each child
-
-        return count;
+        return this.getComponentUsageDetails(pageCode, new RestListRequest()).getTotalItems();
     }
 
 
     @Override
     public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String pageCode, RestListRequest restListRequest) {
 
-        PageDto pageDto = getPage(pageCode, IPageService.STATUS_DRAFT);
+        PageDto pageDto = this.getPage(pageCode, IPageService.STATUS_DRAFT);
+        List<PageDto> childrenPageDtoList = this.getPages(pageCode);
 
-        List<ComponentUsageEntity> componentUsageEntityList = pageDto.getChildren().stream()
-                .map(child -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, child))
+        List<ComponentUsageEntity> componentUsageEntityList = childrenPageDtoList.stream()
+                .map(childPageDto -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, childPageDto.getCode(), childPageDto.getStatus()))
                 .collect(Collectors.toList());
 
         if (pageDto.getStatus().equals(IPageService.STATUS_ONLINE)) {
-            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode()));
+            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode(), pageDto.getStatus()));
         }
 
         return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);

@@ -132,7 +132,7 @@ public class WidgetController {
         return new ResponseEntity<>(new SimpleRestResponse<>(widgetDto), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<WidgetDto>> getWidgets(RestListRequest requestList) {
         logger.trace("get widget list {}", requestList);

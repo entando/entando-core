@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.category;
 
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 
@@ -266,6 +268,28 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         result = this.executeReference("cat1", accessToken, SystemConstants.GROUP_MANAGER, status().isNotFound());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES)));
+    }
+
+    @Test
+    public void testGetCategoryWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isOk());
+    }
+
+    @Test
+    public void testGetPermissionsWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isForbidden());
+    }
+
+    @Test
+    public void testGetPermissionsWithEnterBackEndPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND).build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isOk());
     }
 
     private ResultActions executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {

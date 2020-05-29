@@ -25,9 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelManager;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
@@ -243,5 +246,33 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             result.andDo(print())
                     .andExpect(status().isOk());
         }
+    }
+
+    @Test
+    public void testGetPageModelWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetPageModelWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetPageModelWithManagePagesPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_PAGES).build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isOk());
     }
 }

@@ -1070,6 +1070,37 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         }
     }
 
+    @Test
+    public void testGetPageWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/pages/{code}", "pagina_11")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetPageWithoutAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/pages/{code}", "pagina_11")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetPageWithManagePagesPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_PAGES).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/pages/{code}", "pagina_11")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
     private ResultActions performListViewPages(String accessToken) throws Exception {
         return mockMvc.perform(get("/pages/viewpages")
                 .header("Authorization", "Bearer " + accessToken));

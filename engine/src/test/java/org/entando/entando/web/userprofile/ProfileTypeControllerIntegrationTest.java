@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.userprofile;
 
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import java.io.InputStream;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
@@ -605,6 +607,59 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
             }
         }
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithEditUserProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USER_PROFILES).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithViewUsersProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.VIEW_USERS).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithEditUsersProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USERS).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
     }
 
 }

@@ -50,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.JsonPatchBuilder;
@@ -1183,8 +1185,8 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     public void testPageUsageDetailsWithPublishedPageShouldBeIncluded() throws Exception {
 
         List<ComponentUsageEntity> expectedResult = Arrays.asList(
-                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE),
-                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_PAGE_CODE));
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE, IPageService.STATUS_UNPUBLISHED),
+                new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_PAGE_CODE, IPageService.STATUS_ONLINE));
 
         this.execPageUsageDetailsTest(true, expectedResult);
     }
@@ -1193,7 +1195,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     @Test
     public void testPageUsageDetailsWithUnpublishedPageShouldNOTBeIncluded() throws Exception {
 
-        List<ComponentUsageEntity> expectedResult = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE));
+        List<ComponentUsageEntity> expectedResult = Arrays.asList(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, PageRequestMockHelper.ADD_FIRST_CHILD_PAGE_CODE, IPageService.STATUS_UNPUBLISHED));
 
         this.execPageUsageDetailsTest(false, expectedResult);
     }

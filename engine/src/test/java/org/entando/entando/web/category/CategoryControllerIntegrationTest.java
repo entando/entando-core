@@ -13,26 +13,17 @@
  */
 package org.entando.entando.web.category;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.InputStream;
 
 import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.InputStream;
 import java.util.Collections;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.category.ICategoryService;
 import org.entando.entando.aps.system.services.category.model.CategoryDto;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
@@ -45,6 +36,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class CategoryControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -65,12 +65,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+        testCors("/categories");
     }
 
     @Test
@@ -80,7 +77,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/categories")
                         .param("parentCode", "home")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -92,7 +89,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/categories")
                         .param("parentCode", "invalid_code")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
     }
 
@@ -220,30 +217,29 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
             mockMvc.perform(post("/categories")
                     .content(MAPPER.writeValueAsString(parentCategory))
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .header("Authorization", "Bearer " + accessToken).with(csrf()))
-
+                    .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isOk());
 
             mockMvc.perform(post("/categories")
                     .content(MAPPER.writeValueAsString(childCategory))
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
-                    .header("Authorization", "Bearer " + accessToken).with(csrf()))
+                    .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isOk());
 
             mockMvc.perform(delete("/categories/{code}", parentCategoryCode)
-                    .header("Authorization", "Bearer " + accessToken).with(csrf()))
+                    .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isBadRequest());
 
             mockMvc.perform(delete("/categories/{code}", childCategoryCode)
-                    .header("Authorization", "Bearer " + accessToken).with(csrf()))
+                    .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isOk());
 
             mockMvc.perform(delete("/categories/{code}", parentCategoryCode)
-                    .header("Authorization", "Bearer " + accessToken).with(csrf()))
+                    .header("Authorization", "Bearer " + accessToken))
                     .andDo(print())
                     .andExpect(status().isOk());
 
@@ -274,10 +270,32 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         result.andExpect(jsonPath("$.errors[0].code", is(CategoryValidator.ERRCODE_CATEGORY_NO_REFERENCES)));
     }
 
+    @Test
+    public void testGetCategoryWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isOk());
+    }
+
+    @Test
+    public void testGetPermissionsWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isForbidden());
+    }
+
+    @Test
+    public void testGetPermissionsWithEnterBackEndPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND).build();
+        String accessToken = mockOAuthInterceptor(user);
+        this.executeGet("cat1", accessToken, status().isOk());
+    }
+
     private ResultActions executeGet(String categoryCode, String accessToken, ResultMatcher rm) throws Exception {
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}", new Object[]{categoryCode})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }
@@ -288,7 +306,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(post("/categories").content(jsonPost)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }
@@ -300,7 +318,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(put("/categories/{categoryCode}", new Object[]{categoryCode})
                         .content(jsonPut)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }
@@ -309,7 +327,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(delete("/categories/{categoryCode}", new Object[]{categoryCode})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }
@@ -318,7 +336,7 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/categories/{categoryCode}/references/{holder}", new Object[]{categoryCode, managerName})
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(rm);
         return result;
     }

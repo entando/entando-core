@@ -13,22 +13,12 @@
  */
 package org.entando.entando.web.dataobject;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import java.io.InputStream;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import java.io.InputStream;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectManager;
 import org.entando.entando.aps.system.services.dataobject.IDataObjectService;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
@@ -39,9 +29,19 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class DataTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -61,12 +61,13 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypes")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+    }
+
+    @Test
+    public void testDataTypesCors() throws Exception {
+        super.testCors("/dataTypes", HttpMethod.GET);
     }
 
     @Test
@@ -75,7 +76,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypes/{code}", new Object[]{"RAH"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -85,7 +86,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypes/{code}", new Object[]{"XXX"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
     }
 
@@ -112,7 +113,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
 
             ResultActions result4 = mockMvc
                     .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"AAA"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("AAA"));
         } finally {
@@ -202,7 +203,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
 
             ResultActions result4 = mockMvc
                     .perform(delete("/dataTypes/{dataTypeCode}", new Object[]{"TST"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             Assert.assertNull(this.dataObjectManager.getEntityPrototype("TST"));
         } finally {
@@ -223,7 +224,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(post("/dataTypes")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -235,7 +236,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(put("/dataTypes/{dataTypeCode}", new Object[]{typeCode})
                         .content(jsonPutValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -247,12 +248,9 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypeAttributes")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+        testCors("/dataTypeAttributes");
     }
 
     @Test
@@ -262,7 +260,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/dataTypeAttributes").param("pageSize", "5")
                         .param("sort", "code").param("direction", "DESC")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
@@ -279,7 +277,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/dataTypeAttributes").param("pageSize", "7")
                         .param("sort", "code").param("direction", "ASC")
                         .param("filters[0].attribute", "code").param("filters[0].value", "tex")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(7)));
@@ -294,7 +292,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypeAttributes/{attributeTypeCode}", new Object[]{"Monotext"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.code", is("Monotext")));
         result.andExpect(jsonPath("$.payload.simple", is(true)));
@@ -308,7 +306,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dataTypeAttributes/{attributeTypeCode}", new Object[]{"WrongTypeCode"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -327,7 +325,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
 
             ResultActions result1 = mockMvc
                     .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"XXX", "TextAttribute"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -335,7 +333,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
 
             ResultActions result2 = mockMvc
                     .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "WrongCpde"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isNotFound());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -343,7 +341,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
 
             ResultActions result3 = mockMvc
                     .perform(get("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "TextAttribute"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isOk());
             result3.andExpect(jsonPath("$.payload.code", is("TextAttribute")));
             result3.andExpect(jsonPath("$.payload.type", is("Text")));
@@ -504,7 +502,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(post("/dataTypes/{dataTypeCode}/attribute", new Object[]{typeCode})
                         .content(jsonPostValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -516,7 +514,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(put("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .content(jsonPutValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -525,7 +523,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
             String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/dataTypes/{dataTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -546,7 +544,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{typeCode})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
             result1.andExpect(jsonPath("$.payload.dataTypeCode", is(typeCode)));
             result1.andExpect(jsonPath("$.payload.status", is("success")));
@@ -557,7 +555,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                     .perform(post("/dataTypes/refresh/{dataTypeCode}", new Object[]{"XXX"})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isNotFound());
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
@@ -576,7 +574,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
         ResultActions result = mockMvc
                 .perform(get("/dataTypesStatus")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.size()", is(3)));
         result.andExpect(jsonPath("$.payload.ready", Matchers.hasSize(4)));
@@ -594,7 +592,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(post("/dataTypesStatus")
                         .content("{\"dataTypeCodes\":[\"AAA\",\"BBB\"]}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
 
@@ -602,7 +600,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(post("/dataTypesStatus")
                         .content("{\"dataTypeCodes\":[\"ALL\",\"ART\",\"EVN\"]}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.size()", is(2)));
         result.andExpect(jsonPath("$.payload.result", is("success")));
@@ -662,7 +660,7 @@ public class DataTypeControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(put("/dataTypes/{dataTypeCode}/attribute/{attributeCode}/" + suffix, new Object[]{typeCode, attributeCode})
                         .content("{}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }

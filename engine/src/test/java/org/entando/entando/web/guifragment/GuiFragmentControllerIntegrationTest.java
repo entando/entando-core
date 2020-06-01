@@ -16,13 +16,10 @@ package org.entando.entando.web.guifragment;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.services.user.UserDetails;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.common.model.RestListRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -38,13 +35,9 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/fragments")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andDo(print());
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(1)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.metaData.page", is(1)));
@@ -57,6 +50,7 @@ public class GuiFragmentControllerIntegrationTest extends AbstractControllerInte
         RestListRequest restListReq = new RestListRequest();
         restListReq.setPage(1);
         restListReq.setPageSize(4);
+        testCors("/fragments");
     }
 
     @Test

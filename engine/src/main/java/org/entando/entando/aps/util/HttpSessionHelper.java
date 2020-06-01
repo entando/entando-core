@@ -29,4 +29,18 @@ public class HttpSessionHelper {
 
         return (UserDetails) userObj;
     }
+
+
+    /**
+     * extracts the logged user from the session
+     * if there is no user in session an EntandoTokenException is thrown
+     *
+     * @param session the HttpSession from which extract the current logged user
+     * @return the current logged user cast to UserDetails
+     * @throws EntandoTokenException if there is no user in session
+     */
+    public static UserDetails extractCurrentUser(HttpSession session) {
+
+        return (UserDetails) session.getAttribute(USER_KEY);
+    }
 }

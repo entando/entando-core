@@ -13,19 +13,6 @@
  */
 package org.entando.entando.web.group;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -51,6 +38,18 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BeanPropertyBindingResult;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GroupControllerUnitTest extends AbstractControllerTest {
 
@@ -147,7 +146,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
                         "helpdesk")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
     }
@@ -168,7 +167,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
                 delete("/groups/{groupName}",
                         groupName)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isConflict());
         result.andExpect(jsonPath("$.errors[0].code", is(GroupValidator.ERRCODE_CANNOT_DELETE_RESERVED_GROUP)));
     }
@@ -190,7 +189,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
                 post("/groups")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isBadRequest());
 
@@ -206,7 +205,7 @@ public class GroupControllerUnitTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 delete("/groups/{code}", code)
-                .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                .header("Authorization", "Bearer " + accessToken));
 
         result
                 .andExpect(status().isOk())

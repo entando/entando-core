@@ -23,12 +23,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelManager;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
@@ -84,7 +86,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
         ResultActions result = mockMvc.perform(
                 get("/pageModels")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -93,7 +95,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
         ResultActions result = mockMvc.perform(
                 get("/pageModels/{code}", "home")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.references.length()", is(1)));
@@ -105,7 +107,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         ResultActions result = mockMvc.perform(
                 get("/pageModels/{code}/references/{manager}", "home", "PageManager")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.metaData.totalItems", is(25)));
@@ -134,7 +136,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                 post("/pageModels")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isConflict());
     }
@@ -147,7 +149,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                 post("/pageModels")
                         .content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
 
         result.andExpect(status().isOk());
     }
@@ -168,7 +170,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         ResultActions result = mockMvc.perform(
                 get("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
     }
 
@@ -183,7 +185,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         ResultActions result = mockMvc.perform(
                 delete("/pageModels/{code}", PAGE_MODEL_CODE)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -193,7 +195,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
         ResultActions result = mockMvc.perform(
                 delete("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -208,7 +210,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                     post("/pageModels")
                             .content(createJson(pageModelRequest))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andDo(print())
                     .andExpect(status().isOk())
@@ -221,7 +223,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                     put("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
                             .content(createJson(pageModelRequest))
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andDo(print())
                     .andExpect(status().isOk())
@@ -230,7 +232,7 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
             result = mockMvc.perform(
                     get("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
 
             result.andDo(print())
                     .andExpect(status().isOk())
@@ -240,9 +242,37 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             ResultActions result = mockMvc.perform(
                     delete("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andDo(print())
                     .andExpect(status().isOk());
         }
+    }
+
+    @Test
+    public void testGetPageModelWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetPageModelWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetPageModelWithManagePagesPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_PAGES).build();
+        ResultActions result = mockMvc.perform(
+                get("/pageModels/{code}", "home")
+                        .header("Authorization", "Bearer " + mockOAuthInterceptor(user)));
+        result.andExpect(status().isOk());
     }
 }

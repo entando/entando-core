@@ -13,7 +13,6 @@
  */
 package org.entando.entando.aps.servlet.security;
 
-import javax.servlet.ServletContext;
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
 /**
@@ -22,11 +21,5 @@ import org.springframework.security.web.context.AbstractSecurityWebApplicationIn
  * @author E.Santoboni
  */
 public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplicationInitializer {
-
-    @Override
-    protected void beforeSpringSecurityFilterChain(ServletContext servletContext) {
-        super.beforeSpringSecurityFilterChain(servletContext);
-        super.insertFilters(servletContext, new CORSFilter());
-    }
 
 }

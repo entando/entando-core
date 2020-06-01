@@ -23,6 +23,8 @@ import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsage;
+import org.entando.entando.web.component.ComponentUsageEntity;
+import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.pagemodel.validator.PageModelValidator;
 import org.slf4j.*;
@@ -77,7 +79,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "NotFound")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @GetMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = pageModelService.getPageModel(code);
@@ -110,11 +112,32 @@ public class PageModelController {
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(code)
-                .usage(pageModelService.getPageModelUsage(code))
+                .usage(pageModelService.getComponentUsage(code))
                 .build();
 
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
+
+
+    @ApiOperation("Retrieve pageModel usage count")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 400, message = "Bad Request")
+    })
+    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RequestMapping(value = "/{code}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String code, PageSearchRequest searchRequest) {
+
+        logger.trace("get {} usage details by code {}", COMPONENT_ID, code);
+
+        // clear filters
+        searchRequest.setFilters(new Filter[0]);
+
+        PagedMetadata<ComponentUsageEntity> result = pageModelService.getComponentUsageDetails(code, searchRequest);
+
+        return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
+    }
+
 
     @ApiOperation("Update page template")
     @ApiResponses({

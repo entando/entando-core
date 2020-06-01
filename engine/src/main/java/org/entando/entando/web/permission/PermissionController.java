@@ -61,7 +61,7 @@ public class PermissionController {
         this.permissionValidator = roleValidator;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<PermissionDto>> getPermissions(RestListRequest requestList) throws JsonProcessingException {
         this.getPermissionValidator().validateRestListRequest(requestList, PermissionDto.class);

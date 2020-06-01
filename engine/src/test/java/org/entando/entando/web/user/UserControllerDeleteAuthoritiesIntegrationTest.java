@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.authorization.IAuthorizationManager;
@@ -28,7 +27,6 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.TestEntandoJndiUtils;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.user.validator.UserValidator;
@@ -50,6 +48,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CorsFilter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -83,6 +82,9 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
+    @Autowired
+    protected CorsFilter corsFilter;
+
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -91,8 +93,9 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(new CORSFilter())
+
+       mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .addFilters(corsFilter)
                 .build();
 
         //workaround for dirty context
@@ -156,7 +159,7 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     private ResultActions executeDeleteUserAuthorities(String username, String accessToken) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/users/{username}/authorities", new Object[]{username})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         return result;
     }
 

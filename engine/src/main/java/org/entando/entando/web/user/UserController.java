@@ -73,7 +73,7 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RestAccessControl(permission = {Permission.MANAGE_USERS, Permission.MANAGE_USER_PROFILES, Permission.VIEW_USERS})
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<UserDto>> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
         logger.debug("getting users details with request {}", requestList);

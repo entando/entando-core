@@ -13,17 +13,16 @@
  */
 package org.entando.entando.web.dashboard;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
 import org.junit.Test;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author E.Santoboni
@@ -36,7 +35,7 @@ public class DashboardControllerIntegrationTest extends AbstractControllerIntegr
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dashboard/integration")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.components", is("0")));
         result.andExpect(jsonPath("$.payload.apis", is("0")));
@@ -48,7 +47,7 @@ public class DashboardControllerIntegrationTest extends AbstractControllerIntegr
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dashboard/pageStatus")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.published", is(16)));
         result.andExpect(jsonPath("$.payload.unpublished", is(1)));

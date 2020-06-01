@@ -13,22 +13,14 @@
  */
 package org.entando.entando.web.userprofile;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
+import java.io.InputStream;
 
 import com.agiletec.aps.system.common.entity.IEntityTypesConfigurer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.util.FileTextReader;
-import java.io.InputStream;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileTypeService;
 import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
@@ -42,6 +34,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.ResultMatcher;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class ProfileTypeControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -61,13 +62,9 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypes")
-                .header("Authorization", "Bearer " + accessToken)
-                .with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+        testCors("/profileTypes");
     }
 
     @Test
@@ -76,7 +73,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"PFL"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
     }
 
@@ -86,7 +83,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"XXX"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
     }
 
@@ -99,7 +96,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         ResultActions result1 = mockMvc
                 .perform(post("/profileTypes").content(body1)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result1.andExpect(status().isBadRequest());
         result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result1.andExpect(jsonPath("$.errors[0].code", is("52")));
@@ -108,7 +105,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         ResultActions result2 = mockMvc
                 .perform(put("/profileTypes/{profileTypeCode}", new Object[]{"AAA"}).content(body2)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result2.andExpect(status().isBadRequest());
         result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result2.andExpect(jsonPath("$.errors[0].code", is("54")));
@@ -130,7 +127,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result = mockMvc
                     .perform(get("/profileTypes/{profileTypeCode}", new Object[]{"TST"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result.andExpect(status().isOk());
             result.andExpect(jsonPath("$.payload.code", is("TST")));
             result.andExpect(jsonPath("$.payload.attributes.size()", is(3)));
@@ -166,7 +163,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result4 = mockMvc
                     .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"AAA"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             Assert.assertNull(this.userProfileManager.getEntityPrototype("AAA"));
         } finally {
@@ -210,7 +207,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result4 = mockMvc
                     .perform(delete("/profileTypes/{profileTypeCode}", new Object[]{"TST"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result4.andExpect(status().isOk());
             Assert.assertNull(this.userProfileManager.getEntityPrototype("TST"));
         } finally {
@@ -227,7 +224,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(post("/profileTypes")
                         .content(jsonPostValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -239,7 +236,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(put("/profileTypes/{profileTypeCode}", new Object[]{typeCode})
                         .content(jsonPostValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -251,12 +248,9 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypeAttributes")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
-        result.andExpect(header().string("Access-Control-Allow-Origin", "*"));
-        result.andExpect(header().string("Access-Control-Allow-Methods", CORSFilter.ALLOWED_METHODS));
-        result.andExpect(header().string("Access-Control-Allow-Headers", "Content-Type, Authorization"));
-        result.andExpect(header().string("Access-Control-Max-Age", "3600"));
+        testCors("/profileTypeAttributes");
     }
 
     @Test
@@ -266,7 +260,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         ResultActions result = mockMvc
                 .perform(get("/profileTypeAttributes").param("pageSize", "5")
                         .param("sort", "code").param("direction", "DESC")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(5)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(5)));
@@ -283,7 +277,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(get("/profileTypeAttributes").param("pageSize", "7")
                         .param("sort", "code").param("direction", "ASC")
                         .param("filters[0].attribute", "code").param("filters[0].value", "tex")
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(4)));
         result.andExpect(jsonPath("$.metaData.pageSize", is(7)));
@@ -298,7 +292,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypeAttributes/{attributeTypeCode}", new Object[]{"Monotext"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.code", is("Monotext")));
         result.andExpect(jsonPath("$.payload.simple", is(true)));
@@ -312,7 +306,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/profileTypeAttributes/{attributeTypeCode}", new Object[]{"WrongTypeCode"})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -331,7 +325,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result1 = mockMvc
                     .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"XXX", "TextAttribute"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isNotFound());
             result1.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result1.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -339,7 +333,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result2 = mockMvc
                     .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "WrongCpde"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isNotFound());
             result2.andExpect(jsonPath("$.payload", Matchers.hasSize(0)));
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
@@ -347,7 +341,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
 
             ResultActions result3 = mockMvc
                     .perform(get("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{"TST", "TextAttribute"})
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result3.andExpect(status().isOk());
             result3.andExpect(jsonPath("$.payload.code", is("TextAttribute")));
             result3.andExpect(jsonPath("$.payload.type", is("Text")));
@@ -508,7 +502,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(post("/profileTypes/{profileTypeCode}/attribute", new Object[]{typeCode})
                         .content(jsonPostValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -520,7 +514,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(put("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
                         .content(jsonPutValid)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -529,7 +523,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
             String attributeCode, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(delete("/profileTypes/{profileTypeCode}/attribute/{attributeCode}", new Object[]{typeCode, attributeCode})
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(expected);
         return result;
     }
@@ -541,7 +535,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
         ResultActions result = mockMvc
                 .perform(get("/profileTypesStatus")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.size()", is(3)));
         result.andExpect(jsonPath("$.payload.ready", Matchers.hasSize(1)));
@@ -559,7 +553,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(post("/profileTypesStatus")
                         .content("{\"profileTypeCodes\":[\"AAA\",\"BBB\"]}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isNotFound());
         result.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
 
@@ -567,7 +561,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 .perform(post("/profileTypesStatus")
                         .content("{\"profileTypeCodes\":[\"PFL\"]}")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                        .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.size()", is(2)));
         result.andExpect(jsonPath("$.payload.result", is("success")));
@@ -592,7 +586,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                     .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{typeCode})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result1.andExpect(status().isOk());
             result1.andExpect(jsonPath("$.payload.profileTypeCode", is(typeCode)));
             result1.andExpect(jsonPath("$.payload.status", is("success")));
@@ -603,7 +597,7 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                     .perform(post("/profileTypes/refresh/{profileTypeCode}", new Object[]{"XXX"})
                             .content("{}")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
-                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
+                            .header("Authorization", "Bearer " + accessToken));
             result2.andExpect(status().isNotFound());
             result2.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
             result2.andExpect(jsonPath("$.metaData.size()", is(0)));
@@ -613,6 +607,59 @@ public class ProfileTypeControllerIntegrationTest extends AbstractControllerInte
                 ((IEntityTypesConfigurer) this.userProfileManager).removeEntityPrototype(typeCode);
             }
         }
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithAdminPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithoutPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithEditUserProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USER_PROFILES).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithViewUsersProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.VIEW_USERS).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetUserProfileTypesWithEditUsersProfilePermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USERS).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/profileTypes")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
     }
 
 }

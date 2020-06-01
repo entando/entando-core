@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="corsConfiguration" class="org.springframework.web.cors.CorsConfiguration">
+        <property name="allowedOrigins" value="#{'${cors.access.control.allow.origin:*}'.replace(' ', '').split(',')}" />
+        <property name="allowedHeaders" value="#{'${cors.access.control.allow.headers:Content-Type, Authorization}'.replace(' ', '').split(',')}" />
+        <property name="allowedMethods" value="#{'${cors.access.control.allow.methods:GET, POST, PUT, DELETE, OPTIONS, PATCH}'.replace(' ', '').split(',')}" />
+        <property name="allowCredentials" value="${cors.access.control.allow.credentials:false}" />
+        <property name="maxAge" value="${cors.access.control.maxAge:3600}" />
+    </bean>
+
+</beans>

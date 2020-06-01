@@ -60,10 +60,13 @@ import org.entando.entando.aps.system.services.widgettype.WidgetType;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetProcessorFactory;
 import org.entando.entando.aps.system.services.widgettype.validators.WidgetValidatorFactory;
 import org.entando.entando.aps.util.PageUtils;
+import org.entando.entando.web.common.assembler.PageSearchMapper;
+import org.entando.entando.web.common.assembler.PagedMetadataMapper;
 import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.PagedMetadata;
 import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.page.model.PagePositionRequest;
 import org.entando.entando.web.page.model.PageRequest;
 import org.entando.entando.web.page.model.PageSearchRequest;
@@ -126,6 +129,12 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     @Autowired
     private IPageTokenManager pageTokenManager;
+
+    @Autowired
+    private PageSearchMapper pageSearchMapper;
+
+    @Autowired
+    private PagedMetadataMapper pagedMetadataMapper;
 
     protected IPageManager getPageManager() {
         return pageManager;
@@ -700,12 +709,13 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         }
     }
 
+
     @Override
     public PagedMetadata<PageDto> searchPages(PageSearchRequest request, List<String> allowedGroups) {
         try {
             List<IPage> rawPages = this.getPageManager().searchPages(request.getPageCodeToken(), allowedGroups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return this.getPagedResult(request, pages);
+            return pageSearchMapper.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching pages with token {}", request.getPageCodeToken(), ex);
             throw new RestServerError("Error searching pages", ex);
@@ -739,7 +749,7 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
             groups.add(Group.FREE_GROUP_NAME);
             List<IPage> rawPages = this.getPageManager().searchOnlinePages(null, groups);
             List<PageDto> pages = this.getDtoBuilder().convert(rawPages);
-            return this.getPagedResult(request, pages);
+            return pageSearchMapper.toPageSearchDto(request, pages);
         } catch (ApsSystemException ex) {
             logger.error("Error searching free online pages ", ex);
             throw new RestServerError("Error searching free online pages", ex);
@@ -747,21 +757,27 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
     }
 
     @Override
-    public Integer getPageUsage(String pageCode) {
-        RestListRequest request = new RestListRequest(1, 1);
+    public Integer getComponentUsage(String pageCode) {
 
-        PageDto page = getPage(pageCode, IPageService.STATUS_DRAFT);
-        int count = page.getStatus().equals(IPageService.STATUS_ONLINE) ? 1 : 0; //1 usage if page is published
-        count += page.getChildren().size(); //+1 usage for each child
-
-        return count;
+        return this.getComponentUsageDetails(pageCode, new RestListRequest()).getTotalItems();
     }
 
-    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
-        PageSearchRequest pageSearchReq = new PageSearchRequest();
-        BeanUtils.copyProperties(request, pageSearchReq);
 
-        return getPagedResult(pageSearchReq, pages);
+    @Override
+    public PagedMetadata<ComponentUsageEntity> getComponentUsageDetails(String pageCode, RestListRequest restListRequest) {
+
+        PageDto pageDto = this.getPage(pageCode, IPageService.STATUS_DRAFT);
+        List<PageDto> childrenPageDtoList = this.getPages(pageCode);
+
+        List<ComponentUsageEntity> componentUsageEntityList = childrenPageDtoList.stream()
+                .map(childPageDto -> new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, childPageDto.getCode(), childPageDto.getStatus()))
+                .collect(Collectors.toList());
+
+        if (pageDto.getStatus().equals(IPageService.STATUS_ONLINE)) {
+            componentUsageEntityList.add(new ComponentUsageEntity(ComponentUsageEntity.TYPE_PAGE, pageDto.getCode(), pageDto.getStatus()));
+        }
+
+        return pagedMetadataMapper.getPagedResult(restListRequest, componentUsageEntityList);
     }
 
     private PagedMetadata<PageDto> getPagedResult(PageSearchRequest request, List<PageDto> pages) {
@@ -775,6 +791,14 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
         result.imposeLimits();
         return result;
     }
+
+    private PagedMetadata<PageDto> getPagedResult(RestListRequest request, List<PageDto> pages) {
+        PageSearchRequest pageSearchReq = new PageSearchRequest();
+        BeanUtils.copyProperties(request, pageSearchReq);
+
+        return getPagedResult(pageSearchReq, pages);
+    }
+
 
     private Map<String, Boolean> getReferencesInfo(IPage page) {
         Map<String, Boolean> references = new HashMap<>();

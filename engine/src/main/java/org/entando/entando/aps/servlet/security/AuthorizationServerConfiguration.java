@@ -23,8 +23,12 @@ import org.springframework.security.oauth2.config.annotation.configurers.ClientD
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
+import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableAuthorizationServer
@@ -45,6 +49,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     @Qualifier(SystemConstants.AUTHENTICATION_PROVIDER_MANAGER)
     private IAuthenticationProviderManager authenticationManager;
+
+    @Autowired
+    private CorsFilter corsFilter;
     
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
@@ -59,5 +66,9 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
             endpoints.prefix("/api");
         }
     }
-    
+
+    @Override
+    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+        security.addTokenEndpointAuthenticationFilter(corsFilter);
+    }
 }

@@ -3,13 +3,11 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="corsFilter"
-            class="org.entando.entando.aps.servlet.security.CORSFilter">
-        <property name="enabled" value="${cors.enabled:true}" />
-        <property name="allowedOrigins" value="${cors.access.control.allow.origin:*}" />
-        <property name="allowedHeaders" value="${cors.access.control.allow.headers:Content-Type, Authorization}" />
-        <property name="allowedMethods" value="${cors.access.control.allow.methods:GET, POST, PUT, DELETE, OPTIONS, PATCH}" />
-        <property name="allowedCredentials" value="${cors.access.control.allow.credentials:false}" />
+    <bean id="corsConfiguration" class="org.springframework.web.cors.CorsConfiguration">
+        <property name="allowedOrigins" value="#{'${cors.access.control.allow.origin:*}'.replace(' ', '').split(',')}" />
+        <property name="allowedHeaders" value="#{'${cors.access.control.allow.headers:Content-Type, Authorization}'.replace(' ', '').split(',')}" />
+        <property name="allowedMethods" value="#{'${cors.access.control.allow.methods:GET, POST, PUT, DELETE, OPTIONS, PATCH}'.replace(' ', '').split(',')}" />
+        <property name="allowCredentials" value="${cors.access.control.allow.credentials:false}" />
         <property name="maxAge" value="${cors.access.control.maxAge:3600}" />
     </bean>
 

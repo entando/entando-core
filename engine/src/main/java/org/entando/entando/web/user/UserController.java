@@ -13,31 +13,53 @@
  */
 package org.entando.entando.web.user;
 
+import static org.entando.entando.web.user.validator.UserValidator.createDeleteAdminError;
+import static org.entando.entando.web.user.validator.UserValidator.createSelfDeleteUserError;
+import static org.entando.entando.web.user.validator.UserValidator.isAdminUser;
+import static org.entando.entando.web.user.validator.UserValidator.isUserDeletingHimself;
+
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import com.agiletec.aps.system.services.user.UserGroupPermissions;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import org.entando.entando.aps.system.services.user.IUserService;
-import org.entando.entando.aps.system.services.user.model.*;
+import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
 import org.entando.entando.aps.util.HttpSessionHelper;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.*;
-import org.entando.entando.web.user.model.*;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.PagedRestResponse;
+import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.common.model.SimpleRestResponse;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.entando.entando.web.user.validator.UserValidator;
-import org.slf4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
-import org.springframework.validation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.*;
-
-import static org.entando.entando.web.user.validator.UserValidator.createDeleteAdminError;
-import static org.entando.entando.web.user.validator.UserValidator.isValidDeleteUser;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 /**
  *
@@ -73,7 +95,7 @@ public class UserController {
         this.userValidator = userValidator;
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_USERS)
+    @RestAccessControl(permission = {Permission.MANAGE_USERS, Permission.MANAGE_USER_PROFILES, Permission.VIEW_USERS})
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<UserDto>> getUsers(RestListRequest requestList, @RequestParam(value = "withProfile", required = false) String withProfile) {
         logger.debug("getting users details with request {}", requestList);
@@ -143,17 +165,18 @@ public class UserController {
     }
 
     @RestAccessControl(permission = Permission.MANAGE_USERS)
-    @RequestMapping(value = "/{username:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SimpleRestResponse<Map>> deleteUser(@PathVariable String username) throws ApsSystemException {
-        logger.debug("deleting {}", username);
-
-        if (!isValidDeleteUser(username)) {
+    @RequestMapping(value = "/{target:.+}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SimpleRestResponse<Map>> deleteUser(@ModelAttribute("user") UserDetails user, @PathVariable String target, BindingResult bindingResult) throws ApsSystemException {
+        logger.debug("deleting {}", target);
+        if (isAdminUser(target)) {
             throw new ValidationGenericException(createDeleteAdminError());
         }
-
-        this.getUserService().removeUser(username);
+        if (isUserDeletingHimself(target, user.getUsername())) {
+            throw new ValidationGenericException(createSelfDeleteUserError(bindingResult));
+        }
+        this.getUserService().removeUser(target);
         Map<String, String> result = new HashMap<>();
-        result.put("code", username);
+        result.put("code", target);
         return new ResponseEntity<>(new SimpleRestResponse<>(result), HttpStatus.OK);
     }
 

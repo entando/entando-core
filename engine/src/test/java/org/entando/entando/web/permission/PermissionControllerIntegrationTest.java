@@ -13,6 +13,8 @@
  */
 package org.entando.entando.web.permission;
 
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
@@ -66,6 +68,29 @@ public class PermissionControllerIntegrationTest extends AbstractControllerInteg
                                                             .header("Authorization", "Bearer " + accessToken));
         result.andExpect(status().isOk());
         result.andExpect(jsonPath("$.payload.length()", is(1)));
+    }
+
+    @Test
+    public void testGetPermissionsWithoutPermission() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/permissions")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void testGetPermissionsWithEnterBackEndPermission() throws Exception {
+
+        UserDetails user = new OAuth2TestUtils.UserBuilder("enter_backend_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/permissions")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
     }
 
 }

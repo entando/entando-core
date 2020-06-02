@@ -21,7 +21,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -58,8 +60,12 @@ public class PageModelServiceTest {
     @Before
     public void setUp() throws Exception {
         dtoBuilder = new PageModelDtoBuilder();
-        pageModelService = new PageModelService(pageModelManager, dtoBuilder, pagedMetadataMapper);
+        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
         pageModelService.setApplicationContext(applicationContext);
+
+        Field pagedMetadataMapper = ReflectionUtils.findField(pageModelService.getClass(), "pagedMetadataMapper");
+        pagedMetadataMapper.setAccessible(true);
+        pagedMetadataMapper.set(pageModelService, this.pagedMetadataMapper);
     }
 
     @Test public void

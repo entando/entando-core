@@ -16,22 +16,32 @@ package org.entando.entando.web.user.validator;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.IGroupManager;
 import com.agiletec.aps.system.services.role.IRoleManager;
-import com.agiletec.aps.system.services.user.*;
+import com.agiletec.aps.system.services.user.IUserManager;
+import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.exception.*;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
+import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.web.common.RestErrorCodes;
-import org.entando.entando.web.common.exceptions.*;
+import org.entando.entando.web.common.exceptions.ResourcePermissionsException;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
-import org.entando.entando.web.user.model.*;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserPasswordRequest;
+import org.entando.entando.web.user.model.UserRequest;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.validation.*;
-
-import java.util.*;
-import java.util.regex.*;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.MapBindingResult;
 
 @Component
 public class UserValidator extends AbstractPaginationValidator {
@@ -57,7 +67,9 @@ public class UserValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_SELF_UPDATE = "6";
 
     public static final String ERRCODE_DELETE_ADMIN = "7";
-    
+
+    public static final String ERRCODE_SELF_DELETE = "8";
+
     @Autowired
     @Qualifier("compatiblePasswordEncoder")
     private PasswordEncoder passwordEncoder;
@@ -131,8 +143,12 @@ public class UserValidator extends AbstractPaginationValidator {
         this.checkNewPassword(username, request.getPassword(), bindingResult);
     }
 
-    public static boolean isValidDeleteUser(String username) {
-        return !StringUtils.equalsIgnoreCase("admin", username);
+    public static boolean isAdminUser(String username) {
+        return StringUtils.equalsIgnoreCase("admin", username);
+    }
+
+    public static boolean isUserDeletingHimself(String username, String currentUser) {
+        return StringUtils.equalsIgnoreCase(currentUser, username);
     }
 
     public static BindingResult createDeleteAdminError() {
@@ -140,6 +156,10 @@ public class UserValidator extends AbstractPaginationValidator {
         map.put("username", "admin");
         BindingResult bindingResult = new MapBindingResult(map, "username");
         bindingResult.reject(UserValidator.ERRCODE_DELETE_ADMIN, new String[]{}, "user.admin.cant.delete");
+        return bindingResult;
+    }
+    public static BindingResult createSelfDeleteUserError(BindingResult bindingResult) {
+        bindingResult.reject(UserValidator.ERRCODE_SELF_DELETE, new String[]{}, "user.self.delete.error");
         return bindingResult;
     }
 

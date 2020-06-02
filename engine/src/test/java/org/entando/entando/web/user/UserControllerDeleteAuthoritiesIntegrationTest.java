@@ -27,7 +27,6 @@ import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.User;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.TestEntandoJndiUtils;
-import org.entando.entando.aps.servlet.security.CORSFilter;
 import org.entando.entando.aps.system.services.oauth2.IApiOAuth2TokenManager;
 import org.entando.entando.web.common.interceptor.EntandoOauth2Interceptor;
 import org.entando.entando.web.user.validator.UserValidator;
@@ -49,6 +48,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.filter.CorsFilter;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {
@@ -82,6 +82,9 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     @InjectMocks
     protected EntandoOauth2Interceptor entandoOauth2Interceptor;
 
+    @Autowired
+    protected CorsFilter corsFilter;
+
     @BeforeClass
     public static void setup() throws Exception {
         TestEntandoJndiUtils.setupJndi();
@@ -91,16 +94,8 @@ public class UserControllerDeleteAuthoritiesIntegrationTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        CORSFilter filter = new CORSFilter();
-        filter.setEnabled(true);
-        filter.setAllowedOrigins("*");
-        filter.setAllowedMethods("GET, POST, PUT, DELETE, OPTIONS, PATCH");
-        filter.setAllowedHeaders("Content-Type, Authorization");
-        filter.setAllowedCredentials("false");
-        filter.setMaxAge("3600");
-
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilters(filter)
+       mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+                .addFilters(corsFilter)
                 .build();
 
         //workaround for dirty context

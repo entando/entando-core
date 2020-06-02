@@ -22,5 +22,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD) //can use in method only.
 public @interface RestAccessControl {
 
-    public String permission();
+    public String[] permission();
 }

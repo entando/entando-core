@@ -13,41 +13,56 @@
  */
 package org.entando.entando.web.user;
 
-import com.agiletec.aps.system.common.entity.model.attribute.*;
-import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
-import com.agiletec.aps.system.exception.ApsSystemException;
-import com.agiletec.aps.system.services.group.*;
-import com.agiletec.aps.system.services.role.*;
-import com.agiletec.aps.system.services.user.*;
-import de.mkammerer.argon2.Argon2Factory;
-import org.entando.entando.aps.system.services.user.UserService;
-import org.entando.entando.aps.system.services.user.model.*;
-import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
-import org.entando.entando.aps.util.crypto.Argon2PasswordEncoder;
-import org.entando.entando.web.AbstractControllerTest;
-import org.entando.entando.web.common.exceptions.ValidationGenericException;
-import org.entando.entando.web.common.model.*;
-import org.entando.entando.web.user.model.*;
-import org.entando.entando.web.user.validator.UserValidator;
-import org.entando.entando.web.utils.OAuth2TestUtils;
-import org.junit.*;
-import org.mockito.*;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
-import java.util.*;
-import org.entando.entando.aps.util.crypto.CryptoException;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
+import com.agiletec.aps.system.common.entity.model.attribute.MonoTextAttribute;
+import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
+import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.role.IRoleManager;
+import com.agiletec.aps.system.services.role.Role;
+import com.agiletec.aps.system.services.user.IUserManager;
+import com.agiletec.aps.system.services.user.User;
+import com.agiletec.aps.system.services.user.UserDetails;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import org.entando.entando.aps.system.services.user.UserService;
+import org.entando.entando.aps.system.services.user.model.UserAuthorityDto;
+import org.entando.entando.aps.system.services.user.model.UserDto;
+import org.entando.entando.aps.system.services.user.model.UserDtoBuilder;
+import org.entando.entando.aps.system.services.userprofile.model.UserProfile;
+import org.entando.entando.aps.util.crypto.CryptoException;
+import org.entando.entando.web.AbstractControllerTest;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
+import org.entando.entando.web.common.model.PagedMetadata;
+import org.entando.entando.web.common.model.RestListRequest;
+import org.entando.entando.web.user.model.UserAuthoritiesRequest;
+import org.entando.entando.web.user.model.UserRequest;
+import org.entando.entando.web.user.validator.UserValidator;
+import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.validation.MapBindingResult;
 
 /**
  *
@@ -57,6 +72,9 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
     @Mock
     IUserManager userManager;
+
+    @Mock
+    UserDetails user;
 
     @Mock
     IGroupManager groupManager;
@@ -404,6 +422,15 @@ public class UserControllerUnitTest extends AbstractControllerTest {
 
     @Test(expected = ValidationGenericException.class)
     public void deleteAdminReturnsError() throws ApsSystemException {
-        new UserController().deleteUser("admin");
+        when(user.getUsername()).thenReturn("admin");
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "user");
+        new UserController().deleteUser(user,"admin", bindingResult);
+    }
+
+    @Test(expected = ValidationGenericException.class)
+    public void selfDeleteReturnsError() throws ApsSystemException {
+        when(user.getUsername()).thenReturn("test");
+        MapBindingResult bindingResult = new MapBindingResult(new HashMap<Object, Object>(), "user");
+        new UserController().deleteUser(user,"test", bindingResult);
     }
 }

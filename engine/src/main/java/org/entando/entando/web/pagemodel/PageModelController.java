@@ -79,7 +79,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 404, message = "NotFound")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @GetMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> getPageModel(@PathVariable String code) {
         PageModelDto pageModelDto = pageModelService.getPageModel(code);

@@ -112,8 +112,7 @@ public class PageTreeMenuAction extends PageTreeAction {
     protected Map<String, List<SelectItem>> getWidgetFlavoursMapping(List<String> pluginCodes) {
         Map<String, List<SelectItem>> mapping = new HashMap<String, List<SelectItem>>();
         List<WidgetType> types = this.getWidgetTypeManager().getWidgetTypes();
-        for (int i = 0; i < types.size(); i++) {
-            WidgetType type = types.get(i);
+        for (WidgetType type : types) {
             String pluginCode = type.getPluginCode();
             if (null != pluginCode && pluginCode.trim().length() > 0) {
                 //is a plugin's widgets

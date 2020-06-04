@@ -22,13 +22,8 @@ import com.agiletec.aps.system.services.page.PageMetadata;
 import com.agiletec.aps.system.services.page.PageRecord;
 import com.agiletec.aps.system.services.page.PagesStatus;
 import com.agiletec.aps.system.services.page.Widget;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
@@ -56,8 +51,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
             Map<String, IPage> newOnlineMap = new HashMap<>();
             List<IPage> pageListO = new ArrayList<>();
             List<IPage> pageListD = new ArrayList<>();
-            for (int i = 0; i < pageRecordList.size(); i++) {
-                PageRecord pageRecord = pageRecordList.get(i);
+            for (PageRecord pageRecord : pageRecordList) {
                 IPage pageD = pageRecord.createDraftPage();
                 IPage pageO = pageRecord.createOnlinePage();
                 pageListD.add(pageD);
@@ -72,11 +66,11 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                     pageListO.add(pageO);
                 }
             }
-            for (int i = 0; i < pageListD.size(); i++) {
-                this.buildTreeHierarchy(newDraftRoot, newFullMap, pageListD.get(i));
+            for (IPage iPage : pageListD) {
+                this.buildTreeHierarchy(newDraftRoot, newFullMap, iPage);
             }
-            for (int i = 0; i < pageListO.size(); i++) {
-                this.buildTreeHierarchy(newOnLineRoot, newOnlineMap, pageListO.get(i));
+            for (IPage iPage : pageListO) {
+                this.buildTreeHierarchy(newOnLineRoot, newOnlineMap, iPage);
             }
             if (newDraftRoot == null) {
                 throw new ApsSystemException("Error in the page tree: root page undefined");
@@ -98,7 +92,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     }
 
     private void cleanLocalCache(Cache cache) {
-        for (String key : this.localObject) {
+        for (Iterator<String> iterator = this.localObject.iterator(); iterator.hasNext(); ) {
+            String key = iterator.next();
             if (null != key) {
                 cache.evict(key);
             }
@@ -109,8 +104,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     protected void releaseCachedObjects(Cache cache) {
         List<String> codes = (List<String>) this.get(cache, DRAFT_PAGE_CODES_CACHE_NAME, List.class);
         if (null != codes) {
-            for (int i = 0; i < codes.size(); i++) {
-                String code = codes.get(i);
+            for (String code : codes) {
                 cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
                 cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
             }
@@ -124,12 +118,10 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         cache.put(DRAFT_ROOT_CACHE_NAME, newDraftRoot);
         cache.put(ONLINE_ROOT_CACHE_NAME, newOnLineRoot);
         cache.put(PAGE_STATUS_CACHE_NAME, status);
-        for (int i = 0; i < pageListD.size(); i++) {
-            IPage draftPage = pageListD.get(i);
+        for (IPage draftPage : pageListD) {
             cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + draftPage.getCode(), draftPage);
         }
-        for (int i = 0; i < pageListO.size(); i++) {
-            IPage onLinePage = pageListO.get(i);
+        for (IPage onLinePage : pageListO) {
             cache.put(ONLINE_PAGE_CACHE_NAME_PREFIX + onLinePage.getCode(), onLinePage);
         }
     }
@@ -145,7 +137,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         if (null != parent.getChildrenCodes()) {
             List<String> childrenCodes = new ArrayList<>(Arrays.asList(parent.getChildrenCodes()));
             int index = -1;
-            for (int i = 0; i < childrenCodes.size(); i++) {
+            int i = 0;
+            while (i < childrenCodes.size()) {
                 String childCode = childrenCodes.get(i);
                 if (childCode.equals(pageCode)) {
                     index = i;
@@ -154,6 +147,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                     this.upgradePositionForSisterDeletion(cache, childCode, true);
                     this.upgradePositionForSisterDeletion(cache, childCode, false);
                 }
+                i++;
             }
             boolean executedRemove = childrenCodes.remove(pageCode);
             if (executedRemove) {
@@ -343,7 +337,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 boolean widgetEquals = true;
                 widgetsDraft = (null == widgetsDraft) ? new Widget[0] : widgetsDraft;
                 widgetsOnline = (null == widgetsOnline) ? new Widget[0] : widgetsOnline;
-                for (int i = 0; i < widgetsDraft.length; i++) {
+                int i = 0;
+                while (i < widgetsDraft.length) {
                     Widget widgetDraft = widgetsDraft[i];
                     if (widgetsOnline.length <= i) {
                         widgetEquals = false;
@@ -351,6 +346,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                     }
                     Widget widgetOnline = widgetsOnline[i];
                     if (null == widgetOnline && null == widgetDraft) {
+                        i++;
                         continue;
                     }
                     if ((null != widgetOnline && null == widgetDraft) || (null == widgetOnline && null != widgetDraft)) {
@@ -361,6 +357,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                         widgetEquals = false;
                     }
                     if (null == widgetOnline.getConfig() && null == widgetDraft.getConfig()) {
+                        i++;
                         continue;
                     }
                     if ((null != widgetOnline.getConfig() && null == widgetDraft.getConfig())
@@ -372,6 +369,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                         widgetEquals = false;
                         break;
                     }
+                    i++;
                 }
                 boolean metaEquals = onlineMeta.hasEqualConfiguration(draftMeta);
                 return !(widgetEquals && metaEquals);
@@ -603,11 +601,13 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         IPage oldParentDraft = this.updateOldParent(pageToMove, true, cache);
         this.updateOldParent(pageToMove, false, cache);
         String[] newChildrenDraft = oldParentDraft.getChildrenCodes();
-        for (int i = 0; i < newChildrenDraft.length; i++) {
+        int i = 0;
+        while (i < newChildrenDraft.length) {
             this.updatePositionAndParent(newChildrenDraft[i], i+1, null, false, cache);
             this.updatePositionAndParent(newChildrenDraft[i], i+1, null, true, cache);
+            i++;
         }
-        
+
         String[] oldChildDest = newParent.getChildrenCodes();
         Integer lastPos = (null == oldChildDest || oldChildDest.length == 0) ? 1
                 : Arrays.stream(oldChildDest).map(f -> this.getDraftPage(f).getPosition()).max(Integer::compareTo).get() + 1;

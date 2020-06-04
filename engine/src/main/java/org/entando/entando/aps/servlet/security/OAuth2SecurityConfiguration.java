@@ -31,14 +31,23 @@ public class OAuth2SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.headers().frameOptions().sameOrigin()
-                .and().anonymous().disable()
-                .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .and().cors();
+        http
+            .headers().frameOptions().sameOrigin()
+            .and()
+                .anonymous().disable()
+                .cors();
+
+        if (csrfConfiguration.isEnabled()) {
+            http.csrf().csrfTokenRepository(csrfConfiguration.getCsrfTokenRepository());
+        } else {
+            http.csrf().disable();
+        }
     }
 
     @Autowired
     public CorsConfiguration corsConfiguration;
+    @Autowired
+    public CsrfConfiguration csrfConfiguration;
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

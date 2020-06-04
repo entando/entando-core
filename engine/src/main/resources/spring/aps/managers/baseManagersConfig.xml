@@ -394,6 +394,16 @@
 
     <bean id="BulkCommandManager" class="org.entando.entando.aps.system.services.command.BulkCommandManager" parent="abstractService" />
 
+    <bean id="CookieCsrfTokenRepository"
+            class="org.springframework.security.web.csrf.CookieCsrfTokenRepository">
+        <property name="cookieHttpOnly" value="false" />
+    </bean>
+
+    <bean id="csrfConfiguration"
+            class="org.entando.entando.aps.servlet.security.CsrfConfiguration">
+        <property name="enabled" value="${csrf.enabled:false}" />
+        <property name="csrfTokenRepository" ref="CookieCsrfTokenRepository" />
+    </bean>
 
     <task:scheduler id="entandoScheduler" pool-size="10"/>
 

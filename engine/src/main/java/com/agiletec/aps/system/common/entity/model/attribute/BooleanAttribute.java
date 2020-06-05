@@ -15,6 +15,7 @@ package com.agiletec.aps.system.common.entity.model.attribute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.jdom.Element;
 
@@ -78,7 +79,7 @@ public class BooleanAttribute extends AbstractAttribute {
 
     @Override
     public boolean isSearchableOptionSupported() {
-        return false;
+        return true;
     }
 
     @Override

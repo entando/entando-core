@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,7 +66,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isOk());
     }
@@ -78,7 +80,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
                 put("/pageSettings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjectToJsonBytes(createMockRequestEmptyParams()))
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isBadRequest());
     }
@@ -92,7 +94,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
                 put("/pageSettings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(convertObjectToJsonBytes(createMockRequest()))
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isOk());
     }
@@ -106,7 +108,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
         ResultActions result = mockMvc.perform(
                 get("/pageSettings")
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isForbidden());
     }

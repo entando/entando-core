@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -118,7 +119,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .param("filter[0].operator", "like")
                         .param("filter[0].value", "user")
                         .sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         System.out.println("result: " + result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
@@ -135,7 +136,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .param("filter[0].operator", "like")
                         .param("filter[0].value", "user")
                         //.sessionAttr("user", user)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isOk());
 
@@ -156,7 +157,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         //.sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isOk());
@@ -179,7 +180,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         String response = result.andReturn().getResponse().getContentAsString();
         System.out.println("users: " + response);
         result.andExpect(status().isConflict());
@@ -201,7 +202,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
         String response = result.andReturn().getResponse().getContentAsString();
@@ -225,7 +226,7 @@ public class UserControllerUnitTest extends AbstractControllerTest {
                         .sessionAttr("user", user)
                         .content(mockJson)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isOk());
         String response = result.andReturn().getResponse().getContentAsString();

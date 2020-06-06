@@ -39,6 +39,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -74,7 +75,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(
                 get("/dataModels").param("page", "1")
                         .param("pageSize", "4")
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -94,7 +95,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
                         .param("pageSize", "4")
                         .param("filter[0].attribute", "code")
                         .param("filter[0].value", "1")
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
         result.andExpect(status().isOk());
         RestListRequest restListReq = new RestListRequest();
@@ -112,7 +113,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(
                 get("/dataModels")
-                        .header("Authorization", "Bearer " + accessToken)
+                        .header("Authorization", "Bearer " + accessToken).with(csrf())
         );
 
         result.andExpect(status().isForbidden());
@@ -133,7 +134,7 @@ public class DataObjectModelControllerTest extends AbstractControllerTest {
         ResultActions result = mockMvc.perform(put("/dataModels/{dataModelId}", "67")
                 .content(payload)
                 .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + accessToken));
+                .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isBadRequest());
     }
 

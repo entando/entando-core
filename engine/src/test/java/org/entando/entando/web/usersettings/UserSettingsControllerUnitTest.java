@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -62,7 +63,7 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 put("/userSettings")
                         .content(mapper.writeValueAsString(userSettingsRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
     }
@@ -80,7 +81,7 @@ public class UserSettingsControllerUnitTest extends AbstractControllerTest {
                 put("/userSettings")
                         .content(mapper.writeValueAsString(userSettingsRequest))
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isBadRequest());
     }

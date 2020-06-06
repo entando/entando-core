@@ -29,6 +29,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -54,7 +55,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
         testCors("/languages");
         System.out.println(result.andReturn().getResponse().getContentAsString());
@@ -69,7 +70,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
                 .perform(get("/languages")
                         .param("filter[0].attribute", "isActive")
                         .param("filter[0].value", "true")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
 
@@ -82,7 +83,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"en"})
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
 
     }
@@ -93,7 +94,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"de"})
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         result.andExpect(status().isOk());
     }
 

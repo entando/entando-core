@@ -33,6 +33,8 @@ import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -126,7 +128,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
         String accessToken = this.createAccessToken();
         return mockMvc.perform(
                 get("/userProfiles/{username}", username)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
     }
 
     private ResultActions performPostUserProfiles(String jsonContent) throws Exception {
@@ -135,7 +137,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
                 post("/userProfiles")
                         .content(jsonContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
     }
 
@@ -145,7 +147,7 @@ public class UserProfileControllerTest extends AbstractControllerTest {
                 put("/userProfiles/{username}", username)
                         .content(jsonContent)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
     }
 
     private String createAccessToken() throws Exception {

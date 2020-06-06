@@ -38,6 +38,8 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import static org.hamcrest.CoreMatchers.is;
 import org.hamcrest.Matchers;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -64,7 +66,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"editorCoach"})
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
         testCors("/userProfiles/editorCoach");
@@ -75,7 +77,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"xxxxx"})
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isNotFound());
     }
@@ -85,7 +87,7 @@ public class UserProfileControllerIntegrationTest extends AbstractControllerInte
         String accessToken = this.createAccessToken();
         ResultActions result = mockMvc
                 .perform(get("/userProfiles/{username}", new Object[]{"editorCoach"})
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
         System.out.println(result.andReturn().getResponse().getContentAsString());
         result.andExpect(status().isOk());
     }

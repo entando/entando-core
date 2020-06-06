@@ -38,6 +38,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import org.junit.Assert;
 import static org.junit.Assert.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,7 +74,7 @@ public class StreamInterceptorIntegrationTest extends AbstractControllerIntegrat
                     .perform(put("/pages/{code}/status", code)
                             .content(mapper.writeValueAsString(pageStatusRequest))
                             .contentType(MediaType.APPLICATION_JSON)
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
             result.andExpect(status().isOk());
             this.waitActionLoggerThread();
             List<Integer> logs2 = actionLogManager.getActionRecords(searchBean);

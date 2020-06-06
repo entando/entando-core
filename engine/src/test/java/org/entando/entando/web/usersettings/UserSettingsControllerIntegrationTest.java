@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -69,7 +70,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
         ResultActions result = mockMvc.perform(
                 get("/userSettings")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
         result.andExpect(status().isOk());
 
@@ -97,7 +98,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
 
             ResultActions result = mockMvc.perform(
                     get("/userSettings")
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -125,7 +126,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
                     put("/userSettings")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(mapper.writeValueAsString(userSettingsRequest))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 
@@ -145,7 +146,7 @@ public class UserSettingsControllerIntegrationTest extends AbstractControllerInt
                     put("/userSettings")
                             .contentType(MediaType.APPLICATION_JSON_VALUE)
                             .content(mapper.writeValueAsString(userSettingsRequest))
-                            .header("Authorization", "Bearer " + accessToken));
+                            .header("Authorization", "Bearer " + accessToken).with(csrf()));
 
             result.andExpect(status().isOk());
 

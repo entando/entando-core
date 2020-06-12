@@ -77,12 +77,12 @@
     <p class="sr-only">
         <wpsf:hidden name="attributeTypeCode" />
         <wpsf:hidden name="strutsAction" />
-        <s:if test="null != attributeRoles && attributeRoles.size() > 0">
+        <s:if test="%{null != attributeRoles && attributeRoles.size > 0}">
             <s:iterator value="attributeRoles" var="attributeRole">
                 <wpsf:hidden name="attributeRoles" value="%{#attributeRole}" />
             </s:iterator>
         </s:if>
-        <s:if test="null != disablingCodes && disablingCodes.size() > 0">
+        <s:if test="%{null != disablingCodes && disablingCodes.size > 0}">
             <s:iterator value="disablingCodes" var="disablingCode">
                 <wpsf:hidden name="disablingCodes" value="%{#disablingCode}" />
             </s:iterator>
@@ -129,8 +129,7 @@
             </label>
             <div class="col-sm-10">
                 <s:if test="strutsAction == 1">
-                    <wpsf:textfield cssClass="form-control" name="attributeName"
-                                    id="attributeName" />
+                    <wpsf:textfield cssClass="form-control" name="attributeName" id="attributeName" />
                 </s:if>
                 <s:else>
                     <wpsf:textfield cssClass="form-control" name="attributeName"
@@ -147,8 +146,7 @@
                    data-original-title=""> <span class="fa fa-info-circle"></span></a>
             </label>
             <div class="col-sm-10">
-                <wpsf:textfield name="attributeDescription"
-                                id="attributeDescription" cssClass="form-control" />
+                <wpsf:textfield name="attributeDescription" id="attributeDescription" cssClass="form-control" />
             </div>
         </div>
         <div class="form-group">
@@ -156,15 +154,12 @@
                 <s:text name="Entity.attribute.flag.mandatory.full" />
             </label>
             <div class="col-sm-10">
-                <wpsf:checkbox name="required" id="required"
-                               cssClass=" bootstrap-switch" />
+                <wpsf:checkbox name="required" id="required" cssClass="bootstrap-switch" />
             </div>
         </div>
         <div>
-            <s:if
-                test="!(#attribute.type == 'List') && !(#attribute.type == 'Monolist')">
-                <s:if
-                    test="isEntityManagerSearchEngineUser() && isIndexableOptionSupported(attributeTypeCode)">
+            <s:if test="%{!(#attribute.type == 'List') && !(#attribute.type == 'Monolist')}">
+                <s:if test="%{isEntityManagerSearchEngineUser() && isIndexableOptionSupported(attributeTypeCode)}">
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="indexable">
                             <s:text name="Entity.attribute.flag.indexed.full" />
@@ -175,7 +170,7 @@
                         </div>
                     </div>
                 </s:if>
-                <s:if test="isSearchableOptionSupported(attributeTypeCode)">
+                <s:if test="%{isSearchableOptionSupported(attributeTypeCode)}">
                     <div class="form-group">
                         <label class="col-sm-2 control-label" for="searchable"><s:text
                                 name="Entity.attribute.flag.searchable.full" />
@@ -197,8 +192,7 @@
         </legend>
 
         <s:set var="freeAttributeRoles" value="%{getFreeAttributeRoleNames()}" />
-        <s:if
-            test="null == #freeAttributeRoles || #freeAttributeRoles.isEmpty()">
+        <s:if test="%{null == #freeAttributeRoles || #freeAttributeRoles.isEmpty()}">
             <p>
                 <s:text name="note.entityAdmin.entityTypes.attribute.roles.none" />
             </p>
@@ -222,7 +216,7 @@
                 </div>
             </div>
 
-            <s:if test="null != attributeRoles && attributeRoles.size() > 0">
+            <s:if test="%{null != attributeRoles && attributeRoles.size > 0}">
                 <h3 class="margin-none">
                     <s:text name="label.roles.assigned" />
                 </h3>
@@ -261,11 +255,9 @@
         </s:else>
     </fieldset>
 
-    <s:set var="attributeDisablingCodesVar"
-           value="getAttributeDisablingCodes()"></s:set>
+    <s:set var="attributeDisablingCodesVar" value="getAttributeDisablingCodes()" />
 
-    <s:if
-        test="null != #attributeDisablingCodesVar && #attributeDisablingCodesVar.size()>0">
+    <s:if test="%{null != #attributeDisablingCodesVar && #attributeDisablingCodesVar.size>0}">
         <fieldset class="col-xs-12">
             <legend>
                 <s:text name="name.disablingCodes" />
@@ -286,7 +278,7 @@
                 </div>
             </div>
 
-            <s:if test="null != disablingCodes && disablingCodes.size() > 0">
+            <s:if test="%{null != disablingCodes && disablingCodes.size > 0}">
                 <h3 class="margin-none">
                     <s:text name="label.disablingCodes.assigned" />
                 </h3>
@@ -304,8 +296,7 @@
                         <div class="col-sm-10" style="margin-left: -20px;">
                             <div class="col-sm-4">
                                     <!--<code><s:property value="#disablingCode" /></code>-->
-                                <s:property
-                                    value="%{#attributeDisablingCodesVar[#disablingCode]}" />
+                                <s:property value="%{#attributeDisablingCodesVar[#disablingCode]}" />
                             </div>
                             <div class="col-sm-8">
                                 <wpsf:submit type="button" action="%{#actionName}"
@@ -322,22 +313,22 @@
         </fieldset>
     </s:if>
 
-    <s:if test="#attribute.textAttribute">
+    <s:if test="%{#attribute.textAttribute}">
         <s:include
             value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-text.jsp" />
     </s:if>
 
-    <s:elseif test="#attribute.type == 'Number'">
+    <s:elseif test="%{#attribute.type == 'Number'}">
         <s:include
             value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-number.jsp" />
     </s:elseif>
 
-    <s:elseif test="#attribute.type == 'Date'">
+    <s:elseif test="%{#attribute.type == 'Date'}">
         <s:include
             value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-date.jsp" />
     </s:elseif>
 
-    <s:if test="#attribute.type == 'List' || #attribute.type == 'Monolist'">
+    <s:if test="%{#attribute.type == 'List' || #attribute.type == 'Monolist'}">
         <fieldset class="col-xs-12">
             <legend>
                 <s:text name="label.settings" />
@@ -357,8 +348,7 @@
         </fieldset>
     </s:if>
 
-    <s:include
-        value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-ognl.jsp" />
+    <s:include value="/WEB-INF/apsadmin/jsp/entity/include/validation-rules-ognl.jsp" />
     <fieldset class="col-xs-12">
         <div class="form-group">
             <div class="col-xs-12">
@@ -366,8 +356,6 @@
                     <s:text name="label.continue" />
                 </wpsf:submit>
             </div>
-
         </div>
     </fieldset>
 </s:form>
-

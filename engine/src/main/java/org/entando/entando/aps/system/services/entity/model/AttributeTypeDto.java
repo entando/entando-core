@@ -24,6 +24,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import org.entando.entando.aps.system.common.entity.model.attribute.EnumeratorMapAttribute;
 
 /**
@@ -76,6 +78,7 @@ public class AttributeTypeDto implements Serializable {
             this.setEnumeratorOptionsSupported(attribute instanceof EnumeratorAttribute);
         }
         this.setListAttribute(attribute instanceof AbstractListAttribute);
+        this.setIndexableOptionSupported(attribute instanceof IndexableAttributeInterface);
     }
 
     public String getCode() {

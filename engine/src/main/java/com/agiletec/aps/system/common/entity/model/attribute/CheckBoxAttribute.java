@@ -24,10 +24,5 @@ public class CheckBoxAttribute extends BooleanAttribute {
 	protected boolean saveBooleanJDOMElement() {
 		return (null != super.getBooleanValue() && super.getBooleanValue());
 	}
-	
-	@Override
-	protected boolean addSearchInfo() {
-		return (null != super.getBooleanValue() && super.getBooleanValue());
-	}
-	
+    
 }

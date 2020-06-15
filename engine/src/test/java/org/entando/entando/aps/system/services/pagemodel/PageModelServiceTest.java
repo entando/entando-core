@@ -4,8 +4,6 @@ import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.*;
 import org.entando.entando.aps.system.services.assertionhelper.PageModelAssertionHelper;
-import org.entando.entando.aps.system.services.guifragment.GuiFragment;
-import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;
 import org.entando.entando.aps.system.services.mockhelper.PageMockHelper;
 import org.entando.entando.aps.system.services.page.IPageService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
@@ -17,7 +15,6 @@ import org.entando.entando.web.page.model.PageSearchRequest;
 import org.entando.entando.web.pagemodel.model.*;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
@@ -25,14 +22,13 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil.validPageModelRequest;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
+
+import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PageModelServiceTest {
@@ -46,10 +42,14 @@ public class PageModelServiceTest {
     private IPageModelManager pageModelManager;
 
     @Mock
+    private IWidgetTypeManager widgetTypeManager;
+
+    @Mock
     private ApplicationContext applicationContext;
 
     @Mock
     private PageModelServiceUtilizer pageModelServiceUtilizer;
+    
     @Mock
     private PagedMetadataMapper pagedMetadataMapper;
 
@@ -60,7 +60,7 @@ public class PageModelServiceTest {
     @Before
     public void setUp() throws Exception {
         dtoBuilder = new PageModelDtoBuilder();
-        pageModelService = new PageModelService(pageModelManager, dtoBuilder);
+        pageModelService = new PageModelService(pageModelManager, widgetTypeManager, dtoBuilder);
         pageModelService.setApplicationContext(applicationContext);
 
         Field pagedMetadataMapper = ReflectionUtils.findField(pageModelService.getClass(), "pagedMetadataMapper");

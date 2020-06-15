@@ -13,13 +13,11 @@
  */
 package org.entando.entando.web.pagemodel.validator;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.validator.AbstractPaginationValidator;
 import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
@@ -34,6 +32,8 @@ public class PageModelValidator extends AbstractPaginationValidator {
     public static final String ERRCODE_PAGEMODEL_REFERENCES = "3";
     public static final String ERRCODE_URINAME_MISMATCH = "4";
     public static final String ERRCODE_FRAMES_POS_MISMATCH = "5";
+    public static final String ERRCODE_DEFAULT_WIDGET_NOT_EXISTS = "6";
+    public static final String ERRCODE_DEFAULT_WIDGET_INVALID_PARAMETER = "7";
 
     @Override
     public boolean supports(Class<?> paramClass) {

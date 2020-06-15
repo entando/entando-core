@@ -31,7 +31,7 @@ public final class PageModelTestUtil {
     private static PageModelFrameReq createValidFrameRequest() {
         PageModelFrameReq pageReq = new PageModelFrameReq(0, FRAME_DESCRIPTION);
         pageReq.getDefaultWidget().setCode("leftmenu");
-        pageReq.getDefaultWidget().getProperties().put("navSpec", "code(hompepage).subtree(5)");
+        pageReq.getDefaultWidget().getProperties().put("navSpec", "code(homepage).subtree(5)");
         return pageReq;
     }
     

@@ -35,8 +35,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.entando.entando.aps.system.services.pagemodel.PageModelTestUtil;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
+import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
 import org.entando.entando.web.pagemodel.model.PageModelRequest;
 import org.entando.entando.web.utils.OAuth2TestUtils;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -117,14 +119,14 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test 
-    public void add_repeated_page_model_return_conflict() throws Exception {
+    public void add_repeated_page_model_return_error() throws Exception {
         // pageModel home always exists because it's created with DB.
         String payload = createPageModelPayload("home");
         ResultActions result = mockMvc.perform(
                 post("/pageModels").content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isConflict());
+        result.andExpect(status().isBadRequest());
     }
 
     @Test 
@@ -194,16 +196,16 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                     .andExpect(jsonPath("$.payload.code", is(PAGE_MODEL_WITH_DOT_CODE)))
                     .andExpect(jsonPath("$.payload.descr", is("description")))
                     .andExpect(jsonPath("$.payload.configuration.frames[0].defaultWidget.code", is("leftmenu")))
-                    .andExpect(jsonPath("$.payload.configuration.frames[0].defaultWidget.properties.navSpec", is("code(homepage).subtree(5)")));
+                    .andExpect(jsonPath("$.payload.configuration.frames[0].defaultWidget.properties.navSpec", is("code(homepage).subtree(5)")))
+                    .andExpect(jsonPath("$.payload.configuration.frames[1].defaultWidget", CoreMatchers.nullValue()));
             PageModel pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_WITH_DOT_CODE);
             Assert.assertNotNull(pageModel);
-            Assert.assertEquals(1, pageModel.getFrames().length);
-            Assert.assertEquals(1, pageModel.getFramesConfig().length);
+            Assert.assertEquals(2, pageModel.getFrames().length);
+            Assert.assertEquals(2, pageModel.getFramesConfig().length);
             Assert.assertNotNull(pageModel.getFramesConfig()[0].getDefaultWidget());
             Assert.assertEquals("leftmenu", pageModel.getFramesConfig()[0].getDefaultWidget().getType().getCode());
             Assert.assertEquals(1, pageModel.getFramesConfig()[0].getDefaultWidget().getConfig().size());
             Assert.assertEquals("code(homepage).subtree(5)", pageModel.getFramesConfig()[0].getDefaultWidget().getConfig().getProperty("navSpec"));
-            
             pageModelRequest.setDescr("description2");
             result = mockMvc.perform(
                     put("/pageModels/{code}", PAGE_MODEL_WITH_DOT_CODE)
@@ -228,6 +230,71 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
                             .header("Authorization", "Bearer " + accessToken));
             result.andDo(print())
                     .andExpect(status().isOk());
+        }
+    }
+    
+    @Test 
+    public void add_page_model_with_errors() throws Exception {
+        try {
+            PageModelRequest pageModelRequest = PageModelTestUtil.validPageModelRequest();
+            PageModelFrameReq newFrames = new PageModelFrameReq(2, "Position 1");
+            newFrames.getDefaultWidget().setCode("invalid_widget");
+            pageModelRequest.getConfiguration().getFrames().add(newFrames);
+            
+            pageModelRequest.setCode(PAGE_MODEL_CODE);
+            ResultActions result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("6")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            PageModel pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNull(pageModel);
+            
+            newFrames.getDefaultWidget().setCode("leftmenu");
+            newFrames.getDefaultWidget().getProperties().put("wrongParam", "code(homepage).subtree(8)");
+            
+            result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("7")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNull(pageModel);
+            
+            newFrames.getDefaultWidget().getProperties().remove("wrongParam");
+            PageModelFrameReq newWrongFrames = new PageModelFrameReq(7, "Position 7");
+            pageModelRequest.getConfiguration().getFrames().add(newWrongFrames);
+            
+            result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("5")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNull(pageModel);
+            
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.pageModelManager.deletePageModel(PAGE_MODEL_CODE);
         }
     }
     

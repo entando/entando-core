@@ -24,7 +24,6 @@ import org.entando.entando.aps.system.services.IDtoBuilder;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
 import org.entando.entando.web.common.assembler.PagedMetadataMapper;
-import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.model.*;
 import org.entando.entando.web.component.ComponentUsageEntity;
 import org.entando.entando.web.pagemodel.model.*;
@@ -39,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.web.common.exceptions.ValidationGenericException;
 
 @Service
 public class PageModelService implements IPageModelService, ApplicationContextAware {
@@ -108,12 +108,14 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             BeanPropertyBindingResult validationResult = this.validateAdd(pageModelRequest);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             PageModel pageModel = this.createPageModel(pageModelRequest);
             this.pageModelManager.addPageModel(pageModel);
             return this.dtoBuilder.convert(pageModel);
-        } catch (ApsSystemException e) {
+        } catch (ValidationGenericException e) {
+            throw e;
+        } catch (Exception e) {
             logger.error("Error in add pageModel", e);
             throw new RestServerError("error in add pageModel", e);
         }
@@ -124,13 +126,15 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         try {
             BeanPropertyBindingResult validationResult = this.validateEdit(pageModelRequest);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             PageModel pageModel = this.pageModelManager.getPageModel(pageModelRequest.getCode());
             this.copyProperties(pageModelRequest, pageModel);
             this.pageModelManager.updatePageModel(pageModel);
             return dtoBuilder.convert(pageModel);
-        } catch (ApsSystemException e) {
+        } catch (ValidationGenericException e) {
+            throw e;
+        } catch (Exception e) {
             logger.error("Error in update pageModel {}", pageModelRequest.getCode(), e);
             throw new RestServerError("error in update pageMdel", e);
         }
@@ -145,10 +149,12 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             }
             BeanPropertyBindingResult validationResult = this.validateDelete(pageModel);
             if (validationResult.hasErrors()) {
-                throw new ValidationConflictException(validationResult);
+                throw new ValidationGenericException(validationResult);
             }
             this.pageModelManager.deletePageModel(code);
-        } catch (ApsSystemException e) {
+        } catch (ValidationGenericException e) {
+            throw e;
+        } catch (Exception e) {
             logger.error("Error in delete pagemodel {}", code, e);
             throw new RestServerError("error in delete pagemodel", e);
         }
@@ -269,7 +275,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
     }
 
     private void validateDefaultWidgets(PageModelRequest pageModelRequest, BeanPropertyBindingResult bindingResult) {
-        if (null == pageModelRequest || null != pageModelRequest.getConfiguration().getFrames()) {
+        if (null == pageModelRequest || null == pageModelRequest.getConfiguration().getFrames()) {
             return;
         }
         List<PageModelFrameReq> frames = pageModelRequest.getConfiguration().getFrames();
@@ -287,7 +293,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
                 while (iter.hasNext()) {
                     String key = iter.next();
                     if (!type.hasParameter(key)) {
-                        bindingResult.reject(PageModelValidator.ERRCODE_DEFAULT_WIDGET_NOT_EXISTS, new Object[]{key, dwr.getCode(), i}, "pageModel.defaultWidget.invalidParameter");
+                        bindingResult.reject(PageModelValidator.ERRCODE_DEFAULT_WIDGET_INVALID_PARAMETER, new Object[]{key, dwr.getCode(), i}, "pageModel.defaultWidget.invalidParameter");
                     }
                 }
             }

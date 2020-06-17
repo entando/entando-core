@@ -38,6 +38,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.entando.entando.aps.system.services.widgettype.IWidgetTypeManager;
 import org.entando.entando.aps.system.services.widgettype.WidgetType;
+import org.entando.entando.web.common.exceptions.ValidationConflictException;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 
 @Service
@@ -113,7 +114,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             PageModel pageModel = this.createPageModel(pageModelRequest);
             this.pageModelManager.addPageModel(pageModel);
             return this.dtoBuilder.convert(pageModel);
-        } catch (ValidationGenericException e) {
+        } catch (ValidationGenericException | ValidationConflictException e) {
             throw e;
         } catch (Exception e) {
             logger.error("Error in add pageModel", e);
@@ -132,7 +133,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
             this.copyProperties(pageModelRequest, pageModel);
             this.pageModelManager.updatePageModel(pageModel);
             return dtoBuilder.convert(pageModel);
-        } catch (ValidationGenericException e) {
+        } catch (ValidationGenericException | ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
             logger.error("Error in update pageModel {}", pageModelRequest.getCode(), e);
@@ -244,12 +245,13 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         }
         return defaultWidget;
     }
-
+    
     protected BeanPropertyBindingResult validateAdd(PageModelRequest pageModelRequest) {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageModelRequest, "pageModel");
         PageModel pageModel = pageModelManager.getPageModel(pageModelRequest.getCode());
         if (null != pageModel) {
             bindingResult.reject(PageModelValidator.ERRCODE_CODE_EXISTS, new String[]{pageModelRequest.getCode()}, "pageModel.code.exists");
+            throw new ValidationConflictException(bindingResult);
         }
         this.validateDefaultWidgets(pageModelRequest, bindingResult);
         return bindingResult;
@@ -264,7 +266,7 @@ public class PageModelService implements IPageModelService, ApplicationContextAw
         this.validateDefaultWidgets(pageModelRequest, bindingResult);
         return bindingResult;
     }
-
+    
     protected BeanPropertyBindingResult validateDelete(PageModel pageModel) throws ApsSystemException {
         BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(pageModel, "pageModel");
         Map<String, List<Object>> references = this.getReferencingObjects(pageModel);

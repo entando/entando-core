@@ -119,14 +119,14 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
     }
 
     @Test 
-    public void add_repeated_page_model_return_error() throws Exception {
+    public void add_repeated_page_model_return_conflict() throws Exception {
         // pageModel home always exists because it's created with DB.
         String payload = createPageModelPayload("home");
         ResultActions result = mockMvc.perform(
                 post("/pageModels").content(payload)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isBadRequest());
+        result.andExpect(status().isConflict());
     }
 
     @Test 
@@ -291,6 +291,75 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
             pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
             Assert.assertNull(pageModel);
             
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.pageModelManager.deletePageModel(PAGE_MODEL_CODE);
+        }
+    }
+    
+    @Test 
+    public void update_page_model_with_errors() throws Exception {
+        try {
+            PageModelRequest pageModelRequest = PageModelTestUtil.validPageModelRequest();
+            pageModelRequest.setCode(PAGE_MODEL_CODE);
+            ResultActions result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andDo(print()).andExpect(status().isOk());
+            
+            PageModel pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNotNull(pageModel);
+            Assert.assertEquals(2, pageModel.getFrames().length);
+            
+            PageModelFrameReq newFrames = new PageModelFrameReq(2, "Position 1");
+            newFrames.getDefaultWidget().setCode("invalid_widget");
+            pageModelRequest.getConfiguration().getFrames().add(newFrames);
+            
+            result = mockMvc.perform(
+                    post("/pageModels")
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isConflict());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("2")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNotNull(pageModel);
+            Assert.assertEquals(2, pageModel.getFrames().length);
+            
+            result = mockMvc.perform(
+                    put("/pageModels/{code}", PAGE_MODEL_CODE)
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isBadRequest());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("6")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNotNull(pageModel);
+            Assert.assertEquals(2, pageModel.getFrames().length);
+            
+            pageModelRequest.setCode(NONEXISTENT_PAGE_MODEL);
+            result = mockMvc.perform(
+                    put("/pageModels/{code}", NONEXISTENT_PAGE_MODEL)
+                            .content(createJson(pageModelRequest))
+                            .contentType(MediaType.APPLICATION_JSON_VALUE)
+                            .header("Authorization", "Bearer " + accessToken));
+            result.andExpect(status().isNotFound());
+            result.andExpect(jsonPath("$.payload.size()", is(0)));
+            result.andExpect(jsonPath("$.errors.size()", is(1)));
+            result.andExpect(jsonPath("$.errors[0].code", is("1")));
+            result.andExpect(jsonPath("$.metaData.size()", is(0)));
+            pageModel = this.pageModelManager.getPageModel(PAGE_MODEL_CODE);
+            Assert.assertNotNull(pageModel);
+            Assert.assertEquals(2, pageModel.getFrames().length);
         } catch (Exception e) {
             throw e;
         } finally {

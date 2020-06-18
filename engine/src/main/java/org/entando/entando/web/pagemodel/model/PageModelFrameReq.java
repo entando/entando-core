@@ -30,6 +30,7 @@ public class PageModelFrameReq {
 
     private boolean mainFrame;
     private FrameSketch sketch;
+    private DefaultWidgetReq defaultWidget = new DefaultWidgetReq();
 
     public PageModelFrameReq() {
 
@@ -70,6 +71,14 @@ public class PageModelFrameReq {
 
     public void setSketch(FrameSketch sketch) {
         this.sketch = sketch;
+    }
+
+    public DefaultWidgetReq getDefaultWidget() {
+        return defaultWidget;
+    }
+
+    public void setDefaultWidget(DefaultWidgetReq defaultWidget) {
+        this.defaultWidget = defaultWidget;
     }
 
 }

@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.*;
 import org.entando.entando.aps.system.services.pagemodel.IPageModelService;
 import org.entando.entando.aps.system.services.pagemodel.model.PageModelDto;
-import org.entando.entando.aps.system.services.widgettype.model.WidgetDto;
 import org.entando.entando.web.common.annotation.RestAccessControl;
 import org.entando.entando.web.common.exceptions.ValidationGenericException;
 import org.entando.entando.web.common.model.*;
@@ -40,6 +39,7 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/pageModels", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PageModelController {
+    
     public static final String COMPONENT_ID = "pageTemplate";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -53,7 +53,6 @@ public class PageModelController {
         this.pageModelValidator = pageModelValidator;
     }
 
-
     @ApiOperation("Retrieve multiple page templates")
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK"),
@@ -64,15 +63,11 @@ public class PageModelController {
     public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(
             RestListRequest requestList, @RequestParam Map<String, String> requestParams) {
         logger.trace("loading page templates");
-
-        pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
-        PagedMetadata<PageModelDto> result = pageModelService.getPageModels(requestList, requestParams);
-
-        pageModelValidator.validateRestListResult(requestList, result);
-
+        this.pageModelValidator.validateRestListRequest(requestList, PageModelDto.class);
+        PagedMetadata<PageModelDto> result = this.pageModelService.getPageModels(requestList, requestParams);
+        this.pageModelValidator.validateRestListResult(requestList, result);
         return ResponseEntity.ok(new PagedRestResponse<>(result));
     }
-
 
     @ApiOperation("Retrieve page template by code")
     @ApiResponses({
@@ -82,10 +77,9 @@ public class PageModelController {
     @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @GetMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> getPageModel(@PathVariable String code) {
-        PageModelDto pageModelDto = pageModelService.getPageModel(code);
+        PageModelDto pageModelDto = this.pageModelService.getPageModel(code);
         return ResponseEntity.ok(new SimpleRestResponse<>(pageModelDto));
     }
-
 
     @ApiOperation("Retrieve page template references")
     @ApiResponses({
@@ -95,8 +89,7 @@ public class PageModelController {
     @GetMapping(value = "/{code:.+}/references/{manager}")
     public ResponseEntity<PagedRestResponse<?>> getPageModelReferences(
             @PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
-
-        PagedMetadata<?> result = pageModelService.getPageModelReferences(code, manager, requestList);
+        PagedMetadata<?> result = this.pageModelService.getPageModelReferences(code, manager, requestList);
         return ResponseEntity.ok(new PagedRestResponse<>(result));
     }
 
@@ -108,16 +101,13 @@ public class PageModelController {
     @RequestMapping(value = "/{code}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String code) {
         logger.trace("get {} usage by code {}", COMPONENT_ID, code);
-
         ComponentUsage usage = ComponentUsage.builder()
                 .type(COMPONENT_ID)
                 .code(code)
                 .usage(pageModelService.getComponentUsage(code))
                 .build();
-
         return new ResponseEntity<>(new SimpleRestResponse<>(usage), HttpStatus.OK);
     }
-
 
     @ApiOperation("Retrieve pageModel usage count")
     @ApiResponses({
@@ -127,17 +117,12 @@ public class PageModelController {
     @RestAccessControl(permission = Permission.SUPERUSER)
     @RequestMapping(value = "/{code}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String code, PageSearchRequest searchRequest) {
-
         logger.trace("get {} usage details by code {}", COMPONENT_ID, code);
-
         // clear filters
         searchRequest.setFilters(new Filter[0]);
-
         PagedMetadata<ComponentUsageEntity> result = pageModelService.getComponentUsageDetails(code, searchRequest);
-
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
-
 
     @ApiOperation("Update page template")
     @ApiResponses({
@@ -148,24 +133,20 @@ public class PageModelController {
     @PutMapping(value = "/{code:.+}", name = "roleGroup")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> updatePageModel(@PathVariable String code,
             @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
-
-        validateWithBodyName(code, pageModelRequest, bindingResult);
-
-        PageModelDto pageModel = pageModelService.updatePageModel(pageModelRequest);
+        this.validateWithBodyName(code, pageModelRequest, bindingResult);
+        PageModelDto pageModel = this.pageModelService.updatePageModel(pageModelRequest);
         return ResponseEntity.ok(new SimpleRestResponse<>(pageModel));
     }
 
     private void validateWithBodyName(String code, PageModelRequest pageModelRequest, BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        pageModelValidator.validateBodyName(code, pageModelRequest, bindingResult);
+        this.pageModelValidator.validateBodyName(code, pageModelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
     }
-
 
     @ApiOperation("Add page template")
     @ApiResponses({
@@ -177,9 +158,7 @@ public class PageModelController {
     @PostMapping
     public ResponseEntity<SimpleRestResponse<PageModelDto>> addPageModel(
             @Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) {
-
-        validatePageModelRequest(pagemodelRequest, bindingResult);
-
+        this.validatePageModelRequest(pagemodelRequest, bindingResult);
         PageModelDto dto = pageModelService.addPageModel(pagemodelRequest);
         return ResponseEntity.ok(new SimpleRestResponse<>(dto));
     }
@@ -188,12 +167,11 @@ public class PageModelController {
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
-        pageModelValidator.validate(pagemodelRequest, bindingResult);
+        this.pageModelValidator.validate(pagemodelRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
     }
-
 
     @ApiOperation("Delete page template")
     @ApiResponses({
@@ -203,8 +181,9 @@ public class PageModelController {
     @DeleteMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<Map>> deletePageModel(@PathVariable String code) {
         logger.debug("deleting {}", code);
-        pageModelService.removePageModel(code);
+        this.pageModelService.removePageModel(code);
         Map<String, String> result = ImmutableMap.of("code", code);
         return ResponseEntity.ok(new SimpleRestResponse<>(result));
     }
+    
 }

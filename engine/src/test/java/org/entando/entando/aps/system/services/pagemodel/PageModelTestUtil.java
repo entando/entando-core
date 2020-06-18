@@ -1,8 +1,23 @@
+/*
+ * Copyright 2020-Present Entando Inc. (http://www.entando.com) All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
 package org.entando.entando.aps.system.services.pagemodel;
 
-import org.entando.entando.web.pagemodel.model.*;
-
-import static java.util.Collections.singletonList;
+import java.util.ArrayList;
+import java.util.List;
+import org.entando.entando.web.pagemodel.model.PageModelConfigurationRequest;
+import org.entando.entando.web.pagemodel.model.PageModelFrameReq;
+import org.entando.entando.web.pagemodel.model.PageModelRequest;
 
 public final class PageModelTestUtil {
 
@@ -24,11 +39,18 @@ public final class PageModelTestUtil {
 
     private static PageModelConfigurationRequest createValidPageModelConfigurationRequest() {
         PageModelConfigurationRequest configuration = new PageModelConfigurationRequest();
-        configuration.setFrames(singletonList(createValidFrameRequest()));
+        List<PageModelFrameReq> frames = new ArrayList<>();
+        frames.add(createValidFrameRequest());
+        frames.add(new PageModelFrameReq(1, "Position 1"));
+        configuration.setFrames(frames);
         return configuration;
     }
 
     private static PageModelFrameReq createValidFrameRequest() {
-        return new PageModelFrameReq(0, FRAME_DESCRIPTION);
+        PageModelFrameReq pageReq = new PageModelFrameReq(0, FRAME_DESCRIPTION);
+        pageReq.getDefaultWidget().setCode("leftmenu");
+        pageReq.getDefaultWidget().getProperties().put("navSpec", "code(homepage).subtree(5)");
+        return pageReq;
     }
+    
 }

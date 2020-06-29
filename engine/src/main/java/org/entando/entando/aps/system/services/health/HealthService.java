@@ -24,12 +24,12 @@ public class HealthService implements IHealthService {
     public boolean isHealthy() {
 
         // check port schema connectivity
-        if (!this.healthDAO.isPortDBConnectionHealthy()) {
+        if (! this.healthDAO.isPortDBConnectionHealthy()) {
             throw new EntandoHealthException("Can't establish connection with Port database schema");
         }
 
         // check serv schema connectivity
-        if (!this.healthDAO.isServDBConnectionHealthy()) {
+        if (! this.healthDAO.isServDBConnectionHealthy()) {
             throw new EntandoHealthException("Can't establish connection with Serv database schema");
         }
 

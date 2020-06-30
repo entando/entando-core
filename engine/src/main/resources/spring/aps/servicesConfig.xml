@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:jee="http://www.springframework.org/schema/jee"
-       xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:cache="http://www.springframework.org/schema/cache"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
-			http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-			http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache.xsd
-			http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+
+
+
+
+
 			http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
 
@@ -105,6 +99,10 @@
         <property name="guiFragmentManager" ref="GuiFragmentManager" />
         <property name="groupManager" ref="GroupManager" />
         <property name="pagedMetadataMapper" ref="PagedMetadataMapper" />
+    </bean>
+
+    <bean id="HealthService" class="org.entando.entando.aps.system.services.health.HealthService" >
+        <property name="healthDAO" ref="HealthDAO" />
     </bean>
 
     <bean id="GuiFragmentService" class="org.entando.entando.aps.system.services.guifragment.GuiFragmentService" >

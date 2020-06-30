@@ -14,7 +14,6 @@
 package org.entando.entando.web.health;
 
 import org.entando.entando.aps.system.services.health.IHealthService;
-import org.entando.entando.web.health.model.HealthResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/health")
 public class HealthController {
 
-    private final String STATUS_UP = "UP";
-    private final String STATUS_DOWN = "DOWN";
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private IHealthService healthService;
+    private final IHealthService healthService;
 
     @Autowired
     public HealthController(IHealthService healthService) {
@@ -41,12 +37,10 @@ public class HealthController {
     }
 
     @GetMapping
-    public ResponseEntity<HealthResponse> isHealthy() {
+    public ResponseEntity<Void> isHealthy() {
 
         logger.debug("health check");
 
-        boolean healthy = this.healthService.isHealthy();
-
-        return new ResponseEntity<>(new HealthResponse(healthy ? STATUS_UP : STATUS_DOWN), HttpStatus.OK);
+        return new ResponseEntity<>(this.healthService.isHealthy() ? HttpStatus.OK : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

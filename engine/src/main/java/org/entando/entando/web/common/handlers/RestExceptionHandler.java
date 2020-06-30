@@ -19,7 +19,6 @@ import org.entando.entando.web.common.RestErrorCodes;
 import org.entando.entando.web.common.exceptions.*;
 import org.entando.entando.web.common.model.ErrorRestResponse;
 import org.entando.entando.web.common.model.RestError;
-import org.entando.entando.web.health.model.HealthErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -147,20 +144,6 @@ public class RestExceptionHandler {
         logger.debug("Handling {} error", ex.getClass().getSimpleName());
         BindingResult result = ex.getBindingResult();
         return processAllErrors(result);
-    }
-
-    @ExceptionHandler(value = EntandoHealthException.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ResponseBody
-    public HealthErrorResponse processValidationError(EntandoHealthException ex) {
-
-        logger.debug("Handling {} error", ex.getClass().getSimpleName());
-
-        return new HealthErrorResponse()
-                .setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .setTimestamp(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                .setError("Entando-core is UNHEALTHY")
-                .setMessage(ex.getMessage());
     }
 
     private ErrorRestResponse processAllErrors(BindingResult result) {

@@ -16,10 +16,13 @@ package org.entando.entando.web.health;
 import org.entando.entando.aps.system.services.health.IHealthService;
 import org.entando.entando.web.AbstractControllerIntegrationTest;
 import org.entando.entando.web.MockMvcHelper;
-import org.entando.entando.web.assertionhelper.HealthAssertionHelper;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.hamcrest.core.Is.is;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class HealthControllerIntegrationTest extends AbstractControllerIntegrationTest {
 
@@ -38,6 +41,6 @@ public class HealthControllerIntegrationTest extends AbstractControllerIntegrati
     @Test
     public void isHealthy() throws Exception {
 
-        HealthAssertionHelper.assertSuccessfulRestResponse(mockMvcHelper.getMockMvc(healthEndpoint));
+        mockMvcHelper.getMockMvc(healthEndpoint).andExpect(status().isOk());
     }
 }

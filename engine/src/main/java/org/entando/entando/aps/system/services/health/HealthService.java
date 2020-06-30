@@ -1,12 +1,15 @@
 package org.entando.entando.aps.system.services.health;
 
 import com.agiletec.aps.system.services.health.IHealthDAO;
-import org.entando.entando.web.common.exceptions.EntandoHealthException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class HealthService implements IHealthService {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private IHealthDAO healthDAO;
 
@@ -25,12 +28,14 @@ public class HealthService implements IHealthService {
 
         // check port schema connectivity
         if (! this.healthDAO.isPortDBConnectionHealthy()) {
-            throw new EntandoHealthException("Can't establish connection with Port database schema");
+            logger.error("Can't establish connection with Port database schema");
+            return false;
         }
 
         // check serv schema connectivity
         if (! this.healthDAO.isServDBConnectionHealthy()) {
-            throw new EntandoHealthException("Can't establish connection with Serv database schema");
+            logger.error("Can't establish connection with Serv database schema");
+            return false;
         }
 
         return true;

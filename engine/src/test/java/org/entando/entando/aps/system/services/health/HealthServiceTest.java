@@ -1,7 +1,6 @@
 package org.entando.entando.aps.system.services.health;
 
 import com.agiletec.aps.system.services.health.IHealthDAO;
-import org.entando.entando.web.common.exceptions.EntandoHealthException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -26,21 +26,21 @@ public class HealthServiceTest {
         healthService = new HealthService(healthDAO);
     }
 
-    @Test(expected = EntandoHealthException.class)
-    public void withPortSchemaNotReachableShouldThrowEntandoHealthException() {
+    @Test
+    public void withPortSchemaNotReachableShouldReturnFalse() {
 
         when(healthDAO.isPortDBConnectionHealthy()).thenReturn(false);
 
-        healthService.isHealthy();
+        assertFalse(healthService.isHealthy());
     }
 
-    @Test(expected = EntandoHealthException.class)
-    public void withServSchemaNotReachableShouldThrowEntandoHealthException() {
+    @Test
+    public void withServSchemaNotReachableShouldReturnFalse() {
 
         when(healthDAO.isPortDBConnectionHealthy()).thenReturn(true);
         when(healthDAO.isServDBConnectionHealthy()).thenReturn(false);
 
-        healthService.isHealthy();
+        assertFalse(healthService.isHealthy());
     }
 
     @Test

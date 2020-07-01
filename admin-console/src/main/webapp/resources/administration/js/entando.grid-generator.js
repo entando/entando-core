@@ -1,6 +1,4 @@
-
 (function(context){
-
 
     /**
      * @constructor
@@ -9,25 +7,22 @@
      * @param {number} options.rowHeight - the row height in pixels
      */
     function GridGenerator(options) {
-
         var me = this;
-
-        if (_.isEmpty(options.frames)) {
-            throw this.newError(GridGenerator.MISSING_FRAMES);
-        }
-
         this.options = options;
-
         this.originalFrames = options.frames;
-
         var lastDefinedFrame = _.maxBy(options.frames, 'sketch.y2');
+        var bottomRight;
+        if (_.isEmpty(options.frames)) {
+            bottomRight = 0;
+        } else {
+            bottomRight = _.get(lastDefinedFrame, 'sketch.y2', -1);
+        }
         this.totalBoundaries = {
             x1: 0,
             y1: 0,
             x2: 11,
-            y2: _.get(lastDefinedFrame, 'sketch.y2', -1)
+            y2: bottomRight
         };
-
         this.totalFrames = _.map(options.frames, function(frame) {
             var internalFrame;
             if (frame.sketch) {
@@ -40,23 +35,19 @@
                     y1: me.totalBoundaries.y2,
                     y2: me.totalBoundaries.y2
                 };
-
             }
             internalFrame.description = frame.description;
             internalFrame.pos = frame.pos;
             return internalFrame;
         });
-
         var malformed = this.detectMalformed(this.totalFrames);
         if (!_.isEmpty(malformed)) {
             throw this.newError(GridGenerator.ERROR.MALFORMED_FRAMES, malformed);
         }
-
         var overlaps = this.detectOverlaps(this.totalFrames);
         if (!_.isEmpty(overlaps)) {
             throw this.newError(GridGenerator.ERROR.OVERLAPPING_FRAMES, overlaps);
         }
-
     }
 
     GridGenerator.ERROR = {
@@ -67,7 +58,6 @@
 
     var DIRECTION_ROW = 'row',
         DIRECTION_COL = 'col';
-
 
     /**
      * Returns all frames with the auto-generated missing sketch properties
@@ -111,7 +101,6 @@
         });
     };
 
-
     /**
      * Returns all frames included in the frames param, that
      * are in the specified section (grid row or column)
@@ -125,14 +114,11 @@
             p = (direction === DIRECTION_ROW ? 'y' : 'x'),
             p1 = p+1,
             p2 = p+2;
-
         for (var i=section[p1]; i<=section[p2]; ++i) {
             framesInSection.push(this.getFramesAtIndex(frames, direction, i));
         }
         return _.uniq(_.flatten(framesInSection));
     };
-
-
 
     /**
      * Returns a set of sections (grid rows or columns)
@@ -142,7 +128,6 @@
      * @returns {Array} a set of sections (grid rows or columns)
      */
     GridGenerator.prototype.splitSections = function splitSections(frames, boundaries, direction) {
-
         var p1, p2, propsToPick;
         if (direction === DIRECTION_ROW) {
             p1 = 'y1';
@@ -153,42 +138,32 @@
             p2 = 'x2';
             propsToPick = ['y1', 'y2'];
         }
-
         var startIndex = boundaries[p1];
         var endIndex = boundaries[p2];
-
-
         var sections = [];
         var curSection = _.pick(boundaries, propsToPick);
         curSection[p1] = startIndex;
-
-
         for (var i=startIndex; i<endIndex; ++i) {
             var c1 = this.getFramesAtIndex(frames, direction, i);
             var c2 = this.getFramesAtIndex(frames, direction, i+1);
             var int = _.intersection(c1, c2);
             if (_.isEmpty(int)) {
                 curSection[p2] = i;
-
                 if (_.isEmpty(c1)) {
                     curSection.empty = true;
                 }
-
                 sections.push(curSection);
-
                 // start new section
                 curSection = _.pick(boundaries, propsToPick);
                 curSection[p1] = i + 1;
             }
         }
-
         // add last section
         if (_.isEmpty(c2)){
             curSection.empty = true;
         }
         curSection[p2] = endIndex;
         sections.push(curSection);
-
         var fixedSections = [];
         for (var i=0; i<sections.length; ++i) {
             if (sections[i].empty) {
@@ -200,8 +175,6 @@
             }
             fixedSections.push(sections[i]);
         }
-
-
         return fixedSections;
     };
 
@@ -210,7 +183,6 @@
      */
     GridGenerator.prototype.detectMalformed = function detectMalform () {
         var malformed = [];
-
         _.forEach(this.totalFrames, function(frame) {
             var isOk = (
                 _.inRange(frame.x1, 0, 12) &&
@@ -246,7 +218,6 @@
         var frames = this.totalFrames;
         for (var i=0; i<frames.length-1; ++i) {
             for (var j=i+1; j<frames.length; ++j) {
-
                 if( doOverlap(frames[i], frames[j])) {
                     overlaps.push({
                         a: frames[i],
@@ -265,25 +236,16 @@
      * @returns {Object} the root node of the tree
      */
     GridGenerator.prototype.getTree = function getTree(frames, boundaries) {
-
         var rows = this.splitSections(frames, boundaries, DIRECTION_ROW);
-
-
         for (var i=0; i<rows.length; ++i) {
             var frsInRow = this.getFramesInSection(frames, DIRECTION_ROW, rows[i]);
             var cols = this.splitSections(frsInRow, rows[i], DIRECTION_COL);
-
             rows[i].cols = cols;
-
             for (var j=0; j<cols.length; ++j) {
-
                 var frsInCol = this.getFramesInSection(frsInRow, DIRECTION_COL, cols[j]);
-
-
                 if (frsInCol.length === 0) {
                     continue;
                 } else if (frsInCol.length === 1) {
-
                     var exactMatch = _.isEqual(
                         _.pick(frsInCol[0], ['x1', 'x2', 'y1', 'y2']),
                         _.pick(cols[j], ['x1', 'x2', 'y1', 'y2'])
@@ -293,20 +255,13 @@
                     } else {
                         rows[i].cols[j].rows = this.getTree(frsInCol, cols[j]).rows;
                     }
-
-
                 } else {
                     rows[i].cols[j].rows = this.getTree(frsInCol, cols[j]).rows;
                 }
-
             }
-
         }
-
         return {rows:rows};
     };
-
-
 
     /**
      * Returns HTML code for bootstrap rows and columns
@@ -314,39 +269,26 @@
      * @returns {string} the html for the bootstrap rows
      */
     GridGenerator.prototype.readTree = function readTree(node) {
-
         var html = '';
-
-
         for (var i=0; i<node.rows.length; ++i) {
-
             var row = node.rows[i];
-
             html += '<div class="row">';
-
             var rowLength = row.x2 - row.x1 + 1;
-
-
             for (var j=0; j<row.cols.length; ++j) {
-
                 var col = row.cols[j],
                     colLenght = col.x2 - col.x1 + 1,
                     l = colLenght / rowLength * 12,
                     h = col.y2 - col.y1 + 1,
                     isLeaf = !col.rows;
-
                 var content, isMainFrame = false;
-                
                 if (col.pos !== undefined) {
                     isMainFrame = this.options.frames[col.pos].mainFrame;
                 }
-                
                 if (isLeaf) {
                     content = '<span class="data-description">' + (_.escape(col.description) || '') + '</span>';
                 } else {
                     content = this.readTree(col);
                 }
-
                 var classes = [
                     'col-xs-' + l,
                     (content && !col.rows? 'grid-slot' : 'empty-slot')
@@ -354,7 +296,6 @@
                 if (isMainFrame) {
                     classes.push('topFrame');
                 }
-
                 html += '<div class="' + classes.join(' ') + '"';
                 if (this.options.rowHeight) {
                     html += ' style="height:'+ (h * this.options.rowHeight)  +'px"';
@@ -363,16 +304,13 @@
                     html += ' data-pos="' + _.escape(col.pos+'') + '"';
                     html += ' data-description="' + _.escape(col.description) + '"';
                 }
-
                 html += '>' + content;
                 html += '</div>';
             }
             html += '</div>';
         }
-
         return html;
     };
-
 
     /**
      * Returns HTML code for the bootstrap grid
@@ -380,11 +318,8 @@
      */
     GridGenerator.prototype.getHtml = function getHtml() {
         var root = this.getTree(this.totalFrames, this.totalBoundaries);
-
         return this.readTree(root, 0);
     };
-
-
 
     if (context) {
         context.GridGenerator = GridGenerator;

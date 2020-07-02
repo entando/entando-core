@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.widget;
 
+import com.agiletec.aps.system.services.role.Permission;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +67,10 @@ public class WidgetControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetWidget() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
+
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = mockMvc.perform(
@@ -92,7 +96,9 @@ public class WidgetControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetWidgetList() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         PagedMetadata<WidgetDto> pagedDto = new PagedMetadata<>();
         when(widgetService.getWidgets(any())).thenReturn(pagedDto);

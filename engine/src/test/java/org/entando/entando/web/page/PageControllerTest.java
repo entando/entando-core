@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.page;
 
+import com.agiletec.aps.system.services.role.Permission;
 import java.io.IOException;
 import java.util.List;
 
@@ -93,7 +94,9 @@ public class PageControllerTest extends AbstractControllerTest {
 
     @Test
     public void shouldLoadAPageTree() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
 
         String mockJsonResult = "[\n"
@@ -440,7 +443,9 @@ public class PageControllerTest extends AbstractControllerTest {
     
     @Test
     public void shouldValidateMoveFreePageUnderReservedPage() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
 
         PagePositionRequest request = new PagePositionRequest();
@@ -475,7 +480,9 @@ public class PageControllerTest extends AbstractControllerTest {
 
     @Test
     public void shouldValidateMovePageStatusMismatch() throws ApsSystemException, Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
 
         PagePositionRequest request = new PagePositionRequest();

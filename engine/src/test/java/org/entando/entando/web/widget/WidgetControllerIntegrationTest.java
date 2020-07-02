@@ -58,8 +58,10 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     private ObjectMapper mapper = new ObjectMapper();
 
     @Test
-    public void testGetCategories() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+    public void testGetWidgets() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/widgets")
@@ -70,7 +72,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
     @Test
     public void testGetWidget_1() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = this.executeWidgetGet("1", accessToken, status().isNotFound());
@@ -80,7 +84,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
     
     @Test
     public void testGetWidget_2() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = this.executeWidgetGet("login_form", accessToken, status().isOk());
@@ -119,7 +125,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
     @Test
     public void testGetWidgetList_1() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = mockMvc.perform(
@@ -135,7 +143,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
     @Test
     public void testGetWidgetList_2() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = mockMvc.perform(
@@ -153,7 +163,9 @@ public class WidgetControllerIntegrationTest extends AbstractControllerIntegrati
 
     @Test
     public void testGetWidgetList_3() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         // @formatter:off
         ResultActions result = mockMvc.perform(

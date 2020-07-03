@@ -14,6 +14,8 @@
 package org.entando.entando.web.category;
 
 import com.agiletec.aps.system.services.category.CategoryManager;
+import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import org.entando.entando.aps.system.services.category.CategoryService;
 import org.entando.entando.web.AbstractControllerTest;
@@ -55,7 +57,9 @@ public class CategoryControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetTreeOk() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories")
@@ -71,7 +75,9 @@ public class CategoryControllerTest extends AbstractControllerTest {
 
     @Test
     public void testGetCategory() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories/{code}", "home")

@@ -61,7 +61,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetCategories() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories")
@@ -72,7 +74,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetValidCategoryTree() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories")
@@ -285,9 +289,9 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
     }
 
     @Test
-    public void testGetPermissionsWithEnterBackEndPermission() throws Exception {
+    public void testGetPermissionsManageCategoriesPermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND).build();
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_CATEGORIES).build();
         String accessToken = mockOAuthInterceptor(user);
         this.executeGet("cat1", accessToken, status().isOk());
     }

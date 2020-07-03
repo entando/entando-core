@@ -58,7 +58,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @GetMapping
     public ResponseEntity<PagedRestResponse<PageModelDto>> getPageModels(
             RestListRequest requestList, @RequestParam Map<String, String> requestParams) {

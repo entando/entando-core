@@ -13,6 +13,8 @@
  */
 package org.entando.entando.aps.system.services.page;
 
+import static org.entando.entando.aps.system.services.page.PageService.ERRCODE_PAGE_NOT_FOUND;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +25,7 @@ import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.page.IPage;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.user.UserDetails;
+import org.entando.entando.aps.system.exception.ResourceNotFoundException;
 import org.entando.entando.aps.system.services.auth.AbstractAuthorizationService;
 import org.entando.entando.aps.system.services.page.model.PageDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +66,9 @@ public class PageAuthorizationService extends AbstractAuthorizationService<PageD
     @Override
     public boolean isAuth(UserDetails user, String pageCode) {
         IPage page = this.getPageManager().getDraftPage(pageCode);
+        if (page == null) {
+            throw new ResourceNotFoundException(ERRCODE_PAGE_NOT_FOUND, "page", pageCode);
+        }
         return this.isAuth(user, page);
     }
     

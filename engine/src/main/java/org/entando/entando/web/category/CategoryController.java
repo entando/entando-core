@@ -79,7 +79,7 @@ public class CategoryController {
         return new ResponseEntity<>(new RestResponse<>(result, metadata), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
+    @RestAccessControl(permission = { Permission.MANAGE_CATEGORIES, Permission.CONTENT_EDITOR })
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<CategoryDto>> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);

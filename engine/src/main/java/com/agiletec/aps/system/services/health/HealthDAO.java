@@ -48,7 +48,7 @@ public class HealthDAO implements IHealthDAO {
 
         try {
             conn = this.getConnection(dataSource);
-            return true;
+            return conn.isValid(10);
         } catch (Throwable t) {
             return false;
         } finally {

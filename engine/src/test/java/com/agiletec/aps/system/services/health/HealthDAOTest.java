@@ -13,6 +13,7 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,8 +40,18 @@ public class HealthDAOTest {
     public void isServDBConnectionHealthyWithWorkingDataSourceShouldReturnTrue() throws Exception {
 
         when(servDataSource.getConnection()).thenReturn(connection);
+        when(connection.isValid(anyInt())).thenReturn(true);
 
         assertTrue(healthDAO.isServDBConnectionHealthy());
+    }
+
+    @Test
+    public void isServDBConnectionHealthyWithNotValidConnectionShouldReturnFalse() throws Exception {
+
+        when(servDataSource.getConnection()).thenReturn(connection);
+        when(connection.isValid(anyInt())).thenReturn(false);
+
+        assertFalse(healthDAO.isServDBConnectionHealthy());
     }
 
     @Test
@@ -55,6 +66,7 @@ public class HealthDAOTest {
     public void isPortDBConnectionHealthyWithWorkingDataSourceShouldReturnTrue() throws Exception {
 
         when(portDataSource.getConnection()).thenReturn(connection);
+        when(connection.isValid(anyInt())).thenReturn(true);
 
         assertTrue(healthDAO.isPortDBConnectionHealthy());
     }
@@ -63,6 +75,16 @@ public class HealthDAOTest {
     public void isPortDBConnectionHealthyWithNotWorkingDataSourceShouldReturnFalse() throws Exception {
 
         when(portDataSource.getConnection()).thenThrow(new SQLException());
+
+        assertFalse(healthDAO.isPortDBConnectionHealthy());
+    }
+
+
+    @Test
+    public void isPortDBConnectionHealthyWithNotValidConnectionShouldReturnFalse() throws Exception {
+
+        when(portDataSource.getConnection()).thenReturn(connection);
+        when(connection.isValid(anyInt())).thenReturn(false);
 
         assertFalse(healthDAO.isPortDBConnectionHealthy());
     }

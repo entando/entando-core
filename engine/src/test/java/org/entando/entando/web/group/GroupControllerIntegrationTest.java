@@ -13,6 +13,7 @@
  */
 package org.entando.entando.web.group;
 
+import com.agiletec.aps.system.services.role.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -280,6 +281,42 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
 
         result.andExpect(status().isBadRequest());
 
+    }
+
+    @Test
+    public void testGetGroupsWithManagePagesPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, Permission.MANAGE_PAGES)
+                .build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        mockMvc.perform(get("/groups")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetGroupsWithManageUsersPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_USERS, Permission.MANAGE_USERS)
+                .build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        mockMvc.perform(get("/groups")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetGroupsWithContentEditorPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.CONTENT_EDITOR, Permission.CONTENT_EDITOR)
+                .build();
+        String accessToken = mockOAuthInterceptor(user);
+
+        mockMvc.perform(get("/groups")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk());
     }
 
 }

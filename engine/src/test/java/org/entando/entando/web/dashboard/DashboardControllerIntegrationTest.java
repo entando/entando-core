@@ -33,9 +33,7 @@ public class DashboardControllerIntegrationTest extends AbstractControllerIntegr
 
     @Test
     public void testIntegration() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND)
-                .build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dashboard/integration")
@@ -47,7 +45,9 @@ public class DashboardControllerIntegrationTest extends AbstractControllerIntegr
 
     @Test
     public void testPagesStatusGet() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/dashboard/pageStatus")

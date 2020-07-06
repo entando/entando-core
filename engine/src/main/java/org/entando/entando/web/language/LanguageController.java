@@ -65,7 +65,7 @@ public class LanguageController {
         this.languageValidator = languageValidator;
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RestAccessControl(permission = { Permission.MANAGE_PAGES, Permission.MANAGE_USERS} )
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<LanguageDto>> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");

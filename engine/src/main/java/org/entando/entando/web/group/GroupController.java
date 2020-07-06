@@ -70,7 +70,7 @@ public class GroupController {
         this.groupValidator = groupValidator;
     }
 
-    @RestAccessControl(permission = Permission.MANAGE_PAGES)
+    @RestAccessControl(permission = { Permission.MANAGE_PAGES, Permission.MANAGE_USERS } )
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<GroupDto>> getGroups(RestListRequest requestList) throws JsonProcessingException {
         this.getGroupValidator().validateRestListRequest(requestList, GroupDto.class);

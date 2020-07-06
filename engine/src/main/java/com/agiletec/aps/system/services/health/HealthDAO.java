@@ -6,8 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 
 @Repository
 public class HealthDAO implements IHealthDAO {
@@ -48,6 +47,13 @@ public class HealthDAO implements IHealthDAO {
 
         try {
             conn = this.getConnection(dataSource);
+//            return conn.isValid(5);
+//            conn.getAutoCommit();
+            conn.prepareStatement(this.getDbQuery(conn)).executeQuery();
+//            Statement statement = conn.createStatement();
+//            ResultSet resultSet = statement.executeQuery(this.getDbQuery(conn));
+//            resultSet.next();
+//            resultSet.getTimestamp(0);
             return true;
         } catch (Throwable t) {
             return false;
@@ -87,5 +93,30 @@ public class HealthDAO implements IHealthDAO {
         } catch (Throwable t) {
             logger.error("Error closing the connection", t);
         }
+    }
+
+
+    /**
+     * get a query
+     * @param connection
+     * @return
+     * @throws SQLException
+     */
+    private String getDbQuery(Connection connection) throws SQLException {
+
+        String query;
+        String dbmsName = connection.getMetaData().getDatabaseProductName();
+
+        if (dbmsName.equals("Apache Derby")) {
+            query = "VALUES CURRENT_TIMESTAMP";
+        } else {
+            query = "SELECT CURRENT_TIMESTAMP";
+        }
+
+        if (dbmsName.equals("Oracle")) {
+            query += " FROM DUAL";
+        }
+
+        return query;
     }
 }

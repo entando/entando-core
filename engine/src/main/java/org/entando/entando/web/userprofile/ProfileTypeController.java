@@ -76,7 +76,7 @@ public class ProfileTypeController {
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_USER_PROFILES)
     @RequestMapping(value = "/profileTypes/{profileTypeCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<UserProfileTypeDto>> getUserProfileType(@PathVariable String profileTypeCode) throws JsonProcessingException {
         logger.debug("Requested profile type -> {}", profileTypeCode);
@@ -88,7 +88,7 @@ public class ProfileTypeController {
         return new ResponseEntity<>(new SimpleRestResponse<>(dto), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_USER_PROFILES)
     @RequestMapping(value = "/profileTypes", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<UserProfileTypeDto>> addUserProfileTypes(@Valid @RequestBody ProfileTypeDtoRequest bodyRequest,
             BindingResult bindingResult) throws JsonProcessingException {

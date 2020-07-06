@@ -250,14 +250,14 @@ public class UserController {
     }
 
 
-//    @GetMapping("/userProfiles/myGroupPermissions")
-//    public ResponseEntity<SimpleRestResponse<List<UserGroupPermissions>>> getMyGroupPermissions(HttpServletRequest request) {
-//
-//        UserDetails userDetails = HttpSessionHelper.extractCurrentUser(request);
-//
-//        List<UserGroupPermissions> currentUserPermissions = this.userService.getMyGroupPermissions(userDetails);
-//
-//        return new ResponseEntity<>(new SimpleRestResponse<>(currentUserPermissions), HttpStatus.OK);
-//    }
+    @GetMapping("/userProfiles/myGroupPermissions")
+    public ResponseEntity<SimpleRestResponse<List<UserGroupPermissions>>> getMyGroupPermissions(HttpServletRequest request) {
+
+        UserDetails userDetails = HttpSessionHelper.extractCurrentUser(request);
+
+        List<UserGroupPermissions> currentUserPermissions = this.userService.getMyGroupPermissions(userDetails);
+
+        return new ResponseEntity<>(new SimpleRestResponse<>(currentUserPermissions), HttpStatus.OK);
+    }
 
 }

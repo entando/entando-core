@@ -91,16 +91,15 @@ public class PageService implements IPageService, GroupServiceUtilizer<PageDto>,
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static final String ERRCODE_PAGE_NOT_FOUND = "1";
-    private static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
-    private static final String ERRCODE_GROUP_NOT_FOUND = "2";
-    private static final String ERRCODE_PARENT_NOT_FOUND = "3";
-    private static final String ERRCODE_PAGE_ONLY_DRAFT = "3";
-    private static final String ERRCODE_FRAME_INVALID = "2";
-    private static final String ERRCODE_WIDGET_INVALID = "4";
-    private static final String ERRCODE_STATUS_INVALID = "3";
-
-    private static final String ERRCODE_PAGE_REFERENCES = "5";
+    public static final String ERRCODE_PAGE_NOT_FOUND = "1";
+    public static final String ERRCODE_PAGEMODEL_NOT_FOUND = "1";
+    public static final String ERRCODE_GROUP_NOT_FOUND = "2";
+    public static final String ERRCODE_PARENT_NOT_FOUND = "3";
+    public static final String ERRCODE_PAGE_ONLY_DRAFT = "3";
+    public static final String ERRCODE_FRAME_INVALID = "2";
+    public static final String ERRCODE_WIDGET_INVALID = "4";
+    public static final String ERRCODE_STATUS_INVALID = "3";
+    public static final String ERRCODE_PAGE_REFERENCES = "5";
 
     @Autowired
     private IPageManager pageManager;

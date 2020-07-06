@@ -92,7 +92,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testPageTree() throws Throwable {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin()
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String newPageCode = "test_page";
         try {
@@ -149,10 +151,24 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
             this.pageManager.deletePage(newPageCode);
         }
     }
+
+    @Test
+    public void testPageTreeWithManagePagesPermission() throws Throwable {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
+        String accessToken = mockOAuthInterceptor(user);
+        mockMvc.perform(get("/pages")
+                .header("Authorization", "Bearer " + accessToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.payload.size()", is(4)));
+    }
     
     @Test
     public void testPageSearch() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/pages/search")
@@ -166,7 +182,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testGetPage_1() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/pages/{code}", "pagina_11")
@@ -178,7 +196,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testGetPage_2() throws Throwable {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String newPageCode = "test_page";
         try {
@@ -250,7 +270,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testPatchPage() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin()
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String newPageCode = "test_page";
         try {
@@ -309,7 +331,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testPageSearchFreeOnlinePages() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/pages/search/group/free")
@@ -321,8 +345,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testMove() throws Throwable {
-
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         try {
             PagePositionRequest request;
@@ -500,7 +525,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testAddPublishUnpublishDelete() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String code = "testAddDelete";
         try {
@@ -617,7 +644,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testMovePage() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin()
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String codeParent = "testToMoveParent";
         String codeChild = "testToMoveChild";
@@ -696,7 +725,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testPageStatus() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin()
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String codeParent = "testStatusParent";
         String codeChild = "testStatusChild";
@@ -784,7 +815,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testUpdatePageModel() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String pageCode = "testUpdateModelPage";
         try {
@@ -820,7 +853,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testRecreatePage() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .grantedToRoleAdmin()
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String pageCode = "testUpdateModelPage";
         try {
@@ -926,7 +961,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testListViewPages() throws Throwable {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
 
         String newPageCode1 = "view_page_1";
@@ -960,7 +997,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
 
     @Test
     public void testPutOnPageWithChildren() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
         String parentPageCode = "pageWithChildren";
         String childrenPageCode = "childrenPage";
@@ -1035,7 +1074,9 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
         widgetRequest.setCode(widgetCode);
         widgetRequest.setConfig(new HashMap<>());
 
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "managePages", Permission.MANAGE_PAGES)
+                .build();
         String accessToken = mockOAuthInterceptor(user);
 
         try {
@@ -1071,17 +1112,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testGetPageWithAdminPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/pages/{code}", "pagina_11")
-                        .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetPageWithoutAdminPermission() throws Exception {
+    public void testGetPageWithoutPermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24").build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
@@ -1091,7 +1122,7 @@ public class PageControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testGetPageWithManagePagesPermission() throws Exception {
+    public void testGetPageTreeWithManagePagesPermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
                 .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_PAGES).build();
         String accessToken = mockOAuthInterceptor(user);

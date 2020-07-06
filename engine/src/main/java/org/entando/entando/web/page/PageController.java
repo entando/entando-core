@@ -220,7 +220,7 @@ public class PageController {
 
 
     @ActivityStreamAuditable
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/status", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<PageDto, Map<String, String>>> updatePageStatus(
             @ModelAttribute("user") UserDetails user, @PathVariable String pageCode,
@@ -292,14 +292,17 @@ public class PageController {
     @RequestMapping(value = "/pages/{pageCode}/position", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<PageDto>> movePage(@ModelAttribute("user") UserDetails user, @PathVariable String pageCode, @Valid @RequestBody PagePositionRequest pageRequest, BindingResult bindingResult) {
         logger.debug("changing position for page {} with request {}", pageCode, pageRequest);
-        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
-            return new ResponseEntity<>(new SimpleRestResponse<>(new PageDto()), HttpStatus.UNAUTHORIZED);
-        }
+
         //field validations
         if (bindingResult.hasErrors()) {
             throw new ValidationGenericException(bindingResult);
         }
         this.getPageValidator().validateMovePage(pageCode, bindingResult, pageRequest);
+
+        if (!this.getAuthorizationService().isAuth(user, pageCode)) {
+            return new ResponseEntity<>(new SimpleRestResponse<>(new PageDto()), HttpStatus.UNAUTHORIZED);
+        }
+
         PageDto page = this.getPageService().movePage(pageCode, pageRequest);
         return new ResponseEntity<>(new SimpleRestResponse<>(page), HttpStatus.OK);
     }

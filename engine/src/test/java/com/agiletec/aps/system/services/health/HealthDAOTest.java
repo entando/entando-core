@@ -79,6 +79,7 @@ public class HealthDAOTest {
         assertFalse(healthDAO.isPortDBConnectionHealthy());
     }
 
+
     @Test
     public void isPortDBConnectionHealthyWithNotValidConnectionShouldReturnFalse() throws Exception {
 

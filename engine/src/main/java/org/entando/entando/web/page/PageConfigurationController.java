@@ -62,7 +62,7 @@ public class PageConfigurationController {
         this.pageService = pageService;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/configuration", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<PageConfigurationDto, Map>> getPageConfiguration(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("requested {} configuration", pageCode);
@@ -72,7 +72,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse<>(pageConfiguration, metadata), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/widgets", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<List<WidgetConfigurationDto>, Map>> getPageWidgets(@PathVariable String pageCode, @RequestParam(value = "status", required = false, defaultValue = IPageService.STATUS_DRAFT) String status) {
         logger.debug("requested {} widgets detail", pageCode);
@@ -87,7 +87,7 @@ public class PageConfigurationController {
         return new ResponseEntity<>(new RestResponse<>(widgetConfigDtos, metadata), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<WidgetConfigurationDto, Map>> getPageWidget(@PathVariable String pageCode,
             @PathVariable String frameId,
@@ -110,7 +110,7 @@ public class PageConfigurationController {
     }
 
     @ActivityStreamAuditable
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<WidgetConfigurationDto, Map>> updatePageWidget(
             @PathVariable String pageCode,
@@ -131,7 +131,7 @@ public class PageConfigurationController {
     }
 
     @ActivityStreamAuditable
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/widgets/{frameId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<Map, Map>> deletePageWidget(@PathVariable String pageCode, @PathVariable String frameId) {
         logger.debug("removing widget configuration in page {} and frame {}", pageCode, frameId);
@@ -149,7 +149,7 @@ public class PageConfigurationController {
     }
 
     @ActivityStreamAuditable
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/configuration/restore", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<PageConfigurationDto, Map>> updatePageConfiguration(@PathVariable String pageCode) {
         logger.debug("restore configuration on page {}", pageCode);
@@ -159,7 +159,7 @@ public class PageConfigurationController {
     }
 
     @ActivityStreamAuditable
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pages/{pageCode}/configuration/defaultWidgets", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<PageConfigurationDto>> applyDefaultWidgetsPageConfiguration(@PathVariable String pageCode) {
         logger.debug("applying default widgets on page {}", pageCode);

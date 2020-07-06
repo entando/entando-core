@@ -52,7 +52,7 @@ public class WidgetController {
     @Autowired
     private WidgetValidator widgetValidator;
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/widgets/{widgetCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<WidgetDto>> getWidget(@PathVariable String widgetCode) {
         logger.trace("getWidget by code {}", widgetCode);
@@ -115,7 +115,7 @@ public class WidgetController {
         return new ResponseEntity<>(new SimpleRestResponse<>(widgetDto), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/widgets", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, name = "widget")
     public ResponseEntity<SimpleRestResponse<WidgetDto>> addWidget(@Valid @RequestBody WidgetRequest widgetRequest, BindingResult bindingResult) throws ApsSystemException {
         logger.trace("add widget. body {}: ", widgetRequest);

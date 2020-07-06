@@ -79,7 +79,7 @@ public class CategoryController {
         return new ResponseEntity<>(new RestResponse<>(result, metadata), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.ENTER_BACKEND)
+    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<CategoryDto>> getCategory(@PathVariable String categoryCode) {
         logger.debug("getting category {}", categoryCode);
@@ -87,7 +87,7 @@ public class CategoryController {
         return new ResponseEntity<>(new SimpleRestResponse<>(category), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
     @RequestMapping(value = "/{categoryCode}/references/{holder}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<?>> getCategoryReferences(@PathVariable String categoryCode, @PathVariable String holder, RestListRequest requestList) {
         logger.debug("getting category references - {}", categoryCode);
@@ -95,7 +95,7 @@ public class CategoryController {
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<CategoryDto>> addCategory(@Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) throws ApsSystemException {
         //field validations
@@ -109,7 +109,7 @@ public class CategoryController {
         return new ResponseEntity<>(new SimpleRestResponse<>(category), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RestResponse<CategoryDto, Map<String, String>>> updateCategory(@PathVariable String categoryCode, @Valid @RequestBody CategoryDto categoryRequest, BindingResult bindingResult) {
         logger.debug("updating category {} with request {}", categoryCode, categoryRequest);
@@ -126,7 +126,7 @@ public class CategoryController {
         return new ResponseEntity<>(new RestResponse<>(category, metadata), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_CATEGORIES)
     @RequestMapping(value = "/{categoryCode}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<Map<String, String>>> deleteCategory(@PathVariable String categoryCode) throws ApsSystemException {
         logger.debug("Deleting category -> " + categoryCode);

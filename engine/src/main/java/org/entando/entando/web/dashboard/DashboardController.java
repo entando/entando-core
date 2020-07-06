@@ -117,7 +117,7 @@ public class DashboardController {
         return count;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/pageStatus", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<PagesStatusDto>> getPagesStatus() {
         logger.debug("getting pages status count");

@@ -726,6 +726,17 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
         result.andExpect(status().isOk());
     }
 
+    @Test
+    public void testGetUsersWithContentEditorPermission() throws Exception {
+        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.CONTENT_EDITOR).build();
+        String accessToken = mockOAuthInterceptor(user);
+        ResultActions result = mockMvc
+                .perform(get("/users")
+                        .header("Authorization", "Bearer " + accessToken));
+        result.andExpect(status().isOk());
+    }
+
     private ResultActions executeUserPost(String body, String accessToken, ResultMatcher expected) throws Exception {
         ResultActions result = mockMvc
                 .perform(post("/users")

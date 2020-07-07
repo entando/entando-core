@@ -694,42 +694,9 @@ public class UserControllerIntegrationTest extends AbstractControllerIntegration
     }
 
     @Test
-    public void testGetUsersWithEditUsersPermission() throws Exception {
+    public void testGetUsersWithBackendPermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USERS).build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/users")
-                        .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetUsersWithEditUserProfilePermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.MANAGE_USER_PROFILES).build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/users")
-                        .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetUsersWithViewUsersPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.VIEW_USERS).build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc
-                .perform(get("/users")
-                        .header("Authorization", "Bearer " + accessToken));
-        result.andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetUsersWithContentEditorPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("normal_user", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.CONTENT_EDITOR).build();
+                .withAuthorization(Group.FREE_GROUP_NAME, "admin", Permission.ENTER_BACKEND).build();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/users")

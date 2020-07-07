@@ -61,27 +61,17 @@ public class CategoryControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetCategories() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
-                .perform(get("/categories")
-                        .header("Authorization", "Bearer " + accessToken));
+                .perform(get("/categories"));
         result.andExpect(status().isOk());
         testCors("/categories");
     }
 
     @Test
     public void testGetValidCategoryTree() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, "manageCategories", Permission.MANAGE_CATEGORIES)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/categories")
-                        .param("parentCode", "home")
-                        .header("Authorization", "Bearer " + accessToken));
+                        .param("parentCode", "home"));
         result.andExpect(status().isOk());
     }
 

@@ -284,33 +284,9 @@ public class GroupControllerIntegrationTest extends AbstractControllerIntegratio
     }
 
     @Test
-    public void testGetGroupsWithManagePagesPermission() throws Exception {
+    public void testGetGroupsWithBackendPermission() throws Exception {
         UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, Permission.MANAGE_PAGES)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
-
-        mockMvc.perform(get("/groups")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetGroupsWithManageUsersPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_USERS, Permission.MANAGE_USERS)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
-
-        mockMvc.perform(get("/groups")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    public void testGetGroupsWithContentEditorPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.CONTENT_EDITOR, Permission.CONTENT_EDITOR)
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.ENTER_BACKEND, Permission.ENTER_BACKEND)
                 .build();
         String accessToken = mockOAuthInterceptor(user);
 

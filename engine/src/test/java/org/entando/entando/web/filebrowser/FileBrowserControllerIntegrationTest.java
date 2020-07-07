@@ -233,6 +233,33 @@ public class FileBrowserControllerIntegrationTest extends AbstractControllerInte
     }
 
     @Test
+    public void testAddFileWithoutExtension() throws Exception {
+        Assert.assertFalse(this.storageManager.exists("test_folder/", false));
+        this.storageManager.createDirectory("test_folder/", false);
+        try {
+            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            String accessToken = mockOAuthInterceptor(user);
+            String body = this.createBody("test", "test_folder/test", false, "test test");
+            ResultActions result = this.executeFilePost(body, accessToken, status().isOk());
+            result.andExpect(jsonPath("$.payload.size()", is(3)));
+            result.andExpect(jsonPath("$.payload.protectedFolder", is(false)));
+            result.andExpect(jsonPath("$.payload.path", is("test_folder/test")));
+            result.andExpect(jsonPath("$.payload.filename", is("test")));
+            result.andExpect(jsonPath("$.errors", Matchers.hasSize(0)));
+            result.andExpect(jsonPath("$.metaData.size()", is(1)));
+            result.andExpect(jsonPath("$.metaData.prevPath", is("test_folder")));
+
+            ResultActions result_error = this.executeFilePost(body, accessToken, status().isConflict());
+            result_error.andExpect(jsonPath("$.errors", Matchers.hasSize(1)));
+            result_error.andExpect(jsonPath("$.errors[0].code", is("2")));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            this.storageManager.deleteDirectory("test_folder/", false);
+        }
+    }
+
+    @Test
     public void testUpdateFile() throws Exception {
         String folderName = "test_folder_3";
         boolean protectedFolder = true;

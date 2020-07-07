@@ -80,8 +80,6 @@ public class FileBrowserValidator extends AbstractPaginationValidator implements
                 if (!extractedFileName.equalsIgnoreCase(fileRequest.getFilename())) {
                     errors.rejectValue("filename", ERRCODE_FILENAME_MISMATCH, new String[]{fileRequest.getFilename(), extractedFileName}, "fileBrowser.filename.body.mismatch");
                     throw new ValidationConflictException((BindingResult) errors);
-                } else if (!extractedFileName.contains(".")) {
-                    errors.rejectValue("filename", ERRCODE_INVALID_FILENAME, new String[]{extractedFileName}, "fileBrowser.filename.invalidFilename");
                 }
             }
         } catch (ValidationConflictException vce) {

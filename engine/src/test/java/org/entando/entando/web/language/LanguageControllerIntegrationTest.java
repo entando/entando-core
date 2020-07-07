@@ -50,38 +50,8 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
     private LanguageController controller;
 
     @Test
-    public void testGetLangsWithManagePagesPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, Permission.MANAGE_PAGES)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc.perform(get("/languages")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk());
-
-        testCors("/languages");
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-    }
-
-    @Test
-    public void testGetLangsWithManageUsersPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_USERS, Permission.MANAGE_USERS)
-                .build();
-        String accessToken = mockOAuthInterceptor(user);
-        ResultActions result = mockMvc.perform(get("/languages")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk());
-
-        testCors("/languages");
-        System.out.println(result.andReturn().getResponse().getContentAsString());
-    }
-
-    @Test
-    public void testGetLangsWithContentEditorPermission() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withAuthorization(Group.FREE_GROUP_NAME, Permission.CONTENT_EDITOR, Permission.CONTENT_EDITOR)
-                .build();
+    public void testGetLangsWithBackendPermission() throws Exception {
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc.perform(get("/languages")
                 .header("Authorization", "Bearer " + accessToken))
@@ -93,8 +63,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetLangs() throws Exception {
-
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages")
@@ -106,8 +75,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetLangsByActive() throws Exception {
-
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages")
@@ -121,8 +89,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetLangValid() throws Exception {
-
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"en"})
@@ -133,7 +100,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetLangValidAssignable() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"de"})
@@ -143,7 +110,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
     @Test
     public void testGetLangInvalid() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createUserWithPermission();
         String accessToken = mockOAuthInterceptor(user);
         ResultActions result = mockMvc
                 .perform(get("/languages/{code}", new Object[]{"xx"})
@@ -159,7 +126,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
             assertThat(lang, is(not(nullValue())));
             assertThat(lang.isActive(), is(false));
 
-            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            UserDetails user = createAdminUser();
             String accessToken = mockOAuthInterceptor(user);
 
             String payload = "{\"isActive\": true}";
@@ -199,7 +166,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
             assertThat(lang, is(not(nullValue())));
             assertThat(lang.isActive(), is(true));
 
-            UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+            UserDetails user = createAdminUser();
             String accessToken = mockOAuthInterceptor(user);
 
             String payload = "{\"isActive\": true}";
@@ -236,7 +203,7 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
     public void testDeactivateDefaultLangUnexistingCode() throws Exception {
         String langCode = "xx";
 
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createAdminUser();
         String accessToken = mockOAuthInterceptor(user);
 
         String payload = "{\"isActive\": true}";
@@ -249,6 +216,16 @@ public class LanguageControllerIntegrationTest extends AbstractControllerIntegra
 
         result.andExpect(jsonPath("$.errors[0].code", is("2")));
 
+    }
+
+    private UserDetails createUserWithPermission() {
+        return new OAuth2TestUtils.UserBuilder("user", "0x01")
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.ENTER_BACKEND, Permission.ENTER_BACKEND)
+                .build();
+    }
+
+    private UserDetails createAdminUser() {
+        return new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
     }
 
 }

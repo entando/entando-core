@@ -65,7 +65,7 @@ public class LanguageController {
         this.languageValidator = languageValidator;
     }
 
-    @RestAccessControl(permission = { Permission.MANAGE_PAGES, Permission.MANAGE_USERS, Permission.CONTENT_EDITOR })
+    @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<LanguageDto>> getLanguages(RestListRequest requestList) {
         logger.trace("loading languages list");
@@ -75,7 +75,7 @@ public class LanguageController {
         return new ResponseEntity<>(new PagedRestResponse<>(result), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.ENTER_BACKEND)
     @RequestMapping(value = "/{code}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<LanguageDto>> getLanguage(@PathVariable String code) {
         logger.trace("loading language {}", code);

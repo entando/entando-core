@@ -85,7 +85,7 @@ public class PageModelController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @GetMapping(value = "/{code:.+}/references/{manager}")
     public ResponseEntity<PagedRestResponse<?>> getPageModelReferences(
             @PathVariable String code, @PathVariable String manager, RestListRequest requestList) {
@@ -97,7 +97,7 @@ public class PageModelController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/{code}/usage", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<ComponentUsage>> getComponentUsage(@PathVariable String code) {
         logger.trace("get {} usage by code {}", COMPONENT_ID, code);
@@ -114,7 +114,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/{code}/usage/details", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PagedRestResponse<ComponentUsageEntity>> getComponentUsageDetails(@PathVariable String code, PageSearchRequest searchRequest) {
         logger.trace("get {} usage details by code {}", COMPONENT_ID, code);
@@ -129,7 +129,7 @@ public class PageModelController {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 400, message = "Bad Request")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @PutMapping(value = "/{code:.+}", name = "roleGroup")
     public ResponseEntity<SimpleRestResponse<PageModelDto>> updatePageModel(@PathVariable String code,
             @Valid @RequestBody PageModelRequest pageModelRequest, BindingResult bindingResult) {
@@ -154,7 +154,7 @@ public class PageModelController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 409, message = "Conflict")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @PostMapping
     public ResponseEntity<SimpleRestResponse<PageModelDto>> addPageModel(
             @Valid @RequestBody PageModelRequest pagemodelRequest, BindingResult bindingResult) {
@@ -177,7 +177,7 @@ public class PageModelController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "OK")
     })
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @DeleteMapping(value = "/{code:.+}")
     public ResponseEntity<SimpleRestResponse<Map>> deletePageModel(@PathVariable String code) {
         logger.debug("deleting {}", code);

@@ -70,7 +70,8 @@ public class PageModelControllerIntegrationTest extends AbstractControllerIntegr
 
     private void setupAuthenticationDetails() {
         User user = new OAuth2TestUtils.UserBuilder(USERNAME, PASSWORD)
-                .grantedToRoleAdmin().build();
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, Permission.MANAGE_PAGES)
+                .build();
         accessToken = mockOAuthInterceptor(user);
     }
 

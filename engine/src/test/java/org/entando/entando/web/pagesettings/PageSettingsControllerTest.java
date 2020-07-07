@@ -14,6 +14,7 @@
 package org.entando.entando.web.pagesettings;
 
 import com.agiletec.aps.system.services.group.Group;
+import com.agiletec.aps.system.services.role.Permission;
 import com.agiletec.aps.system.services.user.UserDetails;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_load_the_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createManagePagesUser();
 
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.getPageSettings()).thenReturn(createMockDto());
@@ -71,7 +72,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_not_update_with_empty_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createManagePagesUser();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequestEmptyParams())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
@@ -85,7 +86,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_update_with_a_valid_list_of_settings() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24").grantedToRoleAdmin().build();
+        UserDetails user = createManagePagesUser();
         String accessToken = mockOAuthInterceptor(user);
         when(pageSettingsService.updatePageSettings(createMockRequest())).thenReturn(createMockDto());
         ResultActions result = mockMvc.perform(
@@ -99,9 +100,7 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
 
     @Test
     public void should_be_unauthorized() throws Exception {
-        UserDetails user = new OAuth2TestUtils.UserBuilder("jack_bauer", "0x24")
-                .withGroup(Group.FREE_GROUP_NAME)
-                .build();
+        UserDetails user = createGuestUser();
         String accessToken = mockOAuthInterceptor(user);
 
         ResultActions result = mockMvc.perform(
@@ -130,6 +129,18 @@ public class PageSettingsControllerTest extends AbstractControllerTest {
             request.put("param_" + i, "value_" + i);
         }
         return request;
+    }
+
+    private UserDetails createManagePagesUser() {
+        return new OAuth2TestUtils.UserBuilder("managePages", "0x01")
+                .withAuthorization(Group.FREE_GROUP_NAME, Permission.MANAGE_PAGES, Permission.MANAGE_PAGES)
+                .build();
+    }
+
+    private UserDetails createGuestUser() {
+        return new OAuth2TestUtils.UserBuilder("guest", "0x00")
+                .withGroup(Group.FREE_GROUP_NAME)
+                .build();
     }
 
 }

@@ -49,14 +49,14 @@ public class PageSettingsController {
         this.pageSettingsService = pageSettingsService;
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<PageSettingsDto>> getPageSettings() {
         PageSettingsDto pageSettings = this.getPageSettingsService().getPageSettings();
         return new ResponseEntity<>(new SimpleRestResponse<>(pageSettings), HttpStatus.OK);
     }
 
-    @RestAccessControl(permission = Permission.SUPERUSER)
+    @RestAccessControl(permission = Permission.MANAGE_PAGES)
     @RequestMapping(value = "/pageSettings", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SimpleRestResponse<PageSettingsDto>> updatePageSettings(@RequestBody PageSettingsRequest request) {
         //params validations

@@ -26,6 +26,12 @@
     border: 0;
     width: 100%;
 }
+.clone.dropdown-menu>li>a {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap!important;
+}
 /*-----ouline tolto-----*/
 button:focus {
     outline:0 !important;
@@ -1852,7 +1858,7 @@ div.dataTables_wrapper table.DTFC_Cloned tr.odd td:last-child {
     .table-view-pf-toolbar label {
         display: none
     }
-;
+    ;
     .btn-with-form-control-container {
         width: 100%;
     }

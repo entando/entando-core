@@ -229,6 +229,8 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     
     @Override
     public void updateDraftPage(IPage page) {
+        IPage cachedPage = this.getDraftPage(page.getCode());
+        boolean alreadyChanged = cachedPage.isChanged();
         IPage onlinepage = this.getOnlinePage(page.getCode());
         PageMetadata onlineMeta = (null != onlinepage) ? onlinepage.getMetadata() : null;
         Widget[] widgetsOnline = (null != onlinepage) ? onlinepage.getWidgets() : new Widget[0];
@@ -239,7 +241,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         cache.put(DRAFT_PAGE_CACHE_NAME_PREFIX + page.getCode(), page);
         this.checkRootModification(page, false, cache);
         this.cleanLocalCache(cache);
-        if (isChanged) {
+        if (isChanged && !alreadyChanged) {
             PagesStatus status = this.getPagesStatus();
             status.setLastUpdate(new Date());
             status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
@@ -254,10 +256,9 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         IPage page = this.getDraftPage(pageCode);
         if (null != page) {
             this.addCodeFromCachedList(cache, ONLINE_PAGE_CODES_CACHE_NAME, page.getCode());
+            boolean alreadyChanged = page.isChanged();
             IPage onlinepage = this.getOnlinePage(page.getCode());
             boolean alreadyOnline = null != onlinepage;
-            boolean changed = (alreadyOnline
-                    && this.isChanged(page.getMetadata(), onlinepage.getMetadata(), page.getWidgets(), onlinepage.getWidgets()));
             ((Page) page).setOnline(true);
             ((Page) page).setChanged(false);
             IPage newOnlinePage = page.clone();
@@ -284,16 +285,15 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                     this.checkRootModification(parentOnLine, true, cache);
                 }
             }
-            if (!alreadyOnline || changed) {
+            if (!alreadyOnline || alreadyChanged) {
                 PagesStatus status = this.getPagesStatus();
                 status.setLastUpdate(new Date());
-                if (!alreadyOnline) {
-                    status.setOnline(status.getOnline() + 1);
+                if (alreadyChanged) {
+                    status.setOnlineWithChanges(status.getOnlineWithChanges() - 1);
+                } else if (!alreadyOnline) {
                     status.setUnpublished(status.getUnpublished() - 1);
-                } else if (changed) {
-                    status.setOnlineWithChanges(status.getOnlineWithChanges() + 1);
-                    status.setOnline(status.getOnline() - 1);
                 }
+                status.setOnline(status.getOnline() + 1);
                 cache.put(PAGE_STATUS_CACHE_NAME, status);
             }
         }
@@ -345,7 +345,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 widgetsOnline = (null == widgetsOnline) ? new Widget[0] : widgetsOnline;
                 for (int i = 0; i < widgetsDraft.length; i++) {
                     Widget widgetDraft = widgetsDraft[i];
-                    if (widgetsOnline.length < i) {
+                    if (widgetsOnline.length <= i) {
                         widgetEquals = false;
                         break;
                     }
@@ -568,22 +568,26 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
 
     private void getWidgetUtilizers(IPage page, Map<String, List> utilizersMap, boolean draft) {
         Widget[] widgets = page.getWidgets();
-        for (Widget widget : widgets) {
-            if (null != widget && null != widget.getType()) {
-                String cacheCode = this.getWidgetUtilizerCacheName(widget.getType().getCode(), draft);
-                List<String> widgetUtilizers = utilizersMap.get(cacheCode);
-                if (null == widgetUtilizers) {
-                    widgetUtilizers = new ArrayList<>();
-                    utilizersMap.put(cacheCode, widgetUtilizers);
+        if (widgets != null) {
+            for (Widget widget : widgets) {
+                if (null != widget && null != widget.getType()) {
+                    String cacheCode = this.getWidgetUtilizerCacheName(widget.getType().getCode(), draft);
+                    List<String> widgetUtilizers = utilizersMap.get(cacheCode);
+                    if (null == widgetUtilizers) {
+                        widgetUtilizers = new ArrayList<>();
+                        utilizersMap.put(cacheCode, widgetUtilizers);
+                    }
+                    widgetUtilizers.add(page.getCode());
                 }
-                widgetUtilizers.add(page.getCode());
             }
         }
         String[] childrenCodes = page.getChildrenCodes();
-        for (String childrenCode : childrenCodes) {
-            IPage child = (draft) ? this.getDraftPage(childrenCode) : this.getOnlinePage(childrenCode);
-            if (null != child) {
-                this.getWidgetUtilizers(child, utilizersMap, draft);
+        if (childrenCodes !=null) {
+            for (String childrenCode : childrenCodes) {
+                IPage child = (draft) ? this.getDraftPage(childrenCode) : this.getOnlinePage(childrenCode);
+                if (null != child) {
+                    this.getWidgetUtilizers(child, utilizersMap, draft);
+                }
             }
         }
     }

@@ -21,15 +21,18 @@ import com.agiletec.aps.system.services.page.Page;
 import com.agiletec.aps.system.services.url.IURLManager;
 import com.agiletec.aps.tags.InternalServletTag;
 import com.agiletec.aps.util.ApsWebApplicationUtils;
+import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionInvocation;
 import com.opensymphony.xwork2.config.entities.ResultConfig;
 import com.opensymphony.xwork2.util.reflection.ReflectionExceptionHandler;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.result.ServletRedirectResult;
 import org.slf4j.Logger;
@@ -73,57 +76,50 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
     }
 
     @Override
-    public void execute(ActionInvocation invocation) throws Exception {
-        try {
-            this.actionName = this.conditionalParse(this.actionName, invocation);
-            if (this.namespace == null) {
-                this.namespace = invocation.getProxy().getNamespace();
-            } else {
-                this.namespace = this.conditionalParse(this.namespace, invocation);
-            }
-            if (this.method == null) {
-                this.method = "";
-            } else {
-                this.method = this.conditionalParse(this.method, invocation);
-            }
-            String anchorDest = null;
-            Map<String, String> redirectParams = new HashMap<String, String>();
-            ResultConfig resultConfig = invocation.getProxy().getConfig().getResults().get(invocation.getResultCode());
-            if (resultConfig != null) {
-                this.extractResultParams(redirectParams, resultConfig, invocation);
-                anchorDest = this.extractAnchorDest(resultConfig, invocation);
-            }
-            HttpServletRequest request = ServletActionContext.getRequest();
-            RequestContext reqCtx = (RequestContext) request.getAttribute(RequestContext.REQCTX);
-            this.extractInternalServletParams(redirectParams, reqCtx);
-            IURLManager urlManager = (IURLManager) ApsWebApplicationUtils.getBean(SystemConstants.URL_MANAGER, request);
-            Page currentPage = (Page) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
-            Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
-            ConfigInterface configManager = (ConfigInterface) ApsWebApplicationUtils.getBean(SystemConstants.BASE_CONFIG_MANAGER, request);
-            String urlType = configManager.getParam(SystemConstants.CONFIG_PARAM_BASE_URL);
-            boolean needRequest = (null != urlType && !urlType.equals(SystemConstants.CONFIG_PARAM_BASE_URL_RELATIVE));
-            String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, (needRequest) ? request : null);
-            if (null != anchorDest) {
-                url += "#" + anchorDest;
-            }
-            this.setLocation(url);
-        } catch (Throwable t) {
-            _logger.error("error in execute", t);
+    protected void doExecute(String finalLocation, ActionInvocation invocation) throws Exception {
+        this.actionName = this.conditionalParse(this.actionName, invocation);
+        if (this.namespace == null) {
+            this.namespace = invocation.getProxy().getNamespace();
+        } else {
+            this.namespace = this.conditionalParse(this.namespace, invocation);
         }
-        super.execute(invocation);
-    }
-
-    protected void extractResultParams(Map<String, String> redirectParams, ResultConfig resultConfig, ActionInvocation invocation) {
-        Map resultConfigParams = resultConfig.getParams();
-        for (Iterator i = resultConfigParams.entrySet().iterator(); i.hasNext();) {
-            Map.Entry e = (Map.Entry) i.next();
-            if (!this.getProhibitedResultParams().contains(e.getKey())) {
-                String potentialValue = e.getValue() == null ? "" : conditionalParse(e.getValue().toString(), invocation);
-                if (!suppressEmptyParameters || ((potentialValue != null) && (potentialValue.length() > 0))) {
-                    redirectParams.put(e.getKey().toString(), potentialValue);
+        if (this.method == null) {
+            this.method = "";
+        } else {
+            this.method = this.conditionalParse(this.method, invocation);
+        }
+        ActionContext ctx = invocation.getInvocationContext();
+        HttpServletRequest request = (HttpServletRequest) ctx.get(ServletActionContext.HTTP_REQUEST);
+        HttpServletResponse response = (HttpServletResponse) ctx.get(ServletActionContext.HTTP_RESPONSE);
+        ResultConfig resultConfig = invocation.getProxy().getConfig().getResults().get(invocation.getResultCode());
+        Map<String, String> resultConfigParams = resultConfig.getParams();
+        Map<String, String> redirectParams = new HashMap<>();
+        this.anchorDest = this.extractAnchorDest(resultConfig, invocation);
+        List<String> prohibitedResultParams = getProhibitedResultParams();
+        for (Map.Entry<String, String> e : resultConfigParams.entrySet()) {
+            if (!prohibitedResultParams.contains(e.getKey())) {
+                Collection<String> values = conditionalParseCollection(e.getValue(), invocation, suppressEmptyParameters);
+                if (!suppressEmptyParameters || !values.isEmpty()) {
+                    String value = values.stream().findFirst().get();
+                    String potentialValue = value == null ? "" : conditionalParse(value, invocation);
+                    redirectParams.put(e.getKey(), potentialValue);
                 }
             }
         }
+        RequestContext reqCtx = (RequestContext) request.getAttribute(RequestContext.REQCTX);
+        this.extractInternalServletParams(redirectParams, reqCtx);
+        IURLManager urlManager = (IURLManager) ApsWebApplicationUtils.getBean(SystemConstants.URL_MANAGER, request);
+        Page currentPage = (Page) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_PAGE);
+        Lang currentLang = (Lang) reqCtx.getExtraParam(SystemConstants.EXTRAPAR_CURRENT_LANG);
+        ConfigInterface configManager = (ConfigInterface) ApsWebApplicationUtils.getBean(SystemConstants.BASE_CONFIG_MANAGER, request);
+        String urlType = configManager.getParam(SystemConstants.CONFIG_PARAM_BASE_URL);
+        boolean needRequest = (null != urlType && !urlType.equals(SystemConstants.CONFIG_PARAM_BASE_URL_RELATIVE));
+        String url = urlManager.createURL(currentPage, currentLang, redirectParams, false, (needRequest) ? request : null);
+        if (null != anchorDest) {
+            url += "#" + anchorDest;
+        }
+        this.setLocation(url);
+        this.sendRedirect(response, url);
     }
 
     protected String extractAnchorDest(ResultConfig resultConfig, ActionInvocation invocation) {

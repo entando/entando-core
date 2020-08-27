@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.struts2.ServletActionContext;
@@ -100,7 +101,8 @@ public class FrontServletActionRedirectResult extends ServletRedirectResult impl
             if (!prohibitedResultParams.contains(e.getKey())) {
                 Collection<String> values = conditionalParseCollection(e.getValue(), invocation, suppressEmptyParameters);
                 if (!suppressEmptyParameters || !values.isEmpty()) {
-                    String value = values.stream().findFirst().get();
+                    Optional<String> optional = values.stream().findFirst();
+                    String value = (optional.isPresent()) ? optional.get() : null;
                     String potentialValue = value == null ? "" : conditionalParse(value, invocation);
                     redirectParams.put(e.getKey(), potentialValue);
                 }

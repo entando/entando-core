@@ -53,6 +53,7 @@ import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.entando.entando.aps.servlet.security.AuthorizationServerConfigurationTest;
+import org.entando.entando.aps.servlet.security.CsrfFilterTest;
 import org.entando.entando.aps.system.init.DatabaseManagerTest;
 import org.entando.entando.aps.system.init.InitializerManagerTest;
 import org.entando.entando.aps.system.init.util.TestQueryExtractor;
@@ -223,6 +224,7 @@ public class AllTests {
         suite.addTest(ServicesAllTests.suite());
         suite.addTest(ControllersAllTests.suite());
         suite.addTest(new JUnit4TestAdapter(AuthorizationServerConfigurationTest.class));
+        suite.addTest(new JUnit4TestAdapter(CsrfFilterTest.class));
 
         suite.addTest(new JUnit4TestAdapter(FilterUtilsTest.class));
         suite.addTest(new JUnit4TestAdapter(AbstractEntityTypeServiceTest.class));

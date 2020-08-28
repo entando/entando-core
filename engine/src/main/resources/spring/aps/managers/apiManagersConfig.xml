@@ -30,14 +30,10 @@
             </bean>
         </property>
         <property name="resourceCacheWrapper">
-            <bean class="org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="org.entando.entando.aps.system.services.api.cache.ApiResourceCacheWrapper"/>
         </property>
         <property name="serviceCacheWrapper">
-            <bean class="org.entando.entando.aps.system.services.api.cache.ApiServiceCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="org.entando.entando.aps.system.services.api.cache.ApiServiceCacheWrapper"/>
         </property>
     </bean>
 

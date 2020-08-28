@@ -19,11 +19,13 @@ import com.agiletec.aps.system.services.baseconfig.ConfigInterface;
 import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.apsadmin.ApsAdminBaseTestCase;
+import com.opensymphony.xwork2.Action;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.struts2.dispatcher.mapper.DefaultActionMapper;
 import org.apache.struts2.views.util.UrlHelper;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -80,8 +82,10 @@ public class FrontServletActionRedirectResultIntegrationTest extends ApsAdminBas
         UrlHelper urlHelper = this.getContainerObject(UrlHelper.class);
         this.initAction("/do/Api/Service", "list");
         FrontServletActionRedirectResult servlet = new FrontServletActionRedirectResult();
+        servlet.setActionMapper(new DefaultActionMapper());
         servlet.setActionName("details");
         servlet.setUrlHelper(urlHelper);
+        super.getActionContext().getActionInvocation().setResultCode(Action.SUCCESS);
         servlet.execute(super.getActionContext().getActionInvocation());
         URL aURL = new URL(servlet.getLocation());
         assertEquals(expectedProtocol, aURL.getProtocol());

@@ -27,6 +27,7 @@ public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplic
     protected void beforeSpringSecurityFilterChain(ServletContext servletContext) {
         super.beforeSpringSecurityFilterChain(servletContext);
         super.insertFilters(servletContext, new CORSFilter());
+        super.insertFilters(servletContext, new CsrfFilter());
     }
 
 }

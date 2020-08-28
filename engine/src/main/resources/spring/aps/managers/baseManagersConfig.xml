@@ -92,9 +92,7 @@
     </bean>
 
     <bean id="CacheInfoManager" class="org.entando.entando.aps.system.services.cache.CacheInfoManager"
-          parent="abstractService" depends-on="springCacheManager" >
-        <property name="springCacheManager" ref="springCacheManager" />
-    </bean>
+          parent="abstractService" depends-on="springCacheManager" />
 
     <bean id="BaseConfigManager" class="com.agiletec.aps.system.services.baseconfig.BaseConfigManager"
           parent="abstractService" depends-on="springCacheManager" >
@@ -129,9 +127,7 @@
             </bean>
         </property>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.baseconfig.cache.ConfigManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.baseconfig.cache.ConfigManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -144,9 +140,7 @@
             </bean>
         </property>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.group.cache.GroupManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.group.cache.GroupManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -163,14 +157,10 @@
             </bean>
         </property>
         <property name="roleCacheWrapper">
-            <bean class="com.agiletec.aps.system.services.role.cache.RoleCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.role.cache.RoleCacheWrapper"/>
         </property>
         <property name="permissionCacheWrapper">
-            <bean class="com.agiletec.aps.system.services.role.cache.PermissionCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.role.cache.PermissionCacheWrapper"/>
         </property>
     </bean>
 
@@ -208,9 +198,7 @@
           parent="abstractService" depends-on="BaseConfigManager" >
         <property name="configManager" ref="BaseConfigManager"/>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.lang.cache.LangManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.lang.cache.LangManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -223,9 +211,7 @@
             </bean>
         </property>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.category.cache.CategoryManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.category.cache.CategoryManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -239,9 +225,7 @@
         </property>
         <property name="guiFragmentManager" ref="GuiFragmentManager"/>
         <property name="cacheWrapper">
-            <bean class="org.entando.entando.aps.system.services.widgettype.cache.WidgetTypeManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="org.entando.entando.aps.system.services.widgettype.cache.WidgetTypeManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -278,9 +262,7 @@
             </bean>
         </property>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.pagemodel.cache.PageModelManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.pagemodel.cache.PageModelManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -298,9 +280,7 @@
             </bean>
         </property>
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.page.cache.PageManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.page.cache.PageManagerCacheWrapper"/>
         </property>
     </bean>
 
@@ -319,9 +299,7 @@
     <bean id="I18nManager" class="com.agiletec.aps.system.services.i18n.I18nManager"
           parent="abstractService" >
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.i18n.cache.I18nManagerCacheWrapper"/>
         </property>
         <property name="i18nDAO" >
             <bean class="com.agiletec.aps.system.services.i18n.I18nDAO">
@@ -342,9 +320,7 @@
     <bean id="KeyGeneratorManager" class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorManager"
           parent="abstractService" depends-on="springCacheManager" >
         <property name="cacheWrapper">
-            <bean class="com.agiletec.aps.system.services.keygenerator.cache.KeyGeneratorManagerCacheWrapper">
-                <property name="springCacheManager" ref="springCacheManager" />
-            </bean>
+            <bean class="com.agiletec.aps.system.services.keygenerator.cache.KeyGeneratorManagerCacheWrapper"/>
         </property>
         <property name="keyGeneratorDAO" >
             <bean class="com.agiletec.aps.system.services.keygenerator.KeyGeneratorDAO">

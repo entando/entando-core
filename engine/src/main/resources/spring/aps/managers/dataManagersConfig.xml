@@ -20,9 +20,7 @@
             </bean>
         </property>
 		<property name="cacheWrapper">
-			<bean class="org.entando.entando.aps.system.services.dataobjectmodel.cache.DataObjectModelCacheWrapper">
-				<property name="springCacheManager" ref="springCacheManager" />
-			</bean>
+			<bean class="org.entando.entando.aps.system.services.dataobjectmodel.cache.DataObjectModelCacheWrapper"/>
 		</property>
         <property name="pageManager" ref="PageManager" />
         <property name="dataObjectManager" ref="DataObjectManager" />
@@ -74,9 +72,7 @@
           parent="abstractService" >
         <property name="pageManager" ref="PageManager" />
 		<property name="cacheWrapper">
-			<bean class="org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapper">
-				<property name="springCacheManager" ref="springCacheManager" />
-			</bean>
+			<bean class="org.entando.entando.aps.system.services.dataobjectmapper.cache.DataObjectMapperCacheWrapper"/>
 		</property>
     </bean>
 

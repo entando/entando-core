@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.common.renderer;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.io.StringWriter;
 
 import org.apache.velocity.VelocityContext;
@@ -42,7 +43,6 @@ public class DefaultVelocityRenderer extends AbstractService implements LogChute
 			Velocity.init();
 		} catch (Throwable t) {
 			_logger.error("Error initializing the VelocityEngine", t);
-			//ApsSystemUtils.logThrowable(t, this, "init");
 			throw new ApsSystemException("Error initializing the VelocityEngine", t);
 		}
 		_logger.debug("{} ready.", this.getName());

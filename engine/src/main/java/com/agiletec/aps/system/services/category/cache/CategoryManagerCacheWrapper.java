@@ -39,6 +39,20 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
     private static final Logger logger = LoggerFactory.getLogger(CategoryManagerCacheWrapper.class);
 
     @Override
+    public void release() {
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            for (String code : codes) {
+                cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
+            }
+            cache.evict(CATEGORY_CODES_CACHE_NAME);
+        }
+        cache.evict(CATEGORY_STATUS_CACHE_NAME);
+        cache.evict(CATEGORY_ROOT_CACHE_NAME);
+    }
+
+    @Override
     public void initCache(ICategoryDAO categoryDAO, ILangManager langManager) throws ApsSystemException {
         List<Category> categories = null;
         try {
@@ -90,18 +104,7 @@ public class CategoryManagerCacheWrapper extends AbstractCacheWrapper implements
         }
         this.insertObjectsOnCache(cache, root, categoryMap);
     }
-
-    protected void releaseCachedObjects(Cache cache) {
-        List<String> codes = (List<String>) this.get(cache, CATEGORY_CODES_CACHE_NAME, List.class);
-        if (null != codes) {
-            for (String code : codes) {
-                cache.evict(CATEGORY_CACHE_NAME_PREFIX + code);
-            }
-            cache.evict(CATEGORY_CODES_CACHE_NAME);
-        }
-        cache.evict(CATEGORY_STATUS_CACHE_NAME);
-    }
-
+    
     protected void insertObjectsOnCache(Cache cache, Category root, Map<String, Category> categoryMap) {
         cache.put(CATEGORY_ROOT_CACHE_NAME, root);
         Iterator<Category> iter = categoryMap.values().iterator();

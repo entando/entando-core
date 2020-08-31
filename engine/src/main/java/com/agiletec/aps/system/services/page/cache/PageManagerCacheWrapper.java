@@ -46,6 +46,23 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
     private List<String> localObject = new CopyOnWriteArrayList<>();
 
     @Override
+    public void release() {
+        Cache cache = this.getCache();
+        List<String> codes = (List<String>) this.get(cache, DRAFT_PAGE_CODES_CACHE_NAME, List.class);
+        if (null != codes) {
+            for (int i = 0; i < codes.size(); i++) {
+                String code = codes.get(i);
+                cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
+                cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
+            }
+            cache.evict(DRAFT_PAGE_CODES_CACHE_NAME);
+            cache.evict(ONLINE_PAGE_CODES_CACHE_NAME);
+        }
+        cache.evict(DRAFT_ROOT_CACHE_NAME);
+        cache.evict(ONLINE_ROOT_CACHE_NAME);
+    }
+    
+    @Override
     public void initCache(IPageDAO pageDao) throws ApsSystemException {
         PagesStatus status = new PagesStatus();
         IPage newDraftRoot = null;
@@ -82,7 +99,6 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
                 throw new ApsSystemException("Error in the page tree: root page undefined");
             }
             Cache cache = this.getCache();
-            //this.releaseCachedObjects(cache);
             this.cleanLocalCache(cache);
             List<String> draftPageCodes = pageListD.stream().map(p -> p.getCode()).collect(Collectors.toList());
             cache.put(DRAFT_PAGE_CODES_CACHE_NAME, draftPageCodes);
@@ -105,20 +121,7 @@ public class PageManagerCacheWrapper extends AbstractCacheWrapper implements IPa
         }
         this.localObject.clear();
     }
-
-    protected void releaseCachedObjects(Cache cache) {
-        List<String> codes = (List<String>) this.get(cache, DRAFT_PAGE_CODES_CACHE_NAME, List.class);
-        if (null != codes) {
-            for (int i = 0; i < codes.size(); i++) {
-                String code = codes.get(i);
-                cache.evict(DRAFT_PAGE_CACHE_NAME_PREFIX + code);
-                cache.evict(ONLINE_PAGE_CACHE_NAME_PREFIX + code);
-            }
-            cache.evict(DRAFT_PAGE_CODES_CACHE_NAME);
-            cache.evict(ONLINE_PAGE_CODES_CACHE_NAME);
-        }
-    }
-
+    
     protected void insertObjectsOnCache(Cache cache, PagesStatus status,
             IPage newDraftRoot, IPage newOnLineRoot, List<IPage> pageListD, List<IPage> pageListO) {
         cache.put(DRAFT_ROOT_CACHE_NAME, newDraftRoot);

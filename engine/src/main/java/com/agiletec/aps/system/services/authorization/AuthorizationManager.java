@@ -53,7 +53,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
     public void init() throws Exception {
         _logger.debug("{} ready", this.getClass().getName());
     }
-
+    
     @Override
     @Deprecated
     public boolean isAuth(UserDetails user, IApsAuthority auth) {
@@ -65,7 +65,7 @@ public class AuthorizationManager extends AbstractService implements IAuthorizat
         if (null == user || null == groupName || null == permissionName) {
             return false;
         }
-        List<Role> roles = new ArrayList<Role>();
+        List<Role> roles = new ArrayList<>();
         List<Role> rolesWithPermission = this.getRoleManager().getRolesWithPermission(permissionName);
         if (null != rolesWithPermission) {
             roles.addAll(rolesWithPermission);

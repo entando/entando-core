@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.api;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -84,6 +85,13 @@ public class ApiCatalogManager extends AbstractService implements IApiCatalogMan
 		this.getServiceCacheWrapper().initCache(resources, this.getApiCatalogDAO());
 		logger.debug("{} ready.", this.getClass().getName());
 	}
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getServiceCacheWrapper()).release();
+        ((AbstractCacheWrapper) this.getResourceCacheWrapper()).release();
+        super.release();
+    }
 
 	@Override
 	public ApiMethod getRelatedMethod(String showletCode) throws ApsSystemException {

@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.i18n;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -77,6 +78,12 @@ public class I18nManager extends AbstractService implements II18nManager {
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getI18nDAO());
         logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
+    }
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
     }
 
     /**

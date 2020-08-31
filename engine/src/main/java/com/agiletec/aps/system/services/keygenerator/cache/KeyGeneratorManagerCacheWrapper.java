@@ -23,6 +23,12 @@ public class KeyGeneratorManagerCacheWrapper extends AbstractCacheWrapper implem
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
+	public void release() {
+        Cache cache = this.getCache();
+		cache.evict(IKeyGeneratorManagerCacheWrapper.CURRENT_KEY);
+	}
+
 	@Override
 	protected String getCacheName() {
 		return CACHE_NAME;
@@ -32,7 +38,6 @@ public class KeyGeneratorManagerCacheWrapper extends AbstractCacheWrapper implem
 	public void initCache(IKeyGeneratorDAO keyGeneratorDAO) {
 		Integer value = keyGeneratorDAO.getUniqueKey();
 		Cache cache = this.getCache();
-		this.releaseCachedObjects(cache);
 		this.insertObjectsOnCache(cache, value);
 	}
     
@@ -59,10 +64,6 @@ public class KeyGeneratorManagerCacheWrapper extends AbstractCacheWrapper implem
 	private void insertObjectsOnCache(Cache cache, Integer value) {
 		cache.put(IKeyGeneratorManagerCacheWrapper.CURRENT_KEY, value);
 		logger.trace("current key is now {}", value);
-	}
-
-	private void releaseCachedObjects(Cache cache) {
-		cache.evict(IKeyGeneratorManagerCacheWrapper.CURRENT_KEY);
 	}
 
 }

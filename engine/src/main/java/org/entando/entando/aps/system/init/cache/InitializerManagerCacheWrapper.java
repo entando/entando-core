@@ -34,7 +34,6 @@ public class InitializerManagerCacheWrapper extends AbstractCacheWrapper impleme
 	public void initCache(SystemInstallationReport report) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			this.insertObjectsOnCache(cache, report);
 		} catch (Throwable t) {
 			logger.error("Error bootstrapping InitializerManager cache", t);
@@ -46,7 +45,9 @@ public class InitializerManagerCacheWrapper extends AbstractCacheWrapper impleme
 		cache.put(INITIALIZER_REPORT_CACHE_NAME, report);
 	}
 
-	protected void releaseCachedObjects(Cache cache) {
+    @Override
+	public void release() {
+        Cache cache = this.getCache();
 		cache.evict(INITIALIZER_REPORT_CACHE_NAME);
 		logger.trace("report entry evicted");
 	}

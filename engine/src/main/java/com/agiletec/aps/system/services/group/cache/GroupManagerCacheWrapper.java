@@ -35,9 +35,8 @@ public class GroupManagerCacheWrapper extends AbstractGenericCacheWrapper<Group>
 	public void initCache(IGroupDAO groupDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			Map<String, Group> groups = groupDAO.loadGroups();
-			this.insertObjectsOnCache(cache, groups);
+			this.insertAndCleanCache(cache, groups);
 		} catch (Throwable t) {
 			_logger.error("Error loading groups", t);
 			throw new ApsSystemException("Error loading groups", t);

@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.dataobjectmodel;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,6 +85,12 @@ public class DataObjectModelManager extends AbstractService implements IDataObje
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getDataModelDAO());
         logger.debug("{} ready. Initialized {} dataObject models", this.getClass().getName(), this.getCacheWrapper().getModels().size());
+    }
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
     }
 
     @Override

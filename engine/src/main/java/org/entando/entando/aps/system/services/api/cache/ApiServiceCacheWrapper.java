@@ -42,10 +42,9 @@ public class ApiServiceCacheWrapper extends AbstractGenericCacheWrapper<ApiServi
 	public void initCache(Map<String, ApiResource> resources, IApiCatalogDAO apiCatalogDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			List<ApiMethod> apiGETMethods = buildApiGetMethods(resources);
 			Map<String, ApiService> services = apiCatalogDAO.loadServices(apiGETMethods);
-			this.insertObjectsOnCache(cache, services);
+			this.insertAndCleanCache(cache, services);
 		} catch (Throwable t) {
 			logger.error("Error bootstrapping ApiCatalog cache", t);
 			throw new ApsSystemException("Error bootstrapping ApiCatalog cache", t);

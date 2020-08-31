@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.category;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +53,12 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 		this.initCache();
 		_logger.debug("{} initialized", this.getClass().getName());
 	}
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
+    }
 
 	private void initCache() throws ApsSystemException {
 		this.getCacheWrapper().initCache(this.getCategoryDAO(), this.getLangManager());

@@ -34,9 +34,8 @@ public class PageModelManagerCacheWrapper extends AbstractGenericCacheWrapper<Pa
 	public void initCache(IPageModelDAO pageModelDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			Map<String, PageModel> models = pageModelDAO.loadModels();
-			this.insertObjectsOnCache(cache, models);
+			this.insertAndCleanCache(cache, models);
 		} catch (Throwable t) {
 			_logger.error("Error loading page models", t);
 			throw new ApsSystemException("Error loading page models", t);

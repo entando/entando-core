@@ -140,6 +140,7 @@
         <property name="userManager" ref="UserManager" />
         <property name="pageManager" ref="PageManager" />
         <property name="groupManager" ref="GroupManager" />
+        <property name="langManager" ref="LangManager" />
         <property name="categoryManager" ref="CategoryManager" />
         <property name="dataObjectListHelper" ref="BaseDataObjectListHelper" />
         <property name="dataObjectDispenser" ref="DataObjectDispenserManager" />

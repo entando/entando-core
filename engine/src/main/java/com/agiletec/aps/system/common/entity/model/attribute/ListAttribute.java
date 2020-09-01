@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
@@ -211,10 +212,10 @@ public class ListAttribute extends AbstractListAttribute {
     }
 
     @Override
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        List<AttributeFieldError> errors = super.validate(tracer);
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
+        List<AttributeFieldError> errors = super.validate(tracer, langManager);
         try {
-            List<Lang> langs = super.getLangManager().getLangs();
+            List<Lang> langs = langManager.getLangs();
             for (int i = 0; i < langs.size(); i++) {
                 Lang lang = langs.get(i);
                 List<AttributeInterface> attributeList = this.getAttributeList(lang.getCode());
@@ -228,7 +229,7 @@ public class ListAttribute extends AbstractListAttribute {
                     if (elementStatus.equals(Status.EMPTY)) {
                         errors.add(new AttributeFieldError(attributeElement, FieldError.INVALID, elementTracer));
                     } else {
-                        List<AttributeFieldError> elementErrors = attributeElement.validate(elementTracer);
+                        List<AttributeFieldError> elementErrors = attributeElement.validate(elementTracer, langManager);
                         if (null != elementErrors) {
                             errors.addAll(elementErrors);
                         }
@@ -236,7 +237,6 @@ public class ListAttribute extends AbstractListAttribute {
                 }
             }
         } catch (Throwable t) {
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             _logger.error("Error validating list attribute", t);
             throw new RuntimeException("Error validating list attribute", t);
         }

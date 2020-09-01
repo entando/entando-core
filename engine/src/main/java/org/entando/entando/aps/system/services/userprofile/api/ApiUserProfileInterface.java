@@ -38,6 +38,7 @@ import com.agiletec.aps.system.common.entity.model.FieldError;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.lang.ILangManager;
 
 /**
  * @author E.Santoboni
@@ -155,9 +156,9 @@ public class ApiUserProfileInterface {
     }
 
     private List<ApiError> validate(IUserProfile userProfile) throws ApsSystemException {
-        List<ApiError> errors = new ArrayList<ApiError>();
+        List<ApiError> errors = new ArrayList<>();
         try {
-            List<FieldError> fieldErrors = userProfile.validate(this.getGroupManager());
+            List<FieldError> fieldErrors = userProfile.validate(this.getGroupManager(), this.getLangManager());
             if (null != fieldErrors) {
                 for (int i = 0; i < fieldErrors.size(); i++) {
                     FieldError fieldError = fieldErrors.get(i);
@@ -173,7 +174,6 @@ public class ApiUserProfileInterface {
             }
         } catch (Throwable t) {
             _logger.error("Error validating profile", t);
-            //ApsSystemUtils.logThrowable(t, this, "validate");
             throw new ApsSystemException("Error validating profile", t);
         }
         return errors;
@@ -216,7 +216,16 @@ public class ApiUserProfileInterface {
         this._groupManager = groupManager;
     }
 
+    protected ILangManager getLangManager() {
+        return langManager;
+    }
+
+    public void setLangManager(ILangManager langManager) {
+        this.langManager = langManager;
+    }
+
     private IUserProfileManager _userProfileManager;
     private IGroupManager _groupManager;
+    private ILangManager langManager;
 
 }

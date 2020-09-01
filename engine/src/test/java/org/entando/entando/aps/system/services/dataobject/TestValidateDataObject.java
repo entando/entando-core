@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.MonoListAttribute;
 import com.agiletec.aps.system.services.group.Group;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import org.entando.entando.aps.system.services.dataobject.model.DataObject;
 
 /**
@@ -39,7 +40,7 @@ public class TestValidateDataObject extends BaseTestCase {
 		String insertedDescr = "XXX Prova Validazione XXX";
 		try {
 			DataObject content = this.createNewVoid("ART", insertedDescr, DataObject.STATUS_DRAFT, Group.FREE_GROUP_NAME, "admin");
-			List<FieldError> errors = content.validate(this._groupManager);
+			List<FieldError> errors = content.validate(this._groupManager, this.langManager);
 			assertNotNull(errors);
 			assertEquals(1, errors.size());
 			FieldError error = errors.get(0);
@@ -51,7 +52,7 @@ public class TestValidateDataObject extends BaseTestCase {
 			monolist.addAttribute();
 			assertEquals(1, monolist.getAttributes().size());
 
-			errors = content.validate(this._groupManager);
+			errors = content.validate(this._groupManager, this.langManager);
 			assertEquals(2, errors.size());
 			error = errors.get(0);
 			assertEquals("Text:it_Titolo", error.getFieldCode());//Verifica obbligatorietà attributo "Titolo"
@@ -71,7 +72,7 @@ public class TestValidateDataObject extends BaseTestCase {
 			ITextAttribute emailAttribute = (ITextAttribute) content.getAttribute("email");
 			emailAttribute.setText("wrongEmailAddress", null);
 
-			List<FieldError> errors = content.validate(this._groupManager);
+			List<FieldError> errors = content.validate(this._groupManager, this.langManager);
 			assertEquals(1, errors.size());
 			FieldError error = errors.get(0);
 			assertEquals("Monotext:email", error.getFieldCode());
@@ -91,21 +92,21 @@ public class TestValidateDataObject extends BaseTestCase {
 			ITextAttribute textAttribute = (ITextAttribute) content.getAttribute("Titolo");
 			textAttribute.setText(shortTitle, "it");
 
-			List<FieldError> errors = content.validate(this._groupManager);
+			List<FieldError> errors = content.validate(this._groupManager, this.langManager);
 			assertEquals(1, errors.size());
 			FieldError error = errors.get(0);
 			assertEquals("Text:it_Titolo", error.getFieldCode());
 			assertEquals(FieldError.INVALID_MIN_LENGTH, error.getErrorCode());
 
 			textAttribute.setText(longTitle, "it");
-			errors = content.validate(this._groupManager);
+			errors = content.validate(this._groupManager, this.langManager);
 			assertEquals(1, errors.size());
 			error = errors.get(0);
 			assertEquals("Text:it_Titolo", error.getFieldCode());
 			assertEquals(FieldError.INVALID_MAX_LENGTH, error.getErrorCode());
 
 			textAttribute.setText(shortTitle, "en");
-			errors = content.validate(this._groupManager);
+			errors = content.validate(this._groupManager, this.langManager);
 			assertEquals(2, errors.size());
 			error = errors.get(0);
 			assertEquals("Text:it_Titolo", error.getFieldCode());
@@ -132,6 +133,7 @@ public class TestValidateDataObject extends BaseTestCase {
 		try {
 			this._contentManager = (IDataObjectManager) this.getService("DataObjectManager");
 			this._groupManager = (IGroupManager) this.getService(SystemConstants.GROUP_MANAGER);
+			this.langManager = (ILangManager) this.getService(SystemConstants.LANGUAGE_MANAGER);
 		} catch (Throwable t) {
 			throw new Exception(t);
 		}
@@ -139,5 +141,6 @@ public class TestValidateDataObject extends BaseTestCase {
 
 	private IDataObjectManager _contentManager = null;
 	private IGroupManager _groupManager = null;
+	private ILangManager langManager;
 
 }

@@ -37,6 +37,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.BooleanAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.DateAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.common.entity.model.attribute.NumberAttribute;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.util.CheckFormatUtil;
 import com.agiletec.aps.util.DateConverter;
 import com.agiletec.apsadmin.system.BaseActionHelper;
@@ -75,11 +76,12 @@ public class EntityActionHelper extends BaseActionHelper implements IEntityActio
 	@Override
 	public void scanEntity(IApsEntity currentEntity, ActionSupport action) {
 		try {
+            ILangManager langManager = this.getBeanFactory().getBean(ILangManager.class);
 			List<AttributeInterface> attributes = currentEntity.getAttributeList();
 			for (int i = 0; i < attributes.size(); i++) {
 				AttributeInterface entityAttribute = attributes.get(i);
 				if (entityAttribute.isActive()) {
-					List<AttributeFieldError> errors = entityAttribute.validate(new AttributeTracer());
+					List<AttributeFieldError> errors = entityAttribute.validate(new AttributeTracer(), langManager);
 					if (null != errors && errors.size() > 0) {
 						for (int j = 0; j < errors.size(); j++) {
 							AttributeFieldError attributeFieldError = errors.get(j);

@@ -25,6 +25,7 @@ import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
 import com.agiletec.aps.system.common.entity.parse.attribute.AttributeHandlerInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
@@ -319,8 +320,11 @@ public interface AttributeInterface extends Serializable {
     public void valueFrom(AbstractJAXBAttribute jaxbAttribute, String langCod);
 
     public DefaultJAXBAttributeType getJAXBAttributeType();
-
+    
+    @Deprecated
     public List<AttributeFieldError> validate(AttributeTracer tracer);
+    
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager);
 
     public Status getStatus();
 

@@ -30,6 +30,7 @@ import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
 import com.agiletec.aps.system.common.entity.model.attribute.util.DateAttributeValidationRules;
 import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeValidationRules;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.lang.Lang;
 
 /**
@@ -218,8 +219,8 @@ public class DateAttribute extends AbstractAttribute implements IndexableAttribu
     }
 
     @Override
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        List<AttributeFieldError> errors = super.validate(tracer);
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
+        List<AttributeFieldError> errors = super.validate(tracer, langManager);
         if (null == this.getDate() && null != this.getFailedDateString()) {
             errors.add(new AttributeFieldError(this, FieldError.INVALID_FORMAT, tracer));
         }

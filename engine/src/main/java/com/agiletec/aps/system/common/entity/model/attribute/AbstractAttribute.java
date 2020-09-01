@@ -526,12 +526,6 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
     }
     
     @Override
-    @Deprecated
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        return this.validate(tracer, this.getLangManager());
-    }
-    
-    @Override
     public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
         List<AttributeFieldError> errors = new ArrayList<>();
         try {

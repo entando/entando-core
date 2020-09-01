@@ -321,9 +321,6 @@ public interface AttributeInterface extends Serializable {
 
     public DefaultJAXBAttributeType getJAXBAttributeType();
     
-    @Deprecated
-    public List<AttributeFieldError> validate(AttributeTracer tracer);
-    
     public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager);
 
     public Status getStatus();

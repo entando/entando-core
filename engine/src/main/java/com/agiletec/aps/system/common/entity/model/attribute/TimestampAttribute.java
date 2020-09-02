@@ -21,6 +21,7 @@ import com.agiletec.aps.system.SystemConstants;
 import com.agiletec.aps.system.common.entity.model.AttributeFieldError;
 import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.FieldError;
+import com.agiletec.aps.system.services.lang.ILangManager;
 
 /**
  * @author E.Santoboni
@@ -39,8 +40,8 @@ public class TimestampAttribute extends DateAttribute {
     }
 	
     @Override
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        List<AttributeFieldError> errors = super.validate(tracer);
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
+        List<AttributeFieldError> errors = super.validate(tracer, langManager);
         if (null == this.getDate() && 
 				(null != this.getFailedDateString() || null != this.getFailedHourString() || null != this.getFailedMinuteString() || null != this.getFailedSecondString())) {
             errors.add(new AttributeFieldError(this, FieldError.INVALID_FORMAT, tracer));

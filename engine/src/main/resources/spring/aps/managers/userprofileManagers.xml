@@ -56,6 +56,7 @@
           class="org.entando.entando.aps.system.services.userprofile.api.ApiUserProfileInterface" >
         <property name="userProfileManager" ref="UserProfileManager" />
         <property name="groupManager" ref="GroupManager" />
+        <property name="langManager" ref="LangManager" />
     </bean>
     
 </beans>

@@ -37,6 +37,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.ITextAttribute;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.lang.ILangManager;
 import com.agiletec.aps.system.services.page.IPageManager;
 import com.agiletec.aps.system.services.user.IUserManager;
 import com.agiletec.aps.system.services.user.UserDetails;
@@ -346,12 +347,12 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
     }
 
     private List<ApiError> validate(DataObject dataObject) throws ApsSystemException {
-        List<ApiError> errors = new ArrayList<ApiError>();
+        List<ApiError> errors = new ArrayList<>();
         try {
             if (null == dataObject.getMainGroup()) {
                 errors.add(new ApiError(IApiErrorCodes.API_VALIDATION_ERROR, "Main group null", Response.Status.CONFLICT));
             }
-            List<FieldError> fieldErrors = dataObject.validate(this.getGroupManager());
+            List<FieldError> fieldErrors = dataObject.validate(this.getGroupManager(), this.getLangManager());
             if (null != fieldErrors) {
                 for (int i = 0; i < fieldErrors.size(); i++) {
                     FieldError fieldError = fieldErrors.get(i);
@@ -458,6 +459,14 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
         this._groupManager = groupManager;
     }
 
+    protected ILangManager getLangManager() {
+        return _langManager;
+    }
+
+    public void setLangManager(ILangManager langManager) {
+        this._langManager = langManager;
+    }
+
     protected IPageManager getPageManager() {
         return _pageManager;
     }
@@ -526,6 +535,7 @@ public class ApiDataObjectInterface extends AbstractApiDataObjectInterface {
     private IUserManager _userManager;
     private ICategoryManager _categoryManager;
     private IGroupManager _groupManager;
+    private ILangManager _langManager;
     private IPageManager _pageManager;
     private IDataAuthorizationHelper _dataObjectAuthorizationHelper;
     private IDataObjectDispenser _dataObjectDispenser;

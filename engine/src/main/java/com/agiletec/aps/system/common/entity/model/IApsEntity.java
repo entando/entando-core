@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.lang.ILangManager;
 
 /**
  * This class represents an Entity. The structure of the entity, defined during
@@ -235,6 +236,6 @@ public interface IApsEntity extends Serializable {
 
     public void activateAttributes();
 
-    public List<FieldError> validate(IGroupManager groupManager);
+    public List<FieldError> validate(IGroupManager groupManager, ILangManager langManager);
 
 }

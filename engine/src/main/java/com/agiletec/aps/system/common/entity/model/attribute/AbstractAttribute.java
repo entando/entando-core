@@ -524,9 +524,9 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
     protected DefaultJAXBAttributeType getJAXBAttributeTypeInstance() {
         return new DefaultJAXBAttributeType();
     }
-
+    
     @Override
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
         List<AttributeFieldError> errors = new ArrayList<>();
         try {
             if (this.getStatus().equals(Status.INCOMPLETE)) {
@@ -536,7 +536,7 @@ public abstract class AbstractAttribute implements AttributeInterface, Serializa
                 if (null == validationRules) {
                     return errors;
                 }
-                List<AttributeFieldError> validationRulesErrors = validationRules.validate(this, tracer, this.getLangManager());
+                List<AttributeFieldError> validationRulesErrors = validationRules.validate(this, tracer, langManager);
                 if (null != validationRulesErrors) {
                     errors.addAll(validationRulesErrors);
                 }

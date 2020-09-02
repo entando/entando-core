@@ -28,6 +28,7 @@ import com.agiletec.aps.system.common.entity.model.AttributeTracer;
 import com.agiletec.aps.system.common.entity.model.IApsEntity;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
+import com.agiletec.aps.system.services.lang.ILangManager;
 
 /**
  * This class describes the Entity of a Composed Attribute. This attribute is
@@ -301,8 +302,8 @@ public class CompositeAttribute extends AbstractComplexAttribute {
     }
 
     @Override
-    public List<AttributeFieldError> validate(AttributeTracer tracer) {
-        List<AttributeFieldError> errors = super.validate(tracer);
+    public List<AttributeFieldError> validate(AttributeTracer tracer, ILangManager langManager) {
+        List<AttributeFieldError> errors = super.validate(tracer, langManager);
         try {
             List<AttributeInterface> attributes = this.getAttributes();
             for (int i = 0; i < attributes.size(); i++) {
@@ -310,7 +311,7 @@ public class CompositeAttribute extends AbstractComplexAttribute {
                 AttributeTracer elementTracer = tracer.clone();
                 elementTracer.setCompositeElement(true);
                 elementTracer.setParentAttribute(this);
-                List<AttributeFieldError> elementErrors = attributeElement.validate(elementTracer);
+                List<AttributeFieldError> elementErrors = attributeElement.validate(elementTracer, langManager);
                 if (null != elementErrors) {
                     errors.addAll(elementErrors);
                 }

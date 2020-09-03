@@ -38,7 +38,7 @@
             <p class="ux_brand_subtitle"> FOR CLOUD NATIVE APPLICATIONS</p>
             <div class="spacer-login"></div>
             <div class="entando-intro">
-                Entando is the lightest open source Digital Transformation Platform for Modern Applications. We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
+                We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
             </div>
             <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
         </div>

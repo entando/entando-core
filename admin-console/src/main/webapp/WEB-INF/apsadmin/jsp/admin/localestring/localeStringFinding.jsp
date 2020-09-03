@@ -137,7 +137,7 @@
                                     <p class="sr-only"><s:text name="title.generalSettings.locale.installedLabels"/></p>
                                     <s:iterator var="key">
                                         <tr class="dl-horizontal dl-striped panel padding-base-top padding-base-bottom">
-                                            <s:set var="currentLabel" value="labels[#key]"/>
+                                            <s:set var="currentLabel" value="%{getLabelGroup(#key)]}"/>
                                             <td class="col-md-5"><s:property value="#key"/></td>
                                             <td class="col-md-6 td-grid-ellipsis">
                                                 <s:if test="%{#currentLabel[#lang.code]==null || #currentLabel[#lang.code].length()==0}">

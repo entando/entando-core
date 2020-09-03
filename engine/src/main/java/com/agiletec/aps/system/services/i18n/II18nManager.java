@@ -20,7 +20,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.util.ApsProperties;
 
 /**
- * Interfaccia base per i servizi fornitori stringhe "localizzate".
+ * Interface for managers of local strings (i18n)
  * @author S.Didaci - E.Santoboni - S.Puddu
  */
 public interface II18nManager {
@@ -96,20 +96,16 @@ public interface II18nManager {
 	public void updateLabelGroup(String key, ApsProperties labels) throws ApsSystemException;
 	
 	/**
-	 * Restituisce la lista di chiavi di gruppi di labels 
-	 * in base ai parametri segbalati.
-	 * @param insertedText Il testo tramite il quale effettuare la ricerca.
-	 * @param doSearchByKey Specifica se effettuare la ricerca sulle chiavi, 
-	 * in base al testo inserito.
-	 * @param doSearchByLang Specifica se effettuare la ricerca 
-	 * sul testo di una lingua, in base al testo inserito.
-	 * @param langCode Specifica la lingua della label sulla quale effettuare 
-	 * la ricerca, in base al testo inserito.
-	 * @return La lista di chiavi di gruppi di labels 
-	 * in base ai parametri segbalati.
+	 * Returns the list of keys of groups of labels based on the parameters entered.
+	 * @param insertedText The text to search by.
+	 * @param doSearchByKey Specifies whether to search the keys, based on the entered text.
+	 * @param doSearchByLang Specifies whether to search the text of a language, based on the entered text.
+	 * @param langCode Specifies the language of the label on which to search, based on the entered text.
+	 * @return La lista di chiavi di gruppi di labels in base ai parametri inseriti.
+	 * @throws ApsSystemException In case of Exception.
 	 */
 	public List<String> searchLabelsKey(String insertedText, boolean doSearchByKey, 
-			boolean doSearchByLang, String langCode);
+			boolean doSearchByLang, String langCode) throws ApsSystemException;
 	
 	/**
 	 * Return the group of labels.

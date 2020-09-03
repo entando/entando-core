@@ -13,6 +13,7 @@
  */
 package com.agiletec.apsadmin.admin.localestring;
 
+import com.agiletec.aps.system.exception.ApsSystemException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ public class LocaleStringFinderAction extends BaseAction {
 	private static final Logger _logger = LoggerFactory.getLogger(LocaleStringFinderAction.class);
 	
 	public List<String> getLocaleStrings() {
-		List<String> labelKeys = new ArrayList<String>();
+		List<String> labelKeys = new ArrayList<>();
 		try {
 			II18nManager i18nManager = this.getI18nManager();
 			String text = this.getText();
@@ -65,6 +66,10 @@ public class LocaleStringFinderAction extends BaseAction {
 	public Map<String, ApsProperties> getLabels() {
 		return this.getI18nManager().getLabelGroups();
 	}
+    
+    public ApsProperties getLabelGroup(String key) throws ApsSystemException {
+        return this.getI18nManager().getLabelGroup(key);
+    }
 	
 	public String getText() {
 		return _text;

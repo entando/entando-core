@@ -121,7 +121,9 @@
         <s:if test="strutsAction != 2">
             <div class="form-group<s:property value="controlGroupErrorClassVar" />">
                 <div class="col-xs-2 control-label">
-                    <label><s:text name="name.tree.position" /></label>
+                    <label><s:text name="name.tree.position" />&nbsp;
+                        <i class="fa fa-asterisk required-icon" style="position: relative; top: -4px; right: 0px"></i>
+                    </label>
                 </div>
                 <s:set var="categoryTreeStyleVar"><wp:info key="systemParam" paramName="treeStyle_category" /></s:set>
                     <div class="col-xs-10">

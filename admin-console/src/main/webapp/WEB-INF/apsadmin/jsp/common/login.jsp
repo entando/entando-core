@@ -40,7 +40,7 @@
             <div class="entando-intro">
                 We help customers bring to production enterprise applications that are lightweight, cloud native, and highly customized, and do so significantly faster than their competitors. Learn quickly, develop easily, deploy rapidly.
             </div>
-            <div class="copyright-entando">Copyright 2019 <span class="entando-sm-write">Entando</span></div>
+            <div class="copyright-entando">Copyright 2020 <span class="entando-sm-write">Entando</span></div>
         </div>
     </div>
 

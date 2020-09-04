@@ -48,12 +48,7 @@ public class WidgetTypeAction extends AbstractPortalAction {
     public void validate() {
         super.validate();
         try {
-            if (this.getStrutsAction() == ApsAdminSystemConstants.ADD) {
-                WidgetType type = this.getWidgetType(this.getWidgetTypeCode());
-                if (null != type) {
-                    this.addFieldError("widgetTypeCode", this.getText("error.widgetType.guiRequired"));
-                }
-            } else if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
+            if (this.getStrutsAction() == ApsAdminSystemConstants.PASTE) {
                 this.checkWidgetToCopy();
             } else if (this.getStrutsAction() == NEW_USER_WIDGET) {
                 this.checkNewUserWidget();

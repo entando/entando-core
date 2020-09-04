@@ -27,11 +27,21 @@
         <field-validator type="requiredstring">
             <message key="requiredstring" />
         </field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+            <param name="maxLength">100</param>
+            <param name="trim">true</param>
+            <message key="wrongMaxLength" />
+        </field-validator>
     </field>
     
     <field name="italianTitle">
         <field-validator type="requiredstring">
             <message key="requiredstring" />
+        </field-validator>
+        <field-validator type="stringlength" short-circuit="true">
+            <param name="maxLength">100</param>
+            <param name="trim">true</param>
+            <message key="wrongMaxLength" />
         </field-validator>
     </field>
     

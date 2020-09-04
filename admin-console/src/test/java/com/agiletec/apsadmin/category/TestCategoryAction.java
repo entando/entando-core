@@ -91,7 +91,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
     }
 
     public void testValidateAddCategory_1() throws Throwable {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("parentCategoryCode", this._categoryManager.getRoot().getCode());
         params.put("strutsAction", "1");
         params.put("categoryCode", "");
@@ -108,7 +108,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
     public void testValidateAddCategory_2() throws Throwable {
         String categoryCode = "veryLongCategoryCode_veryLongCategoryCode";
         assertNull(this._categoryManager.getCategory(categoryCode));
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("parentCategoryCode", this._categoryManager.getRoot().getCode());
         params.put("strutsAction", "1");
         params.put("categoryCode", categoryCode);//long category code
@@ -123,7 +123,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
 
     public void testValidateAddCategory_3() throws Throwable {
         assertNotNull(this._categoryManager.getCategory("evento"));
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("parentCategoryCode", this._categoryManager.getRoot().getCode());
         params.put("strutsAction", "1");
         params.put("categoryCode", "evento");//duplicate Code
@@ -140,7 +140,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
         String categoryCode = "cat_temp2";
         assertNull(this._categoryManager.getCategory(categoryCode));
         try {
-            Map<String, String> params = new HashMap<String, String>();
+            Map<String, String> params = new HashMap<>();
             params.put("parentCategoryCode", this._categoryManager.getRoot().getCode());
             params.put("strutsAction", "1");
             params.put("categoryCode", categoryCode);
@@ -151,6 +151,15 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
             Map<String, List<String>> fieldErrors = this.getAction().getFieldErrors();
             assertEquals(1, fieldErrors.size());
             assertEquals(1, fieldErrors.get("langen").size());
+            
+            String longCategoryTitle = "Titolo di lunghezza maggiore di 50 caratteri - abcdefghi lmnopq rstuvz";
+            params.put("langen", "Category title");
+            params.put("langit", longCategoryTitle);
+            result = this.executeSaveCategory("admin", params);
+            assertEquals(Action.INPUT, result);
+            fieldErrors = this.getAction().getFieldErrors();
+            assertEquals(1, fieldErrors.size());
+            assertEquals(1, fieldErrors.get("langit").size());
         } catch (Throwable t) {
             this._categoryManager.deleteCategory(categoryCode);
             assertNotNull(this._categoryManager.getCategory(categoryCode));

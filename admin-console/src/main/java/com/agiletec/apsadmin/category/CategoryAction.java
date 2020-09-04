@@ -115,10 +115,14 @@ public class CategoryAction extends AbstractTreeAction {
 				this.getTitles().put(lang.getCode(), title.trim());
 			}
 			if (checkErrors) {
-				if (null == title || title.trim().length() == 0) {
+                int maxLength = 50;
+				if (StringUtils.isBlank(title)) {
 					String[] args = {lang.getDescr()};
 					this.addFieldError(titleKey, this.getText("error.category.insertTitle", args));
-				}
+				} else if (null != title && title.trim().length() > maxLength) {
+                    String[] args = {lang.getDescr(), String.valueOf(maxLength)};
+					this.addFieldError(titleKey, this.getText("error.category.title.wrongTitleLength", args));
+                }
 			}
 		}
 	}

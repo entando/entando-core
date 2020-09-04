@@ -115,7 +115,7 @@ public class CategoryAction extends AbstractTreeAction {
 				this.getTitles().put(lang.getCode(), title.trim());
 			}
 			if (checkErrors) {
-                int maxLength = 50;
+                int maxLength = 70;
 				if (StringUtils.isBlank(title)) {
 					String[] args = {lang.getDescr()};
 					this.addFieldError(titleKey, this.getText("error.category.insertTitle", args));

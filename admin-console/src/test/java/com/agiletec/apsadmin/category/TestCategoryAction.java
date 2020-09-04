@@ -152,7 +152,7 @@ public class TestCategoryAction extends ApsAdminBaseTestCase {
             assertEquals(1, fieldErrors.size());
             assertEquals(1, fieldErrors.get("langen").size());
             
-            String longCategoryTitle = "Titolo di lunghezza maggiore di 50 caratteri - abcdefghi lmnopq rstuvz";
+            String longCategoryTitle = "Titolo di lunghezza maggiore di 70 caratteri - abcdefghi lmnopq rstuvz 1234567890";
             params.put("langen", "Category title");
             params.put("langit", longCategoryTitle);
             result = this.executeSaveCategory("admin", params);

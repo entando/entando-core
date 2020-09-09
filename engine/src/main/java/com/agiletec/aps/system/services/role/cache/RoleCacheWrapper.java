@@ -38,9 +38,8 @@ public class RoleCacheWrapper extends AbstractGenericCacheWrapper<Role> implemen
 	public void initCache(IRoleDAO roleDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			Map<String, Role> roles = roleDAO.loadRoles();
-			this.insertObjectsOnCache(cache, roles);
+			this.insertAndCleanCache(cache, roles);
 		} catch (Throwable t) {
 			_logger.error("Error loading roles", t);
 			throw new ApsSystemException("Error loading roles", t);

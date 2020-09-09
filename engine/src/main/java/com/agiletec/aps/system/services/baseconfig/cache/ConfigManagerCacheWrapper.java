@@ -46,12 +46,27 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
             throw new ApsSystemException("Error loading configuration params", t);
         }
     }
+    
+    @Override
+    public void release() {
+        Cache cache = this.getCache();
+        this.releaseCachedObjects(cache, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
+        this.releaseCachedObjects(cache, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
+    }
+    
+    protected void releaseCachedObjects(Cache cache, String codesCacheName, String codeCachePrefix) {
+        List<String> codes = (List<String>) this.get(cache, codesCacheName, List.class);
+        this.releaseObjects(cache, codes, codeCachePrefix);
+        if (null != codes) {
+            cache.evict(codesCacheName);
+        }
+    }
 
     protected void insertAndCleanObjectsOnCache(Cache cache, Map<String, String> configItems, Map<String, String> params) {
         this.insertAndCleanCache(cache, configItems, CONFIG_ITEMS_CODES_CACHE_NAME, CONFIG_ITEM_CACHE_NAME_PREFIX);
         this.insertAndCleanCache(cache, params, CONFIG_PARAMS_CODES_CACHE_NAME, CONFIG_PARAM_CACHE_NAME_PREFIX);
     }
-
+    
     protected void insertAndCleanCache(Cache cache,
             Map<String, String> objects, String codesCacheName, String codeCachePrefix) {
         List<String> oldCodes = (List<String>) this.get(cache, codesCacheName, List.class);
@@ -76,7 +91,7 @@ public class ConfigManagerCacheWrapper extends AbstractCacheWrapper implements I
             }
         }
     }
-
+    
     @Override
     public String getConfigItem(String name) {
         return this.get(CONFIG_ITEM_CACHE_NAME_PREFIX + name, String.class);

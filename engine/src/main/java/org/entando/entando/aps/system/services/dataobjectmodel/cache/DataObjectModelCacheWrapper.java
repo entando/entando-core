@@ -34,9 +34,8 @@ public class DataObjectModelCacheWrapper extends AbstractGenericCacheWrapper<Dat
 	public void initCache(IDataObjectModelDAO dataObjectModelDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			Map<String, DataObjectModel> modelsMap = this.getModelsMap(dataObjectModelDAO);
-			super.insertObjectsOnCache(cache, modelsMap);
+			super.insertAndCleanCache(cache, modelsMap);
 		} catch (Throwable t) {
 			logger.error("Error bootstrapping data object models map cache", t);
 			throw new ApsSystemException("Error bootstrapping data object models map cache", t);

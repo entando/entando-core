@@ -85,7 +85,11 @@ public class I18nManagerTest {
 
     @Test
     public void testGetLabelsKey() throws Throwable {
-        when(cacheWrapper.getLabelGroups()).thenReturn(createMockLabels());
+        Map<String, ApsProperties> mockLabels = this.createMockLabels();
+        when(cacheWrapper.getLabelGroups()).thenReturn(mockLabels);
+        mockLabels.keySet().stream().forEach(key -> {
+            when(cacheWrapper.getLabelGroup(key)).thenReturn(mockLabels.get(key));
+        });
         assertThat(this.i18nManager.getLabelGroups().size(), is(3));
         assertEquals(0, i18nManager.searchLabelsKey("*", false, false, null).size());
         assertEquals(3, i18nManager.searchLabelsKey("", false, false, null).size());

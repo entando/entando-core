@@ -40,6 +40,12 @@ public class PageModelManager extends AbstractService implements IPageModelManag
         logger.debug("{} ready. initialized", this.getClass().getName());
     }
 
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
+    }
+
     /**
      * Restituisce il modello di pagina con il codice dato
      *

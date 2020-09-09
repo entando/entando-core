@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.keygenerator;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.keygenerator.cache.IKeyGeneratorManagerCacheWrapper;
@@ -37,6 +38,12 @@ public class KeyGeneratorManager extends AbstractService implements IKeyGenerato
 		this.getCacheWrapper().initCache(this.getKeyGeneratorDAO());
 		logger.debug("{} ready. : last loaded key {}", this.getClass().getName(), this.getCacheWrapper().getUniqueKeyCurrentValue());
 	}
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
+    }
 
 	/**
 	 * Restituisce la chiave univoca corrente.

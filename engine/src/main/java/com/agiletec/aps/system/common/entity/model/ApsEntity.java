@@ -30,6 +30,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.AttributeInterface;
 import com.agiletec.aps.system.common.entity.parse.IApsEntityDOM;
 import com.agiletec.aps.system.services.category.Category;
 import com.agiletec.aps.system.services.group.IGroupManager;
+import com.agiletec.aps.system.services.lang.ILangManager;
 
 /**
  * This class represents an entity. The structure of the entity, defined during
@@ -427,7 +428,7 @@ public class ApsEntity implements IApsEntity {
     }
 
     @Override
-    public List<FieldError> validate(IGroupManager groupManager) {
+    public List<FieldError> validate(IGroupManager groupManager, ILangManager langManager) {
         List<FieldError> errors = new ArrayList<>();
         if (null != this.getMainGroup() && null == groupManager.getGroup(this.getMainGroup())) {
             FieldError error = new FieldError("mainGroup", FieldError.INVALID);
@@ -450,7 +451,7 @@ public class ApsEntity implements IApsEntity {
             for (int i = 0; i < attributes.size(); i++) {
                 AttributeInterface attribute = attributes.get(i);
                 AttributeTracer tracer = new AttributeTracer();
-                List<AttributeFieldError> attributeErrors = attribute.validate(tracer);
+                List<AttributeFieldError> attributeErrors = attribute.validate(tracer, langManager);
                 if (null != attributeErrors) {
                     errors.addAll(attributeErrors);
                 }

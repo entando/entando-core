@@ -35,6 +35,7 @@ import com.agiletec.apsadmin.system.ApsAdminSystemConstants;
 import com.opensymphony.xwork2.Action;
 import com.opensymphony.xwork2.ActionSupport;
 import java.util.Arrays;
+import java.util.Collections;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;
 
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
@@ -50,6 +51,63 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         this.init();
     }
     
+    public void testFailureAdd_1() throws Throwable {
+        String[] invalidCodes = new String[]{null, "", "Code_longher_than_40_characters_1234567890", 
+            "Code_With_Special%$_characters", "Code with spaces", "entando_apis" /* already exists */};
+        for (int i = 0; i < invalidCodes.length; i++) {
+            String invalidCode = invalidCodes[i];
+            try {
+                String result = this.execute(invalidCode, "italian title", 
+                        "english title", "admin", null, "*GUI*", ApsAdminSystemConstants.ADD);
+                assertEquals(Action.INPUT, result);
+                assertEquals(1, this.getAction().getFieldErrors().size());
+                assertEquals(1, this.getAction().getFieldErrors().get("widgetTypeCode").size());
+            } catch (Throwable t) {
+                if (!invalidCode.equals("entando_apis")) {
+                    this.cleanDatabase(invalidCode);
+                }
+                throw t;
+            }
+        }
+    }
+    
+    public void testFailureAdd_2() throws Throwable {
+        String widgetTypeCode = "test_widgetType_add_1";
+        assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
+        List<String> fragmentCodes = this._guiFragmentManager.getGuiFragmentCodesByWidgetType(widgetTypeCode);
+        assertEquals(0, fragmentCodes.size());
+        String[] invalidTitles = new String[]{null, "", String.join("", Collections.nCopies(30, "test "))};
+        for (int i = 0; i < invalidTitles.length; i++) {
+            String invalidTitle = invalidTitles[i];
+            try {
+                String result = this.execute(widgetTypeCode, "italian title", 
+                        invalidTitle, "admin", null, "*GUI*", ApsAdminSystemConstants.ADD);
+                assertEquals(Action.INPUT, result);
+                assertEquals(1, this.getAction().getFieldErrors().size());
+                assertEquals(1, this.getAction().getFieldErrors().get("englishTitle").size());
+            } catch (Throwable t) {
+                this.cleanDatabase(widgetTypeCode);
+                throw t;
+            }
+        }
+    }
+    
+        public void testFailureAdd_3() throws Throwable {
+        String widgetTypeCode = "test_widgetType_add_2";
+        assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
+        List<String> fragmentCodes = this._guiFragmentManager.getGuiFragmentCodesByWidgetType(widgetTypeCode);
+        assertEquals(0, fragmentCodes.size());
+        try {
+            String result = this.execute(widgetTypeCode, "italian title", 
+                    "english title", "admin", null, "", ApsAdminSystemConstants.ADD);
+            assertEquals(Action.INPUT, result);
+            assertEquals(1, this.getAction().getFieldErrors().size());
+            assertEquals(1, this.getAction().getFieldErrors().get("gui").size());
+        } catch (Throwable t) {
+            this.cleanDatabase(widgetTypeCode);
+            throw t;
+        }
+    }
     public void testFailureUpdateTitles() throws Throwable {
         String result = this.executeUpdate("content_viewer", "italian title", "english title", "editorCustomers", "*GUI*");
         assertEquals("userNotAllowed", result);
@@ -160,7 +218,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             this.cleanDatabase(widgetTypeCode);
         }
     }
-
+    
     private void cleanDatabase(String widgetTypeCode) throws Throwable {
         List<String> fragmentCodes = this._guiFragmentManager.getGuiFragmentCodesByWidgetType(widgetTypeCode);
         if (null != fragmentCodes) {
@@ -174,7 +232,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         }
         assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
     }
-
+    
     public void testFailureTrashType_1() throws Throwable {
         String result = this.executeTrash("content_viewer", "editorCustomers");
         assertEquals("userNotAllowed", result);
@@ -263,7 +321,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             assertNull(this._widgetTypeManager.getWidgetType(widgetTypeCode));
         }
     }
-
+    
     private String executeJoinWidget(String pageCode, int frame, String widgetTypeCode, String username) throws Throwable {
         this.setUserOnSession(username);
         this.initAction("/do/Page", "joinWidget");
@@ -287,13 +345,18 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
 
     private String executeUpdate(String widgetTypeCode, String italianTitle,
             String englishTitle, String username, ApsProperties properties, String gui) throws Throwable {
+        return this.execute(widgetTypeCode, italianTitle, englishTitle, username, properties, gui, ApsAdminSystemConstants.EDIT);
+    }
+
+    private String execute(String widgetTypeCode, String italianTitle, String englishTitle, 
+            String username, ApsProperties properties, String gui, int strutsAction) throws Throwable {
         this.setUserOnSession(username);
         this.initAction("/do/Portal/WidgetType", "save");
         this.addParameter("widgetTypeCode", widgetTypeCode);
         this.addParameter("italianTitle", italianTitle);
         this.addParameter("englishTitle", englishTitle);
         this.addParameter("gui", gui);
-        this.addParameter("strutsAction", ApsAdminSystemConstants.EDIT);
+        this.addParameter("strutsAction", String.valueOf(strutsAction));
         if (null != properties) {
             this.addParameters(properties);
         }
@@ -334,7 +397,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         type.setConfig(config);
         return type;
     }
-
+    
     public void testCopyWidgetType() throws Throwable {
         String result = this.executeCopyWidgetType("editorCustomers", "customers_page", "2");
         assertEquals("userNotAllowed", result);
@@ -351,7 +414,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         result = this.executeCopyWidgetType("admin", "pagina_2", "2");
         assertEquals(Action.SUCCESS, result);
     }
-
+    
     private String executeCopyWidgetType(String username, String pageCode, String framePos) throws Throwable {
         this.setUserOnSession(username);
         this.initAction("/do/Portal/WidgetType", "copy");
@@ -360,7 +423,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
         this.addParameter("strutsAction", ApsAdminSystemConstants.PASTE);
         return this.executeAction();
     }
-
+    
     public void testNewWidgetType() throws Throwable {
         String result = this.executeNewUserWidgetType("editorCustomers", "content_viewer_list");
         assertEquals("userNotAllowed", result);
@@ -610,7 +673,7 @@ public class TestWidgetTypeAction extends ApsAdminBaseTestCase {
             this._widgetTypeManager.deleteWidgetType(widgetTypeCode);
         }
     }
-
+    
     //
     private String executePasteUserWidgetType(String username, String code,
             String englishTitle, String italianTitle, String pageCode, String framePos) throws Throwable {

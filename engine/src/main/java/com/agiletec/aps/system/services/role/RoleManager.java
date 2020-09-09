@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.role;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -45,6 +46,13 @@ public class RoleManager extends AbstractService implements IRoleManager {
 		this.getRoleCacheWrapper().initCache(this.getRoleDAO());
 		logger.debug("{} : initialized", this.getClass().getName());
 	}
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getRoleCacheWrapper()).release();
+        ((AbstractCacheWrapper) this.getPermissionCacheWrapper()).release();
+        super.release();
+    }
 
 	/**
 	 * Restituisce la lista dei ruoli esistenti.

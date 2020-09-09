@@ -84,7 +84,7 @@
                     <a href="#" title="<s:text name="label.goToLast"/>">
                         <span class="i fa fa-angle-double-right"></span>
                     </a>
-                    <wpsf:submit name="%{#pagerIdMarker + '_' + #group.size}" type="button" disabled="%{#isDisabled}" title="%{getText('label.goToLast')}" cssClass="hidden">
+                    <wpsf:submit name="%{#pagerIdMarker + '_' + #group.items.length}" type="button" disabled="%{#isDisabled}" title="%{getText('label.goToLast')}" cssClass="hidden">
                         <span class="icon fa fa-angle-double-right"></span>
                     </wpsf:submit>
                 </li>

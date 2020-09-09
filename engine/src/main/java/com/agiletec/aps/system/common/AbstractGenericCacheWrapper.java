@@ -31,9 +31,15 @@ public abstract class AbstractGenericCacheWrapper<O extends Object> extends Abst
         ADD, UPDATE, DELETE
     }
 
+    @Override
+    public void release() {
+        Cache cache = this.getCache();
+        this.releaseCachedObjects(cache);
+    }
+    
     protected void releaseCachedObjects(Cache cache) {
         List<String> codes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
-        this.releaseObjects(cache, codes);
+        this.releaseObjects(cache, codes, this.getCacheKeyPrefix());
         if (null != codes) {
             cache.evict(this.getCodesCacheKey());
         }
@@ -49,27 +55,31 @@ public abstract class AbstractGenericCacheWrapper<O extends Object> extends Abst
         }
         cache.put(this.getCodesCacheKey(), codes);
     }
-
+    
     protected void insertAndCleanCache(Cache cache, Map<String, O> objects) {
-        List<String> oldCodes = (List<String>) this.get(cache, this.getCodesCacheKey(), List.class);
+        this.insertAndCleanCache(cache, objects, this.getCodesCacheKey(), this.getCacheKeyPrefix());
+    }
+
+    protected void insertAndCleanCache(Cache cache, Map<String, O> objects, String codesCacheKey, String cacheKeyPrefix) {
+        List<String> oldCodes = (List<String>) this.get(cache, codesCacheKey, List.class);
         List<String> codes = new ArrayList<>();
         Iterator<String> iter = objects.keySet().iterator();
         while (iter.hasNext()) {
             String key = iter.next();
-            cache.put(this.getCacheKeyPrefix() + key, objects.get(key));
+            cache.put(cacheKeyPrefix + key, objects.get(key));
             if (null != oldCodes) {
                 oldCodes.remove(key);
             }
             codes.add(key);
         }
-        cache.put(this.getCodesCacheKey(), codes);
-        this.releaseObjects(cache, oldCodes);
+        cache.put(codesCacheKey, codes);
+        this.releaseObjects(cache, oldCodes, cacheKeyPrefix);
     }
 
-    private void releaseObjects(Cache cache, List<String> keysToRelease) {
+    private void releaseObjects(Cache cache, List<String> keysToRelease, String cacheKeyPrefix) {
         if (null != keysToRelease) {
             for (String code : keysToRelease) {
-                cache.evict(this.getCacheKeyPrefix() + code);
+                cache.evict(cacheKeyPrefix + code);
             }
         }
     }

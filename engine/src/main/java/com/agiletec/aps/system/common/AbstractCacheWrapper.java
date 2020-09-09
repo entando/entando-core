@@ -37,6 +37,8 @@ public abstract class AbstractCacheWrapper {
     public void setSpringCacheManager(CacheManager springCacheManager) {
         this.springCacheManager = springCacheManager;
     }
+    
+    public abstract void release();
 
     protected abstract String getCacheName();
 

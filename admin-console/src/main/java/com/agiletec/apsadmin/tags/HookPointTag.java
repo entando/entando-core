@@ -41,9 +41,9 @@ public class HookPointTag extends StrutsBodyTagSupport {
 		ValueStack stack = this.getStack();
 		try {
 			List<HookPointElementContainer> containers = extractElements(request);
-			if (containers.size()>0) {
-				stack.getContext().put(this.getObjectName(), containers);
-				stack.setValue("#attr['" + this.getObjectName() + "']", containers, false);
+			if (containers.size() > 0) {
+				stack.getContext().put(this.getObjectName(), (this.isOnlyFirst()) ? containers.get(0) : containers);
+				stack.setValue("#attr['" + this.getObjectName() + "']", (this.isOnlyFirst()) ? containers.get(0) : containers, false);
 				return EVAL_BODY_INCLUDE;
 			}
 		} catch (Throwable t) {
@@ -55,7 +55,7 @@ public class HookPointTag extends StrutsBodyTagSupport {
 	private List<HookPointElementContainer> extractElements(HttpServletRequest request) {
 		WebApplicationContext wac = ApsWebApplicationUtils.getWebApplicationContext(request);
 		String[] beanNames =  wac.getBeanNamesForType(HookPointElementContainer.class);
-		List<HookPointElementContainer> containers = new ArrayList<HookPointElementContainer>();
+		List<HookPointElementContainer> containers = new ArrayList<>();
 		for (int i=0; i<beanNames.length; i++) {
 			HookPointElementContainer container = (HookPointElementContainer) wac.getBean(beanNames[i]);
 			if (null != container && null != container.getHookPointKey() && container.getHookPointKey().equals(this.getKey())) {
@@ -89,7 +89,15 @@ public class HookPointTag extends StrutsBodyTagSupport {
 		this._key = key;
 	}
 
+    public boolean isOnlyFirst() {
+        return _onlyFirst;
+    }
+    public void setOnlyFirst(boolean onlyFirst) {
+        this._onlyFirst = onlyFirst;
+    }
+
 	private String _objectName;
 	private String _key;
+	private boolean _onlyFirst;
 
 }

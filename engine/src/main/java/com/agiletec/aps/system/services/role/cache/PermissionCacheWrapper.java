@@ -37,9 +37,8 @@ public class PermissionCacheWrapper extends AbstractGenericCacheWrapper<Permissi
 	public void initCache(IPermissionDAO permissionDAO) throws ApsSystemException {
 		try {
 			Cache cache = this.getCache();
-			this.releaseCachedObjects(cache);
 			Map<String, Permission> permissions = permissionDAO.loadPermissions();
-			this.insertObjectsOnCache(cache, permissions);
+			this.insertAndCleanCache(cache, permissions);
 		} catch (Throwable t) {
 			_logger.error("Error loading permissions", t);
 			throw new ApsSystemException("Error loading permissions", t);

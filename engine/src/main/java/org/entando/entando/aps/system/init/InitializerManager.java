@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.init;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.List;
 import java.util.Map;
 

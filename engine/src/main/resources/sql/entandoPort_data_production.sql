@@ -1820,7 +1820,7 @@ INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'para
 	</ExtendendPrivacyModule>
 </Params>
 ');
-INSERT INTO sysconfig (version, item, descr, config) values ('production', 'userProfileTypes', 'User Profile Types Definitions', '<?xml version="1.0" encoding="UTF-8"?>
+INSERT INTO sysconfig (version, item, descr, config) VALUES ('production', 'userProfileTypes', 'User Profile Types Definitions', '<?xml version="1.0" encoding="UTF-8"?>
 <profiletypes>
 	<profiletype typecode="PFL" typedescr="Default user profile">
 		<attributes>
@@ -1835,7 +1835,7 @@ INSERT INTO sysconfig (version, item, descr, config) values ('production', 'user
 			<attribute name="email" attributetype="Monotext" description="Email" searchable="true">
 				<validations>
 					<required>true</required>
-					<regexp><![CDATA[.+@.+.[a-z]+]]></regexp>
+					<regexp><![CDATA[(?:[a-z0-9!#$%&''*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&''*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])]]></regexp>
 				</validations>
 				<roles>
 					<role>userprofile:email</role>

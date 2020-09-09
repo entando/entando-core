@@ -21,6 +21,7 @@ import java.util.Properties;
 import javax.servlet.ServletContext;
 
 import com.agiletec.aps.system.SystemConstants;
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.baseconfig.cache.IConfigManagerCacheWrapper;
@@ -70,6 +71,12 @@ public class BaseConfigManager extends AbstractService implements ConfigInterfac
         logger.debug("{} ready. Initialized", this.getClass().getName());
     }
 
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
+    }
+    
     /**
      * Restituisce il valore di una voce della tabella di sistema. Il valore può
      * essere un XML complesso.

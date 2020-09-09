@@ -28,6 +28,11 @@ public class EntityManagerCacheWrapper extends AbstractCacheWrapper implements I
 
 	private String entityManagerName;
 
+    @Override
+    public void release() {
+        // nothing to do
+    }
+
 	@Override
 	public void initCache(String managerName) throws ApsSystemException {
 		this.setEntityManagerName(managerName);

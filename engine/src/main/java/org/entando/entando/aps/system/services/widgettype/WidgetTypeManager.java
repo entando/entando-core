@@ -13,6 +13,7 @@
  */
 package org.entando.entando.aps.system.services.widgettype;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +55,12 @@ public class WidgetTypeManager extends AbstractService
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getWidgetTypeDAO());
         logger.debug("{} ready. Initialized", this.getClass().getName());
+    }
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
     }
 
     @Override

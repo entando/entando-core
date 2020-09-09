@@ -31,6 +31,11 @@ public class DataObjectMapperCacheWrapper extends AbstractCacheWrapper implement
 
 	private static final Logger logger = LoggerFactory.getLogger(DataObjectMapperCacheWrapper.class);
 
+    @Override
+    public void release() {
+        this.getCache().evict(OBJECT_MAPPER_CACHE_KEY);
+    }
+
 	@Override
 	public void initCache(IPageManager pageManager) throws ApsSystemException {
 		try {

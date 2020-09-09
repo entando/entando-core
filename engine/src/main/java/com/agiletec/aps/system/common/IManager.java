@@ -15,8 +15,6 @@ package com.agiletec.aps.system.common;
 
 import java.io.Serializable;
 
-import com.agiletec.aps.system.exception.ApsException;
-
 /**
  * Base interface for implementing Services.
  * @author E.Santoboni

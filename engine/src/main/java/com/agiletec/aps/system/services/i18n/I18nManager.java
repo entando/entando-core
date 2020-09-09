@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.services.i18n;
 
+import com.agiletec.aps.system.common.AbstractCacheWrapper;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -77,6 +78,12 @@ public class I18nManager extends AbstractService implements II18nManager {
     public void init() throws Exception {
         this.getCacheWrapper().initCache(this.getI18nDAO());
         logger.debug("{} : initialized {} labels", this.getClass().getName(), this.getLabelGroups().size());
+    }
+
+    @Override
+    protected void release() {
+        ((AbstractCacheWrapper) this.getCacheWrapper()).release();
+        super.release();
     }
 
     /**
@@ -200,29 +207,15 @@ public class I18nManager extends AbstractService implements II18nManager {
         }
     }
 
-    /**
-     * Restituisce la lista di chiavi di gruppi di labels in base ai parametri
-     * segnalati.
-     *
-     * @param insertedText Il testo tramite il quale effettuare la ricerca.
-     * @param doSearchByKey Specifica se effettuare la ricerca sulle chiavi, in
-     * base al testo inserito.
-     * @param doSearchByLang Specifica se effettuare la ricerca sul testo di una
-     * lingua, in base al testo inserito.
-     * @param langCode Specifica la lingua della label sulla quale effettuare la
-     * ricerca, in base al testo inserito.
-     * @return La lista di chiavi di gruppi di labels in base ai parametri
-     * segbalati.
-     */
     @Override
     public List<String> searchLabelsKey(String insertedText, boolean doSearchByKey,
-            boolean doSearchByLang, String langCode) {
+            boolean doSearchByLang, String langCode) throws ApsSystemException {
         List<String> keys = new ArrayList<>();
         Pattern pattern = Pattern.compile(insertedText, Pattern.CASE_INSENSITIVE + Pattern.LITERAL);
         Matcher matcher = pattern.matcher("");
         List<String> allKeys = new ArrayList<>(this.getLabelGroups().keySet());
         for (String key : allKeys) {
-            ApsProperties properies = this.getLabelGroups().get(key);
+            ApsProperties properies = this.getLabelGroup(key);
             if (!doSearchByKey && !doSearchByLang) {
                 matcher = matcher.reset(key);
                 if (matcher.find()) {

@@ -52,7 +52,7 @@
 		</property>
 		<property name="cacheWrapper">
 			<bean class="com.agiletec.aps.system.common.entity.cache.EntityManagerCacheWrapper">
-				<property name="springCacheManager" ref="springCacheManager" />
+				
 			</bean>
 		</property>
 	</bean>

@@ -13,6 +13,7 @@
  */
 package com.agiletec.aps.system.common;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 
@@ -32,7 +33,7 @@ public abstract class AbstractCacheWrapper {
     protected CacheManager getSpringCacheManager() {
         return springCacheManager;
     }
-
+    @Autowired
     public void setSpringCacheManager(CacheManager springCacheManager) {
         this.springCacheManager = springCacheManager;
     }

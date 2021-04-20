@@ -267,13 +267,13 @@
         <test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
         <test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 
-        <spring.version>5.1.8.RELEASE</spring.version>
-        <springsecurity.version>5.1.5.RELEASE</springsecurity.version>
-        <springsecurityoauth2.version>2.3.6.RELEASE</springsecurityoauth2.version>
-        <struts2.version>2.5.22</struts2.version>
-        <cxf.version>3.1.16</cxf.version>
-        <jackson.version>2.9.9</jackson.version>
-        <hibernate-validator-version>6.0.17.Final</hibernate-validator-version>
+        <spring.version>5.1.20.RELEASE</spring.version>
+        <springsecurity.version>5.1.13.RELEASE</springsecurity.version>
+        <springsecurityoauth2.version>2.3.8.RELEASE</springsecurityoauth2.version>
+        <struts2.version>2.5.26</struts2.version>
+        <cxf.version>3.3.10</cxf.version>
+        <jackson.version>2.11.4</jackson.version>
+        <hibernate-validator-version>6.0.20.Final</hibernate-validator-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>

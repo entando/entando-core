@@ -15,7 +15,7 @@ package org.entando.entando.apsadmin.portal.guifragment;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.util.SelectItem;

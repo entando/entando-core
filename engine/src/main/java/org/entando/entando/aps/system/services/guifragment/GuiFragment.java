@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.guifragment;
 
 import java.io.Serializable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author E.Santoboni

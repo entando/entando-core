@@ -24,7 +24,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-import org.apache.commons.lang.*;
+import org.apache.commons.lang3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

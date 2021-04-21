@@ -27,7 +27,7 @@ import java.io.Writer;
 import javax.servlet.ServletRequest;
 import javax.servlet.jsp.JspException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.entando.entando.aps.system.services.controller.executor.ExecutorBeanContainer;
 import org.entando.entando.aps.system.services.guifragment.GuiFragment;

@@ -18,7 +18,7 @@ import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.pagemodel.cache.IPageModelManagerCacheWrapper;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
 import org.slf4j.*;
 

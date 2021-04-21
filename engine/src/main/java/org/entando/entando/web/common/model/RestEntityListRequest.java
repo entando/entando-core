@@ -18,7 +18,6 @@ import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import static org.entando.entando.web.common.model.RestListRequest.DIRECTION_VALUE_DEFAULT;
 
@@ -41,7 +40,7 @@ public class RestEntityListRequest extends RestListRequest {
     }
 
     private EntitySearchFilter buildSortFilter() {
-        if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
+        if (StringUtils.isNotBlank(super.escapeSql(this.getSort()))) {
             boolean isAttributeFilter = (this.getSort().contains("."));
             String fieldName = isAttributeFilter ? this.getSort().substring(this.getSort().indexOf(".") + 1) : this.getSort();
             EntitySearchFilter sort = new EntitySearchFilter(fieldName, isAttributeFilter);
@@ -49,7 +48,7 @@ public class RestEntityListRequest extends RestListRequest {
                 if (!this.getDirection().equalsIgnoreCase(FieldSearchFilter.ASC_ORDER) && !this.getDirection().equalsIgnoreCase(FieldSearchFilter.DESC_ORDER)) {
                     this.setDirection(DIRECTION_VALUE_DEFAULT);
                 }
-                sort.setOrder(FieldSearchFilter.Order.valueOf(StringEscapeUtils.escapeSql(this.getDirection())));
+                sort.setOrder(FieldSearchFilter.Order.valueOf(super.escapeSql(this.getDirection())));
             }
             return sort;
         }

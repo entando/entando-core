@@ -19,7 +19,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.IAttributeVali
 import com.agiletec.aps.system.common.entity.model.attribute.util.TextAttributeValidationRules;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This abstract class is the base for the 'Text' Attributes.

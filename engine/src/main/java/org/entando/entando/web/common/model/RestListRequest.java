@@ -19,7 +19,6 @@ import java.util.List;
 
 import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.entity.model.EntitySearchFilter;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -164,17 +163,24 @@ public class RestListRequest {
 
     @SuppressWarnings("rawtypes")
     private FieldSearchFilter buildSortFilter() {
-        if (StringUtils.isNotBlank(StringEscapeUtils.escapeSql(this.getSort()))) {
+        if (StringUtils.isNotBlank(this.escapeSql(this.getSort()))) {
             FieldSearchFilter sort = new FieldSearchFilter(this.getSort());
             if (StringUtils.isNotBlank(this.getDirection())) {
                 if (!this.getDirection().equalsIgnoreCase(FieldSearchFilter.ASC_ORDER) && !this.getDirection().equalsIgnoreCase(FieldSearchFilter.DESC_ORDER)) {
                     this.setDirection(DIRECTION_VALUE_DEFAULT);
                 }
-                sort.setOrder(FieldSearchFilter.Order.valueOf(StringEscapeUtils.escapeSql(this.getDirection())));
+                sort.setOrder(FieldSearchFilter.Order.valueOf(this.escapeSql(this.getDirection())));
             }
             return sort;
         }
         return null;
+    }
+    
+    protected String escapeSql(String str) {
+        if (str == null) {
+            return null;
+        }
+        return StringUtils.replace(str, "'", "''");
     }
 
     private Integer getOffset() {

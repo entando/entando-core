@@ -316,6 +316,17 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-rest-webmvc</artifactId>
             <version>3.1.3.RELEASE</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.datatype</groupId> <!-- Security fix -->
+                    <artifactId>jackson-datatype-jdk8</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId> <!-- Security fix -->
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>2.9.8</version>
         </dependency>
     </dependencies>
 </project>

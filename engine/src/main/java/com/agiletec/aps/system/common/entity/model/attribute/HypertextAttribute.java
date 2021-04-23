@@ -17,10 +17,10 @@ import com.agiletec.aps.util.HtmlHandler;
 
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom.CDATA;
 import org.jdom.Element;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 /**
  * This class represents a 'Hypertext' Attribute.
@@ -43,7 +43,7 @@ public class HypertextAttribute extends TextAttribute {
     public String getIndexeableFieldValue() {
         HtmlHandler htmlhandler = new HtmlHandler();
         String parsedText = htmlhandler.getParsedText(super.getText());
-        return StringEscapeUtils.unescapeHtml(parsedText);
+        return StringEscapeUtils.unescapeHtml4(parsedText);
     }
 
     /**

@@ -267,13 +267,13 @@
         <test.database.port.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testPort;create=true</test.database.port.url>
         <test.database.serv.url>jdbc:derby:${project.build.directory}/test/db/${project.artifactId}testServ;create=true</test.database.serv.url>
 
-        <spring.version>5.1.8.RELEASE</spring.version>
-        <springsecurity.version>5.1.5.RELEASE</springsecurity.version>
-        <springsecurityoauth2.version>2.3.6.RELEASE</springsecurityoauth2.version>
-        <struts2.version>2.5.22</struts2.version>
-        <cxf.version>3.1.16</cxf.version>
-        <jackson.version>2.9.9</jackson.version>
-        <hibernate-validator-version>6.0.17.Final</hibernate-validator-version>
+        <spring.version>5.1.20.RELEASE</spring.version>
+        <springsecurity.version>5.1.13.RELEASE</springsecurity.version>
+        <springsecurityoauth2.version>2.3.8.RELEASE</springsecurityoauth2.version>
+        <struts2.version>2.5.26</struts2.version>
+        <cxf.version>3.3.10</cxf.version>
+        <jackson.version>2.11.4</jackson.version>
+        <hibernate-validator-version>6.0.20.Final</hibernate-validator-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <build>
@@ -373,7 +373,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <version>1.9.2</version>
+            <version>1.9.4</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -415,14 +415,14 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
+            <version>2.7</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+            <version>1.9</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -470,7 +470,7 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.10.0</version>
+            <version>2.13.3</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -736,7 +736,7 @@
         <dependency>
             <groupId>ognl</groupId>
             <artifactId>ognl</artifactId>
-            <version>3.1.26</version>
+            <version>3.1.28</version>
             <exclusions>
                 <exclusion>
                     <groupId>javassist</groupId>
@@ -751,6 +751,7 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.jgeppert.struts2.jquery</groupId>
             <artifactId>struts2-jquery-plugin</artifactId>
@@ -762,11 +763,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+        -->
         <dependency>
             <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>2.3</version>
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
@@ -915,7 +916,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.13</version>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -984,7 +985,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.24</version>
+            <version>1.7.26</version>
             <exclusions>
                 <exclusion>
                     <artifactId>log4j</artifactId>

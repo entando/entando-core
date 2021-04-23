@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanComparator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
 import org.jdom.Element;
 import org.slf4j.Logger;

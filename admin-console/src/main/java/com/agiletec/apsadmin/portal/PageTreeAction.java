@@ -26,7 +26,7 @@ import com.agiletec.apsadmin.portal.helper.IPageActionHelper;
 import com.agiletec.apsadmin.system.AbstractTreeAction;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.apsadmin.portal.rs.model.PageResponse;
 
 /**

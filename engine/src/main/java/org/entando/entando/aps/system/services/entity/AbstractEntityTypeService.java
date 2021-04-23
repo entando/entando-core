@@ -20,7 +20,7 @@ import com.agiletec.aps.system.common.entity.model.attribute.util.*;
 import com.agiletec.aps.system.common.searchengine.IndexableAttributeInterface;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.apache.commons.beanutils.*;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.common.entity.model.attribute.util.EnumeratorMapAttributeItemsExtractor;
 import org.entando.entando.aps.system.exception.*;

@@ -15,7 +15,7 @@ package org.entando.entando.aps.system.services.storage;
 
 import com.agiletec.aps.system.exception.ApsSystemException;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.CharEncoding;
+import org.apache.commons.lang3.CharEncoding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

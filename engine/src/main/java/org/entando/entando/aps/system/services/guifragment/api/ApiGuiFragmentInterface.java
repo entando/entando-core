@@ -26,7 +26,7 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import org.entando.entando.aps.system.services.api.IApiErrorCodes;
 import org.entando.entando.aps.system.services.api.IApiExportable;

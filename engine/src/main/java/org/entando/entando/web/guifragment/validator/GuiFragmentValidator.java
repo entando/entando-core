@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.exception.RestServerError;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.guifragment.model.GuiFragmentDto;

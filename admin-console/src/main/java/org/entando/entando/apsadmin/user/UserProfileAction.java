@@ -23,7 +23,7 @@ import com.agiletec.apsadmin.system.entity.AbstractApsEntityAction;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.userprofile.IUserProfileManager;
 import org.entando.entando.aps.system.services.userprofile.model.IUserProfile;
 import org.slf4j.Logger;

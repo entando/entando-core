@@ -35,7 +35,7 @@ import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.entando.entando.aps.system.services.dataobjectsearchengine.IIndexerDAO;
 import org.entando.entando.aps.system.services.searchengine.SearchEngineFilter;
 import org.slf4j.Logger;

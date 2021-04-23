@@ -321,12 +321,21 @@
                     <groupId>com.fasterxml.jackson.datatype</groupId> <!-- Security fix -->
                     <artifactId>jackson-datatype-jdk8</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.springframework</groupId> <!-- Security fix -->
+                    <artifactId>spring-tx</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId> <!-- Security fix -->
             <artifactId>jackson-datatype-jdk8</artifactId>
             <version>2.9.8</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId> <!-- Security fix -->
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
         </dependency>
     </dependencies>
 </project>

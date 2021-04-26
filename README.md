@@ -12,7 +12,7 @@ It provides the basic structure, tools, and functionality to build an instance o
 2. **admin-console**, includes tools to manage administrative core features and WCMS functionality
 3. **portal-ui**, provides tools to create interactive web apps UI/UX
 
-The Entando platform **v5.3.0-SNAPSHOT** project includes also the following Github projects:
+The Entando platform **v5.3.2** project includes also the following Github projects:
 
 * **entando-components**: https://github.com/entando/entando-components. Entando platform relies on a number of components or extensions that add functionality not included with the standard Entando platform. There are two types of components: Plugins and Bundles. Plugins extend the functionality of Entando engine, admin-console and portal-ui; Bundles extend the functionality of UI/UX Applications.
 

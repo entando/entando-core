@@ -918,7 +918,7 @@
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
-            <version>1.3.7</version>
+            <version>1.5.2</version>
             <exclusions>
                 <!--  STAX comes with Java 1.6 -->
                 <exclusion>

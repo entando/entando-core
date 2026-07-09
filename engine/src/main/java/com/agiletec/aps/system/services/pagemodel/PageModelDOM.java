@@ -109,6 +109,10 @@ public class PageModelDOM {
 	private void decodeDOM(String xmlText) throws ApsSystemException {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setValidation(false);
+		builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+		builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+		builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 		StringReader reader = new StringReader(xmlText);
 		try {
 			_doc = builder.build(reader);

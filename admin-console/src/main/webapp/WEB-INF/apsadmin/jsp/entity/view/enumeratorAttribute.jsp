@@ -1,10 +1,10 @@
 <%@ taglib prefix="s" uri="/struts-tags" %>
 <s:if test="#lang.default">
-	<s:property value="%{#attribute.getText()}" />
+	<s:property value="#attribute.getText()" escapeHtml="true" />
 </s:if>
 <s:else>
 	<s:if test="#attributeTracer.listElement">
-		<s:property value="%{#attribute.getText()}" />
+		<s:property value="#attribute.getText()" escapeHtml="true" />
 	</s:if>
 	<s:else>
 		<s:text name="EntityAttribute.monolang.defaultValue" />

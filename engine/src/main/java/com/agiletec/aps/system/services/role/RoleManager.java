@@ -23,6 +23,7 @@ import com.agiletec.aps.system.common.AbstractService;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.role.cache.IPermissionCacheWrapper;
 import com.agiletec.aps.system.services.role.cache.IRoleCacheWrapper;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,6 +101,7 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	 */
 	@Override
 	public void updateRole(Role role) throws ApsSystemException {
+		role.setDescription(LabelSanitizer.stripMarkup(role.getDescription()));
 		try {
 			this.getRoleDAO().updateRole(role);
 			this.getRoleCacheWrapper().updateRole(role);
@@ -117,6 +119,7 @@ public class RoleManager extends AbstractService implements IRoleManager {
 	 */
 	@Override
 	public void addRole(Role role) throws ApsSystemException {
+		role.setDescription(LabelSanitizer.stripMarkup(role.getDescription()));
 		try {
 			this.getRoleDAO().addRole(role);
 			this.getRoleCacheWrapper().addRole(role);

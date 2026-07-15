@@ -20,6 +20,7 @@ import com.agiletec.aps.system.services.pagemodel.cache.IPageModelManagerCacheWr
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
 import org.apache.commons.lang.StringUtils;
 import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.*;
 
 import java.util.*;
@@ -74,6 +75,8 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             logger.debug("Null page model can be add");
             return;
         }
+        pageModel.setCode(LabelSanitizer.stripMarkup(pageModel.getCode()));
+        pageModel.setDescription(LabelSanitizer.stripMarkup(pageModel.getDescription()));
         try {
             this.getPageModelDAO().addModel(pageModel);
             this.getCacheWrapper().addPageModel(pageModel);
@@ -90,6 +93,8 @@ public class PageModelManager extends AbstractService implements IPageModelManag
             logger.debug("Null page model can be update");
             return;
         }
+        pageModel.setCode(LabelSanitizer.stripMarkup(pageModel.getCode()));
+        pageModel.setDescription(LabelSanitizer.stripMarkup(pageModel.getDescription()));
         try {
             PageModel pageModelToUpdate = this.getCacheWrapper().getPageModel(pageModel.getCode());
             if (null == pageModelToUpdate) {

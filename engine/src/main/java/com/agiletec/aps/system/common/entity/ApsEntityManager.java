@@ -52,6 +52,7 @@ import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.category.ICategoryManager;
 import com.agiletec.aps.util.DateConverter;
 import org.apache.commons.beanutils.BeanComparator;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -249,6 +250,7 @@ public abstract class ApsEntityManager extends AbstractService
         if (null == entityType) {
             throw new ApsSystemException("Invalid entity type to add");
         }
+        this.sanitizeEntityTypeLabels(entityType);
         Map<String, IApsEntity> newEntityTypes = this.getEntityTypes();
         newEntityTypes.put(entityType.getTypeCode(), entityType);
         this.updateEntityPrototypes(newEntityTypes);
@@ -266,6 +268,7 @@ public abstract class ApsEntityManager extends AbstractService
         if (null == entityType) {
             throw new ApsSystemException("Invalid entity type to update");
         }
+        this.sanitizeEntityTypeLabels(entityType);
         Map<String, IApsEntity> entityTypes = this.getEntityTypes();
         IApsEntity oldEntityType = entityTypes.get(entityType.getTypeCode());
         if (null == oldEntityType) {
@@ -275,6 +278,22 @@ public abstract class ApsEntityManager extends AbstractService
         this.updateEntityPrototypes(entityTypes);
         this.verifyReloadingNeeded(oldEntityType, entityType);
         this.notifyEntityTypesChanging(oldEntityType, entityType, EntityTypesChangingEvent.UPDATE_OPERATION_CODE);
+    }
+
+    /**
+     * Strips markup from the user-supplied label fields of an entity type (its description
+     * and the name/description of each attribute) before it is persisted
+     */
+    private void sanitizeEntityTypeLabels(IApsEntity entityType) {
+        entityType.setTypeCode(LabelSanitizer.stripMarkup(entityType.getTypeCode()));
+        entityType.setTypeDescription(LabelSanitizer.stripMarkup(entityType.getTypeDescription()));
+        List<AttributeInterface> attributes = entityType.getAttributeList();
+        if (null != attributes) {
+            for (AttributeInterface attribute : attributes) {
+                attribute.setName(LabelSanitizer.stripMarkup(attribute.getName()));
+                attribute.setDescription(LabelSanitizer.stripMarkup(attribute.getDescription()));
+            }
+        }
     }
 
     protected void verifyReloadingNeeded(IApsEntity oldEntityType, IApsEntity newEntityType) {

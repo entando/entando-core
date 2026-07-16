@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
@@ -65,6 +66,8 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public void addCategory(Category category) throws ApsSystemException {
+		category.setCode(LabelSanitizer.stripMarkup(category.getCode()));
+		LabelSanitizer.stripMarkup(category.getTitles());
 		try {
 			this.getCategoryDAO().addCategory(category);
 		} catch (Throwable t) {
@@ -103,6 +106,7 @@ public class CategoryManager extends AbstractService implements ICategoryManager
 	 */
 	@Override
 	public void updateCategory(Category category) throws ApsSystemException {
+		LabelSanitizer.stripMarkup(category.getTitles());
 		try {
 			this.getCategoryDAO().updateCategory(category);
 		} catch (Throwable t) {

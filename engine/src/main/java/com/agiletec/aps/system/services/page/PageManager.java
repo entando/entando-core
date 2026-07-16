@@ -32,6 +32,7 @@ import com.agiletec.aps.system.services.pagemodel.PageModel;
 import com.agiletec.aps.system.services.pagemodel.PageModelUtilizer;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedEvent;
 import com.agiletec.aps.system.services.pagemodel.events.PageModelChangedObserver;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +100,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 */
 	@Override
 	public void addPage(IPage page) throws ApsSystemException {
+		LabelSanitizer.stripMarkup(page.getTitles());
 		try {
 			this.getPageDAO().addPage(page);
 		} catch (Throwable t) {
@@ -117,6 +119,7 @@ public class PageManager extends AbstractService implements IPageManager, GroupU
 	 */
 	@Override
 	public void updatePage(IPage page) throws ApsSystemException {
+		LabelSanitizer.stripMarkup(page.getTitles());
 		try {
 			this.getPageDAO().updatePage(page);
 		} catch (Throwable t) {

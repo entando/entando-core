@@ -31,6 +31,7 @@ import org.entando.entando.aps.system.services.guifragment.GuiFragmentUtilizer;
 import org.entando.entando.aps.system.services.guifragment.IGuiFragmentManager;
 import org.entando.entando.aps.system.services.widgettype.cache.IWidgetTypeManagerCacheWrapper;
 import org.entando.entando.aps.system.services.widgettype.events.WidgetTypeChangedEvent;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,6 +102,7 @@ public class WidgetTypeManager extends AbstractService
             if (null != widgetType.getTypeParameters() && null != widgetType.getConfig()) {
                 throw new ApsSystemException("ERROR : Params not null and config not null");
             }
+            LabelSanitizer.stripMarkup(widgetType.getTitles());
             this.getWidgetTypeDAO().addWidgetType(widgetType);
             this.getCacheWrapper().addWidgetType(widgetType);
             this.notifyWidgetTypeChanging(widgetType.getCode(), WidgetTypeChangedEvent.INSERT_OPERATION_CODE);
@@ -158,6 +160,7 @@ public class WidgetTypeManager extends AbstractService
             if (type.isLocked() || !type.isLogic() || !type.isUserType()) {
                 defaultConfig = type.getConfig();
             }
+            LabelSanitizer.stripMarkup(titles);
             this.getWidgetTypeDAO().updateWidgetType(widgetTypeCode, titles, defaultConfig, mainGroup);
             type.setTitles(titles);
             type.setConfig(defaultConfig);

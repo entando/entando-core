@@ -31,6 +31,7 @@ import org.entando.entando.aps.system.services.cache.CacheInfoEvict;
 import org.entando.entando.aps.system.services.cache.CacheableInfo;
 import org.entando.entando.aps.system.services.cache.ICacheInfoManager;
 import org.entando.entando.aps.system.services.guifragment.event.GuiFragmentChangedEvent;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
@@ -119,6 +120,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     @CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'GuiFragment_uniqueByWidgetTypeGroup,GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
     public void addGuiFragment(GuiFragment guiFragment) throws ApsSystemException {
         try {
+            guiFragment.setCode(LabelSanitizer.stripMarkup(guiFragment.getCode()));
             this.getGuiFragmentDAO().insertGuiFragment(guiFragment);
             this.notifyGuiFragmentChangedEvent(guiFragment, GuiFragmentChangedEvent.INSERT_OPERATION_CODE);
         } catch (Throwable t) {
@@ -132,6 +134,7 @@ public class GuiFragmentManager extends AbstractService implements IGuiFragmentM
     @CacheInfoEvict(value = ICacheInfoManager.DEFAULT_CACHE_NAME, groups = "'GuiFragment_uniqueByWidgetTypeGroup,GuiFragment_codesByWidgetTypeGroup'")//TODO improve group handling
     public void updateGuiFragment(GuiFragment guiFragment) throws ApsSystemException {
         try {
+            guiFragment.setCode(LabelSanitizer.stripMarkup(guiFragment.getCode()));
             this.getGuiFragmentDAO().updateGuiFragment(guiFragment);
             this.notifyGuiFragmentChangedEvent(guiFragment, GuiFragmentChangedEvent.UPDATE_OPERATION_CODE);
         } catch (Throwable t) {

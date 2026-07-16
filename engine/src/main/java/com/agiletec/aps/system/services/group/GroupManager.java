@@ -22,6 +22,7 @@ import com.agiletec.aps.system.common.FieldSearchFilter;
 import com.agiletec.aps.system.common.model.dao.SearcherDaoPaginatedResult;
 import com.agiletec.aps.system.exception.ApsSystemException;
 import com.agiletec.aps.system.services.group.cache.IGroupManagerCacheWrapper;
+import org.entando.entando.ent.util.LabelSanitizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,7 @@ public class GroupManager extends AbstractService implements IGroupManager {
     @Override
     public void addGroup(Group group) throws ApsSystemException {
         try {
+            group.setDescr(LabelSanitizer.stripMarkup(group.getDescr()));
             this.getGroupDAO().addGroup(group);
             this.getCacheWrapper().addGroup(group);
         } catch (Throwable t) {
@@ -102,6 +104,7 @@ public class GroupManager extends AbstractService implements IGroupManager {
     @Override
     public void updateGroup(Group group) throws ApsSystemException {
         try {
+            group.setDescr(LabelSanitizer.stripMarkup(group.getDescr()));
             this.getGroupDAO().updateGroup(group);
             this.getCacheWrapper().updateGroup(group);
         } catch (Throwable t) {
